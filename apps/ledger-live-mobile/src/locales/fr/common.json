@@ -262,6 +262,10 @@
       "title": "Vérification automatique indisponible : vérifiez l'adresse attentivement.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Opération non disponible sur cet appareil",
+      "description": "La fonctionnalité Envoi de NFT n'est disponible que pour le Nano X. Visitez notre centre d'aide pour découvrir comment envoyer un NFT avec un Nano S."
+    },
     "Touch ID Error": {
       "title": "Échec de l'authentification biométrique",
       "description": "Utilisez votre mot de passe ou réinitialisez l'app."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "Adresse {{currencyName}} invalide"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Votre compte est déjà délégué à ce validateur"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Les comptes donneur d'ordre et bénéficiaire ne peuvent pas être identiques."
@@ -377,7 +384,7 @@
       "description": "Vérifiez que ce compte a des fonds suffisants."
     },
     "NotEnoughGas": {
-      "title": "ETH insuffisants pour couvrir les frais de réseau",
+      "title": "Solde du compte parent insuffisant pour les frais de réseau",
       "description": "Envoyez des ETH sur votre compte pour régler vos transactions de tokens ERC-20."
     },
     "NotEnoughBalanceToDelegate": {
@@ -603,6 +610,15 @@
     "generic": {
       "title": "{{message}}",
       "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l'Assistance Ledger."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Pas de fonds sur le compte"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Adresse en dehors de la courbe ed25519"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Mémo trop long. Longueur maximale : {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -618,7 +634,7 @@
     "noInfos": "Ledger n'enregistre pas vos données de localisation."
   },
   "permissions": {
-    "open": "Ouvrir les autorisations des applications"
+    "open": "Ouvrir autorisa. des apps"
   },
   "fees": {
     "speed": {
@@ -626,7 +642,7 @@
       "standard": "Normale",
       "low": "Basse",
       "slow": "Lent",
-      "medium": "Moyens",
+      "medium": "Moyen",
       "fast": "Rapide",
       "custom": "Personnalisée",
       "blockCount": "{{blockCount}} blocs"
@@ -655,7 +671,7 @@
       "biometricsTitle": "Authentifiez-vous avec l'app Ledger Live.",
       "title": "Bienvenue",
       "desc": "Entrez votre mot de passe pour continuer.",
-      "inputPlaceholder": "Saisissez votre mot de passe.",
+      "inputPlaceholder": "Saisissez votre mot de passe",
       "login": "Se connecter",
       "forgotPassword": "Mot de passe oublié"
     },
@@ -702,7 +718,7 @@
       },
       "familyPack": {
         "title": "Family Pack",
-        "description": "Faites entrer votre famille dans la crypto\navec 3 Ledger Nano S"
+        "description": "Faites entrer votre famille dans la crypto avec 3 Ledger Nano S"
       },
       "buyCrypto": {
         "title": "Acheter des cryptos",
@@ -1429,7 +1445,7 @@
       "seeMore": "Afficher plus de tokens",
       "seeLess": "Afficher moins de tokens",
       "addTokens": "Token",
-      "howTo": "Pour ajouter des comptes de tokens, vous devez <0>recevoir des fonds</0> avec votre <1>adresse {{currency}}</1>.",
+      "howTo": "Pour ajouter des comptes de tokens, il vous suffit de <0>les recevoir</0> sur votre <1>adresse {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Adresse du contrat",
         "viewInExplorer": "Dans l'explorateur",
@@ -1741,6 +1757,10 @@
       "title": "Fonctionnalités expérimentales",
       "desc": "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
       "disclaimer": "Il s'agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause."
+    },
+    "developer": {
+      "title": "Développeurs",
+      "desc": "Essayez les fonctionnalités pour développeurs et donnez-nous votre avis."
     }
   },
   "migrateAccounts": {
@@ -1804,6 +1824,7 @@
       "copyAddress": "Copier l'adresse",
       "shareAddress": "Partager l'adresse",
       "addressCopied": "Adresse copiée",
+      "taprootWarning": "Vérifiez que l'émetteur prend en charge Taproot",
       "notSynced": {
         "text": "Synchronisation",
         "desc": "Cela peut prendre quelques instants si vous avez un grand nombre de transactions ou une connexion Internet lente."
@@ -1845,8 +1866,8 @@
           "subtitle": "LEDGER recueille vos données pour WYRE et les lui transfère pour réaliser votre vérification d'identité. Consultez notre Politique de confidentialité.",
           "pending": {
             "cta": "Continuer",
-            "title": "Vérification soumise pour validation",
-            "subtitle": "Votre vérification a été envoyée et est en attente de validation.",
+            "title": "Vos données ont été envoyées pour validation.",
+            "subtitle": "En général, il n'est nécessaire de patienter que quelques minutes.",
             "link": "En savoir plus"
           },
           "approved": {
@@ -1901,7 +1922,7 @@
       "pendingOperation": {
         "description": "Votre opération de swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu'à une heure avant que vous ne receviez vos {{targetCurrency}}.",
         "label": "Identifiant de votre swap :",
-        "title": "Swap bien diffusé ",
+        "title": "Opération en attente",
         "disclaimer": "Notez bien l'identifiant de votre swap au cas où vous auriez besoin de contacter l'assistance de {{provider}}.",
         "cta": "Voir les détails"
       },
@@ -1921,13 +1942,22 @@
         "button": "Continuer",
         "from": "De",
         "to": "À",
+        "source": "Source",
+        "target": "Compte bénéficiaire",
+        "noAccount": "Vous n'avez aucun compte {{currency}}",
         "balance": "Solde <0>123</0>",
         "fromAccount": "Sélectionnez un compte",
         "toAccount": "Sélectionnez un compte",
         "paraswapCTA": "Vous cherchez ParaSwap ? Il se trouve dans l'onglet Discover.",
+        "quote": "Prix",
+        "receive": "Recevoir",
         "amount": {
           "useMax": "Choisir le maximum",
           "available": "Total disponible"
+        },
+        "noAsset": {
+          "title": "Vous n'avez pas d'actif à échanger",
+          "desc": "Achetez des actifs et revenez sur cette page."
         },
         "noApp": {
           "title": "App {{appName}} non installée",
@@ -2006,6 +2036,22 @@
         "empty": {
           "title": "Vos swaps réalisés apparaîtront ici.",
           "desc": "Vous n'avez pas encore effectué de swaps ou Ledger Live a été réinitialisé depuis votre dernier swap."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "De",
+          "to": "À",
+          "send": "Envoyer",
+          "payoutNetworkFees": "Frais de réception",
+          "payoutNetworkFeesTooltip": "Ce montant n'apparaîtra pas sur votre appareil.",
+          "receive": "Montant",
+          "receiveFloat": "Montant à recevoir sans les frais de service",
+          "provider": "Prestataire",
+          "method": "Taux",
+          "fees": "Frais"
         }
       }
     },
@@ -2495,6 +2541,10 @@
       "legacy": {
         "title": "Legacy",
         "desc": "Format d'adresse original de {{currency}}. Frais les plus élevés pour chaque transaction. Certains wallets/échanges ne prennent toujours en charge que les Legacy."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Cette nouvelle mise à niveau du réseau {{currency}} offrira une meilleure confidentialité et des frais moins élevés, mais n'est pas encore prise en charge par tous les échanges et wallets."
       }
     }
   },
@@ -2659,7 +2709,7 @@
       "searchAppsCatalog": "Rechercher dans le Catalogue",
       "searchAppsInstalled": "Rechercher des apps installées",
       "noAppsInstalled": "Aucune app installée sur votre appareil",
-      "noAppsDescription": "Aller dans le catalogue pour installer des apps",
+      "noAppsDescription": "Allez dans le Catalogue pour installer des apps.",
       "noResultsFound": "Aucun résultat",
       "noResultsDesc": "Merci de vérifier l'orthographe et réessayer",
       "versionNew": "(NOUV. {{newVersion}})"
@@ -2840,7 +2890,7 @@
       "flow": {
         "steps": {
           "info": {
-            "description": "Déléguez vos ALGO pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "description": "Détenez des ALGO et gagnez des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
             "steps": {
               "0": "Un solde minimum de 1 ALGO est requis pour recevoir des récompenses.",
               "1": "Augmentez le solde de votre compte pour recevoir plus de récompenses.",

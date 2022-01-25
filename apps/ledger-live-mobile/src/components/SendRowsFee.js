@@ -13,6 +13,7 @@ export default ({
   navigation,
   route,
   setTransaction,
+  ...props
 }: {
   transaction: any,
   account: AccountLike,
@@ -20,12 +21,14 @@ export default ({
   navigation: any,
   route: { params: RouteParams },
   setTransaction: Function,
+  ...
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const C = perFamily[mainAccount.currency.family];
   // FIXME: looks like a hack, need to find how to handle networkInfo properly
   return C && transaction?.networkInfo ? (
     <C
+      {...props}
       setTransaction={setTransaction}
       transaction={transaction}
       account={account}

@@ -51,8 +51,10 @@ const Section = ({
   children?: React$Node,
 }) => (
   <View style={style}>
-    <LText style={styles.sectionTitle}>{title}</LText>
-    {value ? <LText semiBold>{value}</LText> : children}
+    <LText style={styles.sectionTitle} semiBold>
+      {title}
+    </LText>
+    {value ? <LText>{value}</LText> : children}
   </View>
 );
 
@@ -138,7 +140,7 @@ const NftViewer = ({ route }: Props) => {
               ]}
               key={i}
             >
-              <LText style={{ color: rgba(colors.live, 0.5) }}>
+              <LText semiBold style={{ color: rgba(colors.live, 0.5) }}>
                 {prop.key}
               </LText>
               <LText style={{ color: colors.live }}>{prop.value}</LText>
@@ -148,26 +150,26 @@ const NftViewer = ({ route }: Props) => {
       );
     }
 
-    return (
-      <View style={[styles.main]}>
-        <LText semiBold>-</LText>
-      </View>
-    );
+    return null;
   }, [colors, isLoading, metadata]);
 
-  const description = useMemo(
-    () =>
-      isLoading ? (
+  const description = useMemo(() => {
+    if (isLoading) {
+      return (
         <>
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
         </>
-      ) : (
-        <LText semiBold>{metadata?.description || "-"}</LText>
-      ),
-    [isLoading, metadata],
-  );
+      );
+    }
+
+    if (metadata?.description) {
+      return <LText>{metadata.description}</LText>;
+    }
+
+    return null;
+  }, [isLoading, metadata]);
 
   return (
     <View>
@@ -184,7 +186,7 @@ const NftViewer = ({ route }: Props) => {
             style={[styles.nftName, styles.nftNameSkeleton]}
             loading={isLoading}
           >
-            <LText style={styles.nftName} semiBold>
+            <LText style={styles.nftName} numberOfLines={3} semiBold>
               {metadata?.nftName || "-"}
             </LText>
           </Skeleton>
@@ -220,21 +222,27 @@ const NftViewer = ({ route }: Props) => {
         </View>
 
         {/* This weird thing is because we want a full width scrollView withtout the paddings */}
-        <>
-          <View style={styles.propertiesContainer}>
-            <LText style={styles.sectionTitle}>
-              {t("nft.viewer.properties")}
-            </LText>
-          </View>
-          {properties}
-        </>
+        {properties && (
+          <>
+            <View style={styles.propertiesContainer}>
+              <LText style={styles.sectionTitle}>
+                {t("nft.viewer.properties")}
+              </LText>
+            </View>
+            {properties}
+            <View style={styles.hr} />
+          </>
+        )}
 
         <View style={styles.main}>
-          <View style={styles.hr} />
-
-          <Section title={t("nft.viewer.description")}>{description}</Section>
-
-          <View style={styles.hr} />
+          {description && (
+            <>
+              <Section title={t("nft.viewer.description")}>
+                {description}
+              </Section>
+              <View style={styles.hr} />
+            </>
+          )}
 
           <Section
             title={t("nft.viewer.tokenContract")}
@@ -245,14 +253,17 @@ const NftViewer = ({ route }: Props) => {
 
           <Section title={t("nft.viewer.tokenId")} value={nft.tokenId} />
 
-          <View style={styles.hr} />
-
-          <TouchableOpacity onPress={closeModal}>
-            <Section
-              title={t("nft.viewer.quantity")}
-              value={nft.amount.toFixed()}
-            />
-          </TouchableOpacity>
+          {collection.standard === "ERC1155" && (
+            <>
+              <View style={styles.hr} />
+              <TouchableOpacity onPress={closeModal}>
+                <Section
+                  title={t("nft.viewer.quantity")}
+                  value={nft.amount.toFixed()}
+                />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ScrollView>
       <NftLinksPanel

@@ -38,7 +38,7 @@ type Props = {
 
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { mode, currency, device } = route.params;
+  const { mode, currency, device, analyticsPropertyFlow } = route.params;
 
   const accounts = useSelector(accountsSelector);
 
@@ -129,6 +129,7 @@ export default function SelectAccount({ navigation, route }: Props) {
               onPress={() =>
                 navigation.navigate(NavigatorName.AddAccounts, {
                   currency,
+                  analyticsPropertyFlow,
                 })
               }
             />
@@ -137,7 +138,14 @@ export default function SelectAccount({ navigation, route }: Props) {
         />
       );
     },
-    [renderItem, navigation, currency, t, enhancedAccounts],
+    [
+      renderItem,
+      navigation,
+      currency,
+      t,
+      enhancedAccounts,
+      analyticsPropertyFlow,
+    ],
   );
 
   // empty state if no accounts available for this currency
@@ -164,12 +172,12 @@ export default function SelectAccount({ navigation, route }: Props) {
             type="primary"
             title={t("exchange.buy.emptyState.CTAButton")}
             onPress={() =>
-              navigation.navigate(
-                NavigatorName.AddAccounts,
-                currency.type === "TokenCurrency"
+              navigation.navigate(NavigatorName.AddAccounts, {
+                ...(currency.type === "TokenCurrency"
                   ? { token: currency }
-                  : { currency },
-              )
+                  : { currency }),
+                analyticsPropertyFlow,
+              })
             }
           />
         </View>

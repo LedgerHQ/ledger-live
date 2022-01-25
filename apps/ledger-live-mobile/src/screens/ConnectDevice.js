@@ -39,6 +39,7 @@ type RouteParams = {
   appName?: string,
   onSuccess?: (payload: *) => void,
   onError?: (error: *) => void,
+  analyticsPropertyFlow?: string,
 };
 
 export default function ConnectDevice({ route }: Props) {
@@ -47,7 +48,7 @@ export default function ConnectDevice({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
-  const { appName, onSuccess, onError } = route.params;
+  const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -103,6 +104,7 @@ export default function ConnectDevice({ route }: Props) {
             }}
             device={route.params.device}
             {...extraProps}
+            analyticsPropertyFlow={analyticsPropertyFlow}
           />
         </SafeAreaView>
       ) : null,

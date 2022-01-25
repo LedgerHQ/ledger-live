@@ -7,3 +7,4 @@ export * from "./tron";
 export * from "./cosmos";
 export * from "./algorand";
 export * from "./polkadot";
+export * from "./solana";

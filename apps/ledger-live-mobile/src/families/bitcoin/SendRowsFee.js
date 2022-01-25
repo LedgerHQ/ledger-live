@@ -18,6 +18,7 @@ type Props = {
   navigation: *,
   route: { params: * },
   setTransaction: Function,
+  ...
 };
 
 export default function BitcoinSendRowsFee({
@@ -27,6 +28,7 @@ export default function BitcoinSendRowsFee({
   setTransaction,
   route,
   navigation,
+  ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
   let strategies = useFeesStrategy(account, transaction);
@@ -70,6 +72,7 @@ export default function BitcoinSendRowsFee({
 
   return (
     <SelectFeesStrategy
+      {...props}
       strategies={strategies}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}

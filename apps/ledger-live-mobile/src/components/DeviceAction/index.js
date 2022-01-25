@@ -21,6 +21,7 @@ import {
   renderBootloaderStep,
   renderConfirmSwap,
   renderConfirmSell,
+  LoadingAppInstall,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -32,6 +33,7 @@ type Props<R, H, P> = {
   action: Action<R, H, P>,
   request?: R,
   device: Device,
+  analyticsPropertyFlow?: string,
 };
 
 export default function DeviceAction<R, H, P>({
@@ -41,6 +43,7 @@ export default function DeviceAction<R, H, P>({
   onResult,
   onError,
   renderOnResult,
+  analyticsPropertyFlow = "unknown",
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
   const theme = dark ? "dark" : "light";
@@ -101,7 +104,7 @@ export default function DeviceAction<R, H, P>({
 
   if (installingApp) {
     const appName = requestOpenApp;
-    return renderLoading({
+    const props = {
       t,
       description: t("DeviceAction.installApp", {
         percentage: (progress * 100).toFixed(0) + "%",
@@ -109,7 +112,11 @@ export default function DeviceAction<R, H, P>({
       }),
       colors,
       theme,
-    });
+      appName,
+      analyticsPropertyFlow,
+      request,
+    };
+    return <LoadingAppInstall {...props} />;
   }
 
   if (requiresAppInstallation) {

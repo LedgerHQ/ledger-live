@@ -1,11 +1,11 @@
 // @flow
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useState } from "react";
 
 import FastImage from "react-native-fast-image";
-import { useTheme } from "@react-navigation/native";
 import { Image, View, StyleSheet, Animated, Platform } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
+import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
 const ImageComponent = ({
@@ -71,67 +71,85 @@ type Props = {
   status: string,
   src: string,
   hackWidth?: number,
+  colors: any,
 };
 
-const NftImage = ({ src, status, style, hackWidth = 90 }: Props) => {
-  const { colors } = useTheme();
-  const opacityAnim = useRef(new Animated.Value(0)).current;
-  const [loadError, setLoadError] = useState(null);
+type State = {
+  loadError: boolean,
+};
 
-  const startAnimation = useCallback(() => {
-    Animated.timing(opacityAnim, {
+class NftImage extends React.PureComponent<Props, State> {
+  static defaultProps = {
+    hackWidth: 90,
+  };
+
+  state = {
+    loadError: false,
+  };
+
+  opacityAnim = new Animated.Value(0);
+
+  startAnimation = () => {
+    Animated.timing(this.opacityAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
-  }, []);
+  };
 
-  const hackSrc = (() => {
-    const isPreProcessedSrc = /^https:\/\/lh3.googleusercontent.com\/.*/g;
-    return isPreProcessedSrc.test(src) ? `${src}=s${hackWidth}` : src;
-  })();
+  render() {
+    const { style, status, src, hackWidth, colors } = this.props;
+    const { loadError } = this.state;
 
-  return (
-    <View style={[style, styles.root]}>
-      <Skeleton style={styles.skeleton} loading={true} />
-      <Animated.View
-        style={[
-          styles.imageContainer,
-          {
-            opacity: opacityAnim,
-          },
-        ]}
-      >
-        {status === "nodata" ||
-        status === "error" ||
-        (status === "loaded" && !src) ||
-        loadError ? (
-          <NotFound colors={colors} onLayout={startAnimation} />
-        ) : (
-          <ImageComponent
-            style={[
-              styles.image,
-              {
-                backgroundColor: colors.white,
-              },
-            ]}
-            resizeMode="cover"
-            source={{
-              uri: hackSrc,
-            }}
-            onLoad={({ nativeEvent }: Image.ImageLoadEvent) => {
-              if (!nativeEvent) {
-                setLoadError(true);
-              }
-            }}
-            onLoadEnd={startAnimation}
-            onError={() => setLoadError(true)}
-          />
-        )}
-      </Animated.View>
-    </View>
-  );
-};
+    const hackSrc = (() => {
+      const isPreProcessedSrc = /^https:\/\/lh3.googleusercontent.com\/.*/g;
+      return isPreProcessedSrc.test(src) && hackWidth
+        ? `${src}=s${hackWidth}`
+        : src;
+    })();
+
+    return (
+      <View style={[style, styles.root]}>
+        <Skeleton style={styles.skeleton} loading={true} />
+        <Animated.View
+          style={[
+            styles.imageContainer,
+            {
+              opacity: this.opacityAnim,
+            },
+          ]}
+        >
+          {status === "nodata" ||
+          status === "error" ||
+          (status === "loaded" && !src) ||
+          loadError ? (
+            <NotFound colors={colors} onLayout={this.startAnimation} />
+          ) : (
+            <ImageComponent
+              style={[
+                styles.image,
+                {
+                  backgroundColor: colors.white,
+                },
+              ]}
+              resizeMode="cover"
+              source={{
+                uri: hackSrc,
+              }}
+              onLoad={({ nativeEvent }: Image.ImageLoadEvent) => {
+                if (!nativeEvent) {
+                  this.setState({ loadError: true });
+                }
+              }}
+              onLoadEnd={this.startAnimation}
+              onError={() => this.setState({ loadError: true })}
+            />
+          )}
+        </Animated.View>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -157,4 +175,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftImage;
+export default withTheme(NftImage);

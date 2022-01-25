@@ -23,6 +23,7 @@ import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
 } from "../reducers/settings";
+import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import IconExclamation from "../icons/ExclamationCircleFull";
 import { BaseButton as Button } from "./Button";
 import IconDownload from "../icons/Download";
@@ -34,6 +35,7 @@ import LText from "./LText";
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo = useSelector(lastSeenDeviceSelector);
+  const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(
     hasCompletedOnboardingSelector,
   );
@@ -68,101 +70,95 @@ const FirmwareUpdateBanner = () => {
     setShowBanner(false);
   };
 
-  return (
-    showBanner &&
-    hasCompletedOnboarding && (
-      <>
-        <Animatable.View
-          animation="fadeInDownBig"
-          easing="ease-out-expo"
-          useNativeDriver
-          style={styles.banner.root}
-        >
-          <TouchableHighlight
-            style={[
-              styles.banner.snack,
-              {
-                backgroundColor: colors.warning,
-              },
-            ]}
-            underlayColor={colors.darkWarning}
-            onPress={onPress}
-          >
-            <>
-              <View style={styles.banner.iconContainer}>
-                <IconNano color={colors.white} size={16} />
-              </View>
-              <LText
-                semiBold
-                style={[styles.banner.textContainer, { color: colors.white }]}
-              >
-                {t("FirmwareUpdate.newVersion", { version })}
-              </LText>
-              <View style={styles.banner.closeContainer}>
-                <TouchableOpacity
-                  onPress={onDismissBanner}
-                  style={styles.banner.closeIcon}
-                >
-                  <IconClose color={colors.white} size={16} />
-                </TouchableOpacity>
-              </View>
-            </>
-          </TouchableHighlight>
-        </Animatable.View>
-
-        <BottomModal
+  return showBanner && hasConnectedDevice && hasCompletedOnboarding ? (
+    <>
+      <Animatable.View
+        animation="fadeInDownBig"
+        easing="ease-out-expo"
+        useNativeDriver
+        style={styles.banner.root}
+      >
+        <TouchableHighlight
           style={[
-            styles.drawer.root,
+            styles.banner.snack,
             {
-              backgroundColor: colors.card,
+              backgroundColor: colors.warning,
             },
           ]}
-          isOpened={showDrawer}
-          onClose={onCloseDrawer}
+          underlayColor={colors.darkWarning}
+          onPress={onPress}
         >
-          <TouchableOpacity
-            style={styles.drawer.closeIcon}
+          <>
+            <View style={styles.banner.iconContainer}>
+              <IconNano color={colors.white} size={16} />
+            </View>
+            <LText
+              semiBold
+              style={[styles.banner.textContainer, { color: colors.white }]}
+            >
+              {t("FirmwareUpdate.newVersion", { version })}
+            </LText>
+            <View style={styles.banner.closeContainer}>
+              <TouchableOpacity
+                onPress={onDismissBanner}
+                style={styles.banner.closeIcon}
+              >
+                <IconClose color={colors.white} size={16} />
+              </TouchableOpacity>
+            </View>
+          </>
+        </TouchableHighlight>
+      </Animatable.View>
+
+      <BottomModal
+        style={[
+          styles.drawer.root,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+        isOpened={showDrawer}
+        onClose={onCloseDrawer}
+      >
+        <TouchableOpacity
+          style={styles.drawer.closeIcon}
+          onPress={onCloseDrawer}
+        >
+          <IconClose size={18} />
+        </TouchableOpacity>
+
+        <View
+          style={[
+            styles.drawer.roundIconContainer,
+            {
+              backgroundColor: rgba(colors.live, 0.15),
+            },
+          ]}
+        >
+          <IconDownload color={colors.live} size={30} />
+          <IconExclamation style={styles.drawer.exclamationIcon} size={30} />
+        </View>
+
+        <LText semiBold style={[styles.drawer.textCenter, styles.drawer.title]}>
+          {t("FirmwareUpdate.drawerUpdate.title")}
+        </LText>
+        <LText style={[styles.drawer.textCenter, styles.drawer.description]}>
+          {t("FirmwareUpdate.drawerUpdate.description")}
+        </LText>
+
+        <View style={styles.drawer.buttonContainer}>
+          <Button
+            type="primary"
+            title={t("common.close")}
+            colors={colors}
+            useTouchable={useTouchable}
+            isFocused={true}
             onPress={onCloseDrawer}
-          >
-            <IconClose size={18} />
-          </TouchableOpacity>
-
-          <View
-            style={[
-              styles.drawer.roundIconContainer,
-              {
-                backgroundColor: rgba(colors.live, 0.15),
-              },
-            ]}
-          >
-            <IconDownload color={colors.live} size={30} />
-            <IconExclamation style={styles.drawer.exclamationIcon} size={30} />
-          </View>
-
-          <LText
-            semiBold
-            style={[styles.drawer.textCenter, styles.drawer.title]}
-          >
-            {t("FirmwareUpdate.drawerUpdate.title")}
-          </LText>
-          <LText style={[styles.drawer.textCenter, styles.drawer.description]}>
-            {t("FirmwareUpdate.drawerUpdate.description")}
-          </LText>
-
-          <View style={styles.drawer.buttonContainer}>
-            <Button
-              type="primary"
-              title={t("common.close")}
-              colors={colors}
-              useTouchable={useTouchable}
-              isFocused={true}
-              onPress={onCloseDrawer}
-            />
-          </View>
-        </BottomModal>
-      </>
-    )
-  );
+          />
+        </View>
+      </BottomModal>
+    </>
+  ) : null;
 };
 
 const styles = {

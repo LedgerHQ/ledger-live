@@ -21,14 +21,14 @@ type BulletItem = {
 
 type InfoModalProps = ModalProps & {
   id?: string,
-  title?: string | React$Element<*>,
-  desc?: string | React$Element<*>,
+  title?: React$Node,
+  desc?: React$Node,
   bullets?: BulletItem[],
   Icon?: React$ComponentType<*>,
   withCancel?: boolean,
   onContinue?: () => void,
   children?: React$Node,
-  confirmLabel?: string | React$Element<*>,
+  confirmLabel?: React$Node,
   confirmProps?: *,
 };
 

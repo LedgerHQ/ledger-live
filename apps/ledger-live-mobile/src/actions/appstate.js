@@ -14,3 +14,7 @@ export const syncIsConnected = (isConnected: boolean | null) => (
     });
   }
 };
+
+export const setHasConnectedDevice = (hasConnectedDevice: boolean) => (
+  dispatch: *,
+) => dispatch({ type: "HAS_CONNECTED_DEVICE", hasConnectedDevice });

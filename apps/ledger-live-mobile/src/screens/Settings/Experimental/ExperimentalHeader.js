@@ -5,7 +5,7 @@ import Animated, { Extrapolate } from "react-native-reanimated";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
-import useExperimental from "./useExperimental";
+import { useExperimental } from "../../../experimental";
 import { runCollapse } from "../../../components/CollapsibleList";
 import LText from "../../../components/LText";
 import ExperimentalIcon from "../../../icons/Experimental";

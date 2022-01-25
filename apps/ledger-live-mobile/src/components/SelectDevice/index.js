@@ -1,14 +1,15 @@
 // @flow
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, NativeModules } from "react-native";
 import Config from "react-native-config";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { setHasConnectedDevice } from "../../actions/appstate";
 import { ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import DeviceItem from "./DeviceItem";
@@ -43,6 +44,7 @@ export default function SelectDevice({
   const { colors } = useTheme();
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
+  const dispatch = useDispatch();
 
   const handleOnSelect = useCallback(
     deviceInfo => {
@@ -51,17 +53,25 @@ export default function SelectDevice({
         modelId,
         connectionType: wired ? "USB" : "BLE",
       });
+      // Nb consider a device selection enough to show the fw update banner in portfolio
+      dispatch(setHasConnectedDevice(true));
       onSelect(deviceInfo);
     },
-    [onSelect],
+    [dispatch, onSelect],
   );
 
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices, {
-      onDone: autoSelectOnAdd ? handleOnSelect : null,
-    });
+    NativeModules.BluetoothHelperModule.prompt()
+      .then(() =>
+        navigation.navigate(ScreenName.PairDevices, {
+          onDone: autoSelectOnAdd ? handleOnSelect : null,
+        }),
+      )
+      .catch(() => {
+        /* ignore */
+      });
   }, [autoSelectOnAdd, navigation, handleOnSelect]);
 
   const renderItem = useCallback(
