@@ -109,11 +109,6 @@ class Zen extends Base {
       (res[1] === 0x89 || res[1] === 0x96)
     );
   }
-
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
-    return false;
-  }
 }
 
 export default Zen;

@@ -76,11 +76,6 @@ class ZCash extends Base {
   validateAddress(address: string): boolean {
     return zec.Address.isValid(address, "livenet");
   }
-
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
-    return false;
-  }
 }
 
 export default ZCash;
