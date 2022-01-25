@@ -1630,31 +1630,31 @@
     "@svgr/hast-util-to-babel-ast" "^5.5.0"
     svg-parser "^2.0.2"
 
-"@taquito/http-utils@^11.1.0":
+"@taquito/http-utils@^11.1.0", "@taquito/http-utils@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/http-utils/-/http-utils-11.1.0.tgz#43e53b4f57f4f1aec355c84462ee1839ca6277cf"
   integrity sha512-5kig7XKDcWlAxPx0qkGxyaqvS/rcz7DldcqcNvxAq+Z9Bb5viWIXQm4EaBKZ0KDh5PYjSS0HpbpvoGagIGwowQ==
   dependencies:
     xhr2-cookies "^1.1.0"
 
-"@taquito/ledger-signer@^11.1.0":
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/@taquito/ledger-signer/-/ledger-signer-11.1.0.tgz#773586bf2b204ed7b5b6f3d7f8f50b135c4a5ecf"
-  integrity sha512-VdTplrkYKSD6YOrpwdXtk2XdTTfnc+ZtlvNOV+4npOWbS4mdZ4Lnhy54uTvqtbav5AC4NNUCZHVG9V4lGQdeWA==
+"@taquito/ledger-signer@stablelib":
+  version "11.1.0-stablelib.0"
+  resolved "https://registry.yarnpkg.com/@taquito/ledger-signer/-/ledger-signer-11.1.0-stablelib.0.tgz#72786d3974acb60b01322f8c051a009576f337c6"
+  integrity sha512-g01b7KkPeaWSDpMXQVDQ9trJnrF6y6S3itWtmUhZr7douZRwy2Lyw4yFV4JaE4jDGnxrJPjYN0Qf6MtNNqjk9g==
   dependencies:
     "@ledgerhq/hw-transport" "^5.51.1"
-    "@taquito/taquito" "^11.1.0"
-    "@taquito/utils" "^11.1.0"
+    "@stablelib/blake2b" "^1.0.1"
+    "@taquito/taquito" "^11.1.0-stablelib.0"
+    "@taquito/utils" "^11.1.0-stablelib.0"
     "@types/jest" "^26.0.24"
     buffer "^6.0.3"
-    libsodium-wrappers "0.7.8"
 
-"@taquito/michel-codec@^11.1.0":
+"@taquito/michel-codec@^11.1.0", "@taquito/michel-codec@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/michel-codec/-/michel-codec-11.1.0.tgz#a32555ad70d931fd7c2cf3b03d57ba44bf77abe7"
   integrity sha512-Gh1ehstk2OOixeQfc3/XQLPrI4Nr/8gJCWm/Zj5FWtn0GTsxGnZR6W4EjqbWF290b4LMO8FrOAc68+I3EvPaFQ==
 
-"@taquito/michelson-encoder@^11.1.0":
+"@taquito/michelson-encoder@^11.1.0", "@taquito/michelson-encoder@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/michelson-encoder/-/michelson-encoder-11.1.0.tgz#b3cd4d88e140f9a6a1b5d3b01f4806aee381d8df"
   integrity sha512-XYoegKuQ2wnlQCMkaghI+QAVKH3xnIt7x3ChJvvnbpcKOHihFgWawK0nx1HKoz8GyW6+ZeOC2DgzP5uW0C6WRw==
@@ -1664,7 +1664,7 @@
     bignumber.js "^9.0.1"
     fast-json-stable-stringify "^2.1.0"
 
-"@taquito/rpc@^11.1.0":
+"@taquito/rpc@^11.1.0", "@taquito/rpc@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/rpc/-/rpc-11.1.0.tgz#ec7bc2de1848330ac69f80f87f22655759d856a7"
   integrity sha512-AUP1eUmjwwWzCSY00dIzGA2Xe9riO6kGG364TT3626qjDzEE/PxVy65oCiNC3BiXdtO4memQzdVI3gcKZYS3hA==
@@ -1674,7 +1674,7 @@
     lodash.get "^4.4.2"
     lodash.set "^4.3.2"
 
-"@taquito/taquito@11.1.0", "@taquito/taquito@^11.1.0":
+"@taquito/taquito@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-11.1.0.tgz#96c86fb6c8b7425b0faccca8150fd5127fe278d8"
   integrity sha512-aGibJBTi+kCCEhz3E+wHyJ6Pf/n30Tv/m/ag2ZMoWMYxWzOHepfkYaPQ6nq4eXUcWzAAxEuAtvgJBUB2pkHlog==
@@ -1687,7 +1687,20 @@
     bignumber.js "^9.0.1"
     rxjs "^6.6.3"
 
-"@taquito/utils@^11.1.0":
+"@taquito/taquito@stablelib":
+  version "11.1.0-stablelib.0"
+  resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-11.1.0-stablelib.0.tgz#e7df3448a96d197acf1bb4705e5d237d9c6f43d8"
+  integrity sha512-5V914TzycljnRJnneQx26zyagzhEPm/Qh009wmA4FkSByc5tilk5shfr5dmPTnAbwrb4CL8rGki/ovofw1x90A==
+  dependencies:
+    "@taquito/http-utils" "^11.1.0-stablelib.0"
+    "@taquito/michel-codec" "^11.1.0-stablelib.0"
+    "@taquito/michelson-encoder" "^11.1.0-stablelib.0"
+    "@taquito/rpc" "^11.1.0-stablelib.0"
+    "@taquito/utils" "^11.1.0-stablelib.0"
+    bignumber.js "^9.0.1"
+    rxjs "^6.6.3"
+
+"@taquito/utils@^11.1.0", "@taquito/utils@^11.1.0-stablelib.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-11.1.0.tgz#f179881e0e211dfb2764fbf2ea4fd467ae3426c5"
   integrity sha512-65Ms8lRD7Y7E4X9wqDugtoskRhGvonn4MTVfuWCZJEDHR6iKhy5SO/fy31wWvTc8281BsNelvniiItHgLx69wg==
@@ -5439,24 +5452,12 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libsodium-wrappers@0.7.8:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.8.tgz#d95cdf3e7236c2aef76844bf8e1929ba9eef3e9e"
-  integrity sha512-PDhPWXBqd/SaqAFUBgH2Ux7b3VEEJgyD6BQB+VdNFJb9PbExGr/T/myc/MBoSvl8qLzfm0W0IVByOQS5L1MrCg==
-  dependencies:
-    libsodium "0.7.8"
-
 libsodium-wrappers@^0.7.6:
   version "0.7.9"
   resolved "https://registry.npmjs.org/libsodium-wrappers/-/libsodium-wrappers-0.7.9.tgz"
   integrity sha512-9HaAeBGk1nKTRFRHkt7nzxqCvnkWTjn1pdjKgcUnZxj0FyOP4CnhgFhMdrFfgNsukijBGyBLpP2m2uKT1vuWhQ==
   dependencies:
     libsodium "^0.7.0"
-
-libsodium@0.7.8:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.8.tgz#fbd12247b7b1353f88d8de1cbc66bc1a07b2e008"
-  integrity sha512-/Qc+APf0jbeWSaeEruH0L1/tbbT+sbf884ZL0/zV/0JXaDPBzYkKbyb/wmxMHgAHzm3t6gqe7bOOXAVwfqVikQ==
 
 libsodium@^0.7.0:
   version "0.7.9"
