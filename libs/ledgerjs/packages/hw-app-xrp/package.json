@@ -1,0 +1,40 @@
+{
+  "name": "@ledgerhq/hw-app-xrp",
+  "version": "6.20.0",
+  "description": "Ledger Hardware Wallet Ripple Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Ripple",
+    "xrp",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Xrp.js",
+  "module": "lib-es/Xrp.js",
+  "types": "lib/Xrp.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "bip32-path": "0.4.2"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

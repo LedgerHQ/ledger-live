@@ -1,0 +1,5 @@
+*                           @ledgerhq/live-blockchain-support
+packages/types-devices      @ledgerhq/live-devices
+packages/devices            @ledgerhq/live-devices
+packages/hw-transport-*     @ledgerhq/live-devices
+packages/react-native-*     @ledgerhq/live-devices

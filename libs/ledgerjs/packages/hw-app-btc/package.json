@@ -1,0 +1,49 @@
+{
+  "name": "@ledgerhq/hw-app-btc",
+  "version": "6.21.0",
+  "description": "Ledger Hardware Wallet Bitcoin Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "btc",
+    "Bitcoin",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Btc.js",
+  "module": "lib-es/Btc.js",
+  "types": "lib/Btc.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/logs": "^6.10.0",
+    "bip32-path": "^0.4.2",
+    "bitcoinjs-lib": "^5.2.0",
+    "bs58": "^4.0.1",
+    "invariant": "^2.2.4",
+    "ripemd160": "2",
+    "semver": "^7.3.5",
+    "sha.js": "2",
+    "tiny-secp256k1": "1.1.6",
+    "varuint-bitcoin": "1.1.2"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

@@ -1,0 +1,45 @@
+{
+  "name": "@ledgerhq/hw-transport-web-ble",
+  "version": "6.21.0",
+  "description": "Ledger Hardware Wallet Web Bluetooth implementation of the communication layer",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "bluetooth",
+    "ble",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/TransportWebBLE.js",
+  "module": "lib-es/TransportWebBLE.js",
+  "types": "lib/TransportWebBLE.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/devices": "^6.20.0",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/logs": "^6.10.0",
+    "rxjs": "6"
+  },
+  "devDependencies": {
+    "@types/web-bluetooth": "^0.0.12"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

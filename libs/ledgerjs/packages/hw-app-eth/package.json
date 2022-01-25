@@ -1,0 +1,46 @@
+{
+  "name": "@ledgerhq/hw-app-eth",
+  "version": "6.23.1",
+  "description": "Ledger Hardware Wallet Ethereum Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Ethereum",
+    "eth",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Eth.js",
+  "module": "lib-es/Eth.js",
+  "types": "lib/Eth.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ethersproject/abi": "^5.5.0",
+    "@ethersproject/rlp": "^5.5.0",
+    "@ledgerhq/cryptoassets": "^6.23.1",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/logs": "^6.10.0",
+    "axios": "^0.24.0",
+    "bignumber.js": "^9.0.2"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

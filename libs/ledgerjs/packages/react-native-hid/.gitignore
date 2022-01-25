@@ -1,0 +1,7 @@
+local.properties
+.idea
+*.iml
+*.bat
+android/build
+android/.gradle
+android/gradle

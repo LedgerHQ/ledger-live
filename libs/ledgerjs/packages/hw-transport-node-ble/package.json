@@ -1,0 +1,45 @@
+{
+  "name": "@ledgerhq/hw-transport-node-ble",
+  "version": "6.20.0",
+  "description": "Ledger Hardware Wallet Bluetooth BLE transport for Node.js (noble)",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet",
+    "bluetooth",
+    "node",
+    "noble"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/TransportNodeBle.js",
+  "module": "lib-es/TransportNodeBle.js",
+  "types": "lib/TransportNodeBle.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@abandonware/noble": "1.9.2-15",
+    "@ledgerhq/devices": "^6.20.0",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/logs": "^6.10.0",
+    "invariant": "^2.2.4",
+    "rxjs": "6"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

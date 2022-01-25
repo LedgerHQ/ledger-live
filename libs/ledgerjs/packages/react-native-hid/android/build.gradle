@@ -1,0 +1,53 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    jcenter()
+    google()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.5.1'
+  }
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+    jcenter()
+    google()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 29
+
+  defaultConfig {
+    minSdkVersion 24
+    targetSdkVersion 29
+    versionCode 1
+    versionName "1.0"
+  }
+  lintOptions {
+    abortOnError false
+    warning 'InvalidPackage'
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  google()
+  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  maven {
+    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+    url "$rootDir/../node_modules/react-native/android"
+  }
+}
+
+dependencies {
+  implementation 'com.facebook.react:react-native:+'
+}

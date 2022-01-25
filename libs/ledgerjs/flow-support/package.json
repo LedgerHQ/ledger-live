@@ -1,0 +1,15 @@
+{
+  "name": "flow-support",
+  "version": "1.0.0",
+  "scripts": {
+    "copy": "node ./index.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@ledgerhq/cryptoassets": "^5.52.0",
+    "@ledgerhq/devices": "^5.51.1",
+    "@ledgerhq/errors": "^5.50.0",
+    "@ledgerhq/logs": "^5.50.0",
+    "glob": "^7.1.7"
+  }
+}

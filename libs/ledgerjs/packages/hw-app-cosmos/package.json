@@ -1,0 +1,41 @@
+{
+  "name": "@ledgerhq/hw-app-cosmos",
+  "version": "6.20.0",
+  "description": "Ledger Hardware Wallet Cosmos Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "atom",
+    "Cosmos",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Cosmos.js",
+  "module": "lib-es/Cosmos.js",
+  "types": "lib/Cosmos.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "bip32-path": "^0.4.2"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

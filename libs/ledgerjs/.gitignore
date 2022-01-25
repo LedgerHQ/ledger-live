@@ -1,0 +1,17 @@
+node_modules
+.DS_Store
+*.pem
+packages/cryptoassets/ethereum.json
+browser/
+dbdata/
+packages/**/lib/
+packages/**/lib-es/
+packages/**/dist/
+flow-typed/
+lerna-debug.log
+lerna-error.log
+yarn-error.log
+*.swp
+coverage
+.vscode/
+.idea

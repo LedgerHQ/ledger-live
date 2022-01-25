@@ -1,0 +1,44 @@
+{
+  "name": "@ledgerhq/hw-app-algorand",
+  "version": "6.20.0",
+  "description": "Ledger Hardware Wallet Algorand Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "algo",
+    "Algorand",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Algorand.js",
+  "module": "lib-es/Algorand.js",
+  "types": "lib/Algorand.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "bip32-path": "^0.4.2",
+    "hi-base32": "^0.5.1",
+    "js-sha512": "^0.8.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}

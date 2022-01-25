@@ -1,0 +1,52 @@
+{
+  "name": "@ledgerhq/react-native-hid",
+  "version": "6.23.0",
+  "nativePackage": true,
+  "description": "Ledger Hardware Wallet Web implementation of the communication layer, using U2F api",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "U2F",
+    "browser",
+    "web",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/devices": "^6.20.0",
+    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/hw-transport": "^6.20.0",
+    "@ledgerhq/logs": "^6.10.0",
+    "rxjs": "6"
+  },
+  "devDependencies": {
+    "@types/react-native": "^0.66.12",
+    "yarn-add-no-save": "^1.0.3"
+  },
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  },
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+}
