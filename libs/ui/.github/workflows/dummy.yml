@@ -1,0 +1,18 @@
+# This dummy action will unblock pull requests that do not trigger
+# the other actions based on the "on/paths" property.
+name: Dummy
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "packages/react/**"
+      - "packages/native/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do nothing
+        run: exit 0

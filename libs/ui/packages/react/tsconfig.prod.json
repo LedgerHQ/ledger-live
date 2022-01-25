@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "declaration": true,
+    "target": "ES6"
+  },
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js",
+    "./scripts",
+    "./lib",
+    "**/*.stories.tsx"
+  ]
+}

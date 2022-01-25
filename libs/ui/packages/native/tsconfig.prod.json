@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "declaration": true,
+    "target": "ES6",
+    "noEmit": false,
+    "jsx": "react",
+    "rootDir": "./src",
+    "outDir": "./lib"
+  },
+  "include": ["src/**/*"]
+}
