@@ -28,10 +28,25 @@ export const languages = {
 export const DEFAULT_LANGUAGE_LOCALE = "en";
 
 export const localeIds: string[] = Object.keys(allLocales);
-export const pushedLanguages = ["fr", "ru"];
+
+/**
+ * This is the list of languages that are supported in terms of in-app translations
+ * and it is meant to appear in the settings.
+ */
 export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+
+/**
+ * This is the list of languages that are supported in terms of in-app translations
+ * (so it is a subset of `supportedLocales`)
+ * AND supported in terms of external resources (i.e. customer support, articles etc.)
+ * These languages will be used by default for new users if it's their system language
+ * or in the case of existing users, they will be prompted once to change their
+ * Ledger Live language.
+ */
+export const fullySupportedLocales = ["en", "fr", "ru"];
+
 export const locales = supportedLocales.reduce((obj, key) => {
   obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
   return obj;
@@ -46,7 +61,7 @@ export const getDefaultLanguageLocale = (
   const matches = locale.match(/([a-z]{2,4}[-_]([A-Z]{2,4}|[0-9]{3}))/);
   const lang = (matches && matches[1].replace("_", "-")) || "en-US";
   return (
-    Object.keys(locales).find(locale => lang.startsWith(locale)) ||
+    fullySupportedLocales.find(locale => lang.startsWith(locale)) ||
     fallbackLocale
   );
 };
