@@ -9,6 +9,7 @@ import {
   Connection,
   FeeCalculator,
   PublicKey,
+  sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
 } from "@solana/web3.js";
 import { Awaited } from "../../logic";
@@ -96,8 +97,11 @@ export function getChainAPI(config: Config): ChainAPI {
         .getParsedAccountInfo(new PublicKey(address))
         .then((r) => r.value),
 
-    sendRawTransaction: (buffer: Buffer) =>
-      connection().sendRawTransaction(buffer),
+    sendRawTransaction: (buffer: Buffer) => {
+      return sendAndConfirmRawTransaction(connection(), buffer, {
+        commitment: "confirmed",
+      });
+    },
 
     findAssocTokenAccAddress: (owner: string, mint: string) =>
       Token.getAssociatedTokenAddress(
