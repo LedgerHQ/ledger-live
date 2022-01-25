@@ -1,0 +1,29 @@
+
+default_platform :ios
+
+platform :ios do
+  desc "test"
+  lane :test do
+    scan(
+      scheme: "LLTool",
+      workspace: "ios/LLTool.xcworkspace",
+      app_identifier: "com.ledger.LLTool",
+      devices: ["iPhone 11"],
+      include_simulator_logs: true,
+      buildlog_path: "fastlane/test_output",
+      reinstall_app: true
+    )
+  end
+end
+
+platform :android do
+  desc "build"
+  lane :build do
+    gradle(build_type: "Release", project_dir: 'android/')
+  end
+
+  desc "test"
+  lane :test do
+    gradle(task: "connectedAndroidTest", project_dir: 'android/')
+  end
+end

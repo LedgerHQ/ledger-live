@@ -1,0 +1,47 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+libcoredb/
+
+dbdata
+tmp
+
+.yalc
+yalc.lock
+
+# dependencies
+node_modules/
+
+# testing
+/coverage
+
+# build
+/lib
+/lib-es
+
+# misc
+.DS_Store
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.vscode
+
+# git mergetool
+*.orig
+
+flow-coverage
+
+# Generated icons
+src/data/icons/react
+src/data/icons/reactNative
+
+# Generated icons
+src/data/flags/react
+src/data/flags/reactNative
+
+cli/tests/*/output
+cli/tests/tmp
+.env
+
+# Jetbrains
+.idea

@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`inferDynamicRange 1`] = `
+Object {
+  "initial": "0.4",
+  "max": "0.8",
+  "min": "0.12",
+  "step": "0.005",
+  "steps": 137,
+}
+`;
+
+exports[`inferDynamicRange 2`] = `
+Object {
+  "initial": "1",
+  "max": "2",
+  "min": "0.3",
+  "step": "0.01",
+  "steps": 171,
+}
+`;
+
+exports[`inferDynamicRange 3`] = `
+Object {
+  "initial": "1.01",
+  "max": "2.02",
+  "min": "0.31",
+  "step": "0.01",
+  "steps": 172,
+}
+`;
+
+exports[`inferDynamicRange 4`] = `
+Object {
+  "initial": "10",
+  "max": "20",
+  "min": "3",
+  "step": "0.1",
+  "steps": 171,
+}
+`;
+
+exports[`inferDynamicRange 5`] = `
+Object {
+  "initial": "100",
+  "max": "200",
+  "min": "30",
+  "step": "1",
+  "steps": 171,
+}
+`;
+
+exports[`inferDynamicRange 6`] = `
+Object {
+  "initial": "99",
+  "max": "198",
+  "min": "30",
+  "step": "1",
+  "steps": 169,
+}
+`;
+
+exports[`projectRangeIndex 1`] = `"0.13"`;
