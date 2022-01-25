@@ -52,7 +52,7 @@ export default function CheckLanguageAvailability() {
       <Track
         onMount
         event={`Discoverability - Prompt - ${defaultLanguage}`}
-        eventProperties={defaultLanguage}
+        eventProperties={{ language: defaultLanguage }}
       />
       <BottomModal
         id="CheckLanguageAvailabilityModal"
