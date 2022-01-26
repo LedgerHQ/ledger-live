@@ -3,7 +3,6 @@ import {
   AmountRequired,
   NotEnoughBalance,
   FeeNotLoaded,
-  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
@@ -20,6 +19,7 @@ import {
   StellarFeeSmallerThanRecommended,
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
+  StellarInvalidAddress,
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -101,7 +101,7 @@ const getTransactionStatus = async (
     if (!t.recipient) {
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(t.recipient)) {
-      errors.recipient = new InvalidAddress("");
+      errors.recipient = new StellarInvalidAddress("");
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
@@ -137,7 +137,9 @@ const getTransactionStatus = async (
         !warnings.recipient &&
         !recipientAccount.assetIds.includes(`${t.assetCode}:${t.assetIssuer}`)
       ) {
-        errors.recipient = new StellarAssetNotAccepted("");
+        errors.recipient = new StellarAssetNotAccepted("", {
+          assetCode: t.assetCode,
+        });
       }
 
       const assetBalance = asset?.balance || new BigNumber(0);
