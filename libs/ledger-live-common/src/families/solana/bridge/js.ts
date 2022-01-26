@@ -5,19 +5,19 @@ import { minutes } from "../api/cached";
 
 const getAPI = makeLRUCache(
   (config: Config) => Promise.resolve(getChainAPI(config)),
-  (config) => config.cluster,
+  (config) => config.endpoint,
   minutes(1000)
 );
 
 const getQueuedAPI = makeLRUCache(
   (config: Config) => getAPI(config).then((api) => queued(api, 100)),
-  (config) => config.cluster,
+  (config) => config.endpoint,
   minutes(1000)
 );
 
 const getQueuedAndCachedAPI = makeLRUCache(
   (config: Config) => getQueuedAPI(config).then(cached),
-  (config) => config.cluster,
+  (config) => config.endpoint,
   minutes(1000)
 );
 

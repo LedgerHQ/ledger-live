@@ -120,6 +120,11 @@ const envDefinitions = {
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
   },
+  API_SOLANA_PROXY: {
+    parser: stringParser,
+    def: "https://solana.coin.ledger.com",
+    desc: "proxy url for solana API",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
