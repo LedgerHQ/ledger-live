@@ -22,7 +22,7 @@ import { broadcastWithAPI } from "../js-broadcast";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { ChainAPI, Config } from "../api";
 import { makeLRUCache } from "../../../cache";
-import { clusterByCurrencyId } from "../utils";
+import { endpointByCurrencyId } from "../utils";
 import { minutes, seconds } from "../api/cached";
 import hash from "object-hash";
 import BigNumber from "bignumber.js";
@@ -32,8 +32,8 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
     mainAccount: Account,
     transaction: Transaction
   ) {
-    const config = {
-      cluster: clusterByCurrencyId(mainAccount.currency.id),
+    const config: Config = {
+      endpoint: endpointByCurrencyId(mainAccount.currency.id),
     };
 
     const chainAPI = await getChainAPI(config);
@@ -61,8 +61,8 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
 
 function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   const getAccountShape: GetAccountShape = async (info) => {
-    const config = {
-      cluster: clusterByCurrencyId(info.currency.id),
+    const config: Config = {
+      endpoint: endpointByCurrencyId(info.currency.id),
     };
 
     const chainAPI = await getChainAPI(config);
@@ -91,8 +91,8 @@ function makeEstimateMaxSpendable(
       throw new Error("currency not found");
     }
 
-    const config = {
-      cluster: clusterByCurrencyId(currencyId),
+    const config: Config = {
+      endpoint: endpointByCurrencyId(currencyId),
     };
 
     const api = await getChainAPI(config);
@@ -110,8 +110,8 @@ function makeBroadcast(
   getChainAPI: (config: Config) => Promise<ChainAPI>
 ): BroadcastFnSignature {
   return async (info) => {
-    const config = {
-      cluster: clusterByCurrencyId(info.account.currency.id),
+    const config: Config = {
+      endpoint: endpointByCurrencyId(info.account.currency.id),
     };
     const api = await getChainAPI(config);
     return broadcastWithAPI(info, api);
@@ -122,8 +122,8 @@ function makeSign(
   getChainAPI: (config: Config) => Promise<ChainAPI>
 ): SignOperationFnSignature<Transaction> {
   return (info) => {
-    const config = {
-      cluster: clusterByCurrencyId(info.account.currency.id),
+    const config: Config = {
+      endpoint: endpointByCurrencyId(info.account.currency.id),
     };
     const api = () => getChainAPI(config);
     return signOperationWithAPI(info, api);

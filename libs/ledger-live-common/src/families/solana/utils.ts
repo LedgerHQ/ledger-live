@@ -1,4 +1,5 @@
-import { Cluster } from "@solana/web3.js";
+import { clusterApiUrl } from "@solana/web3.js";
+import { getEnv } from "../../env";
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
@@ -16,15 +17,15 @@ export async function drainSeqAsyncGen<T>(
   return items;
 }
 
-export function clusterByCurrencyId(currencyId: string): Cluster {
-  const clusters: Record<string, Cluster> = {
-    solana: "mainnet-beta",
-    solana_devnet: "devnet",
-    solana_testnet: "testnet",
+export function endpointByCurrencyId(currencyId: string): string {
+  const endpoints: Record<string, string> = {
+    solana: getEnv("API_SOLANA_PROXY"),
+    solana_devnet: clusterApiUrl("devnet"),
+    solana_testnet: clusterApiUrl("testnet"),
   };
 
-  if (currencyId in clusters) {
-    return clusters[currencyId];
+  if (currencyId in endpoints) {
+    return endpoints[currencyId];
   }
 
   throw Error(
