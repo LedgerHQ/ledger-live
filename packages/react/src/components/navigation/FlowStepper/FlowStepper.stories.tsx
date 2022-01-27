@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
 import FlowStepperIndexedByKey from "./FlowStepperIndexedByKey";
-import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons } from "../../..";
+import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
 import { lipsum, StoryTemplate } from "../../helpers";
 import { useState } from "react";
 
@@ -87,6 +87,10 @@ export default {
     extraStepperContainerProps: { control: "disabled" },
     children: { control: "disabled" },
     renderChildren: { control: "disabled" },
+    header: { control: "disabled" },
+    renderHeader: { control: "disabled" },
+    footer: { control: "disabled" },
+    renderFooter: { control: "disabled" },
   },
   parameters: {
     docs: {
@@ -174,18 +178,27 @@ const Header = ({ activeIndex, onBack }: { activeIndex: number; onBack?: () => v
   );
 };
 
-const Footer = ({ onContinue }: { onContinue?: () => void }) => {
-  return onContinue ? (
-    <Flex mt={6} flexDirection="column" rowGap={6} alignItems="flex-end">
-      <Box alignSelf="stretch">
-        <Divider variant="light" />
-      </Box>
-      <Button variant="main" onClick={onContinue}>
-        Continue
-      </Button>
+const Footer = ({
+  onContinue,
+  children,
+}: {
+  onContinue?: () => void;
+  children?: React.ReactNode;
+}) => (
+  <Flex mt={6} flexDirection="column" rowGap={6}>
+    <Box alignSelf="stretch">
+      <Divider variant="light" />
+    </Box>
+    <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
+      {children || <Flex />}
+      {onContinue && (
+        <Button variant="main" onClick={onContinue}>
+          Continue
+        </Button>
+      )}
     </Flex>
-  ) : null;
-};
+  </Flex>
+);
 
 const AnimatedItem = styled(Flex)`
   transition: opacity 500ms;
@@ -223,6 +236,17 @@ const Item = ({ label }: { label: string }) => (
   </AnimatedItem>
 );
 
+const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
+
+const footer = steps.map((label) => (
+  <Flex flexDirection="row" alignItems="center">
+    <Text whiteSpace="pre">Footer for step </Text>
+    <Tag size="medium" type="plain" active>
+      {label}
+    </Tag>
+  </Flex>
+));
+
 export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
   const [, updateArgs] = useArgs();
 
@@ -241,7 +265,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
             }
           />
         )}
-        footer={({ stepsLength, activeIndex }) => (
+        renderFooter={({ stepsLength, activeIndex, children }) => (
           <Footer
             onContinue={
               activeIndex < stepsLength - 1
@@ -250,8 +274,16 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
                   }
                 : undefined
             }
-          />
+          >
+            {children}
+          </Footer>
         )}
+        /**
+         * if footer is defined inline here, storybook goes on an infinite loop 😅
+         * Could be related to how it tries to pretty print the code in the Docs
+         * section as footer isn't a ReactElement but a ReactElement[]...
+         */
+        footer={footer}
         extraStepperContainerProps={{ my: 12 }}
         extraStepperProps={{ maxWidth: "500px" }}
         renderChildren={({ children }) => (
@@ -259,7 +291,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
         )}
         {...args}
       >
-        {["Primary", "Neutral", "Success", "Warning", "Error"].map((label) => (
+        {steps.map((label) => (
           <CSSTransition
             key={label}
             label={label}
@@ -276,8 +308,6 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
   );
 };
 
-const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
-
 const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string) => void }) => {
   const { label, setActiveStep } = props;
   const content = useMemo(() => {
@@ -292,10 +322,10 @@ const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string)
   return (
     <Flex
       flex={1}
-      flexDirection="row"
+      flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      columnGap={4}
+      rowGap={4}
       backgroundColor={`${label.toLowerCase()}.c50`}
     >
       {content}
