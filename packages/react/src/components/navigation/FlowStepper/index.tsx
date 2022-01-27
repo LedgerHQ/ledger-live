@@ -127,14 +127,12 @@ function FlowStepper<ExtraProps>({
 
   const headerContents =
     header && Array.isArray(header)
-      ? header.find((child, idx) => (isElement(child) && child.props.index) ?? activeIndex === idx)
+      ? header.find((item, idx) => (isElement(item) && item.props.index) ?? activeIndex === idx)
       : null;
 
   const footerContents =
     footer && Array.isArray(footer)
-      ? footer.find(
-          (element, idx) => (isElement(element) && element.props.index) ?? activeIndex === idx,
-        )
+      ? footer.find((item, idx) => (isElement(item) && item.props.index) ?? activeIndex === idx)
       : null;
 
   const renderArgs = { ...extraProps, activeIndex, stepsLength: steps.length } as InnerProps &
