@@ -3,7 +3,7 @@ import { storiesOf } from "../storiesOf";
 import { action } from "@storybook/addon-actions";
 import { boolean } from "@storybook/addon-knobs";
 import ScrollContainerHeader from "../../../src/components/Layout/ScrollContainerHeader";
-import Button from "../../../src/components/cta/Button";
+import Button, { ButtonProps } from "../../../src/components/cta/Button";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import Badge from "../../../src/components/tags/Badge";
@@ -52,7 +52,7 @@ const ScrollContainerHeaderStory = () => {
               mr={2}
               border={debug ? "1px solid purple" : "none"}
               Icon={Icons.ArrowLeftMedium}
-              size="small"
+              size={"small" as ButtonProps["size"]}
             />
           ) : undefined
         }
