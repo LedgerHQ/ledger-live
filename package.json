@@ -11,8 +11,6 @@
     "build": "turbo run build --ignore=\"./apps/**/*\"",
     "lld:dev": "turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
-    "llm:ios": "turbo run ios --scope=live-mobile",
-    "llm:android": "turbo run android --scope=live-mobile",
     "desktop": "pnpm --filter live-desktop",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
@@ -40,14 +38,6 @@
         "dependsOn": [
           "^build"
         ]
-      },
-      "ios": {
-        "cache": false,
-        "dependsOn": []
-      },
-      "android": {
-        "cache": false,
-        "dependsOn": []
       }
     }
   },
