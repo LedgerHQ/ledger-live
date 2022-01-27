@@ -126,12 +126,12 @@ function FlowStepper<ExtraProps>({
   );
 
   const headerContents =
-    header && typeof header !== "function"
+    header && Array.isArray(header)
       ? header.find((child, idx) => (isElement(child) && child.props.index) ?? activeIndex === idx)
       : null;
 
   const footerContents =
-    footer && typeof footer !== "function"
+    footer && Array.isArray(footer)
       ? footer.find(
           (element, idx) => (isElement(element) && element.props.index) ?? activeIndex === idx,
         )
