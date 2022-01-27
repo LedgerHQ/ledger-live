@@ -223,11 +223,13 @@ export const fetchAccountNetworkInfo = async (
       .accountId(account.freshAddress)
       .call();
     const baseReserve = getReservedBalance(extendedAccount);
-    const { recommendedFee, networkCongestionLevel } = await fetchBaseFee();
+    const { recommendedFee, networkCongestionLevel, baseFee } =
+      await fetchBaseFee();
 
     return {
       family: "stellar",
       fees: new BigNumber(recommendedFee.toString()),
+      baseFee: new BigNumber(baseFee.toString()),
       baseReserve,
       networkCongestionLevel,
     };
@@ -235,6 +237,7 @@ export const fetchAccountNetworkInfo = async (
     return {
       family: "stellar",
       fees: new BigNumber(0),
+      baseFee: new BigNumber(0),
       baseReserve: new BigNumber(0),
       networkCongestionLevel: undefined,
     };

@@ -17,6 +17,7 @@ import {
   StellarAssetNotFound,
   StellarNotEnoughNativeBalance,
   StellarFeeSmallerThanRecommended,
+  StellarFeeSmallerThanBase,
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
   StellarInvalidAddress,
@@ -73,12 +74,15 @@ const getTransactionStatus = async (
 
   // Enough native balance to cover transaction (with required reserve + fees)
   if (!errors.amount && nativeAmountAvailable.lt(0)) {
-    errors.amount = new StellarNotEnoughNativeBalance();
+    errors.nativeBalance = new StellarNotEnoughNativeBalance();
   }
 
-  // Entered fee is smaller than recommended
-  if (estimatedFees.lt(t.networkInfo?.fees || 0)) {
-    errors.transaction = new StellarFeeSmallerThanRecommended();
+  // Entered fee is smaller than base fee
+  if (estimatedFees.lt(t.networkInfo?.baseFee || 0)) {
+    errors.transaction = new StellarFeeSmallerThanBase();
+    // Entered fee is smaller than recommended
+  } else if (estimatedFees.lt(t.networkInfo?.fees || 0)) {
+    warnings.transaction = new StellarFeeSmallerThanRecommended();
   }
 
   // Operation specific checks
@@ -92,9 +96,6 @@ const getTransactionStatus = async (
     if (nativeAmountAvailable.minus(BASE_RESERVE).lt(0)) {
       errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
     }
-
-    // TODO: add info
-    // New trustline will add 0.5 XLM to your reserved balance
   } else {
     // Payment
     // Check recipient address

@@ -54,6 +54,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: new BigNumber(networkInfo.fees),
+      baseFee: new BigNumber(networkInfo.baseReserve),
       baseReserve: new BigNumber(networkInfo.baseReserve),
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },

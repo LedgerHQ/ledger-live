@@ -11,6 +11,7 @@ export type CoreCurrencySpecifics = Record<string, never>;
 export type NetworkInfo = {
   family: "stellar";
   fees: BigNumber;
+  baseFee: BigNumber;
   baseReserve: BigNumber;
   networkCongestionLevel?: NetworkCongestionLevel;
 };
