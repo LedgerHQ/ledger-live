@@ -278,9 +278,15 @@ platform :android do
   before_all do
     set_version_name
     # Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.
-    ENV["NODE_PATH"] ||= File.expand_path(
+    platform_separator = Gem.win_platform? ? ";" : ":"
+    pnpm_hoisted_node_modules = File.expand_path(
       File.join(
         File.dirname(__FILE__), "..", "..", "..", "node_modules", ".pnpm", "node_modules"
+      )
+    )
+    common_node_modules = File.expand_path(
+      File.join(
+        File.dirname(__FILE__), "..", "..", "..", "libs", "ledger-live-common", "node_modules"
       )
     )
   end
