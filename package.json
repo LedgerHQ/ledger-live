@@ -7,11 +7,19 @@
     "turbo": "^1.0.28"
   },
   "scripts": {
-    "lld:dev": "turbo run start --scope=live-desktop",
+    "clean": "git clean -fdX",
+    "build": "turbo run build --ignore=\"./apps/**/*\"",
+    "lld:dev": "turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
+    "llm:dev": "turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
     "llm:ios": "turbo run ios --scope=live-mobile",
     "llm:android": "turbo run android --scope=live-mobile",
-    "build": "turbo run build --ignore=\"./apps/**/*\"",
-    "clean": "git clean -fdX"
+    "desktop": "pnpm --filter live-desktop",
+    "mobile": "pnpm --filter live-mobile",
+    "common": "pnpm --filter live-common",
+    "ui:react": "pnpm --filter react-ui",
+    "ui:native": "pnpm --filter native-ui",
+    "ui:icons": "pnpm --filter icons-ui",
+    "ui:shared": "pnpm --filter shared-ui"
   },
   "turbo": {
     "baseBranch": "origin/main",
