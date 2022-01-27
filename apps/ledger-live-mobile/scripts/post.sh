@@ -16,7 +16,7 @@ rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 
 # issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
 # manually shim
-sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
+# sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
 
 patch -N node_modules/react-native-video/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java ./scripts/react-native-video.2575.patch || false
 
