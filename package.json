@@ -225,7 +225,9 @@
     "**/**/pbkdf2": "3.1.1",
     "**/**/**/pbkdf2": "3.1.1",
     "react-native-svg": "12.1.1",
-    "d3-array": "2.3.3"
+    "d3-array": "2.3.3",
+    "@polkadot/util": "8.0.6-8",
+    "@polkadot/util-crypto": "8.0.6-8"
   },
   "react-native": {
     "zlib": "browserify-zlib",
