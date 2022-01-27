@@ -3,7 +3,6 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
-import FlowStepperIndexedByKey from "./FlowStepperIndexedByKey";
 import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
 import { lipsum, StoryTemplate } from "../../helpers";
 import { useState } from "react";
@@ -337,7 +336,7 @@ export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => 
   const [activeStep, setActiveStep] = useState(steps[0]);
   return (
     <Flex height="90vh">
-      <FlowStepperIndexedByKey
+      <FlowStepper.Indexed
         activeKey={activeStep}
         header={({ activeIndex }) => (
           <Header
@@ -367,11 +366,11 @@ export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => 
         {...args}
       >
         {steps.map((label) => (
-          <FlowStepperIndexedByKey.Step label={label} itemKey={label} key={label}>
+          <FlowStepper.Indexed.Step label={label} itemKey={label} key={label}>
             <StepWithNavigation label={label} setActiveStep={setActiveStep} />
-          </FlowStepperIndexedByKey.Step>
+          </FlowStepper.Indexed.Step>
         ))}
-      </FlowStepperIndexedByKey>
+      </FlowStepper.Indexed>
     </Flex>
   );
 };
