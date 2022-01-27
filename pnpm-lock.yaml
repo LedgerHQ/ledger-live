@@ -381,14 +381,14 @@ importers:
       '@actions/core': ^1.5.0
       '@babel/core': ^7.12.9
       '@babel/runtime': ^7.12.5
-      '@ledgerhq/devices': 6.20.0
-      '@ledgerhq/errors': 6.10.0
-      '@ledgerhq/hw-transport': 6.20.0
-      '@ledgerhq/hw-transport-http': 6.20.0
-      '@ledgerhq/live-common': ^21.26.1
-      '@ledgerhq/logs': 6.10.0
-      '@ledgerhq/react-native-hid': 6.21.0
-      '@ledgerhq/react-native-hw-transport-ble': 6.20.0
+      '@ledgerhq/devices': workspace:^
+      '@ledgerhq/errors': workspace:^
+      '@ledgerhq/hw-transport': workspace:^
+      '@ledgerhq/hw-transport-http': workspace:^
+      '@ledgerhq/live-common': workspace:^
+      '@ledgerhq/logs': workspace:^
+      '@ledgerhq/react-native-hid': workspace:^
+      '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-ledger-core': 4.19.1
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
       '@polkadot/reactnative-identicon': 0.87.5
@@ -548,7 +548,7 @@ importers:
       '@ledgerhq/hw-transport-http': link:../../libs/ledgerjs/packages/hw-transport-http
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
       '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
-      '@ledgerhq/react-native-hid': 6.21.0_react-native@0.65.1
+      '@ledgerhq/react-native-hid': link:../../libs/ledgerjs/packages/react-native-hid
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-ledger-core': 4.19.1_react-native@0.65.1
       '@ledgerhq/react-native-passcode-auth': 2.1.0
@@ -566,6 +566,7 @@ importers:
       '@react-navigation/native': 6.0.6_react-native@0.65.1+react@17.0.2
       '@react-navigation/stack': 6.0.11_4c93db8f3c02f0f5b323fec07825f9e2
       '@segment/analytics-react-native': 1.5.0
+      '@sentry/cli': 1.72.1
       '@sentry/react-native': 3.2.13_react-native@0.65.1+react@17.0.2
       '@tradle/react-native-http': 2.0.1
       assert: 2.0.0
@@ -597,6 +598,7 @@ importers:
       https-browserify: 1.0.0
       i18next: 20.3.5
       invariant: 2.2.4
+      jsc-android: 250230.2.1
       json-rpc-2.0: 0.2.19
       lodash: 4.17.21
       lottie-ios: 3.2.3
@@ -678,7 +680,6 @@ importers:
       '@react-native-community/eslint-config': 2.0.0_eslint@7.32.0
       '@rnx-kit/metro-config': 1.2.27_c5ab500d31762b476149c5ab2366c316
       '@rnx-kit/metro-resolver-symlinks': 0.1.16
-      '@sentry/cli': 1.72.1
       babel-jest: 26.6.3_@babel+core@7.16.12
       detox: 18.23.1_jest-circus@26.6.3
       eslint: 7.32.0
@@ -697,7 +698,6 @@ importers:
       jest: 26.6.3
       jest-circus: 26.6.3
       jetifier: 1.6.8
-      jsc-android: 250230.2.1
       local-web-server: 4.2.1
       metro: 0.66.2
       metro-config: 0.66.2
@@ -6121,15 +6121,6 @@ packages:
       semver: 7.3.5
     dev: false
 
-  /@ledgerhq/devices/6.20.0:
-    resolution: {integrity: sha512-WehM7HGdb+nSUzyUlz1t2qJ8Tg4I+rQkOJJsx0/Dpjkx6/+1hHcX6My/apPuwh39qahqwYhjszq0H1YzGDS0Yg==}
-    dependencies:
-      '@ledgerhq/errors': 6.10.0
-      '@ledgerhq/logs': 6.10.0
-      rxjs: 6.6.7
-      semver: 7.3.5
-    dev: false
-
   /@ledgerhq/electron-updater/4.2.2:
     resolution: {integrity: sha512-kPUJDBnic9VAj8bnL+beqWMP7fpng6SvvbkZQ9+ALHpeoZEcVfF0mmcdB78fqNpoAC4nGw8+G1jgpbbbO1yD2Q==}
     dependencies:
@@ -6149,23 +6140,11 @@ packages:
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
     dev: false
 
-  /@ledgerhq/errors/6.10.0:
-    resolution: {integrity: sha512-fQFnl2VIXh9Yd41lGjReCeK+Q2hwxQJvLZfqHnKqWapTz68NHOv5QcI0OHuZVNEbv0xhgdLhi5b65kgYeQSUVg==}
-    dev: false
-
   /@ledgerhq/hw-transport/5.51.1:
     resolution: {integrity: sha512-6wDYdbWrw9VwHIcoDnqWBaDFyviyjZWv6H9vz9Vyhe4Qd7TIFmbTl/eWs6hZvtZBza9K8y7zD8ChHwRI4s9tSw==}
     dependencies:
       '@ledgerhq/devices': 5.51.1
       '@ledgerhq/errors': 5.50.0
-      events: 3.3.0
-    dev: false
-
-  /@ledgerhq/hw-transport/6.20.0:
-    resolution: {integrity: sha512-5KS0Y6CbWRDOv3FgNIfk53ViQOIZqMxAw0RuOexreW5GMwuYfK7ddGi4142qcu7YrxkGo7cNe42wBbx1hdXl0Q==}
-    dependencies:
-      '@ledgerhq/devices': 6.20.0
-      '@ledgerhq/errors': 6.10.0
       events: 3.3.0
     dev: false
 
@@ -6200,10 +6179,6 @@ packages:
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
     dev: false
 
-  /@ledgerhq/logs/6.10.0:
-    resolution: {integrity: sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==}
-    dev: false
-
   /@ledgerhq/node-pre-gyp-github/1.0.2:
     resolution: {integrity: sha512-JxoXlQrNVMMMRKLOD975CZBCj7qPJHZMUQ8vlZka4YTgM0CnbBA3DwI4uv1c0ox3CWPjLqvbNS8DPuYehmUv3w==}
     hasBin: true
@@ -6213,19 +6188,6 @@ packages:
       mime-types: 2.1.34
     transitivePeerDependencies:
       - encoding
-    dev: false
-
-  /@ledgerhq/react-native-hid/6.21.0_react-native@0.65.1:
-    resolution: {integrity: sha512-I9ZjO8QctBzbhquY/iIcMrtI2r1oQ38BOrGr+vJ7cAGVty2XPUkpnjQ8vIHWnijk/CT3nqjtJpeH/6i7qpciTA==}
-    peerDependencies:
-      react-native: '*'
-    dependencies:
-      '@ledgerhq/devices': 6.20.0
-      '@ledgerhq/errors': 6.10.0
-      '@ledgerhq/hw-transport': 6.20.0
-      '@ledgerhq/logs': 6.10.0
-      react-native: 0.65.1_react@17.0.2
-      rxjs: 6.6.7
     dev: false
 
   /@ledgerhq/react-native-ledger-core/4.19.1_react-native@0.65.1:
@@ -8369,6 +8331,7 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: false
 
   /@sentry/core/6.12.0:
     resolution: {integrity: sha512-mU/zdjlzFHzdXDZCPZm8OeCw7c9xsbL49Mq0TrY0KJjLt4CJBkiq5SDTGfRsenBLgTedYhe5Z/J8Z+xVVq+MfQ==}
@@ -26837,6 +26800,7 @@ packages:
 
   /jsc-android/250230.2.1:
     resolution: {integrity: sha512-KmxeBlRjwoqCnBBKGsihFtvsBHyUFlBxJPK4FzeYcIuBfdjv6jFys44JITAgSTbQD+vIdwMEfyZklsuQX0yI1Q==}
+    dev: false
 
   /jscodeshift/0.11.0:
     resolution: {integrity: sha512-SdRK2C7jjs4k/kT2mwtO07KJN9RnjxtKn03d9JVj6c3j9WwaLcFYsICYDnLAzY0hp+wG2nxl+Cm2jWLiNVYb8g==}
