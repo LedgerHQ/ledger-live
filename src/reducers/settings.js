@@ -344,7 +344,10 @@ const handlers: Object = {
     { payload: dmi }: { payload: DeviceModelInfo },
   ) => ({
     ...state,
-    lastSeenDevice: dmi,
+    lastSeenDevice: {
+      ...(state.lastSeenDevice || {}),
+      ...dmi,
+    },
   }),
 };
 
