@@ -15,9 +15,14 @@ const TabBox = styled(TouchableOpacity)<{ isActive: boolean }>`
 
 const StyledTabs = styled(TemplateTabs)``;
 
-export const ChipTab = ({ onPress, isActive, label }: TabItemProps): React.ReactElement => {
+export const ChipTab = ({
+  onPress,
+  isActive,
+  label,
+  disabled,
+}: TabItemProps): React.ReactElement => {
   return (
-    <TabBox isActive={isActive} onPress={onPress}>
+    <TabBox isActive={isActive} onPress={onPress} disabled={disabled}>
       <Text
         variant={"small"}
         fontWeight={"semiBold"}
