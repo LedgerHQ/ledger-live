@@ -1,5 +1,5 @@
 import { storiesOf } from "../../storiesOf";
-import { array } from "@storybook/addon-knobs";
+import { array, boolean } from "@storybook/addon-knobs";
 
 import React, { useState } from "react";
 import ChipTabs from "../../../../src/components/Tabs/Chip";
@@ -15,6 +15,7 @@ const ChipTabsStory = () => {
         "labels",
         new Array(4).fill("").map((_, i) => "Label" + i),
       )}
+      disabled={boolean("disabled", false)}
     />
   );
 };
