@@ -124,6 +124,8 @@ listen((log) => {
     level = "error";
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   logger.log(level, log);
 });
 implementLibcore({
