@@ -1,0 +1,17 @@
+name: Sync remotes
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Execute shell script
+        env:
+          PUSH_CHANGES: 1
+        run: ./tools/scripts/sync_remotes.sh
