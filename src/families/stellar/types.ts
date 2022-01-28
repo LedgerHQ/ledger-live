@@ -76,6 +76,7 @@ export type BalanceAsset = {
   asset_type: string;
   asset_code: string;
   asset_issuer: string;
+  liquidity_pool_id?: string;
 };
 
 export type StellarOperation = {
