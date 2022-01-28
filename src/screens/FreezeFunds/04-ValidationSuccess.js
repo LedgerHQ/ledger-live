@@ -9,6 +9,7 @@ import {
   getLastVotedDate,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
+import padStart from "lodash/padStart";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -93,11 +94,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
             <Button
               event="FreezeSuccessVote"
               title={
+                /**
+                 * To much effort to localize this IMO (we'd need an additional lib like moment.js, not worth it)
+                 * https://softwareengineering.stackexchange.com/a/399225
+                 * Just make sure to reimplement this basic formatting in case the timer starts from >60s
+                 * */
                 time > 0 ? (
-                  <Trans
-                    i18nKey="freeze.validation.button.voteTimer"
-                    values={{ time }}
-                  />
+                  `0:${padStart(Number(time).toString(), 2, "0")}`
                 ) : (
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )
