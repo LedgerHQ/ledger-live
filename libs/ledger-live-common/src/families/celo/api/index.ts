@@ -1,0 +1,1 @@
+export { getAccountDetails } from "./hubble";

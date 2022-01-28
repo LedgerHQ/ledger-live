@@ -2,6 +2,8 @@ import algorand from "../families/algorand/hw-getAddress";
 
 import bitcoin from "../families/bitcoin/hw-getAddress";
 
+import celo from "../families/celo/hw-getAddress";
+
 import cosmos from "../families/cosmos/hw-getAddress";
 
 import crypto_org from "../families/crypto_org/hw-getAddress";
@@ -30,6 +32,7 @@ import tron from "../families/tron/hw-getAddress";
 export default {
   algorand,
   bitcoin,
+  celo,
   cosmos,
   crypto_org,
   elrond,
