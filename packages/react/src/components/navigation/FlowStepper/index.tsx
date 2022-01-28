@@ -4,14 +4,19 @@ import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
 import { Stepper } from "..";
 
-export type StepPropsBase = {
+export type StepProps = {
   /**
    * A specific index, can be used to explicitely order steps.
    */
   index?: number;
-};
-
-export type StepProps = StepPropsBase & {
+  /**
+   * Custom header for this step.
+   */
+  header?: React.ReactNode;
+  /**
+   * Custom footer for this step.
+   */
+  footer?: React.ReactNode;
   /**
    * The label of the step.
    */
@@ -38,10 +43,7 @@ interface InnerProps {
 }
 
 type StepChild = React.ReactElement<StepProps>;
-type StepSection = React.ReactElement<StepPropsBase>;
-
 type SectionRenderFunc<ExtraProps> = (props: InnerProps & ExtraProps) => React.ReactNode;
-type SectionSteps = StepSection[];
 type SectionStepRenderFunc<ExtraProps> = (
   args: InnerProps & ExtraProps & { children: React.ReactNode },
 ) => React.ReactNode;
@@ -52,27 +54,21 @@ export interface Props<ExtraProps> {
    */
   activeIndex: number;
   /**
-   * An optional header displayed above the stepper.
+   * An optional generic header displayed above the stepper.
    */
   header?: SectionRenderFunc<ExtraProps>;
   /**
-   * List of individual header components for each step. Overrides `header` prop.
-   */
-  stepHeaders?: SectionSteps;
-  /**
-   * Custom rendering function to wrap header (only used if header is not a render function)
+   * Custom rendering function to wrap the header (only used if the `header` is defined
+   * on the child for the current step.)
    */
   renderStepHeader?: SectionStepRenderFunc<ExtraProps>;
   /**
-   * An optional footer displayed below the body.
+   * An optional generic footer displayed below the body.
    */
   footer?: SectionRenderFunc<ExtraProps>;
   /**
-   * List of individual footer components for each step. Overrides `footer` prop.
-   */
-  stepFooters?: SectionSteps;
-  /**
-   * Custom rendering function to wrap stepFooter (only used if footer is not a render function)
+   * Custom rendering function to wrap the footer (only used if the `footer` is defined
+   * on the child for the current step.)
    */
   renderStepFooter?: SectionStepRenderFunc<ExtraProps>;
   /**
@@ -98,8 +94,10 @@ export interface Props<ExtraProps> {
     args: InnerProps & ExtraProps & { children: React.ReactNode },
   ) => React.ReactNode;
   /**
-  /**
    * A list of children representing each step of the flow.
+   * Each children can have a prop `stepHeader` and/or `stepFooter` that will
+   * associate a custom header/footer to this particular step.
+   * The custom header/footer can be wrapped using the prop renderStepHeader/renderStepFooter.
    */
   children: StepChild | StepChild[];
 }
@@ -107,10 +105,8 @@ export interface Props<ExtraProps> {
 function FlowStepper<ExtraProps>({
   activeIndex,
   header,
-  stepHeaders,
   renderStepHeader,
   footer,
-  stepFooters,
   renderStepFooter,
   extraProps,
   extraContainerProps,
@@ -119,26 +115,34 @@ function FlowStepper<ExtraProps>({
   renderChildren,
   children,
 }: Props<ExtraProps>) {
-  const { steps, innerContents } = React.Children.toArray(children).reduce<{
+  const { steps, innerContents, stepFooter, stepHeader } = React.Children.toArray(children).reduce<{
     steps: string[];
     innerContents: React.ReactNode | null;
+    stepHeader: React.ReactNode | null;
+    stepFooter: React.ReactNode | null;
   }>(
     (acc, child, idx) => {
       const index = (isElement(child) && child.props.index) ?? idx;
       const label = isElement(child) && child.props.label;
       const hidden = isElement(child) && child.props.hidden;
+      const stepHeader = isElement(child) && child.props.header;
+      const stepFooter = isElement(child) && child.props.footer;
 
       if (label && !hidden) {
         acc.steps[index] = label;
       }
       if (index === activeIndex) {
         acc.innerContents = child;
+        acc.stepFooter = stepFooter;
+        acc.stepHeader = stepHeader;
       }
       return acc;
     },
     {
       steps: [],
       innerContents: null,
+      stepHeader: null,
+      stepFooter: null,
     },
   );
 
@@ -147,12 +151,9 @@ function FlowStepper<ExtraProps>({
 
   function getSectionContents(
     renderFunc?: SectionRenderFunc<ExtraProps>,
-    steps?: SectionSteps,
+    stepSection?: React.ReactNode,
     renderStepFunc?: SectionStepRenderFunc<ExtraProps>,
   ) {
-    const stepSection =
-      steps &&
-      steps.find((item, idx) => (isElement(item) && item.props.index) ?? idx === activeIndex);
     return stepSection
       ? renderStepFunc
         ? renderStepFunc({ ...renderArgs, children: stepSection })
@@ -162,7 +163,7 @@ function FlowStepper<ExtraProps>({
 
   return (
     <Flex flex={1} flexDirection="column" {...extraContainerProps}>
-      {getSectionContents(header, stepHeaders, renderStepHeader)}
+      {getSectionContents(header, stepHeader, renderStepHeader)}
       <Flex my={8} justifyContent="center" {...extraStepperContainerProps}>
         <Stepper activeIndex={activeIndex} steps={steps} flex={1} {...extraStepperProps} />
       </Flex>
@@ -171,7 +172,7 @@ function FlowStepper<ExtraProps>({
           ? renderChildren({ ...renderArgs, children: innerContents })
           : innerContents}
       </Flex>
-      {getSectionContents(footer, stepFooters, renderStepFooter)}
+      {getSectionContents(footer, stepFooter, renderStepFooter)}
     </Flex>
   );
 }

@@ -239,14 +239,14 @@ const Item = ({ label }: { label: string }) => (
 
 const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
 
-const stepFooters = steps.map((label) => (
+const StepFooter = ({ label }: { label: string }) => (
   <Flex flexDirection="row" alignItems="center">
     <Text whiteSpace="pre">Footer for step </Text>
     <Tag size="medium" type="plain" active>
       {label}
     </Tag>
   </Flex>
-));
+);
 
 export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
   const [, updateArgs] = useArgs();
@@ -266,12 +266,6 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
             }
           />
         )}
-        /**
-         * if stepFooters is defined inline here, storybook goes on an infinite loop 😅
-         * Could be related to how it tries to pretty print the code in the Docs
-         * section as footer isn't a ReactElement but a ReactElement[]...
-         */
-        stepFooters={stepFooters}
         renderStepFooter={({ stepsLength, activeIndex, children }) => (
           <Footer
             onContinue={
@@ -296,6 +290,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
           <CSSTransition
             key={label}
             label={label}
+            footer={<StepFooter label={label} />}
             timeout={500}
             classNames="step"
             mountOnEnter
@@ -331,6 +326,7 @@ const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string)
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      padding={4}
       rowGap={4}
       backgroundColor={`${label.toLowerCase()}.c50`}
     >
