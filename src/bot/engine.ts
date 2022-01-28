@@ -401,7 +401,7 @@ export async function runOnAccount<T extends Transaction>({
       }
     }
 
-    // without recovering mecanism, we simply assume an error is a failure
+    // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
       throw errors[0];
     }
