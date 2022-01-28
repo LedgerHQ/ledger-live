@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 import { useClock, loop } from "react-native-redash/lib/module/v1";
 import Animated, {
@@ -27,8 +27,6 @@ import Button from "../../../components/Button";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
 import ArrowDown from "../../../icons/Chevron";
-
-import { useLocale } from "../../../context/Locale";
 
 import commonStyles from "../styles";
 
@@ -132,7 +130,7 @@ function OnboardingStepWelcome({ navigation }: *) {
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const { locale } = useLocale();
+  const { t, i18n } = useTranslation();
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -142,7 +140,7 @@ function OnboardingStepWelcome({ navigation }: *) {
           onPress={onLanguageSelect}
         >
           <LText semiBold style={styles.languageLabel}>
-            {locale}
+            {i18n.language}
           </LText>
           <ArrowDown size={10} color={colors.darkBlue} />
         </TouchableOpacity>
@@ -184,10 +182,10 @@ function OnboardingStepWelcome({ navigation }: *) {
       <View style={styles.bottomSection}>
         <View style={styles.titleSection}>
           <LText bold style={styles.title}>
-            <Trans i18nKey="onboarding.stepWelcome.title" />
+            {t("onboarding.stepWelcome.title")}
           </LText>
           <LText style={[styles.subTitle]} color="grey">
-            <Trans i18nKey="onboarding.stepWelcome.subtitle" />
+            {t("onboarding.stepWelcome.subtitle")}
           </LText>
         </View>
 
@@ -195,11 +193,11 @@ function OnboardingStepWelcome({ navigation }: *) {
           type="primary"
           event="Onboarding - Start"
           onPress={next}
-          title={<Trans i18nKey="onboarding.stepWelcome.start" />}
+          title={t("onboarding.stepWelcome.start")}
         />
         <View style={commonStyles.footer}>
           <LText style={styles.subTitle} color="grey">
-            <Trans i18nKey="onboarding.stepWelcome.noDevice" />
+            {t("onboarding.stepWelcome.noDevice")}
           </LText>
           <Touchable
             event="WelcomeBuy"
@@ -208,10 +206,7 @@ function OnboardingStepWelcome({ navigation }: *) {
             hitSlop={hitSlop}
           >
             <LText semiBold style={[styles.subTitle, styles.buy]} color="live">
-              <Trans
-                i18nKey="onboarding.stepWelcome.buy"
-                values={deviceNames.nanoX}
-              />
+              {t("onboarding.stepWelcome.buy", deviceNames.nanoX)}
             </LText>
           </Touchable>
         </View>

@@ -66,7 +66,7 @@
     "@ledgerhq/errors": "6.10.0",
     "@ledgerhq/hw-transport": "6.20.0",
     "@ledgerhq/hw-transport-http": "6.20.0",
-    "@ledgerhq/live-common": "^21.26.0",
+    "@ledgerhq/live-common": "^21.27.0",
     "@ledgerhq/logs": "6.10.0",
     "@ledgerhq/react-native-hid": "6.21.0",
     "@ledgerhq/react-native-hw-transport-ble": "6.20.0",
@@ -137,7 +137,7 @@
     "react-native-easy-markdown": "^2.0.0",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-fast-image": "^8.5.11",
-    "react-native-fingerprint-scanner": "^6.0.0",
+    "react-native-fingerprint-scanner": "git+https://github.com/hieuvp/react-native-fingerprint-scanner.git#f1d136f605412d58e4de9e7e155d6f818ba24731",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keychain": "^7.0.0",
     "react-native-level-fs": "^3.0.0",
@@ -225,7 +225,9 @@
     "**/**/pbkdf2": "3.1.1",
     "**/**/**/pbkdf2": "3.1.1",
     "react-native-svg": "12.1.1",
-    "d3-array": "2.3.3"
+    "d3-array": "2.3.3",
+    "@polkadot/util": "8.0.6-8",
+    "@polkadot/util-crypto": "8.0.6-8"
   },
   "react-native": {
     "zlib": "browserify-zlib",

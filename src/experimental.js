@@ -44,6 +44,14 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
+    name: "EXPERIMENTAL_CURRENCIES",
+    title: "Experimental integrations",
+    description: "Use experimental integration of Solana.",
+    valueOn: "solana",
+    valueOff: "",
+  },
+  {
+    type: "toggle",
     name: "MANAGER_DEV_MODE",
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
