@@ -97,7 +97,7 @@ Operation[] {
   newOps.forEach((op) => {
     newOpsIds[op.id] = op;
   });
-  // return existins when there is no real new operations
+  // return existing when there is no real new operations
   if (newOps.length === 0) return existing;
   // edge case, existing can be empty. return the sorted list.
   if (existing.length === 0) return Object.values(newOpsIds);
