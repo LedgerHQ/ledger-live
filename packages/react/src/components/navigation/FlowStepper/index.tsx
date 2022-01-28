@@ -38,7 +38,14 @@ interface InnerProps {
 }
 
 type StepChild = React.ReactElement<StepProps>;
-type StepExtra = React.ReactElement<StepPropsBase>;
+type StepSection = React.ReactElement<StepPropsBase>;
+
+type SectionRenderFunc<ExtraProps> = (props: InnerProps & ExtraProps) => React.ReactNode;
+type SectionSteps = StepSection[];
+type SectionStepRenderFunc<ExtraProps> = (
+  args: InnerProps & ExtraProps & { children: React.ReactNode },
+) => React.ReactNode;
+
 export interface Props<ExtraProps> {
   /**
    * The index of the active step.
@@ -47,19 +54,27 @@ export interface Props<ExtraProps> {
   /**
    * An optional header displayed above the stepper.
    */
-  header?: ((props: InnerProps & ExtraProps) => React.ReactNode) | StepExtra[];
+  header?: SectionRenderFunc<ExtraProps>;
+  /**
+   * List of individual header components for each step. Overrides `header` prop.
+   */
+  stepHeaders?: SectionSteps;
   /**
    * Custom rendering function to wrap header (only used if header is not a render function)
    */
-  renderHeader?: (args: InnerProps & ExtraProps & { children: React.ReactNode }) => React.ReactNode;
+  renderStepHeader?: SectionStepRenderFunc<ExtraProps>;
   /**
    * An optional footer displayed below the body.
    */
-  footer?: ((props: InnerProps & ExtraProps) => React.ReactNode) | StepExtra[];
+  footer?: SectionRenderFunc<ExtraProps>;
   /**
-   * Custom rendering function to wrap footer (only used if footer is not a render function)
+   * List of individual footer components for each step. Overrides `footer` prop.
    */
-  renderFooter?: (args: InnerProps & ExtraProps & { children: React.ReactNode }) => React.ReactNode;
+  stepFooters?: SectionSteps;
+  /**
+   * Custom rendering function to wrap stepFooter (only used if footer is not a render function)
+   */
+  renderStepFooter?: SectionStepRenderFunc<ExtraProps>;
   /**
    * Extra props that are passed to the header and footer render functions.
    */
@@ -92,9 +107,11 @@ export interface Props<ExtraProps> {
 function FlowStepper<ExtraProps>({
   activeIndex,
   header,
+  stepHeaders,
+  renderStepHeader,
   footer,
-  renderHeader,
-  renderFooter,
+  stepFooters,
+  renderStepFooter,
   extraProps,
   extraContainerProps,
   extraStepperProps,
@@ -125,26 +142,27 @@ function FlowStepper<ExtraProps>({
     },
   );
 
-  const headerContents =
-    header && Array.isArray(header)
-      ? header.find((item, idx) => (isElement(item) && item.props.index) ?? activeIndex === idx)
-      : null;
-
-  const footerContents =
-    footer && Array.isArray(footer)
-      ? footer.find((item, idx) => (isElement(item) && item.props.index) ?? activeIndex === idx)
-      : null;
-
   const renderArgs = { ...extraProps, activeIndex, stepsLength: steps.length } as InnerProps &
     ExtraProps;
 
+  function getSectionContents(
+    renderFunc?: SectionRenderFunc<ExtraProps>,
+    steps?: SectionSteps,
+    renderStepFunc?: SectionStepRenderFunc<ExtraProps>,
+  ) {
+    const stepSection =
+      steps &&
+      steps.find((item, idx) => (isElement(item) && item.props.index) ?? idx === activeIndex);
+    return stepSection
+      ? renderStepFunc
+        ? renderStepFunc({ ...renderArgs, children: stepSection })
+        : stepSection
+      : renderFunc && renderFunc(renderArgs);
+  }
+
   return (
     <Flex flex={1} flexDirection="column" {...extraContainerProps}>
-      {headerContents
-        ? renderHeader
-          ? renderHeader({ ...renderArgs, children: headerContents })
-          : headerContents
-        : typeof header === "function" && header(renderArgs)}
+      {getSectionContents(header, stepHeaders, renderStepHeader)}
       <Flex my={8} justifyContent="center" {...extraStepperContainerProps}>
         <Stepper activeIndex={activeIndex} steps={steps} flex={1} {...extraStepperProps} />
       </Flex>
@@ -153,11 +171,7 @@ function FlowStepper<ExtraProps>({
           ? renderChildren({ ...renderArgs, children: innerContents })
           : innerContents}
       </Flex>
-      {footerContents
-        ? renderFooter
-          ? renderFooter({ ...renderArgs, children: footerContents })
-          : footerContents
-        : typeof footer === "function" && footer(renderArgs)}
+      {getSectionContents(footer, stepFooters, renderStepFooter)}
     </Flex>
   );
 }

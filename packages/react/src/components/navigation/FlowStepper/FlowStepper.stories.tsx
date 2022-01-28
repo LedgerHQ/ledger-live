@@ -87,9 +87,11 @@ export default {
     children: { control: "disabled" },
     renderChildren: { control: "disabled" },
     header: { control: "disabled" },
-    renderHeader: { control: "disabled" },
+    stepHeaders: { control: "disabled" },
+    renderStepHeader: { control: "disabled" },
     footer: { control: "disabled" },
-    renderFooter: { control: "disabled" },
+    stepFooters: { control: "disabled" },
+    renderStepFooter: { control: "disabled" },
   },
   parameters: {
     docs: {
@@ -237,7 +239,7 @@ const Item = ({ label }: { label: string }) => (
 
 const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
 
-const footer = steps.map((label) => (
+const stepFooters = steps.map((label) => (
   <Flex flexDirection="row" alignItems="center">
     <Text whiteSpace="pre">Footer for step </Text>
     <Tag size="medium" type="plain" active>
@@ -264,7 +266,13 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
             }
           />
         )}
-        renderFooter={({ stepsLength, activeIndex, children }) => (
+        /**
+         * if stepFooters is defined inline here, storybook goes on an infinite loop 😅
+         * Could be related to how it tries to pretty print the code in the Docs
+         * section as footer isn't a ReactElement but a ReactElement[]...
+         */
+        stepFooters={stepFooters}
+        renderStepFooter={({ stepsLength, activeIndex, children }) => (
           <Footer
             onContinue={
               activeIndex < stepsLength - 1
@@ -277,12 +285,6 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
             {children}
           </Footer>
         )}
-        /**
-         * if footer is defined inline here, storybook goes on an infinite loop 😅
-         * Could be related to how it tries to pretty print the code in the Docs
-         * section as footer isn't a ReactElement but a ReactElement[]...
-         */
-        footer={footer}
         extraStepperContainerProps={{ my: 12 }}
         extraStepperProps={{ maxWidth: "500px" }}
         renderChildren={({ children }) => (
@@ -312,7 +314,12 @@ const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string)
   const content = useMemo(() => {
     return steps.map((step) => {
       return (
-        <Button disabled={step === label} variant="main" onClick={() => setActiveStep(step)}>
+        <Button
+          key={step}
+          disabled={step === label}
+          variant="main"
+          onClick={() => setActiveStep(step)}
+        >
           Go to "{step}"
         </Button>
       );
@@ -366,7 +373,7 @@ export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => 
         {...args}
       >
         {steps.map((label) => (
-          <FlowStepper.Indexed.Step label={label} itemKey={label} key={label}>
+          <FlowStepper.Indexed.Step key={label} label={label} itemKey={label}>
             <StepWithNavigation label={label} setActiveStep={setActiveStep} />
           </FlowStepper.Indexed.Step>
         ))}
