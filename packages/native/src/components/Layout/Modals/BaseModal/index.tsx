@@ -55,13 +55,6 @@ const StyledTitle = styled(Text).attrs({ variant: "h3" })`
   text-transform: uppercase;
 `;
 
-const StyledDescription = styled(Text).attrs({
-  variant: "body",
-  color: "neutral.c80",
-})`
-  margin-top: ${(p) => p.theme.space[2]}px;
-`;
-
 const StyledSubtitle = styled(Text).attrs({
   variant: "subtitle",
   color: "neutral.c80",
@@ -125,9 +118,13 @@ export default function BaseModal({
               )}
             </Flex>
           )}
-          {subtitle && <StyledSubtitle>{subtitle}</StyledSubtitle>}
-          {title && <StyledTitle>{title}</StyledTitle>}
-          {description && <StyledDescription>{description}</StyledDescription>}
+          {subtitle && <StyledSubtitle textAlign={"center"}>{subtitle}</StyledSubtitle>}
+          {title && <StyledTitle textAlign={"center"}>{title}</StyledTitle>}
+          {description && (
+            <Text variant={"body"} color={"neutral.c70"} textAlign={"center"} mt={6}>
+              {description}
+            </Text>
+          )}
         </HeaderContainer>
         <ContentContainer>{children}</ContentContainer>
       </Container>
