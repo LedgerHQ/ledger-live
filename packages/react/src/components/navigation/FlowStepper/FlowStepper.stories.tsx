@@ -24,9 +24,47 @@ import { FlowStepper } from "@ledgerhq/react-ui"
 Each step is a child of the component, which must be a JSX element having at least a \`label\` prop.
 This label will be used by the flow stepper to populate the name of the step inside the progress stepper component.
 
-> Tip: To avoid creating specific passthrough components you can use the \`<FlowStepper.Step label="Step label">{…}</FlowStepper.Step>\` helper.
+### Tip #1:
+To avoid creating specific passthrough components you can use the \`<FlowStepper.Step label="Step label">{…}</FlowStepper.Step>\` helper.
 
-\`\`\`js
+### Tip #2:
+You can define a specific header/footer for a given step by using the props \`header\`/\`footer\` on each step child of the component.
+
+\`\`\`jsx
+<FlowStepper
+  activeIndex={1}
+  renderStepFooter={ // Optional
+    ({activeIndex, stepsLength, children}) => (
+      <YourFooterWrapper>
+        {children}
+      </YourFooterWrapper>
+    )
+  }
+>
+  <YourStepA label="StepA" />
+  <YourStepB label="StepB" footer={<YourStepBFooter />}/>
+  <YourStepC label="StepC" />
+  <YourStepD label="StepD" />
+</FlowStepper.Indexed>
+\`\`\`
+
+### Tip #3:
+If you want to define steps that are identified by a \`string\` identifier, you can use FlowStepper with the \`activeKey\` prop and children that each have an \`itemKey\` prop.
+This allows you to not have to hardcode steps indices.
+
+\`\`\`jsx
+<FlowStepper.Indexed activeKey="stepC">
+  <YourStepA label="StepA" itemKey="stepA" />
+  <YourStepB label="StepB" itemKey="stepB" />
+  <YourStepC label="StepC" itemKey="stepC" />
+  <YourStepD label="StepD" itemKey="stepD" />
+</FlowStepper.Indexed>
+\`\`\`
+
+
+## Basic example:
+
+\`\`\`jsx
 const NB_OF_STEPS = 10;
 const [activeIndex, setActiveIndex] = React.useState(0);
 

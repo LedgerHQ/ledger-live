@@ -95,7 +95,7 @@ export interface Props<ExtraProps> {
   ) => React.ReactNode;
   /**
    * A list of children representing each step of the flow.
-   * Each children can have a prop `stepHeader` and/or `stepFooter` that will
+   * Each child can have a prop `stepHeader` and/or `stepFooter` that will
    * associate a custom header/footer to this particular step.
    * The custom header/footer can be wrapped using the prop renderStepHeader/renderStepFooter.
    */
@@ -206,7 +206,7 @@ export type IndexedProps<ExtraProps> = Omit<Props<ExtraProps>, "activeIndex" | "
 };
 
 /**
- * This is a FlowStepper where each children must have an `itemKey: string` prop
+ * This is a FlowStepper where each child must have an `itemKey: string` prop
  * and the active step is defined by the `activeKey: string` prop.
  *
  * This allows for usages with a lot of steps where dealing with indices could be
