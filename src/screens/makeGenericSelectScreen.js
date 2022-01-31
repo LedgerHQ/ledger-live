@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const makeGenericSelectScreen = (opts: Opts<Item>) => {
+export default <Item>(opts: Opts<Item>) => {
   const {
     id,
     itemEventProperties,
@@ -121,5 +121,3 @@ const makeGenericSelectScreen = (opts: Opts<Item>) => {
     }
   };
 };
-
-export default makeGenericSelectScreen;
