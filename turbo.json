@@ -1,0 +1,22 @@
+{
+  "baseBranch": "origin/main",
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "lib-es/**",
+        "build/**"
+      ]
+    },
+    "start": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    }
+  }
+}
