@@ -709,7 +709,9 @@ importers:
 
   libs/ledger-live-common:
     specifiers:
+      '@celo/connect': ^1.5.1
       '@celo/contractkit': ^1.5.1
+      '@celo/utils': ^1.5.1
       '@celo/wallet-base': ^1.5.1
       '@celo/wallet-ledger': ^1.5.1
       '@crypto-com/chain-jslib': 0.0.19
@@ -830,6 +832,7 @@ importers:
       ripple-binary-codec: ^1.3.0
       ripple-bs58check: ^2.0.2
       ripple-lib: 1.10.0
+      rlp: ^3.0.0
       rxjs: '6'
       rxjs-compat: ^6.6.7
       secp256k1: ^4.0.3
@@ -848,7 +851,9 @@ importers:
       xstate: ^4.28.1
       zcash-bitcore-lib: ^0.13.20-rc3
     dependencies:
+      '@celo/connect': 1.5.1
       '@celo/contractkit': 1.5.1
+      '@celo/utils': 1.5.1
       '@celo/wallet-base': 1.5.1
       '@celo/wallet-ledger': 1.5.1
       '@crypto-com/chain-jslib': 0.0.19
@@ -934,6 +939,7 @@ importers:
       ripple-binary-codec: 1.3.0
       ripple-bs58check: 2.0.2
       ripple-lib: 1.10.0
+      rlp: 3.0.0
       rxjs: 6.6.7
       rxjs-compat: 6.6.7
       secp256k1: 4.0.3
@@ -1145,6 +1151,7 @@ importers:
   libs/ledgerjs/packages/hw-app-helium:
     specifiers:
       '@helium/crypto': ^3.45.0
+      '@helium/proto': ^1.5.0
       '@helium/transactions': ^3.62.0
       '@ledgerhq/errors': ^6.10.0
       '@ledgerhq/hw-transport': ^6.11.2
@@ -1155,6 +1162,7 @@ importers:
       bip32-path: ^0.4.2
     dependencies:
       '@helium/crypto': 3.60.0
+      '@helium/proto': 1.5.0
       '@helium/transactions': 3.62.0
       '@ledgerhq/errors': link:../errors
       '@ledgerhq/hw-transport': link:../hw-transport
@@ -26453,7 +26461,7 @@ packages:
       micromatch: 4.0.4
       pretty-format: 27.4.6
       slash: 3.0.0
-      ts-node: 10.4.0_typescript@4.5.5
+      ts-node: 10.4.0_ebd3b6a9393ee8633d3cf5203e954b2d
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -35454,6 +35462,11 @@ packages:
     hasBin: true
     dependencies:
       bn.js: 5.2.0
+    dev: false
+
+  /rlp/3.0.0:
+    resolution: {integrity: sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==}
+    hasBin: true
     dev: false
 
   /rn-range-slider/2.1.1:
