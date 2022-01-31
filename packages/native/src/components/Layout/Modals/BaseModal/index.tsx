@@ -51,7 +51,7 @@ const CloseContainer = styled.View`
   margin-bottom: ${(p) => p.theme.space[7]}px;
 `;
 
-const StyledTitle = styled(Text).attrs({ variant: "h3" })`
+const StyledTitle = styled(Text).attrs({ variant: "h2" })`
   text-transform: uppercase;
 `;
 
