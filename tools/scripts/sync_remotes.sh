@@ -14,9 +14,11 @@ for remote in $remotes; do
 
   remote_exists=`git remote | grep "^$remote$" || echo ''`
   if [ -z "$remote_exists" ]; then
-    print -e "  > Adding $remote as a remote"
-    git remote add "$remote" git@github.com:$github_org/$remote.git
+    print "  > Adding $remote as a remote"
+    git remote add "$remote" https://github.com/$github_org/$remote.git
   fi
+
+  git fetch -q -n "$remote"
 
   git checkout main
   git clean -f -d -q

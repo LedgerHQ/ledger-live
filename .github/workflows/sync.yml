@@ -11,6 +11,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Git stuff
+        run: |
+          git config checkout.defaultRemote origin
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+          git fetch -n origin
       - name: Execute shell script
         env:
           PUSH_CHANGES: 1
