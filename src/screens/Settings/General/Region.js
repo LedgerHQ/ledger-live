@@ -17,10 +17,15 @@ const items = Object.keys(regionByKeys)
   })
   .sort((a, b) => a.label.localeCompare(b.label));
 
-const mapStateToProps = (state: State) => ({
-  selectedKey: localeSelector(state),
-  items,
-});
+const mapStateToProps = (state: State) => {
+  const selectedKey = localeSelector(state);
+  return {
+    selectedKey,
+    initialSearchQuery:
+      items.find(item => item.value === selectedKey)?.label ?? "",
+    items,
+  };
+};
 
 const mapDispatchToProps = {
   onValueChange: ({ value }: *) => setLocale(value),
@@ -31,6 +36,8 @@ const Screen = makeGenericSelectScreen({
   itemEventProperties: item => ({ countervalue: item.value }),
   keyExtractor: item => item.value,
   formatItem: item => item.label,
+  searchable: true,
+  searchKeys: ["label", "value"],
 });
 
 // $FlowFixMe
