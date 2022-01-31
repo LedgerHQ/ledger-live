@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 remotes="ledger-live-desktop ledger-live-mobile ledger-live-common ledgerjs ui"
 github_org=LedgerHQ
@@ -9,6 +10,8 @@ function print {
   echo -e "\033[1m$1\033[0;0m"
 }
 
+git remote
+
 for remote in $remotes; do
   print "> Syncing with $remote"
 
@@ -17,10 +20,10 @@ for remote in $remotes; do
     print "  > Adding $remote as a remote"
     git remote add "$remote" https://github.com/$github_org/$remote.git
   fi
-  git fetch -q -n "$remote"
+  git fetch -n "$remote"
 
   git checkout main
-  git pull --ff-only
+  git reset --hard origin/main
   git clean -f -d -q
   if git rev-parse -q --verify "$remote/master"; then
     git merge --no-edit -s subtree "$remote/master"
@@ -29,7 +32,7 @@ for remote in $remotes; do
   fi
 
   git checkout develop
-  git pull --ff-only
+  git reset --hard origin/develop
   git clean -f -d -q
   if git rev-parse -q --verify "$remote/develop"; then
     git merge --no-edit -s subtree "$remote/develop"
@@ -39,6 +42,7 @@ done
 print "> Merging the main branch into develop"
 
 git checkout develop
+git reset --hard origin/develop
 git clean -f -d -q
 git merge --no-edit main
 
