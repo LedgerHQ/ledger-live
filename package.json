@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
+  "packageManager": "pnpm@6.29.1",
   "devDependencies": {
-    "turbo": "^1.0.28"
+    "turbo": "^1.1.0"
   },
   "scripts": {
     "clean": "git clean -fdX",
-    "build": "turbo run build --ignore=\"./apps/**/*\"",
+    "build": "turbo run build --ignore=\"apps/**/*\"",
     "lld:dev": "turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
     "desktop": "pnpm --filter live-desktop",
@@ -18,28 +19,6 @@
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
     "ui:shared": "pnpm --filter shared-ui"
-  },
-  "turbo": {
-    "baseBranch": "origin/main",
-    "pipeline": {
-      "build": {
-        "dependsOn": [
-          "^build"
-        ],
-        "outputs": [
-          "dist/**",
-          "lib/**",
-          "lib-es/**",
-          "build/**"
-        ]
-      },
-      "start": {
-        "cache": false,
-        "dependsOn": [
-          "^build"
-        ]
-      }
-    }
   },
   "pnpm": {
     "overrides": {
