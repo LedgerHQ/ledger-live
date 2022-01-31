@@ -41,7 +41,9 @@
     "https": false
   },
   "dependencies": {
+    "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
+    "@celo/utils": "^1.5.2",
     "@celo/wallet-base": "^1.5.2",
     "@celo/wallet-ledger": "^1.5.2",
     "@cosmjs/crypto": "^0.26.5",
@@ -85,9 +87,9 @@
     "@walletconnect/client": "1.7.3",
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-filecoin": "^0.11.2",
+    "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.0",
     "async": "^3.2.3",
-    "algo-msgpack-with-bigint": "^2.1.1",
     "axios": "0.24.0",
     "axios-retry": "^3.2.4",
     "base32-decode": "^1.0.0",
