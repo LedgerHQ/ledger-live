@@ -56,4 +56,5 @@ setSupportedCurrencies([
   "crypto_org",
   "filecoin",
   "solana",
+  "celo",
 ]);

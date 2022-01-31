@@ -44,6 +44,7 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
+  "celo",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -123,6 +124,8 @@ listen((log) => {
     level = "error";
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   logger.log(level, log);
 });
 implementLibcore({

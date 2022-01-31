@@ -87,7 +87,7 @@ export const getTransactionParams: CacheRes<
 );
 
 /**
- * Cache the payment info (fee estimate), with a hash deending on fees-changing transaction params and tx size.
+ * Cache the payment info (fee estimate), with a hash depending on fees-changing transaction params and tx size.
  *
  * @param {Account} arg1.a
  * @param {Transaction} arg1.t

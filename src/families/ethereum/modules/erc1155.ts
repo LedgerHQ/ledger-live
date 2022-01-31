@@ -14,6 +14,9 @@ import { prepareTransaction } from "./erc721";
 const notOwnedNft = createCustomErrorClass("NotOwnedNft");
 const notEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
 const notTokenIdsProvided = createCustomErrorClass("NotTokenIdsProvided");
+const quantityNeedsToBePositive = createCustomErrorClass(
+  "QuantityNeedsToBePositive"
+);
 
 export type Modes = "erc1155.transfer";
 
@@ -42,6 +45,12 @@ const erc1155Transfer: ModeModule = {
       if (result.estimatedFees.gt(a.spendableBalance)) {
         result.errors.amount = new NotEnoughBalanceInParentAccount();
       }
+
+      t.quantities?.forEach((quantity) => {
+        if (quantity.isLessThan(1)) {
+          result.errors.amount = new quantityNeedsToBePositive();
+        }
+      });
 
       const enoughTokensOwned: true | Error =
         t.tokenIds?.reduce((acc, tokenId, index) => {
