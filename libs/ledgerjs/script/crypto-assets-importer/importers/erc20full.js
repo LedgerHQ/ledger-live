@@ -8,8 +8,8 @@ const {
   getCryptoCurrencyById,
 } = require("../../../packages/cryptoassets/lib/currencies");
 
-const inferParentCurrency = (common) =>
-  getCryptoCurrencyById(common.blockchain_name).id;
+const inferParentCurrency = (common, folder) =>
+  getCryptoCurrencyById(path.basename(path.dirname(folder))).id;
 
 const withoutExtraComma = (str) => {
   const m = str.match(/,+$/);
@@ -112,7 +112,7 @@ ${data
       const ticker = common.ticker.toUpperCase();
       const magnitude = common.decimals;
       const contractAddress = common.contract_address;
-      const parentCurrency = inferParentCurrency(common);
+      const parentCurrency = inferParentCurrency(common, folder);
       const disableCountervalue = !!common.disable_countervalue;
       const delisted = !!common.delisted;
       const countervalueTicker = common.countervalue_ticker;

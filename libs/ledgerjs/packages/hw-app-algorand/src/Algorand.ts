@@ -32,7 +32,7 @@ const CLA = 0x80;
 const INS_GET_PUBLIC_KEY = 0x03;
 const INS_SIGN_MSGPACK = 0x08;
 /**
- * Cosmos API
+ * Algorand API
  *
  * @example
  * import Algorand from "@ledgerhq/hw-app-algorand";
@@ -48,12 +48,12 @@ export default class Algorand {
   }
 
   /**
-   * get Algorajt address for a given BIP 32 path.
+   * get Algorant address for a given BIP 32 path.
    * @param path a path in BIP 32 format
    * @option boolDisplay optionally enable or not the display
    * @return an object with a publicKey, address and (optionally) chainCode
    * @example
-   * cosmos.getAddress("44'/60'/0'/0/0").then(o => o.address)
+   * cosmos.getAddress("44'/283'/0'/0/0").then(o => o.address)
    */
   getAddress(
     path: string,

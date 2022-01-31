@@ -6,7 +6,7 @@ const {
 } = require("../../../packages/cryptoassets/lib/currencies");
 
 const inferChainId = (common, folder) =>
-  getCryptoCurrencyById(common.blockchain_name).ethereumLikeInfo.chainId;
+  getCryptoCurrencyById(path.basename(path.dirname(folder))).ethereumLikeInfo.chainId;
 
 const asUint4be = (n) => {
   const b = Buffer.alloc(4);

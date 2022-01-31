@@ -34,9 +34,10 @@ axios
           const folder = path.join(inputFolder, "assets", p);
           const signatureFolder = path.join(inputFolder, "signatures/prod/", p);
           const items = fs.readdirSync(folder);
+          const shouldLoad = ((id) => imp.shouldLoad ? imp.shouldLoad({ folder, id }) : !id.endsWith(".json"));
           return promiseAllBatched(
             50,
-            items.sort().filter((a) => !a.endsWith(".json")),
+            items.sort().filter(shouldLoad),
             (id) =>
               Promise.resolve()
                 .then(() => imp.loader({ signatureFolder, folder, id }))

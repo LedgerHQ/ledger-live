@@ -36,19 +36,19 @@ Ledger Hardware Wallet BTC JavaScript bindings. Also supports many altcoins.
     *   [serializeTransactionOutputs](#serializetransactionoutputs)
         *   [Parameters](#parameters-7)
         *   [Examples](#examples-6)
-*   [getWalletPublicKey](#getwalletpublickey-1)
+*   [impl](#impl)
 *   [BtcNew](#btcnew)
     *   [Parameters](#parameters-8)
     *   [getWalletXpub](#getwalletxpub-1)
         *   [Parameters](#parameters-9)
-    *   [getWalletPublicKey](#getwalletpublickey-2)
+    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-10)
     *   [createPaymentTransactionNew](#createpaymenttransactionnew-1)
         *   [Parameters](#parameters-11)
 *   [BtcOld](#btcold)
     *   [Parameters](#parameters-12)
     *   [Examples](#examples-7)
-    *   [getWalletPublicKey](#getwalletpublickey-3)
+    *   [getWalletPublicKey](#getwalletpublickey-2)
         *   [Parameters](#parameters-13)
         *   [Examples](#examples-8)
     *   [signMessageNew](#signmessagenew-1)
@@ -279,7 +279,7 @@ const outputScript = btc.serializeTransactionOutputs(tx1).toString('hex');
 
 Returns **[Buffer](https://nodejs.org/api/buffer.html)** 
 
-### getWalletPublicKey
+### impl
 
 Definition: A "normal path" is a prefix of a standard path where all
 the hardened steps of the standard path are included. For example, the
