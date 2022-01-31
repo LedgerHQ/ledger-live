@@ -136,6 +136,9 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  cryptoOrg: {
+    website: "https://crypto.org",
+  },
   solana: {
     supportPage: "https://support.ledger.com",
   },
