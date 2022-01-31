@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require('fs');
 const isEqual = require("lodash/isEqual");
 const { readFileJSON } = require("../utils");
 
@@ -33,6 +34,11 @@ module.exports = {
   },
 
   outputTemplate: (data) => JSON.stringify(data, null, 2),
+
+  shouldLoad: ({ folder, id }) => {
+    const b2cFilePath = path.join(folder, id, "b2c.json");
+    return fs.existsSync(b2cFilePath);
+  },
 
   loader: async ({ signatureFolder, folder, id }) => {
     const [signatures, bare] = await Promise.all([

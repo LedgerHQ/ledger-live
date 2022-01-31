@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 remotes="ledger-live-desktop ledger-live-mobile ledger-live-common ledgerjs ui"
 github_org=LedgerHQ
@@ -17,8 +18,7 @@ for remote in $remotes; do
     print "  > Adding $remote as a remote"
     git remote add "$remote" https://github.com/$github_org/$remote.git
   fi
-
-  git fetch -q -n "$remote"
+  git fetch -n "$remote"
 
   git checkout main
   git clean -f -d -q

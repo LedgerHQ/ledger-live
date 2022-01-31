@@ -22,7 +22,7 @@ Ledger Hardware Wallet Algorand JavaScript bindings.
 
 ### Algorand
 
-Cosmos API
+Algorand API
 
 #### Parameters
 
@@ -37,7 +37,7 @@ const algo = new Algorand(transport)
 
 #### getAddress
 
-get Algorajt address for a given BIP 32 path.
+get Algorant address for a given BIP 32 path.
 
 ##### Parameters
 
@@ -47,7 +47,7 @@ get Algorajt address for a given BIP 32 path.
 ##### Examples
 
 ```javascript
-cosmos.getAddress("44'/60'/0'/0/0").then(o => o.address)
+cosmos.getAddress("44'/283'/0'/0/0").then(o => o.address)
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey, address and (optionally) chainCode
