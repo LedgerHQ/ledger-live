@@ -57,7 +57,7 @@ export type Privacy = {
 
 const colorScheme = Appearance.getColorScheme();
 
-export type Theme = "light" | "dark" | "dusk";
+export type Theme = "light" | "dark";
 
 export type SettingsState = {
   counterValue: string,
@@ -117,7 +117,7 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
-  theme: colorScheme === "dark" ? "dusk" : "light",
+  theme: colorScheme === "dark" ? "dark" : "light",
   osTheme: undefined,
   carouselVisibility: 0,
   discreetMode: false,
