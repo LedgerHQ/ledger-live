@@ -190,6 +190,9 @@ export const ScreenName = {
   CosmosClaimRewardsValidationError: "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess: "CosmosClaimRewardsValidationSuccess",
 
+  //crypto_org
+  CryptoOrgEditMemo: "CryptoOrgEditMemo",
+
   AlgorandEditMemo: "AlgorandEditMemo",
   AlgorandClaimRewardsInfo: "AlgorandClaimRewardsInfo",
   AlgorandClaimRewardsStarted: "AlgorandClaimRewardsStarted",

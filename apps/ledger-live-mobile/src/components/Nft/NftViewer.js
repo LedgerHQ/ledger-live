@@ -225,7 +225,7 @@ const NftViewer = ({ route }: Props) => {
         {properties && (
           <>
             <View style={styles.propertiesContainer}>
-              <LText style={styles.sectionTitle}>
+              <LText style={styles.sectionTitle} semiBold>
                 {t("nft.viewer.properties")}
               </LText>
             </View>

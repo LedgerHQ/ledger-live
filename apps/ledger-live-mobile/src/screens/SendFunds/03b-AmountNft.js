@@ -131,7 +131,7 @@ export default function SendAmountNFT({ route }: Props) {
               editable={true}
               multiline={false}
               keyboardType="numeric"
-              value={quantity}
+              value={quantity?.toString()}
               onChangeText={onQuantityChange}
               placeholder="0"
             />
