@@ -506,7 +506,10 @@ export const discreetModeSelector = (state: State): boolean =>
 
 export default handleActions(handlers, INITIAL_STATE);
 
-export const themeSelector = (state: State) => state.settings.theme;
+export const themeSelector = (state: State) => {
+  const val = state.settings.theme;
+  return val === "dusk" ? "dark" : val;
+};
 
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 

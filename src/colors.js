@@ -2,6 +2,7 @@
 import React from "react";
 import color from "color";
 import { useTheme } from "@react-navigation/native";
+import { palettes } from "@ledgerhq/native-ui/styles";
 
 export const ensureContrast = (color1: string, color2: string) => {
   const colorL1 = color(color1).luminosity() + 0.05;
@@ -41,6 +42,9 @@ export function withTheme(Component: React$ComponentType<*>) {
   };
 }
 
+const lightPrimary = palettes.light.primary.c80;
+const lightPrimaryLight = palettes.light.primary.c20;
+
 export const lightTheme = {
   dark: false,
   colors: {
@@ -53,7 +57,7 @@ export const lightTheme = {
     contrastBackground: "#142533",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
-    live: "#6490f1",
+    live: lightPrimary,
     alert: "#ea2e49",
     success: "#66BE54",
     darkBlue: "#142533",
@@ -71,21 +75,21 @@ export const lightTheme = {
     darkWarning: "#E08700",
 
     /* DERIVATIVES */
-    lightLive: "#4b84ff19",
+    lightLive: lightPrimaryLight,
     lightAlert: "#ea2e490c",
     lightFog: "#EEEEEE",
     lightGrey: "#F9F9F9",
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
-    lightLiveBg: "#eef0ff",
+    lightLiveBg: lightPrimaryLight,
 
     errorBg: "#ff0042",
 
     /* PILLS */
     pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
+    pillActiveBackground: lightPrimaryLight,
+    pillActiveForeground: lightPrimary,
     pillActiveDisabledForeground: "#999999",
 
     /** SNACKBAR */
@@ -97,61 +101,8 @@ export const lightTheme = {
   },
 };
 
-export const duskTheme = {
-  dark: true,
-  colors: {
-    primary: "#6490F1",
-    card: "#182532",
-    background: "#131E28",
-    text: "#FFFFFF",
-    border: "rgba(255, 255, 255, 0.1)",
-    notification: "#6490F1",
-    contrastBackground: "#223544",
-    contrastBackgroundText: "#ffffff",
-    /* MAIN */
-    live: "#6490f1",
-    alert: "#ea2e49",
-    success: "#66BE54",
-    darkBlue: "#fafafa",
-    smoke: "#aaa",
-    grey: "#aaa",
-    fog: "rgba(255,255,255, 0.1)",
-    white: "#182532",
-    green: "rgb(102, 190, 84)",
-    ledgerGreen: "#41ccb4",
-    black: "#ffffff",
-    orange: "#ff7701",
-    yellow: "#ffd24a",
-    separator: "#ebebeb",
-    warning: "#ff9900",
-    darkWarning: "#E08700",
-
-    /* DERIVATIVES */
-    lightLive: "#4b84ff19",
-    lightAlert: "#ea2e490c",
-    lightFog: "#1c293c",
-    lightGrey: "rgba(255,255,255, 0.05)",
-    lightOrange: "#FF984F",
-    translucentGreen: "rgba(102, 190, 84, 0.2)",
-    translucentGrey: "rgba(153, 153, 153, 0.2)",
-    lightLiveBg: "#1d2e46",
-
-    errorBg: "#ff0042",
-
-    /* PILLS */
-    pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
-    pillActiveDisabledForeground: "#999999",
-
-    /** SNACKBAR */
-    snackBarBg: "#060d12",
-    snackBarColor: "#FFF",
-
-    /** SKELETON */
-    skeletonBg: "#303b47",
-  },
-};
+const darkPrimary = palettes.dark.primary.c80;
+const darkPrimaryLight = palettes.dark.primary.c20;
 
 export const darkTheme = {
   dark: true,
@@ -165,7 +116,7 @@ export const darkTheme = {
     contrastBackground: "#223544",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
-    live: "#6490f1",
+    live: darkPrimary,
     alert: "#ea2e49",
     success: "#66BE54",
     darkBlue: "#FAFAFA",
@@ -183,21 +134,21 @@ export const darkTheme = {
     darkWarning: "#E08700",
 
     /* DERIVATIVES */
-    lightLive: "#4b84ff19",
+    lightLive: darkPrimaryLight,
     lightAlert: "#ea2e490c",
     lightFog: "#1c202b",
     lightGrey: "rgba(255,255,255, 0.05)",
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
-    lightLiveBg: "#222635",
+    lightLiveBg: darkPrimaryLight,
 
     errorBg: "#ff0042",
 
     /* PILLS */
     pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
+    pillActiveBackground: darkPrimaryLight,
+    pillActiveForeground: darkPrimary,
     pillActiveDisabledForeground: "#999999",
 
     /** SNACKBAR */

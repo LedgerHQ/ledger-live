@@ -1,9 +1,8 @@
 ## UI Theming 🎨
 
-LLM can be themed using three profiles
+LLM can be themed using two profiles
 
 - `light`
-- `dusk`
 - `dark`
 
 Each profile contains a set of colors that are used in all the app and can be found [here](../src/colors.js).

@@ -1666,7 +1666,6 @@
       "themeDesc": "Set the app UI theme",
       "themes": {
         "dark": "Dark",
-        "dusk": "Dusk",
         "light": "Light"
       },
       "counterValueDesc": "Choose the currency for balances and operations.",

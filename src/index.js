@@ -77,7 +77,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import { lightTheme, duskTheme, darkTheme } from "./colors";
+import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
@@ -88,7 +88,6 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 
 const themes = {
   light: lightTheme,
-  dusk: duskTheme,
   dark: darkTheme,
 };
 
@@ -381,7 +380,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
     if (currentOsTheme && osTheme !== currentOsTheme) {
       const isDark = themes[theme].dark;
       const newTheme =
-        currentOsTheme === "dark" ? (isDark ? theme : "dusk") : "light";
+        currentOsTheme === "dark" ? (isDark ? theme : "dark") : "light";
       dispatch(setTheme(newTheme));
       dispatch(setOsTheme(currentOsTheme));
     }
