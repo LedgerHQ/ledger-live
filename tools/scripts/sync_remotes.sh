@@ -17,10 +17,10 @@ for remote in $remotes; do
     print "  > Adding $remote as a remote"
     git remote add "$remote" https://github.com/$github_org/$remote.git
   fi
-
   git fetch -q -n "$remote"
 
   git checkout main
+  git pull --ff-only
   git clean -f -d -q
   if git rev-parse -q --verify "$remote/master"; then
     git merge --no-edit -s subtree "$remote/master"
@@ -29,6 +29,7 @@ for remote in $remotes; do
   fi
 
   git checkout develop
+  git pull --ff-only
   git clean -f -d -q
   if git rev-parse -q --verify "$remote/develop"; then
     git merge --no-edit -s subtree "$remote/develop"
@@ -45,6 +46,7 @@ if [ -z "$push_changes" ]; then
   print "> Rebasing the monorepo branch on top of develop"
 
   git checkout monorepo-setup
+  git pull --ff-only
   git clean -f -d -q
   git rebase -X theirs develop
 else
