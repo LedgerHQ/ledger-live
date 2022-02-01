@@ -8,9 +8,16 @@ export default class ModalBottomAction extends Component<{
   title?: *,
   description?: *,
   footer: *,
+  shouldWrapDesc?: boolean,
 }> {
   render() {
-    const { icon, title, description, footer } = this.props;
+    const {
+      icon,
+      title,
+      description,
+      footer,
+      shouldWrapDesc = true,
+    } = this.props;
     return (
       <View style={styles.root}>
         {icon && <View style={styles.icon}>{icon}</View>}
@@ -20,10 +27,12 @@ export default class ModalBottomAction extends Component<{
           </LText>
         ) : null}
         <View style={styles.body}>
-          {description && (
+          {description && shouldWrapDesc ? (
             <LText style={styles.description} color="grey">
               {description}
             </LText>
+          ) : (
+            description
           )}
           <View style={styles.footer}>{footer}</View>
         </View>
