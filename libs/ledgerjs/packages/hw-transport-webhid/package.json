@@ -26,10 +26,10 @@
   "types": "lib/TransportWebHID.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "^6.27.1",
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.27.1",
-    "@ledgerhq/logs": "^6.10.0"
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^"
   },
   "devDependencies": {
     "@types/w3c-web-hid": "^1.0.2"
