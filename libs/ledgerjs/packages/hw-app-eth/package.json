@@ -29,11 +29,11 @@
   "dependencies": {
     "@ethersproject/abi": "^5.5.0",
     "@ethersproject/rlp": "^5.5.0",
-    "@ledgerhq/cryptoassets": "^6.28.1",
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.24.1",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/logs": "^6.10.0",
+    "@ledgerhq/logs": "workspace:^",
     "axios": "^0.26.1",
     "bignumber.js": "^9.0.2"
   },

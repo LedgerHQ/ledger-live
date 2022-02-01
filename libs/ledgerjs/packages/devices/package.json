@@ -24,8 +24,8 @@
     "@types/semver": "^7.3.9"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/logs": "^6.10.0",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "rxjs": "6",
     "semver": "^7.3.5"
   },

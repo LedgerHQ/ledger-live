@@ -27,9 +27,9 @@
   "types": "lib/withStaticURLs.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.27.1",
-    "@ledgerhq/logs": "^6.10.0",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "axios": "^0.26.1",
     "ws": "8.5.0"
   },
