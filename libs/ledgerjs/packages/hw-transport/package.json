@@ -25,8 +25,8 @@
   "types": "lib/Transport.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "^6.24.1",
-    "@ledgerhq/errors": "^6.10.0",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
     "events": "^3.3.0"
   },
   "scripts": {
