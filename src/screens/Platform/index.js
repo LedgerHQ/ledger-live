@@ -34,7 +34,6 @@ const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { platform, ...routeParams } = route.params ?? {};
-  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const { manifests } = usePlatformApp();
@@ -84,10 +83,6 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
     },
     [navigation, routeParams, setDisclaimerDisabled, disclaimerDisabled],
   );
-
-  const handleDeveloperCTAPress = useCallback(() => {
-    Linking.openURL(urls.platform.developerPage);
-  }, []);
 
   useEffect(() => {
     // platform can be predefined when coming from a deeplink
