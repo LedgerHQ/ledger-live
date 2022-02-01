@@ -2,7 +2,7 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/named */
 /* eslint-disable import/no-unresolved */
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
@@ -162,6 +162,17 @@ export default function MarketDetail({
     [navigation],
   );
 
+  const [refreshControlVisible, setRefreshControlVisible] = useState(false);
+
+  const handlePullToRefresh = useCallback(() => {
+    refreshChart();
+    setRefreshControlVisible(true);
+  }, [refreshChart, setRefreshControlVisible]);
+
+  useEffect(() => {
+    if (!loading) setRefreshControlVisible(false);
+  }, [loading]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
       <ScrollContainerHeader
@@ -234,10 +245,10 @@ export default function MarketDetail({
         }
         refreshControl={
           <RefreshControl
-            refreshing={loading}
+            refreshing={refreshControlVisible}
             colors={[colors.primary.c80]}
             tintColor={colors.primary.c80}
-            onRefresh={() => refreshChart()}
+            onRefresh={handlePullToRefresh}
           />
         }
       >
