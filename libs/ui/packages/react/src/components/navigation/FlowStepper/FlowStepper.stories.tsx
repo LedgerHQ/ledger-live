@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
-import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons } from "../../..";
+import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
 import { lipsum, StoryTemplate } from "../../helpers";
+import { useState } from "react";
 
 const description = `
 ### A customizable flow layout.
@@ -23,9 +24,47 @@ import { FlowStepper } from "@ledgerhq/react-ui"
 Each step is a child of the component, which must be a JSX element having at least a \`label\` prop.
 This label will be used by the flow stepper to populate the name of the step inside the progress stepper component.
 
-> Tip: To avoid creating specific passthrough components you can use the \`<FlowStepper.Step label="Step label">{…}</FlowStepper.Step>\` helper.
+### Tip #1:
+To avoid creating specific passthrough components you can use the \`<FlowStepper.Step label="Step label">{…}</FlowStepper.Step>\` helper.
 
-\`\`\`js
+### Tip #2:
+You can define a specific header/footer for a given step by using the props \`header\`/\`footer\` on each step child of the component.
+
+\`\`\`jsx
+<FlowStepper
+  activeIndex={1}
+  renderStepFooter={ // Optional
+    ({activeIndex, stepsLength, children}) => (
+      <YourFooterWrapper>
+        {children}
+      </YourFooterWrapper>
+    )
+  }
+>
+  <YourStepA label="StepA" />
+  <YourStepB label="StepB" footer={<YourStepBFooter />}/>
+  <YourStepC label="StepC" />
+  <YourStepD label="StepD" />
+</FlowStepper.Indexed>
+\`\`\`
+
+### Tip #3:
+If you want to define steps that are identified by a \`string\` identifier, you can use FlowStepper with the \`activeKey\` prop and children that each have an \`itemKey\` prop.
+This allows you to not have to hardcode steps indices.
+
+\`\`\`jsx
+<FlowStepper.Indexed activeKey="stepC">
+  <YourStepA label="StepA" itemKey="stepA" />
+  <YourStepB label="StepB" itemKey="stepB" />
+  <YourStepC label="StepC" itemKey="stepC" />
+  <YourStepD label="StepD" itemKey="stepD" />
+</FlowStepper.Indexed>
+\`\`\`
+
+
+## Basic example:
+
+\`\`\`jsx
 const NB_OF_STEPS = 10;
 const [activeIndex, setActiveIndex] = React.useState(0);
 
@@ -85,6 +124,12 @@ export default {
     extraStepperContainerProps: { control: "disabled" },
     children: { control: "disabled" },
     renderChildren: { control: "disabled" },
+    header: { control: "disabled" },
+    stepHeaders: { control: "disabled" },
+    renderStepHeader: { control: "disabled" },
+    footer: { control: "disabled" },
+    stepFooters: { control: "disabled" },
+    renderStepFooter: { control: "disabled" },
   },
   parameters: {
     docs: {
@@ -172,18 +217,27 @@ const Header = ({ activeIndex, onBack }: { activeIndex: number; onBack?: () => v
   );
 };
 
-const Footer = ({ onContinue }: { onContinue?: () => void }) => {
-  return onContinue ? (
-    <Flex mt={6} flexDirection="column" rowGap={6} alignItems="flex-end">
-      <Box alignSelf="stretch">
-        <Divider variant="light" />
-      </Box>
-      <Button variant="main" onClick={onContinue}>
-        Continue
-      </Button>
+const Footer = ({
+  onContinue,
+  children,
+}: {
+  onContinue?: () => void;
+  children?: React.ReactNode;
+}) => (
+  <Flex mt={6} flexDirection="column" rowGap={6}>
+    <Box alignSelf="stretch">
+      <Divider variant="light" />
+    </Box>
+    <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
+      {children || <Flex />}
+      {onContinue && (
+        <Button variant="main" onClick={onContinue}>
+          Continue
+        </Button>
+      )}
     </Flex>
-  ) : null;
-};
+  </Flex>
+);
 
 const AnimatedItem = styled(Flex)`
   transition: opacity 500ms;
@@ -221,6 +275,17 @@ const Item = ({ label }: { label: string }) => (
   </AnimatedItem>
 );
 
+const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
+
+const StepFooter = ({ label }: { label: string }) => (
+  <Flex flexDirection="row" alignItems="center">
+    <Text whiteSpace="pre">Footer for step </Text>
+    <Tag size="medium" type="plain" active>
+      {label}
+    </Tag>
+  </Flex>
+);
+
 export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
   const [, updateArgs] = useArgs();
 
@@ -239,7 +304,7 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
             }
           />
         )}
-        footer={({ stepsLength, activeIndex }) => (
+        renderStepFooter={({ stepsLength, activeIndex, children }) => (
           <Footer
             onContinue={
               activeIndex < stepsLength - 1
@@ -248,7 +313,9 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
                   }
                 : undefined
             }
-          />
+          >
+            {children}
+          </Footer>
         )}
         extraStepperContainerProps={{ my: 12 }}
         extraStepperProps={{ maxWidth: "500px" }}
@@ -257,10 +324,11 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
         )}
         {...args}
       >
-        {["Primary", "Neutral", "Success", "Warning", "Error"].map((label) => (
+        {steps.map((label) => (
           <CSSTransition
             key={label}
             label={label}
+            footer={<StepFooter label={label} />}
             timeout={500}
             classNames="step"
             mountOnEnter
@@ -270,6 +338,80 @@ export const Demo: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
           </CSSTransition>
         ))}
       </FlowStepper>
+    </Flex>
+  );
+};
+
+const StepWithNavigation = (props: { label: string; setActiveStep: (arg: string) => void }) => {
+  const { label, setActiveStep } = props;
+  const content = useMemo(() => {
+    return steps.map((step) => {
+      return (
+        <Button
+          key={step}
+          disabled={step === label}
+          variant="main"
+          onClick={() => setActiveStep(step)}
+        >
+          Go to "{step}"
+        </Button>
+      );
+    });
+  }, [setActiveStep, label]);
+  return (
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      padding={4}
+      rowGap={4}
+      backgroundColor={`${label.toLowerCase()}.c50`}
+    >
+      {content}
+    </Flex>
+  );
+};
+
+export const IndexedByKey: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
+  const [activeStep, setActiveStep] = useState(steps[0]);
+  return (
+    <Flex height="90vh">
+      <FlowStepper.Indexed
+        activeKey={activeStep}
+        header={({ activeIndex }) => (
+          <Header
+            activeIndex={activeIndex}
+            onBack={
+              activeIndex > 0
+                ? () => {
+                    setActiveStep(steps[activeIndex - 1]);
+                  }
+                : undefined
+            }
+          />
+        )}
+        footer={({ stepsLength, activeIndex }) => (
+          <Footer
+            onContinue={
+              activeIndex < stepsLength - 1
+                ? () => {
+                    setActiveStep(steps[activeIndex + 1]);
+                  }
+                : undefined
+            }
+          />
+        )}
+        extraStepperContainerProps={{ my: 12 }}
+        extraStepperProps={{ maxWidth: "500px" }}
+        {...args}
+      >
+        {steps.map((label) => (
+          <FlowStepper.Indexed.Step key={label} label={label} itemKey={label}>
+            <StepWithNavigation label={label} setActiveStep={setActiveStep} />
+          </FlowStepper.Indexed.Step>
+        ))}
+      </FlowStepper.Indexed>
     </Flex>
   );
 };

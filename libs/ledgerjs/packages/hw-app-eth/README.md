@@ -50,10 +50,16 @@ Ledger Hardware Wallet ETH JavaScript bindings.
         *   [Examples](#examples-5)
     *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
         *   [Parameters](#parameters-14)
+    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
+        *   [Parameters](#parameters-15)
+        *   [Examples](#examples-6)
+    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
+        *   [Parameters](#parameters-16)
+        *   [Examples](#examples-7)
 *   [loadInfosForContractMethod](#loadinfosforcontractmethod)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-17)
 *   [byContractAddressAndChainId](#bycontractaddressandchainid)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-18)
 *   [list](#list)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
@@ -331,6 +337,41 @@ It shall be run before the ETH 2 deposit transaction is signed. If not called, t
 *   `withdrawalIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** index path in the EIP 2334 path m/12381/3600/withdrawalIndex/0
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** True if the method was executed successfully
+
+#### getEIP1024PublicEncryptionKey
+
+get a public encryption key on Curve25519 according to EIP 1024
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+
+##### Examples
+
+```javascript
+eth.getEIP1024PublicEncryptionKey("44'/60'/0'/0/0").then(o => o.publicKey)
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey
+
+#### getEIP1024SharedSecret
+
+get a shared secret on Curve25519 according to EIP 1024
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+*   `remotePublicKeyHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** remote Curve25519 public key
+*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+
+##### Examples
+
+```javascript
+eth.getEIP1024SharedSecret("44'/60'/0'/0/0", "87020e80af6e07a6e4697f091eacadb9e7e6629cb7e5a8a371689a3ed53b3d64").then(o => o.sharedSecret)
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{sharedSecret: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a shared secret
 
 ### loadInfosForContractMethod
 

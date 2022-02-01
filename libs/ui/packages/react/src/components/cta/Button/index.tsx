@@ -171,7 +171,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   &:active {
     box-shadow: 0 0 0 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.4)};
   }
-  &:focus {
+  &:focus, &:hover {
     box-shadow: 0 0 0 2px ${(p) => rgba(p.theme.colors.primary.c60, 0.4)};
   }
 

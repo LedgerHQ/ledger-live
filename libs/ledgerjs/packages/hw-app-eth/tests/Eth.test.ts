@@ -889,3 +889,31 @@ test("eth2SetWithdrawalIndex", async () => {
   const result = await eth.eth2SetWithdrawalIndex(1);
   expect(result).toEqual(true);
 });
+test("getEIP1024PublicEncryptionKey", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e018000015058000002c8000003c800000000000000000000000
+    <= 2f720080750797da95a41b052cf5694be1be81c0a662d449cd15f946f376e76d9000
+    `)
+  );
+  const eth = new Eth(transport);
+  const result = await eth.getEIP1024PublicEncryptionKey("44'/60'/0'/0/0", false);
+  expect(result).toEqual({
+    publicKey:
+      "2f720080750797da95a41b052cf5694be1be81c0a662d449cd15f946f376e76d",
+  });
+});
+test("getEIP1024SharedSecret", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e018000135058000002c8000003c8000000000000000000000009ee8bf81321bc2a9e74de286621e13c013b5e4187b1c2fe42b686000672c6f33
+    <= 241dc9af8ecae08df6cf899a73a750b43117b50a7f1470405b5ff10adcf49f769000
+    `)
+  );
+  const eth = new Eth(transport);
+  const result = await eth.getEIP1024SharedSecret("44'/60'/0'/0/0", "9ee8bf81321bc2a9e74de286621e13c013b5e4187b1c2fe42b686000672c6f33", false);
+  expect(result).toEqual({
+    sharedSecret:
+      "241dc9af8ecae08df6cf899a73a750b43117b50a7f1470405b5ff10adcf49f76",
+  });
+});
