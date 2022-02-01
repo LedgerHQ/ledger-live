@@ -27,8 +27,8 @@
   "types": "lib/Trx.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.24.1"
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^"
