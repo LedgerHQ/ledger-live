@@ -1,13 +1,14 @@
 // @flow
 import { useMemo } from "react";
-import { useLocale } from "../context/Locale";
+import { useSelector } from "react-redux";
+import { localeSelector } from "../reducers/settings";
 
 type Props = {
   date: Date,
 };
 
 export default function OperationRowDate({ date }: Props) {
-  const { locale } = useLocale();
+  const locale = useSelector(localeSelector);
 
   const localeTimeString = useMemo(
     () =>

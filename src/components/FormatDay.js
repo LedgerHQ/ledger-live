@@ -1,22 +1,26 @@
 // @flow
 import { Component } from "react";
+import { connect } from "react-redux";
 import i18next from "i18next";
-import { format, differenceInCalendarDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import compareDate from "../logic/compareDate";
+import { localeSelector } from "../reducers/settings";
 
 type Props = {
   day: Date,
+  locale: string,
 };
 
 class FormatDay extends Component<Props> {
-  shouldComponentUpdate({ day: nextDay }: Props) {
-    const { day } = this.props;
+  shouldComponentUpdate({ day: nextDay, locale: nextLocale }: Props) {
+    const { day, locale } = this.props;
     const isSameDay = compareDate(day, nextDay);
-    return !isSameDay;
+    const isSameLocale = locale === nextLocale;
+    return !isSameDay || !isSameLocale;
   }
 
   render(): React$Node {
-    const { day } = this.props;
+    const { day, locale } = this.props;
     const dayDiff = differenceInCalendarDays(Date.now(), day);
     const suffix =
       dayDiff === 0
@@ -24,8 +28,17 @@ class FormatDay extends Component<Props> {
         : dayDiff === 1
         ? ` - ${i18next.t("common.yesterday")}`
         : "";
-    return `${format(day, "MMMM dd, yyyy")}${suffix}`;
+
+    const formattedDate = new Intl.DateTimeFormat(locale).format(day);
+    return `${formattedDate}${suffix}`;
   }
 }
 
-export default FormatDay;
+const mapStateToProps = state => ({
+  locale: localeSelector(state),
+});
+
+// $FlowFixMe
+export default connect(mapStateToProps, null, null, { forwardRef: true })(
+  FormatDay,
+);

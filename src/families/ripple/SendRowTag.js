@@ -5,9 +5,11 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
+import { useSelector } from "react-redux";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import { localeSelector } from "../../reducers/settings";
 
 type Props = {
   account: Account,
@@ -17,6 +19,7 @@ type Props = {
 export default function RippleTagRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const locale = useSelector(localeSelector);
 
   const editTag = useCallback(() => {
     navigation.navigate(ScreenName.RippleEditTag, {
@@ -31,7 +34,9 @@ export default function RippleTagRow({ account, transaction }: Props) {
     <View>
       <SummaryRow title={<Trans i18nKey="send.summary.tag" />} info="info">
         <View style={styles.tagContainer}>
-          {tag && <LText style={styles.tagText}>{tag.toString()}</LText>}
+          {tag && (
+            <LText style={styles.tagText}>{tag.toLocaleString(locale)}</LText>
+          )}
           <LText
             style={[
               styles.link,

@@ -2,6 +2,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import {
@@ -16,6 +17,7 @@ import {
 } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
+import { localeSelector } from "../../reducers/settings";
 
 const styles = StyleSheet.create({
   infoText: {
@@ -77,7 +79,7 @@ const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
 function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
-
+  const locale = useSelector(localeSelector);
   const { votes } = transaction;
 
   const sp = useTronSuperRepresentatives();
@@ -95,7 +97,7 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
         <ValidatorField
           address={address}
           name={validator?.name ?? address}
-          amount={voteCount.toString()}
+          amount={voteCount.toLocaleString(locale)}
         />
       ))}
     </>

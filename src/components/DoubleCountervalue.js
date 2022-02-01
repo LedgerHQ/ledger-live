@@ -12,8 +12,8 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import BottomModal from "./BottomModal";
-import { localeIds } from "../languages";
 import Circle from "./Circle";
+import FormatDate from "./FormatDate";
 
 type Props = {
   // wich market to query
@@ -115,11 +115,7 @@ function DoubleCounterValue({
               <Trans i18nKey="common.transactionDate" />
             </LText>
             <LText style={styles.subtitle} color="grey">
-              {date.toLocaleDateString(localeIds, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              <FormatDate date={date} />
             </LText>
           </View>
           <LText semiBold style={styles.amount} color="grey">
@@ -140,11 +136,7 @@ function DoubleCounterValue({
               <Trans i18nKey="common.today" />
             </LText>
             <LText style={styles.subtitle} color="grey">
-              {compareDate.toLocaleDateString(localeIds, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              <FormatDate date={compareDate} />
             </LText>
           </View>
           {typeof compareCountervalue === "number" ? (

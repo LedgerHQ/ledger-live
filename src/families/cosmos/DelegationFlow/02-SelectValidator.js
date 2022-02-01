@@ -28,6 +28,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
+import { localeSelector } from "../../../reducers/settings";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
@@ -49,6 +50,7 @@ type Props = {
 function DelegationSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
 
   invariant(account, "account required");
 
@@ -261,6 +263,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
                   values={{
                     amount: formatCurrencyUnit(unit, max, {
                       showCode: true,
+                      locale,
                     }),
                   }}
                 >
