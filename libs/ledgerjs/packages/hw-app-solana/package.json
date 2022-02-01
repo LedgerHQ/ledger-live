@@ -1,46 +1,46 @@
 {
-    "name": "@ledgerhq/hw-app-solana",
-    "version": "6.26.0",
-    "description": "Ledger Hardware Wallet Solana Application API",
-    "keywords": [
-        "Ledger",
-        "LedgerWallet",
-        "Solana",
-        "sol",
-        "NanoS",
-        "Blue",
-        "Hardware Wallet"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/LedgerHQ/ledgerjs"
-    },
-    "bugs": {
-        "url": "https://github.com/LedgerHQ/ledgerjs/issues"
-    },
-    "homepage": "https://github.com/LedgerHQ/ledgerjs",
-    "publishConfig": {
-        "access": "public"
-    },
-    "main": "lib/Solana.js",
-    "module": "lib-es/Solana.js",
-    "types": "lib/Solana.d.ts",
-    "license": "Apache-2.0",
-    "dependencies": {
-        "@ledgerhq/errors": "^6.10.0",
-        "@ledgerhq/hw-transport": "^6.24.1",
-        "@ledgerhq/logs": "^6.10.0",
-        "bip32-path": "^0.4.2"
-    },
-    "devDependencies": {
-        "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
-        "axios": "^0.26.0",
-        "@ledgerhq/hw-transport-mocker": "workspace:^"
-    },
-    "scripts": {
-        "clean": "bash ../../script/clean.sh",
-        "build": "bash ../../script/build.sh",
-        "watch": "bash ../../script/watch.sh",
-        "doc": "bash ../../script/doc.sh"
-    }
+  "name": "@ledgerhq/hw-app-solana",
+  "version": "6.24.1",
+  "description": "Ledger Hardware Wallet Solana Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "Solana",
+    "sol",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Solana.js",
+  "module": "lib-es/Solana.js",
+  "types": "lib/Solana.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "bip32-path": "^0.4.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "axios": "^0.26.0",
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
+  "scripts": {
+    "clean": "bash ../../script/clean.sh",
+    "build": "bash ../../script/build.sh",
+    "watch": "bash ../../script/watch.sh",
+    "doc": "bash ../../script/doc.sh"
+  }
 }
