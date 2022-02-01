@@ -58,6 +58,7 @@ const DeviceAppStorage = ({
               value={freeSpaceBytes}
               deviceModel={deviceModel}
               firmwareVersion={deviceInfo.version}
+              formatFunction={Math.floor}
             />
           </LText>
           <LText style={[styles.storageText, storageWarnStyle]}>
@@ -98,6 +99,7 @@ const DeviceAppStorage = ({
                 value={totalAppsBytes}
                 deviceModel={deviceModel}
                 firmwareVersion={deviceInfo.version}
+                formatFunction={Math.ceil}
               />
             </LText>
             <LText style={styles.storageText}>
