@@ -14,13 +14,11 @@ import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
-import IconCode from "../../icons/Code";
 
 import CatalogTwitterBanner from "./CatalogTwitterBanner";
 import DAppDisclaimer from "./DAppDisclaimer";
 import type { Props as DisclaimerProps } from "./DAppDisclaimer";
 import CatalogBanner from "./CatalogBanner";
-import CatalogCTA from "./CatalogCTA";
 import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
 
@@ -131,14 +129,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
           onPress={handlePressCard}
         />
       ))}
-      <View style={[styles.separator, { backgroundColor: colors.fog }]} />
-      <CatalogCTA
-        Icon={IconCode}
-        title={<Trans i18nKey={"platform.catalog.developerCTA.title"} />}
-        onPress={handleDeveloperCTAPress}
-      >
-        <Trans i18nKey={"platform.catalog.developerCTA.description"} />
-      </CatalogCTA>
+      <View style={styles.bottomPadding} />
     </AnimatedHeaderView>
   );
 };
@@ -152,10 +143,8 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     textAlign: "left",
   },
-  separator: {
-    width: "100%",
-    height: 1,
-    marginBottom: 24,
+  bottomPadding: {
+    height: 40,
   },
 });
 
