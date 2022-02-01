@@ -27,15 +27,15 @@
     "types": "lib/Solana.d.ts",
     "license": "Apache-2.0",
     "dependencies": {
-        "@ledgerhq/errors": "^6.10.0",
-        "@ledgerhq/hw-transport": "^6.24.1",
-        "@ledgerhq/logs": "^6.10.0",
+        "@ledgerhq/errors": "workspace:^",
+        "@ledgerhq/hw-transport": "workspace:^",
+        "@ledgerhq/logs": "workspace:^",
         "bip32-path": "^0.4.2"
     },
     "devDependencies": {
-        "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
-        "@ledgerhq/hw-transport-mocker": "workspace:^",
-        "axios": "^0.26.1"
+        "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+        "axios": "^0.26.1",
+        "@ledgerhq/hw-transport-mocker": "workspace:^"
     },
     "scripts": {
         "clean": "bash ../../script/clean.sh",
