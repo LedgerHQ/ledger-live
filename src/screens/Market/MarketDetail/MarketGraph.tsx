@@ -81,6 +81,7 @@ export default function MarketGraph({
       <Flex mt={25}>
         <GraphTabs
           activeIndex={activeRangeIndex}
+          activeBg="neutral.c30"
           onChange={setRange}
           labels={ranges}
         />
