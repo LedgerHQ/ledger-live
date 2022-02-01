@@ -21,7 +21,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-cryptoassets": "^6.22.0",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "9",
     "rxjs": "6"
   },
