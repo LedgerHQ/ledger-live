@@ -84,7 +84,8 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
             lineHeight="20px"
             px="2"
             mr="2"
-            borderRadius={2}
+            borderRadius={4}
+            overflow="hidden"
             fontWeight="semiBold"
           >
             {marketcapRank || "-"}

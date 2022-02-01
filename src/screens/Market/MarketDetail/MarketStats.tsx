@@ -180,7 +180,13 @@ export default function MarketStats({
         </TextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
-        <TextLabel bg="neutral.c40" px={2} py={1} borderRadius={4}>
+        <TextLabel
+          bg="neutral.c40"
+          px={2}
+          py={1}
+          overflow="hidden"
+          borderRadius={4}
+        >
           {marketcapRank}
         </TextLabel>
       </StatRow>
