@@ -157,6 +157,7 @@ const BottomSection = ({
             fontWeight="semiBold"
             variant="body"
             color="primary.c80"
+            uppercase
           >
             {counterCurrency}
           </Text>
