@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 /* eslint-disable import/no-unresolved */
 
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
@@ -285,6 +285,17 @@ export default function Market({ navigation }: { navigation: any }) {
     [isLoading],
   );
 
+  const [refreshControlVisible, setRefreshControlVisible] = useState(false);
+
+  const handlePullToRefresh = useCallback(() => {
+    refresh();
+    setRefreshControlVisible(true);
+  }, [refresh, setRefreshControlVisible]);
+
+  useEffect(() => {
+    if (refreshControlVisible && !loading) setRefreshControlVisible(false);
+  }, [refreshControlVisible, loading]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
       <Flex flex={1} position="relative">
@@ -310,10 +321,10 @@ export default function Market({ navigation }: { navigation: any }) {
           }
           refreshControl={
             <RefreshControl
-              refreshing={loading}
+              refreshing={refreshControlVisible}
               colors={[colors.primary.c80]}
               tintColor={colors.primary.c80}
-              onRefresh={() => refresh()}
+              onRefresh={handlePullToRefresh}
             />
           }
         >
