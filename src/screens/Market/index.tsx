@@ -38,8 +38,12 @@ export const BackButton = ({ navigation }: { navigation: any }) => (
   />
 );
 
-function getAnalyticsProperties(requestParams: MarketListRequestParams) {
+function getAnalyticsProperties(
+  requestParams: MarketListRequestParams,
+  otherProperties?: any,
+) {
   return {
+    ...otherProperties,
     access: false,
     sort: `${requestParams.orderBy}_${requestParams.order}`,
     "%change": requestParams.range,
@@ -78,7 +82,12 @@ const BottomSection = ({
     if (starredMarketCoins.length > 0) {
       const starred = starFilterOn ? [] : starredMarketCoins;
       if (!starFilterOn) {
-        track("Page Market Favourites", getAnalyticsProperties(requestParams));
+        track(
+          "Page Market Favourites",
+          getAnalyticsProperties(requestParams, {
+            currencies: starredMarketCoins,
+          }),
+        );
       }
       refresh({ starred });
     }
