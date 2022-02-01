@@ -120,6 +120,8 @@ export default class Eth {
         "eth2SetWithdrawalIndex",
         "setExternalPlugin",
         "setPlugin",
+        "getEIP1024PublicEncryptionKey",
+        "getEIP1024SharedSecret",
       ],
       scrambleKey
     );
@@ -1133,6 +1135,70 @@ export default class Eth {
     );
   }
 
+  /**
+   * get a public encryption key on Curve25519 according to EIP 1024
+   * @param path a path in BIP 32 format
+   * @option boolDisplay optionally enable or not the display
+   * @return an object with a publicKey
+   * @example
+   * eth.getEIP1024PublicEncryptionKey("44'/60'/0'/0/0").then(o => o.publicKey)
+   */
+  getEIP1024PublicEncryptionKey(
+    path: string,
+    boolDisplay?: boolean
+  ): Promise<{
+    publicKey: string;
+  }> {
+    const paths = splitPath(path);
+    const buffer = Buffer.alloc(1 + paths.length * 4);
+    buffer[0] = paths.length;
+    paths.forEach((element, index) => {
+      buffer.writeUInt32BE(element, 1 + 4 * index);
+    });
+    return this.transport
+      .send(0xe0, 0x18, boolDisplay ? 0x01 : 0x00, 0x00, buffer)
+      .then((response) => {
+        return {
+          publicKey: response.slice(0, -2).toString("hex"),
+        };
+      });
+  }
+
+  /**
+   * get a shared secret on Curve25519 according to EIP 1024
+   * @param path a path in BIP 32 format
+   * @param remotePublicKeyHex remote Curve25519 public key
+   * @option boolDisplay optionally enable or not the display
+   * @return an object with a shared secret
+   * @example
+   * eth.getEIP1024SharedSecret("44'/60'/0'/0/0", "87020e80af6e07a6e4697f091eacadb9e7e6629cb7e5a8a371689a3ed53b3d64").then(o => o.sharedSecret)
+   */
+  getEIP1024SharedSecret(
+    path: string,
+    remotePublicKeyHex: string,
+    boolDisplay?: boolean
+  ): Promise<{
+    sharedSecret: string;
+  }> {
+    const paths = splitPath(path);
+    const remotePublicKey = hexBuffer(remotePublicKeyHex);
+    const buffer = Buffer.alloc(1 + paths.length * 4 + 32);
+    let offset = 0;
+    buffer[0] = paths.length;
+    paths.forEach((element, index) => {
+      buffer.writeUInt32BE(element, 1 + 4 * index);
+    });
+    offset = 1 + 4 * paths.length;
+    remotePublicKey.copy(buffer, offset);
+    return this.transport
+      .send(0xe0, 0x18, boolDisplay ? 0x01 : 0x00, 0x01, buffer)
+      .then((response) => {
+        return {
+          sharedSecret: response.slice(0, -2).toString("hex"),
+        };
+      });
+  }
+
   provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
     console.warn(
       "hw-app-eth: eth.provideERC20TokenInformation is deprecated. signTransaction solves this for you when providing it in `resolution`."
@@ -1185,10 +1251,6 @@ function provideNFTInformation(
   return transport.send(0xe0, 0x14, 0x00, 0x00, data).then(
     () => true,
     (e) => {
-      if (e && e.statusCode === 0x6a80) {
-        // some issue with providing the data
-        return false;
-      }
       if (e && e.statusCode === 0x6d00) {
         // older version of ETH app => error because we don't allow blind sign when NFT is explicitly requested to be resolved.
         throw new EthAppNftNotSupported();

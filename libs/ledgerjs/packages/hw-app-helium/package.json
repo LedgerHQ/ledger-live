@@ -1,6 +1,6 @@
 {
     "name": "@ledgerhq/hw-app-helium",
-    "version": "6.11.2",
+    "version": "6.24.0",
     "description": "Ledger Hardware Wallet Helium Application API",
     "keywords": [
         "Ledger",
@@ -28,6 +28,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@helium/crypto": "^3.45.0",
+        "@helium/proto": "^1.5.0",
         "@helium/transactions": "^3.62.0",
         "@ledgerhq/errors": "^6.10.0",
         "@ledgerhq/hw-transport": "^6.11.2",
