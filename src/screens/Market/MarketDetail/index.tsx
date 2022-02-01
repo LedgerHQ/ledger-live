@@ -6,7 +6,6 @@ import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
-  Button,
   Text,
   ScrollContainerHeader,
   Icons,
@@ -38,6 +37,8 @@ import MarketStats from "./MarketStats";
 import MarketGraph from "./MarketGraph";
 import { accountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
 import AccountRow from "../../Accounts/AccountRow";
+import { track } from "../../../analytics";
+import Button from "../../../components/wrappedUi/Button";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -172,6 +173,16 @@ export default function MarketDetail({
     [navigation],
   );
 
+  useEffect(() => {
+    if (name) {
+      track("Page Market Coin", {
+        currencyName: name,
+        starred: isStarred,
+        timeframe: chartRequestParams.range,
+      });
+    }
+  }, [name, isStarred, chartRequestParams.range]);
+
   const [refreshControlVisible, setRefreshControlVisible] = useState(false);
 
   const handlePullToRefresh = useCallback(() => {
@@ -283,6 +294,8 @@ export default function MarketDetail({
                 type="color"
                 onPress={navigateToBuy}
                 iconName="BuyCryptoAlt"
+                event={"Buy Crypto Page Market Coin"}
+                eventProperties={{ currencyName: name }}
               >
                 {t("account.buy")}
               </Button>
@@ -294,6 +307,8 @@ export default function MarketDetail({
                 type="color"
                 onPress={navigateToSwap}
                 iconName="BuyCrypto"
+                event={"Swap Crypto Page Market Coin"}
+                eventProperties={{ currencyName: name }}
               >
                 {t("transfer.swap.main.header")}
               </Button>
