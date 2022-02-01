@@ -170,8 +170,8 @@ export default function MarketDetail({
   }, [refreshChart, setRefreshControlVisible]);
 
   useEffect(() => {
-    if (!loading) setRefreshControlVisible(false);
-  }, [loading]);
+    if (refreshControlVisible && !loading) setRefreshControlVisible(false);
+  }, [refreshControlVisible, loading]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
