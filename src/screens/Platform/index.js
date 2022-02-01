@@ -1,9 +1,9 @@
 // @flow
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { StyleSheet, View, Linking } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
 import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
@@ -12,7 +12,6 @@ import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
-import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
 
 import CatalogTwitterBanner from "./CatalogTwitterBanner";
