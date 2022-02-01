@@ -19,7 +19,7 @@ const MetroSymlinksResolver = require("@rnx-kit/metro-resolver-symlinks");
 const nodeModulesPaths = [
   path.resolve(__dirname, "node_modules"),
   path.resolve(__dirname, "..", "..", "node_modules"),
-  path.resolve(__dirname, "..", "..", "node_modules/.pnpm/node_modules"),
+  path.resolve(__dirname, "..", "..", "node_modules", ".pnpm", "node_modules"),
 ];
 
 const symlinkResolver = MetroSymlinksResolver({
