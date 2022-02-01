@@ -109,7 +109,7 @@ const BottomSection = ({
               ml={2}
               fontWeight="semiBold"
               variant="body"
-              color="primary.c100"
+              color="primary.c80"
             >
               {search}
             </Text>
@@ -156,7 +156,7 @@ const BottomSection = ({
             ml={2}
             fontWeight="semiBold"
             variant="body"
-            color="primary.c100"
+            color="primary.c80"
           >
             {counterCurrency}
           </Text>

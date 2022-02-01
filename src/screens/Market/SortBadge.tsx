@@ -74,14 +74,14 @@ function SortBadge({
           <Text mr={2} fontWeight="semiBold" variant="body">
             {label}
           </Text>
-          <Text fontWeight="semiBold" variant="body" color="primary.c100">
+          <Text fontWeight="semiBold" variant="body" color="primary.c80">
             {valueLabel}
           </Text>
           {type === "sort" ? (
             value === "asc" ? (
-              <Icons.ArrowTopMedium size={12} color="primary.c100" />
+              <Icons.ArrowTopMedium size={12} color="primary.c80" />
             ) : value === "desc" ? (
-              <Icons.ArrowBottomMedium size={12} color="primary.c100" />
+              <Icons.ArrowBottomMedium size={12} color="primary.c80" />
             ) : null
           ) : null}
         </Badge>
