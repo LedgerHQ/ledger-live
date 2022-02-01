@@ -25,8 +25,8 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "^6.24.1",
-    "@ledgerhq/logs": "^6.10.0"
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^"
   },
   "scripts": {
     "clean": "bash ../../script/clean.sh",

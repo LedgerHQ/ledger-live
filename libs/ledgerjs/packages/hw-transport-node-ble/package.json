@@ -29,10 +29,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@abandonware/noble": "1.9.2-15",
-    "@ledgerhq/devices": "^6.24.1",
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.24.1",
-    "@ledgerhq/logs": "^6.10.0",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "invariant": "^2.2.4",
     "rxjs": "6"
   },
