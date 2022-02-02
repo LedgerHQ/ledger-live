@@ -6,10 +6,12 @@ import { Trans } from "react-i18next";
 import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
 
 import { useTheme } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import CheckBox from "../../../../components/CheckBox";
 import LText from "../../../../components/LText";
 import Trophy from "../../../../icons/Trophy";
 import Medal from "../../../../icons/Medal";
+import { localeSelector } from "../../../../reducers/settings";
 
 type ItemProp = {
   address: string,
@@ -32,6 +34,7 @@ function Item({
   disabled,
   onSelectSuperRepresentative,
 }: Props) {
+  const locale = useSelector(localeSelector);
   const { colors } = useTheme();
   const { sr, isSR, rank, address } = item;
 
@@ -79,7 +82,7 @@ function Item({
         <LText style={styles.subText} color="grey" numberOfLines={1}>
           <Trans
             i18nKey="vote.castVotes.nbOfVotes"
-            values={{ amount: Number(sr.voteCount).toLocaleString() }}
+            values={{ amount: Number(sr.voteCount).toLocaleString(locale) }}
           />
         </LText>
       </View>

@@ -18,6 +18,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
+import { localeSelector } from "../../../reducers/settings";
 import Button from "../../../components/Button";
 import CurrencyInput from "../../../components/CurrencyInput";
 import LText from "../../../components/LText";
@@ -46,6 +47,7 @@ type Props = {
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
 
   invariant(
     account && account.cosmosResources && route.params.transaction,
@@ -179,10 +181,12 @@ function DelegationAmount({ navigation, route }: Props) {
                     min: formatCurrencyUnit(unit, min, {
                       showCode: true,
                       showAllDigits: true,
+                      locale,
                     }),
                     max: formatCurrencyUnit(unit, initialMax, {
                       showCode: true,
                       showAllDigits: true,
+                      locale,
                     }),
                   }}
                 >
@@ -209,6 +213,7 @@ function DelegationAmount({ navigation, route }: Props) {
                   values={{
                     amount: formatCurrencyUnit(unit, max, {
                       showCode: true,
+                      locale,
                     }),
                   }}
                 >
@@ -228,6 +233,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       redelegatedBalance.plus(value),
                       {
                         showCode: true,
+                        locale,
                       },
                     ),
                     name: route.params.validator?.name ?? "",

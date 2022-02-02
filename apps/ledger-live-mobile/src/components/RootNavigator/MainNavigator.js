@@ -48,6 +48,11 @@ export default function MainNavigator({
       <Tab.Screen
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
+        listeners={({ route, navigation }) => {
+          return {
+            tabPress: () => navigation.navigate(route.name)
+          }
+        }}
         options={{
           unmountOnBlur: true,
           tabBarIcon: (props: any) => (

@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
+import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 
 import {
@@ -12,6 +13,7 @@ import clamp from "lodash/clamp";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
+import { localeSelector } from "../reducers/settings";
 import getFontStyle from "./LText/getFontStyle";
 import { withTheme } from "../colors";
 import TextInput from "./FocusedTextInput";
@@ -19,9 +21,10 @@ import TextInput from "./FocusedTextInput";
 function format(
   unit: Unit,
   value: BigNumber,
-  { isFocused, showAllDigits, subMagnitude },
+  { isFocused, showAllDigits, subMagnitude, locale },
 ) {
   return formatCurrencyUnit(unit, value, {
+    locale,
     useGrouping: !isFocused,
     disableRounding: true,
     showAllDigits: !!showAllDigits && !isFocused,
@@ -49,6 +52,7 @@ type Props = {
   inputStyle?: *,
   colors: *,
   dynamicFontRatio?: number,
+  locale: string,
 };
 
 type State = {
@@ -95,7 +99,14 @@ class CurrencyInput extends PureComponent<Props, State> {
   }
 
   setDisplayValue = (isFocused: boolean = false) => {
-    const { value, showAllDigits, unit, subMagnitude, allowZero } = this.props;
+    const {
+      value,
+      showAllDigits,
+      unit,
+      subMagnitude,
+      allowZero,
+      locale,
+    } = this.props;
     this.setState({
       isFocused,
       displayValue:
@@ -105,13 +116,14 @@ class CurrencyInput extends PureComponent<Props, State> {
               isFocused,
               showAllDigits,
               subMagnitude,
+              locale,
             }),
     });
   };
 
   handleChange = (v: string) => {
-    const { onChange, unit, value } = this.props;
-    const r = sanitizeValueString(unit, v);
+    const { onChange, unit, value, locale } = this.props;
+    const r = sanitizeValueString(unit, v, locale);
     const satoshiValue = BigNumber(r.value);
 
     if (!value || !value.isEqualTo(satoshiValue)) {
@@ -153,6 +165,7 @@ class CurrencyInput extends PureComponent<Props, State> {
       placeholder,
       colors,
       dynamicFontRatio = 0.75,
+      locale,
     } = this.props;
     const { displayValue } = this.state;
 
@@ -197,6 +210,7 @@ class CurrencyInput extends PureComponent<Props, State> {
               isFocused: false,
               showAllDigits,
               subMagnitude,
+              locale,
             })
           }
           placeholderTextColor={editable ? colors.darkBlue : colors.grey}
@@ -222,4 +236,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTheme(CurrencyInput);
+const mapStateToProps = state => ({
+  locale: localeSelector(state),
+});
+
+export default withTheme(
+  connect(mapStateToProps, null, null, { forwardRef: true })(CurrencyInput),
+);

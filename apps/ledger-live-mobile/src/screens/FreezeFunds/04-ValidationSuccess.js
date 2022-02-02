@@ -93,11 +93,15 @@ export default function ValidationSuccess({ navigation, route }: Props) {
             <Button
               event="FreezeSuccessVote"
               title={
+                /**
+                 * To much effort to localize this IMO (we'd need an additional lib like moment.js, not worth it)
+                 * https://softwareengineering.stackexchange.com/a/399225
+                 * Just make sure to reimplement this basic formatting in case the timer starts from >60s
+                 * */
                 time > 0 ? (
-                  <Trans
-                    i18nKey="freeze.validation.button.voteTimer"
-                    values={{ time }}
-                  />
+                  `0:${Number(time)
+                    .toString()
+                    .padStart(2, "0")}`
                 ) : (
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )

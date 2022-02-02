@@ -4,6 +4,7 @@ import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import ModalBottomAction from "./ModalBottomAction";
+import Alert from "./Alert";
 import Trash from "../icons/Trash";
 import Circle from "./Circle";
 
@@ -19,7 +20,11 @@ function HardResetModal() {
         </Circle>
       }
       description={<Trans i18nKey="reset.description" />}
-      footer={null}
+      footer={
+        <Alert type="warning">
+          <Trans i18nKey="reset.warning" />
+        </Alert>
+      }
     />
   );
 }

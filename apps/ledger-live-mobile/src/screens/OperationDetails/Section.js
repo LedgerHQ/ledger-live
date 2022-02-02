@@ -7,7 +7,7 @@ import LText from "../../components/LText";
 
 type Props = FieldWrapperProps & {
   title: string,
-  value?: string,
+  value?: string | React$Node,
   headerRight?: React$Node,
 };
 

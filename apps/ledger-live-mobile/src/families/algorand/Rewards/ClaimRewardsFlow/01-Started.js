@@ -18,6 +18,7 @@ import { ScreenName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import { accountScreenSelector } from "../../../../reducers/accounts";
+import { localeSelector } from "../../../../reducers/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import IlluRewards from "../../../../icons/images/Rewards";
 import { TrackScreen } from "../../../../analytics";
@@ -36,6 +37,7 @@ type Props = {
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
 
   invariant(account, "Account required");
 
@@ -64,6 +66,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
+    locale,
   });
 
   const onNext = useCallback(() => {
