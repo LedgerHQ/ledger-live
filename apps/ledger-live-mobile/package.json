@@ -49,7 +49,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src --fix --ext .js,.json",
     "flow": "flow",
-    "test": "pnpm check --integrity && pnpm lint --quiet",
+    "test": "pnpm lint --quiet",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
     "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal",
