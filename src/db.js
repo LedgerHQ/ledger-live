@@ -1,9 +1,9 @@
 // @flow
 import { log } from "@ledgerhq/logs";
-import store from "./logic/storeWrapper";
 import { atomicQueue } from "@ledgerhq/live-common/lib/promise";
 import type { AccountRaw } from "@ledgerhq/live-common/lib/types";
 import type { CounterValuesStateRaw } from "@ledgerhq/live-common/lib/countervalues/types";
+import store from "./logic/storeWrapper";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -84,18 +84,15 @@ async function unsafeSaveCountervalues(
 ): Promise<void> {
   if (!changed) return;
 
-
   const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
     k =>
       ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
   );
 
-
   const data = Object.entries(state).map(([key, val]) => [
     `${COUNTERVALUES_DB_PREFIX}${key}`,
     val,
   ]);
-  
 
   await store.save(data);
 
@@ -125,9 +122,8 @@ async function unsafeGetAccounts(): Promise<{ active: AccountRaw[] }> {
   await migrateAccountsIfNecessary();
 
   const keys = await store.keys();
-  // await store.delete(keys); 
+  // await store.delete(keys);
   const accountKeys = onlyAccountsKeys(keys);
-
 
   // if some account keys, we retrieve them and return
   if (accountKeys && accountKeys.length > 0) {
