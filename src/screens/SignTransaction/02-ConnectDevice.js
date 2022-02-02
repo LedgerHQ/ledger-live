@@ -60,6 +60,9 @@ function ConnectDevice({ route }: Props) {
     onSuccess,
   });
 
+  // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
+  const dependencies = [mainAccount];
+
   return transaction ? (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
@@ -75,6 +78,8 @@ function ConnectDevice({ route }: Props) {
           transaction,
           status,
           tokenCurrency,
+          dependencies,
+          requireLatestFirmware: true,
         }}
         device={route.params.device}
         onResult={handleTx}
