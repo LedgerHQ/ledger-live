@@ -1,5 +1,5 @@
 {
-  "baseBranch": "origin/main",
+  "baseBranch": "origin/develop",
   "pipeline": {
     "build": {
       "dependsOn": [
@@ -11,6 +11,12 @@
         "lib-es/**",
         "build/**"
       ]
+    },
+    "test": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": []
     },
     "start": {
       "cache": false,
