@@ -2,14 +2,14 @@
  * @overview A minimalistic wrapper around React Native's AsyncStorage.
  * @license MIT
  */
- import merge from 'lodash.merge';
  import AsyncStorage from '@react-native-async-storage/async-storage';
  import { stringify, parse } from "zipson"
+ import { merge } from 'lodash';
  
 const COMPRESSED_KEY = "_-_COMPRESSED";
 const CHUNK_SIZE = 1000000;
 
-getChunks = (str, size) => {
+const getChunks = (str, size) => {
     const strLength = str.length;
     const numChunks = Math.ceil(strLength / size);
     const chunks = new Array(numChunks);
@@ -24,7 +24,7 @@ getChunks = (str, size) => {
     return chunks;
   }
 
-stringifyPairs = (pairs) => {
+const stringifyPairs = (pairs) => {
     return pairs.reduce((acc, current) => {
         const key = current[0];
         const data = JSON.stringify(current[1]);
@@ -39,7 +39,7 @@ stringifyPairs = (pairs) => {
     }, [])
   }
 
-  getCompressedValue = async (key, value) => {
+const getCompressedValue = async (key, value) => {
       console.log({key});
       if (value && value.includes(COMPRESSED_KEY)) {
         const numberOfChunk = Number(value.replace(COMPRESSED_KEY, ""))
