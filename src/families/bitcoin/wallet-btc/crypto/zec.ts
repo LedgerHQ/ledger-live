@@ -53,12 +53,19 @@ class ZCash implements ICrypto {
     account: number,
     index: number
   ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    if (
+      Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ]
+    ) {
+      return Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ];
     }
     const address = this.getLegacyAddress(xpub, account, index);
-    Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-      address;
+    Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ] = address;
     return address;
   }
 

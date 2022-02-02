@@ -57,7 +57,7 @@ function createMockDataForAPI() {
       Promise.resolve(
         cached(queued(logged(getChainAPI(config), "/tmp/log"), 100))
       ),
-    (config) => config.cluster,
+    (config) => config.endpoint,
     minutes(1000)
   );
   return {

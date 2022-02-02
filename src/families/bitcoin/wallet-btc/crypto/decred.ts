@@ -74,8 +74,14 @@ class Decred extends Base {
     account: number,
     index: number
   ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    if (
+      Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ]
+    ) {
+      return Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ];
     }
     let buffer: Buffer;
     try {
@@ -90,8 +96,9 @@ class Decred extends Base {
     const hd = new BIP32(X, chainCode, this.network, depth, i);
     const publicKey = hd.derive(account).derive(index).publicKey;
     const address = Decred.getAddressFromPk(publicKey);
-    Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-      address;
+    Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ] = address;
     return address;
   }
 }

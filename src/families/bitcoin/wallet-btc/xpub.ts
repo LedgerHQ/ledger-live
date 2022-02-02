@@ -67,7 +67,7 @@ class Xpub extends EventEmitter {
     );
 
     this.storage.addAddress(
-      `${this.derivationMode}-${this.xpub}-${account}-${index}`,
+      `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
       address
     );
     await this.whenSynced("address", address);

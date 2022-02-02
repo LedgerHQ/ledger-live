@@ -23,6 +23,9 @@ export const LowerThanMinimumRelayFee = createCustomErrorClass(
 export const TransactionRefusedOnDevice = createCustomErrorClass(
   "TransactionRefusedOnDevice"
 );
+export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
+  "InvalidAddressBecauseAlreadyDelegated"
+);
 export const TronNoFrozenForBandwidth = createCustomErrorClass(
   "TronNoFrozenForBandwidth"
 );

@@ -40,6 +40,7 @@ import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
+import type { DeviceInfo, FirmwareUpdateContext } from "../../types/manager";
 
 type State = {
   isLoading: boolean;
@@ -60,6 +61,8 @@ type State = {
   allowManagerRequestedWording: string | null | undefined;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
+  deviceInfo?: DeviceInfo | null | undefined;
+  latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
     | {
@@ -146,6 +149,8 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   allowManagerRequestedWording: null,
   allowManagerGranted: false,
   device: null,
+  deviceInfo: null,
+  latestFirmware: null,
   opened: false,
   appAndVersion: null,
   error: null,
@@ -159,6 +164,13 @@ const reducer = (state: State, e: Event): State => {
   switch (e.type) {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
+
+    case "device-update-last-seen":
+      return {
+        ...state,
+        deviceInfo: e.deviceInfo,
+        latestFirmware: e.latestFirmware,
+      };
 
     case "disconnected":
       return { ...getInitialState(), isLoading: !!e.expected };
@@ -585,7 +597,11 @@ export const createAction = (
           scan(reducer, getInitialState()), // tap((s) => console.log("connectApp state", s)),
           // we debounce the UI state to not blink on the UI
           debounce((s: State) => {
-            if (s.allowOpeningRequestedWording || s.allowOpeningGranted) {
+            if (
+              s.allowOpeningRequestedWording ||
+              s.allowOpeningGranted ||
+              s.deviceInfo
+            ) {
               // no debounce for allow event
               return EMPTY;
             }

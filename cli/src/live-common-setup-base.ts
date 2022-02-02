@@ -13,19 +13,25 @@ setSupportedCurrencies([
   "bitcoin",
   "ethereum",
   "bsc",
+  "polkadot",
   "ripple",
-  "bitcoin_cash",
   "litecoin",
-  "dash",
-  "ethereum_classic",
-  "elrond",
-  "tezos",
-  "qtum",
-  "zcash",
-  "bitcoin_gold",
-  "stratis",
+  "polygon",
+  "bitcoin_cash",
+  "stellar",
   "dogecoin",
+  "cosmos",
+  "dash",
+  "tron",
+  "tezos",
+  "elrond",
+  "ethereum_classic",
+  "zcash",
+  "decred",
   "digibyte",
+  "algorand",
+  "qtum",
+  "bitcoin_gold",
   "komodo",
   "pivx",
   "zencash",
@@ -33,19 +39,12 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "stakenet",
-  "stealthcoin",
-  "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
-  "tron",
-  "stellar",
-  "cosmos",
-  "algorand",
-  "polkadot",
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
-  "filecoin",
+  "celo",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -125,6 +124,8 @@ listen((log) => {
     level = "error";
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   logger.log(level, log);
 });
 implementLibcore({

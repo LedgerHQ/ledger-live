@@ -20,31 +20,8 @@ import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
 import jsBridges from "../generated/bridge/js";
 
-const experimentalIntegrations = [
-  "algorand",
-  "bitcoin",
-  "bsc",
-  "bitcoin_cash",
-  "litecoin",
-  "dash",
-  "qtum",
-  "zcash",
-  "bitcoin_gold",
-  "stratis",
-  "dogecoin",
-  "digibyte",
-  "komodo",
-  "pivx",
-  "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
-  "stakenet",
-  "stealthcoin",
-  "decred",
-  "bitcoin_testnet",
-  "tezos",
-];
+const experimentalIntegrations = ["algorand", "tezos"];
+
 export function shouldUseJS(currency: CryptoCurrency) {
   const jsBridge = jsBridges[currency.family];
   if (!jsBridge) return false;

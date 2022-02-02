@@ -3,7 +3,7 @@
 | name | ticker | PROD | EXPERIMENTAL |
 |--|--|--|--|
 | Bitcoin | BTC | https://explorers.api.live.ledger.com/blockchain/v3/btc | N/A |
-| Bitcoin Cash | BCH | https://explorers.api.live.ledger.com/blockchain/v2/bch | N/A |
+| Bitcoin Cash | BCH | https://explorers.api.live.ledger.com/blockchain/v3/bch | N/A |
 | Bitcoin Gold | BTG | https://explorers.api.live.ledger.com/blockchain/v3/btg | N/A |
 | Binance Smart Chain | BNB | https://explorers.api.live.ledger.com/blockchain/v3/bnb | N/A |
 | Dash | DASH | https://explorers.api.live.ledger.com/blockchain/v3/dash | N/A |

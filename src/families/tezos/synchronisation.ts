@@ -48,9 +48,10 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
     derivationMode,
   });
 
-  const initialStableOperations = initialAccount
-    ? initialAccount.operations
-    : [];
+  const initialStableOperations =
+    initialAccount && initialAccount.id === accountId
+      ? initialAccount.operations
+      : [];
 
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];

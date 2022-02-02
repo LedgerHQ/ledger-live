@@ -2,17 +2,18 @@ import Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
 import invariant from "invariant";
-export const TRANSACTION_RATES = {
-  FIXED: 0x00,
-  FLOATING: 0x01,
-};
-export const TRANSACTION_TYPES = {
-  SWAP: 0x00,
-  SELL: 0x01,
-  FUND: 0x02,
-};
-type TransactionRate = typeof TRANSACTION_RATES[keyof typeof TRANSACTION_RATES];
-type TransactionType = typeof TRANSACTION_TYPES[keyof typeof TRANSACTION_TYPES];
+
+export const enum RateTypes {
+  Fixed = 0x00,
+  Floating = 0x01,
+}
+
+export const enum ExchangeTypes {
+  Swap = 0x00,
+  Sell = 0x01,
+  Fund = 0x02,
+}
+
 const START_NEW_TRANSACTION_COMMAND = 0x03;
 const SET_PARTNER_KEY_COMMAND = 0x04;
 const CHECK_PARTNER_COMMAND = 0x05;
@@ -34,8 +35,8 @@ const maybeThrowProtocolError = (result: Buffer): void => {
 
 export default class Exchange {
   transport: Transport;
-  transactionType: TransactionType;
-  transactionRate: TransactionRate;
+  transactionType: ExchangeTypes;
+  transactionRate: RateTypes;
   allowedStatuses: Array<number> = [
     0x9000, 0x6a80, 0x6a81, 0x6a82, 0x6a83, 0x6a84, 0x6a85, 0x6e00, 0x6d00,
     0x9d1a,
@@ -43,11 +44,11 @@ export default class Exchange {
 
   constructor(
     transport: Transport,
-    transactionType: TransactionType,
-    transactionRate?: TransactionRate
+    transactionType: ExchangeTypes,
+    transactionRate?: RateTypes
   ) {
     this.transactionType = transactionType;
-    this.transactionRate = transactionRate || TRANSACTION_RATES.FIXED;
+    this.transactionRate = transactionRate || RateTypes.Fixed;
     this.transport = transport;
   }
 
@@ -62,7 +63,10 @@ export default class Exchange {
     );
     maybeThrowProtocolError(result);
 
-    if (this.transactionType === TRANSACTION_TYPES.SELL) {
+    if (
+      this.transactionType === ExchangeTypes.Sell ||
+      this.transactionType === ExchangeTypes.Fund
+    ) {
       return result.subarray(0, 32).toString("base64");
     }
 
@@ -147,7 +151,7 @@ export default class Exchange {
     ]);
     const result: Buffer = await this.transport.send(
       0xe0,
-      this.transactionType === TRANSACTION_TYPES.SWAP
+      this.transactionType === ExchangeTypes.Swap
         ? CHECK_PAYOUT_ADDRESS
         : CHECK_ASSET_IN,
       this.transactionRate,

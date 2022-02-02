@@ -478,7 +478,7 @@ export function testBridge<T extends Transaction>(
 
               // existing ops are keeping refs
               synced.operations.slice(count).forEach((op, i) => {
-                expect(op).toBe(operations[i]);
+                expect(op).toStrictEqual(operations[i]);
               });
             }
           );

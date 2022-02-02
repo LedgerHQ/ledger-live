@@ -11,6 +11,7 @@ type State = {
   completeExchangeResult: Transaction | null | undefined;
   completeExchangeError: Error | null | undefined;
   freezeReduxDevice: boolean;
+  completeExchangeRequested: boolean;
   isLoading: boolean;
 };
 
@@ -61,14 +62,19 @@ const mapResult = ({
 const initialState: State = {
   completeExchangeResult: null,
   completeExchangeError: null,
+  completeExchangeRequested: false,
   freezeReduxDevice: false,
-  isLoading: false,
+  isLoading: true,
 };
 
 const reducer = (state: State, e: ExchangeRequestEvent) => {
   switch (e.type) {
     case "complete-exchange":
-      return { ...state, isLoading: true, freezeReduxDevice: true };
+      return {
+        ...state,
+        completeExchangeStarted: true,
+        freezeReduxDevice: true,
+      };
 
     case "complete-exchange-error":
       return {
@@ -81,7 +87,7 @@ const reducer = (state: State, e: ExchangeRequestEvent) => {
       return {
         ...state,
         completeExchangeRequested: true,
-        isLoading: true,
+        isLoading: false,
       };
     case "complete-exchange-result":
       return {

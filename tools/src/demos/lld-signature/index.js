@@ -81,10 +81,10 @@ const LiveDownloadOptions = ({ release }) => {
   return (
     <ul>
       {release.assets
-        .filter(a =>
-          [".AppImage", "mac.dmg", "win.exe"].some(s => a.name.endsWith(s))
+        .filter((a) =>
+          [".AppImage", "mac.dmg", ".exe"].some((s) => a.name.endsWith(s))
         )
-        .map(a => (
+        .map((a) => (
           <li>
             <Download name={a.name} href={a.browser_download_url} />
           </li>
@@ -110,10 +110,10 @@ const LLDSignature = () => {
   useEffect(() => {
     let gone;
     fetch("https://api.github.com/repos/LedgerHQ/ledger-live-desktop/releases")
-      .then(r => r.json())
-      .then(releases => {
+      .then((r) => r.json())
+      .then((releases) => {
         if (gone) return;
-        setReleases(releases.filter(r => r.tag_name.startsWith("v")));
+        setReleases(releases.filter((r) => r.tag_name.startsWith("v")));
       });
     return () => {
       gone = true;
@@ -122,7 +122,7 @@ const LLDSignature = () => {
 
   useEffect(() => {
     if (!releases) return;
-    selectRelease(releases.find(r => !r.prerelease));
+    selectRelease(releases.find((r) => !r.prerelease));
   }, [releases]);
 
   useEffect(() => {
@@ -132,7 +132,7 @@ const LLDSignature = () => {
     setChecksums(null);
     setChecksumsSig(null);
 
-    const throwOnErrorPayload = r => {
+    const throwOnErrorPayload = (r) => {
       if (r.status >= 400) {
         throw new Error("The checksums didn't exist on that version.");
       }
@@ -142,17 +142,17 @@ const LLDSignature = () => {
     Promise.all([
       fetch(checksumsUrl)
         .then(throwOnErrorPayload)
-        .then(r => r.text()),
+        .then((r) => r.text()),
       fetch(checksumsUrl + ".sig")
         .then(throwOnErrorPayload)
-        .then(r => r.blob())
+        .then((r) => r.blob()),
     ])
       .then(([checksums, checksumsSig]) => {
         if (gone) return;
         setChecksums(checksums);
         setChecksumsSig(URL.createObjectURL(checksumsSig));
       })
-      .catch(e => {
+      .catch((e) => {
         if (gone) return;
         setChecksumsFetchError(e);
       });
@@ -177,8 +177,8 @@ const LLDSignature = () => {
           options={releases}
           onChange={selectRelease}
           placeholder="Ledger Live Release"
-          getOptionLabel={r => `${r.tag_name}`}
-          getOptionValue={r => r.tag_name}
+          getOptionLabel={(r) => `${r.tag_name}`}
+          getOptionValue={(r) => r.tag_name}
         />
         {release ? <LiveDownloadOptions release={release} /> : null}
       </Field>
@@ -186,7 +186,8 @@ const LLDSignature = () => {
       <h2>Verify my Ledger Live install binary</h2>
 
       <Block>
-        You can verify the authenticity of the Ledger Live binary installation file by comparing its <strong>sha512</strong> hash to the one available
+        You can verify the authenticity of the Ledger Live binary installation
+        file by comparing its <strong>sha512</strong> hash to the one available
         in this file:
       </Block>
 
@@ -211,7 +212,7 @@ const LLDSignature = () => {
             {checksums
               .split("\n")
               .filter(Boolean)
-              .map(line => {
+              .map((line) => {
                 const [hash, filename] = line.split(/\s+/);
                 const cmd = filename.endsWith(".AppImage")
                   ? `sha512sum ${filename}`
@@ -237,9 +238,10 @@ const LLDSignature = () => {
           <h2>Verify the sha512sum hashes</h2>
 
           <Block>
-            For extra security, you should also check that the sha512 hashes published in the file {" "}
-            <code>{checksumsFilename}</code>  are indeed signed by Ledger. A multi-signature setup is used internally
-            using Ledger Nano S devices to mitigate a malicious insider attack.
+            For extra security, you should also check that the sha512 hashes
+            published in the file <code>{checksumsFilename}</code> are indeed
+            signed by Ledger. A multi-signature setup is used internally using
+            Ledger Nano S devices to mitigate a malicious insider attack.
           </Block>
 
           <Field>
@@ -271,16 +273,17 @@ const LLDSignature = () => {
 
           <BlockCode>
             {`$ openssl dgst -sha256 -verify ledgerlive.pem -signature ${checksumsFilename}.sig ${checksumsFilename}
-  
+
 Verified OK`}
           </BlockCode>
 
           <h2>What about automatic updates</h2>
 
           <Block>
-            The update mechanism is secured once you've verified and installed Ledger Live. 
-            Ledger Live checks each upcoming update against Ledger's public key
-            to verify that the update is legitimately from Ledger.
+            The update mechanism is secured once you've verified and installed
+            Ledger Live. Ledger Live checks each upcoming update against
+            Ledger's public key to verify that the update is legitimately from
+            Ledger.
           </Block>
         </>
       ) : null}
@@ -291,7 +294,7 @@ Verified OK`}
 // $FlowFixMe
 LLDSignature.demo = {
   title: "Ledger Live Desktop signatures",
-  url: "/lld-signatures"
+  url: "/lld-signatures",
 };
 
 export default LLDSignature;

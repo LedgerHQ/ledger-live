@@ -40,6 +40,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
+  API_CELO_INDEXER: {
+    def: "https://celo.coin.ledger.com/indexer/",
+    parser: stringParser,
+    desc: "Explorer API for celo",
+  },
+  API_CELO_NODE: {
+    def: "https://celo.coin.ledger.com/archive/",
+    parser: stringParser,
+    desc: "Node endpoint for celo",
+  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com/",
     parser: stringParser,
@@ -119,6 +129,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
+  },
+  API_SOLANA_PROXY: {
+    parser: stringParser,
+    def: "https://solana.coin.ledger.com",
+    desc: "proxy url for solana API",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -371,10 +386,14 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
-  NFT: {
+  /**
+   * Note: the mocked cryptoassets config and test partner are signed with the
+   * Ledger test private key
+   */
+  MOCK_EXCHANGE_TEST_CONFIG: {
     def: false,
     parser: boolParser,
-    desc: "synchronizing nfts",
+    desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
   NFT_CURRENCIES: {
     def: "ethereum",
@@ -530,6 +549,11 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  MARKET_API_URL: {
+    def: "https://proxycg.api.live.ledger.com/api/v3",
+    parser: stringParser,
+    desc: "Market data api",
   },
 };
 
