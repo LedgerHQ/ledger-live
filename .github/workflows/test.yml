@@ -9,16 +9,19 @@ on:
     branches:
       - main
       - develop
-  workflow_dispatch:
-    inputs:
-      since_branch:
-        description: The branch that turborepo will check when diffing.
-        default: "develop"
-        required: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Dummy
-        run: echo "hello world"
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v2
+        # with:
+        #   cache: pnpm
+      - name: Install dependencies
+        run: pnpm i
+      - name: Build and Test affected packages
+        run: pnpm test -- --since=origin/${{ github.event.pull_request.base.ref }}
