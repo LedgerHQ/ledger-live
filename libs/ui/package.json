@@ -2,21 +2,19 @@
   "name": "ui",
   "private": true,
   "devDependencies": {
+    "@ledgerhq/native-ui": "workspace:^",
+    "@ledgerhq/react-ui": "workspace:^",
+    "@ledgerhq/ui-shared": "workspace:^",
+    "@ledgerhq/icons-ui": "workspace:^",
     "@playwright/test": "^1.16.3",
     "concurrently": "^6.4.0",
     "json": "^11.0.0",
     "lint-staged": "^11.2.6"
   },
   "scripts": {
-    "_react": "yarn workspace @ledgerhq/react-ui",
-    "_native": "yarn workspace @ledgerhq/native-ui",
-    "_shared": "yarn workspace @ledgerhq/ui-shared",
-    "_icons": "yarn workspace @ledgerhq/icons-ui",
-    "_test:react:setup": "yarn playwright install && yarn icons build && yarn shared build && yarn react prerelease",
-    "_test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
-    "_test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+    "prepare": "playwright install",
+    "test": "pnpm test:react",
+    "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
+    "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
+  }
 }
