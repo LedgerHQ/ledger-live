@@ -2,6 +2,7 @@ import invariant from "invariant";
 import { Observable, from, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import eip55 from "eip55";
+import { encode } from "rlp";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
@@ -61,8 +62,10 @@ export const signOperation = ({
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
-
-              const txHex = tx.serialize().toString("hex");
+              // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
+              const rawData = tx.raw();
+              rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+              const txHex = encode(rawData).toString("hex");
 
               log("ethereum", "raw tx unsigned = " + txHex);
 

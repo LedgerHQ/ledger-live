@@ -252,13 +252,6 @@ export function buildEthereumTx(
   );
   log("ethereum", "buildEthereumTx", ethTxObject);
   const tx = new EthereumTx(ethTxObject, { common });
-  // these will be filled by device signature
-  tx.raw[6] = Buffer.from([common.chainId()]); // v
-
-  tx.raw[7] = Buffer.from([]); // r
-
-  tx.raw[8] = Buffer.from([]); // s
-
   return {
     tx,
     common,
