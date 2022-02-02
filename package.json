@@ -9,7 +9,8 @@
   },
   "scripts": {
     "clean": "git clean -fdX",
-    "build": "turbo run build --ignore=\"apps/**/*\"",
+    "build": "turbo run build",
+    "test": "turbo run build test --include-dependencies",
     "lld:dev": "turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
     "desktop": "pnpm --filter live-desktop",

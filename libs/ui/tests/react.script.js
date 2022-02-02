@@ -5,17 +5,19 @@ const exampleName = process.argv[2] || "";
 const UPDATE_SNAPSHOTS = process.env["UPDATE_SNAPSHOTS"];
 
 const addPackageResolutions = `
-  yarn json -I -f ./examples/${exampleName}/package.json -e 'this.resolutions={
-    "@ledgerhq/react-ui": "../../packages/react/lib",
-    "@ledgerhq/react-ui/**/@ledgerhq/ui-shared": "../../packages/shared",
-    "@ledgerhq/react-ui/**/@ledgerhq/icons-ui": "../../packages/icons"
+  pnpm json -I -f ./examples/${exampleName}/package.json -e 'this.pnpm={
+    "overrides": {
+      "@ledgerhq/react-ui": "../../packages/react/lib",
+      "@ledgerhq/react-ui>@ledgerhq/ui-shared": "../../packages/shared",
+      "@ledgerhq/react-ui>@ledgerhq/icons-ui": "../../packages/icons"
+    }
   }'
 `;
 const rollbackPackageResolutions = `
-  yarn json -I -f ./examples/${exampleName}/package.json -e 'delete this.resolutions'
+  pnpm json -I -f ./examples/${exampleName}/package.json -e 'delete this.pnpm'
 `;
-const prepareExample = `yarn clean:full && yarn && yarn build`;
-const runTest = `yarn concurrently -s=first -k "yarn --cwd examples/${exampleName} serve" "playwright test ${
+const prepareExample = `npm run clean:full && npm i --no-package-lock && npm run build`;
+const runTest = `pnpm concurrently -s=first -k "pnpm --dir examples/${exampleName} serve" "playwright test ${
   UPDATE_SNAPSHOTS ? "--update-snapshots" : ""
 }"`;
 
