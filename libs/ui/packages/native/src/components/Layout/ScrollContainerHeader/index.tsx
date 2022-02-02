@@ -58,4 +58,6 @@ const ScrollContainerHeader = ({
   );
 };
 
+ScrollContainerHeader.Header = Header;
+
 export default ScrollContainerHeader;

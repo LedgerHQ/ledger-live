@@ -13,8 +13,10 @@ export type HeaderProps = {
   currentPositionY: Animated.SharedValue<number>;
 };
 
+const PADDING_HORIZONTAL = 16;
+
 const Container = styled(Flex).attrs({
-  paddingHorizontal: 16,
+  paddingHorizontal: PADDING_HORIZONTAL,
 })`
   background-color: ${(p) => p.theme.colors.background.main};
   width: 100%;
@@ -158,5 +160,7 @@ const Header = ({
     </Container>
   );
 };
+
+Header.PADDING_HORIZONTAL = PADDING_HORIZONTAL;
 
 export default Header;
