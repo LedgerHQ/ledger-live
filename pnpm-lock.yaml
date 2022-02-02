@@ -1155,7 +1155,7 @@ importers:
       '@helium/transactions': ^3.62.0
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
-      '@ledgerhq/hw-transport-node-speculos': ^6.11.2
+      '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
       axios: ^0.23.0
       bignumber.js: ^9.0.1
