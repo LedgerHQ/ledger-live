@@ -17,6 +17,7 @@ import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
   languageSelector,
+  lastSeenDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import type { State } from "../reducers";
@@ -33,7 +34,9 @@ const extraProperties = store => {
   const { localeIdentifier, preferredLanguages } = Locale.constants();
   const language = languageSelector(state);
   const devices = knownDevicesSelector(state);
-  const lastDevice = devices[devices.length - 1];
+
+  const lastDevice =
+    lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
