@@ -64,7 +64,7 @@ const deviceStorage = {
   async get(key) {
     if (!Array.isArray(key)) {
       const value = await AsyncStorage.getItem(key);
-      return await getCompressedValue(key, value);
+      return getCompressedValue(key, value);
     }
     const values = await AsyncStorage.multiGet(key);
     const data = values.map(value => getCompressedValue(value[0], value[1]));
