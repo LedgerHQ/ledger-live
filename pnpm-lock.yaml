@@ -1155,7 +1155,7 @@ importers:
       '@helium/transactions': ^3.62.0
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
-      '@ledgerhq/hw-transport-node-speculos': workspace:^
+      '@ledgerhq/hw-transport-node-speculos': ^6.11.2
       '@ledgerhq/logs': workspace:^
       axios: ^0.23.0
       bignumber.js: ^9.0.1
@@ -1492,11 +1492,19 @@ importers:
 
   libs/ui:
     specifiers:
+      '@ledgerhq/icons-ui': workspace:^
+      '@ledgerhq/native-ui': workspace:^
+      '@ledgerhq/react-ui': workspace:^
+      '@ledgerhq/ui-shared': workspace:^
       '@playwright/test': ^1.16.3
       concurrently: ^6.4.0
       json: ^11.0.0
       lint-staged: ^11.2.6
     devDependencies:
+      '@ledgerhq/icons-ui': link:packages/icons
+      '@ledgerhq/native-ui': link:packages/native
+      '@ledgerhq/react-ui': link:packages/react
+      '@ledgerhq/ui-shared': link:packages/shared
       '@playwright/test': 1.18.0
       concurrently: 6.5.1
       json: 11.0.0

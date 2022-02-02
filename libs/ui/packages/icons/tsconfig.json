@@ -13,6 +13,12 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "react", "native"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "react",
+    "native"
+  ]
 }
