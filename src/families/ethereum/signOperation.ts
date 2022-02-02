@@ -66,9 +66,6 @@ export const signOperation = ({
               const rawData = tx.raw();
               rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
               const txHex = encode(rawData).toString("hex");
-
-              log("ethereum", "raw tx unsigned = " + txHex);
-
               const loadConfig: LoadConfig = {};
               if (isNFTActive(account.currency)) {
                 loadConfig.nftExplorerBaseURL =
@@ -129,7 +126,6 @@ export const signOperation = ({
 
               // Generate the signature ready to be broadcasted
               const signature = `0x${signedTx.serialize().toString("hex")}`;
-              log("ethereum", "raw tx signed = " + txHex);
 
               // build optimistic operation
               const txHash = ""; // resolved at broadcast time
