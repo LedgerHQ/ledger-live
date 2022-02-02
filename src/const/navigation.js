@@ -127,8 +127,6 @@ export const ScreenName = {
   SignSummary: "SignSummary",
   SignValidationError: "SignValidationError",
   SignValidationSuccess: "SignValidationSuccess",
-  StellarEditMemoType: "StellarEditMemoType",
-  StellarEditMemoValue: "StellarEditMemoValue",
   Swap: "Swap",
   SwapError: "SwapError",
   SwapFormOrHistory: "SwapFormOrHistory",
@@ -239,6 +237,16 @@ export const ScreenName = {
     "PolkadotSimpleOperationValidationError",
   PolkadotSimpleOperationValidationSuccess:
     "PolkadotSimpleOperationValidationSuccess",
+
+  // Stellar
+  StellarEditMemoType: "StellarEditMemoType",
+  StellarEditMemoValue: "StellarEditMemoValue",
+  StellarAddAssetSelectAsset: "StellarAddAssetSelectAsset",
+  StellarAddAssetSelectDevice: "StellarAddAssetSelectDevice",
+  StellarAddAssetConnectDevice: "StellarAddAssetConnectDevice",
+  StellarAddAssetValidation: "StellarAddAssetValidation",
+  StellarAddAssetValidationError: "StellarAddAssetValidationError",
+  StellarAddAssetValidationSuccess: "StellarAddAssetValidationSuccess",
 
   LendingDashboard: "LendingDashboard",
   LendingClosedLoans: "LendingClosedLoans",
@@ -376,6 +384,9 @@ export const NavigatorName = {
   PolkadotRebondFlow: "PolkadotRebondFlow",
   PolkadotNominateFlow: "PolkadotNominateFlow",
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
+
+  // Stellar
+  StellarAddAssetFlow: "StellarAddAssetFlow",
 
   NotificationCenter: "NotificationCenter",
 

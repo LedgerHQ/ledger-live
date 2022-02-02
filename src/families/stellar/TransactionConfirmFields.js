@@ -4,6 +4,7 @@ import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
+import { Trans } from "react-i18next";
 
 type Props = {
   transaction: Transaction,
@@ -25,9 +26,27 @@ const StellarNetworkField = () => (
   </DataRow>
 );
 
+const StellarAssetCodeField = ({ transaction }: Props) => (
+  <DataRow label={<Trans i18nKey="stellar.assetCode" />}>
+    <LText semiBold style={styles.text}>
+      {transaction.assetCode}
+    </LText>
+  </DataRow>
+);
+
+const StellarAssetIssuerField = ({ transaction }: Props) => (
+  <DataRow label={<Trans i18nKey="stellar.assetIssuer" />}>
+    <LText semiBold style={styles.text}>
+      {transaction.assetIssuer}
+    </LText>
+  </DataRow>
+);
+
 const fieldComponents = {
   "stellar.memo": StellarMemoField,
   "stellar.network": StellarNetworkField,
+  "stellar.assetCode": StellarAssetCodeField,
+  "stellar.assetIssuer": StellarAssetIssuerField,
 };
 
 export default {

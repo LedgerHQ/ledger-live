@@ -1456,6 +1456,13 @@
         "howTo": "You can add assets to your Algorand account.",
         "addAsa": "Add ASA (Asset)",
         "howAsaWorks": "How ASA (asset) works?"
+      },
+      "stellar": {
+        "seeMore": "See more assets",
+        "seeLess": "See less assets",
+        "addTokens": "Add assets",
+        "howTo": "You can add assets to your Stellar account.",
+        "addAsset": "Add asset"
       }
     },
     "subaccounts": {
@@ -1596,6 +1603,12 @@
         "showTokens_plural": "Show {{length}} ASA",
         "hideTokens": "Hide ASA",
         "hideTokens_plural": "Hide ASA"
+      },
+      "stellar": {
+        "showTokens": "Show {{length}} asset",
+        "showTokens_plural": "Show {{length}} assets",
+        "hideTokens": "Hide asset",
+        "hideTokens_plural": "Hide assets"
       }
     }
   },
@@ -1899,7 +1912,6 @@
             "country": "Country",
             "postalCode": "Zip Code",
             "dateOfBirth": "Date of birth",
-
             "firstNamePlaceholder": "Enter your first name",
             "lastNamePlaceholder": "Enter your last name",
             "street1Placeholder": "Eg. 13, Maple street",
@@ -1908,7 +1920,6 @@
             "postalCodePlaceholder": "Enter your 5 digit Zip code",
             "statePlaceholder": "Select your state",
             "dateOfBirthPlaceholder": "YYYY-MM-DD",
-
             "firstNameError": "Enter your first name to continue",
             "lastNameError": "Enter your last name to continue",
             "street1Error": "Enter your address",
@@ -3177,15 +3188,15 @@
   },
   "cryptoOrg": {
     "account": {
-     "subHeader": {
-       "cardTitle": "Powered by Crypto.org",
-       "moreInfo": "More info",
-       "drawerTitle": "Crypto.org integration",
-       "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-       "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-       "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-       "website": "Cryptocurrency in every wallet"
-     }
+      "subHeader": {
+        "cardTitle": "Powered by Crypto.org",
+        "moreInfo": "More info",
+        "drawerTitle": "Crypto.org integration",
+        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
+        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
+        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Cryptocurrency in every wallet"
+      }
     }
   },
   "elrond": {
@@ -3317,6 +3328,7 @@
     }
   },
   "stellar": {
+    "token": "Assets",
     "memo": {
       "title": "Memo",
       "warning": "When using a Memo, carefully verify the type with the recipient."
@@ -3327,6 +3339,37 @@
       "MEMO_ID": "Memo ID",
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
+    },
+    "assetCode": "Asset code",
+    "assetIssuer": "Asset issuer",
+    "addAsset": {
+      "stepperHeader": {
+        "selectAsset": "Add asset",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "selectToken": {
+            "warning": {
+              "title": "Asset already added",
+              "description": "You already have {{token}} asset in your Stellar account."
+            }
+          },
+          "verification": {
+            "success": {
+              "title": "{{token}} asset successfully added!",
+              "text": "You can now receive and send {{token}} assets on your Stellar account.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
     }
   },
   "polkadot": {
@@ -3846,7 +3889,6 @@
       }
     }
   },
-
   "nft": {
     "account": {
       "seeAllNfts": "See all NFT",
