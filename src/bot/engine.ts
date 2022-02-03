@@ -81,6 +81,9 @@ export async function runWithAppSpec<T extends Transaction>(
   const mutationReports: MutationReport<T>[] = [];
   const { appQuery, currency, dependency } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
+  if (!appCandidate) {
+    console.warn("no app found for " + spec.name, { appQuery, appCandidates });
+  }
   invariant(
     appCandidate,
     "%s: no app found. Are you sure your COINAPPS is up to date?",
