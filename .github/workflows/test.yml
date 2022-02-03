@@ -1,4 +1,4 @@
-name: Test
+name: Test Libs
 
 on:
   push:
@@ -28,6 +28,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v2
         with:
+          node-version: 14.x
           cache: pnpm
       - uses: ruby/setup-ruby@v1
         with:
@@ -35,5 +36,5 @@ jobs:
           bundler-cache: true
       - name: Install dependencies
         run: pnpm i
-      - name: Build and Test affected packages
-        run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
+      - name: Build and Test affected libraries
+        run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }} --ignore='apps/*'
