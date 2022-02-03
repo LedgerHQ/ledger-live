@@ -24,7 +24,6 @@ export interface Output {
   address: string;
   output_hash: string;
   output_index: number;
-  script_hex: string;
   block_height: number | null;
   // TODO Write tests for RBF unconfirmed outputs
   rbf: boolean;

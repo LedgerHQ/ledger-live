@@ -100,7 +100,7 @@ const mapTxToOperations = (
   const blockHeight = tx.block?.height;
   const blockHash = tx.block?.hash;
   const date = new Date(tx.block?.time || tx.received_at);
-  const senders: string[] = [];
+  const senders = new Set<string>();
   const recipients: string[] = [];
   let type: OperationType = "OUT";
   let value = new BigNumber(0);
@@ -111,7 +111,7 @@ const mapTxToOperations = (
 
   for (const input of tx.inputs) {
     if (input.address) {
-      senders.push(
+      senders.add(
         syncReplaceAddress ? syncReplaceAddress(input.address) : input.address
       );
 
@@ -195,7 +195,7 @@ const mapTxToOperations = (
       type,
       value,
       fee,
-      senders,
+      senders: Array.from(senders),
       recipients,
       blockHeight,
       blockHash,
@@ -229,7 +229,7 @@ const mapTxToOperations = (
         type,
         value,
         fee,
-        senders,
+        senders: Array.from(senders),
         recipients,
         blockHeight,
         blockHash,

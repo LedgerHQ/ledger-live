@@ -239,6 +239,12 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     // @ts-ignore
     // eslint-disable-next-line no-param-reassign
     delete tx.confirmations;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete tx.id;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete tx.lock_time;
 
     // eslint-disable-next-line no-param-reassign
     tx.account = address.account;
@@ -246,7 +252,21 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     tx.index = address.index;
     // eslint-disable-next-line no-param-reassign
     tx.address = address.address;
+    tx.inputs.forEach((input) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.txinwitness;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.script_signature;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.input_index;
+    });
     tx.outputs.forEach((output) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete output.script_hex;
       // eslint-disable-next-line no-param-reassign
       output.output_hash = tx.hash;
       // eslint-disable-next-line no-param-reassign
