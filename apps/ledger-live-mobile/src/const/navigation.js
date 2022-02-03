@@ -22,6 +22,7 @@ export const ScreenName = {
   ClaimRewardsSelectDevice: "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError: "ClaimRewardsValidationError",
   ClaimRewardsValidationSuccess: "ClaimRewardsValidationSuccess",
+  Coinify: "Coinify",
   ConfirmPassword: "ConfirmPassword",
   CountervalueSettings: "CountervalueSettings",
   CryptoAssetsSettings: "CryptoAssetsSettings",

@@ -1,24 +1,50 @@
 // @flow
 
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useCallback, useState } from "react";
+import { View, StyleSheet, Platform } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { NavigatorName } from "../../const";
+import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import LText from "../../components/LText";
-import ExchangeIcon from "../../icons/Exchange";
 import Button from "../../components/Button";
-import PoweredByCoinify from "./PoweredByCoinify";
+import { ScreenName } from "../../const";
+import LText from "../../components/LText";
+import BuyOption from "./BuyOption";
+import MoonPay from "../../icons/providers/MoonPay";
+import Coinify from "../../icons/providers/Coinify";
 
 const forceInset = { bottom: "always" };
+
+type Provider = "moonpay" | "coinify" | null;
 
 export default function Buy() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { colors } = useTheme();
+
+  const [provider, setProvider] = useState<Provider>(null);
+  const { manifests } = usePlatformApp();
+
+  const navigateToMoonPay = useCallback(() => {
+    const manifest = manifests.get("moonpay");
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: manifest.id,
+      name: manifest.name,
+    });
+  }, [navigation, manifests]);
+
+  const navigateToCoinify = useCallback(() => {
+    navigation.navigate(ScreenName.Coinify);
+  }, [navigation]);
+
+  const onContinue = useCallback(() => {
+    provider === "moonpay" ? navigateToMoonPay() : navigateToCoinify();
+  }, [provider, navigateToMoonPay, navigateToCoinify]);
+
+  const moonPayIcon = <MoonPay size={40} />;
+  const coinifyIcon = <Coinify size={40} />;
 
   return (
     <SafeAreaView
@@ -33,32 +59,54 @@ export default function Buy() {
     >
       <TrackScreen category="Buy Crypto" />
       <View style={styles.body}>
-        <View
-          style={[styles.iconContainer, { backgroundColor: colors.lightLive }]}
-        >
-          <ExchangeIcon size={22} color={colors.live} />
-        </View>
-        <LText style={styles.title} semiBold>
-          {t("exchange.buy.title")}
-        </LText>
-        <LText style={styles.description} color="smoke">
-          {t("exchange.buy.description")}
-        </LText>
-        <View style={styles.buttonContainer}>
-          <Button
-            containerStyle={styles.button}
-            event="ExchangeStartBuyFlow"
-            type="primary"
-            title={t("exchange.buy.CTAButton")}
-            onPress={() =>
-              navigation.navigate(NavigatorName.ExchangeBuyFlow, {
-                mode: "buy",
-              })
-            }
+        <LText semiBold>{t("exchange.buy.title")}</LText>
+        <View style={styles.providers}>
+          <BuyOption
+            name={"MoonPay"}
+            icon={moonPayIcon}
+            supportedCoinsCount={40}
+            onPress={() => setProvider("moonpay")}
+            isActive={provider === "moonpay"}
+          />
+          <BuyOption
+            name={"Coinify"}
+            icon={coinifyIcon}
+            supportedCoinsCount={10}
+            onPress={() => setProvider("coinify")}
+            isActive={provider === "coinify"}
           />
         </View>
       </View>
-      <PoweredByCoinify />
+      <View
+        style={[
+          styles.footer,
+          {
+            ...Platform.select({
+              android: {
+                borderTopColor: "rgba(20, 37, 51, 0.1)",
+                borderTopWidth: 1,
+              },
+              ios: {
+                shadowColor: "rgb(20, 37, 51)",
+                shadowRadius: 14,
+                shadowOpacity: 0.04,
+                shadowOffset: {
+                  width: 0,
+                  height: -4,
+                },
+              },
+            }),
+          },
+        ]}
+      >
+        <Button
+          containerStyle={styles.button}
+          type={"primary"}
+          title={t("common.continue")}
+          onPress={() => onContinue()}
+          disabled={!provider}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -74,31 +122,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     margin: 16,
   },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 50,
-    marginBottom: 24,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+  providers: {
+    flex: 1,
+    marginTop: 8,
   },
-  title: {
-    textAlign: "center",
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  description: {
-    textAlign: "center",
-    fontSize: 14,
-  },
-  buttonContainer: {
-    paddingTop: 24,
-    paddingLeft: 16,
-    paddingRight: 16,
-    flexDirection: "row",
+  footer: {
+    marginTop: 40,
+    padding: 16,
   },
   button: {
-    flex: 1,
+    alignSelf: "stretch",
+    minWidth: "100%",
   },
 });

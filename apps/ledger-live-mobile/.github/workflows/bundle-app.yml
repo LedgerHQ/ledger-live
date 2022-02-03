@@ -45,7 +45,7 @@ jobs:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, bundle-apk-hosted]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
+    if: ${{ always() && !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
