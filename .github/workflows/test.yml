@@ -27,6 +27,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           cache: pnpm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
       - name: Install dependencies
         run: pnpm i
       - name: Build and Test affected packages
