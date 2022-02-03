@@ -167,12 +167,8 @@ jobs:
           ANDROID_KEYSTORE_PASS: staging
           ANDROID_KEY_ALIAS: staging
           ANDROID_KEY_PASS: staging
-<<<<<<< HEAD:apps/ledger-live-mobile/.github/workflows/bundle-app.yml
           NODE_OPTIONS: "--max-old-space-size=7168"
         run: ANDROID_KEYSTORE_FILE="$(pwd)/android/app/staging.kstr" pnpm run android:local:apk --enable-pre-post-scripts
-=======
-        run: ANDROID_KEYSTORE_FILE="$(pwd)/android/app/staging.kstr" pnpm run android:local:apk
->>>>>>> 8121db681 (squashme):.github/workflows/bundle-app.yml
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: post-version
       - name: upload Android app
