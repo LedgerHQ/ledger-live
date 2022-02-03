@@ -48,7 +48,6 @@
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
     "@ledgerhq/ledger-core": "6.14.5",
-    "@open-wc/webpack-import-meta-loader": "^0.4.7",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
