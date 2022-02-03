@@ -24,6 +24,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
+          fetch-depth: 0
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
@@ -67,8 +68,6 @@ jobs:
       #   env:
       #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       #   run: yarn version --new-version="$VERSION"
-      - name: list remotes
-        run: git remote -v
       - name: build the app
         run: |
           pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
