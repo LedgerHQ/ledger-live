@@ -24,6 +24,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
