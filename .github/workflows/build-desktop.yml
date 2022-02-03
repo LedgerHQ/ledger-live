@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.versions.outputs.name }}-${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
 
   build-windows:
     name: "Windows"
