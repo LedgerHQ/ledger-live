@@ -54,7 +54,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
   },
   [DeviceModelId.nanoSP]: {
     id: DeviceModelId.nanoSP,
-    productName: "Ledger Nano SP",
+    productName: "Ledger Nano S Plus",
     productIdMM: 0x50,
     legacyUsbProductId: 0x0005,
     usbOnly: true,
