@@ -2,11 +2,12 @@
  * @overview A minimalistic wrapper around React Native's AsyncStorage.
  * @license MIT
  */
+// It's based on https://github.com/jasonmerino/react-native-simple-store
+// with the new React-native-async-store package
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { stringify, parse } from "zipson";
 import { merge } from "lodash";
 
-const COMPRESSED_KEY = "_-_COMPRESSED";
+const CHUNKED_KEY = "_-_CHUNKED";
 const CHUNK_SIZE = 1000000;
 
 const getChunks = (str, size) => {
@@ -30,27 +31,27 @@ const stringifyPairs = pairs =>
     const data = JSON.stringify(current[1]);
 
     if (data.length > CHUNK_SIZE) {
-      const chunks = getChunks(stringify(current[1]), CHUNK_SIZE);
+      const chunks = getChunks(JSON.stringify(current[1]), CHUNK_SIZE);
       const numberOfChunks = chunks.length;
       return [
         ...acc,
-        [current[0], COMPRESSED_KEY + numberOfChunks],
-        ...chunks.map((chunk, index) => [key + COMPRESSED_KEY + index, chunk]),
+        [current[0], CHUNKED_KEY + numberOfChunks],
+        ...chunks.map((chunk, index) => [key + CHUNKED_KEY + index, chunk]),
       ];
     }
     return [...acc, [key, data]];
   }, []);
 
 const getCompressedValue = async (key, value) => {
-  if (value && value.includes(COMPRESSED_KEY)) {
-    const numberOfChunk = Number(value.replace(COMPRESSED_KEY, ""));
+  if (value && value.includes(CHUNKED_KEY)) {
+    const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
     const keys = [];
     for (let i = 0; i < numberOfChunk; i++) {
-      keys.push(key + COMPRESSED_KEY + i);
+      keys.push(key + CHUNKED_KEY + i);
     }
     const values = await AsyncStorage.multiGet(keys);
     const concatString = values.reduce((acc, current) => acc + current[1], "");
-    return parse(concatString);
+    return JSON.parse(concatString);
   }
   return JSON.parse(value);
 };
@@ -123,7 +124,7 @@ const deviceStorage = {
    */
   keys() {
     return AsyncStorage.getAllKeys().then(keys =>
-      keys.filter(key => !key.includes(COMPRESSED_KEY)),
+      keys.filter(key => !key.includes(CHUNKED_KEY)),
     );
   },
 

@@ -182,8 +182,7 @@
     "tty-browserify": "0.0.1",
     "url": "^0.11.0",
     "uuid": "^8.3.2",
-    "vm-browserify": "1.1.2",
-    "zipson": "^0.2.12"
+    "vm-browserify": "1.1.2"
   },
   "devDependencies": {
     "@actions/core": "^1.5.0",
