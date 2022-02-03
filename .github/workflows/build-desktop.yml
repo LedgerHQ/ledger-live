@@ -84,8 +84,13 @@ jobs:
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}
+      - name: check build
+        run: |
+          cd apps/ledger-live-desktop
+          cd dist
+          ls -l
       - name: upload linux app
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-linux-x86_64.AppImage
