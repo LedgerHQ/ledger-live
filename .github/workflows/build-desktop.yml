@@ -1,0 +1,23 @@
+name: Build Dekstop App
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    path:
+      - apps/ledger-live-desktop/**
+  pull_request:
+    branches:
+      - main
+      - develop
+    path:
+      - apps/ledger-live-desktop/**
+
+jobs:
+  build-ubuntu:
+    name: "Ubuntu"
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Echo
+        run: echo "coucou"
