@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
 
   build-windows:
     name: "Windows"
@@ -160,7 +160,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-win-x64.exe
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
 
   bundle-macos:
     name: "macOS"
@@ -234,4 +234,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-mac.dmg
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
