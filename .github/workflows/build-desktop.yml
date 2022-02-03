@@ -5,14 +5,14 @@ on:
     branches:
       - main
       - develop
-    path:
-      - apps/ledger-live-desktop/**
+    # paths:
+    #   - apps/ledger-live-desktop/**
   pull_request:
     branches:
       - main
       - develop
-    path:
-      - apps/ledger-live-desktop/**
+    # paths:
+    #   - apps/ledger-live-desktop/**
 
 jobs:
   build-ubuntu:
@@ -67,6 +67,8 @@ jobs:
       #   env:
       #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       #   run: yarn version --new-version="$VERSION"
+      - name: list remotes
+        run: git remote -v
       - name: build the app
         run: |
           pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
