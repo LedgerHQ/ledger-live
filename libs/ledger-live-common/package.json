@@ -147,6 +147,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@ledgerhq/ledger-core": "6.14.5",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",
