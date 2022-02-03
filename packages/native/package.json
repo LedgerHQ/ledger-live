@@ -1,6 +1,7 @@
 {
   "name": "@ledgerhq/native-ui",
   "version": "0.6.6",
+  "private": true,
   "description": "Ledger Live - Desktop UI",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",

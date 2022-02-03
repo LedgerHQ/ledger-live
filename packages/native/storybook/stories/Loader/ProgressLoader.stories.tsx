@@ -2,7 +2,7 @@ import React from "react";
 import { storiesOf } from "../storiesOf";
 import { number, color, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import { Icons, ProgressLoader } from "src";
+import { Icons, ProgressLoader } from "../../../src";
 
 const LoaderSample = () => (
   <ProgressLoader
