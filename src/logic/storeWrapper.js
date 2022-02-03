@@ -31,7 +31,7 @@ const stringifyPairs = pairs =>
     const data = JSON.stringify(current[1]);
 
     if (data.length > CHUNK_SIZE) {
-      const chunks = getChunks(JSON.stringify(current[1]), CHUNK_SIZE);
+      const chunks = getChunks(data, CHUNK_SIZE);
       const numberOfChunks = chunks.length;
       return [
         ...acc,
