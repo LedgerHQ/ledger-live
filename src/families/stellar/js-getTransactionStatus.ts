@@ -89,6 +89,7 @@ const getTransactionStatus = async (
   if (t.operationType === "changeTrust") {
     // Check asset provided
     if (!t.assetCode || !t.assetIssuer) {
+      // This is unlikely
       errors.asset = new StellarAssetRequired("");
     }
 
@@ -157,6 +158,11 @@ const getTransactionStatus = async (
       // Native payment
       maxAmount = nativeAmountAvailable;
       amount = useAllAmount ? maxAmount : t.amount || 0;
+
+      if (amount.gt(maxAmount)) {
+        errors.amount = new NotEnoughBalance();
+      }
+
       // TODO: ??? do we need to include fee in total?
       totalSpent = useAllAmount
         ? nativeAmountAvailable
