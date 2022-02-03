@@ -9,7 +9,6 @@ import {
   Switch,
   Keyboard,
   Linking,
-  Text,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";

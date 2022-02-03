@@ -19,6 +19,29 @@ import InfoIcon from "../../icons/Info";
 
 import AmountInput from "../../screens/SendFunds/AmountInput";
 
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import type {
+  AccountLike,
+  Account,
+  TransactionStatus,
+  Unit,
+} from "@ledgerhq/live-common/lib/types";
+
+type Props = {
+  navigation: any,
+  account: AccountLike,
+  parentAccount: Account,
+  transaction: Transaction,
+  status: TransactionStatus,
+  setTransaction: (arg0: Transaction) => void,
+  openInfoModal: (infoName: "maxSpendable") => void,
+  bridgePending: boolean,
+  toggleUseAllAmount: () => void,
+  useAllAmount: boolean,
+  unit: Unit,
+  maxSpendable: any,
+};
+
 export default function StellarSendAmountCoin({
   navigation,
   account,
@@ -32,7 +55,7 @@ export default function StellarSendAmountCoin({
   useAllAmount,
   unit,
   maxSpendable,
-}: any) {
+}: Props) {
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
 
