@@ -122,7 +122,6 @@ async function unsafeGetAccounts(): Promise<{ active: AccountRaw[] }> {
   await migrateAccountsIfNecessary();
 
   const keys = await store.keys();
-  // await store.delete(keys);
   const accountKeys = onlyAccountsKeys(keys);
 
   // if some account keys, we retrieve them and return

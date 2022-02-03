@@ -49,7 +49,13 @@ const getCompressedValue = async (key, value) => {
     for (let i = 0; i < numberOfChunk; i++) {
       keys.push(key + CHUNKED_KEY + i);
     }
-    const values = await AsyncStorage.multiGet(keys);
+    let values = [];
+
+    // multiget will failed when you got keys with a tons of data
+    // it crash with 13 CHUNKS of 1MB string so we had splice it.
+    while (keys.length) {
+      values = [...values, ...await AsyncStorage.multiGet(keys.splice(0, 5))];
+    }
     const concatString = values.reduce((acc, current) => acc + current[1], "");
     return JSON.parse(concatString);
   }
@@ -111,11 +117,17 @@ const deviceStorage = {
    * @param  {String|Array} key The key or an array of keys to be deleted
    * @return {Promise}
    */
-  delete(key) {
-    if (Array.isArray(key)) {
-      return AsyncStorage.multiRemove(key);
+  async delete(key) {
+    let keys;
+    const existingKeys = await AsyncStorage.getAllKeys();
+    if (!Array.isArray(key)) {
+      keys = existingKeys.filter(existingKey => existingKey.include(key));
+    } else {
+      keys = existingKeys.filter(existingKey =>
+        key.some(keyToDelete => existingKey.includes(keyToDelete)),
+      );
     }
-    return AsyncStorage.removeItem(key);
+    return AsyncStorage.multiRemove(keys);
   },
 
   /**
