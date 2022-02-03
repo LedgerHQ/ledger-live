@@ -1,11 +1,11 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import {
-  getAccountUnit,
+  getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import { useTheme } from "@react-navigation/native";
@@ -19,9 +19,14 @@ import { urls } from "../../config/urls";
 type Props = {
   account: AccountLike,
   transaction: Transaction,
+  parentAccount: Account,
 };
 
-export default function StellarFeeRow({ account, transaction }: Props) {
+export default function StellarFeeRow({
+  account,
+  parentAccount,
+  transaction,
+}: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
@@ -29,7 +34,7 @@ export default function StellarFeeRow({ account, transaction }: Props) {
 
   if (transaction.family !== "stellar") return null;
   const fees = transaction.fees;
-  const unit = getAccountUnit(account);
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
 
   return (
@@ -46,7 +51,7 @@ export default function StellarFeeRow({ account, transaction }: Props) {
         <View style={styles.accountContainer}>
           {fees ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue unit={unit} value={fees} />
+              <CurrencyUnitValue unit={mainAccount.unit} value={fees} />
             </LText>
           ) : null}
         </View>

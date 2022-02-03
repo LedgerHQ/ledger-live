@@ -3340,6 +3340,16 @@
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
     },
+    "fee": "Network fee",
+    "feeAction": "Update fee",
+    "recommendedFee": "Recommended fee",
+    "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+    "networkCongestion": "network congestion",
+    "networkCongestionLevel": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    },
     "assetCode": "Asset code",
     "assetIssuer": "Asset issuer",
     "addAsset": {
