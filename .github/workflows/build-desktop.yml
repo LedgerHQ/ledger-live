@@ -56,9 +56,7 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
       - name: install dependencies
-        run: |
-          pwd
-          pnpm i
+        run: pnpm i --frozen-lockfile
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: version
         with:
@@ -93,4 +91,147 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.versions.outputs.name }}-${{ steps.version.outputs.clean }}-linux-x86_64.AppImage
+
+  build-windows:
+    name: "Windows"
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # repository: ${{github.event.pull_request.head.repo.full_name}}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@main
+        with:
+          node-version: 14.x
+          cache: pnpm
+      - name: bump npm
+        run: npm i -g npm
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "2.7.x"
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install dependencies
+        run: pnpm i --frozen-lockfile --unsafe-perm
+      - uses: ledgerhq/actions/packages/get-package-infos@main
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: set beta name
+        uses: ledgerhq/actions/packages/change-product-name@main
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      # - name: make local version pr
+      #   id: postversion1
+      #   if: github.event_name == 'pull_request'
+      #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}"
+      # - name: make local version push
+      #   id: postversion2
+      #   if: github.event_name == 'push'
+      #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
+      - name: build the app
+        run: |
+          npm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
+      - name: check build
+        run: |
+          cd apps/ledger-live-desktop
+          cd dist
+          ls -l
+      - name: upload windows
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.version.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
+
+  bundle-macos:
+    name: "macOS"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # repository: ${{github.event.pull_request.head.repo.full_name}}
+          persist-credentials: false
+          fetch-depth: 0
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.6
+      #     bundler-cache: true
+      - name: Cache pnpm modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@main
+        with:
+          node-version: 14.x
+          cache: pnpm
+      - name: bump npm
+        run: npm i -g npm
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install dependencies
+        run: pnpm i --frozen-lockfile
+      - uses: ledgerhq/actions/packages/get-package-infos@main
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: set beta name
+        uses: ledgerhq/actions/packages/change-product-name@main
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      # - name: make local version pr
+      #   if: github.event_name == 'pull_request'
+      #   env:
+      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
+      #   run: pnpm version --new-version="$VERSION"
+      # - name: make local version push
+      #   if: github.event_name == 'push'
+      #   env:
+      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
+      #   run: yarn version --new-version="$VERSION"
+      - name: build the app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: |
+          pnpm run turbo build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
+      # - uses: ledgerhq/actions/packages/get-package-infos@main
+      #   id: post-version
+      #   with:
+      #     path: ${{ github.workspace }}
+      - name: check build
+        run: |
+          cd apps/ledger-live-desktop
+          cd dist
+          ls -l
+      - name: upload macOS app
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.version.outputs.version }}-mac.dmg
+          path: ${{ github.workspace }}/app/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
