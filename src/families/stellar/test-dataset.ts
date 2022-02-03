@@ -109,6 +109,7 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
@@ -168,6 +169,7 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",

@@ -19,6 +19,7 @@ export type NetworkInfo = {
 export type NetworkInfoRaw = {
   family: "stellar";
   fees: string;
+  baseFee: string;
   baseReserve: string;
   networkCongestionLevel?: NetworkCongestionLevel;
 };
