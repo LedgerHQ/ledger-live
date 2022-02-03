@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "git clean -fdX",
     "build": "./node_modules/turbo/bin/turbo run build --ignore='apps/*' --no-deps",
+    "build:libs": "pnpm -r build --filter='./libs'",
     "test": "./node_modules/turbo/bin/turbo run build test --include-dependencies --no-deps",
     "lld:dev": "./node_modules/turbo/bin/turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "./node_modules/turbo/bin/turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
