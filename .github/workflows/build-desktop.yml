@@ -122,7 +122,7 @@ jobs:
           node-version: 14.x
           cache: pnpm
       - name: bump npm
-        run: npm i -g npm
+        run: npm install --global npm@8.3.1
       - uses: actions/setup-python@v1
         with:
           python-version: "2.7.x"
