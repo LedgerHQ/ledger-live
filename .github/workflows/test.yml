@@ -9,6 +9,12 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+    inputs:
+      since_branch:
+        description: The branch that turborepo will check when diffing.
+        default: "develop"
+        required: true
 
 jobs:
   test:
@@ -19,9 +25,9 @@ jobs:
         with:
           version: latest
       - uses: actions/setup-node@v2
-        # with:
-        #   cache: pnpm
+        with:
+          cache: pnpm
       - name: Install dependencies
         run: pnpm i
       - name: Build and Test affected packages
-        run: pnpm test -- --since=origin/${{ github.event.pull_request.base.ref }}
+        run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
