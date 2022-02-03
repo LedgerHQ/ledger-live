@@ -546,14 +546,8 @@
     "NotSupportedLegacyAddress": {
       "title": "The legacy address format is no longer supported"
     },
-    "StellarWrongMemoFormat": {
-      "title": "Memo format is wrong"
-    },
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
-    },
-    "StellarMemoRecommended": {
-      "title": "A memo may be needed when sending to this recipient"
     },
     "StratisDown2021Warning": {
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
@@ -619,6 +613,38 @@
     },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
+    },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "StellarMemoRecommended": {
+      "title": "A memo may be needed when sending to this recipient"
+    },
+    "StellarInvalidAddress": {
+      "title": "This is not a valid Stellar address"
+    },
+    "StellarAssetNotAccepted": {
+      "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
+    },
+    "StellarAssetRequired": {
+      "title": "A Stellar asset should be selected before adding a trustline"
+    },
+    "StellarAssetNotFound": {
+      "title": "Selected Stellar asset could not be found"
+    },
+    "StellarNotEnoughNativeBalance": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the transaction fee"
+    },
+    "StellarFeeSmallerThanRecommended": {
+      "title": "The selected fee is lower than the recommended fee"
+    },
+    "StellarFeeSmallerThanBase": {
+      "title": "The minimum transaction fee is 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline": {
+      "title": "Sorry, insufficient funds",
+      "description": "Please make sure the account has enough funds to cover the new trustline"
     }
   },
   "bluetooth": {
