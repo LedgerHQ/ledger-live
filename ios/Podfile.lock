@@ -15,6 +15,8 @@ PODS:
     - ExpoModulesCore
   - EXConstants (12.1.3):
     - ExpoModulesCore
+  - EXErrorRecovery (3.0.4):
+    - ExpoModulesCore
   - EXFileSystem (13.0.3):
     - ExpoModulesCore
   - EXFont (10.0.4):
@@ -438,6 +440,7 @@ DEPENDENCIES:
   - EXBarCodeScanner (from `../node_modules/expo-barcode-scanner/ios`)
   - EXCamera (from `../node_modules/expo-camera/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXErrorRecovery (from `../node_modules/expo-error-recovery/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
@@ -535,6 +538,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-camera/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXErrorRecovery:
+    :path: "../node_modules/expo-error-recovery/ios"
   EXFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   EXFont:
@@ -680,6 +685,7 @@ SPEC CHECKSUMS:
   EXBarCodeScanner: cc450529b9c5e02dd9e2498cc0dddf153f120dfe
   EXCamera: 03d69135ceb6f5f18f37b63eddb63d7643b65c42
   EXConstants: 6d585d93723b18d7a8c283591a335609e3bc153e
+  EXErrorRecovery: deea88a01d38f8b1c1181b4e1d179b0ba0e4bb5b
   EXFileSystem: 99aac7962c11c680681819dd9cbca24e20e5b1e7
   EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
   EXImageLoader: 939451be6f7b731aaa6588920b90743f20121a4d
