@@ -58,23 +58,28 @@ allprojects {
 }
 
 subprojects {
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'com.android.support' && !details.requested.name.contains('multidex')) {
-                details.useVersion "27.1.1"
-            }
-        }
-    }
-    afterEvaluate {project ->
-        if (project.hasProperty("android")) {
-            android {
-                compileSdkVersion 29
-                buildToolsVersion '30.0.2'
+    task listAllDependencies(type: DependencyReportTask) {}
 
-                compileOptions {
-                    sourceCompatibility 1.8
-                    targetCompatibility 1.8
-                    kotlinVersion = "1.4.10"
+    // Force all subprojects to use one and only one set of versions
+    ext {
+        compileSdk = rootProject.ext.compileSdkVersion
+        buildTools = rootProject.ext.buildToolsVersion
+        minSdk = rootProject.ext.minSdkVersion
+        targetSdk = rootProject.ext.targetSdkVersion
+    }
+
+    afterEvaluate {project ->
+        if(
+            project.hasProperty("android")
+            || project.plugins.hasPlugin('android')
+            || project.plugins.hasPlugin('android-library')
+        ) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                defaultConfig {
+                    minSdkVersion rootProject.ext.minSdkVersion
+                    targetSdkVersion rootProject.ext.targetSdkVersion
                 }
             }
         }
