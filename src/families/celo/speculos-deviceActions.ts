@@ -34,7 +34,6 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Max Fees",
       button: "Rr",
-      expectedValue: () => "CELO",
     },
     {
       title: "No Gateway Fee",
