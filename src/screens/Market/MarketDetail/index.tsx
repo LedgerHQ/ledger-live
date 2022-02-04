@@ -130,16 +130,26 @@ export default function MarketDetail({
     { date: Date; value: number } | undefined
   >();
 
-  const navigateToBuy = useCallback(
-    () =>
+  const navigateToBuy = useCallback(() => {
+    if (allAccounts && allAccounts.length === 1) {
       navigation.navigate(NavigatorName.ExchangeBuyFlow, {
         screen: ScreenName.ExchangeConnectDevice,
         params: {
           mode: "buy",
+          currency: internalCurrency,
+          account: allAccounts[0],
         },
-      }),
-    [navigation],
-  );
+      });
+    } else {
+      navigation.navigate(NavigatorName.ExchangeBuyFlow, {
+        screen: ScreenName.ExchangeSelectAccount,
+        params: {
+          mode: "buy",
+          currency: internalCurrency,
+        },
+      });
+    }
+  }, [navigation, internalCurrency, allAccounts]);
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (
