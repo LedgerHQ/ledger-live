@@ -13,7 +13,7 @@ import Touchable from "../../components/Touchable";
 import BellIcon from "../../icons/Bell";
 import SettingsIcon from "../../icons/Settings";
 import DeviceIcon from "../../icons/NanoS";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
 
