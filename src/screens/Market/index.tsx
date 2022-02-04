@@ -25,6 +25,7 @@ import { useLocale } from "../../context/Locale";
 import SortBadge, { Badge } from "./SortBadge";
 import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
+import { useProviders } from "../Swap/SwapEntry";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -192,6 +193,8 @@ export default function Market({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
+
+  useProviders();
 
   const {
     requestParams,
