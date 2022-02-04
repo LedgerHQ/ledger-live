@@ -71,5 +71,5 @@ jobs:
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
-          name: bot-tests.txt
-          path: bot-tests.txt
+          name: bot-transfer.txt
+          path: bot-transfer.txt
