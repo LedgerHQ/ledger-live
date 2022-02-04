@@ -69,65 +69,65 @@ export const textVariantStyle: Record<
   }
 > = {
   h1: {
-    fontFamily: "Alpha",
+    fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
   h2: {
-    fontFamily: "Alpha",
+    fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
   h3: {
-    fontFamily: "Alpha",
+    fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
   h4: {
-    fontFamily: "Alpha",
+    fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
   h5: {
-    fontFamily: "Alpha",
+    fontFamily: "Alpha, Inter, Sans",
     fontWeight: 500,
     "text-transform": "uppercase",
   },
   large: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   largeLineHeight: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
     lineHeight: 1.7,
   },
   body: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   bodyLineHeight: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
     lineHeight: 1.7,
   },
   paragraph: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   paragraphLineHeight: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
     lineHeight: 1.7,
   },
   small: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   extraSmall: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   tiny: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   micro: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
   },
   subtitle: {
-    fontFamily: "Inter",
+    fontFamily: "Inter, Sans",
     fontWeight: 600,
     "text-transform": "uppercase",
   },
