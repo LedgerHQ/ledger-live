@@ -12,7 +12,7 @@ const solana: AppSpec<Transaction> = {
   name: "Solana",
   appQuery: {
     model: DeviceModelId.nanoS,
-    firmware: "<2",
+    firmware: "2",
     appName: "solana",
   },
   currency: getCryptoCurrencyById("solana"),

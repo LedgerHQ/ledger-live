@@ -4,6 +4,7 @@ import { loadAccountDelegation, listBakers } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
 export default () => {
   describe("tezos bakers", () => {
+    // FIXME Flaky test that will fail every time a Tezos baker is discontinued
     test("getting the bakers", async () => {
       const list = await listBakers(whitelist);
       expect(list.map((o) => o.address)).toEqual(whitelist);
