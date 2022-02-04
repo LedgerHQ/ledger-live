@@ -6,8 +6,8 @@ import type {
   TransactionRaw,
   EthereumGasLimitRequest,
 } from "./types";
-import Common from "ethereumjs-common";
-import { Transaction as EthereumTx } from "ethereumjs-tx";
+import Common from "@ethereumjs/common";
+import { Transaction as EthereumTx } from "@ethereumjs/tx";
 import eip55 from "eip55";
 import {
   InvalidAddress,
@@ -196,23 +196,18 @@ function getEthereumjsTxCommon(currency) {
     `currency ${currency.id} did not set ethereumLikeInfo`
   );
   if (ethereumLikeInfo.chainId === 1) {
-    return new Common(
-      // $FlowFixMe
-      ethereumLikeInfo.baseChain || "mainnet",
-      // $FlowFixMe
-      ethereumLikeInfo.hardfork || "petersburg"
-    );
+    return new Common({
+      chain: ethereumLikeInfo.baseChain || "mainnet",
+      hardfork: ethereumLikeInfo.hardfork || "petersburg",
+    });
   }
   return Common.forCustomChain(
-    // $FlowFixMe
     ethereumLikeInfo.baseChain || "mainnet",
     {
       name: currency.ticker,
       chainId: ethereumLikeInfo.chainId,
-      // $FlowFixMe
       networkId: ethereumLikeInfo.networkId || ethereumLikeInfo.chainId,
     },
-    // $FlowFixMe
     ethereumLikeInfo.hardfork || "petersburg"
   );
 }
@@ -239,8 +234,6 @@ export function buildEthereumTx(
     "only token accounts expected"
   );
   const common = getEthereumjsTxCommon(currency);
-  invariant(common, `common not found for currency ${currency.name}`);
-  // FIXME: make sure it doesn't break
   if (!common) {
     throw new Error(`common not found for currency ${currency.name}`);
   }
@@ -258,18 +251,11 @@ export function buildEthereumTx(
     ethTxObject
   );
   log("ethereum", "buildEthereumTx", ethTxObject);
-  const tx = new EthereumTx(ethTxObject, {
-    common,
-  });
-  // these will be filled by device signature
-  tx.raw[6] = Buffer.from([common.chainId()]); // v
-
-  tx.raw[7] = Buffer.from([]); // r
-
-  tx.raw[8] = Buffer.from([]); // s
-
+  const tx = new EthereumTx(ethTxObject, { common });
   return {
     tx,
+    common,
+    ethTxObject,
     fillTransactionDataResult,
   };
 }
@@ -294,7 +280,7 @@ export function inferEthereumGasLimitRequest(
     }
 
     if (to) {
-      r.to = "0x" + to.toString("hex");
+      r.to = to.toString();
     }
 
     if (data) {
