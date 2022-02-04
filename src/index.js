@@ -82,6 +82,7 @@ import NotificationsProvider from "./screens/NotificationCenter/NotificationsPro
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme, setTheme } from "./actions/settings";
+// $FlowFixMe
 import StyleProvider from "./StyleProvider";
 // $FlowFixMe
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
