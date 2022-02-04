@@ -117,14 +117,6 @@ const BottomSection = ({
 
   const overflowX = ScrollContainerHeader.Header.PADDING_HORIZONTAL;
 
-  useEffect(() => {
-    if (search && !loading) {
-      track("Page Market Search", {
-        success: !!marketData?.length,
-      });
-    }
-  }, [search, marketData]);
-
   return (
     <ScrollContainer
       style={{ marginHorizontal: -overflowX }}
