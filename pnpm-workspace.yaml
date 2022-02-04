@@ -3,3 +3,4 @@ packages:
   - "libs/*"
   - "libs/ledgerjs/packages/*"
   - "libs/ui/packages/*"
+  - "tools/*"
