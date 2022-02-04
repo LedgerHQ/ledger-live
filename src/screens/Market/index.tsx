@@ -318,7 +318,12 @@ export default function Market({ navigation }: { navigation: any }) {
     setIsLoading(false);
   }, [limit, loadNextPage, marketData.length, page]);
 
-  const openSearch = useCallback(() => setSearchOpen(true), []);
+  const openSearch = useCallback(() => {
+    track("Page Market Search", {
+      access: true,
+    });
+    setSearchOpen(true);
+  }, []);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
 
   const renderFooter = useCallback(

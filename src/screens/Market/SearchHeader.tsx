@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import getWindowDimensions from "../../logic/getWindowDimensions";
+import { track } from "../../analytics";
 
 const { width } = getWindowDimensions();
 
@@ -22,8 +23,12 @@ function SearchHeader({ search, refresh, isOpen, onClose }: Props) {
   const ref = useRef();
 
   const onSubmit = useCallback(() => {
-    if (inputSearch !== search)
+    if (inputSearch !== search) {
+      track("Page Market Query", {
+        currencyName: inputSearch,
+      });
       refresh({ search: inputSearch, starred: [], liveCompatible: false });
+    }
     onClose();
   }, [inputSearch, search, refresh, onClose]);
 
