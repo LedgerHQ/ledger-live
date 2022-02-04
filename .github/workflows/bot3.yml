@@ -1,7 +1,5 @@
 name: Bot 'Silicium'
 on:
-  schedule:
-    - cron: "0 8-16/2 * * 1-5"
   push:
     branches:
       - bot-silicium
