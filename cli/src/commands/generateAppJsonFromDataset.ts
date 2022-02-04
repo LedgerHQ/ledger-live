@@ -3,10 +3,7 @@ import invariant from "invariant";
 import { reduce, filter, map } from "rxjs/operators";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import datasets from "@ledgerhq/live-common/lib/generated/test-dataset";
 import { Account } from "@ledgerhq/live-common/lib/types";
@@ -14,40 +11,6 @@ import { mockDeviceWithAPDUs, releaseMockDevice } from "../live-common-setup";
 
 setPlatformVersion("0.0.1");
 
-setSupportedCurrencies([
-  "bitcoin",
-  "ethereum",
-  "bsc",
-  "ripple",
-  "bitcoin_cash",
-  "litecoin",
-  "dash",
-  "ethereum_classic",
-  "tezos",
-  "qtum",
-  "zcash",
-  "bitcoin_gold",
-  "stratis",
-  "dogecoin",
-  "digibyte",
-  "komodo",
-  "pivx",
-  "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
-  "stakenet",
-  "stealthcoin",
-  "decred",
-  "bitcoin_testnet",
-  "ethereum_ropsten",
-  "tron",
-  "stellar",
-  "cosmos",
-  "algorand",
-  "polkadot",
-  "filecoin",
-]);
 const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
