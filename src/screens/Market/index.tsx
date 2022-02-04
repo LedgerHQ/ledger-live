@@ -80,8 +80,7 @@ const BottomSection = ({
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
-  // @ts-ignore TODO: remove the conditional checks once new version of UI lib is released with that
-  const overflowX = ScrollContainerHeader.Header?.PADDING_HORIZONTAL ?? 16;
+  const overflowX = ScrollContainerHeader.Header.PADDING_HORIZONTAL;
   return (
     <ScrollContainer
       style={{ marginHorizontal: -overflowX }}
