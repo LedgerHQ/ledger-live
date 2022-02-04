@@ -11,7 +11,7 @@ import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 
-const ranges = Object.keys(rangeDataTable);
+const ranges = Object.keys(rangeDataTable).filter(key => key !== "1h");
 
 export default function MarketGraph({
   setHoverItem,

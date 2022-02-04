@@ -63,11 +63,13 @@ const BottomSection = ({
 
   const timeRanges = useMemo(
     () =>
-      Object.keys(rangeDataTable).map(value => ({
-        requestParam: { range: value },
-        value,
-        label: t(`market.range.${value}`),
-      })),
+      Object.keys(rangeDataTable)
+        .filter(key => key !== "1h")
+        .map(value => ({
+          requestParam: { range: value },
+          value,
+          label: t(`market.range.${value}`),
+        })),
     [t],
   );
 
