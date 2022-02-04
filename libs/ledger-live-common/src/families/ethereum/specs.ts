@@ -118,7 +118,6 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.5.0-rc3",
   },
   testTimeout: 4 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
@@ -380,7 +379,6 @@ const ethereumRopsten: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
-    appVersion: "1.5.0-rc3",
   },
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {

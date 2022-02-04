@@ -1,16 +1,21 @@
 import React from "react";
 import { storiesOf } from "../storiesOf";
-import { number } from "@storybook/addon-knobs";
+import { number, color, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import Loader from "../../../src/components/Loader/ProgressLoader";
-import { Icons } from "../../../src/assets";
+import { Icons, ProgressLoader } from "../../../src";
 
 const LoaderSample = () => (
-  <Loader
+  <ProgressLoader
     progress={number("progress", 0.2)}
+    infinite={boolean("infinite", false)}
     onPress={action("onPress")}
-    Icon={Icons.StarSolidMedium}
-  />
+    mainColor={color("mainColor", "primary.c80")}
+    secondaryColor={color("secondaryColor", "neutral.c40")}
+    radius={number("radius", 48)}
+    strokeWidth={number("strokeWidth", 4)}
+  >
+    <Icons.StarMedium />
+  </ProgressLoader>
 );
 
 storiesOf((story) => story("Loader", module).add("ProgressLoader", LoaderSample));

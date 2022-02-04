@@ -26,8 +26,8 @@ const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
   size: undefined,
   lineHeight: p.size === "medium" ? "36px" : "26px",
   textAlign: "center",
-  px: p.theme.space[p.size === "medium" ? 7 : 6],
-  height: p.size === "medium" ? 36 : 26,
+  px: 4,
+  height: p.size === "medium" ? "36px" : "26px",
 }))``;
 
 const StyledTabs = styled(TemplateTabs)<GraphTabsProps>`

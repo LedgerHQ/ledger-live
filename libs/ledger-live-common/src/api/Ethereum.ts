@@ -138,6 +138,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
             noinput: true,
             no_input: true,
             no_token: true,
+            filtering: true,
             block_hash,
           },
         }),
