@@ -1,0 +1,11 @@
+{
+  "name": "x-run",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cross-platform runner",
+  "main": "index.js",
+  "bin": {
+    "x-run": "./index.js"
+  },
+  "license": "ISC"
+}
