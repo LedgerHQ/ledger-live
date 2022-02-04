@@ -5,22 +5,24 @@
   "private": true,
   "packageManager": "pnpm@6.29.1",
   "devDependencies": {
-    "turbo": "^1.1.0"
+    "turbo": "^1.1.0",
+    "x-run": "workspace:*"
   },
   "scripts": {
     "clean": "git clean -fdX",
-    "build": "./node_modules/turbo/bin/turbo run build --ignore='apps/*' --no-deps",
+    "build": "pnpm run:turbo -- run build --ignore='apps/*' --no-deps",
     "build:libs": "pnpm -r build --filter='./libs'",
-    "test": "./node_modules/turbo/bin/turbo run build test --include-dependencies --no-deps",
-    "lld:dev": "./node_modules/turbo/bin/turbo run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
-    "llm:dev": "./node_modules/turbo/bin/turbo run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
+    "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps",
+    "lld:dev": "pnpm run:turbo -- run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
+    "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
     "desktop": "pnpm --filter live-desktop",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
-    "ui:shared": "pnpm --filter shared-ui"
+    "ui:shared": "pnpm --filter shared-ui",
+    "run:turbo": "x-run node_modules/turbo/bin/turbo"
   },
   "pnpm": {
     "overrides": {
