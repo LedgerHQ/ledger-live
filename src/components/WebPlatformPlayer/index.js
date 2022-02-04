@@ -21,7 +21,11 @@ import Color from "color";
 
 import { JSONRPCRequest } from "json-rpc-2.0";
 
-import type { SignedOperation } from "@ledgerhq/live-common/lib/types";
+import type {
+  RawPlatformTransaction,
+  RawPlatformSignedTransaction,
+} from "@ledgerhq/live-common/lib/platform/rawTypes";
+
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
@@ -30,7 +34,6 @@ import {
 } from "@ledgerhq/live-common/lib/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 
-import type { RawPlatformTransaction } from "@ledgerhq/live-common/lib/platform/rawTypes";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
@@ -39,8 +42,9 @@ import {
 import {
   serializePlatformAccount,
   deserializePlatformTransaction,
+  serializePlatformSignedTransaction,
+  deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
-
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -333,7 +337,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
                 reject(transactionSignError);
               } else {
                 tracking.platformSignTransactionSuccess(manifest);
-                resolve(signedOperation);
+                resolve(serializePlatformSignedTransaction(signedOperation));
                 const n = navigation.getParent() || navigation;
                 n.pop();
               }
@@ -355,9 +359,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       signedTransaction,
     }: {
       accountId: string,
-      signedTransaction: SignedOperation,
+      signedTransaction: RawPlatformSignedTransaction,
     }) => {
-      const account = accounts.find(a => a.id === accountId);
+      const account = accounts.find(account => account.id === accountId);
 
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
@@ -372,8 +376,13 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           return;
         }
 
+        const signedOperation = deserializePlatformSignedTransaction(
+          signedTransaction,
+          accountId,
+        );
+
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          broadcastSignedTx(account, null, signedTransaction).then(
+          broadcastSignedTx(account, null, signedOperation).then(
             op => {
               tracking.platformBroadcastSuccess(manifest);
               resolve(op.hash);
