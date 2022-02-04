@@ -2566,10 +2566,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/ui-shared/-/ui-shared-0.1.5.tgz#493d26639d7f17b2f5efe9c0e89ec9ba708ccbaa"
   integrity sha512-pUU6lpKR4e9PfmTqrVrTwgpAgbwDJhuQSYfVJy90zSPQBVpVqnJoeBWnCtB+2APsJXgI90hAZbZGqOJ5is2GcA==
 
-"@noble/hashes@^0.4.5":
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-0.4.5.tgz#f69a963b0c59c1145bc5aca1f3eef58a48bf9a59"
-  integrity sha512-oK/2b9gHb1CfiFwpPHQs010WgROn4ioilT7TFwxMVwuDaXEJP3QPhyedYbOpgM4JDBgT9n5gaispBQlkaAgT6g==
+"@noble/hashes@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-0.4.1.tgz#ef8ef347cfb3a03692f16ed31fda717f8e78d392"
+  integrity sha512-Qxy9mZoDf5SyFrQ8hpWHeMZ2Scmb9BAz/lt23sKdr/QHnACW9dD6S+/WVJHd3R/BPoNHcUYWXoXXe74cxSEYoA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -11957,10 +11957,10 @@ metro@0.66.2, metro@^0.66.1:
     ws "^1.1.5"
     yargs "^15.3.1"
 
-micro-base@^0.10.0:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/micro-base/-/micro-base-0.10.2.tgz#f6f9f0bd949ce511883e5a99f9147d80ddc32f5a"
-  integrity sha512-lqqJrT7lfJtDmmiQ4zRLZuIJBk96t0RAc5pCrrWpL9zDeH5i/SUL85mku9HqzTI/OCZ8EQ3aicbMW+eK5Nyu5w==
+micro-base@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/micro-base/-/micro-base-0.9.0.tgz#09cfe20285bec0ea97f41dc3d10e3fba3d0266ee"
+  integrity sha512-4+tOMKidYT5nQ6/UNmYrGVO5PMcnJdfuR4NC8HK8s2H61B4itOhA9yrsjBdqGV7ecdtej36x3YSIfPLRmPrspg==
 
 micromatch@^3.1.10, micromatch@^3.1.4:
   version "3.1.10"
