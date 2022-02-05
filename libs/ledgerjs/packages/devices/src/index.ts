@@ -155,7 +155,6 @@ const serviceUuidToInfos: Record<string, BluetoothInfos> = {};
 for (const id in devices) {
   const deviceModel = devices[id];
   const { bluetoothSpec } = deviceModel;
-
   if (bluetoothSpec) {
     for (let i = 0; i < bluetoothSpec.length; i++) {
       const spec = bluetoothSpec[i];

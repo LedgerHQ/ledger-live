@@ -8,15 +8,15 @@ import bs58check from "bs58check";
 import coininfo from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
 import Base from "./base";
 
-class Zen implements ICrypto {
+class Zen extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
+    super({ network });
     // refer to https://github.com/HorizenOfficial/zen/blob/master/src/chainparams.cpp for the blockchain params
     this.network = network;
     this.network.versions = {
@@ -67,26 +67,13 @@ class Zen implements ICrypto {
     return this.baddrToTaddr(bs58check.encode(Buffer.from(baddr)));
   }
 
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
-    const address = this.getLegacyAddress(xpub, account, index);
-    Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ] = address;
-    return address;
+    return this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -121,11 +108,6 @@ class Zen implements ICrypto {
       res[0] === 0x20 &&
       (res[1] === 0x89 || res[1] === 0x96)
     );
-  }
-
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
-    return false;
   }
 }
 

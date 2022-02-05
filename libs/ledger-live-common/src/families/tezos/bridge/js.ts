@@ -1,6 +1,10 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import { TezosToolkit, DEFAULT_FEE } from "@taquito/taquito";
+import {
+  TezosToolkit,
+  DEFAULT_FEE,
+  DEFAULT_STORAGE_LIMIT,
+} from "@taquito/taquito";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -201,6 +205,7 @@ const prepareTransaction = async (
           mutez: true,
           to: transaction.recipient,
           amount: amount.toNumber(),
+          storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
       case "delegate":

@@ -8,15 +8,15 @@ import bs58check from "bs58check";
 import coininfo from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
 import Base from "./base";
 
-class ZCash implements ICrypto {
+class ZCash extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
+    super({ network });
     this.network = network;
     this.network.dustThreshold = 10000;
     this.network.dustPolicy = "FIXED";
@@ -47,26 +47,13 @@ class ZCash implements ICrypto {
     return address.toString();
   }
 
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
-    const address = this.getLegacyAddress(xpub, account, index);
-    Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ] = address;
-    return address;
+    return this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -88,11 +75,6 @@ class ZCash implements ICrypto {
   // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
     return zec.Address.isValid(address, "livenet");
-  }
-
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
-    return false;
   }
 }
 

@@ -84,14 +84,22 @@ class Base implements ICrypto {
   }
 
   // derive legacy address at account and index positions
-  getLegacyAddress(xpub: string, account: number, index: number): string {
+  protected getLegacyAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): string {
     const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
     const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
     return bjs.address.toBase58Check(publicKeyHash160, this.network.pubKeyHash);
   }
 
   // derive native SegWit at account and index positions
-  getNativeSegWitAddress(xpub: string, account: number, index: number): string {
+  private getNativeSegWitAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): string {
     const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
     const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
     const words: number[] = bech32.toWords(publicKeyHash160);
@@ -100,7 +108,11 @@ class Base implements ICrypto {
   }
 
   // derive SegWit at account and index positions
-  getSegWitAddress(xpub: string, account: number, index: number): string {
+  private getSegWitAddress(
+    xpub: string,
+    account: number,
+    index: number
+  ): string {
     const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
     const redeemOutput: Buffer = bjs.script.compile([
       0,
@@ -129,28 +141,29 @@ class Base implements ICrypto {
         `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
       ];
     }
+    const res = this.customGetAddress(derivationMode, xpub, account, index);
+    Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ] = res;
+    return res;
+  }
+
+  customGetAddress(
+    derivationMode: string,
+    xpub: string,
+    account: number,
+    index: number
+  ): string {
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getLegacyAddress(xpub, account, index);
-        break;
+        return this.getLegacyAddress(xpub, account, index);
       case DerivationModes.SEGWIT:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getSegWitAddress(xpub, account, index);
-        break;
+        return this.getSegWitAddress(xpub, account, index);
       case DerivationModes.NATIVE_SEGWIT:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getNativeSegWitAddress(xpub, account, index);
-        break;
+        return this.getNativeSegWitAddress(xpub, account, index);
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }
-    return Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ];
   }
 
   // infer address type from its syntax

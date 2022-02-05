@@ -412,7 +412,13 @@ function parseAppSearch(query: string):
   };
 }
 
-async function openImplicitSpeculos(query: string) {
+export async function createImplicitSpeculos(query: string): Promise<{
+  device: {
+    transport: SpeculosTransport;
+    id: string;
+  };
+  appCandidate: AppCandidate;
+} | null> {
   const coinapps = getEnv("COINAPPS");
   invariant(coinapps, "COINAPPS folder is missing!");
   const seed = getEnv("SEED");
@@ -438,16 +444,23 @@ async function openImplicitSpeculos(query: string) {
     "speculos",
     "using app " + formatAppCandidate(appCandidate as AppCandidate)
   );
-  const device = appCandidate
-    ? await createSpeculosDevice({
-        ...appCandidate,
-        coinapps,
-        appName,
-        dependency,
-        seed,
-      })
+  return appCandidate
+    ? {
+        device: await createSpeculosDevice({
+          ...appCandidate,
+          coinapps,
+          appName,
+          dependency,
+          seed,
+        }),
+        appCandidate,
+      }
     : null;
-  return device?.transport;
+}
+
+async function openImplicitSpeculos(query: string) {
+  const r = await createImplicitSpeculos(query);
+  return r?.device.transport;
 }
 
 registerTransportModule({

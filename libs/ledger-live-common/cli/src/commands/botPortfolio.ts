@@ -1,5 +1,5 @@
-import { from, defer } from "rxjs";
-import { filter, map, mergeAll } from "rxjs/operators";
+import { from, defer, throwError } from "rxjs";
+import { catchError, filter, map, mergeAll, timeoutWith } from "rxjs/operators";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountFormatters } from "@ledgerhq/live-common/lib/account";
@@ -21,13 +21,24 @@ export default {
       filter((c) => !blacklist.includes(c.id) && !c.isTestnetFor),
       map((currency) =>
         defer(() =>
-          getCurrencyBridge(currency).scanAccounts({
-            currency,
-            deviceId: `speculos:nanos:${currency.id}`,
-            syncConfig: {
-              paginationConfig: {},
-            },
-          })
+          getCurrencyBridge(currency)
+            .scanAccounts({
+              currency,
+              deviceId: `speculos:nanos:${currency.id}`,
+              syncConfig: {
+                paginationConfig: {},
+              },
+            })
+            .pipe(
+              timeoutWith(
+                200 * 1000,
+                throwError(new Error("scan account timeout"))
+              ),
+              catchError((e) => {
+                console.error("scan accounts failed for " + currency.id, e);
+                return from([]);
+              })
+            )
         )
       ),
       mergeAll(5),

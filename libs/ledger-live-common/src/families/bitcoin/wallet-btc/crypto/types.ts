@@ -7,6 +7,13 @@ export interface ICrypto {
     account: number,
     index: number
   ): string;
+  customGetAddress(
+    derivationMode: string,
+    xpub: string,
+    account: number,
+    index: number
+  ): string;
+
   getDerivationMode(address: string): string;
 
   toOutputScript(address: string): Buffer;
