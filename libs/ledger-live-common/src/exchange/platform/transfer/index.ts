@@ -32,7 +32,27 @@ const fundProviders: Record<
     curve: string;
   }
 > = {
-  // FIXME: no prod provider for now
+  baanx: {
+    /**
+     * nameAndPubkey is the concatenation of:
+     * - an empty buffer of the size of the partner name
+     * - a buffer created from the partner name string in ascii encoding
+     * - a buffer created from the hexadecimal version of the partner public key
+     */
+    nameAndPubkey: Buffer.concat([
+      Buffer.from([5]),
+      Buffer.from("Baanx", "ascii"),
+      Buffer.from(
+        "04551878b446b6a711949fa51cc5a8685602f8ffb1dfd08f6ab869019d7c125d7737a79e8b5022d860ec7dfbe062d510fec3b5fe0f6ebb1f5e55a074bb7e5dbc4e",
+        "hex"
+      ),
+    ]),
+    signature: Buffer.from(
+      "304402200345c39e93a22c5ac3f1e70f8b9938b3a60d3a4906067443cf11095af0e685a502201ee5d88dd5539ce36341e49e2505c2a1659e26d8ff08801ed33c50a9126aedd1",
+      "hex"
+    ),
+    curve: "secp256r1",
+  },
 };
 
 const getProvider = (

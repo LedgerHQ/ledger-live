@@ -6,6 +6,7 @@ import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
 import bot from "./commands/bot";
 import botPortfolio from "./commands/botPortfolio";
+import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
 import countervalues from "./commands/countervalues";
@@ -60,6 +61,7 @@ export default {
   balanceHistory,
   bot,
   botPortfolio,
+  botTransfer,
   broadcast,
   cleanSpeculos,
   countervalues,

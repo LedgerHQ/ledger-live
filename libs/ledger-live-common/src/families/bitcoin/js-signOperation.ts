@@ -32,7 +32,7 @@ const signOperation = ({
       try {
         log("hw", `signTransaction ${currency.id} for account ${account.id}`);
         const txInfo = await buildTransaction(account, transaction);
-        let senders: string[] = [];
+        let senders = new Set<string>();
         let recipients: string[] = [];
         let fee = new BigNumber(0);
         // Maybe better not re-calculate these fields here, instead include them
@@ -41,9 +41,7 @@ const signOperation = ({
           account,
           transaction,
         }).then((res) => {
-          senders = res.txInputs
-            .map((i) => i.address)
-            .filter(Boolean) as string[];
+          senders = new Set(res.txInputs.map((i) => i.address).filter(Boolean));
           recipients = res.txOutputs
             .filter((o) => o.address && !o.isChange)
             .map((o) => o.address) as string[];
@@ -140,7 +138,7 @@ const signOperation = ({
           fee,
           blockHash: null,
           blockHeight: null,
-          senders,
+          senders: Array.from(senders),
           recipients,
           accountId: account.id,
           date: new Date(),

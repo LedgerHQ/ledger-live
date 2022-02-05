@@ -119,31 +119,17 @@ class Bitcoin extends Base {
   }
 
   // get address given an address type
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
     switch (derivationMode) {
       case DerivationModes.TAPROOT:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getTaprootAddress(xpub, account, index);
-        return Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ];
+        return this.getTaprootAddress(xpub, account, index);
       default:
-        return super.getAddress(derivationMode, xpub, account, index);
+        return super.customGetAddress(derivationMode, xpub, account, index);
     }
   }
 
