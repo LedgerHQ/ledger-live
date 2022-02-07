@@ -64,8 +64,6 @@ const BottomSection = ({
     requestParams,
     refresh,
     counterCurrency,
-    marketData,
-    loading,
   } = useMarketData();
   const {
     range,
