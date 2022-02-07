@@ -43,6 +43,9 @@ jobs:
           cache: pnpm
       - name: bump npm
         run: npm i -g npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
       - name: install dependencies
         run: pnpm i --frozen-lockfile
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
