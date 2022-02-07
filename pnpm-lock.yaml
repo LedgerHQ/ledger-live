@@ -719,6 +719,8 @@ importers:
       '@celo/wallet-base': ^1.5.1
       '@celo/wallet-ledger': ^1.5.1
       '@crypto-com/chain-jslib': 0.0.19
+      '@ethereumjs/common': ^2.6.0
+      '@ethereumjs/tx': ^3.4.0
       '@ledgerhq/compressjs': 1.3.2
       '@ledgerhq/cryptoassets': workspace:^
       '@ledgerhq/devices': workspace:^
@@ -778,7 +780,6 @@ importers:
       bip32-path: ^0.4.2
       bip39: ^3.0.4
       bitcoinjs-lib: ^5.2.0
-      bitcore-lib-cash: ^8.25.25
       blake-hash: ^2.0.0
       blakejs: ^1.1.1
       bs58: ^4.0.1
@@ -806,8 +807,6 @@ importers:
       eslint-plugin-typescript: ^0.14.0
       eth-sig-util: 3.0.1
       ethereumjs-abi: ^0.6.8
-      ethereumjs-common: ^1.5.2
-      ethereumjs-tx: ^2.1.2
       ethereumjs-util: ^7.1.3
       expect: ^27.4.6
       fs: ^0.0.1-security
@@ -862,6 +861,8 @@ importers:
       '@celo/wallet-base': 1.5.1
       '@celo/wallet-ledger': 1.5.1
       '@crypto-com/chain-jslib': 0.0.19
+      '@ethereumjs/common': 2.6.2
+      '@ethereumjs/tx': 3.5.0
       '@ledgerhq/compressjs': 1.3.2
       '@ledgerhq/cryptoassets': link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices': link:../ledgerjs/packages/devices
@@ -909,7 +910,6 @@ importers:
       bip32-path: 0.4.2
       bip39: 3.0.4
       bitcoinjs-lib: 5.2.0
-      bitcore-lib-cash: 8.25.25
       blake-hash: 2.0.0
       blakejs: 1.1.1
       bs58: 4.0.1
@@ -923,8 +923,6 @@ importers:
       eip55: 2.1.0
       eth-sig-util: 3.0.1
       ethereumjs-abi: 0.6.8
-      ethereumjs-common: 1.5.2
-      ethereumjs-tx: 2.1.2
       ethereumjs-util: 7.1.3
       expect: 27.4.6
       generic-pool: 3.8.2
@@ -4990,6 +4988,20 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@ethereumjs/common/2.6.2:
+    resolution: {integrity: sha512-vDwye5v0SVeuDky4MtKsu+ogkH2oFUV8pBKzH/eNBzT8oI91pKa8WyzDuYuxOQsgNgv5R34LfFDh2aaw3H4HbQ==}
+    dependencies:
+      crc-32: 1.2.1
+      ethereumjs-util: 7.1.4
+    dev: false
+
+  /@ethereumjs/tx/3.5.0:
+    resolution: {integrity: sha512-/+ZNbnJhQhXC83Xuvy6I9k4jT5sXiV0tMR9C+AzSSpcCV64+NB8dTE1m3x98RYMqb8+TLYWA+HML4F5lfXTlJw==}
+    dependencies:
+      '@ethereumjs/common': 2.6.2
+      ethereumjs-util: 7.1.4
+    dev: false
 
   /@ethersproject/abi/5.0.7:
     resolution: {integrity: sha512-Cqktk+hSIckwP/W8O47Eef60VwmoSC/L3lY0+dIBhQPCNn9E4V7rwmm2aFrNRRDJfFlGuZ1khkQUOc3oBX+niw==}
@@ -15459,6 +15471,7 @@ packages:
   /are-we-there-yet/2.0.0:
     resolution: {integrity: sha512-Ci/qENmwHnsYo9xKIcUJN5LeDKdJ6R1Z1j9V/J5wyq8nh/mYPEpIKJbBZXtZjG04HiK7zV/p6Vs9952MrMeUIw==}
     engines: {node: '>=10'}
+    requiresBuild: true
     dependencies:
       delegates: 1.0.0
       readable-stream: 3.6.0
@@ -16605,10 +16618,6 @@ packages:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
     dev: false
 
-  /bech32/2.0.0:
-    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
-    dev: false
-
   /before-after-hook/2.2.2:
     resolution: {integrity: sha512-3pZEU3NT5BFUo/AD5ERPWOgQOCZITni6iavr5AUw5AUwQjMlI0kzu5btnyD39AF0gUEsDPwJT+oY1ORBJijPjQ==}
 
@@ -16677,17 +16686,6 @@ packages:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
     dependencies:
       file-uri-to-path: 1.0.0
-
-  /bip-schnorr/0.6.4:
-    resolution: {integrity: sha512-dNKw7Lea8B0wMIN4OjEmOk/Z5qUGqoPDY0P2QttLqGk1hmDPytLWW8PR5Pb6Vxy6CprcdEgfJpOjUu+ONQveyg==}
-    engines: {node: '>=8.0.0'}
-    dependencies:
-      bigi: 1.4.2
-      ecurve: 1.0.6
-      js-sha256: 0.9.0
-      randombytes: 2.1.0
-      safe-buffer: 5.2.1
-    dev: false
 
   /bip174/2.0.1:
     resolution: {integrity: sha512-i3X26uKJOkDTAalYAp0Er+qGMDhrbbh2o93/xiPyAN2s25KrClSpe3VXo/7mNJoqA5qfko8rLS2l3RWZgYmjKQ==}
@@ -16771,31 +16769,6 @@ packages:
       typeforce: 1.18.0
       varuint-bitcoin: 1.1.2
       wif: 2.0.6
-    dev: false
-
-  /bitcore-lib-cash/8.25.25:
-    resolution: {integrity: sha512-p/KEBlCKNTTxOZFJLt/bA1b7pQ1JFapHkoWL8mSLxfz9wTK4ScN74zpbBwhG+O7dk7XMo8iRrKigvanmkce35g==}
-    dependencies:
-      bitcore-lib: 8.25.25
-      bn.js: 4.11.8
-      bs58: 4.0.1
-      buffer-compare: 1.1.1
-      elliptic: 6.5.4
-      inherits: 2.0.1
-      lodash: 4.17.21
-    dev: false
-
-  /bitcore-lib/8.25.25:
-    resolution: {integrity: sha512-H6qNCVl4M8/MglXhvc04mmeus1d6nrmqTJGQ+xezJLvL7hs7R3dyBPtOqSP3YSw0iq/GWspMd8f5OOlyXVipJQ==}
-    dependencies:
-      bech32: 2.0.0
-      bip-schnorr: 0.6.4
-      bn.js: 4.11.8
-      bs58: 4.0.1
-      buffer-compare: 1.1.1
-      elliptic: 6.5.4
-      inherits: 2.0.1
-      lodash: 4.17.21
     dev: false
 
   /bl/0.8.2:
@@ -17239,10 +17212,6 @@ packages:
 
   /buffer-compare/1.0.0:
     resolution: {integrity: sha1-rKp6lm6Y7un64Usxw5pfFY+zxKI=}
-    dev: false
-
-  /buffer-compare/1.1.1:
-    resolution: {integrity: sha1-W+e+hTr4kZjR9N3AkNHWakiu9ZY=}
     dev: false
 
   /buffer-crc32/0.2.13:
@@ -18990,6 +18959,15 @@ packages:
       p-map: 3.0.0
     dev: true
 
+  /crc-32/1.2.1:
+    resolution: {integrity: sha512-Dn/xm/1vFFgs3nfrpEVScHoIslO9NZRITWGz/1E/St6u4xw99vfZzVkW0OSnzx2h9egej9xwMCEut6sqwokM/w==}
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dependencies:
+      exit-on-epipe: 1.0.1
+      printj: 1.3.1
+    dev: false
+
   /crc/3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
     dependencies:
@@ -20413,13 +20391,6 @@ packages:
     dependencies:
       jsbn: 0.1.1
       safer-buffer: 2.1.2
-
-  /ecurve/1.0.6:
-    resolution: {integrity: sha512-/BzEjNfiSuB7jIWKcS/z8FK9jNjmEWvUV2YZ4RLSmcDtP7Lq0m6FvDuSnJpBlDpGRpfRQeTLGLBI8H+kEv0r+w==}
-    dependencies:
-      bigi: 1.4.2
-      safe-buffer: 5.2.1
-    dev: false
 
   /ed2curve/0.3.0:
     resolution: {integrity: sha512-8w2fmmq3hv9rCrcI7g9hms2pMunQr1JINfcjwR9tAyZqhtyaMN991lF/ZfHfr5tzZQ8c7y7aBgZbjfbd0fjFwQ==}
@@ -22139,6 +22110,17 @@ packages:
       rlp: 2.2.7
     dev: false
 
+  /ethereumjs-util/7.1.4:
+    resolution: {integrity: sha512-p6KmuPCX4mZIqsQzXfmSx9Y0l2hqf+VkAiwSisW3UKUFdk8ZkAt+AYaor83z2nSi6CU2zSsXMlD80hAbNEGM0A==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@types/bn.js': 5.1.0
+      bn.js: 5.2.0
+      create-hash: 1.2.0
+      ethereum-cryptography: 0.1.3
+      rlp: 2.2.7
+    dev: false
+
   /ethjs-unit/0.1.6:
     resolution: {integrity: sha1-xmWSHkduh7ziqdWIpv4EBbLEFpk=}
     engines: {node: '>=6.5.0', npm: '>=3'}
@@ -22269,6 +22251,11 @@ packages:
 
   /exenv/1.2.2:
     resolution: {integrity: sha1-KueOhdmJQVhnCwPUe+wfA72Ru50=}
+    dev: false
+
+  /exit-on-epipe/1.0.1:
+    resolution: {integrity: sha512-h2z5mrROTxce56S+pnvAV890uu7ls7f1kEvVGJbw1OlFH3/mlJ5bkXu0KRyW94v37zzHPiUd55iLn3DA7TjWpw==}
+    engines: {node: '>=0.8'}
     dev: false
 
   /exit/0.1.2:
@@ -23851,6 +23838,7 @@ packages:
   /gauge/3.0.2:
     resolution: {integrity: sha512-+5J6MS/5XksCuXq++uFRsnUd7Ovu1XenbeuIuNRJxYWjgQbPuFhT14lAvsWfqfAmnwluf1OwMjz39HjfLPci0Q==}
     engines: {node: '>=10'}
+    requiresBuild: true
     dependencies:
       aproba: 2.0.0
       color-support: 1.1.3
@@ -32927,6 +32915,12 @@ packages:
     resolution: {integrity: sha512-28iF6xPQrP8Oa6uxE6a1biz+lWeTOAPKggvjB8HAs6nVMKZwf5bG++632Dx614hIWgUPkgivRfG+a8uAXGTIbA==}
     engines: {node: '>=4'}
     dev: true
+
+  /printj/1.3.1:
+    resolution: {integrity: sha512-GA3TdL8szPK4AQ2YnOe/b+Y1jUFwmmGMMK/qbY7VcE3Z7FU8JstbKiKRzO6CIiAKPhTO8m01NoQ0V5f3jc4OGg==}
+    engines: {node: '>=0.8'}
+    hasBin: true
+    dev: false
 
   /prismjs/1.25.0:
     resolution: {integrity: sha512-WCjJHl1KEWbnkQom1+SzftbtXMKQoezOCYs5rECqMN+jP+apI7ftoflyqigqzopSO3hMhTEb0mFClA8lkolgEg==}
