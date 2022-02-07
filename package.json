@@ -5,13 +5,15 @@
   "private": true,
   "packageManager": "pnpm@6.29.1",
   "devDependencies": {
-    "turbo": "^1.1.0",
+    "turbo": "^1.1.2",
     "x-run": "workspace:*"
   },
   "scripts": {
     "clean": "git clean -fdX",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --no-deps",
-    "build:libs": "pnpm -r build --filter=./libs",
+    "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
+    "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
+    "build:mobile": "pnpm run:turbo -- run build-ci --scope=live-mobile --include-dependencies --no-deps",
     "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps",
     "lld:dev": "pnpm run:turbo -- run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
