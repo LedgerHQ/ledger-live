@@ -165,13 +165,20 @@ export default function MarketDetail({
     [navigation, allAccounts.length],
   );
 
-  const navigateToSwap = useCallback(
-    () =>
+  const navigateToSwap = useCallback(() => {
+    if (allAccounts && allAccounts.length === 1) {
       navigation.navigate(NavigatorName.Swap, {
         screen: ScreenName.Swap,
-      }),
-    [navigation],
-  );
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsSelectDevice,
+        params: {
+          currency: internalCurrency,
+        },
+      });
+    }
+  }, [navigation, internalCurrency, allAccounts]);
 
   useEffect(() => {
     if (name) {
