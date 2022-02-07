@@ -1,6 +1,6 @@
 // @flow
 import { useEffect, useState, useCallback } from "react";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const url =
   "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md";
