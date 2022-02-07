@@ -6,6 +6,8 @@ import { defaultTronResources } from "./utils";
 import bridge from "./bridge/js";
 import { Account } from "../../types";
 
+jest.setTimeout(30000);
+
 const tron = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
   paginationConfig: {},
