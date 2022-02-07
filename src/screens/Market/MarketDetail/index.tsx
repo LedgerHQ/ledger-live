@@ -152,6 +152,7 @@ export default function MarketDetail({
     }
   }, [navigation, internalCurrency, allAccounts]);
 
+  /** Disabled for now on demand of PO
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (
       // @ts-expect-error import js issue
@@ -164,6 +165,7 @@ export default function MarketDetail({
     ),
     [navigation, allAccounts.length],
   );
+  */
 
   const navigateToSwap = useCallback(() => {
     if (allAccounts && allAccounts.length === 1) {
