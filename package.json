@@ -10,8 +10,8 @@
   },
   "scripts": {
     "clean": "git clean -fdX",
-    "build": "pnpm run:turbo -- run build --ignore='apps/*' --no-deps",
-    "build:libs": "pnpm -r build --filter='./libs'",
+    "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --no-deps",
+    "build:libs": "pnpm -r build --filter=./libs",
     "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps",
     "lld:dev": "pnpm run:turbo -- run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
