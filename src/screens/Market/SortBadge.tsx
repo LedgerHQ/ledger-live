@@ -91,7 +91,10 @@ function SortBadge({
           ({ label, value: optValue, requestParam }: Option, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => onChange(requestParam)}
+              onPress={() => {
+                onChange(requestParam);
+                closeDrawer();
+              }}
             >
               <Flex
                 flexDirection="row"
@@ -116,9 +119,6 @@ function SortBadge({
             </TouchableOpacity>
           ),
         )}
-        <Button mt={32} onPress={closeDrawer} type="main" size="large">
-          {t(`market.filters.apply`)}
-        </Button>
       </BottomDrawer>
     </>
   );
