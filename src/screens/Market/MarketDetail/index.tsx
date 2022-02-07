@@ -317,7 +317,7 @@ export default function MarketDetail({
         ) : (
           <NoCoinSupport t={t} />
         )}
-        {allAccounts && allAccounts.length > 0 && isLiveSupported ? (
+        {/* {allAccounts && allAccounts.length > 0 && isLiveSupported ? (
           <Flex my={16}>
             <Text mx={16} variant="h3">
               {t("market.detailsPage.holding")}
@@ -328,7 +328,7 @@ export default function MarketDetail({
               keyExtractor={(item, index) => item.id + index}
             />
           </Flex>
-        ) : null}
+        ) : null} */}
         <MarketStats currency={currency} counterCurrency={counterCurrency} />
       </ScrollContainerHeader>
     </SafeAreaView>
