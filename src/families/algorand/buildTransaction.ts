@@ -1,6 +1,5 @@
 import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
 import type {
-  SuggestedParams as AlgoSuggestedParams,
   Transaction as AlgoTransaction,
   EncodedTransaction as AlgoTransactionPayload,
   EncodedSignedTransaction as AlgoSignedTransactionPayload,
@@ -28,8 +27,7 @@ export const buildTransactionPayload = async (
 
   const note = memo ? new TextEncoder().encode(memo) : undefined;
 
-  // Minor hack: cast the result as a algosdk.SuggestedParams, while it's actually a TransactionParametersResponse
-  const params = (await getTransactionParams()) as AlgoSuggestedParams;
+  const params = await getTransactionParams();
 
   let algoTxn: AlgoTransaction;
   if (subAccount || (assetId && mode === "optIn")) {
@@ -78,18 +76,16 @@ export const buildTransactionPayload = async (
   return sorted;
 };
 
-export const encodeToSign = async (
-  payload: AlgoTransactionPayload
-): Promise<string> => {
+export const encodeToSign = (payload: AlgoTransactionPayload): string => {
   const msgPackEncoded = msgpackEncode(payload);
 
   return Buffer.from(msgPackEncoded).toString("hex");
 };
 
-export const encodeToBroadcast = async (
+export const encodeToBroadcast = (
   payload: AlgoTransactionPayload,
   signature: Buffer
-): Promise<Buffer> => {
+): Buffer => {
   const signedPayload: AlgoSignedTransactionPayload = {
     sig: signature,
     txn: payload,

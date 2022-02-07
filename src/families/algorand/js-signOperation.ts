@@ -36,7 +36,7 @@ export const signOperation = ({
 
         const algoTx = await buildTransactionPayload(account, transaction);
 
-        const toSign = await encodeToSign(algoTx);
+        const toSign = encodeToSign(algoTx);
 
         const hwApp = new Algorand(transport);
         const { freshAddressPath } = account;
@@ -53,7 +53,7 @@ export const signOperation = ({
           throw new Error("No signature");
         }
 
-        const toBroadcast = await encodeToBroadcast(algoTx, signature);
+        const toBroadcast = encodeToBroadcast(algoTx, signature);
 
         const operation = buildOptimisticOperation(account, transaction);
 

@@ -17,7 +17,7 @@ export const getEstimatedFees = async (
   let suggestedFees = 0;
   if (params.fee) {
     const payload = await buildTransactionPayload(account, transaction);
-    const encoded = await encodeToSign(payload);
+    const encoded = encodeToSign(payload);
     suggestedFees =
       params.fee * (Buffer.from(encoded, "hex").length + SINGLE_SIGNATURE_SIZE);
   }
