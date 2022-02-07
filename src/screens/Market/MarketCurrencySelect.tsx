@@ -9,7 +9,7 @@ import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
 
 const renderEmptyList = () => (
-  <Flex>
+  <Flex alignItems="center">
     <Text>
       <Trans i18nKey="common.noCryptoFound" />
     </Text>
