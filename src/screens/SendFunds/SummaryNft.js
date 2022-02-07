@@ -40,9 +40,11 @@ const SummaryNft = ({ transaction }: Props) => {
           </LText>
         </View>
       </SummaryRow>
-      <SummaryRow title={t("send.summary.quantity")}>
-        <LText semiBold>{quantity?.toFixed()}</LText>
-      </SummaryRow>
+      {transaction?.mode === "erc1155.transfer" && (
+        <SummaryRow title={t("send.summary.quantity")}>
+          <LText semiBold>{quantity?.toFixed()}</LText>
+        </SummaryRow>
+      )}
     </>
   );
 };
