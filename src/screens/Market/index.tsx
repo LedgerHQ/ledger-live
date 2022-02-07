@@ -85,7 +85,7 @@ const BottomSection = ({
       }
       refresh({ starred });
     }
-  }, [refresh, starFilterOn, starredMarketCoins]);
+  }, [refresh, starFilterOn, starredMarketCoins, requestParams]);
 
   const timeRanges = useMemo(
     () =>
