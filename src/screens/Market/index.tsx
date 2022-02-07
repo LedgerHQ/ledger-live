@@ -72,6 +72,12 @@ const BottomSection = ({
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
 
+  useEffect(() => {
+    if (starFilterOn) {
+      refresh({ starred: starredMarketCoins });
+    }
+  }, [refresh, starFilterOn, starredMarketCoins]);
+
   const toggleFilterByStarredAccounts = useCallback(() => {
     if (starredMarketCoins.length > 0) {
       const starred = starFilterOn ? [] : starredMarketCoins;
