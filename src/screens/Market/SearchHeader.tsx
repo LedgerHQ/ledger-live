@@ -27,7 +27,11 @@ function SearchHeader({ search, refresh, isOpen, onClose }: Props) {
       track("Page Market Query", {
         currencyName: inputSearch,
       });
-      refresh({ search: inputSearch, starred: [], liveCompatible: false });
+      refresh({
+        search: inputSearch ? inputSearch.trim() : "",
+        starred: [],
+        liveCompatible: false,
+      });
     }
     onClose();
   }, [inputSearch, search, refresh, onClose]);
