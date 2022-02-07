@@ -41,6 +41,7 @@ const CONCURRENT = 3;
 export default {
   description:
     "transfer funds from one seed (SEED) to another (SEED_RECIPIENT)",
+  args: [],
   job: () => {
     const localCache = {};
     const cache = makeBridgeCacheSystem({
