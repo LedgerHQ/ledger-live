@@ -89,7 +89,7 @@ export default function OnboardingStepperView({
           "#fff",
           "#fff",
           "rgba(255,255,255,0.3)",
-          "#587ED4",
+          "#453A9C",
           colors.live,
         ]
       : [
@@ -98,7 +98,7 @@ export default function OnboardingStepperView({
           colors.darkBlue,
           colors.lightLive,
           "rgba(100, 144, 241, 0.3)",
-          "rgba(67, 133, 240, 0.08)",
+          colors.lightLive,
           "#fff",
         ];
 
