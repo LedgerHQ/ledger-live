@@ -99,16 +99,18 @@ const BottomSection = ({
     [t],
   );
 
-  const onChange = useCallback(
-    (value: any) => {
-      track(
-        "Page Market",
-        getAnalyticsProperties({ ...requestParams, ...value }),
-      );
-      refresh(value);
-    },
-    [requestParams, refresh],
-  );
+  /**
+   * Using a normal function as apparently it doesn't use the latest requestParams
+   * if using useCallback (even with requestParams in the dependencies)
+   * TODO: investigate this for a possible optimization with useCallback
+   * */
+  const onChange = (value: any) => {
+    track(
+      "Page Market",
+      getAnalyticsProperties({ ...requestParams, ...value }),
+    );
+    refresh(value);
+  };
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
