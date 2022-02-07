@@ -58,16 +58,7 @@ allprojects {
 }
 
 subprojects {
-    task listAllDependencies(type: DependencyReportTask) {}
-
     // Force all subprojects to use one and only one set of versions
-    ext {
-        compileSdk = rootProject.ext.compileSdkVersion
-        buildTools = rootProject.ext.buildToolsVersion
-        minSdk = rootProject.ext.minSdkVersion
-        targetSdk = rootProject.ext.targetSdkVersion
-    }
-
     afterEvaluate {project ->
         if(
             project.hasProperty("android")
