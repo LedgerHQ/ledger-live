@@ -65,7 +65,7 @@ export const signOperation = ({
               // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
               const rawData = tx.raw();
               rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
-              const txHex = encode(rawData).toString("hex");
+              const txHex = encode(rawData).toString();
               const loadConfig: LoadConfig = {};
               if (isNFTActive(account.currency)) {
                 loadConfig.nftExplorerBaseURL =
