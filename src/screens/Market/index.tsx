@@ -60,11 +60,7 @@ const BottomSection = ({
   openSearch: () => void;
 }) => {
   const { t } = useTranslation();
-  const {
-    requestParams,
-    refresh,
-    counterCurrency,
-  } = useMarketData();
+  const { requestParams, refresh, counterCurrency } = useMarketData();
   const {
     range,
     starred = [],
@@ -103,13 +99,16 @@ const BottomSection = ({
     [t],
   );
 
-  const onChange = (value: any) => {
-    track(
-      "Page Market",
-      getAnalyticsProperties({ ...requestParams, ...value }),
-    );
-    refresh(value);
-  };
+  const onChange = useCallback(
+    (value: any) => {
+      track(
+        "Page Market",
+        getAnalyticsProperties({ ...requestParams, ...value }),
+      );
+      refresh(value);
+    },
+    [requestParams, refresh],
+  );
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
