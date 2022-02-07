@@ -42,6 +42,7 @@ export default function MainNavigator({
         name={ScreenName.Portfolio}
         component={Portfolio}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: (props: any) => <PortfolioTabIcon {...props} />,
         }}
       />
