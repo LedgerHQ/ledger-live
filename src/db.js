@@ -1,9 +1,9 @@
 // @flow
 import { log } from "@ledgerhq/logs";
-import store from "react-native-simple-store";
 import { atomicQueue } from "@ledgerhq/live-common/lib/promise";
 import type { AccountRaw } from "@ledgerhq/live-common/lib/types";
 import type { CounterValuesStateRaw } from "@ledgerhq/live-common/lib/countervalues/types";
+import store from "./logic/storeWrapper";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
