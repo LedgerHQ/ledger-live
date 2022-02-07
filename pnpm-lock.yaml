@@ -9,7 +9,7 @@ importers:
 
   .:
     specifiers:
-      turbo: ^1.1.0
+      turbo: ^1.1.2
       x-run: workspace:*
     devDependencies:
       turbo: 1.1.2
@@ -451,7 +451,7 @@ importers:
       expo-camera: ~12.0.3
       expo-image-loader: ^3.1.0
       expo-modules-autolinking: ^0.5.5
-      expo-modules-core: ^0.6.4
+      expo-modules-core: ^0.6.5
       flow-bin: 0.122.0
       flow-typed: ^2.6.2
       fuse.js: ^6.4.6
@@ -596,7 +596,7 @@ importers:
       expo-camera: 12.0.3_react@17.0.2
       expo-image-loader: 3.1.0_expo@43.0.5
       expo-modules-autolinking: 0.5.5
-      expo-modules-core: 0.6.4
+      expo-modules-core: 0.6.5
       fuse.js: 6.5.3
       hoist-non-react-statics: 3.3.2
       https-browserify: 1.0.0
@@ -22481,8 +22481,8 @@ packages:
     resolution: {integrity: sha512-HKbu6VHAlfhoP7y+HaGJwJizoUTY2eBTBHAi1RE7l/r4sc+cAegTmwwqf/3AOR8C7VntDvuQKtW7NZIyA+62KQ==}
     dev: true
 
-  /expo-error-recovery/3.0.4_expo@43.0.5:
-    resolution: {integrity: sha512-7z2V7n9Yvm9/ogm4I1KgcsQZfgyDMSOBVHk8pA3IY0jL8+tXTyTrStxHsPXRjE8HHeYikfTRBIeFsh/1wWY7oA==}
+  /expo-error-recovery/3.0.5_expo@43.0.5:
+    resolution: {integrity: sha512-VM6OOecjt0aPu5/eCdGGJfNjvAZIemaQym0JF/+SA5IlLiPpEfbVCDTO/5yiS8Zb5fKpeABx+GCRmtfnFqvRRw==}
     requiresBuild: true
     peerDependencies:
       expo: '*'
@@ -22595,8 +22595,8 @@ packages:
       invariant: 2.2.4
     dev: false
 
-  /expo-modules-core/0.6.4:
-    resolution: {integrity: sha512-I5MvSZHjww4Jfvob/woCbI0ZLZIUBmhoiLeZsMJoWJuWa8QmtxXjI+4eRjaDB7+RxNVhrnVcmRjQPYG/5HepVg==}
+  /expo-modules-core/0.6.5:
+    resolution: {integrity: sha512-h/9+SJ3m8XkDUV1QrPO8WeXaeRYWLBJrOqhokDyhgWUYSqe6JOuRx1ZkoGq/GmTiwjouRDbXPsXUBiU9HWLYyA==}
     dependencies:
       compare-versions: 3.6.0
       invariant: 2.2.4
@@ -22689,7 +22689,7 @@ packages:
       pretty-format: 26.6.2
       uuid: 3.4.0
     optionalDependencies:
-      expo-error-recovery: 3.0.4_expo@43.0.5
+      expo-error-recovery: 3.0.5_expo@43.0.5
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -30373,6 +30373,7 @@ packages:
 
   /moment/2.29.1:
     resolution: {integrity: sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==}
+    requiresBuild: true
 
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
@@ -30486,6 +30487,7 @@ packages:
   /mv/2.1.1:
     resolution: {integrity: sha1-rmzg1vbV4KT32JN5jQPB6pVZtqI=}
     engines: {node: '>=0.8.0'}
+    requiresBuild: true
     dependencies:
       mkdirp: 0.5.5
       ncp: 2.0.0
