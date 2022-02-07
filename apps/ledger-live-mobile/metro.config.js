@@ -22,6 +22,27 @@ const nodeModulesPaths = [
   path.resolve(__dirname, "..", "..", "node_modules", ".pnpm", "node_modules"),
 ];
 
+// Dependencies that are forcefully resolved from the LLM folder.
+const FORCED_DEPENDENCIES = ["react-native", "react-native-svg"];
+
+function forceDependency(moduleName, filters) {
+  const matches = filters.some(
+    filter => moduleName === filter || moduleName.startsWith(`${filter}/`),
+  );
+  if (matches) {
+    const resolution = require.resolve(moduleName, {
+      paths: nodeModulesPaths,
+    });
+
+    return {
+      filePath: resolution,
+      type: "sourceFile",
+    };
+  }
+
+  return null;
+}
+
 const symlinkResolver = MetroSymlinksResolver({
   remapModule: (context, moduleName, _platform) => {
     const { originModulePath } = context;
@@ -65,8 +86,19 @@ const config = {
     // In practice, it is just a bit more complicated than that unfortunately…
     resolveRequest: (context, realModuleName, platform, moduleName) => {
       try {
+        // pnpm hoists a wrong versions when using the --frozen-lockfile argument.
+        // So we forcefully use the right ones here from the LLM subfolder.
+        const forcedResolution = forceDependency(
+          moduleName,
+          FORCED_DEPENDENCIES,
+        );
+        if (forcedResolution) return forcedResolution;
+
+        // Attempt to resolve using the symlink resolver.
         const resolution = symlinkResolver(context, moduleName, platform);
-        // Can be useful to log the resolution here for specific packages…
+        // It could be useful to log the resolution here when debugging specific packages…
+        if (moduleName.startsWith("react-native-svg"))
+          console.log(context.originModulePath, resolution);
         return resolution;
       } catch (error) {
         // If the symlink resolver failed it is likely that the package.json has an "exports" field
