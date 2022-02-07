@@ -60,12 +60,13 @@ jobs:
       # - name: make local version
       #   run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
       - name: build the app
-        run: ANDROID_KEYSTORE_FILE="$(pwd)/apps/ledger-live-mobile/android/app/staging.kstr" pnpm build:mobile
         env:
           ANDROID_KEYSTORE_PASS: staging
           ANDROID_KEY_ALIAS: staging
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
+        run: pnpm build:mobile
       # - uses: ledgerhq/actions/get-package-infos@v1.0.0
       #   id: post-version
       - name: upload Android app
