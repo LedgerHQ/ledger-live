@@ -16,7 +16,7 @@ PODS:
     - React-Core
   - Expo (43.0.5):
     - ExpoModulesCore
-  - ExpoModulesCore (0.6.4):
+  - ExpoModulesCore (0.6.5):
     - React-Core
     - ReactCommon/turbomodule/core
   - FBLazyVector (0.65.1)
@@ -543,7 +543,7 @@ DEPENDENCIES:
   - "EXCamera (from `../../../node_modules/.pnpm/expo-camera@12.0.3_react@17.0.2/node_modules/expo-camera/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@3.1.0_expo@43.0.5/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.16.12/node_modules/expo/ios`)"
-  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.4/node_modules/expo-modules-core/ios`)"
+  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/Libraries/FBLazyVector`)"
   - "FBReactNativeSpec (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/React/FBReactNativeSpec`)"
   - "glog (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/third-party-podspecs/glog.podspec`)"
@@ -658,7 +658,7 @@ EXTERNAL SOURCES:
   Expo:
     :path: "../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.16.12/node_modules/expo/ios"
   ExpoModulesCore:
-    :path: "../../../node_modules/.pnpm/expo-modules-core@0.6.4/node_modules/expo-modules-core/ios"
+    :path: "../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios"
   FBLazyVector:
     :path: "../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
@@ -792,7 +792,7 @@ SPEC CHECKSUMS:
   EXCamera: 03d69135ceb6f5f18f37b63eddb63d7643b65c42
   EXImageLoader: df83442d32bcfb57b7cfc5690096b6caf8203f8d
   Expo: d9588796cd19999da4d440d87bf7eb7ae4dbd608
-  ExpoModulesCore: 64abda7af7cf659d2fa092934e29c6f4ea7e849f
+  ExpoModulesCore: 32c0ccb47f477d330ee93db72505380adf0de09a
   FBLazyVector: 33c82491102f20ecddb6c6a2c273696ace3191e0
   FBReactNativeSpec: df8f81d2a7541ee6755a047b398a5cb5a72acd0e
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
