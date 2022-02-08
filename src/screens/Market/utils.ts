@@ -65,7 +65,7 @@ export const counterValueFormatter = ({
   const formatter = formatters[locale][currency];
 
   if (shorten && t) {
-    const sign = value > 0 ? "+" : "-";
+    const sign = value > 0 ? "" : "-";
     const v = Math.abs(value);
     const index = Math.floor(Math.log(v) / Math.log(10) / 3);
 
