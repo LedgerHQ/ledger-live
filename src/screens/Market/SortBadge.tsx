@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 export const Badge = styled(Flex).attrs({
   bg: "neutral.c30",
   flexDirection: "row",
-  mx: 2,
+  mx: "6px",
   px: 4,
   py: 1,
   justifyContent: " center",
@@ -23,7 +23,7 @@ export const Badge = styled(Flex).attrs({
 })`
   border-radius: 32px;
 `;
-Badge.mx = 2;
+Badge.mx = 6;
 
 const CheckIconContainer = styled(Flex).attrs({
   bg: "primary.c80",
