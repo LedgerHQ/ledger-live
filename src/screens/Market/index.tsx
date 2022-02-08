@@ -116,7 +116,7 @@ const BottomSection = ({
   return (
     <ScrollContainer
       style={{ marginHorizontal: -overflowX }}
-      contentContainerStyle={{ paddingHorizontal: overflowX - Badge.mx }}
+      contentContainerStyle={{ paddingHorizontal: overflowX - 2 * Badge.mx }}
       height={55}
       horizontal
       showsHorizontalScrollIndicator={false}
@@ -340,7 +340,6 @@ export default function Market({ navigation }: { navigation: any }) {
       <Flex flex={1} position="relative">
         <ScrollContainerHeader
           bg="background.main"
-          TopLeftSection={<Flex width={44} />}
           MiddleSection={
             <Flex
               height={48}
