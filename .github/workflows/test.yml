@@ -32,10 +32,8 @@ jobs:
           version: latest
       - uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 14
           cache: pnpm
-      - name: Upgrade node-gyp to @latest
-        run: npm i -g node-gyp@latest
       - uses: actions/setup-python@v2
         with:
           python-version: "2.7.x"
@@ -55,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: ${{ format('react-ui-test-results-{{0}}', matrix.os) }}
+          name: ${{ format('react-ui-test-results-{0}', matrix.os) }}
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
