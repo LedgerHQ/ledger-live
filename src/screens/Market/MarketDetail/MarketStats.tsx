@@ -190,19 +190,6 @@ export default function MarketStats({
           {marketcapRank}
         </TextLabel>
       </StatRow>
-      <StatRow label={t("market.detailsPage.marketCapDominance")}>
-        {marketCapChangePercentage24h !== null &&
-        !isNaN(marketCapChangePercentage24h) ? (
-          <TextLabel>
-            {marketCapChangePercentage24h.toLocaleString(locale)}%
-          </TextLabel>
-        ) : (
-          <Text variant="body" color="neutral.c70">
-            {" "}
-            -
-          </Text>
-        )}
-      </StatRow>
       <Separator />
       <Title>{t("market.detailsPage.supply")}</Title>
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
