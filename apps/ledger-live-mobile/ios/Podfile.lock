@@ -591,7 +591,7 @@ DEPENDENCIES:
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/ReactCommon`)"
   - "ReactNativeART (from `../../../node_modules/.pnpm/@react-native-community+art@1.2.0_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/art`)"
   - "RNAnalytics (from `../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.0/node_modules/@segment/analytics-react-native`)"
-  - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-community+async-storage@1.12.1_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/async-storage`)"
+  - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.15.17_react-native@0.65.1/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.65.1+react@17.0.2/node_modules/react-native-fast-image`)"
@@ -750,7 +750,7 @@ EXTERNAL SOURCES:
   RNAnalytics:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.0/node_modules/@segment/analytics-react-native"
   RNCAsyncStorage:
-    :path: "../../../node_modules/.pnpm/@react-native-community+async-storage@1.12.1_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/async-storage"
+    :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.15.17_react-native@0.65.1/node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/clipboard"
   RNCMaskedView:
