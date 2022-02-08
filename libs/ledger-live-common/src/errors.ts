@@ -141,6 +141,9 @@ export const SatStackDescriptorNotImported = createCustomErrorClass(
 export const SwapNoAvailableProviders = createCustomErrorClass(
   "SwapNoAvailableProviders"
 );
+export const NoSuchAppOnProvider = createCustomErrorClass(
+  "NoSuchAppOnProvider"
+);
 export const SwapExchangeRateAmountTooLow = createCustomErrorClass(
   "SwapExchangeRateAmountTooLow"
 );
