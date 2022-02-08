@@ -72,6 +72,7 @@ export default function MarketGraph({
               data={data}
               mapValue={mapGraphValue}
               onItemHover={setHoverItem}
+              verticalRangeRatio={10}
             />
           </Animatable.View>
         ) : (
