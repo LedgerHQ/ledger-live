@@ -18,13 +18,14 @@
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",
-    "jest": "rimraf libcoredb && mkdir libcoredb && x-run node_modules/cross-env/src/bin/cross-env.js TZ=America/New_York jest",
+    "jest": "rimraf libcoredb && mkdir libcoredb && pnpm run:cross-env -- TZ=America/New_York jest",
     "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
     "ci-test-common": "env-cmd -f ./.ci.env pnpm jest -- --ci --updateSnapshot && git diff --exit-code src",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && pnpm test",
-    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
+    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'",
+    "run:cross-env": "x-run node_modules/cross-env/src/bin/cross-env.js"
   },
   "files": [
     "lib",
