@@ -116,7 +116,7 @@ const BottomSection = ({
   return (
     <ScrollContainer
       style={{ marginHorizontal: -overflowX }}
-      contentContainerStyle={{ paddingHorizontal: overflowX }}
+      contentContainerStyle={{ paddingHorizontal: overflowX - Badge.mx }}
       height={55}
       horizontal
       showsHorizontalScrollIndicator={false}

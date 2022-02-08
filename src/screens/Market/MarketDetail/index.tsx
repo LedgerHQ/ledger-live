@@ -128,6 +128,9 @@ export default function MarketDetail({
   const availableOnSwap =
     internalCurrency && swapCurrencies.includes(internalCurrency.id);
 
+  console.log("availability a", {availableOnBuy, availableOnSwap})
+  console.log("availability b", {swapCurrencies});
+
   const toggleStar = useCallback(() => {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));

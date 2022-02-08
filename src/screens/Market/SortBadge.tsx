@@ -23,6 +23,7 @@ export const Badge = styled(Flex).attrs({
 })`
   border-radius: 32px;
 `;
+Badge.mx = 2;
 
 const CheckIconContainer = styled(Flex).attrs({
   bg: "primary.c80",
