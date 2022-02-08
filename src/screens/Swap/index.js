@@ -441,6 +441,7 @@ export default function SwapFormEntry(props: Props) {
       confirmButtonText={<Trans i18nKey="carousel.banners.buyCrypto.title" />}
       onConfirm={onNavigateToBuyCrypto}
       Icon={Info}
+      iconMarginBottom={16}
       iconColor={colors.orange}
     />
   );
