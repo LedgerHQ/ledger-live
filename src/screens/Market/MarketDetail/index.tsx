@@ -13,7 +13,10 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation, TFunction } from "react-i18next";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import {
+  useMarketData,
+  useSingleCoinMarketData,
+} from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 import { FlatList, Image, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -83,6 +86,8 @@ export default function MarketDetail({
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
 
+  const { refresh, selectCurrency } = useMarketData();
+
   const {
     selectedCoinData: currency,
     chartRequestParams,
@@ -101,6 +106,15 @@ export default function MarketDetail({
     chartData,
     isLiveSupported,
   } = currency || {};
+
+  useEffect(
+    () => () => {
+      // @ts-expect-error can be an input
+      selectCurrency(undefined);
+      refresh({});
+    },
+    [selectCurrency, refresh],
+  );
 
   const allAccounts = useSelector(
     accountsByCryptoCurrencyScreenSelector(internalCurrency),
