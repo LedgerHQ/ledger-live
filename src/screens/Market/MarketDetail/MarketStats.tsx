@@ -193,7 +193,7 @@ export default function MarketStats({
       <StatRow label={t("market.detailsPage.marketCapDominance")}>
         {marketCapChangePercentage24h !== null &&
         !isNaN(marketCapChangePercentage24h) ? (
-          <DeltaVariation percent value={marketCapChangePercentage24h} />
+          <TextLabel>{marketCapChangePercentage24h.toLocaleString(locale)}%</TextLabel>
         ) : (
           <Text variant="body" color="neutral.c70">
             {" "}
