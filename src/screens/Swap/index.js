@@ -442,7 +442,6 @@ export default function SwapFormEntry(props: Props) {
       onConfirm={onNavigateToBuyCrypto}
       Icon={Info}
       iconColor={colors.orange}
-      hideRejectButton
     />
   );
 }
