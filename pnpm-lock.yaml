@@ -396,6 +396,7 @@ importers:
       '@ledgerhq/react-native-ledger-core': 4.19.1
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
       '@polkadot/reactnative-identicon': 0.87.5
+      '@react-native-async-storage/async-storage': ^1.15.17
       '@react-native-community/art': ^1.2.0
       '@react-native-community/async-storage': ^1.12.1
       '@react-native-community/cli-platform-android': ^6.3.0
@@ -515,7 +516,6 @@ importers:
       react-native-safe-area-view: ^1.1.1
       react-native-screens: ^3.9.0
       react-native-share: ^6.2.0
-      react-native-simple-store: ^2.0.2
       react-native-slider: ^0.11.0
       react-native-splash-screen: 3.2.0
       react-native-svg: ^12.1.1
@@ -557,6 +557,7 @@ importers:
       '@ledgerhq/react-native-ledger-core': 4.19.1_react-native@0.65.1
       '@ledgerhq/react-native-passcode-auth': 2.1.0
       '@polkadot/reactnative-identicon': 0.87.5_react-native@0.65.1+react@17.0.2
+      '@react-native-async-storage/async-storage': 1.15.17_react-native@0.65.1
       '@react-native-community/art': 1.2.0_react-native@0.65.1+react@17.0.2
       '@react-native-community/async-storage': 1.12.1_react-native@0.65.1+react@17.0.2
       '@react-native-community/cli-platform-android': 6.3.0
@@ -648,7 +649,6 @@ importers:
       react-native-safe-area-view: 1.1.1_d91bbaee17cf2790c03dc5031a7aa4c7
       react-native-screens: 3.10.2_react-native@0.65.1+react@17.0.2
       react-native-share: 6.5.0
-      react-native-simple-store: 2.0.2_react-native@0.65.1+react@17.0.2
       react-native-slider: 0.11.0
       react-native-splash-screen: 3.2.0_react-native@0.65.1
       react-native-svg: 12.1.1_react-native@0.65.1+react@17.0.2
@@ -8040,6 +8040,15 @@ packages:
       react-lifecycles-compat: 3.0.4
     dev: true
 
+  /@react-native-async-storage/async-storage/1.15.17_react-native@0.65.1:
+    resolution: {integrity: sha512-NQCFs47aFEch9kya/bqwdpvSdZaVRtzU7YB02L8VrmLSLpKgQH/1VwzFUBPcc1/JI1s3GU4yOLVrEbwxq+Fqcw==}
+    peerDependencies:
+      react-native: ^0.0.0-0 || 0.60 - 0.67 || 1000.0.0
+    dependencies:
+      merge-options: 3.0.4
+      react-native: 0.65.1_react@17.0.2
+    dev: false
+
   /@react-native-community/art/1.2.0_react-native@0.65.1+react@17.0.2:
     resolution: {integrity: sha512-a+ZcRGl/BzLa89yi33Mbn5SHavsEXqKUMdbfLf3U8MDLElndPqUetoJyGkv63+BcPO49UMWiQRP1YUz6/zfJ+A==}
     peerDependencies:
@@ -8061,17 +8070,6 @@ packages:
       react-native: '>=0.59'
     dependencies:
       deep-assign: 3.0.0
-      react: 17.0.2
-      react-native: 0.65.1_react@17.0.2
-    dev: false
-
-  /@react-native-community/async-storage/1.3.3_react-native@0.65.1+react@17.0.2:
-    resolution: {integrity: sha512-mypRivxWCO3apTDWpbvc7owcz5gZH0mI60JWPJDW/Pibr3vk9T7TQPA44b8m43qc/o5cnSEJFZk6l/1T4QEM/Q==}
-    deprecated: 'Async Storage has moved to new organization: https://github.com/react-native-async-storage/async-storage'
-    peerDependencies:
-      react: ^16.0
-      react-native: '>=0.57'
-    dependencies:
       react: 17.0.2
       react-native: 0.65.1_react@17.0.2
     dev: false
@@ -15857,7 +15855,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.14.7
+      follow-redirects: 1.14.7_debug@4.3.3
     transitivePeerDependencies:
       - debug
     dev: false
@@ -15865,7 +15863,7 @@ packages:
   /axios/0.23.0:
     resolution: {integrity: sha512-NmvAE4i0YAv5cKq8zlDoPd1VLKAqX5oLuZKs8xkJa4qi6RGn0uhCYFjWtHHC9EM/MwOwYWOs53W+V0aqEXq1sg==}
     dependencies:
-      follow-redirects: 1.14.7
+      follow-redirects: 1.14.7_debug@4.3.3
     transitivePeerDependencies:
       - debug
     dev: true
@@ -15873,7 +15871,7 @@ packages:
   /axios/0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
     dependencies:
-      follow-redirects: 1.14.7
+      follow-redirects: 1.14.7_debug@4.3.3
     transitivePeerDependencies:
       - debug
 
@@ -15888,7 +15886,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.14.7
+      follow-redirects: 1.14.7_debug@4.3.3
     transitivePeerDependencies:
       - debug
 
@@ -23422,8 +23420,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.3_supports-color@6.1.0
-    dev: false
+      debug: 4.3.3
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
@@ -25112,7 +25109,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.14.7
+      follow-redirects: 1.14.7_debug@4.3.3
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -25935,7 +25932,6 @@ packages:
   /is-plain-obj/2.1.0:
     resolution: {integrity: sha512-YWnfyRwxL/+SsrWYfOpUtz5b3YD+nyfkHvjbcanzk8zgyO4ASD67uVMRt8k5bM4lLMDnXfriRhOpemw+NfT1eA==}
     engines: {node: '>=8'}
-    dev: true
 
   /is-plain-object/2.0.4:
     resolution: {integrity: sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==}
@@ -28548,6 +28544,7 @@ packages:
 
   /lodash.merge/4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+    dev: true
 
   /lodash.omit/4.5.0:
     resolution: {integrity: sha1-brGa5aHuHdnfC5aeZs4Lf6MLXmA=}
@@ -29343,6 +29340,13 @@ packages:
 
   /merge-descriptors/1.0.1:
     resolution: {integrity: sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=}
+
+  /merge-options/3.0.4:
+    resolution: {integrity: sha512-2Sug1+knBjkaMsMgf1ctR1Ujx+Ayku4EdJN4Z+C2+JzoeF7A3OZ9KM2GY0CpQS51NR61LTurMJrRKPhSs3ZRTQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      is-plain-obj: 2.1.0
+    dev: false
 
   /merge-stream/1.0.1:
     resolution: {integrity: sha1-QEEgLVCKNCugAXQAjfDCUbjBNeE=}
@@ -34121,16 +34125,6 @@ packages:
 
   /react-native-share/6.5.0:
     resolution: {integrity: sha512-T46Mn+ALx2Fg+2/ksWFtzxSYNl34Xe/PH8eabx6DsLuCTDxatyaUblmpzDBjTO4rIMuVuTGMtR4mzwKKZcB5ZA==}
-    dev: false
-
-  /react-native-simple-store/2.0.2_react-native@0.65.1+react@17.0.2:
-    resolution: {integrity: sha512-2+EOxAGb5mMAQ3PKNUoE/X+i4fbHF7kV7BdJE9EQ42zbWty+rVH/3J6eJCijDXuGxvEvcQxkOU7P/VeY6wPvig==}
-    dependencies:
-      '@react-native-community/async-storage': 1.3.3_react-native@0.65.1+react@17.0.2
-      lodash.merge: 4.6.2
-    transitivePeerDependencies:
-      - react
-      - react-native
     dev: false
 
   /react-native-slider/0.11.0:
