@@ -52,7 +52,7 @@ export const BackButton = ({ navigation }: { navigation: any }) => (
 );
 
 /**
- * Disabled for now as the mapping for supported coins is not working
+ * The following is disabled for now as the mapping for supported coins is not 100% working (ERC20 etc.)
 const NoCoinSupport = ({ t }: { t: TFunction }) => (
   <Flex
     bg="primary.c20"

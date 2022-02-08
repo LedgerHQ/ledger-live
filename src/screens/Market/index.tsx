@@ -195,7 +195,8 @@ const BottomSection = ({
           </Text>
         </Badge>
       </TouchableOpacity>
-      <SortBadge
+      {/* The following is disabled for now as the mapping for supported coins is not 100% working (ERC20 etc.) */}
+      {/* <SortBadge
         label={t("market.filters.view.label")}
         value={liveCompatible ? "liveCompatible" : "all"}
         valueLabel={t(
@@ -214,7 +215,7 @@ const BottomSection = ({
           },
         ]}
         onChange={onChange}
-      />
+      /> */}
     </ScrollContainer>
   );
 };
