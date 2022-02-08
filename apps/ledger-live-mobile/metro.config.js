@@ -97,8 +97,6 @@ const config = {
         // Attempt to resolve using the symlink resolver.
         const resolution = symlinkResolver(context, moduleName, platform);
         // It could be useful to log the resolution here when debugging specific packages…
-        if (moduleName.startsWith("react-native-svg"))
-          console.log(context.originModulePath, resolution);
         return resolution;
       } catch (error) {
         // If the symlink resolver failed it is likely that the package.json has an "exports" field
