@@ -16,9 +16,10 @@ type Props = {
   currency: *,
   size: number,
   color?: string,
+  sizeRatio?: number,
 };
 
-function CircleCurrencyIcon({ size, currency, color }: Props) {
+function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5 }: Props) {
   const { colors } = useTheme();
   const isToken = currency.type === "TokenCurrency";
 
@@ -43,7 +44,7 @@ function CircleCurrencyIcon({ size, currency, color }: Props) {
       style={[styles.wrapper, { backgroundColor, width: size, height: size }]}
     >
       {MaybeIconComponent ? (
-        <MaybeIconComponent size={size} color={c} />
+        <MaybeIconComponent size={size * sizeRatio} color={c} />
       ) : (
         <LText semiBold style={{ color: c, fontSize: size / 2 }}>
           {ticker}

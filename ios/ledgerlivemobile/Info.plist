@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow $(PRODUCT_NAME) to use the camera</string>
+	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
 	<key>CFBundleURLTypes</key>
@@ -58,8 +58,6 @@
 	<string>Ledger Live needs to connect to your Ledger device to manage your crypto assets</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>The Ledger Live app needs access device</string>
-	<key>NSCameraUsageDescription</key>
-	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app requires Face ID permission to authenticate using Face recognition.</string>
 	<key>UIAppFonts</key>
@@ -94,6 +92,8 @@
 		<string>FontAwesome5_Pro_Light.ttf</string>
 		<string>FontAwesome5_Pro_Regular.ttf</string>
 		<string>FontAwesome5_Pro_Solid.ttf</string>
+		<string>HMAlphaMono-Medium.otf</string>
+		<string>Inter-Medium.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
