@@ -77,7 +77,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         <Text variant="large" fontWeight="semiBold">
           {name}
         </Text>
-        <Flex flexDirection="row">
+        <Flex flexDirection="row" alignItems="center">
           <Text
             variant="small"
             bg="neutral.c40"
