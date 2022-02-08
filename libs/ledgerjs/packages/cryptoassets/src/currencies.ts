@@ -2650,8 +2650,8 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.coinexplorer.net/VTC/transaction/$hash",
-        address: "https://www.coinexplorer.net/VTC/address/$address",
+        tx: "https://vtcblocks.com/tx/$hash",
+        address: "https://vtcblocks.com/address/$address",
       },
     ],
   },
