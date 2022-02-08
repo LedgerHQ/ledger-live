@@ -3,15 +3,40 @@ import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvid
 import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, TouchableOpacity, Image } from "react-native";
 import styled from "styled-components/native";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
+import { useTheme } from "styled-components/native";
 
-const renderEmptyList = () => (
-  <Flex alignItems="center">
-    <Text>
-      <Trans i18nKey="common.noCryptoFound" />
+const RenderEmptyList = ({
+  theme,
+  search,
+}: {
+  theme: string;
+  search: string;
+}) => (
+  <Flex alignItems="center" textAlign="center">
+    <Image
+      style={{ width: 164, height: 164 }}
+      source={
+        theme === "light"
+          ? require("../../images/marketNoResultslight.png")
+          : require("../../images/marketNoResultsdark.png")
+      }
+    />
+    <Text textAlign="center" variant="h4" my={3}>
+      <Trans i18nKey="market.warnings.noCurrencyFound" />
+    </Text>
+    <Text textAlign="center" variant="body" color="neutral.c70">
+      <Trans
+        i18nKey="market.warnings.noCurrencySearchResultsFor"
+        values={{ search }}
+      >
+        <Text fontWeight="bold" variant="body" color="neutral.c70">
+          {""}
+        </Text>
+      </Trans>
     </Text>
   </Flex>
 );
@@ -29,6 +54,7 @@ const CheckIconContainer = styled(Flex).attrs({
 
 function MarketCurrencySelect({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const {
     counterCurrency,
     supportedCounterCurrencies,
@@ -126,7 +152,10 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
         value={search}
         items={items}
         render={renderList}
-        renderEmptySearch={renderEmptyList}
+        // This props is badly type
+        renderEmptySearch={(() => () => (
+          <RenderEmptyList theme={colors.palette.type} search={search} />
+        ))()}
       />
     </Flex>
   );

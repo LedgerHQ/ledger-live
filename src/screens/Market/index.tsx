@@ -16,7 +16,12 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
-import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { starredMarketCoinsSelector } from "../../reducers/settings";
@@ -279,6 +284,14 @@ export default function Market({ navigation }: { navigation: any }) {
           p="4"
           mt={70}
         >
+          <Image
+            style={{ width: 164, height: 164, alignSelf: "center" }}
+            source={
+              colors.palette.type === "light"
+                ? require("../../images/marketNoResultslight.png")
+                : require("../../images/marketNoResultsdark.png")
+            }
+          />
           <Text textAlign="center" variant="h4" my={3}>
             {t("market.warnings.noCryptosFound")}
           </Text>
