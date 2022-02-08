@@ -182,7 +182,7 @@ class ChooseDevice extends Component<
           onBluetoothDeviceAction={this.onShowMenu}
         />
         <DeviceActionModal
-          onClose={this.onSelectDevice}
+          onClose={() => this.onSelectDevice()}
           device={device}
           onResult={this.onSelect}
           onModalHide={this.onModalHide}
