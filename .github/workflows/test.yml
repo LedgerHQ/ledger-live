@@ -49,5 +49,5 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="!./apps" --no-frozen-lockfile
       - name: Build and Test affected libraries
-        run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }} --ignore='apps/*'
+        run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
