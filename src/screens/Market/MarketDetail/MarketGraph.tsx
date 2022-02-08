@@ -33,13 +33,15 @@ export default function MarketGraph({
 
   const ranges = Object.keys(rangeDataTable)
     .filter(key => key !== "1h")
-    .map(r => t(`market.range.${r}`));
+    .map(r => ({ label: t(`market.range.${r}`), value: r }));
+
+  const rangesLabels = ranges.map(({ label }) => label);
 
   const isLoading = loading || loadingChart;
 
   const { range } = chartRequestParams;
 
-  const activeRangeIndex = ranges.indexOf(range);
+  const activeRangeIndex = ranges.findIndex(r => r.value === range);
   const data = useMemo(
     () =>
       chartData?.[range]
@@ -54,7 +56,7 @@ export default function MarketGraph({
   const setRange = useCallback(
     index => {
       if (isLoading) return;
-      const newRange = ranges[index];
+      const newRange = ranges[index]?.value;
       if (range !== newRange) refreshChart({ range: newRange });
     },
     [isLoading, range, ranges, refreshChart],
@@ -89,7 +91,7 @@ export default function MarketGraph({
           activeIndex={activeRangeIndex}
           activeBg="neutral.c30"
           onChange={setRange}
-          labels={ranges}
+          labels={rangesLabels}
         />
       </Flex>
     </Flex>
