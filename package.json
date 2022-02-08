@@ -14,7 +14,7 @@
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
     "build:mobile": "pnpm run:turbo -- run build-ci --scope=live-mobile --include-dependencies --no-deps",
-    "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps",
+    "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps --ignore=apps/* --ignore=apps\\*",
     "lld:dev": "pnpm run:turbo -- run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
     "desktop": "pnpm --filter live-desktop",
