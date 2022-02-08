@@ -263,8 +263,8 @@
       "description": null
     },
     "EthAppNftNotSupported": {
-      "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "title": "Operación no disponible para este dispositivo",
+      "description": "La función Enviar NFT sólo está disponible en el Nano X. Por favor visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
     "Touch ID Error": {
       "title": "La autenticación biométrica ha fallado",
@@ -304,7 +304,7 @@
       "title": "Esta no es una dirección de {{currencyName}} válida"
     },
     "InvalidAddressBecauseAlreadyDelegated": {
-      "title": "Your account is already delegated to this validator"
+      "title": "Tu cuenta ya está delegada a este validador"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Las cuentas de origen y destino no deben ser las mismas."
@@ -519,7 +519,7 @@
     },
     "WrongDeviceForAccount": {
       "title": "Algo ha salido mal",
-      "description": "Comprueba que tu billetera de hardware esté configurada con la frase de recuperación o frase de contraseña asociada a la cuenta seleccionada."
+      "description": "Comprueba que tu billetera de hardware esté configurada con la Frase de recuperación o Passphrase asociada a la cuenta seleccionada."
     },
     "UnexpectedBootloader": {
       "title": "Tu dispositivo no debe estar en modo Bootloader",
@@ -612,13 +612,13 @@
       "description": "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "Cuenta sin fondos"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "Dirección fuera de la curva ed25519"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "Memo demasiado largo. La longitud máxima es {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -690,7 +690,8 @@
   },
   "reset": {
     "description": "Desinstala y luego vuelve la instalar la aplicación en tu teléfono para eliminar los datos de Ledger Live, incluidas las cuentas y los ajustes.",
-    "button": "Restablecer"
+    "button": "Restablecer",
+    "warning": "Restablecer Ledger Live borrará el historial de transacciones de permuta de todas tus cuentas."
   },
   "graph": {
     "week": "1 S",
@@ -753,7 +754,7 @@
   "onboarding": {
     "stepWelcome": {
       "title": "Bienvenidos a Ledger",
-      "subtitle": "Administra de manera segura tus criptos desde tu smartphone.",
+      "subtitle": "Administra de manera segura tus cripto desde tu smartphone.",
       "start": "Comenzar",
       "noDevice": "¿No tienes un dispositivo?",
       "buy": "Compra un {{fullDeviceName}}"
@@ -791,8 +792,8 @@
       "desktopSync": {
         "title": "¿Ya tienes una Frase de recuperación?",
         "label": "Sincronización con PC",
-        "subTitle": "Sincroniza tus criptos desde tu aplicación Desktop",
-        "desc": "¿Ya tienes la aplicación Desktop? ¡Sincronízala para administrar tus criptos desde tu teléfono!"
+        "subTitle": "Sincroniza tus cripto desde tu aplicación Desktop",
+        "desc": "¿Ya tienes la aplicación Desktop? ¡Sincronízala para administrar tus cripto desde tu teléfono!"
       },
       "restoreDevice": {
         "label": "Restaurar dispositivo",
@@ -803,7 +804,7 @@
     "stepNewDevice": {
       "0": {
         "label": "Nociones básicas",
-        "title": "Accede a tus criptos",
+        "title": "Accede a tus cripto",
         "desc": "Tus activos cripto se almacenan en la cadena de bloques. Necesitas una clave privada para acceder a ellos y administrarlos."
       },
       "1": {
@@ -937,7 +938,7 @@
         "infoModal": {
           "title": "¿Cómo funciona una Frase de recuperación?",
           "desc": "Tu Frase de recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
-          "desc_1": "Para restaurar el acceso a tus criptos, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
+          "desc_1": "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
           "link": "Más información acerca del funcionamiento de la Frase de recuperación",
           "title_1": "¿Qué pasa si pierdo el acceso a mi Nano?",
           "bullets": {
@@ -948,7 +949,7 @@
               "label": "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger."
             },
             "2": {
-              "label": "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus criptos."
+              "label": "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
             }
           }
         },
@@ -975,7 +976,7 @@
       },
       "hideRecoveryPhrase": {
         "title": "Oculta tu Frase de recuperación",
-        "desc": "Tu Frase de recuperación es la única manera de recuperar tus criptos, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
+        "desc": "Tu Frase de recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
         "bullets": {
           "0": {
             "label": "Ingresa estas palabras únicamente en una billetera de hardware, no en PCs, ni en teléfonos."
@@ -1017,7 +1018,7 @@
       "importRecoveryPhrase": {
         "title": "Restaurar a partir de Frase de recuperación",
         "desc": "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
-        "desc_1": "Tu Nano restaurará tus claves privadas y podrás acceder a tus criptos y administrarlas.",
+        "desc_1": "Tu Nano restaurará tus claves privadas y podrás acceder a tus cripto y administrarlas.",
         "cta": "De acuerdo, ¡todo listo!",
         "warning": {
           "title": "Recomendamos utilizar únicamente Frases de recuperación generadas por Ledger",
@@ -1063,7 +1064,7 @@
           },
           "1": {
             "title": "Selecciona la cantidad de palabras de la Frase de recuperación",
-            "label": "Tus frases de recuperación pueden tener 12, 18 o 24 palabras. Debes ingresar todas las palabras para acceder a tus criptos."
+            "label": "Tus Frases de recuperación pueden tener 12, 18 o 24 palabras. Debes ingresar todas las palabras para acceder a tus cripto."
           },
           "2": {
             "title": "Ingresa la Word #1...",
@@ -1101,7 +1102,7 @@
         "desc": "En tu dispositivo, selecciona “Settings > General > Device name”.",
         "title_1": "¿Cómo configurar una conexión Bluetooth?",
         "title_2": "¿Cómo utilizo mi Nano X sin Bluetooth?",
-        "desc_1": "Utiliza un <1>cable OTG</1> para conectar tu Ledger Nano X a tu teléfono Android (no compatible con iOS). Administra tus criptos con la aplicación Ledger Live o cualquier otra aplicación (web) compatible.",
+        "desc_1": "Utiliza un <1>cable OTG</1> para conectar tu Ledger Nano X a tu teléfono Android (no compatible con iOS). Administra tus cripto con la aplicación Ledger Live o cualquier otra aplicación (web) compatible.",
         "bullets": {
           "0": {
             "label": "Asegúrate de que el Bluetooth está activado en tu teléfono y en tu Ledger Nano X. Tu Ledger Nano X debe estar en el Dashboard, la ventana de inicio principal."
@@ -1144,8 +1145,8 @@
       }
     },
     "stepImportAccounts": {
-      "title": "Sincroniza tus criptos desde la PC",
-      "desc": "Si ya tienes tus criptos configuradas en la aplicación Ledger Desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
+      "title": "Sincroniza tus cripto desde Desktop",
+      "desc": "Si ya tienes tus cripto configuradas en la aplicación Ledger Desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
       "cta": "Estoy listo para escanear",
       "bullets": {
         "0": {
@@ -1176,18 +1177,18 @@
       "modal": {
         "step1": "Elige siempre <1><1>tu propio</1></1> PIN",
         "step2": "Utiliza 8 dígitos para mayor seguridad",
-        "step3": "No utilices nunca un dispositivo con un PIN o una frase de recuperación ya configurado"
+        "step3": "No utilices nunca un dispositivo con un PIN o una Frase de recuperación ya configurados"
       }
     },
     "stepWriteRecovery": {
       "step1": "Escribe la <1><1>“Word #1”</1></1> en la posición 1 de una Hoja de recuperación en blanco",
       "step2": "Presiona el botón derecho y continúa escribiendo las 24 palabras.",
-      "step3": "Confirma cada palabra de la frase de recuperación: selecciónala presionando ambos botones a la vez.",
+      "step3": "Confirma cada palabra de la Frase de recuperación: selecciónala presionando ambos botones a la vez.",
       "modal": {
-        "step1": "Guarda la frase de recuperación de 24 palabras en un lugar seguro, fuera de la vista.",
-        "step2": "Asegúrate de que seas el único que tenga acceso a la frase de recuperación.",
-        "step3": "Ledger no guarda tu frase de recuperación.",
-        "step4": "No utilices nunca un dispositivo con una frase de recuperación o un PIN ya configurados."
+        "step1": "Guarda la Frase de recuperación de 24 palabras en un lugar seguro, fuera de la vista.",
+        "step2": "Asegúrate de ser el único que tiene acceso a la Frase de recuperación.",
+        "step3": "Ledger no guarda tu Frase de recuperación.",
+        "step4": "No utilices nunca un dispositivo con una Frase de recuperación o un PIN ya configurados."
       }
     },
     "stepPassword": {
@@ -1247,7 +1248,7 @@
       },
       "final": {
         "successTitle": "¡Ya tienes nivel de profesional!",
-        "successText": "Está todo listo para que administres de forma segura tus criptos. ¡Solo te queda un breve paso!",
+        "successText": "Está todo listo para que administres de forma segura tus cripto. ¡Solo te queda un breve paso!",
         "failTitle": "Pronto tendrás nivel de profesional...",
         "failText": "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa confianza con respecto a la protección de tus criptomonedas. ¡Solo te queda un breve paso!",
         "cta": "Siguiente paso"
@@ -1255,14 +1256,14 @@
     },
     "warning": {
       "recoveryPhrase": {
-        "title": "No utilices una frase de recuperación que no hayas generado tú mismo.",
+        "title": "No utilices una Frase de recuperación que no hayas generado tú mismo.",
         "desc": "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una palabra semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
         "supportLink": "Ponte en contacto con Soporte"
       },
       "seed": {
         "title": "Por favor, verifica los contenidos de la caja",
-        "desc": "Si tu {{deviceName}} ya tiene un código PIN o una frase de recuperación, no es seguro usarlo y deberías ponerte en contacto con el Soporte de Ledger.",
-        "warning": "Usa solo la frase de recuperación que haya generado tu dispositivo al configurarlo por primera vez",
+        "desc": "Si tu {{deviceName}} ya tiene un código PIN o una Frase de recuperación, no es seguro usarlo y deberías ponerte en contacto con el Soporte de Ledger.",
+        "warning": "Usa únicamente la Frase de recuperación que haya generado tu dispositivo al configurarlo por primera vez",
         "continueCTA": "Continuar",
         "contactSupportCTA": "Ponte en contacto con Soporte"
       }
@@ -1506,7 +1507,8 @@
         "title": "Eliminar cuenta del Portfolio",
         "desc": "Se eliminarán los datos guardados.",
         "confirmationTitle": "¿Deseas continuar?",
-        "confirmationDesc": "Esto no tiene ningún efecto sobre tus activos cripto. Siempre puedes agregar cuentas existentes más adelante."
+        "confirmationDesc": "Esto no tiene ningún efecto sobre tus activos cripto. Siempre puedes agregar cuentas existentes más adelante.",
+        "confirmationWarn": "Eliminar esta cuenta borrará el historial de transacciones de permuta asociado a dicha cuenta."
       },
       "archive": {
         "title": "Archivar cuenta",
@@ -1645,6 +1647,8 @@
       "carouselDesc": "Muestra u oculta el carrusel en el Portfolio",
       "language": "Idioma",
       "languageDesc": "Configura el idioma de Ledger Live.",
+      "region": "Región",
+      "regionDesc": "Elige tu región para actualizar el formato de fecha, hora \ny moneda.",
       "password": "Bloqueo por contraseña",
       "passwordDesc": "Elige una contraseña para proteger los datos de Ledger Live en el teléfono.",
       "counterValue": "Divisa preferida",
@@ -1721,7 +1725,7 @@
     "about": {
       "title": "Información",
       "desc": "Información, términos y condiciones y política de privacidad de la aplicación.",
-      "appDescription": "Con Ledger Live, protege, compra, vende, intercambia, aumenta y administra tus criptomonedas. Todo en un único sitio.",
+      "appDescription": "Con Ledger Live, protege, compra, vende, intercambia, haz crecer y administra tus criptomonedas. Todo en un único sitio.",
       "appVersion": "Versión",
       "termsConditions": "Términos y condiciones",
       "termsConditionsDesc": "Al utilizar Ledger Live, consideramos que aceptas nuestros términos y condiciones.",
@@ -1759,8 +1763,11 @@
       "disclaimer": "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que cambien, se deterioren o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
     },
     "developer": {
-      "title": "Developer",
-      "desc": "Try out the Developer features and let us know what you think."
+      "title": "Desarrollador",
+      "desc": "Prueba las funciones experimentales y envíanos tu opinión.",
+      "customManifest": {
+        "title": "Cargar manifiesto de plataforma personalizada"
+      }
     }
   },
   "migrateAccounts": {
@@ -1824,7 +1831,7 @@
       "copyAddress": "Copiar dirección",
       "shareAddress": "Compartir dirección",
       "addressCopied": "¡Dirección copiada!",
-      "taprootWarning": "Make sure the sender supports taproot",
+      "taprootWarning": "Asegúrate de que el remitente soporta taproot",
       "notSynced": {
         "text": "Sincronizando",
         "desc": "Esto puede tardar un tiempo si tienes muchas transacciones o una conexión a Internet lenta."
@@ -1866,8 +1873,8 @@
           "subtitle": "LEDGER recopila tu información en nombre de WYRE y la transfiere a este para fines de KYC. Para obtener más información, revisa nuestra Política de Privacidad",
           "pending": {
             "cta": "Continuar",
-            "title": "Your information has been submitted for approval",
-            "subtitle": "It usually takes only a few minutes before you can start swapping",
+            "title": "Tus datos han sido enviados para su aprobación",
+            "subtitle": "Normalmente lleva sólo unos minutos comenzar a permutar",
             "link": "Más información sobre KYC"
           },
           "approved": {
@@ -1920,9 +1927,9 @@
         "cta": "Cerrar"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
+        "description": "Tu operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que recibas tus {{targetCurrency}}",
         "label": "Tu ID de Permuta:",
-        "title": "Pending operation",
+        "title": "Operación pendiente",
         "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda del Soporte de {{provider}} más adelante.",
         "cta": "Ver detalles"
       },
@@ -1942,22 +1949,22 @@
         "button": "Continuar",
         "from": "De",
         "to": "A",
-        "source": "Source",
-        "target": "Target account",
-        "noAccount": "You don’t have {{currency}} account",
+        "source": "Origen",
+        "target": "Cuenta de destino",
+        "noAccount": "No tienes ninguna cuenta de {{currency}}",
         "balance": "Saldo <0>123</0>",
         "fromAccount": "Seleccionar cuenta",
         "toAccount": "Seleccionar cuenta",
         "paraswapCTA": "¿Buscas Paraswap? ¡Está en a la pestaña Discover!",
-        "quote": "Quote",
-        "receive": "Receive",
+        "quote": "Cotización",
+        "receive": "Recibir",
         "amount": {
           "useMax": "Utilizar máx",
           "available": "Total disponible"
         },
         "noAsset": {
-          "title": "You have no asset to swap",
-          "desc": "Buy some and come back to swap"
+          "title": "No tienes activos para permutar",
+          "desc": "Compra algunos y vuelve a permutar"
         },
         "noApp": {
           "title": "Aplicación {{appName}} no instalada",
@@ -2042,16 +2049,16 @@
     "swapv2": {
       "form": {
         "summary": {
-          "from": "From",
-          "to": "To",
-          "send": "Send",
-          "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
-          "provider": "Provider",
-          "method": "Rate",
-          "fees": "Fees"
+          "from": "De",
+          "to": "A",
+          "send": "Enviar",
+          "payoutNetworkFees": "Tarifas de pago",
+          "payoutNetworkFeesTooltip": "Este importe no se mostrará en el dispositivo",
+          "receive": "Importe",
+          "receiveFloat": "Importe a recibir antes de aplicar las tarifas de servicios",
+          "provider": "Proveedor",
+          "method": "Tarifa",
+          "fees": "Tarifas"
         }
       }
     },
@@ -2855,6 +2862,23 @@
     "introDescription2": "Esto no afecta de ninguna manera tus activos cripto.",
     "action": "Continuar con la actualización"
   },
+  "systemLanguageAvailable": {
+    "title": "¿Deseas cambiar el idioma de tu aplicación?",
+    "description": {
+      "newSupport": "¡Buenas noticias! Nuestros equipos han estado trabajando arduamente y Ledger Live ahora está en {{language}}.",
+      "advice": "Puedes cambiar el idioma más adelante desde Ajustes."
+    },
+    "switchButton": "Cambiar a {{language}}",
+    "no": "Prefiero no hacerlo",
+    "languages": {
+      "en": "Inglés",
+      "fr": "Francés",
+      "ru": "Ruso",
+      "es": "Español",
+      "zh": "Chino",
+      "de": "Alemán"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "Identificador",
     "description": "Presiona ambos botones a la vez en tu {{fullDeviceName}} si muestra el mismo identificador:"
@@ -2946,6 +2970,14 @@
             "broadcastError": "Es posible que la transacción haya fallado. Vuelve a comprobarlo en unos minutos para asegurarte de que no se haya realizado la transacción antes de intentarlo de nuevo."
           }
         }
+      }
+    }
+  },
+  "celo": {
+    "info": {
+      "available": {
+        "title": "CELO disponibles",
+        "description": "Este importe está disponible."
       }
     }
   },
@@ -3146,6 +3178,19 @@
             "broadcastError": "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
           }
         }
+      }
+    }
+  },
+  "cryptoOrg": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Con tecnología desarrollada por Crypto.org",
+        "moreInfo": "Más información",
+        "drawerTitle": "Integración con Crypto.org",
+        "title": "El token de Crypto.org (CRO) ya está disponible en Ledger Live",
+        "description": "Ahora puedes gestionar tus tokens de Crypto.org (CRO) y protegerlos con Ledger Live.",
+        "description2": "El token Crypto.org (CRO) es nativo de la cadena Crypto.org y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
+        "website": "Criptomonedas en todas las billeteras"
       }
     }
   },
@@ -3666,7 +3711,8 @@
       "selectCurrency": "Selecciona una divisa",
       "selectAccount": "Selecciona una cuenta",
       "connectDevice": "Conecta tu dispositivo",
-      "title": "Compra cripto a través de nuestro socio",
+      "title": "Elige un proveedor para comprar cripto",
+      "coinifyTitle": "Compra cripto por medio de nuestro socio",
       "description": "Compra activos cripto mediante Coinify y recíbelos directamente en tu cuenta de Ledger.",
       "CTAButton": "Comprar ahora",
       "emptyState": {
@@ -3679,6 +3725,11 @@
         "cancel": "Cancelar",
         "address": "Dirección para cuenta de {{currency}}",
         "warning": "La dirección no se ha confirmado en el dispositivo Ledger. Verifícala para mayor seguridad"
+      },
+      "bullets": {
+        "whereToBuy": "Compra dondequiera que estés",
+        "cryptoSupported": "cripto compatibles",
+        "payWith": "Paga con tarjeta o con SEPA"
       }
     },
     "sell": {

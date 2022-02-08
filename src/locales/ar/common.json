@@ -263,8 +263,8 @@
       "description": null
     },
     "EthAppNftNotSupported": {
-      "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "title": "العملية غير متوفرة لهذا الجهاز",
+      "description": "خاصية إرسال NFT متوفرة فقط لـ Nano X. الرجاء زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT باستخدام Nano S."
     },
     "Touch ID Error": {
       "title": "فشل التوثيق البيومتري",
@@ -304,7 +304,7 @@
       "title": "هذا ليس عنوان {{currencyName}} صحيح"
     },
     "InvalidAddressBecauseAlreadyDelegated": {
-      "title": "Your account is already delegated to this validator"
+      "title": "تم تفويض حسابك بالفعل إلى هذا المدقق"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "يجب ألا تكون حسابات الوجهة وحسابات المصدر هي نفسها."
@@ -612,13 +612,13 @@
       "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "الحساب غير ممول"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "العنوان خارج المنحنى ed25519"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "الملاحظة طويلة جداً. الطول الأقصى هو {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -690,7 +690,8 @@
   },
   "reset": {
     "description": "يرجى إلغاء تثبيت التطبيق ثم إعادة تثبيته على هاتفك لحذف بيانات ليدجر لايف (Ledger Live)، بما في ذلك الحسابات والإعدادات.",
-    "button": "إعادة تعيين"
+    "button": "إعادة تعيين",
+    "warning": "إعادة تعيين Ledger Live سوف يمحو سجل معاملات المبادلة الخاصة بك لجميع حساباتك."
   },
   "graph": {
     "week": "1 أسبوع",
@@ -1506,7 +1507,8 @@
         "title": "إزالة الحساب من الحافظة",
         "desc": "ستتم إزالة البيانات المخزنة.",
         "confirmationTitle": "هل أنت متأكد؟",
-        "confirmationDesc": "لن يؤثر ذلك على الأصول المشفرة الخاصة بك. من الممكن دائمًا إضافة الحسابات الموجودة فيما بعد."
+        "confirmationDesc": "لن يؤثر ذلك على الأصول المشفرة الخاصة بك. من الممكن دائمًا إضافة الحسابات الموجودة فيما بعد.",
+        "confirmationWarn": "سيؤدي حذف هذا الحساب إلى محو سجل معاملات المبادلة المرتبطة به."
       },
       "archive": {
         "title": "أرشفة الحساب",
@@ -1645,6 +1647,8 @@
       "carouselDesc": "تمكين المشاهدة كشريط دوّار في الحافظة",
       "language": "لغة البرنامج",
       "languageDesc": "قم بتعيين اللغة المستخدمة في Ledger Live.",
+      "region": "المنطقة",
+      "regionDesc": "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "password": "قفل كلمة المرور",
       "passwordDesc": "قم بتعيين كلمة مرور لحماية بيانات Ledger Live على هاتفك.",
       "counterValue": "العملة المفضلة",
@@ -1759,8 +1763,11 @@
       "disclaimer": "هذه ميزات تجريبية نقدمها \"كما هي\" لمجتمعنا من المهتمين بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة."
     },
     "developer": {
-      "title": "Developer",
-      "desc": "Try out the Developer features and let us know what you think."
+      "title": "مطوّر",
+      "desc": "جرّب ميزات المطور وأخبرنا برأيك.",
+      "customManifest": {
+        "title": "تحميل قائمة المنصة المخصصة"
+      }
     }
   },
   "migrateAccounts": {
@@ -1824,7 +1831,7 @@
       "copyAddress": "نسخ العنوان",
       "shareAddress": "عنوان المشاركة",
       "addressCopied": "تم نسخ العنوان!",
-      "taprootWarning": "Make sure the sender supports taproot",
+      "taprootWarning": "تأكد من أن المُرسل يدعم taproot",
       "notSynced": {
         "text": "تتم المزامنة",
         "desc": "قد يستغرق هذا بعض الوقت إذا كان لديك العديد من المعاملات أو إذا كان اتصالك بالإنترنت بطيئاً."
@@ -1866,8 +1873,8 @@
           "subtitle": "يتم جمع معلوماتك من قبل LEDGER بالنيابة عن WYRE كما يتم نقل هذه المعلومات إليها لأغراض التحقق من هوية العميل. للتعرف على مزيد من المعلومات، يرجى مراجعة سياسة الخصوصية الخاصة بنا",
           "pending": {
             "cta": "متابعة",
-            "title": "Your information has been submitted for approval",
-            "subtitle": "It usually takes only a few minutes before you can start swapping",
+            "title": "تم إرسال بياناتك لاعتمادها",
+            "subtitle": "عادة ما يستغرق الأمر بضع دقائق فقط قبل أن تتمكن من بدء المبادلة",
             "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
           },
           "approved": {
@@ -1920,9 +1927,9 @@
         "cta": "إغلاق"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
+        "description": "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. يمكن أن يستغرق الامر مدة تصل إلى ساعة قبل أن تستلم أصولك {{targetCurrency}} التي تمت مبادلتها",
         "label": "معرّف المبادلة الخاص بك:",
-        "title": "Pending operation",
+        "title": "عملية معلقة",
         "disclaimer": "قم بحفظ معرّف المبادلة الخاص بك في حال كنت بحاجة إلى مساعدة من دعم {{provider}}.",
         "cta": "رؤية التفاصيل"
       },
@@ -1942,22 +1949,22 @@
         "button": "متابعة",
         "from": "من",
         "to": "إلى",
-        "source": "Source",
-        "target": "Target account",
-        "noAccount": "You don’t have {{currency}} account",
+        "source": "المصدر",
+        "target": "الحساب المستهدف",
+        "noAccount": "ليس لديك حساب {{currency}}",
         "balance": "الرصيد <0>123</0>",
         "fromAccount": "اختيار الحساب",
         "toAccount": "اختيار الحساب",
         "paraswapCTA": "تبحث عن Paraswap؟ لقد تم نقله إلى علامة تبويب الاكتشاف!",
-        "quote": "Quote",
-        "receive": "Receive",
+        "quote": "عرض أسعار",
+        "receive": "تلقي",
         "amount": {
           "useMax": "استخدم الحد الأقصى",
           "available": "إجمالي المتاح"
         },
         "noAsset": {
-          "title": "You have no asset to swap",
-          "desc": "Buy some and come back to swap"
+          "title": "ليس لديك أي أصل لمبادلته",
+          "desc": "اشتري البعض و عد للمبادلة"
         },
         "noApp": {
           "title": "التطبيق {{appName}} غير مثبت",
@@ -2042,16 +2049,16 @@
     "swapv2": {
       "form": {
         "summary": {
-          "from": "From",
-          "to": "To",
-          "send": "Send",
-          "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
-          "provider": "Provider",
-          "method": "Rate",
-          "fees": "Fees"
+          "from": "من",
+          "to": "إلى",
+          "send": "إرسال",
+          "payoutNetworkFees": "رسوم الدفع",
+          "payoutNetworkFeesTooltip": "هذا المبلغ لن يظهر على جهازك",
+          "receive": "المبلغ",
+          "receiveFloat": "المبلغ المراد استلامه قبل رسوم الخدمة",
+          "provider": "المزود",
+          "method": "معدل",
+          "fees": "الرسوم"
         }
       }
     },
@@ -2855,6 +2862,23 @@
     "introDescription2": "ليس لذلك أي تأثير على الأصول المشفرة الخاصة بك.",
     "action": "متابعة التحديث"
   },
+  "systemLanguageAvailable": {
+    "title": "تريد تغير لغة تطبيقك؟",
+    "description": {
+      "newSupport": "أخبار جيدة! عملت فرقنا جاهدة و Ledger Live الآن يدعم {{language}}.",
+      "advice": "يمكنك دائماً تغيير لغة التطبيق في أي وقت في الإعدادات."
+    },
+    "switchButton": "التبديل إلى {{language}}",
+    "no": "أفضل عدم القيام بذلك",
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中文（简体）",
+      "de": "Deutsch"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "المُعرّف",
     "description": "يرجى الضغط على الزرين معًا على جهاز {{fullDeviceName}} الخاص بك إذا كان يعرض نفس المُعرّف:"
@@ -2946,6 +2970,14 @@
             "broadcastError": "من الوارد أن تكون معاملتك قد فشلت. يرجى التحقق مرة أخرى في غضون بضع دقائق للتأكد من عدم إتمام معاملتك قبل المحاولة مرة أخرى."
           }
         }
+      }
+    }
+  },
+  "celo": {
+    "info": {
+      "available": {
+        "title": "CELO متاح",
+        "description": "هذا المبلغ يمكن التخلص منه."
       }
     }
   },
@@ -3146,6 +3178,19 @@
             "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
+      }
+    }
+  },
+  "cryptoOrg": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "تعمل بواسطة Crypto.org",
+        "moreInfo": "مزيد من المعلومات",
+        "drawerTitle": "تكامل Crypto.org",
+        "title": "رمز Crypto.org (CRO) متاح الآن على Ledger Live",
+        "description": "يمكنك الآن بدء إدارة رموزك Crypto.org (CRO) وتأمينها من خلال Ledger Live.",
+        "description2": "رمز Crypto.org (CRO) هو رمز أصلي لسلسلة Crypto.org ويُستخدم لكل شيء من المعاملات، إلى التكديس و العديد من الميزات القادمة.",
+        "website": "العملات المشفرة في كل محفظة"
       }
     }
   },
@@ -3666,7 +3711,8 @@
       "selectCurrency": "اختار عملة",
       "selectAccount": "اختيار حساب",
       "connectDevice": "توصيل جهازك",
-      "title": "اشتري العملات المشفرة عن طريق شريكنا",
+      "title": "اختر مزود لشراء الأصول المشفرة",
+      "coinifyTitle": "شراء العملات المشفرة عن طريق شريكنا",
       "description": "قم بشراء الأصول المشفرة من خلال Coinify واستلمها مباشرة في حساب ليدجر (Ledger) الخاص بك.",
       "CTAButton": "اشتري الان",
       "emptyState": {
@@ -3679,6 +3725,11 @@
         "cancel": "إلغاء",
         "address": "عنوان حساب {{currency}}",
         "warning": "لم يتم تأكيد عنوانك على جهاز ليدجر الخاص بك. يرجى التحقق منه حرصاً على الأمان"
+      },
+      "bullets": {
+        "whereToBuy": "قم بالشراء من أي مكان",
+        "cryptoSupported": "الأصول المشفرة المدعومة",
+        "payWith": "الدفع بواسطة البطاقة أو SEPA"
       }
     },
     "sell": {

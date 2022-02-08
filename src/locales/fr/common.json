@@ -290,7 +290,7 @@
     },
     "LatestFirmwareVersionRequired": {
       "title": "Mise à jour requise sur l'ordinateur",
-      "description": "Mettez à jour le micrologiciel de votre Nano X sur Ledger Live ordinateur."
+      "description": "Mettez à jour le micrologiciel de votre Nano X sur Ledger Live pour l'ordinateur."
     },
     "GenuineCheckFailed": {
       "title": "Échec de la vérification de l'authenticité",
@@ -690,7 +690,8 @@
   },
   "reset": {
     "description": "Merci de désinstaller puis réinstaller l'app sur votre téléphone pour supprimer les données de Ledger Live, y compris de comptes et paramètres.",
-    "button": "Réinitialiser"
+    "button": "Réinitialiser",
+    "warning": "La réinitialisation de Ledger Live effacera l'historique des transactions de swap de tous vos comptes."
   },
   "graph": {
     "week": "1S",
@@ -752,7 +753,7 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Bienvenue sur Ledger Live",
+      "title": "Bienvenue chez Ledger",
       "subtitle": "Gérez vos cryptos en toute sécurité depuis votre smartphone.",
       "start": "Commencer",
       "noDevice": "Pas encore de wallet Ledger ?",
@@ -791,8 +792,8 @@
       "desktopSync": {
         "title": "Vous avez déjà une phrase de récupération ?",
         "label": "Synchronisation avec un ordinateur",
-        "subTitle": "Synchroniser ses cryptos à partir de Ledger Live ordinateur",
-        "desc": "Vous utilisez déjà l'application Ledger Live ordinateur ? Synchronisez-la pour gérer vos cryptos depuis votre smartphone."
+        "subTitle": "Synchroniser ses cryptos à partir de Ledger Live pour l'ordinateur",
+        "desc": "Vous utilisez déjà l'application Ledger Live pour l'ordinateur ? Synchronisez-la pour gérer vos cryptos depuis votre smartphone."
       },
       "restoreDevice": {
         "label": "Restauration d'un appareil",
@@ -1145,11 +1146,11 @@
     },
     "stepImportAccounts": {
       "title": "Synchroniser ses cryptos depuis un ordinateur",
-      "desc": "Si vous gérez déjà vos cryptos dans Ledger Live ordinateur, vous pouvez synchroniser pour les gérer sur votre téléphone.",
+      "desc": "Si vous gérez déjà vos cryptos dans Ledger Live pour l'ordinateur, vous pouvez synchroniser pour les gérer sur votre téléphone.",
       "cta": "Je suis prêt(e) à scanner",
       "bullets": {
         "0": {
-          "label": "Sur Ledger Live ordinateur, allez dans <1>Paramètres > Comptes > Exporter les comptes</1>."
+          "label": "Sur Ledger Live pour l'ordinateur, allez dans <1>Paramètres > Comptes > Exporter les comptes</1>."
         },
         "1": {
           "label": "Scannez le code QR avec votre téléphone."
@@ -1159,7 +1160,7 @@
         }
       },
       "warning": {
-        "title": "Vos applications ordinateur et mobile doivent être synchronisées manuellement.",
+        "title": "Vos applications pour l'ordinateur et pour le mobile doivent être synchronisées manuellement.",
         "desc": "Ledger Live respecte votre vie privée et stocke vos données localement. Si vous modifiez vos comptes ou paramètres sur votre téléphone, vous devez le faire aussi sur votre ordinateur, et inversement. Vos transactions restent synchronisées avec la blockchain.",
         "cta": "Compris"
       }
@@ -1288,7 +1289,7 @@
     },
     "emptyState": {
       "noAppsTitle": "Installer une app sur mon appareil",
-      "noAppsDesc": "Installez des apps sur votre appareil avant d'ajouter des comptes dans Ledger Live. Allez dans le Gestionnaire pour installer des apps.",
+      "noAppsDesc": "Installez des apps sur votre wallet avant d'ajouter des comptes dans Ledger Live. Allez dans le Gestionnaire pour installer des apps.",
       "noAccountsTitle": "Vous n'avez aucun compte.",
       "noAccountsDesc": "Ajoutez des comptes à votre Portefeuille.",
       "buttons": {
@@ -1506,7 +1507,8 @@
         "title": "Supprimer le compte du Portefeuille",
         "desc": "Les données enregistrées seront supprimées.",
         "confirmationTitle": "Êtes-vous sûr(e) ?",
-        "confirmationDesc": "Cela n'a pas d'effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants."
+        "confirmationDesc": "Cela n'a pas d'effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+        "confirmationWarn": "La suppression de ce compte effacera l'historique de vos transactions de swap avec ce dernier."
       },
       "archive": {
         "title": "Archiver le compte",
@@ -1521,7 +1523,7 @@
       "scan": {
         "title": "Scanner le code QR de Live ordinateur",
         "descTop": {
-          "line1": "Dans Ledger Live ordinateur, accédez à",
+          "line1": "Dans Ledger Live pour l'ordinateur, accédez à",
           "line2": "Paramètres > Comptes > Exporter les comptes > Exporter"
         },
         "descBottom": "Placez le code QR de Live ordinateur dans le carré."
@@ -1536,7 +1538,7 @@
         "noAccounts": "Rien à importer",
         "unsupported": "Non pris en charge",
         "settings": "Paramètres de l'app",
-        "includeGeneralSettings": "Importer les paramètres de Ledger Live ordinateur"
+        "includeGeneralSettings": "Importer les paramètres de Ledger Live pour l'ordinateur"
       },
       "fallback": {
         "header": "Importer le compte",
@@ -1645,6 +1647,8 @@
       "carouselDesc": "Afficher le carrousel sur le Portefeuille",
       "language": "Langue d'affichage",
       "languageDesc": "Choisissez la langue d'affichage de Ledger Live.",
+      "region": "Région",
+      "regionDesc": "Choisissez votre région pour personnaliser les formats de date, d'heure et de nombre.",
       "password": "Verrouillage par mot de passe",
       "passwordDesc": "Définissez un mot de passe pour protéger vos données Ledger Live sur votre téléphone.",
       "counterValue": "Devise préférée",
@@ -1760,7 +1764,10 @@
     },
     "developer": {
       "title": "Développeurs",
-      "desc": "Essayez les fonctionnalités pour développeurs et donnez-nous votre avis."
+      "desc": "Essayez les fonctionnalités pour développeurs et donnez-nous votre avis.",
+      "customManifest": {
+        "title": "Charger un manifest personnalisé pour Platform"
+      }
     }
   },
   "migrateAccounts": {
@@ -2030,7 +2037,7 @@
       },
       "history": {
         "tab": "Historique",
-        "disclaimer": "Vos transactions swap sur Ledger Live mobile ne sont pas synchronisées avec Ledger Live ordinateur.",
+        "disclaimer": "Vos transactions swap sur Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l'ordinateur.",
         "exportButton": "Exporter les opérations",
         "exportFilename": "Opérations de swap",
         "empty": {
@@ -2596,7 +2603,7 @@
     "withoutDevice": "Continuer sans mon appareil",
     "steps": {
       "connecting": {
-        "title": "Connexion d'un {{deviceName}}",
+        "title": "Connexion de {{deviceName}}",
         "description": {
           "ble": "Assurez-vous que votre {{productName}} est déverrouillé et à proximité.",
           "usb": "Assurez-vous que votre {{productName}} est déverrouillé."
@@ -2743,7 +2750,7 @@
     "firmware": {
       "latest": "Version {{version}} du micrologiciel disponible",
       "outdated": "La version du micrologiciel de l'appareil est trop ancienne pour être mise à jour. Contactez l'Assistance Ledger pour le remplacer.",
-      "modalTitle": "Mise à jour du micrologiciel disponible uniquement sur Ledger Live ordinateur",
+      "modalTitle": "Mise à jour du micrologiciel disponible uniquement sur Ledger Live pour l'ordinateur",
       "modalDesc": "Téléchargez Ledger Live sur votre ordinateur pour mettre à jour le micrologiciel de votre appareil."
     }
   },
@@ -2827,7 +2834,7 @@
   },
   "FirmwareUpdateRow": {
     "title": "Version {{version}} du micrologiciel disponible",
-    "subtitle": "Merci d'utiliser Ledger Live ordinateur pour mettre à jour",
+    "subtitle": "Merci d'utiliser Ledger Live pour l'ordinateur pour mettre à jour",
     "action": "Mettre à jour"
   },
   "FirmwareUpdate": {
@@ -2846,7 +2853,7 @@
     "newVersion": "Mise à jour {{version}} du micrologiciel disponible",
     "drawerUpdate": {
       "title": "Mise à jour micrologiciel",
-      "description": "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live ordinateur"
+      "description": "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l'ordinateur"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -2854,6 +2861,23 @@
     "introDescription1": "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2": "Cela n'a pas d'effet sur vos crypto-actifs.",
     "action": "Continuer la mise à jour"
+  },
+  "systemLanguageAvailable": {
+    "title": "Changer la langue de l'application ?",
+    "description": {
+      "newSupport": "Bonne nouvelle ! Grâce aux efforts de nos équipes, Ledger Live est maintenant disponible en {{language}}.",
+      "advice": "Vous pouvez toujours changer la langue plus tard dans les Paramètres."
+    },
+    "switchButton": "Basculer en {{language}}",
+    "no": "Non, merci",
+    "languages": {
+      "en": "English",
+      "fr": "Français",
+      "ru": "Русский",
+      "es": "Español",
+      "zh": "中文（简体）",
+      "de": "Deutsch"
+    }
   },
   "FirmwareUpdateCheckId": {
     "title": "Identifiant",
@@ -2873,7 +2897,7 @@
     "action": "Votre appareil est prêt."
   },
   "StepLegacyModal": {
-    "description": "Les comptes importés se synchronisent uniquement avec le réseau, pas entre les versions mobile et ordinateur de Ledger Live."
+    "description": "Les comptes importés se synchronisent uniquement avec le réseau, pas entre les versions de Ledger Live pour le mobile et pour l'ordinateur."
   },
   "algorand": {
     "token": "ASA (Actifs)",
@@ -2946,6 +2970,14 @@
             "broadcastError": "Votre transaction a peut-être échoué. Merci de vérifier dans quelques minutes pour vous assurer que votre transaction n'a pas été traitée avant de réessayer."
           }
         }
+      }
+    }
+  },
+  "celo": {
+    "info": {
+      "available": {
+        "title": "CELO disponible",
+        "description": "Ce montant est disponible."
       }
     }
   },
@@ -3146,6 +3178,19 @@
             "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
           }
         }
+      }
+    }
+  },
+  "cryptoOrg": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Propulsé par Crypto.org",
+        "moreInfo": "Plus d'informations",
+        "drawerTitle": "Intégration de Crypto.org",
+        "title": "Le token Crypto.org (CRO) désormais disponible sur Ledger Live",
+        "description": "Vous pouvez maintenant gérer et sécuriser vos tokens Crypto.org (CRO) via Ledger Live.",
+        "description2": "Le token Crypto.org (CRO) est natif de la Crypto.org Chain. Il est utilisé pour les transactions, le staking et de nombreuses fonctionnalités à venir.",
+        "website": "Cryptocurrency in Every Wallet"
       }
     }
   },
@@ -3666,7 +3711,8 @@
       "selectCurrency": "Sélectionner une devise",
       "selectAccount": "Sélectionner un compte",
       "connectDevice": "Connecter l'appareil",
-      "title": "Acheter des cryptos via notre partenaire",
+      "title": "Choisissez un prestataire pour acheter des cryptos.",
+      "coinifyTitle": "Acheter des cryptos via notre partenaire",
       "description": "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger Live.",
       "CTAButton": "Acheter maintenant",
       "emptyState": {
@@ -3679,6 +3725,11 @@
         "cancel": "Annuler",
         "address": "Adresse du compte {{currency}}",
         "warning": "Votre adresse n'a pas été confirmée sur votre appareil Ledger. Vérifiez-la pour une sécurité optimale."
+      },
+      "bullets": {
+        "whereToBuy": "Achetez de là où vous vous trouvez",
+        "cryptoSupported": "cryptos prises en charge",
+        "payWith": "Payez par carte ou via SEPA"
       }
     },
     "sell": {
