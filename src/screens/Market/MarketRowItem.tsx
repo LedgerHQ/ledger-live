@@ -55,13 +55,14 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
           size={32}
           currency={internalCurrency}
           color={undefined}
+          sizeRatio={0.9}
         />
       ) : (
         image && (
           <IconContainer>
             <Image
               source={{ uri: image }}
-              style={{ width: 32, height: 32 }}
+              style={{ width: 30, height: 30 }}
               resizeMode="contain"
             />
           </IconContainer>
@@ -82,15 +83,15 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
             bg="neutral.c40"
             height="20px"
             lineHeight="20px"
-            px="2"
-            mr="2"
+            px="3"
+            mr="3"
             borderRadius={4}
             overflow="hidden"
             fontWeight="semiBold"
           >
             {marketcapRank || "-"}
           </Text>
-          <Text variant="body" color="neutral.c70">
+          <Text variant="body" color="neutral.c80" fontWeight="semiBold">
             {marketcap && marketcap > 0
               ? counterValueFormatter({
                   value: marketcap,

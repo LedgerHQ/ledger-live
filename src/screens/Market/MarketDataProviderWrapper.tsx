@@ -18,7 +18,12 @@ export default function MarketDataProviderWrapper({
   return (
     <MarketDataProvider
       {...(Config.MOCK ? { fetchApi: apiMock } : {})}
-      countervalue={counterValueCurrency}
+      // @TODO move this toLowercase check on live-common
+      countervalue={
+        counterValueCurrency
+          ? { ticker: counterValueCurrency.ticker.toLowerCase() }
+          : counterValueCurrency
+      }
       initState={{
         requestParams: {
           range: "24h",

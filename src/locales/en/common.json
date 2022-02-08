@@ -3194,15 +3194,15 @@
   },
   "cryptoOrg": {
     "account": {
-     "subHeader": {
-       "cardTitle": "Powered by Crypto.org",
-       "moreInfo": "More info",
-       "drawerTitle": "Crypto.org integration",
-       "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-       "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-       "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-       "website": "Cryptocurrency in every wallet"
-     }
+      "subHeader": {
+        "cardTitle": "Powered by Crypto.org",
+        "moreInfo": "More info",
+        "drawerTitle": "Crypto.org integration",
+        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
+        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
+        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Cryptocurrency in every wallet"
+      }
     }
   },
   "elrond": {
@@ -3915,21 +3915,11 @@
       "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
     },
     "range": {
-      "1H_label": "1H",
-      "1D_label": "1D",
-      "1W_label": "1W",
-      "1M_label": "1M",
-      "1Y_label": "1Y",
-      "1h": "1h",
-      "24h": "24h",
-      "7d": "7d",
-      "30d": "30d",
-      "1y": "1y",
-      "1H_selectorLabel": "Last 1 hour",
-      "1D_selectorLabel": "Last 24 hours",
-      "1W_selectorLabel": "last week",
-      "1M_selectorLabel": "Last month",
-      "1Y_selectorLabel": "Last year"
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "1y": "1Y"
     },
     "warnings": {
       "connectionError": "Connection Error",

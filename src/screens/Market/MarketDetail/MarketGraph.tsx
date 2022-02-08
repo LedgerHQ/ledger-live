@@ -8,10 +8,10 @@ import * as Animatable from "react-native-animatable";
 import Graph from "../../../components/Graph";
 // @ts-expect-error impot issue
 import getWindowDimensions from "../../../logic/getWindowDimensions";
+import { track } from "../../../analytics";
+import { useTranslation } from "react-i18next";
 
 const { width } = getWindowDimensions();
-
-const ranges = Object.keys(rangeDataTable).filter(key => key !== "1h");
 
 export default function MarketGraph({
   setHoverItem,
@@ -28,7 +28,12 @@ export default function MarketGraph({
   refreshChart: (request: any) => void;
   chartData: Record<string, number[]>;
 }) {
+  const { t } = useTranslation();
   const { colors } = useTheme();
+
+  const ranges = Object.keys(rangeDataTable)
+    .filter(key => key !== "1h")
+    .map(r => t(`market.range.${r}`));
 
   const isLoading = loading || loadingChart;
 
@@ -52,7 +57,7 @@ export default function MarketGraph({
       const newRange = ranges[index];
       if (range !== newRange) refreshChart({ range: newRange });
     },
-    [isLoading, range, refreshChart],
+    [isLoading, range, ranges, refreshChart],
   );
 
   const mapGraphValue = useCallback(d => d?.value || 0, []);

@@ -18,9 +18,9 @@ import {
   useSingleCoinMarketData,
 } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
-import { FlatList, Image, RefreshControl } from "react-native";
+import { Image, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Account } from "@ledgerhq/live-common/lib/types";
+// import { Account } from "@ledgerhq/live-common/lib/types";
 import {
   starredMarketCoinsSelector,
   swapSelectableCurrenciesSelector,
@@ -39,7 +39,7 @@ import {
 import MarketStats from "./MarketStats";
 import MarketGraph from "./MarketGraph";
 import { accountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
-import AccountRow from "../../Accounts/AccountRow";
+// import AccountRow from "../../Accounts/AccountRow";
 import { track } from "../../../analytics";
 import Button from "../../../components/wrappedUi/Button";
 
@@ -247,7 +247,7 @@ export default function MarketDetail({
                 </IconContainer>
               )
             )}
-            <Text ml={3} variant="large">
+            <Text ml={3} variant="large" fontSize={22}>
               {name}
             </Text>
           </Flex>

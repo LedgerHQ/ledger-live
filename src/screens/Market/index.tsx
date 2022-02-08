@@ -8,7 +8,6 @@ import {
   Button,
   Text,
   ScrollContainerHeader,
-  Icons,
   Icon,
   ScrollContainer,
   InfiniteLoader,
@@ -29,14 +28,6 @@ import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
 import { useProviders } from "../Swap/SwapEntry";
-
-export const BackButton = ({ navigation }: { navigation: any }) => (
-  <Button
-    size="large"
-    onPress={() => navigation.goBack()}
-    Icon={Icons.ArrowLeftMedium}
-  />
-);
 
 function getAnalyticsProperties(
   requestParams: MarketListRequestParams,
@@ -349,14 +340,13 @@ export default function Market({ navigation }: { navigation: any }) {
       <Flex flex={1} position="relative">
         <ScrollContainerHeader
           bg="background.main"
-          TopLeftSection={<BackButton navigation={navigation} />}
+          TopLeftSection={<Flex width={44} />}
           MiddleSection={
             <Flex
               height={48}
               flexDirection="row"
               justifyContent="flex-start"
               alignItems="center"
-              pl={4}
             >
               <Text variant="h2">{t("market.title")}</Text>
             </Flex>
