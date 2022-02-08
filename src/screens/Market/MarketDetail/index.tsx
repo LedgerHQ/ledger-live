@@ -51,6 +51,8 @@ export const BackButton = ({ navigation }: { navigation: any }) => (
   />
 );
 
+/**
+ * Disabled for now as the mapping for supported coins is not working
 const NoCoinSupport = ({ t }: { t: TFunction }) => (
   <Flex
     bg="primary.c20"
@@ -69,6 +71,7 @@ const NoCoinSupport = ({ t }: { t: TFunction }) => (
     </Text>
   </Flex>
 );
+*/
 
 export default function MarketDetail({
   navigation,
@@ -337,9 +340,7 @@ export default function MarketDetail({
               </Button>
             ) : null}
           </Flex>
-        ) : (
-          <NoCoinSupport t={t} />
-        )}
+        ) : null}
         {/* {allAccounts && allAccounts.length > 0 && isLiveSupported ? (
           <Flex my={16}>
             <Text mx={16} variant="h3">
