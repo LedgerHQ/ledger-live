@@ -78,7 +78,6 @@
     "@polkadot/reactnative-identicon": "0.87.5",
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@react-native-community/art": "^1.2.0",
-    "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/cli-platform-android": "^6.3.0",
     "@react-native-community/cli-platform-ios": "^6.0.1",
     "@react-native-community/clipboard": "^1.5.1",
