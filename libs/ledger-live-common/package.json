@@ -36,7 +36,17 @@
   "peerDependencies": {
     "react": ">=16",
     "react-dom": ">=16",
-    "react-redux": "7"
+    "react-redux": "7",
+    "react-native": ">=0.65.1",
+    "react-native-svg": "^12.1.1"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "react-native": {
     "https": false
@@ -183,6 +193,8 @@
     "react-dom": "17.0.2",
     "react-redux": "^7.2.6",
     "react-test-renderer": "^17.0.2",
+    "react-native": "0.65.1",
+    "react-native-svg": "^12.1.1",
     "rimraf": "^3.0.2",
     "timemachine": "^0.3.2",
     "ts-jest": "^27.1.3",
