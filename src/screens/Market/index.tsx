@@ -334,7 +334,9 @@ export default function Market({ navigation }: { navigation: any }) {
         <Flex py="4">
           <InfiniteLoader size={40} />
         </Flex>
-      ) : <Flex py="4" height={40} />,
+      ) : (
+        <Flex py="4" height={40} />
+      ),
     [isLoading],
   );
 
