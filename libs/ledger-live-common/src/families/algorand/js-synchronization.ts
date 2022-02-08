@@ -291,6 +291,7 @@ const getAccountShape: GetAccountShape = async (
 
   const shape = {
     id: accountId,
+    xpub: address,
     blockHeight: round,
     balance,
     spendableBalance,
