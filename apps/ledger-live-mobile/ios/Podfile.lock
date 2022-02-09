@@ -273,7 +273,7 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-webview (11.17.0):
+  - react-native-webview (11.17.1):
     - React-Core
   - React-perflogger (0.65.1)
   - React-RCTActionSheet (0.65.1):
@@ -363,7 +363,7 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.3.1):
+  - RNReanimated (2.2.4):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -389,6 +389,7 @@ PODS:
     - React-RCTNetwork
     - React-RCTSettings
     - React-RCTText
+    - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
   - RNScreens (3.10.2):
@@ -461,7 +462,7 @@ DEPENDENCIES:
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.65.1/node_modules/react-native-text-input-mask`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.3/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
-  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.17.0_react-native@0.65.1+react@17.0.2/node_modules/react-native-webview`)"
+  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.17.1_react-native@0.65.1+react@17.0.2/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/ReactCommon/reactperflogger`)"
   - "React-RCTActionSheet (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/Libraries/ActionSheetIOS`)"
   - "React-RCTAnimation (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/Libraries/NativeAnimation`)"
@@ -484,7 +485,7 @@ DEPENDENCIES:
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.3.1_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.2.4_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.10.2_react-native@0.65.1+react@17.0.2/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.2.13_react-native@0.65.1+react@17.0.2/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
@@ -583,7 +584,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-webview:
-    :path: "../../../node_modules/.pnpm/react-native-webview@11.17.0_react-native@0.65.1+react@17.0.2/node_modules/react-native-webview"
+    :path: "../../../node_modules/.pnpm/react-native-webview@11.17.1_react-native@0.65.1+react@17.0.2/node_modules/react-native-webview"
   React-perflogger:
     :path: "../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -629,7 +630,7 @@ EXTERNAL SOURCES:
   RNOS:
     :path: "../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.3.1_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.2.4_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.10.2_react-native@0.65.1+react@17.0.2/node_modules/react-native-screens"
   RNSentry:
@@ -690,7 +691,7 @@ SPEC CHECKSUMS:
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: f0fbf5386c45af5523dc143a86afe2cbf29f764e
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-webview: 10996be8bcc5e37a30dbc139fc544bb651dc8612
+  react-native-webview: 162b6453d074e0b1c7025242bb7a939b6f72b9e7
   React-perflogger: fd28ee1f2b5b150b00043f0301d96bd417fdc339
   React-RCTActionSheet: 7f3fa0855c346aa5d7c60f9ced16e067db6d29fa
   React-RCTAnimation: 2119a18ee26159004b001bc56404ca5dbaae6077
@@ -713,7 +714,7 @@ SPEC CHECKSUMS:
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: 629fedd82e9f6b9138421caa342f0a5ebd711cbe
+  RNReanimated: f58d4f027fcea2197b63588138decdf5f8ac5e89
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
