@@ -19,8 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest,
-          - macos-latest,
+          - ubuntu-latest
+          - macos-latest
           # There is an issue with node-gyp that randomly fails on github workers.
           # - windows-latest
 
