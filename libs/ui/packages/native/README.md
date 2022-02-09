@@ -86,10 +86,10 @@ import { useFonts } from "expo-font";
 */
 function FontProvider({ children }) {
   const [fontsLoaded] = useFonts({
-    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
-    "Inter-Medium": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Medium.otf"),
-    "Inter-SemiBold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-SemiBold.otf"),
-    "Inter-Bold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Bold.otf"),
+    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
+    "Inter-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Medium.otf"),
+    "Inter-SemiBold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-SemiBold.otf"),
+    "Inter-Bold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Bold.otf"),
   });
 
   if (!fontsLoaded) {
@@ -107,8 +107,8 @@ Add the paths in the `react-native.config.js` file:
 ```js
 module.exports = {
   assets: [
-    "node_modules/@ledgerhq/native-ui/assets/fonts/alpha",
-    "node_modules/@ledgerhq/native-ui/assets/fonts/inter",
+    "node_modules/@ledgerhq/native-ui/lib/assets/fonts/alpha",
+    "node_modules/@ledgerhq/native-ui/lib/assets/fonts/inter",
   ],
 };
 ```
@@ -138,10 +138,10 @@ function Logo() {
 
 function FontProvider({ children }) {
   const [fontsLoaded] = useFonts({
-    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
-    "Inter-Medium": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Medium.otf"),
-    "Inter-SemiBold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-SemiBold.otf"),
-    "Inter-Bold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Bold.otf"),
+    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
+    "Inter-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Medium.otf"),
+    "Inter-SemiBold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-SemiBold.otf"),
+    "Inter-Bold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Bold.otf"),
   });
 
   if (!fontsLoaded) {
