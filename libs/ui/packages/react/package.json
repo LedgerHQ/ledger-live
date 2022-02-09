@@ -1,15 +1,16 @@
 {
   "name": "@ledgerhq/react-ui",
-  "description": "Ledger Live - Desktop UI",
   "version": "0.7.3",
+  "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
+  "types": "index.d.ts",
   "typesVersions": {
     "*": {
       "*": [
         "lib/*",
-        "lib/*/index"
+        "lib/*/index.d.ts"
       ]
     }
   },
@@ -21,7 +22,8 @@
     "./": {
       "require": "./lib/cjs/",
       "default": "./lib/"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.woff2",

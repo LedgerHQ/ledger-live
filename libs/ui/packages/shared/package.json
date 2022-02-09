@@ -12,7 +12,8 @@
     "./": {
       "require": "./lib/cjs/",
       "default": "./lib/"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "types": "lib/index.d.ts",
   "repository": "https://github.com/LedgerHQ/ui/",
