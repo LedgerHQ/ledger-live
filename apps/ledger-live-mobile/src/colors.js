@@ -97,62 +97,6 @@ export const lightTheme = {
   },
 };
 
-export const duskTheme = {
-  dark: true,
-  colors: {
-    primary: "#6490F1",
-    card: "#182532",
-    background: "#131E28",
-    text: "#FFFFFF",
-    border: "rgba(255, 255, 255, 0.1)",
-    notification: "#6490F1",
-    contrastBackground: "#223544",
-    contrastBackgroundText: "#ffffff",
-    /* MAIN */
-    live: "#6490f1",
-    alert: "#ea2e49",
-    success: "#66BE54",
-    darkBlue: "#fafafa",
-    smoke: "#aaa",
-    grey: "#aaa",
-    fog: "rgba(255,255,255, 0.1)",
-    white: "#182532",
-    green: "rgb(102, 190, 84)",
-    ledgerGreen: "#41ccb4",
-    black: "#ffffff",
-    orange: "#ff7701",
-    yellow: "#ffd24a",
-    separator: "#ebebeb",
-    warning: "#ff9900",
-    darkWarning: "#E08700",
-
-    /* DERIVATIVES */
-    lightLive: "#4b84ff19",
-    lightAlert: "#ea2e490c",
-    lightFog: "#1c293c",
-    lightGrey: "rgba(255,255,255, 0.05)",
-    lightOrange: "#FF984F",
-    translucentGreen: "rgba(102, 190, 84, 0.2)",
-    translucentGrey: "rgba(153, 153, 153, 0.2)",
-    lightLiveBg: "#1d2e46",
-
-    errorBg: "#ff0042",
-
-    /* PILLS */
-    pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
-    pillActiveDisabledForeground: "#999999",
-
-    /** SNACKBAR */
-    snackBarBg: "#060d12",
-    snackBarColor: "#FFF",
-
-    /** SKELETON */
-    skeletonBg: "#303b47",
-  },
-};
-
 export const darkTheme = {
   dark: true,
   colors: {

@@ -15,16 +15,10 @@ import { ScreenName } from "../../const";
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 
-const SwapEntrypoint = () => {
-  const { colors } = useTheme();
+export const useProviders = () => {
   const dispatch = useDispatch();
-  const { replace } = useNavigation();
-  const route = useRoute();
-
   const [providers, setProviders] = useState();
   const [provider, setProvider] = useState();
-  const swapKYC = useSelector(swapKYCSelector);
-
   useEffect(() => {
     getProviders().then((providers: any) => {
       let resultProvider;
@@ -57,6 +51,16 @@ const SwapEntrypoint = () => {
       }
     });
   }, [dispatch]);
+  return { providers, provider };
+};
+
+const SwapEntrypoint = () => {
+  const { colors } = useTheme();
+  const { replace } = useNavigation();
+  const route = useRoute();
+  const swapKYC = useSelector(swapKYCSelector);
+
+  const { provider, providers } = useProviders();
 
   useEffect(() => {
     if (!providers?.length || !provider) return;
