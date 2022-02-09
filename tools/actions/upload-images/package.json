@@ -1,0 +1,19 @@
+{
+  "name": "@actions/upload-images",
+  "version": "1.0.0",
+  "description": "Uploads images found in a folder to imgur and creates a json file for later reference",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m",
+    "watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1",
+    "form-data": "^4.0.0",
+    "isomorphic-unfetch": "^3.1.0"
+  }
+}
