@@ -57,12 +57,12 @@ jobs:
           ./tools/g++-5.4/install.sh
       - name: install dependencies
         run: pnpm i --frozen-lockfile
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       # - name: make local version pr
@@ -78,7 +78,7 @@ jobs:
       - name: build the app
         run: |
           pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
-      # - uses: ledgerhq/actions/packages/get-package-infos@main
+      # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}
@@ -132,12 +132,12 @@ jobs:
           git config user.name "Team Live"
       - name: install dependencies
         run: pnpm i --frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       # - name: make local version pr
@@ -198,12 +198,12 @@ jobs:
           git config user.name "Team Live"
       - name: install dependencies
         run: pnpm i --frozen-lockfile
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       # - name: make local version pr
@@ -221,7 +221,7 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
-      # - uses: ledgerhq/actions/packages/get-package-infos@main
+      # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}
