@@ -113,7 +113,7 @@ jobs:
         run: npm install --global npm@8.3.1
       - uses: actions/setup-python@v1
         with:
-          python-version: "2.7.x"
+          python-version: "3.x"
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
