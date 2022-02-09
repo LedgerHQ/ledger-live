@@ -1,0 +1,21 @@
+name: is-org-member
+description: check if user is part of organisation
+author: valpinkman
+inputs:
+  organisation:
+    description: name of the organisation to check for
+    required: true
+  username:
+    description: The username to check
+    required: true
+  token:
+    description: github token
+    required: true
+
+runs:
+  using: node12
+  main: build/index.js
+
+branding:
+  icon: user-check
+  color: yellow

@@ -38,12 +38,12 @@ jobs:
           git config user.name "Team Live"
       - name: install dependencies
         run: pnpm i --frozen-lockfile
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}
       - name: make local version pr
@@ -60,7 +60,7 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: pnpm build-ci
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: post-version
         with:
           path: ${{ github.workspace }}
@@ -123,12 +123,12 @@ jobs:
         run: ./tools/g++-5.4/install.sh
       - name: install dependencies
         run: pnpm i --frozen-lockfile
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}
       - name: make local version pr
@@ -143,7 +143,7 @@ jobs:
         run: yarn version --new-version="$VERSION"
       - name: build the app
         run: pnpm build-ci
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: post-version
         with:
           path: ${{ github.workspace }}
@@ -177,12 +177,12 @@ jobs:
           git config user.name "Team Live"
       - name: install dependencies
         run: pnpm i --frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
           path: ${{ github.workspace }}
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}
       - name: make local version pr
