@@ -1,0 +1,17 @@
+{
+  "name": "@actions/get-release-by-tag",
+  "version": "1.0.0",
+  "description": "Gets the id of the draft release by tag name",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m",
+    "watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1"
+  }
+}
