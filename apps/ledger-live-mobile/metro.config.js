@@ -23,7 +23,7 @@ const nodeModulesPaths = [
 ];
 
 // Dependencies that are forcefully resolved from the LLM folder.
-const FORCED_DEPENDENCIES = ["react-native" /*, "react-native-svg"*/];
+const FORCED_DEPENDENCIES = ["react-native"];
 
 function forceDependency(moduleName, filters) {
   const matches = filters.some(
