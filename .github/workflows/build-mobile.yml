@@ -45,8 +45,10 @@ jobs:
           ruby-version: 2.6
       - name: install dependencies
         run: pnpm i --frozen-lockfile
-      - uses: ledgerhq/actions/get-package-infos@v1.0.0
+      - uses: ledgerhq/actions/get-package-infos@main
         id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
         uses: ledgerhq/actions/packages/change-product-name@main
         with:
@@ -64,8 +66,10 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build:mobile
-      # - uses: ledgerhq/actions/get-package-infos@v1.0.0
+      # - uses: ledgerhq/actions/get-package-infos@main
       #   id: post-version
+      #   with:
+      #     path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: upload Android app
         uses: actions/upload-artifact@v1
         with:
