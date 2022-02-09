@@ -77,7 +77,7 @@ jobs:
       #   run: yarn version --new-version="$VERSION"
       - name: build the app
         run: |
-          pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
+          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
