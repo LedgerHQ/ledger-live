@@ -29,13 +29,6 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
@@ -43,6 +36,7 @@ jobs:
         with:
           node-version: 14.x
           cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm i -g npm
       - name: set git user
@@ -107,13 +101,6 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
@@ -121,6 +108,7 @@ jobs:
         with:
           node-version: 14.x
           cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm install --global npm@8.3.1
       - uses: actions/setup-python@v1
@@ -176,13 +164,6 @@ jobs:
       #   with:
       #     ruby-version: 2.6
       #     bundler-cache: true
-      - name: Cache pnpm modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
@@ -190,6 +171,7 @@ jobs:
         with:
           node-version: 14.x
           cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm i -g npm
       - name: set git user
