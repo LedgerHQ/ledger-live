@@ -12,6 +12,7 @@
     "clean": "git clean -fdX",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --no-deps",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
+    "build:actions": "pnpm run:turbo -- run build --scope=@actions/* --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
     "build:mobile": "pnpm run:turbo -- run build-ci --scope=live-mobile --include-dependencies --no-deps",
     "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps --ignore=apps/* --ignore=apps\\*",
@@ -24,6 +25,7 @@
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
     "ui:shared": "pnpm --filter shared-ui",
+    "actions": "pnpm --filter @actions/*",
     "run:turbo": "x-run node_modules/turbo/bin/turbo"
   },
   "pnpm": {
