@@ -1,0 +1,10 @@
+name: change-product-name
+description: changes `productName` in package.json
+inputs:
+  path:
+    description: root folder where package.json is found (usually github.workspace)
+    required: true
+
+runs:
+  using: 'node12'
+  main: 'build/index.js'

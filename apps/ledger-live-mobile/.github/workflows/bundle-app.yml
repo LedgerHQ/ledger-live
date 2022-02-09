@@ -106,7 +106,7 @@ jobs:
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}
       - name: Get short SHA
@@ -154,7 +154,7 @@ jobs:
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}
       - name: Get short SHA

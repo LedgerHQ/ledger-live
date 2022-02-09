@@ -50,7 +50,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       # - name: Get short SHA
