@@ -1788,12 +1788,10 @@ importers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
-      isomorphic-fetch: ^3.0.0
     dependencies:
       '@actions/core': 1.6.0
       '@actions/github': 5.0.0
       '@vercel/ncc': 0.33.1
-      isomorphic-fetch: 3.0.0
 
   tools/actions/extract-live-common-version:
     specifiers:
@@ -1812,23 +1810,25 @@ importers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
-      isomorphic-fetch: ^3.0.0
+      isomorphic-unfetch: ^3.1.0
     dependencies:
       '@actions/core': 1.6.0
       '@actions/github': 5.0.0
       '@vercel/ncc': 0.33.1
-      isomorphic-fetch: 3.0.0
+      isomorphic-unfetch: 3.1.0
 
   tools/actions/get-package-infos:
     specifiers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
+      isomorphic-unfetch: ^3.1.0
       semver: ^7.3.5
     dependencies:
       '@actions/core': 1.6.0
       '@actions/github': 5.0.0
       '@vercel/ncc': 0.33.1
+      isomorphic-unfetch: 3.1.0
       semver: 7.3.5
 
   tools/actions/get-pr-number:
@@ -1866,22 +1866,22 @@ importers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
+      isomorphic-unfetch: ^3.1.0
     dependencies:
       '@actions/core': 1.6.0
       '@actions/github': 5.0.0
       '@vercel/ncc': 0.33.1
+      isomorphic-unfetch: 3.1.0
 
   tools/actions/prepare-comment-body:
     specifiers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
-      isomorphic-fetch: ^3.0.0
     dependencies:
       '@actions/core': 1.6.0
       '@actions/github': 5.0.0
       '@vercel/ncc': 0.33.1
-      isomorphic-fetch: 3.0.0
 
   tools/actions/publish-release:
     specifiers:
@@ -26812,15 +26812,6 @@ packages:
     dependencies:
       node-fetch: 1.7.3
       whatwg-fetch: 3.6.2
-
-  /isomorphic-fetch/3.0.0:
-    resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
-    dependencies:
-      node-fetch: 2.6.7
-      whatwg-fetch: 3.6.2
-    transitivePeerDependencies:
-      - encoding
-    dev: false
 
   /isomorphic-unfetch/3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
