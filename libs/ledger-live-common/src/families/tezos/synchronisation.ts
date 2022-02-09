@@ -74,6 +74,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
   if (apiAccount.type === "empty") {
     return {
       id: accountId,
+      xpub: address,
       blockHeight,
       lastSyncDate: new Date(),
       tezosResources: {
@@ -110,6 +111,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
 
   const accountShape = {
     id: accountId,
+    xpub: address,
     operations,
     balance,
     subAccounts,
