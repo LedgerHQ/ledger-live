@@ -5,6 +5,8 @@
  * @format
  */
 
+const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
+
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
@@ -14,4 +16,7 @@ module.exports = {
       },
     }),
   },
+  resolver: {
+    sourceExts: [...defaultSourceExts, 'cjs'],
+  }
 };

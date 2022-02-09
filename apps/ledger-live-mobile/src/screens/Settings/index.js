@@ -15,6 +15,7 @@ import LiveLogo from "../../icons/LiveLogo";
 import Atom from "../../icons/Atom";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
+import Wrench from "../../icons/Wrench";
 import TrackScreen from "../../analytics/TrackScreen";
 import timer from "../../timer";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -86,6 +87,12 @@ export default function Settings({ navigation }: Props) {
           desc={t("settings.experimental.desc")}
           icon={<Atom size={16} color={colors.live} />}
           onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
+        />
+        <SettingsCard
+          title={t("settings.developer.title")}
+          desc={t("settings.developer.desc")}
+          icon={<Wrench size={16} color={colors.live} />}
+          onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
         />
         {debugVisible || __DEV__ ? (
           <SettingsCard

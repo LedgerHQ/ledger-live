@@ -10,13 +10,15 @@ type Props = {
 
 export default function TrackScreen({ category, name, ...props }: Props) {
   const isFocused = useIsFocused();
-
-  const isFocusedRef = useRef(isFocused);
+  const isFocusedRef = useRef();
 
   useEffect(() => {
     if (isFocusedRef.current !== isFocused) {
       isFocusedRef.current = isFocused;
-      screen(category, name, props);
+
+      if (isFocusedRef.current) {
+        screen(category, name, props);
+      }
     }
   }, [category, name, props, isFocused]);
 
