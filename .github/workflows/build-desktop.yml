@@ -1,4 +1,4 @@
-name: Build Dekstop App
+name: Build Desktop App
 
 on:
   push:
@@ -138,7 +138,7 @@ jobs:
       #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
         run: |
-          pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
+          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
       - name: check build
         run: |
           cd apps/ledger-live-desktop
@@ -202,7 +202,7 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          pnpm turbo run build-ci --since=origin/${{ github.event.pull_request.base.ref }} --scope=live-desktop --include-dependencies --no-deps
+          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
