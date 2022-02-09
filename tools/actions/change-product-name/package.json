@@ -12,7 +12,6 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
-    "@vercel/ncc": "^0.33.1",
-    "isomorphic-fetch": "^3.0.0"
+    "@vercel/ncc": "^0.33.1"
   }
 }
