@@ -540,6 +540,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "url used to fetch platform app manifests (staging)",
   },
+  PLATFORM_LOCAL_MANIFEST_JSON: {
+    def: "",
+    parser: stringParser,
+    desc: 'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
+  },
   PLATFORM_API_URL: {
     def: "",
     parser: stringParser,
