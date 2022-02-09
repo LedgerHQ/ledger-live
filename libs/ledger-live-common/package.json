@@ -79,7 +79,7 @@
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.2.0",
-    "@ledgerhq/logs": "6.10.0",
+    "@ledgerhq/logs": "workspace:^",
     "@polkadot/types": "7.8.1",
     "@polkadot/types-known": "7.8.1",
     "@polkadot/util": "^8.3.1",

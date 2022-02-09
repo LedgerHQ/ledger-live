@@ -1,6 +1,8 @@
 function readPackage(pkg, context) {
   // Prevents duplicate packages.
-  if (pkg.name === "react-redux") {
+  if (
+    ["react-redux", "styled-components"].some((pkgName) => pkgName === pkg.name)
+  ) {
     delete pkg.peerDependencies;
     delete pkg.peerDependenciesMeta;
   }
