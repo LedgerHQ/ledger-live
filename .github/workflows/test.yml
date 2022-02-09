@@ -18,7 +18,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os:
+          - ubuntu-latest,
+          - macos-latest,
+          # There is an issue with node-gyp that randomly fails on github workers.
+          # - windows-latest
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
