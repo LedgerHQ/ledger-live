@@ -1,14 +1,14 @@
-import * as core from '@actions/core';
-import fetch from 'isomorphic-unfetch';
+import * as core from "@actions/core";
+import fetch from "isomorphic-unfetch";
 
-const BASE_URL = 'https://ledgerhq.atlassian.net/issues/?jql=';
+const BASE_URL = "https://ledgerhq.atlassian.net/issues/?jql=";
 const regexp = /(LL|LIVE)-\d+/gi;
 
 const main = async () => {
-  const base = core.getInput('base');
-  const current = core.getInput('current');
-  const repo = core.getInput('repo');
-  const owner = core.getInput('owner');
+  const base = core.getInput("base");
+  const current = core.getInput("current");
+  const repo = core.getInput("repo");
+  const owner = core.getInput("owner");
 
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/compare/${base}...${current}`
@@ -22,12 +22,12 @@ const main = async () => {
     })
     .filter(Boolean)
     .flat();
-  const issueMessage = `issue in (${[...new Set(issues)].join(',')})`;
+  const issueMessage = `issue in (${[...new Set(issues)].join(",")})`;
   const encoded = encodeURIComponent(issueMessage);
 
   const url = `${BASE_URL}${encoded}`;
 
-  core.setOutput('url', url);
+  core.setOutput("url", url);
 };
 
 main().catch((err) => core.setFailed(err));
