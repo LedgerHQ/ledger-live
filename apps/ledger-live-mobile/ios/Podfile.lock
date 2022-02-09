@@ -476,7 +476,7 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.2.4):
+  - RNReanimated (2.4.1):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -502,7 +502,6 @@ PODS:
     - React-RCTNetwork
     - React-RCTSettings
     - React-RCTText
-    - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
   - RNScreens (3.10.2):
@@ -600,7 +599,7 @@ DEPENDENCIES:
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.2.4_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.4.1_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.10.2_react-native@0.65.1+react@17.0.2/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.2.13_react-native@0.65.1+react@17.0.2/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
@@ -767,7 +766,7 @@ EXTERNAL SOURCES:
   RNOS:
     :path: "../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.2.4_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.4.1_1271c2e3e5ad30d1b58e223b64a8818a/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.10.2_react-native@0.65.1+react@17.0.2/node_modules/react-native-screens"
   RNSentry:
@@ -874,7 +873,7 @@ SPEC CHECKSUMS:
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: f58d4f027fcea2197b63588138decdf5f8ac5e89
+  RNReanimated: f1b73ebfdd510dc56b8970bf19444cb0d5acd35a
   RNScreens: d6da2b9e29cf523832c2542f47bf1287318b1868
   RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
