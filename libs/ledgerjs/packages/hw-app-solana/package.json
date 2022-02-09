@@ -33,9 +33,9 @@
     "bip32-path": "^0.4.2"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "axios": "^0.24.0",
-    "@ledgerhq/hw-transport-mocker": "workspace:^"
+    "axios": "^0.25.0"
   },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
