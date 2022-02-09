@@ -16,8 +16,11 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
+import { toLocaleString } from "@ledgerhq/live-common/lib/currencies/BigNumberToLocaleString";
+import { useSelector } from "react-redux";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
+import { localeSelector } from "../../reducers/settings";
 
 const styles = StyleSheet.create({
   text: {
@@ -28,12 +31,15 @@ const styles = StyleSheet.create({
 });
 
 const TezosStorageLimit = ({ transaction }: { transaction: Transaction }) => {
+  const locale = useSelector(localeSelector);
   invariant(transaction.family === "tezos", "tezos transaction");
 
   return (
     <DataRow label="Storage Limit">
       <LText semiBold style={styles.text}>
-        {(transaction.storageLimit || "").toString()}
+        {transaction.storageLimit
+          ? toLocaleString(transaction.storageLimit, locale)
+          : ""}
       </LText>
     </DataRow>
   );

@@ -29,11 +29,11 @@ jobs:
           echo ${{ github.repository }}
       - name: check if we are on a forked repo
         id: forked
-        run: echo "::set-output name=forked::$(${{ github.event.pull_request.head.repo.full_name != 'ledgerhq/ledger-live-mobile' }})"
+        run: echo "::set-output name=forked::$(${{ github.event.pull_request.head.repo.full_name != github.repository }})"
 
   start-runner:
     needs: [check-if-fork]
-    if: ${{ !needs.check-if-fork.outputs.forked }}
+    if: ${{ !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
     name: "start ec2 instance (Linux)"
     uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
     with:
@@ -45,7 +45,7 @@ jobs:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, bundle-apk-hosted]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
+    if: ${{ always() && !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
@@ -104,6 +104,7 @@ jobs:
           ANDROID_KEYSTORE_PASS: staging
           ANDROID_KEY_ALIAS: staging
           ANDROID_KEY_PASS: staging
+          NODE_OPTIONS: "--max-old-space-size=7168"
         run: ANDROID_KEYSTORE_FILE="$(pwd)/android/app/staging.kstr" yarn android:local:apk
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: post-version
@@ -115,7 +116,7 @@ jobs:
 
   bundle-apk-guest:
     needs: [check-if-fork]
-    if: needs.check-if-fork.outputs.forked
+    if: ${{ needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -151,6 +152,7 @@ jobs:
           ANDROID_KEYSTORE_PASS: staging
           ANDROID_KEY_ALIAS: staging
           ANDROID_KEY_PASS: staging
+          NODE_OPTIONS: "--max-old-space-size=7168"
         run: ANDROID_KEYSTORE_FILE="$(pwd)/android/app/staging.kstr" yarn android:local:apk
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: post-version

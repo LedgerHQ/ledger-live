@@ -57,6 +57,7 @@ export default function SelectDevice({ navigation, route }: Props) {
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
       >
         <SkipSelectDevice route={route} onResult={onNavigate} />
         <TrackScreen

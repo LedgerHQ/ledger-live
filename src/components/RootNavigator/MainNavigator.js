@@ -1,6 +1,8 @@
 // @flow
 import React from "react";
+import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio, { PortfolioTabIcon } from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
@@ -10,7 +12,7 @@ import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
 import AccountsIcon from "../../icons/Accounts";
 import AppsIcon from "../../icons/Apps";
-
+import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
 
 type RouteParams = {
@@ -42,12 +44,16 @@ export default function MainNavigator({
         name={ScreenName.Portfolio}
         component={Portfolio}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: (props: any) => <PortfolioTabIcon {...props} />,
         }}
       />
       <Tab.Screen
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
+        listeners={({ route, navigation }) => ({
+          tabPress: () => navigation.navigate(route.name),
+        })}
         options={{
           unmountOnBlur: true,
           tabBarIcon: (props: any) => (
@@ -64,41 +70,60 @@ export default function MainNavigator({
           tabBarIcon: (props: any) => <TransferTabIcon {...props} />,
         }}
       />
+      {Platform.OS === "android" ? (
+        <Tab.Screen
+          name={NavigatorName.Platform}
+          component={PlatformNavigator}
+          options={{
+            headerShown: false,
+            unmountOnBlur: true,
+            tabBarIcon: (props: any) => (
+              <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
+            ),
+          }}
+        />
+      ) : null}
       <Tab.Screen
-        name={NavigatorName.Platform}
-        component={PlatformNavigator}
+        name={NavigatorName.Market}
+        component={MarketNavigator}
         options={{
           headerShown: false,
           unmountOnBlur: true,
           tabBarIcon: (props: any) => (
-            <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
+            <TabIcon
+              Icon={Icons.GraphGrowMedium}
+              i18nKey="tabs.market"
+              {...props}
+            />
           ),
         }}
       />
-      <Tab.Screen
-        name={NavigatorName.Manager}
-        component={ManagerNavigator}
-        options={{
-          tabBarIcon: (props: any) => <ManagerTabIcon {...props} />,
-          tabBarTestID: "TabBarManager",
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: e => {
-            e.preventDefault();
-            // NB The default behaviour is not reset route params, leading to always having the same
-            // search query or preselected tab after the first time (ie from Swap/Sell)
-            // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-            navigation.navigate(NavigatorName.Manager, {
-              screen: ScreenName.Manager,
-              params: {
-                tab: undefined,
-                searchQuery: undefined,
-                updateModalOpened: undefined,
-              },
-            });
-          },
-        })}
-      />
+      {Platform.OS === "ios" ? (
+        <Tab.Screen
+          name={NavigatorName.Manager}
+          component={ManagerNavigator}
+          options={{
+            tabBarIcon: (props: any) => <ManagerTabIcon {...props} />,
+            tabBarTestID: "TabBarManager",
+          }}
+          listeners={({ navigation }) => ({
+            tabPress: e => {
+              e.preventDefault();
+              // NB The default behaviour is not reset route params, leading to always having the same
+              // search query or preselected tab after the first time (ie from Swap/Sell)
+              // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
+              navigation.navigate(NavigatorName.Manager, {
+                screen: ScreenName.Manager,
+                params: {
+                  tab: undefined,
+                  searchQuery: undefined,
+                  updateModalOpened: undefined,
+                },
+              });
+            },
+          })}
+        />
+      ) : null}
     </Tab.Navigator>
   );
 }

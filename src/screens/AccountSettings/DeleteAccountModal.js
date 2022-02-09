@@ -5,6 +5,8 @@ import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
 import Circle from "../../components/Circle";
+import Alert from "../../components/Alert";
+import LText from "../../components/LText";
 import Trash from "../../icons/Trash";
 import ModalBottomAction from "../../components/ModalBottomAction";
 import Button from "../../components/Button";
@@ -21,12 +23,22 @@ function DeleteAccountModal({ onRequestClose, deleteAccount }: Props) {
   return (
     <ModalBottomAction
       title={<Trans i18nKey="account.settings.delete.confirmationTitle" />}
+      shouldWrapDesc={false}
       icon={
         <Circle bg={colors.lightAlert} size={56}>
           <Trash size={24} color={colors.alert} />
         </Circle>
       }
-      description={<Trans i18nKey="account.settings.delete.confirmationDesc" />}
+      description={
+        <View>
+          <LText style={styles.description} color="grey">
+            <Trans i18nKey="account.settings.delete.confirmationDesc" />
+          </LText>
+          <Alert type="warning">
+            <Trans i18nKey="account.settings.delete.confirmationWarn" />
+          </Alert>
+        </View>
+      }
       footer={
         <View style={styles.footerContainer}>
           <Button
@@ -57,8 +69,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
   },
+  description: {
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: "center",
+    marginBottom: 16,
+  },
   buttonContainer: {
     flexGrow: 1,
+    marginTop: 24,
   },
   buttonMarginLeft: {
     marginLeft: 16,

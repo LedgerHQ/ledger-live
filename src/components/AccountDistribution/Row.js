@@ -21,6 +21,7 @@ import { accountsSelector } from "../../reducers/accounts";
 import LText from "../LText";
 import ParentCurrencyIcon from "../ParentCurrencyIcon";
 import { ensureContrast } from "../../colors";
+import { localeSelector } from "../../reducers/settings";
 
 export type AccountDistributionItem = {
   account: AccountLike,
@@ -39,6 +40,7 @@ export default function Row({
   const accounts = useSelector(accountsSelector);
   const navigation = useNavigation();
   const { colors } = useTheme();
+  const locale = useSelector(localeSelector);
 
   const onAccountPress = useCallback(
     (parentAccount?: ?Account) => {
@@ -110,7 +112,7 @@ export default function Row({
           <LText
             semiBold
             style={styles.percentageText}
-          >{`${percentage}%`}</LText>
+          >{`${percentage.toLocaleString(locale)}%`}</LText>
         </View>
       </View>
     </RectButton>

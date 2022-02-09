@@ -1,11 +1,13 @@
 // @flow
 import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import type {
   Action,
   Device,
 } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
@@ -48,6 +50,7 @@ export default function DeviceAction<R, H, P>({
   analyticsPropertyFlow = "unknown",
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
+  const dispatch = useDispatch();
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -83,6 +86,17 @@ export default function DeviceAction<R, H, P>({
     progress,
     listingApps,
   } = status;
+
+  useEffect(() => {
+    if (deviceInfo) {
+      dispatch(
+        setLastSeenDeviceInfo({
+          modelId: device.modelId,
+          deviceInfo,
+        }),
+      );
+    }
+  }, [dispatch, device, deviceInfo]);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({

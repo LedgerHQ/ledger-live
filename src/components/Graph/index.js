@@ -23,6 +23,7 @@ type Props = {
   onItemHover?: (?Item) => void,
   mapValue: Item => number,
   shape?: string,
+  verticalRangeRatio?: number,
 };
 
 const STROKE_WIDTH = 2;
@@ -37,6 +38,7 @@ function Graph({
   shape = "curveLinear",
   mapValue,
   onItemHover,
+  verticalRangeRatio = 2,
 }: Props) {
   const { colors } = useTheme();
 
@@ -44,7 +46,7 @@ function Graph({
 
   const maxY = mapValue(maxBy(data, mapValue));
   const minY = mapValue(minBy(data, mapValue));
-  const paddedMinY = minY - (maxY - minY) / 2;
+  const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
 
   const yExtractor = d => y(mapValue(d));
 
@@ -63,7 +65,7 @@ function Graph({
     .area()
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
-    .y1(d => yExtractor(d) + Math.max((maxY - minY) / 2, 200))
+    .y1(d => yExtractor(d) + Math.max((maxY - minY) / verticalRangeRatio, 200))
     .curve(curve)(data);
 
   const line = d3shape

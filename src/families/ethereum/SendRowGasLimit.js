@@ -1,15 +1,18 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { toLocaleString } from "@ledgerhq/live-common/lib/currencies/BigNumberToLocaleString";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { BigNumber } from "bignumber.js";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
+import { localeSelector } from "../../reducers/settings";
 
 type Props = {
   account: AccountLike,
@@ -30,6 +33,7 @@ export default function EthereumGasLimit({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
   const navigation = useNavigation();
 
   const editGasLimit = useCallback(() => {
@@ -56,7 +60,7 @@ export default function EthereumGasLimit({
         <View style={styles.gasLimitContainer}>
           {gasLimit && (
             <LText semiBold style={styles.gasLimitText}>
-              {gasLimit.toString()}
+              {toLocaleString(gasLimit, locale)}
             </LText>
           )}
           <LText

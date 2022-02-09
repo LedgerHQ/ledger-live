@@ -30,8 +30,8 @@ import SectionSeparator from "../../components/SectionSeparator";
 import TooltipLabel from "../../components/TooltipLabel";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import { urls } from "../../config/urls";
-import { localeIds } from "../../languages";
 import ExternalLink from "../../icons/ExternalLink";
+import FormatDate from "../../components/FormatDate";
 
 import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
 
@@ -142,13 +142,7 @@ const OperationDetails = ({ route }: Props) => {
             <Trans i18nKey={"transfer.swap.operationDetails.date"} />
           </LText>
           <LText style={styles.value}>
-            {operation.date.toLocaleDateString(localeIds, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            <FormatDate date={operation.date} />
           </LText>
 
           <SectionSeparator style={{ marginBottom: 32 }} />

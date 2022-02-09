@@ -1,7 +1,7 @@
 // @flow
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
 import {
   setEnvUnsafe,
@@ -44,6 +44,14 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
+    name: "EXPERIMENTAL_CURRENCIES",
+    title: "Experimental integrations",
+    description: "Use experimental integration of Solana.",
+    valueOn: "solana",
+    valueOff: "",
+  },
+  {
+    type: "toggle",
     name: "MANAGER_DEV_MODE",
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
@@ -71,23 +79,6 @@ export const experimentalFeatures: Feature[] = [
       "This may cause the countervalues displayed for your accounts to become incorrect.",
     valueOn: "https://countervalues.live.ledger.com",
     valueOff: "https://countervalues-experimental.live.ledger.com",
-  },
-  {
-    type: "toggle",
-    name: "NFT",
-    title: "NFT management features",
-    description:
-      "Display your Ethereum NFT and their metadata in your accounts. Send Ethereum NFT directly from Ledger Live.",
-    valueOn: true,
-    valueOff: false,
-  },
-  {
-    type: "toggle",
-    name: "NFT_ETH_METADATA_SERVICE",
-    title: "NFT staging metadata service",
-    description: "Use staging metadata service instead of production.",
-    valueOn: "https://nft.api.live.ledger-stg.com",
-    valueOff: "https://nft.api.live.ledger.com",
   },
   ...(__DEV__
     ? [

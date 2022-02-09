@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";
+import FilteredSearchBar from "../components/FilteredSearchBar";
 
 type EntryProps<Item> = {
   item: Item,
@@ -19,7 +20,9 @@ type Opts<Item> = {
   Entry?: EntryComponent<Item>,
   navigationOptions?: Object,
   ListHeaderComponent?: any,
-  // TODO in future: searchable: boolean
+  searchable?: boolean,
+  searchKeys?: string[],
+  searchInputWrapperStyle?: any,
 };
 
 function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
@@ -50,10 +53,20 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 64,
   },
+  padding: {
+    paddingHorizontal: 16,
+  },
 });
 
 export default <Item>(opts: Opts<Item>) => {
-  const { id, itemEventProperties, keyExtractor } = opts;
+  const {
+    id,
+    itemEventProperties,
+    keyExtractor,
+    searchable,
+    searchKeys,
+    searchInputWrapperStyle,
+  } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
@@ -62,6 +75,7 @@ export default <Item>(opts: Opts<Item>) => {
     onValueChange: (Item, *) => void,
     navigation: any,
     cancelNavigateBack?: boolean,
+    initialSearchQuery?: string,
   }> {
     onPress = (item: Item) => {
       const { navigation, onValueChange, cancelNavigateBack } = this.props;
@@ -80,16 +94,30 @@ export default <Item>(opts: Opts<Item>) => {
       />
     );
 
+    renderList = (items: Item[]) => (
+      <FlatList
+        ListHeaderComponent={opts.ListHeaderComponent}
+        data={items}
+        renderItem={this.renderItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={styles.root}
+      />
+    );
+
     render() {
-      return (
-        <FlatList
-          ListHeaderComponent={opts.ListHeaderComponent}
-          data={this.props.items}
-          renderItem={this.renderItem}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={styles.root}
-        />
-      );
+      if (searchable) {
+        return (
+          <FilteredSearchBar
+            list={this.props.items}
+            renderList={this.renderList}
+            keys={searchKeys}
+            initialQuery={this.props.initialSearchQuery}
+            inputWrapperStyle={searchInputWrapperStyle || styles.padding}
+            renderEmptySearch={() => null}
+          />
+        );
+      }
+      return this.renderList(this.props.items);
     }
   };
 };

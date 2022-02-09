@@ -184,8 +184,8 @@ export default function PortfolioScreen({ navigation }: Props) {
           />
         ) : null}
 
-      <RequireTerms />
-      <CheckLanguageAvailability />
+        <RequireTerms />
+        <CheckLanguageAvailability />
 
         <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 

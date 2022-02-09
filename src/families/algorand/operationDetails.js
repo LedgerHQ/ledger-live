@@ -16,7 +16,7 @@ import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import Section from "../../screens/OperationDetails/Section";
 import OperationStatusIcon from "../../icons/OperationStatusIcon";
-import { discreetModeSelector } from "../../reducers/settings";
+import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 type Props = {
   extra: {
@@ -31,9 +31,11 @@ function OperationDetailsExtra({ extra, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const discreet = useSelector(discreetModeSelector);
+  const locale = useSelector(localeSelector);
   const formattedRewards =
     extra.rewards && extra.rewards.gt(0)
       ? formatCurrencyUnit(unit, extra.rewards, {
+          locale,
           disableRounding: true,
           alwaysShowSign: false,
           showCode: true,

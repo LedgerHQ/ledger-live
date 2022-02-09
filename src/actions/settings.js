@@ -26,7 +26,7 @@ type SetExchangePairs = (
   }>,
 ) => *;
 
-export type Theme = "light" | "dark" | "dusk";
+export type Theme = "light" | "dark";
 
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
@@ -163,6 +163,11 @@ export const setLanguage = (payload: string) => ({
   payload,
 });
 
+export const setLocale = (payload: string) => ({
+  type: "SETTINGS_SET_LOCALE",
+  payload,
+});
+
 export const setSwapSelectableCurrencies = (
   selectableCurrencies: string[],
 ) => ({
@@ -187,6 +192,16 @@ export const swapAcceptProvider = (providerId: string) => ({
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: dmi,
+});
+
+export const addStarredMarketCoins = (payload: string) => ({
+  type: "ADD_STARRED_MARKET_COINS",
+  payload,
+});
+
+export const removeStarredMarketCoins = (payload: string) => ({
+  type: "REMOVE_STARRED_MARKET_COINS",
+  payload,
 });
 
 export const setLastConnectedDevice = (device: Device) => ({

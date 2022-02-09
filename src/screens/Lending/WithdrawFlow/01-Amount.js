@@ -13,6 +13,7 @@ import {
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountScreenSelector } from "../../../reducers/accounts";
+import { localeSelector } from "../../../reducers/settings";
 import { ScreenName } from "../../../const";
 
 import AmountScreen from "../shared/01-Amount";
@@ -31,6 +32,7 @@ type RouteParams = {
 
 export default function WithdrawAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
   invariant(
     account && account.type === "TokenAccount",
     "token account required",
@@ -90,6 +92,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
           showAllDigits: false,
           disableRounding: false,
           showCode: true,
+          locale,
         },
       );
     navigation.navigate(ScreenName.LendingWithdrawSummary, {

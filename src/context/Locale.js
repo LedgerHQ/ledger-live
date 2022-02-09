@@ -9,7 +9,7 @@ import React, {
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import {
   DEFAULT_LANGUAGE_LOCALE,

@@ -22,6 +22,7 @@ import Resources from "../../screens/Settings/Resources";
 import GeneralSettings from "../../screens/Settings/General";
 import CountervalueSettings from "../../screens/Settings/General/CountervalueSettings";
 import HelpSettings from "../../screens/Settings/Help";
+import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import DebugSettings, {
@@ -59,6 +60,13 @@ export default function SettingsNavigator() {
         component={CountervalueSettings}
         options={{
           title: t("settings.display.counterValue"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.RegionSettings}
+        component={RegionSettings}
+        options={{
+          title: t("settings.display.region"),
         }}
       />
       <Stack.Screen

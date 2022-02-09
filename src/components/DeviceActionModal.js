@@ -62,9 +62,11 @@ export default function DeviceActionModal({
                   analyticsPropertyFlow={analyticsPropertyFlow}
                 />
               </View>
-              <InfoBox forceColor={{ text: colors.live }}>
-                {t("DeviceAction.stayInTheAppPlz")}
-              </InfoBox>
+              {!device.wired ? (
+                <InfoBox forceColor={{ text: colors.live }}>
+                  {t("DeviceAction.stayInTheAppPlz")}
+                </InfoBox>
+              ) : null}
             </View>
           }
         />
