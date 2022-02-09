@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
-    "axios": "^0.23.0"
+    "axios": "^0.25.0"
   },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
