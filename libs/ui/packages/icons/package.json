@@ -16,7 +16,9 @@
     "./react": {
       "require": "./react/cjs/index.js",
       "default": "./react/index.js"
-    }
+    },
+    "./native/": "./native/",
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "pnpm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",

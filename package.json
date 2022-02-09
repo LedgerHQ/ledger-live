@@ -30,7 +30,13 @@
   },
   "pnpm": {
     "overrides": {
-      "stellar-base>sodium-native": "^3.2.1"
+      "stellar-base>sodium-native": "^3.2.1",
+      "metro": "^0.67.0",
+      "metro-config": "^0.67.0",
+      "metro-core": "^0.67.0",
+      "metro-react-native-babel-transformer": "^0.67.0",
+      "metro-resolver": "^0.67.0",
+      "metro-runtime": "^0.67.0"
     },
     "packageExtensions": {
       "react-native": {
