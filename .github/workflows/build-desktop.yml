@@ -8,9 +8,9 @@ on:
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:
-    branches:
-      - main
-      - develop
+    # branches:
+    #   - main
+    #   - develop
     # paths:
     #   - apps/ledger-live-desktop/**
 
