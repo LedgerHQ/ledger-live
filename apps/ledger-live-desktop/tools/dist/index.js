@@ -56,7 +56,7 @@ const setupTasks = args => [
         "--filter=live-desktop",
         "--unsafe-perm",
         "--package-import-method=copy",
-        "--node-linker=hoisted"
+        "--node-linker=hoisted",
       ]);
     },
   },
