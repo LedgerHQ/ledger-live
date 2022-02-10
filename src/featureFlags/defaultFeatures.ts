@@ -1,7 +1,7 @@
 import { DefaultFeatures } from "./types";
 
 export const defaultFeatures: DefaultFeatures = {
-  market: {
+  learn: {
     enabled: false,
   },
 };
