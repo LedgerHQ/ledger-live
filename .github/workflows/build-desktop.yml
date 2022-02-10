@@ -50,7 +50,7 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
       - name: install dependencies
-        run: pnpm i --filter="live-desktop..." --no-frozen-lockfile
+        run: pnpm i
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
