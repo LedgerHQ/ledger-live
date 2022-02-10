@@ -18,6 +18,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
 import { useSignedTxHandlerWithoutBroadcast } from "../../logic/screenTransactionHooks";
+import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
 
@@ -39,7 +40,7 @@ type RouteParams = {
   onError: (error: Error) => void,
 };
 
-function ConnectDevice({ route }: Props) {
+function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -83,6 +84,7 @@ function ConnectDevice({ route }: Props) {
         }}
         device={route.params.device}
         onResult={handleTx}
+        onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
       />
     </SafeAreaView>
   ) : null;

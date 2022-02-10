@@ -12,6 +12,7 @@ import SelectDevice from "../../../components/SelectDevice";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import {
   installAppFirstTime,
+  setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../actions/settings";
 
@@ -102,6 +103,14 @@ export default function OnboardingStepPairNew({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const [device, setDevice] = useState<?Device>();
 
+  const onSetDevice = useCallback(
+    device => {
+      dispatch(setLastConnectedDevice(device));
+      setDevice(device);
+    },
+    [dispatch],
+  );
+
   const onNext = useCallback(
     () => navigation.navigate(next, { ...route.params }),
     [navigation, next, route.params],
@@ -117,10 +126,14 @@ export default function OnboardingStepPairNew({ navigation, route }: Props) {
     />
   ) : null;
 
-  const directNext = useCallback(() => {
-    dispatch(setReadOnlyMode(false));
-    onNext();
-  }, [dispatch, onNext]);
+  const directNext = useCallback(
+    device => {
+      dispatch(setLastConnectedDevice(device));
+      dispatch(setReadOnlyMode(false));
+      onNext();
+    },
+    [dispatch, onNext],
+  );
 
   const onResult = useCallback(
     (info: any) => {
@@ -169,7 +182,7 @@ export default function OnboardingStepPairNew({ navigation, route }: Props) {
               withArrows
               usbOnly={usbOnly}
               deviceModelId={deviceModelId}
-              onSelect={usbOnly ? setDevice : directNext}
+              onSelect={usbOnly ? onSetDevice : directNext}
               autoSelectOnAdd
             />
             {Footer}

@@ -1,7 +1,9 @@
 // @flow
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
+import { useDispatch as useReduxDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type {
   Transaction,
   TransactionStatus,
@@ -10,6 +12,8 @@ import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
+import { setLastConnectedDevice } from "../actions/settings";
+import SkipSelectDevice from "./SkipSelectDevice";
 
 const forceInset = { bottom: "always" };
 
@@ -27,14 +31,22 @@ type RouteParams = {
 
 export default function SelectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const onSelect = useCallback(
+  const dispatchRedux = useReduxDispatch();
+  const onNavigate = useCallback(
     device => {
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {
         ...route.params,
         device,
       });
     },
-    [navigation, route],
+    [navigation, route.name, route.params],
+  );
+  const onSelect = useCallback(
+    (device: Device) => {
+      dispatchRedux(setLastConnectedDevice(device));
+      onNavigate(device);
+    },
+    [dispatchRedux, onNavigate],
   );
 
   return (
@@ -47,6 +59,7 @@ export default function SelectDevice({ navigation, route }: Props) {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
+        <SkipSelectDevice route={route} onResult={onNavigate} />
         <TrackScreen
           category={route.name.replace("SelectDevice", "")}
           name="SelectDevice"

@@ -14,6 +14,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
+import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
 
@@ -66,6 +67,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
             message: route.params.message,
           }}
           device={route.params.device}
+          onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
           onResult={onResult}
         />
       </SafeAreaView>
