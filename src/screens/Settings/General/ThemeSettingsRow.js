@@ -39,7 +39,7 @@ export default function ThemeSettingsRow() {
       </SettingsRow>
       <BottomModal isOpened={isOpen} onClose={onClose}>
         <View style={styles.modal}>
-          {["light", "dusk", "dark"].map((theme, i) => (
+          {["light", "dark"].map((theme, i) => (
             <Touchable
               event="ThemeSettingsRow"
               eventProperties={{ theme }}

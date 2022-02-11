@@ -1276,7 +1276,8 @@
     "manager": "Manager",
     "settings": "Settings",
     "platform": "Discover",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Market"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -1311,6 +1312,15 @@
     "bytes": "{{size}} bytes",
     "kbUnit": "{{size}} Kb",
     "mbUnit": "{{size}} Mb"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time": {
     "day": "1D",
@@ -1656,7 +1666,6 @@
       "themeDesc": "Set the app UI theme",
       "themes": {
         "dark": "Dark",
-        "dusk": "Dusk",
         "light": "Light"
       },
       "counterValueDesc": "Choose the currency for balances and operations.",
@@ -2571,6 +2580,7 @@
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
+    "useAnotherDevice": "Use another device",
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -3185,15 +3195,15 @@
   },
   "cryptoOrg": {
     "account": {
-     "subHeader": {
-       "cardTitle": "Powered by Crypto.org",
-       "moreInfo": "More info",
-       "drawerTitle": "Crypto.org integration",
-       "title": "The Crypto.org (CRO) token is now available on Ledger Live",
-       "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
-       "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
-       "website": "Cryptocurrency in every wallet"
-     }
+      "subHeader": {
+        "cardTitle": "Powered by Crypto.org",
+        "moreInfo": "More info",
+        "drawerTitle": "Crypto.org integration",
+        "title": "The Crypto.org (CRO) token is now available on Ledger Live",
+        "description": "You can now start to manage your Crypto.org (CRO) tokens and secure them through Ledger Live.",
+        "description2": "The Crypto.org (CRO) token is native to the Crypto.org chain and is used for everything from transactions, staking and many upcoming features.",
+        "website": "Cryptocurrency in every wallet"
+      }
     }
   },
   "elrond": {
@@ -3860,7 +3870,75 @@
       }
     }
   },
-
+  "market": {
+    "title": "Market",
+    "filters": {
+      "sort": "Sort",
+      "filter": "Filter",
+      "view": {
+        "label": "View",
+        "all": "All coins",
+        "liveCompatible": "Live Compatible",
+        "all_label": "All cryptocurrencies",
+        "liveCompatible_label": "Only Live Supported"
+      },
+      "order": {
+        "market_cap": "Rank",
+        "market_cap_asc": "Rank (Market cap) asc.",
+        "market_cap_desc": "Rank (Market cap) desc."
+      },
+      "currency": "Currency",
+      "time": "Time",
+      "apply": "Apply"
+    },
+    "marketList": {
+      "crypto": "Crypto",
+      "price": "Price",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "last7d": "Last 7 days"
+    },
+    "detailsPage": {
+      "holding": "Your Holdings",
+      "priceStatistics": "Price Statistics",
+      "price": "Price",
+      "tradingVolume": "Trading volume",
+      "24hLowHight": "24h Low / 24h High",
+      "7dLowHigh": "7d Low / 7d High",
+      "allTimeHigh": "All time high",
+      "allTimeLow": "All time low",
+      "marketCapRank": "Market cap rank",
+      "marketCapDominance": "Market cap dominance",
+      "supply": "Supply",
+      "circulatingSupply": "Circulating supply",
+      "totalSupply": "Total supply",
+      "maxSupply": "Max supply",
+      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
+    },
+    "range": {
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "1y": "1Y"
+    },
+    "warnings": {
+      "connectionError": "Connection Error",
+      "ledgerUnableToRetrieveData": "Ledger Live is unable to retrieve data.",
+      "checkInternetAndReload": "Please check your internet connection and reload this page.",
+      "reload": "Reload",
+      "noCryptosFound": "No coins found",
+      "noCurrencyFound": "No currency found",
+      "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noSearchResults": "Sorry, we did not find any search results.",
+      "retrySearchKeyword": "Please retry the search with another keyword.",
+      "retrySearchParams": "Please retry the search with another parameters.",
+      "trackFavAssets": "Track your favourite",
+      "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
+      "browseAssets": "Browse assets"
+    }
+  },
   "nft": {
     "account": {
       "seeAllNfts": "See all NFT",

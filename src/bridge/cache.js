@@ -1,6 +1,6 @@
 // @flow
 
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";

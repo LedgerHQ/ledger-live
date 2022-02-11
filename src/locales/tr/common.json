@@ -304,7 +304,7 @@
       "title": "Bu geçerli bir {{currencyName}} adresi değil"
     },
     "InvalidAddressBecauseAlreadyDelegated": {
-      "title": "Your account is already delegated to this validator"
+      "title": "Hesabınızla bu doğrulayıcıya zaten yetki devredilmiş"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Hedef ve kaynak hesapları aynı olmamalıdır."
@@ -690,7 +690,8 @@
   },
   "reset": {
     "description": "Hesap ve ayarlar da dahil olmak üzere Ledger Live verilerini silmek için lütfen uygulamayı telefonunuzdan kaldırın ve yeniden yükleyin.",
-    "button": "Sıfırla"
+    "button": "Sıfırla",
+    "warning": "Ledger Live'ı sıfırlamak, tüm hesaplarınız için takas işlem geçmişinizi siler."
   },
   "graph": {
     "week": "1H",
@@ -721,7 +722,7 @@
         "description": "3 Nano S ile ailenizi kriptoyla tanıştırın"
       },
       "buyCrypto": {
-        "title": "Kripto Satın Al",
+        "title": "Kripto Satın Alın",
         "description": "Ledger Live ile\nkripto satın alın"
       },
       "swap": {
@@ -1149,7 +1150,7 @@
       "cta": "Taramaya hazırım.",
       "bullets": {
         "0": {
-          "label": "Masaüstü uygulamasında <1>Ayarlar &gt; Hesaplar &gt; Hesap Dışa Aktarma</1> seçeneğini seçin."
+          "label": "Masaüstü uygulamasında <1>Ayarlar > Hesaplar > Hesapları dışa aktar</1> seçeneğini kullanın."
         },
         "1": {
           "label": "LiveQR kodunu telefonunuzla tarayın."
@@ -1304,7 +1305,7 @@
   },
   "addAccountsModal": {
     "ctaAdd": "Hesap ekle",
-    "ctaImport": "Masaüstü hesaplarını içe aktarma"
+    "ctaImport": "Masaüstü hesaplarını içe aktar"
   },
   "byteSize": {
     "bytes": "{{size}} bayt",
@@ -1466,7 +1467,7 @@
     "buy": "Satın al",
     "walletconnect": "WalletConnect",
     "sell": "Sat",
-    "swap": "Takas",
+    "swap": "Takas et",
     "manage": "Yönet",
     "lastOperations": "Son işlemler",
     "emptyState": {
@@ -1506,7 +1507,8 @@
         "title": "Hesabı portföyden kaldır",
         "desc": "Depolanan veriler kaldırılacaktır.",
         "confirmationTitle": "Emin misiniz?",
-        "confirmationDesc": "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur. Mevcut hesaplar daha sonra istenildiğinde eklenebilir."
+        "confirmationDesc": "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur. Mevcut hesaplar daha sonra istenildiğinde eklenebilir.",
+        "confirmationWarn": "Bu hesabın silinmesi, hesapla ilgili takas işlem geçmişinin de silinmesine neden olacaktır."
       },
       "archive": {
         "title": "Hesabı arşivle",
@@ -1645,6 +1647,8 @@
       "carouselDesc": "Portföy galerisinin görünürlüğünü etkinleştirin",
       "language": "Görüntüleme dili",
       "languageDesc": "Ledger Live'ın görüntüleneceği dili ayarlayın.",
+      "region": "Bölge",
+      "regionDesc": "Tarih, saat ve para birimi formatlarını güncellemek için bölgenizi seçin.",
       "password": "Parola kilidi",
       "passwordDesc": "Telefonunuzdaki Ledger Live verilerini korumak için bir parola belirleyin.",
       "counterValue": "Tercih edilen para birimi",
@@ -1759,8 +1763,11 @@
       "disclaimer": "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz."
     },
     "developer": {
-      "title": "Developer",
-      "desc": "Try out the Developer features and let us know what you think."
+      "title": "Geliştirici",
+      "desc": "Geliştirici özelliklerini deneyip ne düşündüğünüzü bize bildirin.",
+      "customManifest": {
+        "title": "Özel Platform Manifest Dosyası Yükle"
+      }
     }
   },
   "migrateAccounts": {
@@ -1824,7 +1831,7 @@
       "copyAddress": "Adresi kopyala",
       "shareAddress": "Adresi paylaş",
       "addressCopied": "Adres kopyalandı!",
-      "taprootWarning": "Make sure the sender supports taproot",
+      "taprootWarning": "Göndericinin taproot desteklediğinden emin olun",
       "notSynced": {
         "text": "Senkronize ediliyor",
         "desc": "Çok sayıda işlem yaptıysanız veya internet bağlantınız yavaşsa bu işlem biraz zaman alabilir."
@@ -2640,7 +2647,7 @@
     }
   },
   "EditDeviceName": {
-    "title": "Cihazı yeniden adlandırma",
+    "title": "Cihazı yeniden adlandırın",
     "charactersRemaining": "{{remainingCount}} karakter kaldı",
     "action": "Onayla"
   },
@@ -2656,7 +2663,7 @@
     },
     "GenuineCheck": {
       "title": "Orijinal cihaz doğrulaması",
-      "accept": "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1> izin verdiğinizden emin olun."
+      "accept": "Lütfen Nano X'inizi kapatmayın. Cihazda <1>Ledger Yöneticisine</1> izin vermeniz gerekiyor."
     },
     "ScanningHeader": {
       "title": "Cihazlar aranıyor",
@@ -2855,6 +2862,23 @@
     "introDescription2": "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur.",
     "action": "Güncellemeye devam et"
   },
+  "systemLanguageAvailable": {
+    "title": "Uygulama dili değiştirilsin mi?",
+    "description": {
+      "newSupport": "Güzel haberlerimiz var! Ekiplerimizin uzun süren çalışmaları sonucunda Ledger Live artık {{language}} dilini destekliyor.",
+      "advice": "Uygulama dilini ayarlar bölümünden istediğiniz zaman değiştirebilirsiniz."
+    },
+    "switchButton": "{{language}} diline geç",
+    "no": "Böyle kalsın",
+    "languages": {
+      "en": "İngilizce",
+      "fr": "Fransızca",
+      "ru": "Rusça",
+      "es": "İspanyolca",
+      "zh": "Çince",
+      "de": "Almanca"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "Tanımlayıcı",
     "description": "Aynı tanımlayıcıyı gösteriyorsa lütfen {{fullDeviceName}} cihazınızda iki tuşa aynı anda basın:"
@@ -2946,6 +2970,14 @@
             "broadcastError": "İşleminiz başarısız olmuş olabilir. Tekrar denemeden önce, işleminizin gerçekleşmediğinden emin olmak için birkaç dakika sonra yeniden kontrol edin."
           }
         }
+      }
+    }
+  },
+  "celo": {
+    "info": {
+      "available": {
+        "title": "CELO available",
+        "description": "This amount is disposable."
       }
     }
   },
@@ -3146,6 +3178,19 @@
             "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
           }
         }
+      }
+    }
+  },
+  "cryptoOrg": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Crypto.org aracılığıyla",
+        "moreInfo": "Daha fazla bilgi",
+        "drawerTitle": "Crypto.org entegrasyonu",
+        "title": "Crypto.org (CRO) token'ı artık Ledger Live'da",
+        "description": "Artık Ledger Live ile Crypto.org (CRO) token'larınızı yönetmeye ve güvenle saklamaya başlayabilirsiniz.",
+        "description2": "Crypto.org (CRO) token'ı, Crypto.org zincirinin yerel token'ıdır ve işlemler, staking ve yakında çıkacak pek çok özellik için kullanılır.",
+        "website": "Her cüzdanda kripto para"
       }
     }
   },
@@ -3666,7 +3711,8 @@
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
-      "title": "Ortağımız üzerinden kripto satın alın",
+      "title": "Choose a provider to buy crypto",
+      "coinifyTitle": "Buy crypto via our partner",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın.",
       "CTAButton": "Şimdi satın al",
       "emptyState": {
@@ -3679,6 +3725,11 @@
         "cancel": "İptal",
         "address": "{{currency}} hesabının adresi",
         "warning": "Adresiniz Ledger cihazınızda doğrulanmadı. Güvenlik için lütfen doğrulayın."
+      },
+      "bullets": {
+        "whereToBuy": "Buy from anywhere",
+        "cryptoSupported": "crypto supported",
+        "payWith": "Pay with card or SEPA"
       }
     },
     "sell": {

@@ -25,6 +25,7 @@ type Props = {|
   alert: boolean,
   colors: *,
   preventBackdropClick?: boolean,
+  iconMarginBottom?: number,
 |};
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -47,6 +48,7 @@ class ConfirmationModal extends PureComponent<Props> {
       alert,
       hideRejectButton,
       colors,
+      iconMarginBottom,
       ...rest
     } = this.props;
 
@@ -61,7 +63,15 @@ class ConfirmationModal extends PureComponent<Props> {
         {...rest}
       >
         {Icon && (
-          <View style={[styles.icon, { backgroundColor: rgba(iColor, 0.08) }]}>
+          <View
+            style={[
+              styles.icon,
+              {
+                backgroundColor: rgba(iColor, 0.08),
+                marginBottom: iconMarginBottom || 0,
+              },
+            ]}
+          >
             <Icon size={24} color={iColor} />
           </View>
         )}

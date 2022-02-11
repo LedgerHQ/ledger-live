@@ -317,6 +317,10 @@ export const ScreenName = {
   RequestAccountsSelectCrypto: "RequestAccountsSelectCrypto",
   RequestAccountsSelectAccount: "RequestAccountsSelectAccount",
 
+  MarketList: "MarketList",
+  MarketCurrencySelect: "MarketCurrencySelect",
+  MarketDetail: "MarketDetail",
+
   VerifyAccount: "VerifyAccount",
 
   // solana
@@ -379,6 +383,7 @@ export const NavigatorName = {
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
 
   NotificationCenter: "NotificationCenter",
+  Market: "Market",
 
   // Tab
   Main: "Main",
