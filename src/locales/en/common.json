@@ -1665,6 +1665,7 @@
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
       "themes": {
+        "system": "System",
         "dark": "Dark",
         "light": "Light"
       },
