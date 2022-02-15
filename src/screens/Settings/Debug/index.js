@@ -19,6 +19,7 @@ import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
+import OpenDebugEnv from "./OpenDebugEnv";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenLottie from "./OpenDebugLottie";
 import OpenDebugLogs from "./OpenDebugLogs";
@@ -45,6 +46,7 @@ export function DebugMocks() {
       <OpenDebugLogs />
       <OpenDebugCrash />
       <OpenDebugStore />
+      <OpenDebugEnv />
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugPlayground />
