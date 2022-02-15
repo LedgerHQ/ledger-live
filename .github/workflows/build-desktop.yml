@@ -76,11 +76,6 @@ jobs:
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}
-      - name: check build
-        run: |
-          cd apps/ledger-live-desktop
-          cd dist
-          ls -l
       - name: upload linux app
         uses: actions/upload-artifact@v1
         with:
@@ -139,11 +134,6 @@ jobs:
       - name: build the app
         run: |
           pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
-      - name: check build
-        run: |
-          cd apps/ledger-live-desktop
-          cd dist
-          ls -l
       - name: upload windows
         uses: actions/upload-artifact@v1
         with:
@@ -207,11 +197,6 @@ jobs:
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}
-      - name: check build
-        run: |
-          cd apps/ledger-live-desktop
-          cd dist
-          ls -l
       - name: upload macOS app
         uses: actions/upload-artifact@v1
         with:
