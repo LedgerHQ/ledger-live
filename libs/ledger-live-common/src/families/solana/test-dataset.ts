@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { DatasetTest, encodeAccountId } from "../../types";
+import { CurrenciesData, DatasetTest, encodeAccountId } from "../../types";
 
 import { Transaction, TransactionModel } from "./types";
 
@@ -75,8 +75,7 @@ const fees = (signatureCount: number) =>
 
 const zero = new BigNumber(0);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const solana = {
+const solana: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
   accounts: [
     {
@@ -438,7 +437,7 @@ const solana = {
 const dataset: DatasetTest<Transaction> = {
   implementations: [getEnv("MOCK") ? "mock" : "js"], // FIXME we should actually put both mock and js like other dataset do
   currencies: {
-    // solana, // TODO re enable when it's ready
+    solana,
   },
 };
 

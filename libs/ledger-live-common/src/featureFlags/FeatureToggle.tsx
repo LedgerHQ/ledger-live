@@ -17,8 +17,8 @@ export const FeatureToggle = ({
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {
-    return fallback;
+    return fallback ?? null;
   }
 
-  return children;
+  return children ?? null;
 };
