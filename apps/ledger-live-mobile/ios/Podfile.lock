@@ -27,14 +27,14 @@ PODS:
     - React-Core (= 0.65.1)
     - React-jsi (= 0.65.1)
     - ReactCommon/turbomodule/core (= 0.65.1)
-  - Firebase/CoreOnly (8.11.0):
-    - FirebaseCore (= 8.11.0)
-  - Firebase/RemoteConfig (8.11.0):
+  - Firebase/CoreOnly (8.12.1):
+    - FirebaseCore (= 8.12.1)
+  - Firebase/RemoteConfig (8.12.1):
     - Firebase/CoreOnly
-    - FirebaseRemoteConfig (~> 8.11.0)
+    - FirebaseRemoteConfig (~> 8.12.0)
   - FirebaseABTesting (8.12.0):
     - FirebaseCore (~> 8.0)
-  - FirebaseCore (8.11.0):
+  - FirebaseCore (8.12.1):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
@@ -48,7 +48,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseRemoteConfig (8.11.0):
+  - FirebaseRemoteConfig (8.12.0):
     - FirebaseABTesting (~> 8.0)
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
@@ -460,11 +460,11 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNFBApp (14.3.1):
-    - Firebase/CoreOnly (= 8.11.0)
+  - RNFBApp (14.4.0):
+    - Firebase/CoreOnly (= 8.12.1)
     - React-Core
-  - RNFBRemoteConfig (14.3.1):
-    - Firebase/RemoteConfig (= 8.11.0)
+  - RNFBRemoteConfig (14.4.0):
+    - Firebase/RemoteConfig (= 8.12.1)
     - React-Core
     - RNFBApp
   - RNGestureHandler (1.10.3):
@@ -595,6 +595,8 @@ DEPENDENCIES:
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.65.1+react@17.0.2/node_modules/react-native-fast-image`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@14.4.0_react-native@0.65.1+react@17.0.2/node_modules/@react-native-firebase/app`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.4.0_00957bc64fc21157b06d3a8e2a19d40b/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@1.10.3/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
@@ -757,6 +759,10 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.65.1+react@17.0.2/node_modules/@react-native-community/masked-view"
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.65.1+react@17.0.2/node_modules/react-native-fast-image"
+  RNFBApp:
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.4.0_react-native@0.65.1+react@17.0.2/node_modules/@react-native-firebase/app"
+  RNFBRemoteConfig:
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.4.0_00957bc64fc21157b06d3a8e2a19d40b/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@1.10.3/node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -795,9 +801,9 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 32c0ccb47f477d330ee93db72505380adf0de09a
   FBLazyVector: 33c82491102f20ecddb6c6a2c273696ace3191e0
   FBReactNativeSpec: df8f81d2a7541ee6755a047b398a5cb5a72acd0e
-  Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
+  Firebase: 580d09e8edafc3073ebf09c03fd42e4d80d35fe9
   FirebaseABTesting: 1b05c92327b3f0a9545cea3bab4d93e82550e29b
-  FirebaseCore: 2f4f85b453cc8fea4bb2b37e370007d2bcafe3f0
+  FirebaseCore: 8138de860a90ca7eec5e324da5788fb0ebf1d93c
   FirebaseCoreDiagnostics: 3b40dfadef5b90433a60ae01f01e90fe87aa76aa
   FirebaseInstallations: 25764cf322e77f99449395870a65b2bef88e1545
   FirebaseRemoteConfig: a6a1ce9dabf404817ae2a44e8421d276660d9091
@@ -867,8 +873,8 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
-  RNFBApp: 227358730432d119d9b76ed33eba9e2306a9d85a
-  RNFBRemoteConfig: 64d3a17b53c865cdb6a7af5fe28084d1b964a9fb
+  RNFBApp: 27e0eebba8200ba1609abfd4482c70cc9a76e02a
+  RNFBRemoteConfig: c8409d6a4f0663e9f7bcd4955366b37de5865aa7
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
