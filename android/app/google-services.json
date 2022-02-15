@@ -18,7 +18,11 @@
           "client_type": 3
         }
       ],
-      "api_key": [{ "current_key": "__FIREBASE_API_KEY__" }],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC79FnhuEt4mW-9U0wXZ-PUVpQJ5ZUZgYc"
+        }
+      ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
