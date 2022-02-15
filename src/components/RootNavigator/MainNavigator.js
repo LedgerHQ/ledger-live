@@ -4,14 +4,12 @@ import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
-import Portfolio, { PortfolioTabIcon } from "../../screens/Portfolio";
+import Portfolio from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
-import AccountsIcon from "../../icons/Accounts";
-import AppsIcon from "../../icons/Apps";
 import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
 
@@ -45,7 +43,13 @@ export default function MainNavigator({
         component={Portfolio}
         options={{
           unmountOnBlur: true,
-          tabBarIcon: (props: any) => <PortfolioTabIcon {...props} />,
+          tabBarIcon: (props: any) => (
+            <TabIcon
+              Icon={Icons.HouseMedium}
+              i18nKey="tabs.portfolio"
+              {...props}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -57,7 +61,11 @@ export default function MainNavigator({
         options={{
           unmountOnBlur: true,
           tabBarIcon: (props: any) => (
-            <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
+            <TabIcon
+              Icon={Icons.WalletMedium}
+              i18nKey="tabs.accounts"
+              {...props}
+            />
           ),
           tabBarTestID: "TabBarAccounts",
         }}
@@ -78,7 +86,11 @@ export default function MainNavigator({
             headerShown: false,
             unmountOnBlur: true,
             tabBarIcon: (props: any) => (
-              <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
+              <TabIcon
+                Icon={Icons.ManagerMedium}
+                i18nKey="tabs.platform"
+                {...props}
+              />
             ),
           }}
         />

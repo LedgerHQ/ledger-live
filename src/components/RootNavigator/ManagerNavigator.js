@@ -13,8 +13,8 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import ReadOnlyTab from "../ReadOnlyTab";
 import ManagerIcon from "../../icons/Manager";
-import NanoXIcon from "../../icons/TabNanoX";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
+import { Icons } from "@ledgerhq/native-ui";
 
 const ManagerIconWithUpate = ({
   color,
@@ -26,7 +26,7 @@ const ManagerIconWithUpate = ({
   const { colors } = useTheme();
   return (
     <View style={stylesLocal.iconWrapper}>
-      <ManagerIcon size={size} color={color} />
+      <Icons.NanoFoldedMedium size={size} color={color} />
       <View style={[stylesLocal.blueDot, { backgroundColor: colors.live }]} />
     </View>
   );
@@ -75,9 +75,11 @@ export function ManagerTabIcon(props: any) {
 
   const content = (
     <ReadOnlyTab
-      OnIcon={NanoXIcon}
+      OnIcon={Icons.NanoFoldedMedium}
       oni18nKey="tabs.nanoX"
-      OffIcon={hasAvailableUpdate ? ManagerIconWithUpate : ManagerIcon}
+      OffIcon={
+        hasAvailableUpdate ? ManagerIconWithUpate : Icons.NanoFoldedMedium
+      }
       offi18nKey="tabs.manager"
       {...props}
     />

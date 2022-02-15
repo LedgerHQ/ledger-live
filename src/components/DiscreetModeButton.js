@@ -19,9 +19,9 @@ export default function DiscreetModeButton() {
   return (
     <TouchableOpacity onPress={onPress} style={styles.root}>
       {discreetMode ? (
-        <EyeCrossed size={16} color={colors.grey} />
+        <EyeCrossed size={24} color={colors.grey} />
       ) : (
-        <Eye size={16} color={colors.grey} />
+        <Eye size={24} color={colors.grey} />
       )}
     </TouchableOpacity>
   );

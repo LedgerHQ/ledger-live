@@ -15,7 +15,7 @@ export default function TabIcon({ Icon, i18nKey, color, focused }: Props) {
   const { t } = useTranslation();
   return (
     <View style={styles.root}>
-      <Icon size={20} color={color} />
+      <Icon size={24} color={color} />
       <LText
         numberOfLines={1}
         semiBold={!focused}

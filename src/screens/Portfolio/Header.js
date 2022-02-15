@@ -5,14 +5,12 @@ import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
+import { Icons } from "@ledgerhq/native-ui";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
-import BellIcon from "../../icons/Bell";
-import SettingsIcon from "../../icons/Settings";
-import DeviceIcon from "../../icons/NanoS";
 import { NavigatorName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
@@ -77,17 +75,17 @@ export default function PortfolioHeader() {
               </LText>
             </View>
           )}
-          <BellIcon size={18} color={colors.grey} />
+          <Icons.NotificationsMedium size={24} color={colors.grey} />
         </Touchable>
       </View>
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onSettingsButtonPress}>
-          <SettingsIcon size={18} color={colors.grey} />
+          <Icons.SettingsMedium size={24} color={colors.grey} />
         </Touchable>
       </View>
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onDeviceButtonPress}>
-          <DeviceIcon size={18} color={colors.grey} />
+          <Icons.NanoFoldedMedium size={24} color={colors.grey} />
         </Touchable>
       </View>
     </View>
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignSelf: "center",
   },
-  marginLeft: { marginLeft: 8 },
+  marginLeft: { marginLeft: 24 },
   badge: {
     width: 16,
     height: 16,
