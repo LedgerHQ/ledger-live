@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 
@@ -201,6 +202,11 @@ export const addStarredMarketCoins = (payload: string) => ({
 export const removeStarredMarketCoins = (payload: string) => ({
   type: "REMOVE_STARRED_MARKET_COINS",
   payload,
+});
+
+export const setLastConnectedDevice = (device: Device) => ({
+  type: "SET_LAST_CONNECTED_DEVICE",
+  payload: device,
 });
 
 type PortfolioRangeOption = {

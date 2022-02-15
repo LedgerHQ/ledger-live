@@ -21,6 +21,7 @@ import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import GenericErrorView from "../../components/GenericErrorView";
+import SkipSelectDevice from "../SkipSelectDevice";
 
 const action = createAction(connectApp);
 
@@ -111,6 +112,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
+        <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
           onWithoutDevice={onSkipDevice}
@@ -123,6 +125,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
+        onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow={analyticsPropertyFlow}
       />
     </SafeAreaView>

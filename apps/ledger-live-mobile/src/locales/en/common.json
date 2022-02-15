@@ -2580,6 +2580,7 @@
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
+    "useAnotherDevice": "Use another device",
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."

@@ -35,6 +35,7 @@ type Props<R, H, P> = {
   action: Action<R, H, P>,
   request?: R,
   device: Device,
+  onSelectDeviceLink?: () => void,
   analyticsPropertyFlow?: string,
 };
 
@@ -45,6 +46,7 @@ export default function DeviceAction<R, H, P>({
   onResult,
   onError,
   renderOnResult,
+  onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
@@ -221,6 +223,7 @@ export default function DeviceAction<R, H, P>({
       unresponsive,
       colors,
       theme,
+      onSelectDeviceLink,
     });
   }
 

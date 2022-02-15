@@ -16,6 +16,7 @@ import type {
   Currency,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
@@ -96,6 +97,7 @@ export type SettingsState = {
   },
   lastSeenDevice: ?DeviceModelInfo,
   starredMarketCoins: string[],
+  lastConnectedDevice: ?Device,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -131,6 +133,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   lastSeenDevice: null,
   starredMarketCoins: [],
+  lastConnectedDevice: null,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -365,6 +368,13 @@ const handlers: Object = {
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
+  SET_LAST_CONNECTED_DEVICE: (
+    state: SettingsState,
+    { payload: lastConnectedDevice }: { payload: Device },
+  ) => ({
+    ...state,
+    lastConnectedDevice,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -535,3 +545,6 @@ export const lastSeenDeviceSelector = (state: State) =>
 
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
+
+export const lastConnectedDeviceSelector = (state: State) =>
+  state.settings.lastConnectedDevice;

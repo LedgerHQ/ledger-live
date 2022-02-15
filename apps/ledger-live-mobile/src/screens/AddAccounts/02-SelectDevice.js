@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
+import { useDispatch } from "react-redux";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
@@ -13,6 +14,8 @@ import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
+import SkipSelectDevice from "../SkipSelectDevice";
+import { setLastConnectedDevice } from "../../actions/settings";
 
 type Props = {
   navigation: any,
@@ -31,6 +34,15 @@ const action = createAction(connectApp);
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const [device, setDevice] = useState<?Device>();
+  const dispatch = useDispatch();
+
+  const onSetDevice = useCallback(
+    device => {
+      dispatch(setLastConnectedDevice(device));
+      setDevice(device);
+    },
+    [dispatch],
+  );
 
   const onClose = useCallback(() => {
     setDevice();
@@ -75,7 +87,8 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
           name="SelectDevice"
           currencyName={currency.name}
         />
-        <SelectDevice onSelect={setDevice} />
+        <SkipSelectDevice route={route} onResult={setDevice} />
+        <SelectDevice onSelect={onSetDevice} />
       </NavigationScrollView>
       <DeviceActionModal
         action={action}
@@ -88,6 +101,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
               ? currency.parentCurrency
               : currency,
         }}
+        onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />
     </SafeAreaView>
