@@ -102,6 +102,10 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: "Rr",
     },
     {
+      title: "Network",
+      button: "Rr",
+    },
+    {
       title: "Max fees",
       button: "Rr",
       expectedValue: maxFeesExpectedValue,

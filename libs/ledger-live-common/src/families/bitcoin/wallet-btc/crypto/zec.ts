@@ -1,11 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { toOutputScript } from "bitcoinjs-lib/src/address";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import zec from "zcash-bitcore-lib";
 import bs58check from "bs58check";
-import coininfo from "coininfo";
+import * as bjs from "bitcoinjs-lib";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import Base from "./base";
@@ -32,19 +29,13 @@ class ZCash extends Base {
     return bs58check.encode(Buffer.from(taddr));
   }
 
-  private static toBitcoinAddr(taddr: string) {
-    // refer to https://runkitcdn.com/gojomo/baddr2taddr/1.0.2
-    const baddr = new Uint8Array(21);
-    baddr.set(bs58check.decode(taddr).slice(2), 1);
-    return bs58check.encode(Buffer.from(baddr));
-  }
-
   // eslint-disable-next-line
   getLegacyAddress(xpub: string, account: number, index: number): string {
-    const pubkey = new zec.HDPublicKey(xpub);
-    const child = pubkey.derive(account).derive(index);
-    const address = new zec.Address(child.publicKey, zec.Networks.livenet);
-    return address.toString();
+    const pk = bjs.crypto.hash160(this.getPubkeyAt(xpub, account, index));
+    const payload = Buffer.allocUnsafe(22);
+    payload.writeUInt16BE(this.network.pubKeyHash, 0);
+    pk.copy(payload, 2);
+    return bs58check.encode(payload);
   }
 
   customGetAddress(
@@ -65,11 +56,20 @@ class ZCash extends Base {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
-    // TODO find a better way to calculate the script from zec address instead of converting to bitcoin address
-    return toOutputScript(
-      ZCash.toBitcoinAddr(address),
-      coininfo.bitcoin.main.toBitcoinJS()
+    const version = Number(
+      "0x" + bs58check.decode(address).slice(0, 2).toString("hex")
     );
+    if (version === this.network.pubKeyHash) {
+      //Pay-to-PubkeyHash
+      return bjs.payments.p2pkh({ hash: bs58check.decode(address).slice(2) })
+        .output as Buffer;
+    }
+    if (version === this.network.scriptHash) {
+      //Pay-to-Script-Hash
+      return bjs.payments.p2sh({ hash: bs58check.decode(address).slice(2) })
+        .output as Buffer;
+    }
+    throw new InvalidAddress();
   }
 
   // eslint-disable-next-line class-methods-use-this
