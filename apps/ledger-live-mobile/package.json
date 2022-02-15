@@ -6,7 +6,7 @@
   "version": "2.38.3",
   "private": true,
   "scripts": {
-    "postinstall": "./scripts/post.sh",
+    "postinstall": "bash ./scripts/post.sh",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "react-native start",
     "ios": "react-native run-ios",
