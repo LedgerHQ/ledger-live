@@ -771,6 +771,7 @@
     "stepSelectDevice": {
       "title": "您使用的是哪种设备？",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
@@ -859,6 +860,9 @@
             },
             "nanoS": {
               "label": "通过连接到手机的 USB 端口来启动您的设备。"
+            },
+            "nanoSP": {
+              "label": "Turn on your device by connecting it to the USB port of your phone."
             },
             "blue": {
               "label": "通过连接到您手机的 USB 端口并按电源按钮来启动您的设备。"
@@ -1035,6 +1039,9 @@
             "nanoS": {
               "label": "通过连接到手机的 USB 端口来启动您的设备。"
             },
+            "nanoSP": {
+              "label": "Turn on your device by connecting it to the USB port of your phone."
+            },
             "blue": {
               "label": "通过连接设备到您手机的 USB 端口并按电源按钮来启动您的设备。"
             }
@@ -1091,6 +1098,11 @@
         "title": "连接您的 Nano",
         "desc": "这是您第一次使用该手机设置您的 Nano。让我们快速连接您的设备。",
         "cta": "来连接我的 Nano"
+      },
+      "nanoSP": {
+        "title": "Connect your Nano",
+        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
+        "cta": "Let’s connect my Nano"
       },
       "blue": {
         "title": "连接您的 Blue",
@@ -1276,7 +1288,8 @@
     "manager": "管理器",
     "settings": "设置",
     "platform": "发现",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Market"
   },
   "portfolio": {
     "totalBalance": "总余额",
@@ -1309,8 +1322,17 @@
   },
   "byteSize": {
     "bytes": "{{size}} 字节",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time": {
     "day": "1 天",
@@ -1656,7 +1678,6 @@
       "themeDesc": "设置用户界面主题",
       "themes": {
         "dark": "暗色",
-        "dusk": "昏黄",
         "light": "亮色"
       },
       "counterValueDesc": "选择要查看余额和进行操作的币种",
@@ -2569,6 +2590,7 @@
     "quitApp": "在设备上退出该应用程序",
     "appNotInstalled": "请安装 {{appName}} 应用程序",
     "appNotInstalled_plural": "请安装 {{appName}} 应用程序",
+    "useAnotherDevice": "Use another device",
     "verifyAddress": {
       "title": "在设备上验证地址",
       "description": "请验证这个将要在 Ledger Live 上显示的 {{currencyName}} 地址与您的 Ledger 设备上显示的地址一致。"
@@ -3856,6 +3878,75 @@
       "infoPanel": {
         "website": "网站"
       }
+    }
+  },
+  "market": {
+    "title": "Market",
+    "filters": {
+      "sort": "Sort",
+      "filter": "Filter",
+      "view": {
+        "label": "View",
+        "all": "All coins",
+        "liveCompatible": "Live Compatible",
+        "all_label": "All cryptocurrencies",
+        "liveCompatible_label": "Only Live Supported"
+      },
+      "order": {
+        "market_cap": "Rank",
+        "market_cap_asc": "Rank (Market cap) asc.",
+        "market_cap_desc": "Rank (Market cap) desc."
+      },
+      "currency": "Currency",
+      "time": "Time",
+      "apply": "Apply"
+    },
+    "marketList": {
+      "crypto": "Crypto",
+      "price": "Price",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "last7d": "Last 7 days"
+    },
+    "detailsPage": {
+      "holding": "Your Holdings",
+      "priceStatistics": "Price Statistics",
+      "price": "Price",
+      "tradingVolume": "Trading volume",
+      "24hLowHight": "24h Low / 24h High",
+      "7dLowHigh": "7d Low / 7d High",
+      "allTimeHigh": "All time high",
+      "allTimeLow": "All time low",
+      "marketCapRank": "Market cap rank",
+      "marketCapDominance": "Market cap dominance",
+      "supply": "Supply",
+      "circulatingSupply": "Circulating supply",
+      "totalSupply": "Total supply",
+      "maxSupply": "Max supply",
+      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
+    },
+    "range": {
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "1y": "1Y"
+    },
+    "warnings": {
+      "connectionError": "Connection Error",
+      "ledgerUnableToRetrieveData": "Ledger Live is unable to retrieve data.",
+      "checkInternetAndReload": "Please check your internet connection and reload this page.",
+      "reload": "Reload",
+      "noCryptosFound": "No coins found",
+      "noCurrencyFound": "No currency found",
+      "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noSearchResults": "Sorry, we did not find any search results.",
+      "retrySearchKeyword": "Please retry the search with another keyword.",
+      "retrySearchParams": "Please retry the search with another parameters.",
+      "trackFavAssets": "Track your favourite",
+      "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
+      "browseAssets": "Browse assets"
     }
   },
   "nft": {

@@ -771,6 +771,7 @@
     "stepSelectDevice": {
       "title": "Hangi cihazı kullanıyorsunuz?",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
@@ -859,6 +860,9 @@
             },
             "nanoS": {
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
+            },
+            "nanoSP": {
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "blue": {
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
@@ -1035,6 +1039,9 @@
             "nanoS": {
               "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
             },
+            "nanoSP": {
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
+            },
             "blue": {
               "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
             }
@@ -1088,6 +1095,11 @@
         "cta": "Nano'mu eşle"
       },
       "nanoS": {
+        "title": "Nano'nuzu bağlayın",
+        "desc": "Nano cihazınızı bu telefonla ilk kez kuruyorsunuz. Cihazınızı hızlı bir şekilde bağlayalım.",
+        "cta": "Nano'mu bağla"
+      },
+      "nanoSP": {
         "title": "Nano'nuzu bağlayın",
         "desc": "Nano cihazınızı bu telefonla ilk kez kuruyorsunuz. Cihazınızı hızlı bir şekilde bağlayalım.",
         "cta": "Nano'mu bağla"
@@ -1276,7 +1288,8 @@
     "manager": "Yönetici",
     "settings": "Ayarlar",
     "platform": "Keşfet",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Piyasa"
   },
   "portfolio": {
     "totalBalance": "Toplam bakiye",
@@ -1309,8 +1322,17 @@
   },
   "byteSize": {
     "bytes": "{{size}} bayt",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "b",
+    "M": "mn",
+    "B": "mr",
+    "T": "tn",
+    "Q": "ka",
+    "Qn": "ke"
   },
   "time": {
     "day": "1G",
@@ -1656,7 +1678,6 @@
       "themeDesc": "Uygulama arayüz temasını ayarla",
       "themes": {
         "dark": "Koyu",
-        "dusk": "Loş",
         "light": "Açık"
       },
       "counterValueDesc": "Bakiyeler ve işlemler için para birimini seçin.",
@@ -2569,6 +2590,7 @@
     "quitApp": "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalled": "Lütfen {{appName}} uygulamasını yükleyin",
     "appNotInstalled_plural": "Lütfen {{appName}} uygulamalarını yükleyin",
+    "useAnotherDevice": "Başka bir cihaz kullan",
     "verifyAddress": {
       "title": "Cihazda adresi doğrulayın",
       "description": "Ledger Live'da gösterilecek {{currencyName}} adresinin Ledger cihazınızdaki adresle eşleştiğini lütfen doğrulayın."
@@ -2647,7 +2669,7 @@
     }
   },
   "EditDeviceName": {
-    "title": "Cihazı yeniden adlandırın",
+    "title": "Cihazın adını değiştirin",
     "charactersRemaining": "{{remainingCount}} karakter kaldı",
     "action": "Onayla"
   },
@@ -2976,8 +2998,8 @@
   "celo": {
     "info": {
       "available": {
-        "title": "CELO available",
-        "description": "This amount is disposable."
+        "title": "CELO mevcut",
+        "description": "Bu tutarı işlemlerinizde kullanabilirsiniz."
       }
     }
   },
@@ -3711,8 +3733,8 @@
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
-      "title": "Choose a provider to buy crypto",
-      "coinifyTitle": "Buy crypto via our partner",
+      "title": "Kripto satın almak için bir sağlayıcı seçin",
+      "coinifyTitle": "Ortağımız üzerinden kripto satın alın",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın.",
       "CTAButton": "Şimdi satın al",
       "emptyState": {
@@ -3727,9 +3749,9 @@
         "warning": "Adresiniz Ledger cihazınızda doğrulanmadı. Güvenlik için lütfen doğrulayın."
       },
       "bullets": {
-        "whereToBuy": "Buy from anywhere",
-        "cryptoSupported": "crypto supported",
-        "payWith": "Pay with card or SEPA"
+        "whereToBuy": "İstediğiniz yerden satın alın",
+        "cryptoSupported": "kripto destekleniyor",
+        "payWith": "Kart veya SEPA ile ödeme yapın"
       }
     },
     "sell": {
@@ -3856,6 +3878,75 @@
       "infoPanel": {
         "website": "Web sitesi"
       }
+    }
+  },
+  "market": {
+    "title": "Piyasa",
+    "filters": {
+      "sort": "Sırala",
+      "filter": "Filtrele",
+      "view": {
+        "label": "Görüntüle",
+        "all": "Tüm paralar",
+        "liveCompatible": "Live ile Uyumlu",
+        "all_label": "Tüm kripto paralar",
+        "liveCompatible_label": "Yalnızca Live Destekli"
+      },
+      "order": {
+        "market_cap": "Sıralama",
+        "market_cap_asc": "Sıralama (Piyasa değ.) en yüks.",
+        "market_cap_desc": "Sıralama (Piyasa değ.) en düş."
+      },
+      "currency": "Para birimi",
+      "time": "Dönem",
+      "apply": "Uygula"
+    },
+    "marketList": {
+      "crypto": "Kripto",
+      "price": "Fiyat",
+      "change": "Değişim",
+      "marketCap": "Piyasa değeri",
+      "last7d": "Son 7 gün"
+    },
+    "detailsPage": {
+      "holding": "Varlıklarınız",
+      "priceStatistics": "Fiyat İstatistikleri",
+      "price": "Fiyat",
+      "tradingVolume": "İşlem hacmi",
+      "24hLowHight": "24sa Min. / 24sa Maks.",
+      "7dLowHigh": "7g Min. / 7g Maks.",
+      "allTimeHigh": "Tüm zamanlar maks.",
+      "allTimeLow": "Tüm zamanlar min.",
+      "marketCapRank": "Piyasa değeri sıralaması",
+      "marketCapDominance": "Piyasa değeri hakimiyeti",
+      "supply": "Arz",
+      "circulatingSupply": "Dolaşımdaki arz",
+      "totalSupply": "Toplam arz",
+      "maxSupply": "Maksimum arz",
+      "assetNotSupportedOnLedgerLive": "Bu varlık Ledger Live'da desteklenmiyor."
+    },
+    "range": {
+      "1h": "1S",
+      "24h": "24S",
+      "7d": "7G",
+      "30d": "30G",
+      "1y": "1Y"
+    },
+    "warnings": {
+      "connectionError": "Bağlantı Hatası",
+      "ledgerUnableToRetrieveData": "Ledger Live verilere ulaşamadı.",
+      "checkInternetAndReload": "Lütfen internet bağlantınızı kontrol edin ve daha sonra tekrar deneyin.",
+      "reload": "Yenile",
+      "noCryptosFound": "Coin bulunamadı",
+      "noCurrencyFound": "Para birimi bulunamadı",
+      "noSearchResultsFor": "Üzgünüz, <0>{{search}}</0> için bir coin bulamadık. Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin.",
+      "noCurrencySearchResultsFor": "Üzgünüz, <0>{{search}}</0> için bir para birimi bulamadık. Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin.",
+      "noSearchResults": "Üzgünüz, herhangi bir arama sonucu bulamadık.",
+      "retrySearchKeyword": "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin.",
+      "retrySearchParams": "Lütfen başka parametrelerle yeniden aramayı deneyin.",
+      "trackFavAssets": "Favorilerinizi takip edin",
+      "clickOnStarIcon": "Bir varlığın yanında bulunan yıldız sembolüne tıklayarak onu otomatik olarak favorilerinize ekleyebilirsiniz.",
+      "browseAssets": "Varlıklara göz atın"
     }
   },
   "nft": {
