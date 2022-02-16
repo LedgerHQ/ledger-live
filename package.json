@@ -11,6 +11,7 @@
   "scripts": {
     "clean": "git clean -fdX",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
+    "build:libs": "pnpm -r --filter=\"!./apps\" build",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
     "build:actions": "pnpm run:turbo -- run build --scope=@actions/* --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
