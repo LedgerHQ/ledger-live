@@ -4,6 +4,7 @@ import { StyleSheet, View, Image, Linking } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
+import Config from "react-native-config";
 
 import manager from "@ledgerhq/live-common/lib/manager";
 
@@ -14,9 +15,14 @@ import Genuine from "../../../icons/Genuine";
 import FirmwareUpdateModal from "../Modals/FirmwareUpdateModal";
 import DeviceAppStorage from "./DeviceAppStorage";
 
-import nanoS from "./images/nanoS.png";
-import nanoX from "./images/nanoX.png";
-import blue from "./images/blue.png";
+import nanoSLight from "./images/light/nanoS.png";
+import nanoSPLight from "./images/light/nanoSP.png";
+import nanoXLight from "./images/light/nanoX.png";
+import blueLight from "./images/light/blue.png";
+import nanoSDark from "./images/dark/nanoS.png";
+import nanoSPDark from "./images/dark/nanoSP.png";
+import nanoXDark from "./images/dark/nanoX.png";
+import blueDark from "./images/dark/blue.png";
 
 import { urls } from "../../../config/urls";
 import Card from "../../../components/Card";
@@ -25,9 +31,18 @@ import DeviceName from "./DeviceName";
 import { setAvailableUpdate } from "../../../actions/settings";
 
 const illustrations = {
-  nanoS,
-  nanoX,
-  blue,
+  dark: {
+    nanoS: nanoSDark,
+    nanoSP: nanoSPDark,
+    nanoX: nanoXDark,
+    blue: blueDark,
+  },
+  light: {
+    nanoS: nanoSLight,
+    nanoSP: nanoSPLight,
+    nanoX: nanoXLight,
+    blue: blueLight,
+  },
 };
 
 type Props = {
@@ -47,7 +62,8 @@ const DeviceCard = ({
   blockNavigation,
   deviceInfo,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+  const theme = dark ? "dark" : "light";
   const { deviceModel } = state;
   const [firmware, setFirmware] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -122,8 +138,10 @@ const DeviceCard = ({
           <View style={styles.deviceImageContainer}>
             <Image
               style={styles.deviceImage}
-              source={illustrations[deviceModel.id]}
-              resizeMode="contain"
+              source={
+                illustrations[theme][Config.OVERRIDE_MODEL_ID || deviceModel.id]
+              }
+              resizeMode="cover"
             />
           </View>
           <View style={styles.deviceInfoContainer}>

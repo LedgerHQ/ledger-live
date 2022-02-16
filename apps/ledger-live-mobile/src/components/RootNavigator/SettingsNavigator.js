@@ -14,6 +14,7 @@ import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie.js";
 import DebugLogs from "../../screens/DebugLogs.js";
 import DebugStore from "../../screens/DebugStore";
+import DebugEnv from "../../screens/DebugEnv";
 import DebugPlayground from "../../screens/DebugPlayground";
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
@@ -217,6 +218,13 @@ export default function SettingsNavigator() {
         component={DebugStore}
         options={{
           title: "Debug Store",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugEnv}
+        component={DebugEnv}
+        options={{
+          title: "Debug Env",
         }}
       />
       <Stack.Screen

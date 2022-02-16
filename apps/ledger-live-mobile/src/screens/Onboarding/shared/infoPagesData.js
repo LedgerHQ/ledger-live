@@ -13,21 +13,27 @@ import hideRecoveryPhrase from "../assets/hideRecoveryPhrase.png";
 
 import pinCodeNanoX from "../assets/nanoX/pinCode/data.json";
 import pinCodeNanoS from "../assets/nanoS/pinCode/data.json";
+import pinCodeNanoSP from "../assets/nanoSP/pinCode/data.json";
 
 import recoverNanoX from "../assets/nanoX/recover/data.json";
 import recoverNanoS from "../assets/nanoS/recover/data.json";
+import recoverNanoSP from "../assets/nanoSP/recover/data.json";
 
 import confirmWordsNanoX from "../assets/nanoX/confirmWords/data.json";
 import confirmWordsNanoS from "../assets/nanoS/confirmWords/data.json";
+import confirmWordsNanoSP from "../assets/nanoSP/confirmWords/data.json";
 
 import numberOfWordsNanoX from "../assets/nanoX/numberOfWords/data.json";
 import numberOfWordsNanoS from "../assets/nanoS/numberOfWords/data.json";
+import numberOfWordsNanoSP from "../assets/nanoSP/numberOfWords/data.json";
 
 import powerOnNanoX from "../assets/nanoX/powerOn/data.json";
 import powerOnNanoS from "../assets/nanoS/powerOn/data.json";
+import powerOnNanoSP from "../assets/nanoSP/powerOn/data.json";
 
 import powerOnRecoveryNanoX from "../assets/nanoX/powerOnRecovery/data.json";
 import powerOnRecoveryNanoS from "../assets/nanoS/powerOnRecovery/data.json";
+import powerOnRecoveryNanoSP from "../assets/nanoSP/powerOnRecovery/data.json";
 
 import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
 import syncCryptos from "../assets/syncCryptos.png";
@@ -49,7 +55,7 @@ import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
 
 import { urls } from "../../../config/urls";
 
-const lottieAnimations = {
+export const lottieAnimations = {
   nanoS: {
     pinCode: pinCodeNanoS,
     recover: recoverNanoS,
@@ -57,6 +63,15 @@ const lottieAnimations = {
     numberOfWords: numberOfWordsNanoS,
     powerOn: powerOnNanoS,
     powerOnRecovery: powerOnRecoveryNanoS,
+    style: {},
+  },
+  nanoSP: {
+    pinCode: pinCodeNanoSP,
+    recover: recoverNanoSP,
+    confirmWords: confirmWordsNanoSP,
+    numberOfWords: numberOfWordsNanoSP,
+    powerOn: powerOnNanoSP,
+    powerOnRecovery: powerOnRecoveryNanoSP,
     style: {},
   },
   nanoX: {
@@ -399,7 +414,7 @@ const pinCodeScenes = deviceModelId => [
 ];
 
 const getSetupDeviceScenes: (
-  deviceModelId: "nanoS" | "nanoX" | "blue",
+  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue",
 ) => OnboardingScene[] = deviceModelId => [
   {
     sceneProps: {
