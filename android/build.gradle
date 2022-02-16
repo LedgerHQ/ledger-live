@@ -61,7 +61,7 @@ allprojects {
 subprojects {
     // Force all subprojects to use one and only one set of versions
     afterEvaluate {project ->
-        if(project.hasProperty("android")) {
+        if (project.hasProperty("android")) {
             android {
                 compileSdkVersion rootProject.ext.compileSdkVersion
                 buildToolsVersion rootProject.ext.buildToolsVersion
