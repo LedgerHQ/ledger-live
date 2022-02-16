@@ -85,6 +85,7 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
+  languageIsSetByUser: boolean,
   locale: ?string,
   swap: {
     hasAcceptedIPSharing: false,
@@ -120,6 +121,7 @@ export const INITIAL_STATE: SettingsState = {
   carouselVisibility: 0,
   discreetMode: false,
   language: getDefaultLanguageLocale(),
+  languageIsSetByUser: false,
   locale: null,
   swap: {
     hasAcceptedIPSharing: false,
@@ -306,6 +308,7 @@ const handlers: Object = {
   SETTINGS_SET_LANGUAGE: (state: SettingsState, { payload }) => ({
     ...state,
     language: payload,
+    languageIsSetByUser: true,
   }),
   SETTINGS_SET_LOCALE: (state: SettingsState, { payload }) => ({
     ...state,
@@ -513,6 +516,9 @@ export const osThemeSelector = (state: State) => state.settings.osTheme;
 
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
+
+export const languageIsSetByUserSelector = (state: State) =>
+  state.settings.languageIsSetByUser;
 
 export const localeSelector = (state: State) =>
   state.settings.locale || getDefaultLocale();

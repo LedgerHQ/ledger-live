@@ -11,7 +11,7 @@ import Button from "./Button";
 import Circle from "./Circle";
 import ModalBottomAction from "./ModalBottomAction";
 import LanguageIcon from "../icons/Language";
-import { languageSelector } from "../reducers/settings";
+import { languageSelector, languageIsSetByUserSelector } from "../reducers/settings";
 import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";
@@ -25,6 +25,7 @@ export default function CheckLanguageAvailability() {
   const defaultLanguage = getDefaultLanguageLocale();
   const currAppLanguage = useSelector(languageSelector);
   const [hasAnswered, answer] = useLanguageAvailableChecked();
+  const isLanguageSetByUser = useSelector(languageIsSetByUserSelector);
 
   const onRequestClose = useCallback(() => {
     setModalOpened(false);
@@ -42,7 +43,12 @@ export default function CheckLanguageAvailability() {
   }, [dispatch, defaultLanguage, answer, onRequestClose]);
 
   const toShow =
-    modalOpened && !hasAnswered && currAppLanguage !== defaultLanguage;
+    modalOpened &&
+    !isLanguageSetByUser &&
+    !hasAnswered &&
+    currAppLanguage !== defaultLanguage &&
+    currAppLanguage === "en";
+
   if (!toShow) {
     return null;
   }
