@@ -315,9 +315,10 @@ export const listApps = (
           }
 
           const type =
-            application.description === AppType.PLUGIN
-              ? AppType.PLUGIN
-              : AppType.APP;
+            application.description &&
+            Object.values(AppType).includes(application.description as AppType)
+              ? AppType[application.description]
+              : AppType.app;
 
           const app: App = polyfillApp({
             id: version.id,
