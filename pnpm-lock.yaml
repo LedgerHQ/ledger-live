@@ -448,7 +448,6 @@ importers:
       detox: ^18.2.1
       dns.js: ^1.0.1
       domain-browser: ^4.22.0
-      dotenv: ^8.2.0
       eip55: ^1.0.3
       eslint: 7.32.0
       eslint-config-airbnb: ^18.2.1
@@ -709,7 +708,6 @@ importers:
       '@types/react-test-renderer': 17.0.1
       babel-jest: 26.6.3_@babel+core@7.16.12
       detox: 18.23.1_jest-circus@26.6.3
-      dotenv: 8.6.0
       eslint: 7.32.0
       eslint-config-airbnb: 18.2.1_fe07f8fb878b9aef736083e2da35c7e5
       eslint-config-prettier: 8.3.0_eslint@7.32.0
@@ -2461,7 +2459,7 @@ packages:
     resolution: {integrity: sha512-LVtS6TqjJHFc+nYeITRo6VLXve70xmq7wPhWTqDJusJEgGmkAACWwMiTNrvfoQo6hEhFwAIixNkvB0jPXDL8Wg==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.16.8
+      '@babel/types': 7.17.0
 
   /@babel/helper-module-transforms/7.16.7:
     resolution: {integrity: sha512-gaqtLDxJEFCeQbYp9aLAefjhkKdjKcdh6DB7jniIGU3Pz52WAmP268zK0VgPz9hUNkMSYeH976K2/Y6yPadpng==}
