@@ -1,11 +1,13 @@
 // @flow
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
+import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import LText from "../LText";
 import Alert from "../Alert";
@@ -452,6 +454,17 @@ export function LoadingAppInstall({
   description?: string,
   request?: AppRequest,
 }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Nb Blocks closing the modal while the install is happening.
+    // releases the block on onmount.
+    dispatch(setModalLock(true));
+    return () => {
+      dispatch(setModalLock(false));
+    };
+  }, [dispatch]);
+
   const currency = request?.currency || request?.account?.currency;
   const appName = request?.appName || currency?.managerAppName;
   useEffect(() => {
