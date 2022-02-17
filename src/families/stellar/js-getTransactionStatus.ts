@@ -74,7 +74,7 @@ const getTransactionStatus = async (
 
   // Enough native balance to cover transaction (with required reserve + fees)
   if (!errors.amount && nativeAmountAvailable.lt(0)) {
-    errors.nativeBalance = new StellarNotEnoughNativeBalance();
+    errors.amount = new StellarNotEnoughNativeBalance();
   }
 
   // Entered fee is smaller than base fee
@@ -90,7 +90,7 @@ const getTransactionStatus = async (
     // Check asset provided
     if (!t.assetCode || !t.assetIssuer) {
       // This is unlikely
-      errors.asset = new StellarAssetRequired("");
+      errors.transaction = new StellarAssetRequired("");
     }
 
     // Has enough native balance to add new trustline
