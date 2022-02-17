@@ -5,14 +5,14 @@ on:
     branches:
       - main
       - develop
-    paths:
-      - apps/ledger-live-desktop/**
+    # paths:
+    #   - apps/ledger-live-desktop/**
   pull_request:
-    branches:
-      - main
-      - develop
-    paths:
-      - apps/ledger-live-desktop/**
+    # branches:
+    #   - main
+    #   - develop
+    # paths:
+    #   - apps/ledger-live-desktop/**
 
 jobs:
   build-ubuntu:
