@@ -1,16 +1,17 @@
-import * as core from '@actions/core';
+import * as core from "@actions/core";
 // const fetch = require("isomorphic-unfetch");
-import { promises as fs } from 'fs';
+import { promises as fs } from "fs";
 
 const main = async () => {
-  const imagesObject = await fs.readFile(core.getInput('images'));
-  const lintoutput = await fs.readFile(core.getInput('lintoutput'), 'utf8');
-  const jestoutput = await fs.readFile(core.getInput('jestoutput'), 'utf8');
+  const imagesObject = await fs.readFile(core.getInput("images"), "utf8");
+  const lintoutput = await fs.readFile(core.getInput("lintoutput"), "utf8");
+  const jestoutput = await fs.readFile(core.getInput("jestoutput"), "utf8");
 
-  let str = '';
+  const parsed = JSON.parse(imagesObject);
+  let str = "";
   let hasFailed = false;
-  for (const platform of imagesObject) {
-    const current = imagesObject[platform];
+  for (const platform of parsed) {
+    const current = parsed[platform];
     if (Array.isArray(current) && current.length) {
       if (!hasFailed) hasFailed = true;
       str += `
@@ -25,19 +26,19 @@ const main = async () => {
           | ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
         `;
       });
-      str += '\n\n';
+      str += "\n\n";
     }
   }
 
-  const lintFailed = (lintoutput || '').indexOf('exit code 255') >= 0;
-  const jestFailed = (jestoutput || '').indexOf('FAIL') >= 0;
+  const lintFailed = (lintoutput || "").indexOf("exit code 255") >= 0;
+  const jestFailed = (jestoutput || "").indexOf("FAIL") >= 0;
   const imgDiffFailed = !!hasFailed;
 
   // cc @${author}
   str = `
 
 <details>
-<summary><b>Lint outputs ${lintFailed ? '❌' : ' ✅'}</b></summary>
+<summary><b>Lint outputs ${lintFailed ? "❌" : " ✅"}</b></summary>
 <p>
 
 ${lintoutput}
@@ -46,7 +47,7 @@ ${lintoutput}
 </details>
 
 <details>
-<summary><b>Tests outputs ${jestFailed ? '❌' : ' ✅'}</b></summary>
+<summary><b>Tests outputs ${jestFailed ? "❌" : " ✅"}</b></summary>
 <p>
 
 ${jestoutput}
@@ -55,7 +56,7 @@ ${jestoutput}
 </details>
 
 <details>
-<summary><b>Diff output ${imgDiffFailed ? '❌' : ' ✅'}</b></summary>
+<summary><b>Diff output ${imgDiffFailed ? "❌" : " ✅"}</b></summary>
 <p>
 
 ${str}
@@ -109,7 +110,7 @@ ${str}
   //   },
   // );
 
-  core.setOutput('body', str);
+  core.setOutput("body", str);
 };
 
 main().catch((err) => core.setFailed(err));
