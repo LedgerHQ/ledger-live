@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
+import { useSelector } from "react-redux";
 import ReactNativeModal from "react-native-modal";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { useTheme } from "@react-navigation/native";
 import TrackScreen from "../analytics/TrackScreen";
+import { isModalLockedSelector } from "../reducers/appstate";
 import StyledStatusBar from "./StyledStatusBar";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -46,14 +48,15 @@ const BottomModal = ({
 }: Props) => {
   const { colors } = useTheme();
   const [open, setIsOpen] = useState(false);
+  const isModalLocked = useSelector(isModalLockedSelector);
   const backDropProps = preventBackdropClick
     ? {}
     : {
-        onBackdropPress: onClose,
-        onBackButtonPress: onClose,
+        onBackdropPress: !isModalLocked ? onClose : undefined,
+        onBackButtonPress: !isModalLocked ? onClose : undefined,
       };
 
-  // workarround to make sure no double modal can be opened at same time
+  // workaround to make sure no double modal can be opened at same time
   useEffect(
     () => () => {
       isModalOpenedref = false;
