@@ -1,5 +1,5 @@
 // import * as github from '@actions/github';
-import * as core from '@actions/core';
+import * as core from "@actions/core";
 
 // function checkStatus(result) {
 //   if (result.status >= 200 && result.status < 300) {
@@ -10,7 +10,7 @@ import * as core from '@actions/core';
 // }
 
 const main = async function (): Promise<void> {
-  core.debug('Decrepated for now');
+  core.debug("Decrepated for now");
   // const username = core.getInput('usename');
   // const organisation = core.getInput('organisation');
   // const token = core.getInput('token');
