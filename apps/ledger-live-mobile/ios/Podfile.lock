@@ -546,6 +546,27 @@ DEPENDENCIES:
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/Libraries/FBLazyVector`)"
   - "FBReactNativeSpec (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/React/FBReactNativeSpec`)"
+  - Flipper (= 0.93.0)
+  - Flipper-Boost-iOSX (= 1.76.0.1.11)
+  - Flipper-DoubleConversion (= 3.1.7)
+  - Flipper-Fmt (= 7.1.7)
+  - Flipper-Folly (= 2.6.7)
+  - Flipper-Glog (= 0.3.6)
+  - Flipper-PeerTalk (= 0.0.4)
+  - Flipper-RSocket (= 1.4.3)
+  - FlipperKit (= 0.93.0)
+  - FlipperKit/Core (= 0.93.0)
+  - FlipperKit/CppBridge (= 0.93.0)
+  - FlipperKit/FBCxxFollyDynamicConvert (= 0.93.0)
+  - FlipperKit/FBDefines (= 0.93.0)
+  - FlipperKit/FKPortForwarding (= 0.93.0)
+  - FlipperKit/FlipperKitHighlightOverlay (= 0.93.0)
+  - FlipperKit/FlipperKitLayoutPlugin (= 0.93.0)
+  - FlipperKit/FlipperKitLayoutTextSearchable (= 0.93.0)
+  - FlipperKit/FlipperKitNetworkPlugin (= 0.93.0)
+  - FlipperKit/FlipperKitReactPlugin (= 0.93.0)
+  - FlipperKit/FlipperKitUserDefaultsPlugin (= 0.93.0)
+  - FlipperKit/SKIOSNetworkPlugin (= 0.93.0)
   - "glog (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "lottie-ios (from `../../../node_modules/.pnpm/lottie-ios@3.2.3/node_modules/lottie-ios`)"
@@ -806,7 +827,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 8138de860a90ca7eec5e324da5788fb0ebf1d93c
   FirebaseCoreDiagnostics: 3b40dfadef5b90433a60ae01f01e90fe87aa76aa
   FirebaseInstallations: 25764cf322e77f99449395870a65b2bef88e1545
-  FirebaseRemoteConfig: a6a1ce9dabf404817ae2a44e8421d276660d9091
+  FirebaseRemoteConfig: f174a7091ac8e69bf6d0de2bae2212edb922a0ab
   Flipper: b1fddf9a17c32097b2b4c806ad158b2f36bb2692
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
   Flipper-DoubleConversion: 57ffbe81ef95306cc9e69c4aa3aeeeeb58a6a28c
@@ -893,6 +914,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: aecfb8e181b29eaf47fad1a51b5b28ff43f8bed3
+PODFILE CHECKSUM: 93173162311b5e91c913652110f10b394343e044
 
 COCOAPODS: 1.11.2
