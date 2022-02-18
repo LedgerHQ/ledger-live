@@ -78,7 +78,6 @@ function OperationDetails({ route }: Props) {
     specific.getURLWhatIsThis(operation);
 
   return (
-    <DiscreetModeProvider shouldApplyDiscreetMode>
       <SafeAreaView
         style={[styles.container, { backgroundColor: colors.background }]}
         forceInset={forceInset}
@@ -96,7 +95,6 @@ function OperationDetails({ route }: Props) {
         </NavigationScrollView>
         <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
       </SafeAreaView>
-    </DiscreetModeProvider>
   );
 }
 
