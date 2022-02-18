@@ -2,6 +2,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
@@ -18,6 +19,13 @@ type Props = {
 
 export default function ValidateOnDevice({ device, message, account }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+
+  const messageContainerStyle = [
+    styles.messageContainer,
+    { backgroundColor: colors.background },
+  ];
+  const messageTextStyle = [styles.property, { color: colors.text }];
 
   return (
     <View style={styles.root}>
@@ -32,15 +40,15 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
         <LText style={styles.action}>
           {t("walletconnect.stepVerification.action")}
         </LText>
-        <View style={styles.messageContainer}>
-          <LText style={styles.property}>
+        <View style={messageContainerStyle}>
+          <LText style={messageTextStyle}>
             {t("walletconnect.stepVerification.accountName")}
           </LText>
           <LText semiBold>{account && account.name ? account.name : ""}</LText>
         </View>
         {message && message.hashes && message.hashes.domainHash ? (
-          <View style={styles.messageContainer}>
-            <LText style={styles.property}>
+          <View style={messageContainerStyle}>
+            <LText style={messageTextStyle}>
               {t("walletconnect.domainHash")}
             </LText>
             <LText semiBold>
@@ -51,8 +59,8 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
           </View>
         ) : null}
         {message && message.hashes && message.hashes.messageHash ? (
-          <View style={styles.messageContainer}>
-            <LText style={styles.property}>
+          <View style={messageContainerStyle}>
+            <LText style={messageTextStyle}>
               {t("walletconnect.messageHash")}
             </LText>
             <LText semiBold>
@@ -63,8 +71,8 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
           </View>
         ) : null}
         {message && message.hashes && message.hashes.stringHash ? (
-          <View style={styles.messageContainer}>
-            <LText style={styles.property}>
+          <View style={messageContainerStyle}>
+            <LText style={messageTextStyle}>
               {t("walletconnect.stringHash")}
             </LText>
             <LText semiBold>
@@ -74,8 +82,8 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
             </LText>
           </View>
         ) : null}
-        <View style={styles.messageContainer}>
-          <LText style={styles.property}>{t("walletconnect.message")}</LText>
+        <View style={messageContainerStyle}>
+          <LText style={messageTextStyle}>{t("walletconnect.message")}</LText>
           <LText semiBold>
             {message.message.domain
               ? JSON.stringify(message.message)
@@ -103,7 +111,6 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     padding: 12,
-    backgroundColor: "#F5F5F5",
     borderRadius: 4,
     marginTop: 2,
   },
