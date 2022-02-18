@@ -19,10 +19,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 
 import { ScreenName } from "../../const";
@@ -42,8 +39,6 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import InfoIcon from "../../icons/Info";
-
-import perFamily from "../../generated/screens";
 
 import AmountInput from "./AmountInput";
 
@@ -168,10 +163,6 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
 
-  const mainAccount = getMainAccount(account, parentAccount);
-  const CustomAmountFields =
-    perFamily[mainAccount.currency.family]?.SendAmountCoin;
-
   return (
     <>
       <TrackScreen
@@ -185,92 +176,75 @@ export default function SendAmountCoin({ navigation, route }: Props) {
       >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
-            {CustomAmountFields ? (
-              <CustomAmountFields
-                navigation={navigation}
+            <View style={styles.amountWrapper}>
+              <AmountInput
+                editable={!useAllAmount}
                 account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                status={status}
-                setTransaction={setTransaction}
-                openInfoModal={openInfoModal}
-                bridgePending={bridgePending}
-                toggleUseAllAmount={toggleUseAllAmount}
-                useAllAmount={useAllAmount}
-                unit={unit}
-                maxSpendable={maxSpendable}
+                onChange={onChange}
+                value={amount}
+                error={
+                  amount.eq(0) && (bridgePending || !transaction.useAllAmount)
+                    ? null
+                    : status.errors.amount
+                }
+                warning={status.warnings.amount}
               />
-            ) : (
-              <View style={styles.amountWrapper}>
-                <AmountInput
-                  editable={!useAllAmount}
-                  account={account}
-                  onChange={onChange}
-                  value={amount}
-                  error={
-                    amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                      ? null
-                      : status.errors.amount
-                  }
-                  warning={status.warnings.amount}
-                />
 
-                <View style={styles.bottomWrapper}>
-                  <View style={[styles.available]}>
-                    <Touchable
-                      style={styles.availableLeft}
-                      event={"MaxSpendableInfo"}
-                      onPress={() => openInfoModal("maxSpendable")}
-                    >
-                      <View>
-                        <LText color="grey">
-                          <Trans i18nKey="send.amount.available" />{" "}
-                          <InfoIcon size={12} color="grey" />
+              <View style={styles.bottomWrapper}>
+                <View style={[styles.available]}>
+                  <Touchable
+                    style={styles.availableLeft}
+                    event={"MaxSpendableInfo"}
+                    onPress={() => openInfoModal("maxSpendable")}
+                  >
+                    <View>
+                      <LText color="grey">
+                        <Trans i18nKey="send.amount.available" />{" "}
+                        <InfoIcon size={12} color="grey" />
+                      </LText>
+                      {maxSpendable && (
+                        <LText semiBold color="grey">
+                          <CurrencyUnitValue
+                            showCode
+                            unit={unit}
+                            value={maxSpendable}
+                          />
                         </LText>
-                        {maxSpendable && (
-                          <LText semiBold color="grey">
-                            <CurrencyUnitValue
-                              showCode
-                              unit={unit}
-                              value={maxSpendable}
-                            />
-                          </LText>
-                        )}
-                      </View>
-                    </Touchable>
-                    {typeof useAllAmount === "boolean" ? (
-                      <View style={styles.availableRight}>
-                        <LText style={styles.maxLabel} color="grey">
-                          <Trans i18nKey="send.amount.useMax" />
-                        </LText>
-                        <Switch
-                          style={styles.switch}
-                          value={useAllAmount}
-                          onValueChange={toggleUseAllAmount}
-                        />
-                      </View>
-                    ) : null}
-                  </View>
-                  <View style={styles.continueWrapper}>
-                    <Button
-                      event="SendAmountCoinContinue"
-                      type="primary"
-                      title={
-                        <Trans
-                          i18nKey={
-                            !bridgePending
-                              ? "common.continue"
-                              : "send.amount.loadingNetwork"
-                          }
-                        />
-                      }
-                      onPress={onContinue}
-                      disabled={!!status.errors.amount || bridgePending}
-                    />
-                  </View>
+                      )}
+                    </View>
+                  </Touchable>
+                  {typeof useAllAmount === "boolean" ? (
+                    <View style={styles.availableRight}>
+                      <LText style={styles.maxLabel} color="grey">
+                        <Trans i18nKey="send.amount.useMax" />
+                      </LText>
+                      <Switch
+                        style={styles.switch}
+                        value={useAllAmount}
+                        onValueChange={toggleUseAllAmount}
+                      />
+                    </View>
+                  ) : null}
+                </View>
+                <View style={styles.continueWrapper}>
+                  <Button
+                    event="SendAmountCoinContinue"
+                    type="primary"
+                    title={
+                      <Trans
+                        i18nKey={
+                          !bridgePending
+                            ? "common.continue"
+                            : "send.amount.loadingNetwork"
+                        }
+                      />
+                    }
+                    onPress={onContinue}
+                    disabled={!!status.errors.amount || bridgePending}
+                  />
                 </View>
               </View>
-            )}
+            </View>
           </TouchableWithoutFeedback>
         </KeyboardView>
       </SafeAreaView>

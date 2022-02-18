@@ -3370,6 +3370,7 @@
     "feeAction": "Update fee",
     "recommendedFee": "Recommended fee",
     "recommenndedFeeInfo": "You can still submit this transaction with lower fee than recommended but it may not be completed",
+    "suggested": "Suggested",
     "networkCongestion": "network congestion",
     "networkCongestionLevel": {
       "LOW": "Low",

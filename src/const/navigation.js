@@ -241,6 +241,7 @@ export const ScreenName = {
   // Stellar
   StellarEditMemoType: "StellarEditMemoType",
   StellarEditMemoValue: "StellarEditMemoValue",
+  StellarEditCustomFees: "StellarEditCustomFees",
   StellarAddAssetSelectAsset: "StellarAddAssetSelectAsset",
   StellarAddAssetSelectDevice: "StellarAddAssetSelectDevice",
   StellarAddAssetConnectDevice: "StellarAddAssetConnectDevice",
