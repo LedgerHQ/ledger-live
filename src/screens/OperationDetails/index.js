@@ -19,7 +19,7 @@ import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
 // $FlowFixMe
-import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -61,7 +61,7 @@ export const CloseButton = ({ navigation }: { navigation: * }) => {
   );
 };
 
-export default function OperationDetails({ route }: Props) {
+function OperationDetails({ route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
@@ -99,6 +99,8 @@ export default function OperationDetails({ route }: Props) {
     </DiscreetModeProvider>
   );
 }
+
+export default withDiscreetMode(OperationDetails);
 
 const styles = StyleSheet.create({
   container: {

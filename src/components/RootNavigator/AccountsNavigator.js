@@ -15,6 +15,7 @@ import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeader
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 export default function AccountsNavigator() {
   const { t } = useTranslation();

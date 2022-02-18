@@ -29,6 +29,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -246,4 +247,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftCollection;
+export default withDiscreetMode(NftCollection);

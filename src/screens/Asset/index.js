@@ -42,7 +42,7 @@ import {
   selectedTimeRangeSelector,
 } from "../../reducers/settings";
 // $FlowFixMe
-import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(SectionList);
 
@@ -232,7 +232,7 @@ class Asset extends PureComponent<AssetProps, any> {
   }
 }
 
-export default function Screen(props: Props) {
+function Screen(props: Props) {
   const dispatch = useDispatch();
   const currency = props.route.params.currency;
   const range = useSelector(selectedTimeRangeSelector);
@@ -255,7 +255,7 @@ export default function Screen(props: Props) {
   const { colors } = useTheme();
 
   return (
-    <DiscreetModeProvider shouldApplyDiscreetMode>
+    <>
       <Asset
         {...props}
         currency={currency}
@@ -271,9 +271,11 @@ export default function Screen(props: Props) {
         }
         colors={colors}
       />
-    </DiscreetModeProvider>
+    </>
   );
 }
+
+export default withDiscreetMode(Screen);
 
 const styles = StyleSheet.create({
   root: {

@@ -23,7 +23,7 @@ import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { useDistribution } from "../../actions/general";
 // $FlowFixMe
-import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -70,7 +70,7 @@ export const DistributionList = ({
   );
 };
 
-export default function Distribution() {
+function Distribution() {
   const { colors } = useTheme();
   const distribution = useDistribution();
 
@@ -85,7 +85,7 @@ export default function Distribution() {
   }, []);
 
   return (
-    <DiscreetModeProvider shouldApplyDiscreetMode>
+    <>
       <SafeAreaView
         style={[styles.wrapper, { backgroundColor: colors.background }]}
         forceInset={forceInset}
@@ -103,9 +103,11 @@ export default function Distribution() {
           setHighlight={setHighlight}
         />
       </SafeAreaView>
-    </DiscreetModeProvider>
+    </>
   );
 }
+
+export default withDiscreetMode(Distribution);
 
 export function Header({
   distribution,

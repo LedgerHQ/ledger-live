@@ -37,7 +37,7 @@ import LText from "../../components/LText";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 // $FlowFixMe
-import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -52,7 +52,7 @@ type Props = {
   navigation: any,
 };
 
-export default function PortfolioScreen({ navigation }: Props) {
+function PortfolioScreen({ navigation }: Props) {
   const accounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const portfolio = usePortfolio();
@@ -167,7 +167,7 @@ export default function PortfolioScreen({ navigation }: Props) {
   );
 
   return (
-    <DiscreetModeProvider shouldApplyDiscreetMode>
+    <>
       <FirmwareUpdateBanner />
       <SafeAreaView
         style={[
@@ -217,9 +217,11 @@ export default function PortfolioScreen({ navigation }: Props) {
         />
         <MigrateAccountsBanner />
       </SafeAreaView>
-    </DiscreetModeProvider>
+    </>
   );
 }
+
+export default withDiscreetMode(PortfolioScreen);
 
 const styles = StyleSheet.create({
   root: {

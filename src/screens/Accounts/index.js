@@ -17,8 +17,7 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { useScrollToTop } from "../../navigation/utils";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
-// $FlowFixMe
-import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -27,7 +26,7 @@ type Props = {
   route: { params?: { currency?: string } },
 };
 
-export default function Accounts({ navigation, route }: Props) {
+function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const ref = useRef();
   useScrollToTop(ref);
@@ -86,7 +85,7 @@ export default function Accounts({ navigation, route }: Props) {
   }
 
   return (
-    <DiscreetModeProvider shouldApplyDiscreetMode>
+    <>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <List
         ref={ref}
@@ -102,9 +101,11 @@ export default function Accounts({ navigation, route }: Props) {
         isOpened={!!account}
         account={account}
       />
-    </DiscreetModeProvider>
+    </>
   );
 }
+
+export default withDiscreetMode(Accounts);
 
 const styles = StyleSheet.create({
   list: {

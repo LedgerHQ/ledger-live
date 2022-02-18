@@ -31,3 +31,14 @@ export function DiscreetModeProvider({
     </DiscreetModeContext.Provider>
   );
 }
+
+export function withDiscreetMode<T>(
+  Component: React.ComponentType<T>,
+  shouldApplyDiscreetMode: boolean = true,
+) {
+  return (props: T) => (
+    <DiscreetModeProvider shouldApplyDiscreetMode={shouldApplyDiscreetMode}>
+      <Component {...props} />
+    </DiscreetModeProvider>
+  );
+}
