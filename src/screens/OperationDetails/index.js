@@ -78,23 +78,23 @@ function OperationDetails({ route }: Props) {
     specific.getURLWhatIsThis(operation);
 
   return (
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
-      >
-        <TrackScreen category="OperationDetails" />
-        <NavigationScrollView>
-          <View style={styles.root}>
-            <Content
-              account={account}
-              parentAccount={parentAccount}
-              operation={operation}
-              disableAllLinks={route.params?.disableAllLinks}
-            />
-          </View>
-        </NavigationScrollView>
-        <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
-      </SafeAreaView>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
+      <TrackScreen category="OperationDetails" />
+      <NavigationScrollView>
+        <View style={styles.root}>
+          <Content
+            account={account}
+            parentAccount={parentAccount}
+            operation={operation}
+            disableAllLinks={route.params?.disableAllLinks}
+          />
+        </View>
+      </NavigationScrollView>
+      <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
+    </SafeAreaView>
   );
 }
 

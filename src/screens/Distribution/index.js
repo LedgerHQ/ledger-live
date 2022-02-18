@@ -85,25 +85,23 @@ function Distribution() {
   }, []);
 
   return (
-    <>
-      <SafeAreaView
-        style={[styles.wrapper, { backgroundColor: colors.background }]}
-        forceInset={forceInset}
-      >
-        <TrackScreen category="Distribution" />
-        <Header
-          distribution={distribution}
-          highlight={highlight}
-          onHighlightChange={onHeaderHighlightChange}
-        />
-        <DistributionList
-          flatListRef={flatListRef}
-          highlight={highlight}
-          distribution={distribution}
-          setHighlight={setHighlight}
-        />
-      </SafeAreaView>
-    </>
+    <SafeAreaView
+      style={[styles.wrapper, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
+      <TrackScreen category="Distribution" />
+      <Header
+        distribution={distribution}
+        highlight={highlight}
+        onHighlightChange={onHeaderHighlightChange}
+      />
+      <DistributionList
+        flatListRef={flatListRef}
+        highlight={highlight}
+        distribution={distribution}
+        setHighlight={setHighlight}
+      />
+    </SafeAreaView>
   );
 }
 

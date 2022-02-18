@@ -17,6 +17,7 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { useScrollToTop } from "../../navigation/utils";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
+// $FlowFixMe
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(FlatList);

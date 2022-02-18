@@ -255,23 +255,21 @@ function Screen(props: Props) {
   const { colors } = useTheme();
 
   return (
-    <>
-      <Asset
-        {...props}
-        currency={currency}
-        range={range}
-        counterValue={counterValue}
-        accounts={accounts}
-        allAccounts={allAccounts}
-        counterValueCurrency={counterValueCurrency}
-        useCounterValue={useCounterValue}
-        portfolio={portfolio}
-        switchCountervalueFirst={(...args) =>
-          dispatch(switchCountervalueFirst(...args))
-        }
-        colors={colors}
-      />
-    </>
+    <Asset
+      {...props}
+      currency={currency}
+      range={range}
+      counterValue={counterValue}
+      accounts={accounts}
+      allAccounts={allAccounts}
+      counterValueCurrency={counterValueCurrency}
+      useCounterValue={useCounterValue}
+      portfolio={portfolio}
+      switchCountervalueFirst={(...args) =>
+        dispatch(switchCountervalueFirst(...args))
+      }
+      colors={colors}
+    />
   );
 }
 

@@ -251,17 +251,17 @@ function AccountScreenInner({
   ];
 
   return (
-      <View style={[styles.root]}>
-        {analytics}
-        <AnimatedFlatListWithRefreshControl
-          style={{ flex: 1, backgroundColor: colors.background }}
-          data={data}
-          renderItem={({ item }) => item}
-          keyExtractor={(item, index) => String(index)}
-          showsVerticalScrollIndicator={false}
-          stickyHeaderIndices={stickyHeaderIndices}
-        />
-      </View>
+    <View style={[styles.root]}>
+      {analytics}
+      <AnimatedFlatListWithRefreshControl
+        style={{ flex: 1, backgroundColor: colors.background }}
+        data={data}
+        renderItem={({ item }) => item}
+        keyExtractor={(item, index) => String(index)}
+        showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={stickyHeaderIndices}
+      />
+    </View>
   );
 }
 
