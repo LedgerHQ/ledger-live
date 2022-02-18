@@ -32,6 +32,11 @@ export function DiscreetModeProvider({
   );
 }
 
+/**
+ * Higher order component that wraps a component in the `DiscreetModeProvider`.
+ * Using this HOC for a given component will make all currency values hidden
+ * by default when discreet mode is on.
+ */
 export function withDiscreetMode<T>(
   Component: React.ComponentType<T>,
   shouldApplyDiscreetMode: boolean = true,
