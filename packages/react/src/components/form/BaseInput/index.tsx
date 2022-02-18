@@ -1,9 +1,11 @@
 import styled, { css } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
+import { CircledCrossSolidMedium } from "@ledgerhq/icons-ui/react/";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import { rgba } from "../../../styles/helpers";
+import { ButtonUnstyled } from "../../cta/Button";
 
 type ValueType = HTMLInputElement["value"];
 
@@ -22,6 +24,7 @@ export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> 
   renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
   unwrapped?: boolean;
   containerProps?: InputContainerProps;
+  clearable?: boolean;
   /**
    * A function can be provided to serialize a value of any type to a string.
    *
@@ -147,6 +150,10 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   pr: "16px",
 }))``;
 
+export const ClearableButtonUnstyled = styled(ButtonUnstyled)`
+  display: flex;
+`;
+
 // Yes, this is dirty. If you can figure out a better way please change the code :).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
@@ -168,6 +175,7 @@ function Input<T = ValueType>(
     containerProps,
     serialize = IDENTITY,
     deserialize = IDENTITY,
+    clearable,
     ...htmlInputProps
   } = props;
   const [focus, setFocus] = useState(false);
@@ -180,6 +188,10 @@ function Input<T = ValueType>(
     },
     [onChange, onChangeEvent, deserialize],
   );
+
+  const handleClear = useCallback(() => {
+    onChange && onChange(deserialize(""));
+  }, [onChange, deserialize]);
 
   const inner = (
     <>
@@ -201,6 +213,13 @@ function Input<T = ValueType>(
           htmlInputProps.onBlur && htmlInputProps.onBlur(event);
         }}
       />
+      {clearable && inputValue && (
+        <FlexBox alignItems={"center"} mr={7}>
+          <ClearableButtonUnstyled onClick={handleClear}>
+            <CircledCrossSolidMedium size={18} color={"neutral.c50"} />
+          </ClearableButtonUnstyled>
+        </FlexBox>
+      )}
       {typeof renderRight === "function" ? renderRight(props) : renderRight}
     </>
   );
