@@ -11,6 +11,7 @@ type Props = {
   value: BigNumber | number,
   showCode?: boolean,
   alwaysShowSign?: boolean,
+  hideValueInDiscreetMode?: boolean,
   before?: string,
   after?: string,
   disableRounding?: boolean,
@@ -22,6 +23,7 @@ export default function CurrencyUnitValue({
   value: valueProp,
   showCode = true,
   alwaysShowSign,
+  hideValueInDiscreetMode,
   before = "",
   after = "",
   disableRounding = false,
@@ -40,7 +42,7 @@ export default function CurrencyUnitValue({
           alwaysShowSign,
           locale,
           disableRounding,
-          discreet,
+          discreet: hideValueInDiscreetMode && discreet,
           joinFragmentsSeparator,
         })
       : "") +

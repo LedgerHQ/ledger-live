@@ -34,6 +34,7 @@ type Props = {
   // wrapper component from outside
   Wrapper?: React$ComponentType<*>,
   subMagnitude?: number,
+  hideValueInDiscreetMode?: boolean,
 };
 
 export const NoCountervaluePlaceholder = () => {
