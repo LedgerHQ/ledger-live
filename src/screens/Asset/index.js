@@ -41,6 +41,8 @@ import {
   countervalueFirstSelector,
   selectedTimeRangeSelector,
 } from "../../reducers/settings";
+// $FlowFixMe
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(SectionList);
 
@@ -253,21 +255,23 @@ export default function Screen(props: Props) {
   const { colors } = useTheme();
 
   return (
-    <Asset
-      {...props}
-      currency={currency}
-      range={range}
-      counterValue={counterValue}
-      accounts={accounts}
-      allAccounts={allAccounts}
-      counterValueCurrency={counterValueCurrency}
-      useCounterValue={useCounterValue}
-      portfolio={portfolio}
-      switchCountervalueFirst={(...args) =>
-        dispatch(switchCountervalueFirst(...args))
-      }
-      colors={colors}
-    />
+    <DiscreetModeProvider shouldApplyDiscreetMode>
+      <Asset
+        {...props}
+        currency={currency}
+        range={range}
+        counterValue={counterValue}
+        accounts={accounts}
+        allAccounts={allAccounts}
+        counterValueCurrency={counterValueCurrency}
+        useCounterValue={useCounterValue}
+        portfolio={portfolio}
+        switchCountervalueFirst={(...args) =>
+          dispatch(switchCountervalueFirst(...args))
+        }
+        colors={colors}
+      />
+    </DiscreetModeProvider>
   );
 }
 

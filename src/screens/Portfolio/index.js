@@ -36,6 +36,8 @@ import FabActions from "../../components/FabActions";
 import LText from "../../components/LText";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
+// $FlowFixMe
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -165,7 +167,7 @@ export default function PortfolioScreen({ navigation }: Props) {
   );
 
   return (
-    <>
+    <DiscreetModeProvider shouldApplyDiscreetMode>
       <FirmwareUpdateBanner />
       <SafeAreaView
         style={[
@@ -215,7 +217,7 @@ export default function PortfolioScreen({ navigation }: Props) {
         />
         <MigrateAccountsBanner />
       </SafeAreaView>
-    </>
+    </DiscreetModeProvider>
   );
 }
 

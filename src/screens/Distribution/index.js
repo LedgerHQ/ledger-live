@@ -22,6 +22,8 @@ import { counterValueCurrencySelector } from "../../reducers/settings";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { useDistribution } from "../../actions/general";
+// $FlowFixMe
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -83,23 +85,25 @@ export default function Distribution() {
   }, []);
 
   return (
-    <SafeAreaView
-      style={[styles.wrapper, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
-      <TrackScreen category="Distribution" />
-      <Header
-        distribution={distribution}
-        highlight={highlight}
-        onHighlightChange={onHeaderHighlightChange}
-      />
-      <DistributionList
-        flatListRef={flatListRef}
-        highlight={highlight}
-        distribution={distribution}
-        setHighlight={setHighlight}
-      />
-    </SafeAreaView>
+    <DiscreetModeProvider shouldApplyDiscreetMode>
+      <SafeAreaView
+        style={[styles.wrapper, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
+        <TrackScreen category="Distribution" />
+        <Header
+          distribution={distribution}
+          highlight={highlight}
+          onHighlightChange={onHeaderHighlightChange}
+        />
+        <DistributionList
+          flatListRef={flatListRef}
+          highlight={highlight}
+          distribution={distribution}
+          setHighlight={setHighlight}
+        />
+      </SafeAreaView>
+    </DiscreetModeProvider>
   );
 }
 

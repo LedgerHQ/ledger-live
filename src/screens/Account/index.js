@@ -42,6 +42,8 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
 
 import { getListHeaderComponents } from "./ListHeaderComponent";
+// $FlowFixMe
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 type Props = {
   navigation: any,
@@ -250,17 +252,19 @@ function AccountScreenInner({
   ];
 
   return (
-    <View style={[styles.root]}>
-      {analytics}
-      <AnimatedFlatListWithRefreshControl
-        style={{ flex: 1, backgroundColor: colors.background }}
-        data={data}
-        renderItem={({ item }) => item}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={stickyHeaderIndices}
-      />
-    </View>
+    <DiscreetModeProvider shouldApplyDiscreetMode>
+      <View style={[styles.root]}>
+        {analytics}
+        <AnimatedFlatListWithRefreshControl
+          style={{ flex: 1, backgroundColor: colors.background }}
+          data={data}
+          renderItem={({ item }) => item}
+          keyExtractor={(item, index) => String(index)}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderIndices={stickyHeaderIndices}
+        />
+      </View>
+    </DiscreetModeProvider>
   );
 }
 

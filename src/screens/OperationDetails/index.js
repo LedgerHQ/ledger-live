@@ -18,6 +18,8 @@ import Footer from "./Footer";
 import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
+// $FlowFixMe
+import { DiscreetModeProvider } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -76,23 +78,25 @@ export default function OperationDetails({ route }: Props) {
     specific.getURLWhatIsThis(operation);
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
-      <TrackScreen category="OperationDetails" />
-      <NavigationScrollView>
-        <View style={styles.root}>
-          <Content
-            account={account}
-            parentAccount={parentAccount}
-            operation={operation}
-            disableAllLinks={route.params?.disableAllLinks}
-          />
-        </View>
-      </NavigationScrollView>
-      <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
-    </SafeAreaView>
+    <DiscreetModeProvider shouldApplyDiscreetMode>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
+        <TrackScreen category="OperationDetails" />
+        <NavigationScrollView>
+          <View style={styles.root}>
+            <Content
+              account={account}
+              parentAccount={parentAccount}
+              operation={operation}
+              disableAllLinks={route.params?.disableAllLinks}
+            />
+          </View>
+        </NavigationScrollView>
+        <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
+      </SafeAreaView>
+    </DiscreetModeProvider>
   );
 }
 
