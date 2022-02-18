@@ -52,6 +52,8 @@ const matchSearch =
   };
 
 function distributedCopy(items: number[], n: number): number[] {
+  if (!items) return [];
+  if (items.length <= n) return items;
   const elements = [items[0]];
   const totalItems = items.length - 2;
   const interval = Math.floor(totalItems / (n - 2));
@@ -83,6 +85,7 @@ function sparklineAsSvgData(points: number[]): SparklineSvgData {
       })
       .join(" "),
     viewBox: `0 0 ${totalXSteps} ${sparklineYHeight + 3}`,
+    isPositive: points[0] <= points[points.length - 1],
   };
 }
 
