@@ -57,7 +57,7 @@ const DebugLottie = () => {
       });
     }
     if (onBoardingKeys.includes(key)) {
-      return lottieAnimations[modelId][key];
+      return lottieAnimations[modelId][key].light;
     }
     return null;
     // Onboarding animations
@@ -73,7 +73,7 @@ const DebugLottie = () => {
       });
     }
     if (onBoardingKeys.includes(key)) {
-      return lottieAnimations[modelId][key];
+      return lottieAnimations[modelId][key].dark;
     }
     return null;
     // Onboarding animations
