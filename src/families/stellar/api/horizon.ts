@@ -283,6 +283,8 @@ export const buildPaymentOperation = (
   assetIssuer: string | undefined
 ): any => {
   const formattedAmount = getFormattedAmount(amount);
+  // Non-native assets should always have asset code and asset issuer. If an
+  // asset doesn't have both, we assume it is native asset.
   const asset =
     assetCode && assetIssuer
       ? new StellarSdk.Asset(assetCode, assetIssuer)
