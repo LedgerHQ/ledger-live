@@ -220,7 +220,8 @@ export const MarketDataProvider = ({
   }, []);
 
   useEffect(() => {
-    if (countervalue)
+    if (countervalue) {
+      const ticker = countervalue.ticker.toLowerCase();
       api.supportedCounterCurrencies().then(
         (supportedCounterCurrencies) =>
           api.setSupportedCoinsList().then((coins) => {
@@ -233,13 +234,14 @@ export const MarketDataProvider = ({
             });
             dispatch({
               type: ACTIONS.UPDATE_COUNTERVALUE,
-              payload: supportedCounterCurrencies.includes(countervalue.ticker)
-                ? countervalue.ticker
+              payload: supportedCounterCurrencies.includes(ticker)
+                ? ticker
                 : "usd",
             });
           }, handleError),
         handleError
       );
+    }
   }, [api, countervalue, handleError]);
 
   useEffect(() => {

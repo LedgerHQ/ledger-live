@@ -34,6 +34,7 @@ export type MarketCurrencyChartDataRequestParams = {
 export type SparklineSvgData = {
   path: string;
   viewBox: string;
+  isPositive: boolean;
 };
 
 export type CurrencyData = {
