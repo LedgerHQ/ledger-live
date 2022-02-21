@@ -6,7 +6,6 @@ import type { Unit } from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
 import { useContext } from "react";
 import { discreetModeSelector, localeSelector } from "../reducers/settings";
-// $FlowFixMe
 import DiscreetModeContext from "../context/DiscreetModeContext";
 
 type Props = {

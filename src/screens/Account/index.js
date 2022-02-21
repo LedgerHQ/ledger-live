@@ -42,7 +42,6 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
 
 import { getListHeaderComponents } from "./ListHeaderComponent";
-// $FlowFixMe
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = {

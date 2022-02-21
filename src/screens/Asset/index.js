@@ -41,7 +41,6 @@ import {
   countervalueFirstSelector,
   selectedTimeRangeSelector,
 } from "../../reducers/settings";
-// $FlowFixMe
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(SectionList);

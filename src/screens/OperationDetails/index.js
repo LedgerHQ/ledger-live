@@ -18,7 +18,6 @@ import Footer from "./Footer";
 import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
-// $FlowFixMe
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };

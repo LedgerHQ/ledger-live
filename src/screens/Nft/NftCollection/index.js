@@ -29,7 +29,6 @@ import { NavigatorName, ScreenName } from "../../../const";
 import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
-// $FlowFixMe
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_NFT_FIRST_RENDER = 12;

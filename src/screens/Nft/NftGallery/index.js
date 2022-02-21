@@ -22,7 +22,6 @@ import NftCollectionWithName from "./NftCollectionWithName";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
-// $FlowFixMe
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;

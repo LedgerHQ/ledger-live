@@ -22,7 +22,6 @@ import { counterValueCurrencySelector } from "../../reducers/settings";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { useDistribution } from "../../actions/general";
-// $FlowFixMe
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
