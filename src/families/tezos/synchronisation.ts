@@ -84,13 +84,12 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
       },
     };
   }
-  invariant(
-    apiAccount.type === "user",
-    "unsupported account of type ",
-    apiAccount.type
-  );
 
-  const apiOperations = await fetchAllTransactions(address, lastId);
+  const fullySupported = apiAccount.type === "user";
+
+  const apiOperations = fullySupported
+    ? await fetchAllTransactions(address, lastId)
+    : [];
 
   const { revealed, counter, publicKey } = apiAccount;
 
