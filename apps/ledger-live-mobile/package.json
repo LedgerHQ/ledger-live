@@ -227,7 +227,7 @@
     "jetifier": "^1.6.6",
     "local-web-server": "^4.2.1",
     "metro": "^0.67.0",
-    "metro-config": "^0.67.0",
+    "metro-extra-config": "workspace:*",
     "metro-react-native-babel-preset": "^0.66.0",
     "patch-package": "^6.4.7",
     "prettier": "^1.19.1",
