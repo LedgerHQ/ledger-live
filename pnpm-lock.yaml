@@ -1919,16 +1919,6 @@ importers:
       form-data: 4.0.0
       isomorphic-unfetch: 3.1.0
 
-  tools/metro-extra-config:
-    specifiers:
-      '@rnx-kit/metro-config': ^1.2.27
-      '@rnx-kit/metro-resolver-symlinks': ^0.1.16
-      metro-config: ^0.67.0
-    dependencies:
-      '@rnx-kit/metro-config': 1.2.27_metro-config@0.67.0
-      '@rnx-kit/metro-resolver-symlinks': 0.1.16
-      metro-config: 0.67.0
-
   tools/x-run:
     specifiers: {}
 
@@ -3691,15 +3681,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.16.7
     dev: true
-
-  /@babel/plugin-syntax-typescript/7.16.7:
-    resolution: {integrity: sha512-YhUIJHHGkqPgEcMYkPCKTyGUdoGKWtopIycQyjJH8OjvRgOYsXsaKehLVPScKJWAULPxMa4N1vCe6szREFlZ7A==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.16.7
-    dev: false
 
   /@babel/plugin-syntax-typescript/7.16.7_@babel+core@7.16.12:
     resolution: {integrity: sha512-YhUIJHHGkqPgEcMYkPCKTyGUdoGKWtopIycQyjJH8OjvRgOYsXsaKehLVPScKJWAULPxMa4N1vCe6szREFlZ7A==}
@@ -10567,21 +10548,6 @@ packages:
       warn-once: 0.1.0
     dev: false
 
-  /@rnx-kit/babel-preset-metro-react-native/1.0.17:
-    resolution: {integrity: sha512-x/7InOIrE2+3p8bDYBQw2OdLulgYtM79HBuACqCd5PkQJoWxVYHSbjJWkO6NiBg1XUrbGPikngi3MQu9wo145w==}
-    peerDependencies:
-      '@babel/plugin-transform-typescript': ^7.0.0
-      metro-react-native-babel-preset: '*'
-    peerDependenciesMeta:
-      '@babel/plugin-transform-typescript':
-        optional: true
-    dependencies:
-      babel-plugin-const-enum: 1.2.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - supports-color
-    dev: false
-
   /@rnx-kit/babel-preset-metro-react-native/1.0.17_50ea1af9fb3436c1b4a2cf3d67161f94:
     resolution: {integrity: sha512-x/7InOIrE2+3p8bDYBQw2OdLulgYtM79HBuACqCd5PkQJoWxVYHSbjJWkO6NiBg1XUrbGPikngi3MQu9wo145w==}
     peerDependencies:
@@ -10618,33 +10584,17 @@ packages:
       - supports-color
     dev: true
 
-  /@rnx-kit/metro-config/1.2.27_metro-config@0.67.0:
-    resolution: {integrity: sha512-tITsoINAlrB/tBpnVNpKAUbAeTwR71vC6YeKCgrcMe05yNxXWyZr7QXW6rP4HpHTBYIjgSHJ752TEne5xwXzzg==}
-    peerDependencies:
-      metro-config: '>=0.58.0'
-      react: '*'
-      react-native: '*'
-    dependencies:
-      '@rnx-kit/babel-preset-metro-react-native': 1.0.17
-      '@rnx-kit/tools-node': 1.2.6
-      metro-config: 0.67.0
-      workspace-tools: 0.16.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/plugin-transform-typescript'
-      - metro-react-native-babel-preset
-      - supports-color
-    dev: false
-
   /@rnx-kit/metro-resolver-symlinks/0.1.16:
     resolution: {integrity: sha512-6+MgiUKucHuaN6u0jcgrq+yEsmc1qNd9npmqNeUtkvCW9UtqPj4l/dRRRbOO2ZtNmyd0Jfw7X06YeKv4DjSMXQ==}
     dependencies:
       '@rnx-kit/tools-node': 1.2.6
       '@rnx-kit/tools-react-native': 1.2.0
       enhanced-resolve: 5.8.3
+    dev: true
 
   /@rnx-kit/tools-language/1.2.6:
     resolution: {integrity: sha512-8pq4JlFIkOqjwkN6amYebQ2CTAa1EeYjSBurGh8upYZtqUZBXDOK7FUAx+OVHs/7qQfmF2lU7QpqA7DZGv4xJA==}
+    dev: true
 
   /@rnx-kit/tools-node/1.2.6:
     resolution: {integrity: sha512-oiVbP801aabLCBl42l448QPlui/SEQcuWURZOmVbg04ntyLGgUNgYN87Zen+2yr/LnnI2ec1SOtftHbK6Ro+5A==}
@@ -10653,9 +10603,11 @@ packages:
       find-up: 5.0.0
       pkg-dir: 5.0.0
       pkg-up: 3.1.0
+    dev: true
 
   /@rnx-kit/tools-react-native/1.2.0:
     resolution: {integrity: sha512-pFcbdaPDgGLdy/mp6b9qFpBhtEsdTn8DfVxhX3WWEm2af0lgN4+QhRtqktBPZ1XauWy43MoNwjzDqzPP4lVzRQ==}
+    dev: true
 
   /@samverschueren/stream-to-observable/0.3.1_rxjs@6.6.7:
     resolution: {integrity: sha512-c/qwwcHyafOQuVQJj0IlBjf5yYgBI7YPJ77k4fOJYesb41jio65eaJODRUmfYKhTOFBrIZ66kgvGPlNbjuoRdQ==}
@@ -15446,6 +15398,7 @@ packages:
 
   /@types/minimatch/3.0.5:
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+    dev: true
 
   /@types/minimist/1.2.2:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
@@ -16897,6 +16850,7 @@ packages:
 
   /@yarnpkg/lockfile/1.1.0:
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
+    dev: true
 
   /@zeit/schemas/2.6.0:
     resolution: {integrity: sha512-uUrgZ8AxS+Lio0fZKAipJjAh415JyrOZowliZAzmnJSsf7piVL5w+G0+gFJ0KSu3QRhvui/7zuvpLz03YjXAhg==}
@@ -17518,6 +17472,7 @@ packages:
 
   /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+    dev: true
 
   /argsarray/0.0.1:
     resolution: {integrity: sha1-bnIHtOzbObCviDA/pa4ivajfYcs=}
@@ -17594,6 +17549,7 @@ packages:
   /array-differ/3.0.0:
     resolution: {integrity: sha512-THtfYS6KtME/yIAhKjZ2ul7XI96lQGHRputJQHO80LAWQnuGP4iCIN8vdMRboGbIEYBwU33q8Tch1os2+X0kMg==}
     engines: {node: '>=8'}
+    dev: true
 
   /array-filter/0.0.1:
     resolution: {integrity: sha1-fajPLiZijtcygDWB/SH2fKzS7uw=}
@@ -17645,6 +17601,7 @@ packages:
   /array-union/2.1.0:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
     engines: {node: '>=8'}
+    dev: true
 
   /array-union/3.0.1:
     resolution: {integrity: sha512-1OvF9IbWwaeiM9VhzYXVQacMibxpXOMYVNIvMtKRyX9SImBXpKcFr8XvFDeEslCyuH/t6KRt7HEO94AlP8Iatw==}
@@ -17703,6 +17660,7 @@ packages:
   /arrify/2.0.1:
     resolution: {integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==}
     engines: {node: '>=8'}
+    dev: true
 
   /art/0.10.3:
     resolution: {integrity: sha512-HXwbdofRTiJT6qZX/FnchtldzJjS3vkLJxQilc3Xj+ma2MXjY4UAyQ0ls1XZYVnDvVIBiFZbC6QsvtW86TD6tQ==}
@@ -18141,18 +18099,6 @@ packages:
       '@babel/helper-plugin-utils': 7.10.4
       '@mdx-js/util': 1.6.22
     dev: true
-
-  /babel-plugin-const-enum/1.2.0:
-    resolution: {integrity: sha512-o1m/6iyyFnp9MRsK1dHF3bneqyf3AlM2q3A/YbgQr2pCat6B6XJVDv2TXqzfY2RYUi4mak6WAksSBPlyYGx9dg==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.16.7
-      '@babel/plugin-syntax-typescript': 7.16.7
-      '@babel/traverse': 7.17.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
 
   /babel-plugin-const-enum/1.2.0_@babel+core@7.16.12:
     resolution: {integrity: sha512-o1m/6iyyFnp9MRsK1dHF3bneqyf3AlM2q3A/YbgQr2pCat6B6XJVDv2TXqzfY2RYUi4mak6WAksSBPlyYGx9dg==}
@@ -22162,6 +22108,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       path-type: 4.0.0
+    dev: true
 
   /dmg-builder/22.13.1:
     resolution: {integrity: sha512-qgfLN2fo4q2wIWNvbcKlZ71DLRDLvWIElOB7oxlSxUrMi6xhI+9v1Mh7E0FJ+r5UXhQzaQXaGuyMsQRbGgrSwg==}
@@ -22182,6 +22129,7 @@ packages:
     resolution: {integrity: sha512-SVeeyiOeinV5JCPHXMdKOgK1YVbak/4+8WL2rBnfqRYpA5FaeFaQnQWb25x628am1w70CbipGDv9S51biph63A==}
     engines: {node: '>=8'}
     os: [darwin]
+    deprecated: 'Disk image license agreements are deprecated by Apple and will probably be removed in a future macOS release. Discussion at: https://github.com/argv-minus-one/dmg-license/issues/11'
     hasBin: true
     requiresBuild: true
     dependencies:
@@ -22740,6 +22688,7 @@ packages:
     dependencies:
       graceful-fs: 4.2.9
       tapable: 2.2.1
+    dev: true
 
   /enquirer/2.3.6:
     resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
@@ -25379,6 +25328,7 @@ packages:
     dependencies:
       fs-extra: 4.0.3
       micromatch: 3.1.10
+    dev: true
 
   /find-yarn-workspace-root/2.0.0:
     resolution: {integrity: sha512-1IMnbjt4KzsQfnhnzNd8wUEgXZ44IzZaZmnLYx7D5FZlaHt2gW20Cri8Q+E/t5tIj4+epTBub+2Zxu/vNILzqQ==}
@@ -26208,11 +26158,13 @@ packages:
     dependencies:
       is-ssh: 1.3.3
       parse-url: 6.0.0
+    dev: true
 
   /git-url-parse/11.6.0:
     resolution: {integrity: sha512-WWUxvJs5HsyHL6L08wOusa/IXYtMuCAhrMmnTjQPpBU0TTHyDhnOATNH3xNQz7YOQUsqIIPTGr4xiVti1Hsk5g==}
     dependencies:
       git-up: 4.0.5
+    dev: true
 
   /gitconfiglocal/1.0.0:
     resolution: {integrity: sha1-QdBF84UaXqiPA/JMocYXgRRGS5s=}
@@ -26458,6 +26410,7 @@ packages:
       ignore: 5.2.0
       merge2: 1.4.1
       slash: 3.0.0
+    dev: true
 
   /globby/12.2.0:
     resolution: {integrity: sha512-wiSuFQLZ+urS9x2gGPl1H5drc5twabmm4m2gTR27XDFyjUHJUNsS8o/2aKyIF6IoBaR630atdher0XJ5g6OMmA==}
@@ -27402,6 +27355,7 @@ packages:
   /ignore/5.2.0:
     resolution: {integrity: sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==}
     engines: {node: '>= 4'}
+    dev: true
 
   /image-size/0.6.3:
     resolution: {integrity: sha512-47xSUiQioGaB96nqtp5/q55m0aBQSQdyIloMOc/x+QVTDZLNmXE892IIDrJ0hM1A5vcNUDD5tDffkSP5lCaIIA==}
@@ -28192,6 +28146,7 @@ packages:
     resolution: {integrity: sha512-NKzJmQzJfEEma3w5cJNcUMxoXfDjz0Zj0eyCalHn2E6VOwlzjZo0yuO2fcBSf8zhFuVCL/82/r5gRcoi6aEPVQ==}
     dependencies:
       protocols: 1.4.8
+    dev: true
 
   /is-stream/1.1.0:
     resolution: {integrity: sha1-EtSj3U5o4Lec6428hBc66A2RykQ=}
@@ -29549,6 +29504,7 @@ packages:
 
   /jju/1.4.0:
     resolution: {integrity: sha1-o6vicYryQaKykE+EpiWXDzia4yo=}
+    dev: true
 
   /joi/17.5.0:
     resolution: {integrity: sha512-R7hR50COp7StzLnDi4ywOXHrBrgNXuUUfJWIR5lPY5Bm/pOD3jZaTwpluUXVLRWcoWZxkrHBBJ5hLxgnlehbdw==}
@@ -29627,6 +29583,7 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
+    dev: true
 
   /jsbn/0.1.1:
     resolution: {integrity: sha1-peZUwuWi3rXyAdls77yoDA7y9RM=}
@@ -32547,6 +32504,7 @@ packages:
       array-union: 2.1.0
       arrify: 2.0.1
       minimatch: 3.0.4
+    dev: true
 
   /mute-stream/0.0.7:
     resolution: {integrity: sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=}
@@ -32982,6 +32940,7 @@ packages:
   /normalize-url/6.1.0:
     resolution: {integrity: sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==}
     engines: {node: '>=10'}
+    dev: true
 
   /now-and-later/2.0.1:
     resolution: {integrity: sha512-KGvQ0cB70AQfg107Xvs/Fbu+dGmZoTRJp2TaPwcwQm3/7PteUyN2BCgk8KBMPGBUXZdVwyWS8fDCGFygBm19UQ==}
@@ -33990,6 +33949,7 @@ packages:
       protocols: 1.4.8
       qs: 6.10.3
       query-string: 6.14.1
+    dev: true
 
   /parse-png/2.1.0:
     resolution: {integrity: sha512-Nt/a5SfCLiTnQAjx3fHlqp8hRgTL3z7kTQZzvIMS9uCAepnCyjpdEc6M/sz69WqMBdaDBw9sF1F1UaHROYzGkQ==}
@@ -34013,6 +33973,7 @@ packages:
       normalize-url: 6.1.0
       parse-path: 4.0.3
       protocols: 1.4.8
+    dev: true
 
   /parse5/6.0.1:
     resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
@@ -34288,6 +34249,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       find-up: 5.0.0
+    dev: true
 
   /pkg-up/2.0.0:
     resolution: {integrity: sha1-yBmscoBZpGHKscOImivjxJoATX8=}
@@ -35204,6 +35166,7 @@ packages:
 
   /protocols/1.4.8:
     resolution: {integrity: sha512-IgjKyaUSjsROSO8/D49Ab7hP8mJgTYcqApOqdPhLoPxAplXmkp+zRvsrSQjFn5by0rhm4VH0GAUELIPpx7B1yg==}
+    dev: true
 
   /protoduck/5.0.1:
     resolution: {integrity: sha512-WxoCeDCoCBY55BMvj4cAEjdVUFGRWed9ZxPlqTKYyw1nDDTQ4pqmnIMAGfJlg7Dx35uB/M+PHJPTmGOvaCaPTg==}
@@ -35375,6 +35338,7 @@ packages:
       filter-obj: 1.1.0
       split-on-first: 1.1.0
       strict-uri-encode: 2.0.0
+    dev: true
 
   /query-string/7.1.0:
     resolution: {integrity: sha512-wnJ8covk+S9isYR5JIXPt93kFUmI2fQ4R/8130fuq+qwLiGVTurg7Klodgfw4NSz/oe7xnyi09y3lSrogUeM3g==}
@@ -36871,6 +36835,7 @@ packages:
     dependencies:
       js-yaml: 4.1.0
       strip-bom: 4.0.0
+    dev: true
 
   /read/1.0.7:
     resolution: {integrity: sha1-s9oZvQUkMal2cdRKQmNK33ELQMQ=}
@@ -39226,6 +39191,7 @@ packages:
   /strip-bom/4.0.0:
     resolution: {integrity: sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w==}
     engines: {node: '>=8'}
+    dev: true
 
   /strip-eof/1.0.0:
     resolution: {integrity: sha1-u0P/VZim6wXYm1n80SnJgzE2Br8=}
@@ -39637,6 +39603,7 @@ packages:
   /tapable/2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
     engines: {node: '>=6'}
+    dev: true
 
   /tar-fs/2.1.1:
     resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}
@@ -43120,6 +43087,7 @@ packages:
       jju: 1.4.0
       multimatch: 4.0.0
       read-yaml-file: 2.1.0
+    dev: true
 
   /wrap-ansi/2.1.0:
     resolution: {integrity: sha1-2Pw9KE3QV5T+hJc8rs3Rz4JP3YU=}
