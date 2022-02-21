@@ -12,6 +12,7 @@ import {
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendUndelegation,
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type {
@@ -35,8 +36,11 @@ import { signOperation } from "../signOperation";
 import { patchOperationWithHash } from "../../../operation";
 import { log } from "@ledgerhq/logs";
 import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
+import api from "../api/tzkt";
 
 const receive = makeAccountBridgeReceive();
+
+const EXISTENTIAL_DEPOSIT = new BigNumber(275000);
 
 const createTransaction: () => Transaction = () => ({
   family: "tezos",
@@ -71,6 +75,7 @@ const getTransactionStatus = async (
   } = {};
 
   const estimatedFees = t.estimatedFees || new BigNumber(0);
+  let amount = t.amount;
 
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
@@ -95,12 +100,28 @@ const getTransactionStatus = async (
   }
 
   if (t.mode === "send") {
-    if (!errors.amount && t.amount.eq(0)) {
+    const spendableBalance = account.balance.minus(EXISTENTIAL_DEPOSIT).lt(0)
+      ? account.balance.minus(EXISTENTIAL_DEPOSIT)
+      : account.balance;
+    if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
       errors.amount = new AmountRequired();
-    } else if (!errors.amount && t.amount.lt(0)) {
+    } else if (!errors.amount && t.amount.gt(spendableBalance)) {
       errors.amount = new NotEnoughBalance();
+      if (t.useAllAmount) {
+        amount = new BigNumber(0);
+      }
     } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
+    }
+
+    if (
+      !errors.amount &&
+      (await api.getAccountByAddress(t.recipient)).type === "empty" &&
+      t.amount.lt(EXISTENTIAL_DEPOSIT)
+    ) {
+      errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+        minimalAmount: "0.275 XTZ",
+      });
     }
 
     const thresholdWarning = 0.5 * 10 ** account.currency.units[0].magnitude;
@@ -146,8 +167,8 @@ const getTransactionStatus = async (
     errors,
     warnings,
     estimatedFees,
-    amount: t.amount,
-    totalSpent: t.amount.plus(estimatedFees),
+    amount: amount,
+    totalSpent: amount.plus(estimatedFees),
   };
   return Promise.resolve(result);
 };
@@ -222,7 +243,6 @@ const prepareTransaction = async (
       default:
         throw new Error("unsupported mode=" + transaction.mode);
     }
-
     if (t.useAllAmount) {
       const totalFees = out.suggestedFeeMutez + out.burnFeeMutez;
       const maxAmount = account.balance
