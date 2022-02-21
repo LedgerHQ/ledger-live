@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { FontWeightTypes } from "src/components/Text/getTextStyle";
 import { Flex } from "../../../src/components/Layout";
 import Text from "../../../src/components/Text";
@@ -44,15 +44,14 @@ const Overview = () => {
               isHeader(variant) || isSubtitle(variant) ? ["none"] : ["none", "underline"];
             return (
               <Flex flexDirection="row" mb={8}>
-                <div style={{ minWidth: 250 }}>
+                <View style={{ minWidth: 250 }}>
                   <Text variant="small" color="neutral.c90">
                     variant="{variant}"
                   </Text>
-                  <br />
                   <Text variant="tiny" color="neutral.c70">
                     fontWeights: {JSON.stringify(fontWeightsToShow)}
                   </Text>
-                </div>
+                </View>
                 {fontWeightsToShow.flatMap((fontWeight) =>
                   decorationsToShow.map((textDecorationLine) => (
                     <Flex maxWidth={270} mx={4}>
