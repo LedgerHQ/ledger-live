@@ -5,13 +5,14 @@
   "private": true,
   "packageManager": "pnpm@6.29.1",
   "devDependencies": {
-    "turbo": "^1.1.2",
+    "metro-extra-config": "workspace:*",
+    "turbo": "^1.1.3",
     "x-run": "workspace:*"
   },
   "scripts": {
     "clean": "git clean -fdX",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
-    "build:libs": "pnpm -r --filter=\"!./apps\" build",
+    "build:libs": "pnpm -r --filter=\"!./apps\" --filter=\"!ledger-live\" build",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
     "build:actions": "pnpm run:turbo -- run build --scope=@actions/* --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
@@ -37,7 +38,8 @@
       "metro-core": "^0.67.0",
       "metro-react-native-babel-transformer": "^0.67.0",
       "metro-resolver": "^0.67.0",
-      "metro-runtime": "^0.67.0"
+      "metro-runtime": "^0.67.0",
+      "metro-transform-worker": "^0.67.0"
     },
     "packageExtensions": {
       "react-native": {
