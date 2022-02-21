@@ -1,8 +1,7 @@
 import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
-// TODO restore
-// import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
+import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
 
 // FIXME these accounts no longer reflect their expected states..
 export const accountTZrevealedDelegating = makeAccount(
@@ -45,8 +44,7 @@ const dataset: DatasetTest<Transaction> = {
   currencies: {
     tezos: {
       FIXME_ignoreOperationFields: ["blockHeight"],
-      // scanAccounts: [tezosScanAccounts1],
-      scanAccounts: [],
+      scanAccounts: [tezosScanAccounts1],
       accounts: [
         {
           raw: accountTZrevealedDelegating,
