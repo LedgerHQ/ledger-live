@@ -105,18 +105,26 @@ async function listPaginated({
 }: MarketListRequestParams): Promise<CurrencyData[]> {
   let ids = _ids;
 
-  if (liveCompatible) {
-    ids = ids.concat(LIVE_COINS_LIST);
-  }
-
-  if (starred.length > 0) {
-    ids = ids.concat(starred);
-  }
-
   if (search) {
     ids = SUPPORTED_COINS_LIST.filter(matchSearch(search)).map(({ id }) => id);
     if (!ids.length) {
       return [];
+    }
+  }
+
+  if (liveCompatible) {
+    if (ids.length > 0) {
+      ids = LIVE_COINS_LIST.filter((id) => ids.includes(id));
+    } else {
+      ids = ids.concat(LIVE_COINS_LIST);
+    }
+  }
+
+  if (starred.length > 0) {
+    if (ids.length > 0) {
+      ids = starred.filter((id) => ids.includes(id));
+    } else {
+      ids = ids.concat(starred);
     }
   }
 
