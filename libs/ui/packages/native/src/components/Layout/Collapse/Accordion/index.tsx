@@ -31,7 +31,6 @@ const Accordion = ({
 
   const style = useAnimatedStyle(() => {
     return {
-      // @ts-expect-error https://github.com/software-mansion/react-native-reanimated/pull/2979
       maxHeight: withTiming(animationHeight.value, config),
     };
   });
