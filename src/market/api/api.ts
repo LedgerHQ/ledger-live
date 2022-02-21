@@ -52,6 +52,8 @@ const matchSearch =
   };
 
 function distributedCopy(items: number[], n: number): number[] {
+  if (!items) return [];
+  if (items.length <= n) return items;
   const elements = [items[0]];
   const totalItems = items.length - 2;
   const interval = Math.floor(totalItems / (n - 2));
@@ -83,6 +85,7 @@ function sparklineAsSvgData(points: number[]): SparklineSvgData {
       })
       .join(" "),
     viewBox: `0 0 ${totalXSteps} ${sparklineYHeight + 3}`,
+    isPositive: points[0] <= points[points.length - 1],
   };
 }
 
@@ -102,18 +105,26 @@ async function listPaginated({
 }: MarketListRequestParams): Promise<CurrencyData[]> {
   let ids = _ids;
 
-  if (liveCompatible) {
-    ids = ids.concat(LIVE_COINS_LIST);
-  }
-
-  if (starred.length > 0) {
-    ids = ids.concat(starred);
-  }
-
   if (search) {
     ids = SUPPORTED_COINS_LIST.filter(matchSearch(search)).map(({ id }) => id);
     if (!ids.length) {
       return [];
+    }
+  }
+
+  if (liveCompatible) {
+    if (ids.length > 0) {
+      ids = LIVE_COINS_LIST.filter((id) => ids.includes(id));
+    } else {
+      ids = ids.concat(LIVE_COINS_LIST);
+    }
+  }
+
+  if (starred.length > 0) {
+    if (ids.length > 0) {
+      ids = starred.filter((id) => ids.includes(id));
+    } else {
+      ids = ids.concat(starred);
     }
   }
 
