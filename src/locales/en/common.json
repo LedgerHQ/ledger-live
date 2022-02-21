@@ -1289,7 +1289,8 @@
     "settings": "Settings",
     "platform": "Discover",
     "nanoX": "Nano X",
-    "market": "Market"
+    "market": "Market",
+    "learn": "Learn"
   },
   "portfolio": {
     "totalBalance": "Total balance",
