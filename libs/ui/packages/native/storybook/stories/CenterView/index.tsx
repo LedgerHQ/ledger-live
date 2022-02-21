@@ -39,14 +39,14 @@ export function FontProvider({
   waitUntilLoaded?: boolean;
   children: JSX.Element;
 }) {
-  const [fontsLoaded] = useFonts({
+  const [loaded] = useFonts({
     "HMAlphaMono-Medium": require("../../../src/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
     "Inter-Medium": require("../../../src/assets/fonts/inter/Inter-Medium.otf"),
     "Inter-SemiBold": require("../../../src/assets/fonts/inter/Inter-SemiBold.otf"),
     "Inter-Bold": require("../../../src/assets/fonts/inter/Inter-Bold.otf"),
   });
 
-  if (waitUntilLoaded && !fontsLoaded) {
+  if (waitUntilLoaded && !loaded) {
     return null;
   }
 
@@ -62,6 +62,7 @@ export default function CenterView({
   children: React.ReactNode;
 }): JSX.Element {
   const [isLight, setIsLight] = useState(true);
+
   return (
     <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
       <ThemeButton onPress={() => setIsLight(!isLight)}>
