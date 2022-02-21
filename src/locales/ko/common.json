@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "언본딩된 액수 출금",
       "palletMethod": "방법",
       "transferAmount": "금액 전송",
-      "validatorsCount": "검증인 ({{number}})"
+      "validatorsCount": "검증인 ({{number}})",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "왜 주소가 여러 개인가요?",
     "tokenName": "토큰명",

@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "提取已解绑的数额",
       "palletMethod": "方法",
       "transferAmount": "转移数额",
-      "validatorsCount": "验证器 ({{number}})"
+      "validatorsCount": "验证器 ({{number}})",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "为什么有多个地址？",
     "tokenName": "代币名称",

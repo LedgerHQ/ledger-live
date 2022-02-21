@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "Çözülmüş Tutarı Çek",
       "palletMethod": "Yöntem",
       "transferAmount": "Transfer Tutarı",
-      "validatorsCount": "Doğrulayıcılar ({{number}})"
+      "validatorsCount": "Doğrulayıcılar ({{number}})",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "Neden birden fazla adres var?",
     "tokenName": "Token Adı",

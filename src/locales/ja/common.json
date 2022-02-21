@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "ボンド解除済み額を引き出す",
       "palletMethod": "方法",
       "transferAmount": "送付額",
-      "validatorsCount": "バリデータ（{{number}}）"
+      "validatorsCount": "バリデータ（{{number}}）",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "なぜ複数のアドレスがあるのですか？",
     "tokenName": "トークン名",
