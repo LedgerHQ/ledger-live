@@ -4,5 +4,9 @@ import { storiesOf as storiesOfWeb } from "@storybook/react";
 export type StoryOf = typeof storiesOfNative | typeof storiesOfWeb;
 
 export function storiesOf(storyFn: (story: StoryOf) => void): void {
-  [storiesOfNative, storiesOfWeb].forEach(storyFn);
+  if (typeof window !== undefined && window.addEventListener) {
+    storyFn(storiesOfWeb);
+  } else {
+    storyFn(storiesOfNative);
+  }
 }
