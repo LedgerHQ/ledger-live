@@ -33,6 +33,10 @@ export type FeatureInteger = {
 
 export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 
+// comma-separated list of currencies that we want to enable as experimental, e.g:
+// const experimentalCurrencies = "solana,cardano";
+const experimentalCurrencies = "";
+
 export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
@@ -42,14 +46,18 @@ export const experimentalFeatures: Feature[] = [
     valueOn: "tezos,algorand",
     valueOff: "",
   },
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_CURRENCIES",
-    title: "Experimental integrations",
-    description: "Use experimental integration of Solana.",
-    valueOn: "solana",
-    valueOff: "",
-  },
+  ...(experimentalCurrencies.length
+    ? [
+        {
+          type: "toggle",
+          name: "EXPERIMENTAL_CURRENCIES",
+          title: "Experimental integrations",
+          description: "Use available experimental crypto assets integrations.",
+          valueOn: experimentalCurrencies,
+          valueOff: "",
+        },
+      ]
+    : []),
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
