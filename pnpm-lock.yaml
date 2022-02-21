@@ -2094,7 +2094,7 @@ packages:
       '@babel/generator': 7.17.3
       '@babel/helper-module-transforms': 7.16.7
       '@babel/helpers': 7.17.2
-      '@babel/parser': 7.17.3
+      '@babel/parser': 7.12.3 
       '@babel/template': 7.16.7
       '@babel/traverse': 7.17.3
       '@babel/types': 7.17.0
@@ -14786,6 +14786,12 @@ packages:
       ajv: 8.10.0
     dev: true
 
+  /ajv-keywords/3.5.2:
+    resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
+    peerDependencies:
+      ajv: ^6.9.1
+    dev: true
+
   /ajv-keywords/3.5.2_ajv@6.12.6:
     resolution: {integrity: sha512-5p6WTN0DdTGVQk6VjcEju19IgaHudalcfabD7yhDGeA6bcQnmL+CpveLJq/3hvfwd1aof6L386Ougkx6RfyMIQ==}
     peerDependencies:
@@ -15699,6 +15705,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@babel/core': 7.17.5
+      ajv-keywords: 3.5.2
       find-cache-dir: 3.3.2
       loader-utils: 1.4.0
       make-dir: 3.1.0
@@ -31032,7 +31039,7 @@ packages:
       asn1.js: 5.4.1
       browserify-aes: 1.2.0
       evp_bytestokey: 1.0.3
-      pbkdf2: 3.1.2
+      pbkdf2: 3.0.8
       safe-buffer: 5.2.1
 
   /parse-entities/1.2.2:
@@ -31310,7 +31317,6 @@ packages:
     engines: {node: '>=0.12'}
     dependencies:
       create-hmac: 1.1.7
-    dev: false
 
   /pbkdf2/3.1.2:
     resolution: {integrity: sha512-iuh7L6jA7JEGu2WxDwtQP1ddOpaJNC4KlDEFfdQajSGgGPNi4OyDc2R7QnbY2bR9QjBVGwgvTdNJZoE7RaxUMA==}
