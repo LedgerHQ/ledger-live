@@ -203,8 +203,6 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
-    "@rnx-kit/metro-config": "^1.2.27",
-    "@rnx-kit/metro-resolver-symlinks": "^0.1.16",
     "@types/jest": "^27.0.2",
     "@types/react": "^17.0.30",
     "@types/react-native": "^0.65.8",
