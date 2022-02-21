@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
-import { CircledCrossSolidMedium } from "@ledgerhq/icons-ui/react/";
+import CircledCrossSolidMedium from "@ledgerhq/icons-ui/react/CircledCrossSolidMedium";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import { rgba } from "../../../styles/helpers";
