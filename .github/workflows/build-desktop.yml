@@ -169,7 +169,9 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: pnpm i
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
