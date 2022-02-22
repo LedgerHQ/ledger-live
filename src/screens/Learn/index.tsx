@@ -13,6 +13,10 @@ const SafeContainer = styled(SafeAreaView)`
   padding-top: ${extraStatusBarPadding}px;
 `;
 
+const StyledWebview = styled(WebView)`
+  background-color: transparent; // avoids white background before page loads
+`;
+
 export default function Learn() {
   const { i18n } = useTranslation();
   const {
@@ -23,7 +27,7 @@ export default function Learn() {
 
   return (
     <SafeContainer>
-      <WebView source={{ uri }} />
+      <StyledWebview source={{ uri }} />
     </SafeContainer>
   );
 }
