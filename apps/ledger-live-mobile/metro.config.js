@@ -14,6 +14,7 @@ const forcedDependencies = [
   "react-native",
   "react-native-svg",
   "react-native-reanimated",
+  "styled-components",
 ];
 
 const specificConfig = {

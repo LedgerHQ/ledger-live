@@ -84,7 +84,11 @@ const buildRendererConfig = (mode, config, argv) => {
 
   const plugins =
     mode === "development"
-      ? [...wpConf.plugins, new ReactRefreshWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]
+      ? [
+          ...wpConf.plugins,
+          new ReactRefreshWebpackPlugin(),
+          new webpack.HotModuleReplacementPlugin(),
+        ]
       : wpConf.plugins;
 
   // const alias =

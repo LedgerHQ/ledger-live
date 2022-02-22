@@ -1,4 +1,3 @@
-import { connect } from "react-redux";
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
@@ -9,14 +8,12 @@ export function checkLibs(
     React: typeof React;
     log: typeof log;
     Transport: typeof Transport;
-    connect: typeof connect;
   }>
 ) {
   check(libs.NotEnoughBalance, NotEnoughBalance, "@ledgerhq/errors");
   check(libs.log, log, "@ledgerhq/logs");
   check(libs.Transport, Transport, "@ledgerhq/hw-transport");
   check(libs.React, React, "react");
-  check(libs.connect, connect, "react-redux");
 
   function check(remoteInst, localInst, pkg) {
     if (remoteInst && remoteInst !== localInst) {
