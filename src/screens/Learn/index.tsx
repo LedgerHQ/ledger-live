@@ -1,22 +1,29 @@
 import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { SafeAreaView } from "react-native";
 import WebView from "react-native-webview";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+
+const learnURL = "https://www.ledger.com/ledger-live-learn";
+
+const SafeContainer = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${p => p.theme.colors.background.main};
+  padding-top: ${extraStatusBarPadding}px;
+`;
 
 export default function Learn() {
   const { i18n } = useTranslation();
   const {
     colors: { type: themeType },
   } = useTheme();
+
+  const uri = `${learnURL}?theme=${themeType}&lang=${i18n.languages[0]}`;
+
   return (
-    <Flex flex={1}>
-      <WebView
-        backgroundColor="transparent"
-        source={{
-          uri: `https://media-ledgerlive.ledger-ppr.com?theme=${themeType}&lang=${i18n.languages[0]}`,
-        }}
-      />
-    </Flex>
+    <SafeContainer>
+      <WebView source={{ uri }} />
+    </SafeContainer>
   );
 }
