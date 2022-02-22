@@ -1,4 +1,4 @@
-import { assign, Machine } from "xstate";
+import { assign, createMachine } from "xstate";
 import type { State } from "./types";
 const initialState: State = {
   incidents: [],
@@ -7,7 +7,7 @@ const initialState: State = {
   isLoading: false,
   context: { tickers: [] },
 };
-export const serviceStatusMachine = Machine({
+export const serviceStatusMachine = createMachine({
   id: "serviceStatus",
   initial: "updating",
   context: initialState,
