@@ -89,6 +89,7 @@ export const ServiceStatusProvider = ({
     };
   }, [networkApi]);
 
+  // @ts-expect-error xstate bindings ?
   const [state, send] = useMachine(serviceStatusMachine, {
     services: {
       fetchData,

@@ -123,6 +123,7 @@ export const AnnouncementProvider = ({
     },
     [handleSave]
   );
+  // @ts-expect-error xstate bindings ?
   const [state, send] = useMachine(announcementMachine, {
     actions: {
       saveData,

@@ -99,8 +99,7 @@ checkLibs({
   NotEnoughBalance,
   React,
   log,
-  Transport,
-  connect,
+  Transport
 });
 
 // useScreens();
