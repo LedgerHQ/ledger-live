@@ -15,15 +15,15 @@ const main = async () => {
     if (Array.isArray(current) && current.length) {
       if (!hasFailed) hasFailed = true;
       str += `
-        <strong>${platform}</strong>
+<strong>${platform}</strong>
 
-        | Actual | Diff | Expected |
-        |:------:|:----:|:--------:|
+| Actual | Diff | Expected |
+|:------:|:----:|:--------:|
       `;
       current.forEach(({ actual, diff, expected }) => {
         str += `
-          | ${actual.name} | ${diff.name} | ${expected.name} |
-          | ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
+| ${actual.name} | ${diff.name} | ${expected.name} |
+| ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
         `;
       });
       str += "\n\n";
