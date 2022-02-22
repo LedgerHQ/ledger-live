@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "Withdraw Unbonded Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validators ({{number}})",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",

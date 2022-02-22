@@ -42,6 +42,7 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
 
 import { getListHeaderComponents } from "./ListHeaderComponent";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = {
   navigation: any,
@@ -70,7 +71,7 @@ function keyExtractor(item: Operation) {
 
 const stickySectionHeight = 56;
 
-export default function AccountScreen({ route }: Props) {
+function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
   return <AccountScreenInner account={account} parentAccount={parentAccount} />;
@@ -263,6 +264,8 @@ function AccountScreenInner({
     </View>
   );
 }
+
+export default withDiscreetMode(AccountScreen);
 
 const styles = StyleSheet.create({
   root: {

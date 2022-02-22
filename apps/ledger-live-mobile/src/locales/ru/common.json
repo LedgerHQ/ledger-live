@@ -862,7 +862,7 @@
               "label": "Включите устройство, подсоединив его к телефону посредством USB-порта."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Включите устройство, подсоединив его к телефону посредством USB-порта."
             },
             "blue": {
               "label": "Включите устройство: подсоедините его к USB-порту телефона и нажмите кнопку включения."
@@ -1040,7 +1040,7 @@
               "label": "Включите устройство, подсоединив его к телефону посредством USB-порта."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Включите устройство, подсоединив его к телефону посредством USB-порта."
             },
             "blue": {
               "label": "Включите устройство: подсоедините его к USB-порту телефона и нажмите кнопку включения."
@@ -1100,9 +1100,9 @@
         "cta": "Подключить Nano"
       },
       "nanoSP": {
-        "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Nano"
+        "title": "Подключение вашего Nano",
+        "desc": "Вы впервые синхронизируете Nano с этим смартфоном. Необходимо подключить ваше устройство.",
+        "cta": "Подключить Nano"
       },
       "blue": {
         "title": "Подключите ваш кошелёк Blue",
@@ -1322,8 +1322,8 @@
   },
   "byteSize": {
     "bytes": "{{size}} байт",
-    "kbUnit": "{{size}} KB",
-    "mbUnit": "{{size}} MB"
+    "kbUnit": "{{size}} Кб",
+    "mbUnit": "{{size}} Мб"
   },
   "numberCompactNotation": {
     "d": "",
@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "Вывести разблокированную сумму",
       "palletMethod": "Метод",
       "transferAmount": "Сумма перевода",
-      "validatorsCount": "Валидаторов: ({{number}})"
+      "validatorsCount": "Валидаторов: ({{number}})",
+      "storageLimit": "Объём хранилища",
+      "gasLimit": "Лимит Газа",
+      "opbytes": "opBytes",
+      "id": "ID"
     },
     "multipleAddresses": "Почему несколько адресов?",
     "tokenName": "Название токена",

@@ -862,7 +862,7 @@
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "blue": {
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono y presionando el botón de encendido."
@@ -1040,7 +1040,7 @@
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "blue": {
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono y presionando el botón de encendido."
@@ -1100,9 +1100,9 @@
         "cta": "Vamos a conectar mi Nano"
       },
       "nanoSP": {
-        "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Nano"
+        "title": "Conecta tu Nano",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
         "title": "Conecta tu Blue",
@@ -1322,7 +1322,7 @@
   },
   "byteSize": {
     "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} KB",
+    "kbUnit": "{{size}} kB",
     "mbUnit": "{{size}} MB"
   },
   "numberCompactNotation": {
@@ -1441,7 +1441,11 @@
       "withdrawUnbondedAmount": "Retirar importe desvinculado",
       "palletMethod": "Método",
       "transferAmount": "Transferir importe",
-      "validatorsCount": "Validadores ({{number}})"
+      "validatorsCount": "Validadores ({{number}})",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "opbytes": "opBytes",
+      "id": "Id"
     },
     "multipleAddresses": "¿Por qué hay múltiples direcciones?",
     "tokenName": "Nombre del token",
