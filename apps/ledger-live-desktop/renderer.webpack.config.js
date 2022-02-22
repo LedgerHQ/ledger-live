@@ -26,7 +26,7 @@ const packagesToTranspile = [
   /@polkadot[\\/]react-identicon/,
 ]
 
-const exceptionToTranspile = (path_ruled) => {
+const exceptionToTranspile = path_ruled => {
   // DO transpile these packages
   if (packagesToTranspile.some(pkg => path_ruled.match(pkg))) {
     return false;
@@ -35,10 +35,8 @@ const exceptionToTranspile = (path_ruled) => {
   // Ignore all other modules that are in node_modules
   if (path_ruled.match(/node_modules/)) {
     return true;
-  }
-
-  else return false;
-}
+  } else return false;
+};
 
 const includeToTranspile = (path_ruled) => {
   // DO transpile these packages
@@ -186,22 +184,19 @@ module.exports = {
       "~": path.resolve(__dirname, "src"),
       // See: https://github.com/facebook/react/issues/20235
       "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
+      // Prevents having duplicate react and react-redux contexts when bundling the app in "npm mode".
+      // "redux": [require.resolve("redux"), path.dirname(require.resolve("redux"))],
+      // "react-redux": [require.resolve("react-redux"), path.dirname(require.resolve("react-redux"))],
       // Alias react-ui and icons-ui peer dependencies to prevent duplicate packages issues.
-      "react": [
-        require.resolve("react"),
-        path.dirname(require.resolve("react"))
-      ],
-      "react-dom": [
-        require.resolve("react-dom"),
-        path.dirname(require.resolve("react-dom"))
-      ],
+      react: [require.resolve("react"), path.dirname(require.resolve("react"))],
+      "react-dom": [require.resolve("react-dom"), path.dirname(require.resolve("react-dom"))],
       "styled-system": [
         require.resolve("styled-system"),
-        path.dirname(require.resolve("styled-system"))
+        path.dirname(require.resolve("styled-system")),
       ],
       "styled-components": [
         require.resolve("styled-components"),
-        path.dirname(require.resolve("styled-components"))
+        path.dirname(require.resolve("styled-components")),
       ],
     },
     ...(process.env.V3
