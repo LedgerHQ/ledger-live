@@ -6,16 +6,15 @@ import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
+import Learn from "../../screens/Learn";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
 import AccountsIcon from "../../icons/Accounts";
 import AppsIcon from "../../icons/Apps";
-import LearnIcon from "../../icons/Learn";
 import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
-import Learn from "../../screens/Learn";
 
 type RouteParams = {
   hideTabNavigation?: boolean,
@@ -64,7 +63,11 @@ export default function MainNavigator({
           options={{
             unmountOnBlur: true,
             tabBarIcon: (props: any) => (
-              <TabIcon Icon={LearnIcon} i18nKey="tabs.learn" {...props} />
+              <TabIcon
+                Icon={Icons.GraduationMedium}
+                i18nKey="tabs.learn"
+                {...props}
+              />
             ),
           }}
         />
