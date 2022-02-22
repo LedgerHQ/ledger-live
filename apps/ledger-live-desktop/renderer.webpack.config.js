@@ -4,29 +4,29 @@ const babelPlugins = require("./babel.plugins");
 const UnusedWebpackPlugin = require("unused-webpack-plugin");
 
 const packagesToTranspile = [
-  '@polkadot/api',
-  '@polkadot/api-derive',
-  '@polkadot/keyring',
-  '@polkadot/networks',
-  '@polkadot/rpc-augment',
-  '@polkadot/rpc-core',
-  '@polkadot/rpc-provider',
-  '@polkadot/types',
-  '@polkadot/types-known',
-  '@polkadot/ui-shared',
-  '@polkadot/util',
-  '@polkadot/util-crypto',
-  '@polkadot/x-bigint',
-  '@polkadot/x-fetch',
-  '@polkadot/x-global',
-  '@polkadot/x-randomvalues',
-  '@polkadot/x-textdecoder',
-  '@polkadot/x-textencoder',
-  '@polkadot/x-ws',
-  '@polkadot/react-identicon',
-]
+  "@polkadot/api",
+  "@polkadot/api-derive",
+  "@polkadot/keyring",
+  "@polkadot/networks",
+  "@polkadot/rpc-augment",
+  "@polkadot/rpc-core",
+  "@polkadot/rpc-provider",
+  "@polkadot/types",
+  "@polkadot/types-known",
+  "@polkadot/ui-shared",
+  "@polkadot/util",
+  "@polkadot/util-crypto",
+  "@polkadot/x-bigint",
+  "@polkadot/x-fetch",
+  "@polkadot/x-global",
+  "@polkadot/x-randomvalues",
+  "@polkadot/x-textdecoder",
+  "@polkadot/x-textencoder",
+  "@polkadot/x-ws",
+  "@polkadot/react-identicon",
+];
 
-const exceptionToTranspile = (path_ruled) => {
+const exceptionToTranspile = path_ruled => {
   // DO transpile these packages
   if (packagesToTranspile.some(pkg => path_ruled.match(pkg))) {
     return false;
@@ -35,10 +35,8 @@ const exceptionToTranspile = (path_ruled) => {
   // Ignore all other modules that are in node_modules
   if (path_ruled.match(/node_modules/)) {
     return true;
-  }
-
-  else return false;
-}
+  } else return false;
+};
 
 const babelConfig = {
   presets: [
@@ -135,21 +133,21 @@ module.exports = {
       },
       process.env.V3
         ? {
-          test: /\.woff2/,
-          use: [
-            {
-              loader: "file-loader",
-              options: {
-                name: "[name].[ext]",
-                outputPath: "assets/fonts/",
+            test: /\.woff2/,
+            use: [
+              {
+                loader: "file-loader",
+                options: {
+                  name: "[name].[ext]",
+                  outputPath: "assets/fonts/",
+                },
               },
-            },
-          ],
-        }
+            ],
+          }
         : {
-          test: /\.(woff|woff2|eot|ttf|otf)$/i,
-          use: ["file-loader"],
-        },
+            test: /\.(woff|woff2|eot|ttf|otf)$/i,
+            use: ["file-loader"],
+          },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: {
@@ -172,50 +170,47 @@ module.exports = {
       "~": path.resolve(__dirname, "src"),
       // See: https://github.com/facebook/react/issues/20235
       "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
+      // Prevents having duplicate react and react-redux contexts when bundling the app in "npm mode".
+      // "redux": [require.resolve("redux"), path.dirname(require.resolve("redux"))],
+      // "react-redux": [require.resolve("react-redux"), path.dirname(require.resolve("react-redux"))],
       // Alias react-ui and icons-ui peer dependencies to prevent duplicate packages issues.
-      "react": [
-        require.resolve("react"),
-        path.dirname(require.resolve("react"))
-      ],
-      "react-dom": [
-        require.resolve("react-dom"),
-        path.dirname(require.resolve("react-dom"))
-      ],
+      react: [require.resolve("react"), path.dirname(require.resolve("react"))],
+      "react-dom": [require.resolve("react-dom"), path.dirname(require.resolve("react-dom"))],
       "styled-system": [
         require.resolve("styled-system"),
-        path.dirname(require.resolve("styled-system"))
+        path.dirname(require.resolve("styled-system")),
       ],
       "styled-components": [
         require.resolve("styled-components"),
-        path.dirname(require.resolve("styled-components"))
+        path.dirname(require.resolve("styled-components")),
       ],
     },
     ...(process.env.V3
       ? {
-        extensions: [
-          ".v3.tsx",
-          ".v3.ts",
-          ".v3.jsx",
-          ".v3.js",
-          ".tsx",
-          ".ts",
-          ".jsx",
-          ".js",
-          "...",
-        ],
-      }
+          extensions: [
+            ".v3.tsx",
+            ".v3.ts",
+            ".v3.jsx",
+            ".v3.js",
+            ".tsx",
+            ".ts",
+            ".jsx",
+            ".js",
+            "...",
+          ],
+        }
       : {
-        extensions: [
-          ".jsx",
-          ".js",
-          ".v3.tsx",
-          ".v3.ts",
-          ".v3.jsx",
-          ".v3.js",
-          ".tsx",
-          ".ts",
-          "...",
-        ],
-      }),
+          extensions: [
+            ".jsx",
+            ".js",
+            ".v3.tsx",
+            ".v3.ts",
+            ".v3.jsx",
+            ".v3.js",
+            ".tsx",
+            ".ts",
+            "...",
+          ],
+        }),
   },
 };
