@@ -299,10 +299,6 @@ export type AppSearch = {
   appVersion?: string;
 };
 
-function semverSatisfies(a, b) {
-  return semver.satisfies(a, b) || semver.satisfies(semver.coerce(a), b);
-}
-
 export function appCandidatesMatches(
   appCandidate: AppCandidate,
   search: AppSearch
@@ -316,12 +312,12 @@ export function appCandidatesMatches(
     ((!searchFirmware && !appCandidate.firmware.includes("rc")) ||
       appCandidate.firmware === searchFirmware ||
       (searchFirmware &&
-        semverSatisfies(
+        semver.satisfies(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
     (!search.appVersion ||
-      semverSatisfies(appCandidate.appVersion, search.appVersion))
+      semver.satisfies(appCandidate.appVersion, search.appVersion))
   );
 }
 export const findAppCandidate = (

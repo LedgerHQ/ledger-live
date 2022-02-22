@@ -1,8 +1,13 @@
+import {
+  AmountRequired,
+  NotEnoughBalance,
+  NotEnoughBalanceBecauseDestinationNotCreated,
+} from "@ledgerhq/errors";
+import BigNumber from "bignumber.js";
 import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
-// TODO restore
-// import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
+import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
 
 // FIXME these accounts no longer reflect their expected states..
 export const accountTZrevealedDelegating = makeAccount(
@@ -45,12 +50,37 @@ const dataset: DatasetTest<Transaction> = {
   currencies: {
     tezos: {
       FIXME_ignoreOperationFields: ["blockHeight"],
-      // scanAccounts: [tezosScanAccounts1],
-      scanAccounts: [],
+      scanAccounts: [tezosScanAccounts1],
       accounts: [
         {
           raw: accountTZrevealedDelegating,
-          transactions: [],
+          transactions: [
+            {
+              name: "No amount",
+              transaction: (t) => ({
+                ...t,
+                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
+              }),
+              expectedStatus: {
+                errors: { amount: new AmountRequired() },
+                warnings: {},
+              },
+            },
+            {
+              name: "send more than min allowed",
+              transaction: (t, account) => ({
+                ...t,
+                amount: account.balance.minus("100"),
+                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NotEnoughBalance(),
+                },
+                warnings: {},
+              },
+            },
+          ],
         },
         {
           raw: accountTZRevealedNoDelegate,
@@ -58,7 +88,36 @@ const dataset: DatasetTest<Transaction> = {
         },
         {
           raw: accountTZnotRevealed,
-          transactions: [],
+          transactions: [
+            {
+              name: "Send to new account",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber(100),
+                recipient: accountTZnew.freshAddress,
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NotEnoughBalanceBecauseDestinationNotCreated(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Amount > spendablebalance",
+              transaction: (t, account) => ({
+                ...t,
+                amount: account.balance,
+                recipient: accountTZnew.freshAddress,
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NotEnoughBalance(),
+                },
+                warnings: {},
+              },
+            },
+          ],
         },
         {
           raw: accountTZnew,
