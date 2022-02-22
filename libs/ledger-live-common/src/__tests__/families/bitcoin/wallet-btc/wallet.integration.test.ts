@@ -34,7 +34,7 @@ describe("testing wallet", () => {
     const balance = await wallet.getAccountBalance(account);
 
     expect(balance.toNumber()).toEqual(109088);
-  }, 60000);
+  });
 
   it("should allow to store and load an account", async () => {
     const serializedAccount = await wallet.exportToSerializedAccount(account);

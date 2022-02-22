@@ -5,6 +5,7 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   AmountRequired,
+  InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import type { Account, TransactionStatus } from "../../types";
 import type { Transaction } from "./types";
@@ -46,6 +47,8 @@ const getTransactionStatus = async (
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient, a.currency.id)) {
     errors.recipient = new InvalidAddress();
+  } else if (t.mode === "send" && a.freshAddress === t.recipient) {
+    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   return Promise.resolve({
