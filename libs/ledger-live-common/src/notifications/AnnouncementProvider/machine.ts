@@ -1,4 +1,4 @@
-import { assign, Machine } from "xstate";
+import { assign, createMachine } from "xstate";
 import intersection from "lodash/intersection";
 import type { State } from "./types";
 const initialState: State = {
@@ -9,7 +9,7 @@ const initialState: State = {
   lastUpdateTime: null,
   isLoading: false,
 };
-export const announcementMachine = Machine(
+export const announcementMachine = createMachine(
   {
     id: "announcement",
     initial: "initializing",
