@@ -82,7 +82,7 @@ export type AvailableProviderV3 = {
 };
 
 type CheckQuoteOkStatus = {
-  code: "OK";
+  code: "RATE_VALID";
 };
 
 type ValidCheckQuoteErrorCodes =
@@ -103,9 +103,11 @@ type CheckQuoteErrorStatus = {
 export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
 
 export type CheckQuote = ({
+  provider,
   quoteId,
   bearerToken,
 }: {
+  provider: string;
   quoteId: string;
   bearerToken: string;
 }) => Promise<CheckQuoteStatus>;

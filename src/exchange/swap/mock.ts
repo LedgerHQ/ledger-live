@@ -193,6 +193,7 @@ export const mockGetKYCStatus = async (
 const mockedCheckQuoteStatusCode = getEnv("MOCK_SWAP_CHECK_QUOTE");
 
 export const mockCheckQuote: CheckQuote = async ({
+  provider: _provider,
   quoteId: _quoteId,
   bearerToken: _bearerToken,
 }) => {
@@ -200,7 +201,7 @@ export const mockCheckQuote: CheckQuote = async ({
   await new Promise((r) => setTimeout(r, 2000));
 
   switch (mockedCheckQuoteStatusCode) {
-    case "OK":
+    case "RATE_VALID":
       return { code: mockedCheckQuoteStatusCode };
 
     case "KYC_FAILED":
