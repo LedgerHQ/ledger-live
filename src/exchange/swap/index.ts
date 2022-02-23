@@ -1,4 +1,4 @@
-import type { ExchangeProviderNameAndSignature } from "../";
+import type { SwapProviderConfig } from "../";
 import getExchangeRates from "./getExchangeRates";
 import getStatus from "./getStatus";
 import getProviders from "./getProviders";
@@ -32,15 +32,7 @@ export const operationStatusList = {
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
-const swapProviders: Record<
-  string,
-  {
-    nameAndPubkey: Buffer;
-    signature: Buffer;
-    curve: string;
-    needsKYC: boolean;
-  }
-> = {
+const swapProviders: Record<string, SwapProviderConfig> = {
   changelly: {
     nameAndPubkey: Buffer.from(
       "094368616e67656c6c790480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
@@ -52,6 +44,7 @@ const swapProviders: Record<
     ),
     curve: "secpk256k1",
     needsKYC: false,
+    needsBearerToken: false,
   },
   wyre: {
     nameAndPubkey: Buffer.from(
@@ -64,6 +57,7 @@ const swapProviders: Record<
     ),
     curve: "secpk256k1",
     needsKYC: true,
+    needsBearerToken: false,
   },
   ftx: {
     nameAndPubkey: Buffer.concat([
@@ -80,6 +74,7 @@ const swapProviders: Record<
     ),
     curve: "secp256k1",
     needsKYC: true,
+    needsBearerToken: true,
   },
   ftxus: {
     nameAndPubkey: Buffer.concat([
@@ -96,12 +91,13 @@ const swapProviders: Record<
     ),
     curve: "secp256k1",
     needsKYC: true,
+    needsBearerToken: true,
   },
 };
 
 const getProviderNameAndSignature = (
   providerName: string
-): ExchangeProviderNameAndSignature => {
+): SwapProviderConfig => {
   const res = swapProviders[providerName.toLowerCase()];
 
   if (!res) {
