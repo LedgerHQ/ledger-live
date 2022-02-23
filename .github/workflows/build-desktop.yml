@@ -15,20 +15,40 @@ on:
     #   - apps/ledger-live-desktop/**
 
 jobs:
-  build-ubuntu:
-    name: "Ubuntu"
-    runs-on: ubuntu-20.04
+  start-runner:
+    name: "start ec2 instance"
+    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@monorepo-setup
+    with:
+      instance-type: c5.4xlarge
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance"
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    needs: [start-runner, build-linux]
+    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  build-linux:
+    name: "Linux"
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
           fetch-depth: 0
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-          bundler-cache: true
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
@@ -71,7 +91,7 @@ jobs:
       #   run: yarn version --new-version="$VERSION"
       - name: build the app
         run: |
-          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
+          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
@@ -84,7 +104,7 @@ jobs:
 
   build-windows:
     name: "Windows"
-    runs-on: windows-2019
+    runs-on: [ledger-live, windows]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -92,29 +112,42 @@ jobs:
           # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
           fetch-depth: 0
+      - name: update path
+        run: |
+          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
-          bundler-cache: true
+          ruby-version: 2.7 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+        env:
+          imageOS: win19
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.1.816
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
       - uses: actions/setup-node@main
         with:
-          node-version: 14.x
+          node-version: 14.18.3
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+      # - uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.x
       - name: bump npm
-        run: npm install --global npm@8.3.1
-      - uses: actions/setup-python@v1
-        with:
-          python-version: "3.x"
+        # cd C:\actions-runner\_work\_tool\node\14.18.3\x64\
+        # npm i --g npm@8.3.1 --force
+        run: |
+          pnpm add -g npm
+          npm --version
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
         run: pnpm i
+        shell: bash
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
@@ -133,7 +166,9 @@ jobs:
       #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
         run: |
-          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
+          npm --version
+          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
+        shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v1
         with:
@@ -142,7 +177,7 @@ jobs:
 
   bundle-macos:
     name: "macOS"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -150,10 +185,6 @@ jobs:
           # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
           fetch-depth: 0
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.6
-      #     bundler-cache: true
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
@@ -169,7 +200,9 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: pnpm i
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --frozen-lockfile
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
@@ -192,7 +225,8 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          pnpm turbo run build-ci --scope=live-desktop --include-dependencies --no-deps
+          eval "$(rbenv init - bash)"
+          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
@@ -202,3 +236,13 @@ jobs:
         with:
           name: ${{ steps.version.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
+
+  clean-macos-runner:
+    runs-on: [ledger-live, macos]
+    needs: [bundle-macos]
+    steps:
+      - name: Clean working directory
+        run: |
+          cd $RUNNER_WORKSPACE
+          cd ..
+          rm -r *
