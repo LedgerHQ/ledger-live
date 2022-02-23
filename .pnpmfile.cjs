@@ -68,6 +68,11 @@ function readPackage(pkg, context) {
       kind: "peerDependencies"
     }),
     addDependencies("@storybook/addon-knobs", { "@storybook/client-api": major ? "" + major : "*" }),
+    addDependencies("@cspotcode/source-map-support", {
+      "source-map-support": "*"
+    }, {
+      kind: "peerDependencies"
+    })
   ], pkg, context)
 
   return pkg;
