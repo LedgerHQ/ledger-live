@@ -41,6 +41,9 @@ function readPackage(pkg, context) {
       "glob": "*",
       "invariant": "*",
     }),
+    addDependencies("@react-native-community/cli", {
+      "metro-resolver": "^0.67.0",
+    }),
     addDependencies("metro-config", {
       "metro-transform-worker": pkg.version
     }),
