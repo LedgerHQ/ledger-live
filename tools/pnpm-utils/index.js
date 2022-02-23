@@ -11,7 +11,7 @@ function field(str, { length = 30, bolden = true } = {}) {
   return bolden ? bold(paddedField) : paddedField
 }
 
-const mutatedDependencies = new Set()
+const memoMap = new Map()
 function addDependencies(filter, dependencies, {
   kind = "dependencies",
   matchDevVersion = true,
@@ -20,10 +20,9 @@ function addDependencies(filter, dependencies, {
   return (pkg, context) => {
     if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
       const key = `${pkg.name}@${pkg.version}`
-      if (mutatedDependencies.has(key)) {
-        return
-      }
-      mutatedDependencies.add(key)
+      if (!memoMap.has(key))
+        memoMap.set(key, new Set())
+      const visitedDeps = memoMap.get(key)
 
       if (!pkg[kind])
         pkg[kind] = {}
@@ -33,9 +32,13 @@ function addDependencies(filter, dependencies, {
         const version = devVersion ?? depVersion ?? "*"
         const depKey = `${dep}@${version}`
 
+        if (visitedDeps.has(depKey))
+          return
+        visitedDeps.add(depKey)
+
         if (pkg[kind][dep]) {
           if (!ignoreExisting) {
-            context.log(`[!] ${field(depKey)} | ${field(key, { length: 0 })} already declares version ${pkg[kind][dep]} (${kind})`)
+            context.log(`[!] ${field(depKey)} | ${field(key, { length: 0 })} already declares ${dep}@${pkg[kind][dep]} (${kind})`)
             return
           }
         }
