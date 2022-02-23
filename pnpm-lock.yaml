@@ -8449,6 +8449,7 @@ packages:
       '@sentry/types': 6.12.0
       '@sentry/utils': 6.12.0
       '@sentry/wizard': 1.2.17
+      promise: 8.1.0
       react: 17.0.2
       react-native: 0.65.1_react@17.0.2
       tslib: 2.3.1
