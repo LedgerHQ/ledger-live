@@ -34,6 +34,7 @@ const withDevicePromise = (deviceId, fn) =>
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
   let { transaction } = input;
   const { exchange, exchangeRate, deviceId, userId } = input;
+
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
   return new Observable((o) => {
     let unsubscribed = false;
@@ -70,29 +71,39 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
+        const swapProviderConfig = getProviderNameAndSignature(provider);
+
+        const { needsBearerToken } = swapProviderConfig;
+
+        const headers = {
+          EquipmentId: getEnv("USER_ID"),
+          ...(needsBearerToken ? { Authorization: `Bearer ${userId}` } : {}),
+          ...(userId ? { userId } : {}), // NB: only for Wyre AFAIK
+        };
+
+        const data = {
+          provider,
+          amountFrom: apiAmount.toString(),
+          from: refundCurrency.id,
+          to: payoutCurrency.id,
+          address: payoutAccount.freshAddress,
+          refundAddress: refundAccount.freshAddress,
+          deviceTransactionId,
+          ...(rateId && ratesFlag === RateTypes.Fixed
+            ? {
+                rateId,
+              }
+            : {}), // NB float rates dont need rate ids.
+        };
+
         try {
           res = await network({
             method: "POST",
             url: `${getSwapAPIBaseURL()}/swap`,
-            headers: {
-              EquipmentId: getEnv("USER_ID"),
-              ...(userId ? { userId } : {}),
-            },
-            data: {
-              provider,
-              amountFrom: apiAmount,
-              from: refundCurrency.id,
-              to: payoutCurrency.id,
-              address: payoutAccount.freshAddress,
-              refundAddress: refundAccount.freshAddress,
-              deviceTransactionId,
-              ...(rateId
-                ? {
-                    rateId,
-                  }
-                : {}), // NB float rates dont need rate ids.
-            },
+            headers,
+            data,
           });
+
           if (unsubscribed || !res || !res.data) return;
         } catch (e) {
           o.next({
@@ -105,9 +116,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         const swapResult = res.data;
         swapId = swapResult.swapId;
-        const providerNameAndSignature = getProviderNameAndSignature(
-          swapResult.provider
-        );
+
         const accountBridge = getAccountBridge(refundAccount);
         transaction = accountBridge.updateTransaction(transaction, {
           recipient: swapResult.payinAddress,
@@ -157,10 +166,12 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         }
 
         // Prepare swap app to receive the tx to forward.
-        await swap.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await swap.setPartnerKey(swapProviderConfig.nameAndPubkey);
         if (unsubscribed) return;
-        await swap.checkPartner(providerNameAndSignature.signature);
+
+        await swap.checkPartner(swapProviderConfig.signature);
         if (unsubscribed) return;
+
         await swap.processTransaction(
           Buffer.from(swapResult.binaryPayload, "hex"),
           estimatedFees
