@@ -2,12 +2,8 @@ function bold(str) {
   return "\033[1m" + str + "\033[0;0m";
 }
 
-function pad(str, length) {
-  return str.padEnd(length)
-}
-
 function field(str, { length = 30, bolden = true } = {}) {
-  const paddedField = pad("[" + str + "]", length)
+  const paddedField = ("[" + str + "]").padEnd(length)
   return bolden ? bold(paddedField) : paddedField
 }
 
