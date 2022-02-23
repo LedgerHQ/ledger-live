@@ -13,12 +13,20 @@ import type { DeviceModel } from "@ledgerhq/devices";
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
-import { Observable, defer, merge, from } from "rxjs";
-import { share, ignoreElements, first, map, tap } from "rxjs/operators";
+import { Observable, defer, merge, from, of, throwError } from "rxjs";
+import {
+  share,
+  ignoreElements,
+  first,
+  map,
+  tap,
+  catchError,
+} from "rxjs/operators";
 import {
   CantOpenDevice,
   TransportError,
   DisconnectedDeviceDuringOperation,
+  PairingFailed,
 } from "@ledgerhq/errors";
 import type { Device, Characteristic } from "./types";
 import { monitorCharacteristic } from "./monitorCharacteristic";
@@ -211,7 +219,15 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
   log("ble-verbose", `device.mtu=${device.mtu}`);
   const notifyObservable = monitorCharacteristic(notifyC).pipe(
+    catchError((e) => {
+      // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
+      const msg = String(e);
+      return msg.includes("notify change failed")
+        ? of(new PairingFailed(msg))
+        : throwError(e);
+    }),
     tap((value) => {
+      if (value instanceof PairingFailed) return;
       log("ble-frame", "<= " + value.toString("hex"));
     }),
     share()
@@ -388,7 +404,7 @@ export default class BluetoothTransport extends Transport {
   mtuSize = 20;
   writeCharacteristic: Characteristic;
   writeCmdCharacteristic: Characteristic;
-  notifyObservable: Observable<Buffer>;
+  notifyObservable: Observable<any>;
   deviceModel: DeviceModel;
   notYetDisconnected = true;
 
@@ -396,7 +412,7 @@ export default class BluetoothTransport extends Transport {
     device: Device,
     writeCharacteristic: Characteristic,
     writeCmdCharacteristic: Characteristic,
-    notifyObservable: Observable<Buffer>,
+    notifyObservable: Observable<any>,
     deviceModel: DeviceModel
   ) {
     super();
@@ -445,6 +461,9 @@ export default class BluetoothTransport extends Transport {
         mtu =
           (await merge(
             this.notifyObservable.pipe(
+              tap((maybeError) => {
+                if (maybeError instanceof Error) throw maybeError;
+              }),
               first((buffer) => buffer.readUInt8(0) === 0x08),
               map((buffer) => buffer.readUInt8(5))
             ),
