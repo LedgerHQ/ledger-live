@@ -1087,10 +1087,17 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.4", "@babel/runtime@^7.10.5", "@babel/runtime@^7.16.7":
+"@babel/runtime@^7.10.4", "@babel/runtime@^7.10.5":
   version "7.17.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.0.tgz#b8d142fc0f7664fb3d9b5833fd40dcbab89276c0"
   integrity sha512-etcO/ohMNaNA2UBdaXBBSX/3aEzFMRrVfaPv8Ptc0k+cWpWW0QFiGZ2XnVqQZI1Cf734LbPGmqBKWESfW4x/dQ==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.17.2":
+  version "7.17.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.2.tgz#66f68591605e59da47523c631416b18508779941"
+  integrity sha512-hzeyJyMA1YGdJTuWU0e/j4wKXrU4OMFvY2MSlaI9B7VQb0r5cxTE3EAIS2Q7Tn2RIcDkRvTA/v2JsAEhxe99uw==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2241,10 +2248,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.24.1", "@ledgerhq/cryptoassets@^6.24.1":
-  version "6.24.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.24.1.tgz#edac116eaa2d5da5e7c0cda3bc039aa6aedfd7d5"
-  integrity sha512-RCl2T5Qeu4fch5O+6pgT9s9AWs0ATWdBDwN2MSUuLxj7BfwdXig5+hcSObM3OIJPryNeDCtIYNK3z0blgxfTiA==
+"@ledgerhq/cryptoassets@6.25.0", "@ledgerhq/cryptoassets@^6.25.0":
+  version "6.25.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.25.0.tgz#9e9307c69c436c938fafd27d5351526c21a2a114"
+  integrity sha512-WjE94BGv9bh70UrgAKH3mAflnAYUGnln/GNEP3UWJKtCkE64RCvRYFI9J4OpnSLEIs9Yf9h48Mjbu6Q2CYao+Q==
   dependencies:
     invariant "2"
 
@@ -2316,14 +2323,14 @@
     "@ledgerhq/hw-transport" "^6.24.1"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.24.1":
-  version "6.24.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.24.1.tgz#13e0f1ebb5ab298d9280bb14e29e04ed6e5f4754"
-  integrity sha512-IyEY+th08RRZaJ014JmKmyS+vtrZzmFwXGgJ0aO7Z+pAzpqgZWyoFsntxf27YE/qPxR/FtHdyFma9RGYI97IEg==
+"@ledgerhq/hw-app-eth@6.25.0":
+  version "6.25.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.25.0.tgz#afdf9c45ce24a725dda98805785492262d83b16f"
+  integrity sha512-7oFRWSWLKE0uZosWaCsBC83avCfHZKoqPw36iAj6UhylbICqszOOL9RNa4b1TUnEMI0K2/W0hGPlGGYY2/5g9Q==
   dependencies:
     "@ethersproject/abi" "^5.5.0"
     "@ethersproject/rlp" "^5.5.0"
-    "@ledgerhq/cryptoassets" "^6.24.1"
+    "@ledgerhq/cryptoassets" "^6.25.0"
     "@ledgerhq/errors" "^6.10.0"
     "@ledgerhq/hw-transport" "^6.24.1"
     "@ledgerhq/logs" "^6.10.0"
@@ -2472,10 +2479,10 @@
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"
 
-"@ledgerhq/live-common@^21.32.4":
-  version "21.32.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.32.4.tgz#edac9ea712f4361230a0e7fad20294571dba8cfd"
-  integrity sha512-7Q2sduw6udZ8VLgMmJH9KxQmyT6FoD8EYKVkx1nkY/cjUDRBhwJjIoo77r6ww0E3mSajHfO4pjG7vqV8c8iq/g==
+"@ledgerhq/live-common@^21.33.0":
+  version "21.33.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.33.0.tgz#4b709dcbccdcb5010fd19b6829effe2a18587cc3"
+  integrity sha512-CpMiASJjLOYCz59EqjGEe3p7JxoF062RpbVuaF2AIBje09kxu9kVeqBeOQpk2bx+jLH2t3yWvmqVh9E1sm9FyA==
   dependencies:
     "@celo/contractkit" "^1.5.1"
     "@celo/wallet-base" "^1.5.1"
@@ -2484,13 +2491,13 @@
     "@ethereumjs/common" "^2.6.0"
     "@ethereumjs/tx" "^3.4.0"
     "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/cryptoassets" "6.24.1"
+    "@ledgerhq/cryptoassets" "6.25.0"
     "@ledgerhq/devices" "6.24.1"
     "@ledgerhq/errors" "6.10.0"
     "@ledgerhq/hw-app-algorand" "6.24.1"
     "@ledgerhq/hw-app-btc" "6.24.1"
     "@ledgerhq/hw-app-cosmos" "6.24.1"
-    "@ledgerhq/hw-app-eth" "6.24.1"
+    "@ledgerhq/hw-app-eth" "6.25.0"
     "@ledgerhq/hw-app-polkadot" "6.24.1"
     "@ledgerhq/hw-app-solana" "^6.24.1"
     "@ledgerhq/hw-app-str" "6.24.1"
@@ -2503,8 +2510,8 @@
     "@ledgerhq/json-bignumber" "^1.1.0"
     "@ledgerhq/live-app-sdk" "^0.2.0"
     "@ledgerhq/logs" "6.10.0"
-    "@polkadot/types" "7.4.1"
-    "@polkadot/types-known" "7.4.1"
+    "@polkadot/types" "7.8.1"
+    "@polkadot/types-known" "7.8.1"
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.32.0"
     "@taquito/ledger-signer" stablelib
@@ -2770,14 +2777,14 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
-"@polkadot/keyring@^8.3.2":
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-8.3.3.tgz#931c809f9a3b092231b2d319007e02e64bec8f21"
-  integrity sha512-TgoIpaTqn7voT7lDu5W6p0Z+216OImpqtHuaiFy125ekCQurrf9BVIdwp56y5qoFLDAZ5i9gnWHMIgOQ6AJj/Q==
+"@polkadot/keyring@^8.4.1":
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-8.4.1.tgz#71098121c60a05e1ad33653fcc521c52f22ad1b8"
+  integrity sha512-0qfS7qikUxhe6LEdCOcMRdCxEa26inJ5aSUWaf5dXy+dgy9VJiov6uXAbXdAd1UHpDvr9hvw94FX+hXsJ7Vsyw==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/util" "8.3.3"
-    "@polkadot/util-crypto" "8.3.3"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/util" "8.4.1"
+    "@polkadot/util-crypto" "8.4.1"
 
 "@polkadot/networks@8.0.6-8":
   version "8.0.6-8"
@@ -2786,13 +2793,14 @@
   dependencies:
     "@babel/runtime" "^7.16.3"
 
-"@polkadot/networks@^8.3.2":
-  version "8.3.3"
-  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-8.3.3.tgz#2def73213451f12bc940b0c9ce8942aebbe5d4a8"
-  integrity sha512-yj0DMqmzRZbvgaoZztV3/RPgYJjBhT17Dhu+FX/LUJzVbAF/RfjkzNsJT4Ta4kLDxQMYZq1avUac0ia2j9NcNw==
+"@polkadot/networks@^8.4.1":
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-8.4.1.tgz#c22585edb38f5ae0a329a1f471577d8b35bf64e4"
+  integrity sha512-YFY3fPLbc1Uz9zsX4TOzjY/FF09nABMgrMkvqddrVbSgo71NvoBv3Gqw3mKV/7bX1Gzk1ODfvTzamdpsKEWSnA==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/util" "8.3.3"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/util" "8.4.1"
+    "@substrate/ss58-registry" "^1.14.0"
 
 "@polkadot/reactnative-identicon@0.87.5":
   version "0.87.5"
@@ -2805,58 +2813,58 @@
     "@polkadot/util-crypto" "^8.1.2"
     react-native-svg "^12.2.0"
 
-"@polkadot/types-augment@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-augment/-/types-augment-7.4.1.tgz#e11b98088e93e390b5166816760037f1f7fd7d7b"
-  integrity sha512-aHLmhyw+8odrJhznfdN7K1vzp8Lz+aASk6CLAux2etshX/XpeFatBkvF7EVol5YN4TQTZwdBMv8TAYicQPow0g==
+"@polkadot/types-augment@7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-augment/-/types-augment-7.8.1.tgz#f790f3874384e3bd3a4850affb775c6d125f2ff3"
+  integrity sha512-uKDOlU6arH/Oz/faHq315tCA5vjIJTO/zQt0Iuz9woEbmXd6ga0vkCr3gXWfPvjg+QnMQuRpNG8rxtiX5w0vCw==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/types" "7.4.1"
-    "@polkadot/types-codec" "7.4.1"
-    "@polkadot/util" "^8.3.2"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/types" "7.8.1"
+    "@polkadot/types-codec" "7.8.1"
+    "@polkadot/util" "^8.4.1"
 
-"@polkadot/types-codec@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-7.4.1.tgz#196556110279e4efdcf7629f7b3b5cc88e0a925a"
-  integrity sha512-jeyVEvj77u0b+ilT0mODBhVW1zs3Uzb1Jf+cG3lqyxsAOkd02gHxYqmcDNdnqPjHLYm70+ZugRzpSd4u+MBONA==
+"@polkadot/types-codec@7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-7.8.1.tgz#b42df0baeac7d424c4e5216752f7a630d95381fa"
+  integrity sha512-4et1ZiXXK/KsveKcXd0p1FwAYq8rwHmf1pyf1tOH9JglA/Ip6mArrIjivnfofxY5WFWgeuAv7b2+Rk5vGq/0Xw==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/util" "^8.3.2"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/util" "^8.4.1"
 
-"@polkadot/types-create@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-create/-/types-create-7.4.1.tgz#39c64041ff57dd2e473040515f6c0543000a5674"
-  integrity sha512-B/wrqLN9zIJvo6kXq+EJpx/Q0+StJqGmNKjryhDlrdWHfI8jADDU6hKWRIMvHsxCl6VGvMweLRLnjS59P3mRCA==
+"@polkadot/types-create@7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-create/-/types-create-7.8.1.tgz#9b68e1f4bb3d71e4ed1eaa03119940e3e3952396"
+  integrity sha512-TxUFc3/WAzFHT1DIgzIssBKxtbjrSDe3GzHbOlJcIcLI17rLHFCVi53uDYvR9kMxterJ9MFMxXc76iqwnnXCgQ==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/types-codec" "7.4.1"
-    "@polkadot/util" "^8.3.2"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/types-codec" "7.8.1"
+    "@polkadot/util" "^8.4.1"
 
-"@polkadot/types-known@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-known/-/types-known-7.4.1.tgz#34eea6080100b5003bf997f5a8e5e7f79e7e5118"
-  integrity sha512-6cbYRcA0WrncRmI0ZJb5JOL8Yj7MLbLXSOZB7TMh1+c7sc15jJcubYrr5tamiUfBY1p017DH6cTyA2Jnvzvb2A==
+"@polkadot/types-known@7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-known/-/types-known-7.8.1.tgz#1ed7ed5f5bdd5eb8816258753c1f0fa881a0c38f"
+  integrity sha512-qUTZq6B4tm+Gt3G/CvivZVHTD3NueTyNpv9/nEUWwOAmKgrZyJy7uLgGwHoqEjcXn+F86B3raIgp6WP+v8PibQ==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/networks" "^8.3.2"
-    "@polkadot/types" "7.4.1"
-    "@polkadot/types-codec" "7.4.1"
-    "@polkadot/types-create" "7.4.1"
-    "@polkadot/util" "^8.3.2"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/networks" "^8.4.1"
+    "@polkadot/types" "7.8.1"
+    "@polkadot/types-codec" "7.8.1"
+    "@polkadot/types-create" "7.8.1"
+    "@polkadot/util" "^8.4.1"
 
-"@polkadot/types@7.4.1":
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-7.4.1.tgz#921ab9bfaea9ecff7363c9e30bd81a3d286feb9a"
-  integrity sha512-9GjVJw1LjNJbODLTQ4Wnp2Y1xhPH+0IdCXdJu2RqMatJZfKQN9ogpzKIYbaJsGtMAASz1yU6Q66ps/AmFlWwMA==
+"@polkadot/types@7.8.1":
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-7.8.1.tgz#67ccf5f10fde4e47f007391f7c39c942cc12bdd8"
+  integrity sha512-B+b3q5qprJb6PJGiJ1r6FiXW6LxH2SOFXkTpcFpJeM2wBkJmeQoiEQ7M/r8kkrqtORptfsrxmhbjMr0xvUHZHA==
   dependencies:
-    "@babel/runtime" "^7.16.7"
-    "@polkadot/keyring" "^8.3.2"
-    "@polkadot/types-augment" "7.4.1"
-    "@polkadot/types-codec" "7.4.1"
-    "@polkadot/types-create" "7.4.1"
-    "@polkadot/util" "^8.3.2"
-    "@polkadot/util-crypto" "^8.3.2"
-    rxjs "^7.5.2"
+    "@babel/runtime" "^7.17.2"
+    "@polkadot/keyring" "^8.4.1"
+    "@polkadot/types-augment" "7.8.1"
+    "@polkadot/types-codec" "7.8.1"
+    "@polkadot/types-create" "7.8.1"
+    "@polkadot/util" "^8.4.1"
+    "@polkadot/util-crypto" "^8.4.1"
+    rxjs "^7.5.4"
 
 "@polkadot/ui-shared@0.87.5":
   version "0.87.5"
@@ -2866,7 +2874,7 @@
     "@babel/runtime" "^7.16.3"
     color "^3.2.1"
 
-"@polkadot/util-crypto@8.0.6-8", "@polkadot/util-crypto@8.3.3", "@polkadot/util-crypto@^8.1.2", "@polkadot/util-crypto@^8.3.2":
+"@polkadot/util-crypto@8.0.6-8", "@polkadot/util-crypto@8.4.1", "@polkadot/util-crypto@^8.1.2", "@polkadot/util-crypto@^8.4.1":
   version "8.0.6-8"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-8.0.6-8.tgz#47735fcf409819f3eaeaf9a7099ff170e501adda"
   integrity sha512-ssITWN1mRwvzM0wexDaGAfHWWbqOys4D3vg8mY8WYUZ8NKbdGoOSirnOY/0LlsKDUSQ/kRCtWDiPHZs7UC3Y1A==
@@ -2884,7 +2892,7 @@
     micro-base "^0.9.0"
     tweetnacl "^1.0.3"
 
-"@polkadot/util@8.0.6-8", "@polkadot/util@8.3.3", "@polkadot/util@^8.1.2", "@polkadot/util@^8.3.2":
+"@polkadot/util@8.0.6-8", "@polkadot/util@8.4.1", "@polkadot/util@^8.1.2", "@polkadot/util@^8.4.1":
   version "8.0.6-8"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-8.0.6-8.tgz#83e18960abc49d7dc523bd5375923064742d12bf"
   integrity sha512-ZH3Yb7tFaatBjiurK8sDcK+jupmgSK5NEB0j89Jwyv/R+wwTjkyeUlRg0wo7srvRQGfazIQMyryD4pFVRaQx3g==
@@ -3696,6 +3704,11 @@
   dependencies:
     "@styled-system/core" "^5.1.2"
     "@styled-system/css" "^5.1.5"
+
+"@substrate/ss58-registry@^1.14.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@substrate/ss58-registry/-/ss58-registry-1.15.0.tgz#211c7c9e5cbcbfb6ee9c300efd719a038af38c36"
+  integrity sha512-UU5uN8HEp0NM22od6kHWLltX0McQPgPX6O3gj7fSf1mMExsCS5fzW88gv1WaVaT8Q+umvGgnIAF7+Tvp8fqTFw==
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -7180,7 +7193,6 @@ detox@^19.4.3:
   version "19.4.3"
   resolved "https://registry.yarnpkg.com/detox/-/detox-19.4.3.tgz#eae333689a79c268adb4180fd63772c0ba71d68c"
   integrity sha512-X7x5pp9RQkoiZfdRNFMwFPedOk4vM7ENRH9JwyXRZDd2gcV7y8NrHxbMvyBiyfiXQWBorIC3ZNxNjhIVJSloEQ==
-
   dependencies:
     ajv "^8.6.3"
     bunyan "^1.8.12"
@@ -14918,10 +14930,10 @@ rxjs@6, rxjs@^6.6.3, rxjs@^6.6.6:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^7.5.2:
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.2.tgz#11e4a3a1dfad85dbf7fb6e33cbba17668497490b"
-  integrity sha512-PwDt186XaL3QN5qXj/H9DGyHhP3/RYYgZZwqBv9Tv8rsAaiwFH1IsJJlcgD37J7UW5a6O67qX0KWKS3/pu0m4w==
+rxjs@^7.5.4:
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.4.tgz#3d6bd407e6b7ce9a123e76b1e770dc5761aa368d"
+  integrity sha512-h5M3Hk78r6wAheJF0a5YahB1yRQKCsZ4MsGdZ5O9ETbVtjPcScGfrMmoOq7EBsCRzd4BDkvDJ7ogP8Sz5tTFiQ==
   dependencies:
     tslib "^2.1.0"
 
