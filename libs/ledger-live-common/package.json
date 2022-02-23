@@ -145,6 +145,7 @@
     "secp256k1": "^4.0.3",
     "semver": "^7.3.5",
     "sha.js": "^2.4.11",
+    "source-map-support": "^0.5.21",
     "stellar-sdk": "^10.0.1",
     "superstruct": "0.14.2",
     "tiny-secp256k1": "^1.1.6",
