@@ -54,7 +54,8 @@ function readPackage(pkg, context) {
       "resolve-from": "*"
     }),
     addDependencies("@sentry/react-native", {
-      "tslib": "*"
+      "tslib": "*",
+      "promise": "*"
     }),
     addDependencies("react-native-text-input-mask", {
       "tslib": "*"
