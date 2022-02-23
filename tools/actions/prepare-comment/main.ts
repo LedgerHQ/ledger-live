@@ -1,5 +1,4 @@
 import * as core from "@actions/core";
-// const fetch = require("isomorphic-unfetch");
 import { promises as fs } from "fs";
 
 const main = async () => {
@@ -10,20 +9,20 @@ const main = async () => {
   const parsed = JSON.parse(imagesObject);
   let str = "";
   let hasFailed = false;
-  for (const platform of parsed) {
+  for (const platform in parsed) {
     const current = parsed[platform];
     if (Array.isArray(current) && current.length) {
       if (!hasFailed) hasFailed = true;
       str += `
-        <strong>${platform}</strong>
+<strong>${platform}</strong>
 
-        | Actual | Diff | Expected |
-        |:------:|:----:|:--------:|
+| Actual | Diff | Expected |
+|:------:|:----:|:--------:|
       `;
       current.forEach(({ actual, diff, expected }) => {
         str += `
-          | ${actual.name} | ${diff.name} | ${expected.name} |
-          | ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
+| ${actual.name} | ${diff.name} | ${expected.name} |
+| ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
         `;
       });
       str += "\n\n";
