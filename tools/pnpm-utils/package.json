@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "pnpm utility functions",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC"
 }
