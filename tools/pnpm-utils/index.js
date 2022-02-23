@@ -1,3 +1,16 @@
+function bold(str) {
+  return "\033[1m" + str + "\033[0;0m";
+}
+
+function pad(str, length) {
+  return str.padEnd(length)
+}
+
+function field(str, { length = 30, bolden = true } = {}) {
+  const paddedField = pad("[" + str + "]", length)
+  return bolden ? bold(paddedField) : paddedField
+}
+
 const mutatedDependencies = new Set()
 function addDependencies(filter, dependencies, {
   kind = "dependencies",
@@ -18,15 +31,16 @@ function addDependencies(filter, dependencies, {
       Object.entries(dependencies).forEach(([dep, depVersion]) => {
         const devVersion = pkg?.devDependencies?.[dep]
         const version = devVersion ?? depVersion ?? "*"
+        const depKey = `${dep}@${version}`
 
         if (pkg[kind][dep]) {
           if (!ignoreExisting) {
-            context.log(`/!\\ ${pkg.name}@${pkg.version} already declares ${dep} with version [${pkg[kind][dep]}] (tried to set version [${version}]).`)
+            context.log(`[!] ${field(depKey)} | ${field(key, { length: 0 })} already declares version ${pkg[kind][dep]} (${kind})`)
             return
           }
         }
 
-        context.log(`Adding ${dep}@${version} to the ${kind} of: ${pkg.name}@${pkg.version}.`)
+        context.log(`[+] ${field(depKey)} | ${field(key)} (${kind})`)
 
         pkg[kind] = {
           ...pkg[kind],
@@ -39,8 +53,9 @@ function addDependencies(filter, dependencies, {
 
 function removePeerDeps(filter) {
   return (pkg, context) => {
+    const key = `${pkg.name}@${pkg.version}`
     if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
-      context.log(`Removing peer dependencies from: ${pkg.name}@${pkg.version}.`)
+      context.log(`[-] ${field(key)} | (peerDependencies)`)
       delete pkg.peerDependencies;
       delete pkg.peerDependenciesMeta;
     }
