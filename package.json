@@ -70,7 +70,7 @@
     "@ledgerhq/logs": "6.10.0",
     "@ledgerhq/native-ui": "^0.7.0",
     "@ledgerhq/react-native-hid": "6.24.1",
-    "@ledgerhq/react-native-hw-transport-ble": "6.24.1",
+    "@ledgerhq/react-native-hw-transport-ble": "6.25.1",
     "@ledgerhq/react-native-ledger-core": "4.19.1",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@polkadot/reactnative-identicon": "0.87.5",
