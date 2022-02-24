@@ -107,6 +107,12 @@ export const developerFeatures: Feature[] = [
     title: "Allow experimental apps",
     description: "Display and allow opening experimental tagged platform apps.",
   },
+  {
+    type: "toggle",
+    name: "USE_LEARN_STAGING_URL",
+    title: "Learn staging URL",
+    description: "Use the staging URL for the Learn page.",
+  },
 ];
 
 const storageKey = "experimentalFlags";

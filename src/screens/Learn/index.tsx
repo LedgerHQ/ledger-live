@@ -3,9 +3,12 @@ import { SafeAreaView } from "react-native";
 import WebView from "react-native-webview";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 
-const learnURL = "https://www.ledger.com/ledger-live-learn";
+const learnProdURL = "https://www.ledger.com/ledger-live-learn";
+const learnStagingURL =
+  "https://ecommerce-website.aws.stg.ldg-tech.com/ledger-live-learn";
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
@@ -23,7 +26,11 @@ export default function Learn() {
     colors: { type: themeType },
   } = useTheme();
 
-  const uri = `${learnURL}?theme=${themeType}&lang=${i18n.languages[0]}`;
+  const useStagingURL = useEnv("USE_LEARN_STAGING_URL");
+
+  const uri = `${
+    useStagingURL ? learnStagingURL : learnProdURL
+  }?theme=${themeType}&lang=${i18n.languages[0]}`;
 
   return (
     <SafeContainer>
