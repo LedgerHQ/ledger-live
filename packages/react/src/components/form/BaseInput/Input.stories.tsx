@@ -18,6 +18,10 @@ export default {
       type: "string",
       defaultValue: undefined,
     },
+    clearable: {
+      type: "boolean",
+      defaultValue: false,
+    },
   },
 };
 
