@@ -16,7 +16,7 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
         const formattedValue =
           formatCurrencyUnit(account.unit, transaction.amount, {
             disableRounding: true,
-          }) + " eGLD";
+          }) + " EGLD";
 
         if (!formattedValue.includes(".")) {
           // if the value is pure integer, in the app it will automatically add an .0
