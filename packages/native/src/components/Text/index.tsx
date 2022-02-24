@@ -16,7 +16,7 @@ import baseStyled, { BaseStyledProps } from "../styled";
 import BracketRight from "../../icons/BracketLeft";
 import BracketLeft from "../../icons/BracketRight";
 import { getColor } from "../../styles";
-import { FontWeightTypes, getTextStyle } from "./getTextStyle";
+import { FontWeightTypes, getTextStyle, getBracketSize } from "./getTextStyle";
 import { TextVariants } from "../../styles/theme";
 
 const uppercase = system({
@@ -43,7 +43,7 @@ export interface BaseTextProps
   fontFamily?: string;
   fontSize?: number | string | TextVariants;
   color?: string;
-  lineHeight?: number | string;
+  lineHeight?: string;
   bracket?: boolean;
   textTransform?: TextStyle["textTransform"];
   uppercase?: boolean;
@@ -66,8 +66,8 @@ const T = styled.View`
   align-items: center;
 `;
 
-const BracketText = ({ children, color = "neutral.c100", lineHeight, ...props }: BaseTextProps) => {
-  const size = lineHeight || getTextStyle(props).lineHeight;
+const BracketText = ({ children, color = "neutral.c100", ...props }: BaseTextProps) => {
+  const size = getBracketSize(props);
   const theme = useTheme();
   const c: string = theme ? (getColor(theme, color) as string) : "transparent";
   return (
