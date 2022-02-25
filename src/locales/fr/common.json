@@ -1442,10 +1442,9 @@
       "palletMethod": "Méthode",
       "transferAmount": "Montant transféré",
       "validatorsCount": "Validateurs ({{number}})",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
-      "opbytes": "opBytes",
-      "id": "Id"
+      "storageLimit": "Limite de stockage",
+      "gasLimit": "Limite de gaz",
+      "id": "Identifiant (ID)"
     },
     "multipleAddresses": "Pourquoi plusieurs adresses ?",
     "tokenName": "Nom du token",

@@ -1442,9 +1442,8 @@
       "palletMethod": "Método",
       "transferAmount": "Transferir importe",
       "validatorsCount": "Validadores ({{number}})",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
-      "opbytes": "opBytes",
+      "storageLimit": "Límite de almacenamiento",
+      "gasLimit": "Límite de Gas",
       "id": "Id"
     },
     "multipleAddresses": "¿Por qué hay múltiples direcciones?",
