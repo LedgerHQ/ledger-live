@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import WebView from "react-native-webview";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import NetInfo from "@react-native-community/netinfo";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import LoadingView from "./LoadingScreen";
+import NoConnectionErrorScreen from "./NoConnectionErrorScreen";
 
 const learnProdURL = "https://www.ledger.com/ledger-live-learn";
 const learnStagingURL =
@@ -26,15 +29,48 @@ export default function Learn() {
     colors: { type: themeType },
   } = useTheme();
 
-  const useStagingURL = useEnv("USE_LEARN_STAGING_URL");
-
+  const useStagingURL = useEnv("USE_LEARN_STAGING_URL") || true;
   const uri = `${
     useStagingURL ? learnStagingURL : learnProdURL
   }?theme=${themeType}&lang=${i18n.languages[0]}`;
 
+  const [initialLoadingDone, setInitialLoadingDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [hasNetwork, setHasNetwork] = useState(true);
+
+  useEffect(() => {
+    setInitialLoadingDone(false);
+    setLoading(true);
+  }, [uri, setInitialLoadingDone, setLoading]);
+
+  useEffect(() => {
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected) setHasNetwork(false);
+    });
+  }, []);
+
+  const handleOnLoadStart = useCallback(() => {
+    if (initialLoadingDone) return;
+    setInitialLoadingDone(true);
+    setLoading(false);
+  }, [initialLoadingDone, setInitialLoadingDone, setLoading]);
+
+  const renderError = useCallback(() => <NoConnectionErrorScreen />, []);
+
   return (
     <SafeContainer>
-      <StyledWebview source={{ uri }} />
+      {hasNetwork ? (
+        <>
+          {loading && <LoadingView />}
+          <StyledWebview
+            source={{ uri }}
+            onLoadStart={handleOnLoadStart}
+            renderError={renderError}
+          />
+        </>
+      ) : (
+        <NoConnectionErrorScreen />
+      )}
     </SafeContainer>
   );
 }

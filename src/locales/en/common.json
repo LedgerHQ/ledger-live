@@ -1292,6 +1292,11 @@
     "market": "Market",
     "learn": "Learn"
   },
+  "learn": {
+    "pageTitle": "learn",
+    "noConnection": "No connection",
+    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again."
+  },
   "portfolio": {
     "totalBalance": "Total balance",
     "syncError": "Sync error",
