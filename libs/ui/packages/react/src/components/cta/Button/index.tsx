@@ -135,7 +135,7 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
   `,
 });
 
-export const ButtonUnstyled = styled.button`
+export const ButtonUnstyled = baseStyled.button`
   all: unset;
   cursor: pointer;
 

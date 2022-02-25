@@ -82,7 +82,7 @@ const Chart = ({
             tickLabels: {
               fill: theme.colors.neutral.c80,
               fontSize: 12,
-              lineHeight: 14.52,
+              lineHeight: "14.52px",
             },
             grid: { display: "none" },
           }}
