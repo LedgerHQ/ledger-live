@@ -58,6 +58,7 @@ function SlideIndicator({ slidesLength, activeIndex = 0, onChange }: Props): Rea
   }, [activeIndex, slidesLength]);
 
   const animatedStyles = useAnimatedStyle(() => ({
+    // @ts-expect-error https://github.com/software-mansion/react-native-reanimated/issues/2971
     width: withTiming(activeSize.value, config),
   }));
 
