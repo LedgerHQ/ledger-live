@@ -7,9 +7,16 @@ module.exports = ({ config }) => {
   const babelRule = config.module.rules.find(
     (rule) => rule.exclude.toString() === "/node_modules/",
   );
-  if (babelRule) babelRule.exclude = /node_modules\/(?!(@ledgerhq\/ui-shared|victory-native)\/).*/;
 
-  return withUnimodules(config, {
+  // Some dependencies need to be explicitely transpiled.
+  if (babelRule) babelRule.exclude = /node_modules[\\\/](?!(@ledgerhq\/ui-shared|victory-native)[\\\/]).*/;
+
+  config = withUnimodules(config, {
     projectRoot: resolve(__dirname, "../"),
   });
+
+  config.resolve.symlinks = true;
+  config.resolve.alias["victory-native"] = "victory";
+
+  return config
 };
