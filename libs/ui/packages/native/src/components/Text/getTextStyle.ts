@@ -3,11 +3,30 @@ import { BaseTextProps } from "./index";
 
 export type FontWeightTypes = "medium" | "semiBold" | "bold";
 
+const bracketSizes: Record<TextVariants, number> = {
+  h1: 32,
+  h2: 28,
+  h3: 20,
+  h4: 18,
+  large: 20,
+  body: 20,
+  bodyLineHeight: 20,
+  paragraph: 20,
+  paragraphLineHeight: 18,
+  small: 16,
+  subtitle: 16,
+  tiny: 16,
+};
+
+export function getBracketSize({ variant }: { variant?: TextVariants }): number {
+  return variant ? bracketSizes[variant] : 20;
+}
+
 export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
   TextVariants,
   {
     fontFamily: string;
-    lineHeight?: number;
+    lineHeight?: string;
     paddingTop?: number;
     textTransform?: string;
   }
@@ -15,19 +34,19 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
   return {
     h1: {
       fontFamily: "Alpha",
-      lineHeight: 32,
-      paddingTop: bracket ? 15 : 0,
+      lineHeight: "32px",
+      paddingTop: bracket ? 5 : 0,
       textTransform: "uppercase",
     },
     h2: {
       fontFamily: "Alpha",
-      lineHeight: 28,
-      paddingTop: bracket ? 10 : 0,
+      lineHeight: "28px",
+      paddingTop: bracket ? 3 : 0,
       textTransform: "uppercase",
     },
     h3: {
       fontFamily: "Alpha",
-      lineHeight: 20,
+      lineHeight: "20px",
       paddingTop: bracket ? 5 : 0,
       textTransform: "uppercase",
     },
@@ -43,14 +62,14 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     bodyLineHeight: {
       fontFamily: "Inter",
-      lineHeight: 20,
+      lineHeight: "20px",
     },
     paragraph: {
       fontFamily: "Inter",
     },
     paragraphLineHeight: {
       fontFamily: "Inter",
-      lineHeight: 18,
+      lineHeight: "18px",
     },
     small: {
       fontFamily: "Inter",
@@ -102,7 +121,7 @@ export function getTextStyle({
   fontWeight = "medium",
 }: Partial<BaseTextProps>): {
   fontFamily: string;
-  lineHeight?: number;
+  lineHeight?: string;
   paddingTop?: number;
 } {
   const style = getTextTypeStyle({ bracket })[variant];
