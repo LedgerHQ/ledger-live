@@ -10,6 +10,7 @@ import getAppAndVersion from "./getAppAndVersion";
 import type { DeviceInfo } from "../types/manager";
 import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
+import { DeviceNotOnboarded } from "../errors";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 export default async function getDeviceInfo(
@@ -37,7 +38,16 @@ export default async function getDeviceInfo(
     throw new DeviceOnDashboardExpected();
   }
 
-  const res = await getVersion(transport);
+  const res = await getVersion(transport).catch((e) => {
+    if (e instanceof TransportStatusError) {
+      // @ts-expect-error typescript not checking agains the instanceof
+      if (e.statusCode === 0x6d06) {
+        throw new DeviceNotOnboarded();
+      }
+    }
+    throw e;
+  });
+
   const {
     isBootloader,
     rawVersion,
@@ -57,6 +67,12 @@ export default async function getDeviceInfo(
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
   const pinValidated = !!(flag & PinValidatedFlag);
+
+  // FIXME Until we have proper flagging of the onboarded status.
+  let onboarded = true;
+  if (flags.length === 4) {
+    onboarded = !!(flags[0] & 0x04);
+  }
   log(
     "hw",
     "deviceInfo: se@" +
@@ -79,5 +95,6 @@ export default async function getDeviceInfo(
     isBootloader,
     managerAllowed,
     pinValidated,
+    onboarded,
   };
 }

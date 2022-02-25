@@ -30,6 +30,7 @@ export type DeviceInfo = {
   mcuBlVersion?: string;
   mcuTargetId?: number;
   seTargetId?: number;
+  onboarded?: boolean;
 };
 export type DeviceModelInfo = {
   modelId: DeviceModelId;

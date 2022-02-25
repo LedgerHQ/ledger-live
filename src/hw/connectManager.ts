@@ -12,6 +12,7 @@ import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { isDashboardName } from "./isDashboardName";
+import { DeviceNotOnboarded } from "../errors";
 import type { AppAndVersion } from "./connectApp";
 import quitApp from "./quitApp";
 export type Input = {
@@ -76,6 +77,11 @@ const cmd = ({
         .pipe(
           concatMap((deviceInfo) => {
             timeoutSub.unsubscribe();
+
+            // FIXME Until we have proper flagging of the onboarded status.
+            if (!deviceInfo.onboarded) {
+              throw new DeviceNotOnboarded();
+            }
 
             if (deviceInfo.isBootloader) {
               return of({
