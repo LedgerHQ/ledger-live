@@ -50,5 +50,7 @@ let _hederaClient: hedera.Client | null = null;
 function getClient(): hedera.Client {
   _hederaClient ??= hedera.Client.forMainnet().setMaxNodesPerTransaction(1);
 
+  //_hederaClient.setNetwork({ mainnet: "https://hedera.coin.ledger.com" });
+
   return _hederaClient;
 }

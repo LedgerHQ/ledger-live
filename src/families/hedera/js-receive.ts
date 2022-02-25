@@ -7,18 +7,9 @@ import getAddress from "../../hw/getAddress";
 export default function receive(
   account: Account,
   {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    verify,
     deviceId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    subAccountId,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    freshAddressIndex,
   }: {
-    verify?: boolean;
     deviceId: string;
-    subAccountId?: string;
-    freshAddressIndex?: number;
   }
 ): Observable<{
   address: string;
@@ -29,6 +20,7 @@ export default function receive(
       let transport;
 
       try {
+        // TODO withDevice
         transport = await open(deviceId);
 
         const r = await getAddress(transport, {
@@ -38,7 +30,7 @@ export default function receive(
           segwit: isSegwitDerivationMode(account.derivationMode),
         });
 
-        if (r.address !== account.freshAddress) {
+        if (r.publicKey !== account.seedIdentifier) {
           throw new WrongDeviceForAccount(
             `WrongDeviceForAccount ${account.name}`,
             {
@@ -48,7 +40,7 @@ export default function receive(
         }
 
         o.next({
-          address: account.hederaResources!.accountId.toString(),
+          address: account.freshAddress,
           path: account.freshAddressPath,
         });
 

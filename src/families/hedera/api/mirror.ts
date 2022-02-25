@@ -26,10 +26,16 @@ export interface Account {
 export async function getAccountsForPublicKey(
   publicKey: string
 ): Promise<Account[]> {
-  const r = await fetch("/accounts", {
-    "account.publicKey": publicKey,
-    balance: false,
-  });
+  let r;
+  try {
+    r = await fetch("/accounts", {
+      "account.publicKey": publicKey,
+      balance: false,
+    });
+  } catch (e: any) {
+    if (e.name === "LedgerAPI4xx") return [];
+    throw e;
+  }
   const rawAccounts = r.data.accounts;
   const accounts: Account[] = [];
 
@@ -125,7 +131,8 @@ export async function getOperationsForAccount(
       value,
       date: timestamp,
       // NOTE: there are no "blocks" in hedera
-      blockHeight: null,
+      // Set a value just so that it's considered confirmed according to isConfirmedOperation
+      blockHeight: 5,
       blockHash: null,
       extra: { consensus_timestamp },
       fee,

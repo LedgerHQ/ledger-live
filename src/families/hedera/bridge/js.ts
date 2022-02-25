@@ -4,8 +4,7 @@ import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
-import scanAccounts from "../js-scanAccounts";
-import sync from "../js-sync";
+import { scanAccounts, sync } from "../js-synchronisation";
 import receive from "../js-receive";
 import {
   createTransaction,
