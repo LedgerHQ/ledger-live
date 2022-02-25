@@ -29,7 +29,7 @@ export default function Learn() {
     colors: { type: themeType },
   } = useTheme();
 
-  const useStagingURL = useEnv("USE_LEARN_STAGING_URL") || true;
+  const useStagingURL = useEnv("USE_LEARN_STAGING_URL");
   const uri = `${
     useStagingURL ? learnStagingURL : learnProdURL
   }?theme=${themeType}&lang=${i18n.languages[0]}`;
