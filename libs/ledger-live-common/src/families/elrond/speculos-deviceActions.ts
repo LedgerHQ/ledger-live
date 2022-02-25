@@ -6,25 +6,20 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
       title: "Receiver",
-      button: "RRRRrrrr",
+      button: "Rr",
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
       title: "Amount",
       button: "Rr",
-      expectedValue: ({ account, transaction }) => {
-        const formattedValue =
-          formatCurrencyUnit(account.unit, transaction.amount, {
-            disableRounding: true,
-          }) + " eGLD";
-
-        if (!formattedValue.includes(".")) {
-          // if the value is pure integer, in the app it will automatically add an .0
-          return formattedValue + ".0";
-        }
-
-        return formattedValue;
-      },
+      expectedValue: ({ account, transaction }) =>
+        formatCurrencyUnit(account.unit, transaction.amount, {
+          showCode: true,
+          disableRounding: true,
+          joinFragmentsSeparator: " ",
+        })
+          .replace(/\s+/g, " ")
+          .replace("egld", "EGLD"), // FIXME
     },
     {
       title: "Fee",
@@ -38,6 +33,11 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Sign",
       button: "LRlr",
+    },
+    {
+      title: "Network",
+      button: "Rr",
+      expectedValue: () => "Mainnet",
     },
   ],
 });

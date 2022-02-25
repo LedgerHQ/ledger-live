@@ -27,13 +27,15 @@
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
+  "optionalDependencies": {
+    "@ledgerhq/hw-transport-node-ble": "^6.24.1"
+  },
   "dependencies": {
     "@ledgerhq/cryptoassets": "6.24.1",
     "@ledgerhq/errors": "6.10.0",
     "@ledgerhq/hw-app-btc": "6.24.1",
     "@ledgerhq/hw-transport-http": "6.24.1",
     "@ledgerhq/hw-transport-mocker": "6.24.1",
-    "@ledgerhq/hw-transport-node-ble": "^6.24.1",
     "@ledgerhq/hw-transport-node-hid": "6.24.1",
     "@ledgerhq/hw-transport-node-speculos": "6.24.1",
     "@ledgerhq/ledger-core": "6.14.5",
