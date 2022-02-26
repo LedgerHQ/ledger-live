@@ -1444,7 +1444,6 @@
       "validatorsCount": "({{number}}) مدققين",
       "storageLimit": "Storage Limit",
       "gasLimit": "Gas Limit",
-      "opbytes": "opBytes",
       "id": "Id"
     },
     "multipleAddresses": "لماذا عناوين متعددة؟",
