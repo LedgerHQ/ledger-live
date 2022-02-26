@@ -23,6 +23,7 @@ export const LowerThanMinimumRelayFee = createCustomErrorClass(
 export const TransactionRefusedOnDevice = createCustomErrorClass(
   "TransactionRefusedOnDevice"
 );
+export const DeviceNotOnboarded = createCustomErrorClass("DeviceNotOnboarded");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated"
 );
