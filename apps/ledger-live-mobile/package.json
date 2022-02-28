@@ -53,7 +53,7 @@
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src --fix --ext .js,.json",
     "flow": "flow",
-    "test": "pnpm lint --quiet",
+    "test": "pnpm lint --quiet && pnpm flow",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html"

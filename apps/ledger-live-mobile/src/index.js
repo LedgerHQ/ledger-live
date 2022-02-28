@@ -11,8 +11,8 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
-import * as Sentry from "@sentry/react-native";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   StyleSheet,
   View,
@@ -99,7 +99,7 @@ checkLibs({
   NotEnoughBalance,
   React,
   log,
-  Transport
+  Transport,
 });
 
 // useScreens();
