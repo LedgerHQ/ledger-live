@@ -1454,8 +1454,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx:
-          "https://www.kin.org/blockchainInfoPage/?&dataType=public&header=Transaction&id=$hash",
+        tx: "https://www.kin.org/blockchainInfoPage/?&dataType=public&header=Transaction&id=$hash",
         address:
           "https://www.kin.org/blockchainAccount/?&dataType=public&header=accountID&id=$address",
       },
@@ -2184,8 +2183,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     units: ethereumUnits("SGB", "SGB"),
     explorerViews: [
       {
-        tx:
-          "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
+        tx: "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
         address:
           "https://songbird-explorer.flare.network/address/$address/transactions",
       },

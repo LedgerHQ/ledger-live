@@ -1,6 +1,6 @@
 packages:
   - "apps/*"
   - "libs/*"
-  - "libs/ledgerjs/packages/*"
+  - "libs/ledgerjs/**"
   - "libs/ui/packages/*"
   - "tools/**"

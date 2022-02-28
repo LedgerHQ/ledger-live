@@ -251,9 +251,8 @@ export default class Eth {
     }
 
     const rawTx = Buffer.from(rawTxHex, "hex");
-    const { vrsOffset, txType, chainId, chainIdTruncated } = decodeTxInfo(
-      rawTx
-    );
+    const { vrsOffset, txType, chainId, chainIdTruncated } =
+      decodeTxInfo(rawTx);
 
     const paths = splitPath(path);
     let response;

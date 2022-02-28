@@ -144,7 +144,7 @@ async function init() {
       const libcoreVersion = await command("libcoreGetVersion")().toPromise();
       logger.log("libcore", libcoreVersion);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
     }
 
     window.addEventListener("keydown", (e: SyntheticKeyboardEvent<any>) => {
