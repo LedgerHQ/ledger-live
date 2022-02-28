@@ -123,7 +123,6 @@ export const AnnouncementProvider = ({
     },
     [handleSave]
   );
-  // @ts-expect-error xstate bindings ?
   const [state, send] = useMachine(announcementMachine, {
     actions: {
       saveData,
@@ -147,6 +146,7 @@ export const AnnouncementProvider = ({
       setAsSeen: (seenId: string) => {
         send({
           type: "SET_AS_SEEN",
+          // @ts-expect-error Bindings issue ?
           seenId,
         });
       },

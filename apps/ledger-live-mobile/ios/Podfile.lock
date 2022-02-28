@@ -374,7 +374,7 @@ PODS:
     - InputMask (~> 6.1.0)
     - React-Core
     - React-RCTText
-  - react-native-udp (4.1.3):
+  - react-native-udp (4.1.4):
     - CocoaAsyncSocket
     - React-Core
   - react-native-version-number (0.3.6):
@@ -595,7 +595,7 @@ DEPENDENCIES:
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@3.4.1_react-native@0.65.1+react@17.0.2/node_modules/react-native-safe-area-context`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.65.1/node_modules/react-native-splash-screen`)"
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.65.1/node_modules/react-native-text-input-mask`)"
-  - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.3/node_modules/react-native-udp`)"
+  - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.4/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.17.2_react-native@0.65.1+react@17.0.2/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.65.1_react@17.0.2/node_modules/react-native/ReactCommon/reactperflogger`)"
@@ -739,7 +739,7 @@ EXTERNAL SOURCES:
   react-native-text-input-mask:
     :path: "../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.65.1/node_modules/react-native-text-input-mask"
   react-native-udp:
-    :path: "../../../node_modules/.pnpm/react-native-udp@4.1.3/node_modules/react-native-udp"
+    :path: "../../../node_modules/.pnpm/react-native-udp@4.1.4/node_modules/react-native-udp"
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-webview:
@@ -873,7 +873,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
-  react-native-udp: f0fbf5386c45af5523dc143a86afe2cbf29f764e
+  react-native-udp: 501c9f6b93991a034bc92123d37f2648f1086630
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-webview: 380c1a03ec94b7ed764dac8db1e7c9952d08c93a
   React-perflogger: fd28ee1f2b5b150b00043f0301d96bd417fdc339
