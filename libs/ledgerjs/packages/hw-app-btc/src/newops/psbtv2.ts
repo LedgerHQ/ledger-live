@@ -427,9 +427,10 @@ export class PsbtV2 {
     this.writeBip32Derivation(buf, masterFingerprint, path);
     return buf.buffer();
   }
-  private decodeBip32Derivation(
-    buffer: Buffer
-  ): { masterFingerprint: Buffer; path: number[] } {
+  private decodeBip32Derivation(buffer: Buffer): {
+    masterFingerprint: Buffer;
+    path: number[];
+  } {
     const buf = new BufferReader(buffer);
     return this.readBip32Derivation(buf);
   }
@@ -443,9 +444,10 @@ export class PsbtV2 {
       buf.writeUInt32(element);
     });
   }
-  private readBip32Derivation(
-    buf: BufferReader
-  ): { masterFingerprint: Buffer; path: number[] } {
+  private readBip32Derivation(buf: BufferReader): {
+    masterFingerprint: Buffer;
+    path: number[];
+  } {
     const masterFingerprint = buf.readSlice(4);
     const path: number[] = [];
     while (buf.offset < buf.buffer.length) {
@@ -466,9 +468,11 @@ export class PsbtV2 {
     this.writeBip32Derivation(buf, masterFingerprint, path);
     return buf.buffer();
   }
-  private decodeTapBip32Derivation(
-    buffer: Buffer
-  ): { hashes: Buffer[]; masterFingerprint: Buffer; path: number[] } {
+  private decodeTapBip32Derivation(buffer: Buffer): {
+    hashes: Buffer[];
+    masterFingerprint: Buffer;
+    path: number[];
+  } {
     const buf = new BufferReader(buffer);
     const hashCount = buf.readVarInt();
     const hashes: Buffer[] = [];

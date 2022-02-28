@@ -93,6 +93,15 @@ function readPackage(pkg, context) {
           kind: "peerDependencies",
         }
       ),
+      addDependencies(
+        "eslint-plugin-jest",
+        {
+          "jest": "*",
+        },
+        {
+          kind: "peerDependencies",
+        }
+      ),
     ],
     pkg,
     context
