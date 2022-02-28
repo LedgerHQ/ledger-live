@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import WebView from "react-native-webview";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
@@ -49,7 +49,7 @@ export default function Learn() {
     });
   }, []);
 
-  const handleOnLoadStart = useCallback(() => {
+  const handleOnLoad = useCallback(() => {
     if (initialLoadingDone) return;
     setInitialLoadingDone(true);
     setLoading(false);
@@ -63,8 +63,9 @@ export default function Learn() {
         <>
           {loading && <LoadingView />}
           <StyledWebview
+            style={loading && { height: 0 }}
             source={{ uri }}
-            onLoadStart={handleOnLoadStart}
+            onLoadEnd={handleOnLoad}
             renderError={renderError}
           />
         </>
