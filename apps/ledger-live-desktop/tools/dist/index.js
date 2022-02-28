@@ -96,9 +96,9 @@ const buildTasks = args => [
       await exec("npm", ["run", ...commands], {
         env: args.publish
           ? {
-            SENTRY_URL:
-              "https://db8f5b9b021048d4a401f045371701cb@o118392.ingest.sentry.io/274561",
-          }
+              SENTRY_URL:
+                "https://db8f5b9b021048d4a401f045371701cb@o118392.ingest.sentry.io/274561",
+            }
           : {},
       });
     },
@@ -220,7 +220,7 @@ yargs
   .command(
     "check",
     "Run health checks",
-    () => { },
+    () => {},
     args => runTasks(healthChecksTasks, args),
   )
   .command(
