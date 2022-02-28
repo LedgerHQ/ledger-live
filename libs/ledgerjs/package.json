@@ -2,6 +2,11 @@
   "name": "ledger-libs",
   "private": true,
   "version": "0.0.0",
+  "scripts": {
+    "test": "pnpm lint && pnpm test:jest",
+    "lint": "eslint packages/**/src --no-error-on-unmatched-pattern --ext .ts,.tsx -c .eslintrc.json",
+    "test:jest": "jest"
+  },
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",

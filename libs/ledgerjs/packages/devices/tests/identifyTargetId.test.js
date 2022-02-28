@@ -1,5 +1,6 @@
 // @flow
-import { identifyTargetId } from "../src/";
+
+import { identifyTargetId } from "../lib/";
 
 test("check that known targetIds match known devices", () => {
   const knownTargetIds = {
