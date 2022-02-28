@@ -39,10 +39,14 @@ export class AppClient {
     data: Buffer,
     cci?: ClientCommandInterpreter
   ): Promise<Buffer> {
-    let response: Buffer = await this.transport.send(CLA_BTC, ins, 0, 0, data, [
-      0x9000,
-      0xe000,
-    ]);
+    let response: Buffer = await this.transport.send(
+      CLA_BTC,
+      ins,
+      0,
+      0,
+      data,
+      [0x9000, 0xe000]
+    );
     while (response.readUInt16BE(response.length - 2) === 0xe000) {
       if (!cci) {
         throw new Error("Unexpected SW_INTERRUPTED_EXECUTION");

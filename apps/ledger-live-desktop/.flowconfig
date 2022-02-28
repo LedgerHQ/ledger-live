@@ -20,6 +20,7 @@ flow-defs
 module.system.node.resolve_dirname=./src
 module.system.node.resolve_dirname=node_modules
 module.name_mapper='^~' ->'<PROJECT_ROOT>/src'
+module.name_mapper='^@ledgerhq/react-ui/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ui/packages/react/lib/\1'
 munge_underscores=true
 esproposal.optional_chaining=enable
 
@@ -31,3 +32,4 @@ esproposal.optional_chaining=enable
 <PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/icons/react/*
 <PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/react.jsarn
 <PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/apps/hw.js*
+.*/libs/ledger-live-common/.*

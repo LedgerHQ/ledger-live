@@ -1,4 +1,4 @@
-name: Test Libs
+name: Test
 
 on:
   push:
@@ -48,8 +48,8 @@ jobs:
         run: tzutil /s "Eastern Standard Time"
         if: runner.os == 'Windows'
       - name: Install dependencies
-        run: pnpm i --filter="!./apps" --no-frozen-lockfile
-      - name: Build and Test affected libraries
+        run: pnpm i
+      - name: Build and Test affected packages
         run: pnpm test -- --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
       - name: (On Failure) Upload react-ui test results
