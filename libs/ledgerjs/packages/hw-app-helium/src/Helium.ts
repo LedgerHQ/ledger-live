@@ -231,9 +231,8 @@ export default class Helium {
 
     if (response.length === 1) throw "User has declined.";
 
-    const decoded = proto.helium.blockchain_txn_stake_validator_v1.decode(
-      response
-    );
+    const decoded =
+      proto.helium.blockchain_txn_stake_validator_v1.decode(response);
     const signature = decoded.ownerSignature as Buffer;
 
     txn.ownerSignature = signature;
@@ -272,9 +271,8 @@ export default class Helium {
 
     if (response.length === 1) throw "User has declined.";
 
-    const decoded = proto.helium.blockchain_txn_unstake_validator_v1.decode(
-      response
-    );
+    const decoded =
+      proto.helium.blockchain_txn_unstake_validator_v1.decode(response);
     const signature = decoded.ownerSignature as Buffer;
 
     txn.ownerSignature = signature;
@@ -315,9 +313,8 @@ export default class Helium {
 
     if (response.length === 1) throw "User has declined.";
 
-    const decoded = proto.helium.blockchain_txn_transfer_validator_stake_v1.decode(
-      response
-    );
+    const decoded =
+      proto.helium.blockchain_txn_transfer_validator_stake_v1.decode(response);
     const signature = decoded.oldOwnerSignature as Buffer;
 
     if (ownerType === "old") {
@@ -362,9 +359,8 @@ export default class Helium {
 
     if (response.length === 1) throw "User has declined.";
 
-    const decoded = proto.helium.blockchain_txn_security_exchange_v1.decode(
-      response
-    );
+    const decoded =
+      proto.helium.blockchain_txn_security_exchange_v1.decode(response);
     const signature = decoded.signature as Buffer;
 
     txn.signature = signature;
