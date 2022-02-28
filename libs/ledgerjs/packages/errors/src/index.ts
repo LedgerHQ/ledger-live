@@ -67,9 +67,8 @@ export const FirmwareNotRecognized = createCustomErrorClass(
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
-export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
-  "InvalidAddressBecauseDestinationIsAlsoSource"
-);
+export const InvalidAddressBecauseDestinationIsAlsoSource =
+  createCustomErrorClass("InvalidAddressBecauseDestinationIsAlsoSource");
 export const LatestMCUInstalledError = createCustomErrorClass(
   "LatestMCUInstalledError"
 );
@@ -117,9 +116,8 @@ export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
 export const NotEnoughSpendableBalance = createCustomErrorClass(
   "NotEnoughSpendableBalance"
 );
-export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
-  "NotEnoughBalanceBecauseDestinationNotCreated"
-);
+export const NotEnoughBalanceBecauseDestinationNotCreated =
+  createCustomErrorClass("NotEnoughBalanceBecauseDestinationNotCreated");
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 export const NotSupportedLegacyAddress = createCustomErrorClass(
@@ -128,12 +126,10 @@ export const NotSupportedLegacyAddress = createCustomErrorClass(
 export const GasLessThanEstimate = createCustomErrorClass(
   "GasLessThanEstimate"
 );
-export const PasswordsDontMatchError = createCustomErrorClass(
-  "PasswordsDontMatch"
-);
-export const PasswordIncorrectError = createCustomErrorClass(
-  "PasswordIncorrect"
-);
+export const PasswordsDontMatchError =
+  createCustomErrorClass("PasswordsDontMatch");
+export const PasswordIncorrectError =
+  createCustomErrorClass("PasswordIncorrect");
 export const RecommendSubAccountsToEmpty = createCustomErrorClass(
   "RecommendSubAccountsToEmpty"
 );

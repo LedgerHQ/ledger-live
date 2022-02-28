@@ -116,9 +116,8 @@ export const retrieveServiceAndCharacteristics = async (device: any) => {
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
-  const characteristics: Characteristic[] = await discoverServiceCharacteristics(
-    service
-  );
+  const characteristics: Characteristic[] =
+    await discoverServiceCharacteristics(service);
   let writeC;
   let notifyC;
 
