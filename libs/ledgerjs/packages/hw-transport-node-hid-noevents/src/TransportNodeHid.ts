@@ -55,7 +55,7 @@ export default class TransportNodeHidNoEvents extends Transport {
         type: "add",
         descriptor: device.path,
         deviceModel,
-        device: (device as unknown) as TransportDevice,
+        device: device as unknown as TransportDevice,
       });
     });
     observer.complete();
