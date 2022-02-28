@@ -7,21 +7,29 @@
     "isolatedModules": true,
     "module": "commonjs",
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": [
+        "src/*"
+      ]
     },
     "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "tests/tests-out",
     "rootDir": "./src"
   },
-  "include": ["tests", "src/**/*"],
+  "include": [
+    "tests",
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -33,7 +33,7 @@ const tasks = new Listr(
       title: "Run flow",
       task: async () => {
         try {
-          const { stdout } = await execa("pnpm", ["flow"]);
+          const { stdout } = await execa("pnpm", ["flow", __dirname]);
           return stdout;
         } catch (error) {
           process.stderr.write(error.message);
