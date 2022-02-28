@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native";
 import WebView from "react-native-webview";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import LoadingView from "./LoadingScreen";
 import NoConnectionErrorScreen from "./NoConnectionErrorScreen";
+import { Track } from "../../analytics";
 
 const learnProdURL = "https://www.ledger.com/ledger-live-learn";
 const learnStagingURL =
@@ -59,6 +60,7 @@ export default function Learn() {
 
   return (
     <SafeContainer>
+      <Track onMount event="Page Learn" />
       {hasNetwork ? (
         <>
           {loading && <LoadingView />}
