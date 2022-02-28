@@ -12,7 +12,7 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   StyleSheet,
@@ -99,7 +99,7 @@ checkLibs({
   NotEnoughBalance,
   React,
   log,
-  Transport
+  Transport,
 });
 
 // useScreens();
