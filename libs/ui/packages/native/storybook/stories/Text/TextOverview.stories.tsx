@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import { FontWeightTypes } from "src/components/Text/getTextStyle";
 import { Flex } from "../../../src/components/Layout";
 import Text from "../../../src/components/Text";
