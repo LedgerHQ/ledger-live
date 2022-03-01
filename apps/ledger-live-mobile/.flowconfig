@@ -32,6 +32,8 @@ node_modules/warning/.*
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
 .*/node_modules/react-native
+.*/libs/ledger-live-common/.*
+.*/libs/ui/packages/native/.*
 
 ; Creates weird flow erros, ignoring for now
 .*/node_modules/@ledgerhq/react-native-hw-transport-ble/lib/BleTransport.js
