@@ -13,21 +13,33 @@ import hideRecoveryPhrase from "../assets/hideRecoveryPhrase.png";
 
 import pinCodeNanoX from "../assets/nanoX/pinCode/data.json";
 import pinCodeNanoS from "../assets/nanoS/pinCode/data.json";
+import pinCodeNanoSPLight from "../assets/nanoSP/pinCode/light.json";
+import pinCodeNanoSPDark from "../assets/nanoSP/pinCode/dark.json";
 
 import recoverNanoX from "../assets/nanoX/recover/data.json";
 import recoverNanoS from "../assets/nanoS/recover/data.json";
+import recoverNanoSPLight from "../assets/nanoSP/recover/light.json";
+import recoverNanoSPDark from "../assets/nanoSP/recover/dark.json";
 
 import confirmWordsNanoX from "../assets/nanoX/confirmWords/data.json";
 import confirmWordsNanoS from "../assets/nanoS/confirmWords/data.json";
+import confirmWordsNanoSPLight from "../assets/nanoSP/confirmWords/light.json";
+import confirmWordsNanoSPDark from "../assets/nanoSP/confirmWords/dark.json";
 
 import numberOfWordsNanoX from "../assets/nanoX/numberOfWords/data.json";
 import numberOfWordsNanoS from "../assets/nanoS/numberOfWords/data.json";
+import numberOfWordsNanoSPLight from "../assets/nanoSP/numberOfWords/light.json";
+import numberOfWordsNanoSPDark from "../assets/nanoSP/numberOfWords/dark.json";
 
 import powerOnNanoX from "../assets/nanoX/powerOn/data.json";
 import powerOnNanoS from "../assets/nanoS/powerOn/data.json";
+import powerOnNanoSPLight from "../assets/nanoSP/powerOn/light.json";
+import powerOnNanoSPDark from "../assets/nanoSP/powerOn/dark.json";
 
 import powerOnRecoveryNanoX from "../assets/nanoX/powerOnRecovery/data.json";
 import powerOnRecoveryNanoS from "../assets/nanoS/powerOnRecovery/data.json";
+import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.json";
+import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
 
 import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
 import syncCryptos from "../assets/syncCryptos.png";
@@ -49,32 +61,113 @@ import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
 
 import { urls } from "../../../config/urls";
 
-const lottieAnimations = {
+export const lottieAnimations = {
   nanoS: {
-    pinCode: pinCodeNanoS,
-    recover: recoverNanoS,
-    confirmWords: confirmWordsNanoS,
-    numberOfWords: numberOfWordsNanoS,
-    powerOn: powerOnNanoS,
-    powerOnRecovery: powerOnRecoveryNanoS,
+    pinCode: {
+      light: pinCodeNanoS,
+      dark: pinCodeNanoS,
+    },
+    recover: {
+      light: recoverNanoS,
+      dark: recoverNanoS,
+    },
+    confirmWords: {
+      light: confirmWordsNanoS,
+      dark: confirmWordsNanoS,
+    },
+    numberOfWords: {
+      light: numberOfWordsNanoS,
+      dark: numberOfWordsNanoS,
+    },
+    powerOn: {
+      light: powerOnNanoS,
+      dark: powerOnNanoS,
+    },
+    powerOnRecovery: {
+      light: powerOnRecoveryNanoS,
+      dark: powerOnRecoveryNanoS,
+    },
+    style: {},
+  },
+  nanoSP: {
+    pinCode: {
+      light: pinCodeNanoSPLight,
+      dark: pinCodeNanoSPDark,
+    },
+    recover: {
+      light: recoverNanoSPLight,
+      dark: recoverNanoSPDark,
+    },
+    confirmWords: {
+      light: confirmWordsNanoSPLight,
+      dark: confirmWordsNanoSPDark,
+    },
+    numberOfWords: {
+      light: numberOfWordsNanoSPLight,
+      dark: numberOfWordsNanoSPDark,
+    },
+    powerOn: {
+      light: powerOnNanoSPLight,
+      dark: powerOnNanoSPDark,
+    },
+    powerOnRecovery: {
+      light: powerOnRecoveryNanoSPLight,
+      dark: powerOnRecoveryNanoSPDark,
+    },
     style: {},
   },
   nanoX: {
-    pinCode: pinCodeNanoX,
-    recover: recoverNanoX,
-    confirmWords: confirmWordsNanoX,
-    numberOfWords: numberOfWordsNanoX,
-    powerOn: powerOnNanoX,
-    powerOnRecovery: powerOnRecoveryNanoX,
+    pinCode: {
+      light: pinCodeNanoX,
+      dark: pinCodeNanoX,
+    },
+    recover: {
+      light: recoverNanoX,
+      dark: recoverNanoX,
+    },
+    confirmWords: {
+      light: confirmWordsNanoX,
+      dark: confirmWordsNanoX,
+    },
+    numberOfWords: {
+      light: numberOfWordsNanoX,
+      dark: numberOfWordsNanoX,
+    },
+    powerOn: {
+      light: powerOnNanoX,
+      dark: powerOnNanoX,
+    },
+    powerOnRecovery: {
+      light: powerOnRecoveryNanoX,
+      dark: powerOnRecoveryNanoX,
+    },
     style: { width: "110%", left: "5%" },
   },
   blue: {
-    pinCode: undefined,
-    recover: undefined,
-    confirmWords: undefined,
-    numberOfWords: undefined,
-    powerOn: undefined,
-    powerOnRecovery: undefined,
+    pinCode: {
+      light: undefined,
+      dark: undefined,
+    },
+    recover: {
+      light: undefined,
+      dark: undefined,
+    },
+    confirmWords: {
+      light: undefined,
+      dark: undefined,
+    },
+    numberOfWords: {
+      light: undefined,
+      dark: undefined,
+    },
+    powerOn: {
+      light: undefined,
+      dark: undefined,
+    },
+    powerOnRecovery: {
+      light: undefined,
+      dark: undefined,
+    },
     style: {},
   },
 };
@@ -342,7 +435,7 @@ export const infoModalScenes = {
   pairNewErrorInfoModalProps,
 };
 
-const pinCodeScenes = deviceModelId => [
+const pinCodeScenes = (deviceModelId, theme: "dark" | "light") => [
   {
     sceneProps: {
       trackPage: "Pin code step 1",
@@ -363,7 +456,7 @@ const pinCodeScenes = deviceModelId => [
   {
     sceneProps: {
       trackPage: "Pin code step 2",
-      lottie: lottieAnimations[deviceModelId].pinCode,
+      lottie: lottieAnimations[deviceModelId].pinCode[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {
@@ -399,8 +492,9 @@ const pinCodeScenes = deviceModelId => [
 ];
 
 const getSetupDeviceScenes: (
-  deviceModelId: "nanoS" | "nanoX" | "blue",
-) => OnboardingScene[] = deviceModelId => [
+  deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue",
+  theme: "dark" | "light",
+) => OnboardingScene[] = (deviceModelId, theme) => [
   {
     sceneProps: {
       trackPage: "Get started step 1",
@@ -444,7 +538,7 @@ const getSetupDeviceScenes: (
   {
     sceneProps: {
       trackPage: "Get started step 2",
-      lottie: lottieAnimations[deviceModelId].powerOn,
+      lottie: lottieAnimations[deviceModelId].powerOn[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {
@@ -487,7 +581,7 @@ const getSetupDeviceScenes: (
     type: "secondary",
     id: "setup",
   },
-  ...pinCodeScenes(deviceModelId),
+  ...pinCodeScenes(deviceModelId, theme),
   {
     sceneProps: {
       trackPage: "Recovery step 1",
@@ -546,7 +640,7 @@ const getSetupDeviceScenes: (
   {
     sceneProps: {
       trackPage: "Recovery step 3",
-      lottie: lottieAnimations[deviceModelId].recover,
+      lottie: lottieAnimations[deviceModelId].recover[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {
@@ -622,7 +716,10 @@ const getSetupDeviceScenes: (
   },
 ];
 
-const getRecoveryPhraseScenes = (deviceModelId: string) => [
+const getRecoveryPhraseScenes = (
+  deviceModelId: string,
+  theme: "dark" | "light",
+) => [
   {
     sceneProps: {
       trackPage: "RecoveryPhrase step 1",
@@ -656,7 +753,7 @@ const getRecoveryPhraseScenes = (deviceModelId: string) => [
   {
     sceneProps: {
       trackPage: "RecoveryPhrase step 2",
-      lottie: lottieAnimations[deviceModelId].powerOnRecovery,
+      lottie: lottieAnimations[deviceModelId].powerOnRecovery[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {
@@ -701,7 +798,7 @@ const getRecoveryPhraseScenes = (deviceModelId: string) => [
     type: "secondary",
     id: "importRecoveryPhrase_1",
   },
-  ...pinCodeScenes(deviceModelId),
+  ...pinCodeScenes(deviceModelId, theme),
   {
     sceneProps: {
       trackPage: "RecoveryPhrase step 3",
@@ -729,7 +826,7 @@ const getRecoveryPhraseScenes = (deviceModelId: string) => [
   {
     sceneProps: {
       trackPage: "RecoveryPhrase step 4",
-      lottie: lottieAnimations[deviceModelId].numberOfWords,
+      lottie: lottieAnimations[deviceModelId].numberOfWords[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {
@@ -757,7 +854,7 @@ const getRecoveryPhraseScenes = (deviceModelId: string) => [
   {
     trackPage: "RecoveryPhrase step 5",
     sceneProps: {
-      lottie: lottieAnimations[deviceModelId].confirmWords,
+      lottie: lottieAnimations[deviceModelId].confirmWords[theme],
       lottieStyle: lottieAnimations[deviceModelId].style,
       bullets: [
         {

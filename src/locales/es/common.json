@@ -771,6 +771,7 @@
     "stepSelectDevice": {
       "title": "¿Cuál es tu dispositivo?",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
@@ -858,6 +859,9 @@
               "label": "Enciende tu dispositivo presionando el botón negro durante 1 segundo."
             },
             "nanoS": {
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
+            },
+            "nanoSP": {
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "blue": {
@@ -1035,6 +1039,9 @@
             "nanoS": {
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
+            "nanoSP": {
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
+            },
             "blue": {
               "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono y presionando el botón de encendido."
             }
@@ -1090,6 +1097,11 @@
       "nanoS": {
         "title": "Conecta tu Nano",
         "desc": "Esta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "cta": "Vamos a conectar mi Nano"
+      },
+      "nanoSP": {
+        "title": "Conecta tu Nano",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
         "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
@@ -1276,7 +1288,8 @@
     "manager": "Manager",
     "settings": "Ajustes",
     "platform": "Discover",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Mercado"
   },
   "portfolio": {
     "totalBalance": "Saldo total",
@@ -1309,8 +1322,17 @@
   },
   "byteSize": {
     "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} kB",
+    "mbUnit": "{{size}} MB"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time": {
     "day": "1 D",
@@ -1419,7 +1441,10 @@
       "withdrawUnbondedAmount": "Retirar importe desvinculado",
       "palletMethod": "Método",
       "transferAmount": "Transferir importe",
-      "validatorsCount": "Validadores ({{number}})"
+      "validatorsCount": "Validadores ({{number}})",
+      "storageLimit": "Límite de almacenamiento",
+      "gasLimit": "Límite de Gas",
+      "id": "Id"
     },
     "multipleAddresses": "¿Por qué hay múltiples direcciones?",
     "tokenName": "Nombre del token",
@@ -1656,7 +1681,6 @@
       "themeDesc": "Elige el tema de la IU de la aplicación",
       "themes": {
         "dark": "Oscuro",
-        "dusk": "Atardecer",
         "light": "Claro"
       },
       "counterValueDesc": "Elige la divisa para los saldos y operaciones.",
@@ -2569,6 +2593,7 @@
     "quitApp": "Cierra la aplicación en tu dispositivo",
     "appNotInstalled": "Instala la aplicación {{appName}}",
     "appNotInstalled_plural": "Instala las aplicaciones {{appName}}",
+    "useAnotherDevice": "Utilizar otro dispositivo",
     "verifyAddress": {
       "title": "Verifica la dirección en tu dispositivo",
       "description": "Verifica que la dirección {{currencyName}} que aparece en Ledger Live coincida con la que aparece en tu dispositivo Ledger."
@@ -3856,6 +3881,75 @@
       "infoPanel": {
         "website": "sitio web"
       }
+    }
+  },
+  "market": {
+    "title": "Mercado",
+    "filters": {
+      "sort": "Ordenar",
+      "filter": "Filtrar",
+      "view": {
+        "label": "Ver",
+        "all": "Todas las monedas",
+        "liveCompatible": "Compatible con Live",
+        "all_label": "Todas las Criptomonedas",
+        "liveCompatible_label": "Solo las compatibles con Live"
+      },
+      "order": {
+        "market_cap": "Clasificación",
+        "market_cap_asc": "Posición (capitalización) asc.",
+        "market_cap_desc": "Posición (capitalización) desc."
+      },
+      "currency": "Divisa",
+      "time": "Tiempo",
+      "apply": "Aplicar"
+    },
+    "marketList": {
+      "crypto": "Cripto",
+      "price": "Precio",
+      "change": "Cambio",
+      "marketCap": "Capitalización de mercado",
+      "last7d": "Últimos 7 días"
+    },
+    "detailsPage": {
+      "holding": "Tus tenencias",
+      "priceStatistics": "Estadísticas de precios",
+      "price": "Precio",
+      "tradingVolume": "Volumen de operaciones",
+      "24hLowHight": "Mín 24h/Máx 24h",
+      "7dLowHigh": "Mín 7d/Máx 7d",
+      "allTimeHigh": "Máximo histórico",
+      "allTimeLow": "Mínimo histórico",
+      "marketCapRank": "Posición según capitalización de mercado",
+      "marketCapDominance": "Dominio de capitalización de mercado",
+      "supply": "Suministro",
+      "circulatingSupply": "Suministro circulante",
+      "totalSupply": "Suministro total",
+      "maxSupply": "Suministro máximo",
+      "assetNotSupportedOnLedgerLive": "Este activo no es compatible con Ledger Live."
+    },
+    "range": {
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "1y": "1A"
+    },
+    "warnings": {
+      "connectionError": "Error de conexión",
+      "ledgerUnableToRetrieveData": "Ledger Live no puede recuperar datos.",
+      "checkInternetAndReload": "Por favor, comprueba tu conexión de internet y vuelve a cargar esta página.",
+      "reload": "Volver a cargar",
+      "noCryptosFound": "No se han encontrado monedas",
+      "noCurrencyFound": "No se encontraron divisas",
+      "noSearchResultsFor": "Lo sentimos, no hemos encontrado monedas para <0>{{search}}</0>. Por favor, vuelve a intentar la búsqueda con otra palabra clave.",
+      "noCurrencySearchResultsFor": "Lo sentimos, no hemos encontrado divisas para <0>{{search}}</0>. Por favor, vuelve a intentar la búsqueda con otra palabra clave.",
+      "noSearchResults": "Lo sentimos, no hemos encontrado ningún resultado.",
+      "retrySearchKeyword": "Por favor, intenta de nuevo con otra palabra clave.",
+      "retrySearchParams": "Por favor, intenta de nuevo con otros parámetros.",
+      "trackFavAssets": "Sigue a tus favoritas",
+      "clickOnStarIcon": "Al hacer clic en el ícono de la estrella junto a un activo se añadirá automáticamente a tus destacados.",
+      "browseAssets": "Buscar activos"
     }
   },
   "nft": {

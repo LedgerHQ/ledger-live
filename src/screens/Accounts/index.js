@@ -17,6 +17,7 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { useScrollToTop } from "../../navigation/utils";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -25,7 +26,7 @@ type Props = {
   route: { params?: { currency?: string } },
 };
 
-export default function Accounts({ navigation, route }: Props) {
+function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const ref = useRef();
   useScrollToTop(ref);
@@ -103,6 +104,8 @@ export default function Accounts({ navigation, route }: Props) {
     </>
   );
 }
+
+export default withDiscreetMode(Accounts);
 
 const styles = StyleSheet.create({
   list: {

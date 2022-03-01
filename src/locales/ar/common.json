@@ -771,6 +771,7 @@
     "stepSelectDevice": {
       "title": "ما نوع جهازك؟",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "بلو"
     },
@@ -858,6 +859,9 @@
               "label": "قم بتشغيل جهازك بالضغط على الزر الأسود لمدة ثانية واحدة."
             },
             "nanoS": {
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
+            },
+            "nanoSP": {
               "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
             },
             "blue": {
@@ -1035,6 +1039,9 @@
             "nanoS": {
               "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
             },
+            "nanoSP": {
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
+            },
             "blue": {
               "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك والضغط على زر الطاقة."
             }
@@ -1089,6 +1096,11 @@
       },
       "nanoS": {
         "title": "قم بتوصيل جهاز Nano الخاص بك",
+        "desc": "هذه هي المرة الأولى التي تستخدم فيها هذا الهاتف لإعداد Nano الخاص بك. لنقوم بتوصيل جهازك سريعاً.",
+        "cta": "لنقم بتوصيل جهاز Nano الخاص بي"
+      },
+      "nanoSP": {
+        "title": "قم بتوصيل Nano الخاص بك",
         "desc": "هذه هي المرة الأولى التي تستخدم فيها هذا الهاتف لإعداد Nano الخاص بك. لنقوم بتوصيل جهازك سريعاً.",
         "cta": "لنقم بتوصيل جهاز Nano الخاص بي"
       },
@@ -1276,7 +1288,8 @@
     "manager": "المدير",
     "settings": "إعدادات",
     "platform": "إكتشف",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "السوق"
   },
   "portfolio": {
     "totalBalance": "إجمالي الرصيد",
@@ -1311,6 +1324,15 @@
     "bytes": "{{size}} بايت",
     "kbUnit": "{{size}} كيلوبايت",
     "mbUnit": "{{size}} ميجابايت"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "ألف",
+    "M": "مليون",
+    "B": "مليار",
+    "T": "تريليون",
+    "Q": "كوادريليون",
+    "Qn": "كوينتيليون"
   },
   "time": {
     "day": "1يوم",
@@ -1419,7 +1441,10 @@
       "withdrawUnbondedAmount": "سحب المبلغ الغير مقيد",
       "palletMethod": "الطريقة",
       "transferAmount": "مبلغ التحويل",
-      "validatorsCount": "({{number}}) مدققين"
+      "validatorsCount": "({{number}}) مدققين",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "id": "Id"
     },
     "multipleAddresses": "لماذا عناوين متعددة؟",
     "tokenName": "اسم رّمز التوكن",
@@ -1656,7 +1681,6 @@
       "themeDesc": "قم بتعيين السمة لواجهة مستخدم التطبيق",
       "themes": {
         "dark": "داكن",
-        "dusk": "غسق",
         "light": "فاتح"
       },
       "counterValueDesc": "اختر العملة للأرصدة والعمليات.",
@@ -2569,6 +2593,7 @@
     "quitApp": "الخروج من التطبيق على جهازك",
     "appNotInstalled": "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural": "الرجاء تثبيت تطبيقات {{appName}}",
+    "useAnotherDevice": "استخدام جهاز آخر",
     "verifyAddress": {
       "title": "تحقق من العنوان على الجهاز",
       "description": "يرجى التحقق من أن العنوان {{currencyName}} الذي سيتم عرضه في ليدجر لايف يطابق العنوان الموجود على جهاز ليدجر الخاص بك."
@@ -3856,6 +3881,75 @@
       "infoPanel": {
         "website": "الموقع الإلكتروني"
       }
+    }
+  },
+  "market": {
+    "title": "السوق",
+    "filters": {
+      "sort": "ترتيب",
+      "filter": "تصفية",
+      "view": {
+        "label": "عرض",
+        "all": "جميع العملات",
+        "liveCompatible": "متوافق مع Live",
+        "all_label": "جميع العملات الرقمية",
+        "liveCompatible_label": "مدعوم فقط في Live"
+      },
+      "order": {
+        "market_cap": "المرتبة",
+        "market_cap_asc": "المرتبة (سقف أسعار السوق) تصاعدي",
+        "market_cap_desc": "المرتبة (سقف أسعار السوق) تنازلي"
+      },
+      "currency": "العملة",
+      "time": "الوقت",
+      "apply": "تطبيق"
+    },
+    "marketList": {
+      "crypto": "الأصول المشفرة",
+      "price": "السعر",
+      "change": "تغيير",
+      "marketCap": "سقف أسعار السوق",
+      "last7d": "آخر 7 أيام"
+    },
+    "detailsPage": {
+      "holding": "مقتنياتك",
+      "priceStatistics": "إحصائيات الأسعار",
+      "price": "السعر",
+      "tradingVolume": "حجم التداول",
+      "24hLowHight": "أقل معدل 24 ساعة / أعلى معدل 24 ساعة",
+      "7dLowHigh": "أقل معدل 7 أيام / أعلى معدل 7 أيام",
+      "allTimeHigh": "الحد الأقصى التاريخي",
+      "allTimeLow": "الحد الأدنى التاريخي",
+      "marketCapRank": "ترتيب سقف أسعار السوق",
+      "marketCapDominance": "هيمنة سقف أسعار السوق",
+      "supply": "توريد",
+      "circulatingSupply": "التوريد المتداول",
+      "totalSupply": "إجمالي التوريد",
+      "maxSupply": "الحد الاقصى للتوريد",
+      "assetNotSupportedOnLedgerLive": "هذا الأصل غير مدعوم على Ledger Live."
+    },
+    "range": {
+      "1h": "1 ساعة",
+      "24h": "24 ساعة",
+      "7d": "7 أيام",
+      "30d": "30 يوم",
+      "1y": "1 سنة"
+    },
+    "warnings": {
+      "connectionError": "خطأ في الاتصال",
+      "ledgerUnableToRetrieveData": "Ledger Live غير قادر على استرداد البيانات.",
+      "checkInternetAndReload": "يُرجى التحقق من اتصالك بالإنترنت وإعادة تحميل هذه الصفحة.",
+      "reload": "إعادة تحميل",
+      "noCryptosFound": "لم يتم العثور على عملات",
+      "noCurrencyFound": "لم يتم العثور على عملات",
+      "noSearchResultsFor": "عذراً، لم نجد أي عملات ل<0>{{search}}</0>. الرجاء إعادة محاولة البحث بكلمة رئيسية أخرى.",
+      "noCurrencySearchResultsFor": "عذراً، لم نجد أي عملات ل<0>{{search}}</0>. الرجاء إعادة محاولة البحث بكلمة رئيسية أخرى.",
+      "noSearchResults": "عذراً، لم نجد أي نتائج بحث.",
+      "retrySearchKeyword": "الرجاء إعادة محاولة البحث بكلمة رئيسية أخرى.",
+      "retrySearchParams": "الرجاء إعادة محاولة البحث مع معلمات أخرى.",
+      "trackFavAssets": "تتبع المفضلة لديك",
+      "clickOnStarIcon": "النقر على أيقونة النجمة بجوار أحد الأصول سيضفيها تلقائياً إلى المفضلة لديك.",
+      "browseAssets": "تصفح الأصول"
     }
   },
   "nft": {

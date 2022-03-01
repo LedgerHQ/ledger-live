@@ -771,6 +771,7 @@
     "stepSelectDevice": {
       "title": "Quel wallet Ledger avez-vous ?",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
@@ -860,6 +861,9 @@
             "nanoS": {
               "label": "Allumez votre appareil en le connectant au port USB de votre téléphone."
             },
+            "nanoSP": {
+              "label": "Allumez votre appareil en le connectant au port USB de votre téléphone."
+            },
             "blue": {
               "label": "Allumez votre appareil en le connectant au port USB de votre téléphone et en appuyant sur le bouton de mise en marche."
             }
@@ -921,7 +925,7 @@
               "label": "N'utilisez jamais un code PIN que vous n'avez pas choisi vous-même."
             },
             "7": {
-              "label": "Ne sauvegardez jamais votre code PIN sur un ordinateur ou un smartphone."
+              "label": "Ne sauvegardez jamais votre code PIN sur un ordinateur ou un téléphone."
             }
           }
         },
@@ -991,7 +995,7 @@
           "title": "Cacher sa phrase de récupération",
           "bullets": {
             "0": {
-              "label": "Ne la saisissez <1>jamais</1> sur un ordinateur, smartphone ou autre appareil. Ne la prenez pas en photo."
+              "label": "Ne la saisissez <1>jamais</1> sur un ordinateur, téléphone ou autre appareil. Ne la prenez pas en photo."
             },
             "1": {
               "label": "Ne la partagez <1>jamais</1> avec qui que ce soit."
@@ -1033,6 +1037,9 @@
               "label": "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
             "nanoS": {
+              "label": "Allumez votre appareil en le connectant au port USB de votre téléphone."
+            },
+            "nanoSP": {
               "label": "Allumez votre appareil en le connectant au port USB de votre téléphone."
             },
             "blue": {
@@ -1084,18 +1091,23 @@
     "stepPairNew": {
       "nanoX": {
         "title": "Coupler son Nano",
-        "desc": "C'est la première fois que vous configurez votre Nano sur ce smartphone. Appairons rapidement votre appareil.",
+        "desc": "C'est la première fois que vous configurez votre Nano sur ce téléphone. Appairons rapidement votre appareil.",
         "cta": "Coupler le Nano"
       },
       "nanoS": {
         "title": "Connecter le Nano",
-        "desc": "C'est la première fois que vous configurez votre Nano sur ce smartphone. Connectons rapidement votre appareil.",
-        "cta": "Connecter le Nano"
+        "desc": "C'est la première fois que vous configurez votre Nano sur ce téléphone. Connectons rapidement votre appareil.",
+        "cta": "Connecter mon Nano"
+      },
+      "nanoSP": {
+        "title": "Connectez votre Nano",
+        "desc": "C'est la première fois que vous configurez votre Nano sur ce téléphone. Appairons rapidement votre appareil.",
+        "cta": "Connecter mon Nano"
       },
       "blue": {
         "title": "Connecter le Blue",
-        "desc": "C'est la première fois que vous configurez votre Blue sur ce smartphone. Connectons rapidement votre appareil.",
-        "cta": "Connecter le Blue"
+        "desc": "C'est la première fois que vous configurez votre Blue sur ce téléphone. Connectons rapidement votre appareil.",
+        "cta": "Connecter mon Blue"
       },
       "infoModal": {
         "title": "Où trouver le nom de mon appareil ?",
@@ -1276,7 +1288,8 @@
     "manager": "Gestionnaire",
     "settings": "Paramètres",
     "platform": "Discover",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Marché"
   },
   "portfolio": {
     "totalBalance": "Solde total",
@@ -1311,6 +1324,15 @@
     "bytes": "{{size}} bytes",
     "kbUnit": "{{size}} Ko",
     "mbUnit": "{{size}} Mo"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "M",
+    "B": "Md",
+    "T": "billions",
+    "Q": "billiards",
+    "Qn": "trillions"
   },
   "time": {
     "day": "1J",
@@ -1419,7 +1441,10 @@
       "withdrawUnbondedAmount": "Retirer le montant délié",
       "palletMethod": "Méthode",
       "transferAmount": "Montant transféré",
-      "validatorsCount": "Validateurs ({{number}})"
+      "validatorsCount": "Validateurs ({{number}})",
+      "storageLimit": "Limite de stockage",
+      "gasLimit": "Limite de gaz",
+      "id": "Identifiant (ID)"
     },
     "multipleAddresses": "Pourquoi plusieurs adresses ?",
     "tokenName": "Nom du token",
@@ -1656,7 +1681,6 @@
       "themeDesc": "Définissez le thème de l'interface utilisateur",
       "themes": {
         "dark": "Dark",
-        "dusk": "Dusk",
         "light": "Light"
       },
       "counterValueDesc": "Choisissez la devise dans laquelle afficher votre solde et vos opérations.",
@@ -2559,7 +2583,7 @@
     "stayInTheAppPlz": "Restez dans l'app et gardez votre Nano X en main.",
     "allowAppPermission": "Ouvrez l'app {{wording}} sur votre appareil.",
     "allowAppPermissionSubtitleToken": "pour gérer vos tokens {{token}}",
-    "allowManagerPermission": "Autoriser {{wording}} sur l'appareil",
+    "allowManagerPermission": "Autorisez {{wording}} sur l'appareil.",
     "loading": "Chargement...",
     "turnOnAndUnlockDevice": "Allumez et déverrouillez votre appareil.",
     "connectAndUnlockDevice": "Connectez et déverrouillez votre appareil.",
@@ -2569,6 +2593,7 @@
     "quitApp": "Quittez l'application sur votre appareil.",
     "appNotInstalled": "Merci d'installer l'app {{appName}}",
     "appNotInstalled_plural": "Merci d'installer les apps {{appName}}.",
+    "useAnotherDevice": "Utiliser un autre appareil",
     "verifyAddress": {
       "title": "Vérifier l'adresse sur l'appareil",
       "description": "Vérifiez que l'adresse {{currencyName}} affichée sur Ledger Live correspond à celle indiquée sur votre appareil."
@@ -2871,12 +2896,12 @@
     "switchButton": "Basculer en {{language}}",
     "no": "Non, merci",
     "languages": {
-      "en": "English",
+      "en": "Anglais",
       "fr": "Français",
-      "ru": "Русский",
-      "es": "Español",
-      "zh": "中文（简体）",
-      "de": "Deutsch"
+      "ru": "Russe",
+      "es": "Espagnol",
+      "zh": "Chinois",
+      "de": "Allemand"
     }
   },
   "FirmwareUpdateCheckId": {
@@ -3856,6 +3881,75 @@
       "infoPanel": {
         "website": "Site"
       }
+    }
+  },
+  "market": {
+    "title": "Marché",
+    "filters": {
+      "sort": "Trier",
+      "filter": "Filtrer",
+      "view": {
+        "label": "Voir",
+        "all": "Tous les coins",
+        "liveCompatible": "Compatible avec Live",
+        "all_label": "Toutes les cryptomonnaies",
+        "liveCompatible_label": "Compatible avec Live"
+      },
+      "order": {
+        "market_cap": "Rang",
+        "market_cap_asc": "Rang (capit.) asc.",
+        "market_cap_desc": "Rang (capit.) desc."
+      },
+      "currency": "Monnaie",
+      "time": "Période",
+      "apply": "Appliquer"
+    },
+    "marketList": {
+      "crypto": "Crypto",
+      "price": "Cours",
+      "change": "Variation",
+      "marketCap": "Capitalisation",
+      "last7d": "7 derniers jours"
+    },
+    "detailsPage": {
+      "holding": "Vos actifs",
+      "priceStatistics": "Statistiques du cours",
+      "price": "Cours",
+      "tradingVolume": "Volume de trading",
+      "24hLowHight": "Bas / Haut (24h)",
+      "7dLowHigh": "Bas / Haut (7j)",
+      "allTimeHigh": "Haut (historique)",
+      "allTimeLow": "Bas (historique)",
+      "marketCapRank": "Rang",
+      "marketCapDominance": "Position dominante",
+      "supply": "Offre",
+      "circulatingSupply": "Offre en circulation",
+      "totalSupply": "Offre totale",
+      "maxSupply": "Offre maximale",
+      "assetNotSupportedOnLedgerLive": "Cet actif n'est pas pris en charge sur Ledger Live."
+    },
+    "range": {
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7J",
+      "30d": "30J",
+      "1y": "1A"
+    },
+    "warnings": {
+      "connectionError": "Erreur de connexion",
+      "ledgerUnableToRetrieveData": "Échec de la recherche des données par Ledger Live.",
+      "checkInternetAndReload": "Veuillez vérifier votre connexion Internet et actualiser la page.",
+      "reload": "Actualiser",
+      "noCryptosFound": "Crypto non trouvée",
+      "noCurrencyFound": "Monnaie non trouvée",
+      "noSearchResultsFor": "Nous n'avons pas trouvé de cryptos correspondant à <0>{{search}}</0>. Réessayez avec un autre mot-clé.",
+      "noCurrencySearchResultsFor": "Nous n'avons pas trouvé de monnaies correspondant à <0>{{search}}</0>. Réessayez avec un autre mot-clé.",
+      "noSearchResults": "Nous n'avons trouvé aucun résultat.",
+      "retrySearchKeyword": "Veuillez réessayer avec un autre mot-clé.",
+      "retrySearchParams": "Veuillez réessayer avec des paramètres différents.",
+      "trackFavAssets": "Surveillez vos favoris",
+      "clickOnStarIcon": "Cliquez sur l'étoile à côté d'un actif pour l'ajouter à vos favoris.",
+      "browseAssets": "Parcourir les actifs"
     }
   },
   "nft": {

@@ -97,6 +97,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       ...route.params,
       transaction,
       status,
+      selectDeviceLink: true,
     });
   }, [navigation, nextNavigation, route.params, transaction, status]);
 

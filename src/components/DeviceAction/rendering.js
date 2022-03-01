@@ -1,11 +1,13 @@
 // @flow
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import { useDispatch } from "react-redux";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
+import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import LText from "../LText";
 import Alert from "../Alert";
@@ -20,6 +22,7 @@ import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
 
 type RawProps = {
@@ -371,10 +374,12 @@ export function renderConnectYourDevice({
   unresponsive,
   device,
   theme,
+  onSelectDeviceLink,
 }: {
   ...RawProps,
   unresponsive: boolean,
   device: Device,
+  onSelectDeviceLink?: () => void,
 }) {
   return (
     <View style={styles.wrapper}>
@@ -392,7 +397,12 @@ export function renderConnectYourDevice({
           })}
         />
       </View>
-      <LText style={styles.text} semiBold>
+      {device.deviceName && (
+        <LText style={[styles.text, styles.connectDeviceName]} semiBold>
+          {device.deviceName}
+        </LText>
+      )}
+      <LText style={[styles.text, styles.connectDeviceLabel]} semiBold>
         {t(
           unresponsive
             ? "DeviceAction.unlockDevice"
@@ -401,6 +411,14 @@ export function renderConnectYourDevice({
             : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </LText>
+      {onSelectDeviceLink ? (
+        <View style={styles.connectDeviceExtraContentWrapper}>
+          <ExternalLink
+            text={t("DeviceAction.useAnotherDevice")}
+            onPress={onSelectDeviceLink}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -436,6 +454,17 @@ export function LoadingAppInstall({
   description?: string,
   request?: AppRequest,
 }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Nb Blocks closing the modal while the install is happening.
+    // releases the block on onmount.
+    dispatch(setModalLock(true));
+    return () => {
+      dispatch(setModalLock(false));
+    };
+  }, [dispatch]);
+
   const currency = request?.currency || request?.account?.currency;
   const appName = request?.appName || currency?.managerAppName;
   useEffect(() => {
@@ -551,7 +580,17 @@ const styles = StyleSheet.create({
   connectDeviceContainer: {
     height: 100,
   },
+  connectDeviceName: {
+    marginBottom: 8,
+    fontSize: 15,
+  },
+  connectDeviceLabel: {
+    fontSize: 20,
+  },
   verifyAddress: {
     height: 72,
+  },
+  connectDeviceExtraContentWrapper: {
+    marginTop: 36,
   },
 });

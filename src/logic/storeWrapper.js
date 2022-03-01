@@ -55,9 +55,15 @@ const getCompressedValue = async (key, value) => {
       // multiget will failed when you got keys with a tons of data
       // it crash with 13 CHUNKS of 1MB string so we had splice it.
       while (keys.length) {
-        values = [...values, ...await AsyncStorage.multiGet(keys.splice(0, 5))];
+        values = [
+          ...values,
+          ...(await AsyncStorage.multiGet(keys.splice(0, 5))),
+        ];
       }
-      const concatString = values.reduce((acc, current) => acc + current[1], "");
+      const concatString = values.reduce(
+        (acc, current) => acc + current[1],
+        "",
+      );
       return JSON.parse(concatString);
     }
     return JSON.parse(value);

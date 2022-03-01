@@ -42,6 +42,7 @@ export const ScreenName = {
   DebugPlayground: "DebugPlayground",
   DebugSettings: "DebugSettings",
   DebugStore: "DebugStore",
+  DebugEnv: "DebugEnv",
   DelegationConnectDevice: "DelegationConnectDevice",
   DelegationSelectDevice: "DelegationSelectDevice",
   DelegationSelectValidator: "DelegationSelectValidator",
@@ -192,7 +193,7 @@ export const ScreenName = {
   CosmosClaimRewardsValidationError: "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess: "CosmosClaimRewardsValidationSuccess",
 
-  //crypto_org
+  // crypto_org
   CryptoOrgEditMemo: "CryptoOrgEditMemo",
 
   AlgorandEditMemo: "AlgorandEditMemo",
