@@ -563,7 +563,7 @@ const envDefinitions = {
   USE_LEARN_STAGING_URL: {
     def: false,
     parser: boolParser,
-    desc: "use the staging URL for the learn page"
+    desc: "use the staging URL for the learn page",
   },
 };
 
