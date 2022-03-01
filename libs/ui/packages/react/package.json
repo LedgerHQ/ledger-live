@@ -42,7 +42,8 @@
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix --cache",
-    "typecheck": "tsc --p . --noEmit"
+    "typecheck": "tsc --p . --noEmit",
+    "test": "pnpm -w -F ui test:react"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^0.4.0",
