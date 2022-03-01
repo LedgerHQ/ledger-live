@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { useArgs } from "@storybook/client-api";
 import { Props as FlowStepperProps } from "./index";
 import { Divider, Flex, FlowStepper, Text, Button, Box, Link, Icons, Tag } from "../../..";
+import type { Size as TagSize } from "../../Tag";
 import { lipsum, StoryTemplate } from "../../helpers";
 import { useState } from "react";
 
@@ -281,7 +282,7 @@ const steps = ["Primary", "Neutral", "Success", "Warning", "Error"];
 const StepFooter = ({ label }: { label: string }) => (
   <Flex flexDirection="row" alignItems="center">
     <Text whiteSpace="pre">Footer for step </Text>
-    <Tag size="medium" type="plain" active>
+    <Tag size={"medium" as TagSize} type="plain" active>
       {label}
     </Tag>
   </Flex>
