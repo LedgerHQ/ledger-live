@@ -5,5 +5,6 @@ export default {
   collectCoverage: true,
   testPathIgnorePatterns: ["packages/*/lib-es", "packages/*/lib"],
   coveragePathIgnorePatterns: ["packages/create-dapp"],
-  collectCoverageFrom: ["packages/**/src/*.ts"],
+  passWithNoTests: true,
+  // collectCoverageFrom: ["packages/**/src/*.ts"],
 };
