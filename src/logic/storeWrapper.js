@@ -43,23 +43,33 @@ const stringifyPairs = pairs =>
   }, []);
 
 const getCompressedValue = async (key, value) => {
-  if (value && value.includes(CHUNKED_KEY)) {
-    const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
-    const keys = [];
-    for (let i = 0; i < numberOfChunk; i++) {
-      keys.push(key + CHUNKED_KEY + i);
-    }
-    let values = [];
+  try {
+    if (value && value.includes(CHUNKED_KEY)) {
+      const numberOfChunk = Number(value.replace(CHUNKED_KEY, ""));
+      const keys = [];
+      for (let i = 0; i < numberOfChunk; i++) {
+        keys.push(key + CHUNKED_KEY + i);
+      }
+      let values = [];
 
-    // multiget will failed when you got keys with a tons of data
-    // it crash with 13 CHUNKS of 1MB string so we had splice it.
-    while (keys.length) {
-      values = [...values, ...(await AsyncStorage.multiGet(keys.splice(0, 5)))];
+      // multiget will failed when you got keys with a tons of data
+      // it crash with 13 CHUNKS of 1MB string so we had splice it.
+      while (keys.length) {
+        values = [
+          ...values,
+          ...(await AsyncStorage.multiGet(keys.splice(0, 5))),
+        ];
+      }
+      const concatString = values.reduce(
+        (acc, current) => acc + current[1],
+        "",
+      );
+      return JSON.parse(concatString);
     }
-    const concatString = values.reduce((acc, current) => acc + current[1], "");
-    return JSON.parse(concatString);
+    return JSON.parse(value);
+  } catch (e) {
+    return undefined;
   }
-  return JSON.parse(value);
 };
 
 const deviceStorage = {
@@ -75,7 +85,7 @@ const deviceStorage = {
     }
     const values = await AsyncStorage.multiGet(key);
     const data = values.map(value => getCompressedValue(value[0], value[1]));
-    return Promise.all(data);
+    return Promise.all(data).then(array => array.filter(Boolean));
   },
 
   /**
