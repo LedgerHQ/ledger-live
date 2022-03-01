@@ -11,7 +11,10 @@ import Button from "./Button";
 import Circle from "./Circle";
 import ModalBottomAction from "./ModalBottomAction";
 import LanguageIcon from "../icons/Language";
-import { languageSelector, languageIsSetByUserSelector } from "../reducers/settings";
+import {
+  languageSelector,
+  languageIsSetByUserSelector,
+} from "../reducers/settings";
 import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";

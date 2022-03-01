@@ -5,6 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
 import { hasAvailableUpdateSelector } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
@@ -12,9 +13,7 @@ import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import ReadOnlyTab from "../ReadOnlyTab";
-import ManagerIcon from "../../icons/Manager";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
-import { Icons } from "@ledgerhq/native-ui";
 
 const ManagerIconWithUpate = ({
   color,
