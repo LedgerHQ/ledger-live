@@ -5,18 +5,18 @@ const Listr = require("listr");
 
 const tasks = new Listr(
   [
-    {
-      title: "Run eslint",
-      task: async () => {
-        try {
-          const { stdout } = await execa("pnpm", ["lint"]);
-          return stdout;
-        } catch (error) {
-          process.stderr.write(error.message);
-          throw new Error("eslint test failed");
-        }
-      },
-    },
+    // {
+    //   title: "Run eslint",
+    //   task: async () => {
+    //     try {
+    //       const { stdout } = await execa("pnpm", ["lint"]);
+    //       return stdout;
+    //     } catch (error) {
+    //       process.stderr.write(error.message);
+    //       throw new Error("eslint test failed");
+    //     }
+    //   },
+    // },
     {
       title: "Run prettier check",
       task: async () => {

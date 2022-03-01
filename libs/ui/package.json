@@ -13,7 +13,6 @@
   },
   "scripts": {
     "prepare": "playwright install",
-    "test": "pnpm test:react",
     "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
     "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
   }
