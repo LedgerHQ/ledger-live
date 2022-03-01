@@ -19,11 +19,30 @@
         "^build"
       ]
     },
+    "lint": {},
+    "typecheck": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
     "test": {
       "dependsOn": [
+        "lint",
+        "typecheck",
         "build"
       ],
       "outputs": []
+    },
+    "live-mobile#lint": {
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "live-desktop#lint": {
+      "dependsOn": [
+        "^build"
+      ]
     },
     "start": {
       "cache": false,

@@ -96,10 +96,23 @@ function readPackage(pkg, context) {
       addDependencies(
         "eslint-plugin-jest",
         {
-          "jest": "*",
+          jest: "*",
         },
         {
           kind: "peerDependencies",
+        }
+      ),
+      // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
+      // This is done this way because these packages are not hoisted hence unaccessible otherwise.
+      addDependencies(
+        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
+        {
+          jest: "^27.4.7",
+          "ts-jest": "^27.1.2",
+          "ts-node": "^10.4.0",
+        },
+        {
+          kind: "devDependencies",
         }
       ),
     ],

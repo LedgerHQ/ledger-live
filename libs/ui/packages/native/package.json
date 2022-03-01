@@ -39,6 +39,7 @@
     "expo": "expo start",
     "storybook": "start-storybook -p 6006",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "exit 0",
     "web": "expo start --web"
   },
   "dependencies": {
