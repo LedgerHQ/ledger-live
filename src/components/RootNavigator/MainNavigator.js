@@ -3,6 +3,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
@@ -26,7 +27,7 @@ export default function MainNavigator({
 }) {
   const { colors } = useTheme();
   const { hideTabNavigation } = params || {};
-  const enableLearn = true; // useFeature("learn");
+  const enableLearn = useFeature("learn");
   return (
     <Tab.Navigator
       screenOptions={{
