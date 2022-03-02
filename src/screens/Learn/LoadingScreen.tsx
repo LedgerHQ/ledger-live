@@ -118,23 +118,23 @@ export default function LearnSkeleton() {
       </TitleContainer>
       <ScrollView>
         <Section title={t("learn.sectionShows")}>
-          {emptyArray.map(() => (
-            <PlaceholderShow />
+          {emptyArray.map((i, key) => (
+            <PlaceholderShow key={key} />
           ))}
         </Section>
         <Section title={t("learn.sectionVideo")}>
-          {emptyArray.map(() => (
-            <PlaceholderVideo />
+          {emptyArray.map((i, key) => (
+            <PlaceholderVideo key={key} />
           ))}
         </Section>
         <Section title={t("learn.sectionPodcast")}>
-          {emptyArray.map(() => (
-            <PlaceholderPodcast />
+          {emptyArray.map((i, key) => (
+            <PlaceholderPodcast key={key} />
           ))}
         </Section>
         <Section title={t("learn.sectionArticles")}>
-          {emptyArray.map(() => (
-            <Flex flexDirection="column">
+          {emptyArray.map((i, key) => (
+            <Flex key={key} flexDirection="column">
               <PlaceholderArticle />
               <PlaceholderArticle />
             </Flex>
