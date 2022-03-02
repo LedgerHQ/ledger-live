@@ -81,7 +81,7 @@ import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
-import { setOsTheme, setTheme } from "./actions/settings";
+import { setOsTheme } from "./actions/settings";
 // $FlowFixMe
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
 // $FlowFixMe
@@ -383,13 +383,9 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const compareOsTheme = useCallback(() => {
     const currentOsTheme = Appearance.getColorScheme();
     if (currentOsTheme && osTheme !== currentOsTheme) {
-      const isDark = themes[theme].dark;
-      const newTheme =
-        currentOsTheme === "dark" ? (isDark ? theme : "dark") : "light";
-      dispatch(setTheme(newTheme));
       dispatch(setOsTheme(currentOsTheme));
     }
-  }, [dispatch, osTheme, theme]);
+  }, [dispatch, osTheme]);
 
   useEffect(() => {
     compareOsTheme();
@@ -399,14 +395,20 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
     return () => AppState.removeEventListener("change", osThemeChangeHandler);
   }, [compareOsTheme]);
 
+  const resolvedTheme = useMemo(
+    () =>
+      ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
+    [theme, osTheme],
+  );
+
   if (!isReady) {
     return null;
   }
 
   return (
-    <StyleProvider selectedPalette={theme === "light" ? "light" : "dark"}>
+    <StyleProvider selectedPalette={resolvedTheme}>
       <NavigationContainer
-        theme={themes[theme]}
+        theme={themes[resolvedTheme]}
         linking={linking}
         ref={navigationRef}
         onReady={() => {

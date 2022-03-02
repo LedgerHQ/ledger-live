@@ -221,8 +221,6 @@ const styles = StyleSheet.create({
   scrollArea: {
     paddingHorizontal: 24,
     paddingTop: 50,
-    paddingBottom: 24,
+    paddingBottom: 116,
   },
-  spacerTop: { marginTop: 60 },
-  spacerBottom: { marginTop: 24 },
 });
