@@ -12,7 +12,6 @@ import {
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import flatMap from "lodash/flatMap";
-import { Transaction } from "../../types";
 
 type TxsById = {
   [id: string]: {
@@ -103,21 +102,19 @@ export const getAddress = (a: Account): Address =>
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
 export const getTxToBroadcast = (
-  account: Account,
-  transaction: Transaction,
+  operation: Operation,
   signature: string
 ): BroadcastTransactionRequest => {
-  const { address } = getAddress(account);
+  const { extra, senders, recipients, value } = operation;
   const {
-    recipient,
-    amount,
     gasLimit,
     gasFeeCap,
     gasPremium,
     method,
     version,
     nonce,
-  } = transaction;
+    signatureType,
+  } = extra;
 
   return {
     message: {
@@ -125,15 +122,15 @@ export const getTxToBroadcast = (
       method,
       nonce,
       params: "",
-      to: recipient,
-      from: address,
+      to: recipients[0],
+      from: senders[0],
       gaslimit: gasLimit.toNumber(),
       gaspremium: gasPremium.toString(),
       gasfeecap: gasFeeCap.toString(),
-      value: amount.toFixed(),
+      value: value.toFixed(),
     },
     signature: {
-      type: 1,
+      type: signatureType,
       data: signature,
     },
   };
