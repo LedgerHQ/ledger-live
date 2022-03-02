@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import WebView from "react-native-webview";
+import { URLSearchParams } from 'react-native-url-polyfill';
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import NetInfo from "@react-native-community/netinfo";
@@ -9,6 +10,7 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import LoadingView from "./LoadingScreen";
 import NoConnectionErrorScreen from "./NoConnectionErrorScreen";
 import { Track } from "../../analytics";
+import { lightTheme, darkTheme } from "../../colors";
 
 const learnProdURL = "https://www.ledger.com/ledger-live-learn";
 const learnStagingURL =
@@ -31,9 +33,19 @@ export default function Learn() {
   } = useTheme();
 
   const useStagingURL = useEnv("USE_LEARN_STAGING_URL");
+
+  const params = new URLSearchParams({
+    theme: themeType,
+    lang: i18n.languages[0],
+    pagePaddingLeft: "16px",
+    pagePaddingRight: "16px",
+    darkBackgroundColor: `${darkTheme.colors.background}`, // TODO: update in v3
+    lightBackgroundColor: `${lightTheme.colors.background}`, // TODO: update in v3
+  });
+
   const uri = `${
     useStagingURL ? learnStagingURL : learnProdURL
-  }?theme=${themeType}&lang=${i18n.languages[0]}`;
+  }?${params.toString()}`;
 
   const [initialLoadingDone, setInitialLoadingDone] = useState(false);
   const [loading, setLoading] = useState(false);
