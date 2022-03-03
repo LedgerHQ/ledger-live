@@ -560,6 +560,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Market data api",
   },
+  USE_LEARN_STAGING_URL: {
+    def: false,
+    parser: boolParser,
+    desc: "use the staging URL for the learn page",
+  },
 };
 
 const getDefinition = (name: string): EnvDef<any> | null | undefined =>
