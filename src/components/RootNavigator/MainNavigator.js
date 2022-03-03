@@ -12,8 +12,6 @@ import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
-import AccountsIcon from "../../icons/Accounts";
-import AppsIcon from "../../icons/Apps";
 import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
 
