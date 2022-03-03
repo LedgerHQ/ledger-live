@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { storiesOf } from "../../storiesOf";
-import { text, button } from "@storybook/addon-knobs";
+import { text, button, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
 import Text from "../../../../src/components/Text";
@@ -28,6 +28,7 @@ const BottomDrawerStory = () => {
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
       Icon={Icons.TrashMedium}
+      noCloseButton={boolean("noCloseButton", false)}
     >
       <Text>Exemple children</Text>
       <Button type={"main"} onPress={() => setIsOpen(false)}>
