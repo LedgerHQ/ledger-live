@@ -136,6 +136,11 @@ def useIntlJsc = true
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
 
+/**
+ * Architectures to build native code for in debug.
+ */
+def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitectures")
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -147,7 +152,7 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4195711
+        versionCode 4195712
         versionName "2.38.3"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -181,6 +186,11 @@ android {
         debug {
             signingConfig signingConfigs.debug
             applicationIdSuffix ".debug"
+            if (nativeArchitectures) {
+                ndk {
+                    abiFilters nativeArchitectures.split(',')
+                }
+            }
         }
         release {
             minifyEnabled enableProguardInReleaseBuilds
