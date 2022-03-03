@@ -71,7 +71,7 @@ const ScrollContainerHeaderStory = () => {
         }
         MiddleSection={
           <Flex
-            height={50}
+            height={250}
             border={debug ? "1px solid blue" : "none"}
             flexDirection="column"
             justifyContent="center"

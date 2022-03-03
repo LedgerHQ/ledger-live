@@ -40,12 +40,6 @@ const ContentContainer = styled.View`
   flex-grow: 1;
 `;
 
-const HeaderContainer = styled.View`
-  display: flex;
-  align-items: center;
-  margin-bottom: ${(p) => p.theme.space[7]}px;
-`;
-
 const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
@@ -69,6 +63,38 @@ const defaultModalStyle = {
   flex: 1,
   margin: 16,
 };
+
+export function ModalHeader({
+  Icon,
+  iconColor,
+  title,
+  description,
+  subtitle,
+}: Pick<
+  BaseModalProps,
+  "Icon" | "iconColor" | "title" | "description" | "subtitle"
+>): React.ReactElement {
+  return (
+    <Flex alignItems={"center"} mb={7}>
+      {Icon && (
+        <Flex mb={7}>
+          {React.isValidElement(Icon) ? (
+            Icon
+          ) : (
+            <BoxedIcon size={64} Icon={Icon} iconSize={24} iconColor={iconColor} />
+          )}
+        </Flex>
+      )}
+      {subtitle && <StyledSubtitle textAlign={"center"}>{subtitle}</StyledSubtitle>}
+      {title && <StyledTitle textAlign={"center"}>{title}</StyledTitle>}
+      {description && (
+        <Text variant={"body"} color={"neutral.c70"} textAlign={"center"} mt={6}>
+          {description}
+        </Text>
+      )}
+    </Flex>
+  );
+}
 
 export default function BaseModal({
   isOpen,
@@ -110,24 +136,13 @@ export default function BaseModal({
         <CloseContainer>
           {!noCloseButton && <Link Icon={CloseMedium} onPress={onClose} />}
         </CloseContainer>
-        <HeaderContainer>
-          {Icon && (
-            <Flex mb={7}>
-              {React.isValidElement(Icon) ? (
-                Icon
-              ) : (
-                <BoxedIcon size={64} Icon={Icon} iconSize={24} iconColor={iconColor} />
-              )}
-            </Flex>
-          )}
-          {subtitle && <StyledSubtitle textAlign={"center"}>{subtitle}</StyledSubtitle>}
-          {title && <StyledTitle textAlign={"center"}>{title}</StyledTitle>}
-          {description && (
-            <Text variant={"body"} color={"neutral.c70"} textAlign={"center"} mt={6}>
-              {description}
-            </Text>
-          )}
-        </HeaderContainer>
+        <ModalHeader
+          Icon={Icon}
+          iconColor={iconColor}
+          title={title}
+          description={description}
+          subtitle={subtitle}
+        />
         <ContentContainer>{children}</ContentContainer>
       </Container>
     </ReactNativeModal>
