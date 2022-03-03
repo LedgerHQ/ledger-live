@@ -83,30 +83,16 @@ export default function MainNavigator({
           options={{
             unmountOnBlur: true,
             tabBarIcon: (props: any) => (
-              <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
+              <TabIcon
+                Icon={Icons.WalletMedium}
+                i18nKey="tabs.accounts"
+                {...props}
+              />
             ),
             tabBarTestID: "TabBarAccounts",
           }}
         />
       )}
-      <Tab.Screen
-        name={NavigatorName.Accounts}
-        component={AccountsNavigator}
-        listeners={({ route, navigation }) => ({
-          tabPress: () => navigation.navigate(route.name),
-        })}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: (props: any) => (
-            <TabIcon
-              Icon={Icons.WalletMedium}
-              i18nKey="tabs.accounts"
-              {...props}
-            />
-          ),
-          tabBarTestID: "TabBarAccounts",
-        }}
-      />
       <Tab.Screen
         name={ScreenName.Transfer}
         component={Transfer}
