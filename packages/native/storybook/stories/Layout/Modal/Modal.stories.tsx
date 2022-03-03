@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { storiesOf } from "../../storiesOf";
-import { text, button } from "@storybook/addon-knobs";
+import { text, button, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BaseModal from "../../../../src/components/Layout/Modals/BaseModal";
 import Text from "../../../../src/components/Text";
@@ -27,6 +27,7 @@ const ModalStory = () => {
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
       Icon={<IconBox Icon={Icons.TrashMedium} />}
+      noCloseButton={boolean("noCloseButton", false)}
     >
       <Text>{text("content", "Ledger")}</Text>
     </BaseModal>

@@ -25,6 +25,7 @@ export type BaseModalProps = {
   description?: string;
   subtitle?: string;
   children?: React.ReactNode;
+  noCloseButton?: boolean;
 } & Partial<ModalProps>;
 
 const Container = styled.View`
@@ -72,6 +73,7 @@ const defaultModalStyle = {
 export default function BaseModal({
   isOpen,
   onClose = () => {},
+  noCloseButton,
   containerStyle = {},
   modalStyle = {},
   preventBackdropClick,
@@ -106,7 +108,7 @@ export default function BaseModal({
     >
       <Container style={containerStyle}>
         <CloseContainer>
-          <Link Icon={CloseMedium} onPress={onClose} />
+          {!noCloseButton && <Link Icon={CloseMedium} onPress={onClose} />}
         </CloseContainer>
         <HeaderContainer>
           {Icon && (
