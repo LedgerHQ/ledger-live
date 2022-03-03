@@ -55,10 +55,6 @@ import {
 } from "../families/solana/serialization";
 
 import {
-  toHederaResourcesRaw,
-  fromHederaResourcesRaw,
-} from "../families/hedera/serialization";
-import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -720,7 +716,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     cryptoOrgResources,
     solanaResources,
     nfts,
-    hederaResources,
   } = rawAccount;
   const subAccounts =
     subAccountsRaw &&
@@ -885,7 +880,6 @@ export function toAccountRaw({
   cryptoOrgResources,
   solanaResources,
   nfts,
-  hederaResources,
 }: Account): AccountRaw {
   const res: AccountRaw = {
     id,
@@ -954,10 +948,6 @@ export function toAccountRaw({
 
   if (algorandResources) {
     res.algorandResources = toAlgorandResourcesRaw(algorandResources);
-  }
-
-  if (hederaResources) {
-    res.hederaResources = toHederaResourcesRaw(hederaResources);
   }
 
   if (polkadotResources) {

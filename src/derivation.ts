@@ -165,7 +165,8 @@ const modes = Object.freeze({
     overridesDerivation: "44'/501'/<account>'",
   },
   hederaBip44: {
-    overridesDerivation: "44/3030/0/0/<account>",
+    isNonIterable: true,
+    overridesDerivation: "44/3030",
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line

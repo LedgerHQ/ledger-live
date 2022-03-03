@@ -136,7 +136,7 @@ const envDefinitions = {
     desc: "proxy url for solana API",
   },
   API_HEDERA_MIRROR: {
-    def: "https://mainnet-public.mirrornode.hedera.com",
+    def: "https://hedera.coin.ledger.com",
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },

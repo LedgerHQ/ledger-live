@@ -1,4 +1,3 @@
-import type { AccountId } from "@hashgraph/sdk";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
@@ -8,14 +7,6 @@ export type CoreStatics = Record<string, never>;
 export type CoreAccountSpecifics = Record<string, never>;
 export type CoreOperationSpecifics = Record<string, never>;
 export type CoreCurrencySpecifics = Record<string, never>;
-
-export type HederaResources = {
-  accountId: AccountId;
-};
-
-export type HederaResourcesRaw = {
-  accountId: string;
-};
 
 export type NetworkInfo = {
   family: "hedera";

@@ -9,11 +9,6 @@ import {
 } from "./derivation";
 import { decodeAccountId, emptyHistoryCache } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
-import type { HederaResourcesRaw } from "./families/hedera/types";
-import {
-  toHederaResourcesRaw,
-  fromHederaResourcesRaw,
-} from "./families/hedera/serialization";
 
 export type AccountData = {
   id: string;
@@ -25,8 +20,6 @@ export type AccountData = {
   name: string;
   index: number;
   balance: string;
-  // chain-specific resources
-  hederaResources?: HederaResourcesRaw;
 };
 
 export type CryptoSettings = {
@@ -120,7 +113,6 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
     name,
     index,
     balance,
-    hederaResources,
   } = unsafe;
 
   if (typeof id !== "string") {
@@ -163,10 +155,6 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
 
   if (typeof freshAddress === "string" && freshAddress) {
     o.freshAddress = freshAddress;
-  }
-
-  if (typeof hederaResources === "object" && hederaResources) {
-    o.hederaResources = hederaResources;
   }
 
   return o;
@@ -282,7 +270,6 @@ export function accountToAccountData({
   currency,
   index,
   balance,
-  hederaResources,
 }: Account): AccountData {
   const res: AccountData = {
     id,
@@ -294,10 +281,6 @@ export function accountToAccountData({
     index,
     balance: balance.toString(),
   };
-
-  if (hederaResources) {
-    res.hederaResources = toHederaResourcesRaw(hederaResources);
-  }
 
   return res;
 }
@@ -313,7 +296,6 @@ export const accountDataToAccount = ({
   balance,
   derivationMode: derivationModeStr,
   seedIdentifier,
-  hederaResources,
 }: AccountData): Account => {
   const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
@@ -378,10 +360,6 @@ export const accountDataToAccount = ({
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
-
-  if (hederaResources) {
-    account.hederaResources = fromHederaResourcesRaw(hederaResources);
-  }
 
   return account;
 };

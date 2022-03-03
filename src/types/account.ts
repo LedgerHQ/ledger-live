@@ -33,10 +33,6 @@ import type {
 } from "../families/crypto_org/types";
 import { SolanaResources, SolanaResourcesRaw } from "../families/solana/types";
 import type {
-  HederaResources,
-  HederaResourcesRaw,
-} from "../families/hedera/types";
-import type {
   BalanceHistory,
   BalanceHistoryRaw,
   PortfolioRange,
@@ -217,7 +213,6 @@ export type Account = {
   tezosResources?: TezosResources;
   elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
-  hederaResources?: HederaResources;
   solanaResources?: SolanaResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
@@ -308,7 +303,6 @@ export type AccountRaw = {
   elrondResources?: ElrondResourcesRaw;
   tezosResources?: TezosResourcesRaw;
   cryptoOrgResources?: CryptoOrgResourcesRaw;
-  hederaResources?: HederaResourcesRaw;
   solanaResources?: SolanaResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
