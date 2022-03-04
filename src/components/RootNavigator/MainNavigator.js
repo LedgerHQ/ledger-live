@@ -25,7 +25,7 @@ export default function MainNavigator({
 }) {
   const { colors } = useTheme();
   const { hideTabNavigation } = params || {};
-  const { enabled: learnEnabled } = useFeature("learn") || {};
+  const learnFeature = useFeature("learn");
   return (
     <Tab.Navigator
       screenOptions={{
@@ -55,7 +55,7 @@ export default function MainNavigator({
           ),
         }}
       />
-      {learnEnabled ? (
+      {learnFeature?.learn ? (
         <Tab.Screen
           name={NavigatorName.Learn}
           component={Learn}
