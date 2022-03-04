@@ -95,6 +95,7 @@ const swapProviders: Record<string, SwapProviderConfig> = {
   },
 };
 
+// FIXME: rename to getProviderConfig
 const getProviderNameAndSignature = (
   providerName: string
 ): SwapProviderConfig => {
