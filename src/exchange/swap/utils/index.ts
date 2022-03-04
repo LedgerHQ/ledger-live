@@ -190,7 +190,7 @@ export const shouldShowKYCBanner = ({
   return kycStatus !== KYC_STATUS.approved;
 };
 
-export function getProviderName(provider: string) {
+export const getProviderName = (provider: string): string => {
   switch (provider) {
     case "ftx":
     case "ftxus":
@@ -198,4 +198,4 @@ export function getProviderName(provider: string) {
     default:
       return provider.charAt(0).toUpperCase() + provider.slice(1);
   }
-}
+};
