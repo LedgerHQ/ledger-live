@@ -36,6 +36,7 @@ export default function MainNavigator({
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.live,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen
