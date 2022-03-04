@@ -43,7 +43,9 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   invariant(transaction.family === "bitcoin", "not bitcoin family");
   invariant(account, "no account found");
 
-  const [ownSatPerByte, setOwnSatPerByte] = useState(null);
+  const [ownSatPerByte, setOwnSatPerByte] = useState(
+    satPerByte ? satPerByte.toString() : "",
+  );
 
   const onChange = text => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
@@ -83,12 +85,12 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
             <TextInput
               autoFocus
               style={[styles.textInputAS, { color: colors.darkBlue }]}
-              defaultValue={satPerByte ? satPerByte.toString() : ""}
-              keyboardType="numeric"
+              keyboardType="number-pad"
               returnKeyType="done"
               maxLength={10}
               onChangeText={onChange}
               onSubmitEditing={onValidateText}
+              value={ownSatPerByte}
             />
             <LText style={[styles.currency, { color: colors.grey }]}>
               <Trans i18nKey="common.satPerByte" />
