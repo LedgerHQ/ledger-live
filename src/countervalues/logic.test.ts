@@ -7,7 +7,7 @@ const now = Date.now();
 jest.setTimeout(60000);
 
 describe("API sanity", () => {
-  test("recent days have rate for BTC USD", async () => {
+  test.skip("recent days have rate for BTC USD", async () => {
     const state = await loadCountervalues(initialState, {
       trackingPairs: [
         {
