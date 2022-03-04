@@ -111,6 +111,7 @@
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "json-rpc-2.0": "^0.2.19",
+    "jwt-decode": "^3.1.2",
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
     "lru-cache": "5.1.1",
