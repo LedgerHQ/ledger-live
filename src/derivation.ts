@@ -165,7 +165,6 @@ const modes = Object.freeze({
     overridesDerivation: "44'/501'/<account>'",
   },
   hederaBip44: {
-    isNonIterable: true,
     overridesDerivation: "44/3030",
   },
 });
@@ -349,6 +348,7 @@ const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
+  hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

@@ -1,13 +1,11 @@
-import { $Shape } from "utility-types";
-import { BigNumber } from "bignumber.js";
-import { AccountId } from "@hashgraph/sdk";
-
-import type { Account } from "../../types";
+import invariant from "invariant";
+import { Account, getDerivationScheme, runDerivationScheme } from "../../types";
 import type {
   GetAccountShape,
-  GetAddressesFromPubkey,
+  IterateResultBuilder,
 } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+import type { Result } from "../../hw/getAddress/types";
 import { encodeAccountId } from "../../account";
 
 import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
@@ -18,22 +16,18 @@ const getAccountShape: GetAccountShape = async (
 ): Promise<Partial<Account>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
+  invariant(address, "an hedera address is expected");
+
   const liveAccountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    // FIXME Make sure this is enough
-    // TODO Even if enough, maybe better to have pubkey+address?
     xpubOrAddress: address,
-    // Custom Hedera account identifier
-    //xpubOrAddress: `${res.publicKey}+${account.accountId.toString()}`,
     derivationMode,
   });
 
-  const hederaAccountId = AccountId.fromString(address);
-
   // get current account balance
-  const accountBalance = await getAccountBalance(hederaAccountId);
+  const accountBalance = await getAccountBalance(address);
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
@@ -43,12 +37,12 @@ const getAccountShape: GetAccountShape = async (
   // merge new operations w/ previously synced ones
   const newOperations = await getOperationsForAccount(
     liveAccountId,
-    hederaAccountId,
+    address,
     latestOperationTimestamp
   );
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape = {
+  return {
     id: liveAccountId,
     freshAddress: address,
     balance: accountBalance.balance,
@@ -58,22 +52,35 @@ const getAccountShape: GetAccountShape = async (
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,
   };
-
-  return shape;
 };
 
-const getAddressesFromPubkey: GetAddressesFromPubkey = async (
-  pubkey: string
-) => {
-  // use a mirror node to ask for any accounts that have this public key registered
-  const accounts = await getAccountsForPublicKey(pubkey);
+const buildIterateResult: IterateResultBuilder = async ({
+  result: rootResult,
+}) => {
+  const accounts = await getAccountsForPublicKey(rootResult.publicKey);
+  const addresses = accounts.map((a) => a.accountId.toString());
 
-  return accounts.map((a) => a.accountId.toString());
+  return async ({ currency, derivationMode, index }) => {
+    const derivationScheme = getDerivationScheme({
+      derivationMode,
+      currency,
+    });
+    const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
+      account: index,
+    });
+    return addresses[index]
+      ? ({
+          address: addresses[index],
+          publicKey: addresses[index],
+          path: freshAddressPath,
+        } as Result)
+      : null;
+  };
 };
 
 export const scanAccounts = makeScanAccounts({
   getAccountShape,
-  getAddressesFromPubkey,
+  buildIterateResult,
 });
 
 export const sync = makeSync({ getAccountShape });

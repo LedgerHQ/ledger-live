@@ -5,7 +5,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import * as hedera from "@hashgraph/sdk";
+import { AccountId } from "@hashgraph/sdk";
 import type { Transaction } from "./types";
 import type { Account, TransactionStatus } from "../../types";
 import { calculateAmount } from "./utils";
@@ -19,18 +19,16 @@ export default async function getTransactionStatus(
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired("");
   } else {
-    const senderAccountId = account.hederaResources?.accountId;
+    if (account.freshAddress === transaction.recipient) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("");
+    }
 
     try {
-      const recipientAccountId = hedera.AccountId.fromString(
-        transaction.recipient
-      );
-
-      if (senderAccountId?.equals(recipientAccountId)) {
-        errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("");
-      }
+      AccountId.fromString(transaction.recipient);
     } catch (err) {
-      errors.recipient = new InvalidAddress(`${err}`);
+      errors.recipient = new InvalidAddress("", {
+        currencyName: account.currency.name,
+      });
     }
   }
 

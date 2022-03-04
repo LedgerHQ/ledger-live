@@ -65,11 +65,10 @@ interface HederaMirrorTransfer {
 
 export async function getOperationsForAccount(
   ledgerAccountId: string,
-  accountId: AccountId,
+  address: string,
   latestOperationTimestamp: string
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
-  const address = accountId.toString();
   const r = await fetch("/transactions", {
     "account.id": address,
     timestamp: `gt:${latestOperationTimestamp}`,

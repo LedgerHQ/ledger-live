@@ -1,8 +1,8 @@
 import { Observable } from "rxjs";
+import { PublicKey } from "@hashgraph/sdk";
 import { Account, DeviceId, Operation, SignOperationEvent } from "../../types";
-import { Transaction } from "./types";
 import { open, close } from "../../hw";
-import { AccountId, PublicKey } from "@hashgraph/sdk";
+import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
 import { calculateAmount } from "./utils";
 import Hedera from "./hw-app-hedera";
@@ -17,6 +17,7 @@ export default function signOperation({
   deviceId: DeviceId;
 }): Observable<SignOperationEvent> {
   return new Observable((o) => {
+    // TODO withDevice
     void (async function () {
       let transport;
 
@@ -32,7 +33,7 @@ export default function signOperation({
           transaction,
         });
 
-        const accountPublicKey = PublicKey.fromString(account.freshAddress);
+        const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
         await hederaTransaction.signWith(
           accountPublicKey,
@@ -94,8 +95,8 @@ async function buildOptimisticOperation({
     fee: estimatedFees,
     blockHash: null,
     blockHeight: null,
-    senders: [account.hederaResources!.accountId.toString()],
-    recipients: [AccountId.fromString(transaction.recipient).toString()],
+    senders: [account.freshAddress.toString()],
+    recipients: [transaction.recipient],
     accountId: account.id,
     date: new Date(),
     extra: {},
