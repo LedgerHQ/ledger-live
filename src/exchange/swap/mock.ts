@@ -202,53 +202,53 @@ export const mockCheckQuote: CheckQuote = async ({
 
   switch (mockedCheckQuoteStatusCode) {
     case "RATE_VALID":
-      return { code: mockedCheckQuoteStatusCode };
+      return { codeName: mockedCheckQuoteStatusCode };
 
     case "KYC_FAILED":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "KYC Failed",
         description: "The KYC verification failed",
       };
 
     case "KYC_PENDING":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "KYC Pending",
         description: "The KYC is pending",
       };
 
     case "KYC_UNDEFINED":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "KYC undifined",
         description: "The KYC is undifined",
       };
 
     case "KYC_UPGRADE_REQUIRED":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "KYC upgrade requierd",
         description: "Need to upgrade KYC level",
       };
 
     case "OVER_TRADE_LIMIT":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "Trade over the limit",
         description: "You have reached your trade limit",
       };
 
     case "UNKNOW_USER":
       return {
-        code: mockedCheckQuoteStatusCode,
+        codeName: mockedCheckQuoteStatusCode,
         error: "Unknown user",
         description: "Provided bearerToken does not match any known user",
       };
 
     default:
       return {
-        code: "UNKNOWN_ERROR",
+        codeName: "UNKNOWN_ERROR",
         error: "Unknown error",
         description: "Something unexpected happened",
       };

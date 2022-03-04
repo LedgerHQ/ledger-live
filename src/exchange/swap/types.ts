@@ -82,7 +82,7 @@ export type AvailableProviderV3 = {
 };
 
 type CheckQuoteOkStatus = {
-  code: "RATE_VALID";
+  codeName: "RATE_VALID";
 };
 
 type ValidCheckQuoteErrorCodes =
@@ -95,7 +95,7 @@ type ValidCheckQuoteErrorCodes =
   | "UNKNOWN_ERROR";
 
 type CheckQuoteErrorStatus = {
-  code: ValidCheckQuoteErrorCodes;
+  codeName: ValidCheckQuoteErrorCodes;
   error: string;
   description: string;
 };
