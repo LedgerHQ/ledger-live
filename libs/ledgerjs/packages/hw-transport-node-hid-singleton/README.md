@@ -17,10 +17,13 @@ Allows to communicate with Ledger Hardware Wallets.
 
 *   [TransportNodeHidSingleton](#transportnodehidsingleton)
     *   [Examples](#examples)
+    *   [exchange](#exchange)
+        *   [Parameters](#parameters)
     *   [isSupported](#issupported)
     *   [list](#list)
     *   [listen](#listen)
-        *   [Parameters](#parameters)
+        *   [Parameters](#parameters-1)
+    *   [autoDisconnect](#autodisconnect)
     *   [disconnect](#disconnect)
     *   [open](#open)
 
@@ -38,6 +41,16 @@ import TransportNodeHid from "@ledgerhq/hw-transport-node-hid-singleton";
 TransportNodeHid.create().then(transport => ...)
 ```
 
+#### exchange
+
+Exchange with the device using APDU protocol.
+
+##### Parameters
+
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
+
 #### isSupported
 
 #### list
@@ -49,6 +62,12 @@ TransportNodeHid.create().then(transport => ...)
 *   `observer` **Observer\<DescriptorEvent\<any>>** 
 
 Returns **Subscription** 
+
+#### autoDisconnect
+
+convenience wrapper for auto-disconnect logic
+
+Returns **void** 
 
 #### disconnect
 

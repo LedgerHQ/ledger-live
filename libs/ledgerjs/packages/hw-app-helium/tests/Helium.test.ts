@@ -5,7 +5,7 @@ import {
   TransferValidatorStakeV1,
   UnstakeValidatorV1,
 } from "@helium/transactions";
-import { Address } from "@helium/crypto";
+import Address from "@helium/address";
 import {
   openTransportReplayer,
   RecordStore,

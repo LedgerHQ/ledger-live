@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
 import { StatusCodes } from "@ledgerhq/errors";
-import { Address } from "@helium/crypto";
+import Address from "@helium/address";
 import {
   PaymentV2,
   SecurityExchangeV1,
@@ -116,7 +116,7 @@ export default class Helium {
       pathBuffer
     );
 
-    const address = Address.fromBin(addressBuffer.slice(1));
+    const address = Address.fromBin(addressBuffer.slice(1, 34));
 
     return {
       index: addressBuffer.slice(0, 1)[0],

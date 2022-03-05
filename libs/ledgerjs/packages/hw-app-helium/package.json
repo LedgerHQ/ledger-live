@@ -1,6 +1,6 @@
 {
     "name": "@ledgerhq/hw-app-helium",
-    "version": "6.24.1",
+    "version": "6.26.0",
     "description": "Ledger Hardware Wallet Helium Application API",
     "keywords": [
         "Ledger",
@@ -27,7 +27,7 @@
     "types": "lib/Helium.d.ts",
     "license": "Apache-2.0",
     "dependencies": {
-        "@helium/crypto": "^3.45.0",
+        "@helium/address": "^4.0.0",
         "@helium/proto": "^1.5.0",
         "@helium/transactions": "^3.62.0",
         "@ledgerhq/errors": "^6.10.0",
@@ -38,7 +38,7 @@
     },
     "devDependencies": {
         "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
-        "axios": "^0.23.0"
+        "axios": "^0.26.0"
     },
     "scripts": {
         "clean": "bash ../../script/clean.sh",

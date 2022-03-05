@@ -1,4 +1,4 @@
-import { Address } from "@helium/crypto";
+import Address from "@helium/address";
 import {
   PaymentV2,
   StakeValidatorV1,
