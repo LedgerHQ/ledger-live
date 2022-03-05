@@ -1289,7 +1289,17 @@
     "settings": "Settings",
     "platform": "Discover",
     "nanoX": "Nano X",
-    "market": "Market"
+    "market": "Market",
+    "learn": "Learn"
+  },
+  "learn": {
+    "pageTitle": "learn",
+    "noConnection": "No connection",
+    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again.",
+    "sectionShows": "Shows",
+    "sectionVideo": "Video",
+    "sectionPodcast": "Podcast",
+    "sectionArticles": "Articles"
   },
   "portfolio": {
     "totalBalance": "Total balance",
