@@ -19,7 +19,11 @@ node_modules/warning/.*
 
 .*/node_modules/react-native-gesture-handler/Swipeable.js
 
-
+# Parser issues
+.*/node_modules/.pnpm/hermes-estree@.*
+.*/node_modules/.pnpm/hermes-parser@.*
+.*/node_modules/.pnpm/module-deps@.*
+.*/node_modules/.pnpm/resolve@.*
 
 .*/TcpSocket.js
 .*/TcpServer.js
@@ -39,6 +43,7 @@ node_modules/warning/.*
 .*/node_modules/@ledgerhq/react-native-hw-transport-ble/lib/BleTransport.js
 
 [include]
+../../node_modules/.pnpm
 
 [libs]
 node_modules/react-native/interface.js
