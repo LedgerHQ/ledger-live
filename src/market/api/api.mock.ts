@@ -1,4 +1,9 @@
-import { CurrencyData, SupportedCoins } from "../types";
+import {
+  CurrencyData,
+  MarketCoin,
+  MarketListRequestParams,
+  SupportedCoins,
+} from "../types";
 import { listCryptoCurrencies, listTokens } from "../../currencies";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
@@ -14,8 +19,21 @@ async function setSupportedCoinsList(): Promise<SupportedCoins> {
   return response;
 }
 
+const matchSearch =
+  (search: string) =>
+  (currency: MarketCoin): boolean => {
+    if (!search) return false;
+    const match = `${currency.symbol}|${currency.name}`;
+    return match.toLowerCase().includes(search.toLowerCase());
+  };
+
 // fetches currencies data for selected currencies ids
-async function listPaginated(): Promise<CurrencyData[]> {
+async function listPaginated({
+  search = "",
+  starred = [],
+  order = "desc",
+  range = "24h",
+}: MarketListRequestParams): Promise<CurrencyData[]> {
   const response = await Promise.resolve([
     {
       id: "bitcoin",
@@ -233,8 +251,26 @@ async function listPaginated(): Promise<CurrencyData[]> {
     },
   ]);
 
+  let filteredResponse = response;
+
+  if (order !== "desc") {
+    filteredResponse = filteredResponse.sort(
+      (x, y) => y.market_cap_rank - x.market_cap_rank
+    );
+  }
+
+  if (search) {
+    filteredResponse = filteredResponse.filter(matchSearch(search));
+  }
+
+  if (starred.length > 0) {
+    filteredResponse = filteredResponse.filter((currency) =>
+      starred.includes(currency.id)
+    );
+  }
+
   // @ts-expect-error issue in typing
-  return response.map((currency: any) => ({
+  return filteredResponse.map((currency: any) => ({
     id: currency.id,
     name: currency.name,
     image: currency.image,
@@ -248,7 +284,10 @@ async function listPaginated(): Promise<CurrencyData[]> {
     low24h: currency.low_24h,
     ticker: currency.symbol,
     price: currency.current_price,
-    priceChangePercentage: currency.price_change_percentage_24h_in_currency,
+    priceChangePercentage:
+      range !== "24h"
+        ? currency.price_change_percentage_24h_in_currency * 7
+        : currency.price_change_percentage_24h_in_currency,
     marketCapChangePercentage24h: currency.market_cap_change_percentage_24h,
     circulatingSupply: currency.circulating_supply,
     totalSupply: currency.total_supply,

@@ -200,7 +200,10 @@ export function maxTxSize(
   // Input: 32 PrevTxHash + 4 Index + 1 scriptSigLength + 4 sequence
   let inputsWeight = byteSize(inputCount) * baseByte; // Number of inputs
   inputsWeight += inputWeight(derivationMode) * inputCount;
-
+  // More bytes for decred, refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L162
+  if (currency.network.name === "Decred") {
+    inputsWeight += 64 * inputCount;
+  }
   const txWeight = fixed + inputsWeight + outputsWeight;
   return txWeight / 4;
 }

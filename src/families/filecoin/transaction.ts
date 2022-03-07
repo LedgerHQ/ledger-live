@@ -8,12 +8,22 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import BigNumber from "bignumber.js";
 
-export const formatTransaction = (t: Transaction, account: Account): string => `
-SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
-  showCode: true,
-  disableRounding: true,
-})}
-TO ${t.recipient}`;
+export const formatTransaction = (
+  { recipient, useAllAmount, amount }: Transaction,
+  account: Account
+): string => `
+SEND ${
+  useAllAmount
+    ? "MAX"
+    : amount.isZero()
+    ? ""
+    : " " +
+      formatCurrencyUnit(getAccountUnit(account), amount, {
+        showCode: true,
+        disableRounding: true,
+      })
+}
+TO ${recipient}`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

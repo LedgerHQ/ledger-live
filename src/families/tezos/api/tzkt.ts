@@ -36,6 +36,8 @@ type CommonOperationType = {
   timestamp: string;
   level: number;
   block: string;
+  gasLimit?: number;
+  storageLimit?: number;
   status?: "applied" | "failed" | "backtracked" | "skipped";
 };
 

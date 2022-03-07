@@ -14,8 +14,6 @@ const filecoinSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Filecoin",
-    firmware: "2.0.0",
-    appVersion: "0.18.3",
   },
 
   testTimeout: 2 * 60 * 1000,
