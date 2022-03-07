@@ -109,7 +109,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
   /**
    * convenience wrapper for auto-disconnect logic
    */
-  static async autoDisconnect(): void {
+  static async autoDisconnect(): Promise<void> {
     if (transportInstance && !transportInstance.preventAutoDisconnect) {
       log("hid-verbose", "triggering auto disconnect");
       TransportNodeHidSingleton.disconnect();
