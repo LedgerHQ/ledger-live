@@ -200,6 +200,9 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
         run: |
           eval "$(rbenv init - bash)"
           pnpm i --frozen-lockfile
