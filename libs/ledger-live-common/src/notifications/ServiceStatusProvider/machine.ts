@@ -18,13 +18,14 @@ export const serviceStatusMachine = createMachine({
           target: "updating",
         },
       },
+      // @ts-expect-error xstate bindings updates caused this error
       on: {
         UPDATE_DATA: {
           target: "updating",
           actions: assign({
             isLoading: true,
             error: null,
-          } as any),
+          }),
         },
       },
     },
