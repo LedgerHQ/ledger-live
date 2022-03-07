@@ -6,55 +6,38 @@ import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer"
 import { Alert, Icons, Text } from "../../../../src";
 import { ScrollView } from "react-native";
 
-const BottomDrawerStory = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const makeBottomDrawerStory =
+  ({ noHeaderProps = false }) =>
+  () => {
+    const [isOpen, setIsOpen] = useState(true);
 
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
+    const openModal = useCallback(() => {
+      setIsOpen(true);
+    }, []);
 
-  button("Open modal", openModal);
+    button("Open modal", openModal);
 
-  return (
-    <BottomDrawer
-      isOpen={isOpen}
-      onClose={() => {
-        action("onClose")();
-        setIsOpen(false);
-      }}
-      title={text("title", "title")}
-      description={text("description", "Description")}
-      subtitle={text("subtitle", "Subtitle")}
-      Icon={Icons.TrashMedium}
-      noCloseButton={boolean("noCloseButton", false)}
-    >
-      <Alert type="info" title="Example children (Alert component)" />
-    </BottomDrawer>
-  );
-};
-
-const BottomDrawerNoHeaderProps = () => {
-  const [isOpen, setIsOpen] = useState(true);
-
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
-
-  button("Open modal", openModal);
-
-  return (
-    <BottomDrawer
-      isOpen={isOpen}
-      onClose={() => {
-        action("onClose")();
-        setIsOpen(false);
-      }}
-      noCloseButton={boolean("noCloseButton", false)}
-    >
-      <Alert type="info" title="Example children (Alert component)" />
-    </BottomDrawer>
-  );
-};
+    return (
+      <BottomDrawer
+        isOpen={isOpen}
+        onClose={() => {
+          action("onClose")();
+          setIsOpen(false);
+        }}
+        {...(noHeaderProps
+          ? {}
+          : {
+              title: text("title", "title"),
+              description: text("description", "Description"),
+              subtitle: text("subtitle", "Subtitle"),
+              Icon: Icons.TrashMedium,
+            })}
+        noCloseButton={boolean("noCloseButton", false)}
+      >
+        <Alert type="info" showIcon={false} title="Example children (Alert component)" />
+      </BottomDrawer>
+    );
+  };
 
 const BottomDrawerScrollViewStory = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -145,7 +128,7 @@ const BottomDrawerScrollViewStory = () => {
 
 storiesOf((story) =>
   story("Layout/Drawer", module)
-    .add("BottomDrawer", () => <BottomDrawerStory />)
-    .add("BottomDrawer without header props", () => <BottomDrawerNoHeaderProps />)
+    .add("BottomDrawer", makeBottomDrawerStory({ noHeaderProps: false }))
+    .add("BottomDrawer without header props", makeBottomDrawerStory({ noHeaderProps: true }))
     .add("BottomDrawer with ScrollView", () => <BottomDrawerScrollViewStory />),
 );

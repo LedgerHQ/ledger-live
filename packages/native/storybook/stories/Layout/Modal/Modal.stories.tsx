@@ -4,7 +4,7 @@ import { text, button, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import { Alert, BaseModal, IconBox, Icons } from "../../../../src";
 
-const MakeModalStory = ({ noHeaderProps = false }: { noHeaderProps?: boolean }) =>
+const makeModalStory = ({ noHeaderProps = false }) =>
   function ModalStory() {
     const [isOpen, setIsOpen] = useState(true);
 
@@ -31,13 +31,13 @@ const MakeModalStory = ({ noHeaderProps = false }: { noHeaderProps?: boolean }) 
             })}
         noCloseButton={boolean("noCloseButton", false)}
       >
-        <Alert type="info" title="Example children (Alert component)" />
+        <Alert type="info" showIcon={false} title="Example children (Alert component)" />
       </BaseModal>
     );
   };
 
 storiesOf((story) =>
   story("Layout/Modal", module)
-    .add("BaseModal", MakeModalStory({ noHeaderProps: false }))
-    .add("BaseModal without header props", MakeModalStory({ noHeaderProps: true })),
+    .add("BaseModal", makeModalStory({ noHeaderProps: false }))
+    .add("BaseModal without header props", makeModalStory({ noHeaderProps: true })),
 );
