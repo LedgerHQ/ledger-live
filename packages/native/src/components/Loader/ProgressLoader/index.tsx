@@ -85,7 +85,7 @@ const ProgressLoader = ({
                 cx={radius}
                 cy={radius}
                 fill="transparent"
-                r={radius * 0.92}
+                r={normalizedRadius}
                 stroke={backgroundColor}
                 strokeWidth={strokeWidth}
               />
@@ -93,7 +93,7 @@ const ProgressLoader = ({
                 cx={radius}
                 cy={radius}
                 fill="transparent"
-                r={radius * 0.92}
+                r={normalizedRadius}
                 stroke={mainColor}
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${circumference / 4}, ${circumference}`}
