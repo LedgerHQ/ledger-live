@@ -39,7 +39,7 @@ const ProgressLoader = ({
   onPress,
   radius = 48,
   strokeWidth = 4,
-  frontStrokeLinecap,
+  frontStrokeLinecap = "butt",
   children,
 }: Props): React.ReactElement => {
   const { colors } = useTheme();
