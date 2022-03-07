@@ -22,7 +22,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "send 50%~",
+      name: "Send 50%~",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
@@ -46,6 +46,23 @@ const filecoinSpecs: AppSpec<Transaction> = {
             },
             {
               amount,
+            },
+          ],
+        };
+      },
+    },
+    {
+      name: "Transfer Max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: pickSiblings(siblings, 2).freshAddress,
+            },
+            {
+              useAllAmount: true,
             },
           ],
         };
