@@ -1423,13 +1423,13 @@ importers:
       jest: ^27.4.7
       ts-jest: ^27.1.2
       ts-node: ^10.4.0
-      ws: 8.5.0
+      ws: ^7.5.2
     dependencies:
       '@ledgerhq/errors': link:../errors
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
       axios: 0.26.0
-      ws: 8.5.0
+      ws: 7.5.7
     devDependencies:
       jest: 27.5.1_ts-node@10.7.0
       ts-jest: 27.1.3_jest@27.5.1
@@ -19578,7 +19578,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': '>= 4'
       eslint: '>=5'
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
