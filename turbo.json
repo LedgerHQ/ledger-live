@@ -19,9 +19,11 @@
         "^build"
       ]
     },
-    "lint": {},
+    "lint": {
+      "outputs": []
+    },
     "typecheck": {
-      "cache": false,
+      "outputs": [],
       "dependsOn": [
         "^build"
       ]
@@ -37,12 +39,14 @@
     "live-mobile#lint": {
       "dependsOn": [
         "^build"
-      ]
+      ],
+      "outputs": []
     },
     "live-desktop#lint": {
       "dependsOn": [
         "^build"
-      ]
+      ],
+      "outputs": []
     },
     "start": {
       "cache": false,
