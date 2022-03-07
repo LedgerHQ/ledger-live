@@ -3,9 +3,7 @@ import { storiesOf } from "../../storiesOf";
 import { text, button, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
-import Text from "../../../../src/components/Text";
-import Button from "../../../../src/components/cta/Button";
-import { Icons } from "../../../../src/assets";
+import { Alert, Icons, Text } from "../../../../src";
 import { ScrollView } from "react-native";
 
 const BottomDrawerStory = () => {
@@ -30,10 +28,30 @@ const BottomDrawerStory = () => {
       Icon={Icons.TrashMedium}
       noCloseButton={boolean("noCloseButton", false)}
     >
-      <Text>Exemple children</Text>
-      <Button type={"main"} onPress={() => setIsOpen(false)}>
-        Close
-      </Button>
+      <Alert type="info" title="Example children (Alert component)" />
+    </BottomDrawer>
+  );
+};
+
+const BottomDrawerNoHeaderProps = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  button("Open modal", openModal);
+
+  return (
+    <BottomDrawer
+      isOpen={isOpen}
+      onClose={() => {
+        action("onClose")();
+        setIsOpen(false);
+      }}
+      noCloseButton={boolean("noCloseButton", false)}
+    >
+      <Alert type="info" title="Example children (Alert component)" />
     </BottomDrawer>
   );
 };
@@ -121,9 +139,6 @@ const BottomDrawerScrollViewStory = () => {
           mollis.
         </Text>
       </ScrollView>
-      <Button type={"main"} onPress={() => setIsOpen(false)} mt={4}>
-        Close
-      </Button>
     </BottomDrawer>
   );
 };
@@ -131,5 +146,6 @@ const BottomDrawerScrollViewStory = () => {
 storiesOf((story) =>
   story("Layout/Modal", module)
     .add("BottomDrawer", () => <BottomDrawerStory />)
+    .add("BottomDrawer without header props", () => <BottomDrawerNoHeaderProps />)
     .add("BottomDrawer with ScrollView", () => <BottomDrawerScrollViewStory />),
 );
