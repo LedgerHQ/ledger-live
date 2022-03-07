@@ -144,7 +144,7 @@ const BottomDrawerScrollViewStory = () => {
 };
 
 storiesOf((story) =>
-  story("Layout/Modal", module)
+  story("Layout/Drawer", module)
     .add("BottomDrawer", () => <BottomDrawerStory />)
     .add("BottomDrawer without header props", () => <BottomDrawerNoHeaderProps />)
     .add("BottomDrawer with ScrollView", () => <BottomDrawerScrollViewStory />),
