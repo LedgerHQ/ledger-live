@@ -160,13 +160,13 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   useEffect(() => {
     const device = route.params.device;
 
-    if (device) {
+    if (device && !verified) {
       setAllowNavigation(false);
       verifyOnDevice(device);
     } else {
       setAllowNavigation(true);
     }
-  }, [route.params, account, parentAccount, verifyOnDevice]);
+  }, [route.params, verified, verifyOnDevice]);
 
   if (!account) return null;
   const { width } = getWindowDimensions();
