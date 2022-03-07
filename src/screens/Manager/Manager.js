@@ -99,6 +99,8 @@ const Manager = ({
   // Save last seen device
   useEffect(() => {
     const dmi = {
+      id: device.deviceId,
+      name: device.deviceName,
       modelId: device.modelId,
       deviceInfo,
       appsInstalled: state.installed.map(({ name, version }) => ({

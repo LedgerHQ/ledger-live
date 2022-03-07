@@ -25,10 +25,6 @@ import { Trans } from "react-i18next";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import {
-  getDefaultPreferredNewAccountScheme,
-  getPreferredNewAccountScheme,
-} from "@ledgerhq/live-common/lib/derivation";
 
 import type { DerivationMode } from "@ledgerhq/live-common/lib/derivation";
 
@@ -129,15 +125,18 @@ function AddAccountsAccounts({
     returnToSwap,
   } = route.params || {};
 
-  const newAccountSchemes = getPreferredNewAccountScheme(currency);
-
-  const preferedNewAccountScheme = getDefaultPreferredNewAccountScheme(
-    currency,
-  );
-
-  const preferredNewAccountSchemes = useMemo(
-    () => (preferedNewAccountScheme ? [preferedNewAccountScheme] : undefined),
-    [preferedNewAccountScheme],
+  // Find accounts that are (scanned && !existing && !used)
+  const newAccountSchemes = scannedAccounts
+    .filter(
+      a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used,
+    )
+    .map(a => a.derivationMode);
+  const preferredNewAccountScheme = useMemo(
+    () =>
+      newAccountSchemes && newAccountSchemes.length > 0
+        ? newAccountSchemes[0]
+        : undefined,
+    [newAccountSchemes],
   );
 
   useEffect(() => {
@@ -318,14 +317,14 @@ function AddAccountsAccounts({
         scanning,
         preferredNewAccountSchemes: showAllCreatedAccounts
           ? undefined
-          : preferredNewAccountSchemes,
+          : [preferredNewAccountScheme],
       }),
     [
       existingAccounts,
       scannedAccounts,
       scanning,
       showAllCreatedAccounts,
-      preferredNewAccountSchemes,
+      preferredNewAccountScheme,
     ],
   );
 

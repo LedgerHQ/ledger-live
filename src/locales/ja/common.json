@@ -263,8 +263,8 @@
       "description": null
     },
     "EthAppNftNotSupported": {
-      "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+      "title": "お使いのデバイスではこの操作をご利用いただけません",
+      "description": "NFTの送付は、Nano Xでのみご利用いただけます。カスタマーサポートページから、Nano SでNFTを送付する方法をご確認ください。"
     },
     "Touch ID Error": {
       "title": "生体認証に失敗しました。",
@@ -304,7 +304,7 @@
       "title": "これは有効な{{currencyName}}アドレスではありません。"
     },
     "InvalidAddressBecauseAlreadyDelegated": {
-      "title": "Your account is already delegated to this validator"
+      "title": "アカウントは既にバリデーターへデリゲート済みです"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "送り元アカウントと送り先アカウントが同じです。"
@@ -612,13 +612,13 @@
       "description": "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "アカウントに資金がありません"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "アドレスオフed25519 curve"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "Memoが長すぎます。最長{{maxLength}}以内で入力してください。"
     }
   },
   "bluetooth": {
@@ -690,7 +690,8 @@
   },
   "reset": {
     "description": "アカウントと設定を含むLedger Liveのデータを削除するには、スマートフォンからアプリを一旦アンインストールしてから、もう一度インストールし直してください。",
-    "button": "リセット"
+    "button": "リセット",
+    "warning": "Ledger Liveをリセットすると、すべてのアカウントのスワップ取引履歴が消去されます。"
   },
   "graph": {
     "week": "1週",
@@ -752,7 +753,7 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Ledgerへようこそ",
+      "title": "ようこそ、Ledgerへ",
       "subtitle": "スマートフォンで暗号資産を安全に管理しましょう。",
       "start": "はじめる",
       "noDevice": "デバイスをお持ちでない場合",
@@ -770,6 +771,7 @@
     "stepSelectDevice": {
       "title": "どのデバイスをお使いですか？",
       "nanoS": "Nano S",
+      "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
@@ -802,27 +804,27 @@
     },
     "stepNewDevice": {
       "0": {
-        "label": "ベーシック",
+        "label": "基礎知識",
         "title": "保有する暗号資産にアクセス",
         "desc": "あなたの暗号資産は、ブロックチェーンに保存されています。それらにアクセスして管理するには、秘密鍵が必要です。"
       },
       "1": {
-        "label": "ベーシック",
+        "label": "基礎知識",
         "title": "秘密鍵は自分で管理しましょう",
         "desc": "秘密鍵はお使いのNano上に保存されており、資産を安全に管理するために、絶対に他人と共有しないでください。"
       },
       "2": {
-        "label": "ベーシック",
+        "label": "基礎知識",
         "title": "常にオフラインで保管する",
         "desc": "Nanoは、「コールドストレージ」のウォレットとして機能します。つまり、アプリを使用しても秘密鍵がオンラインで公開されることは絶対にありません。"
       },
       "3": {
-        "label": "ベーシック",
+        "label": "基礎知識",
         "title": "トランザクションを検証する",
         "desc": "Ledger Liveでは、暗号資産の購入や売却、管理、取引、報酬の獲得を、安全に行うことが可能です。暗号資産の取引はすべて、Nanoを使って認証することになります。"
       },
       "4": {
-        "label": "ベーシック",
+        "label": "基礎知識",
         "title": "Nanoをセットアップしましょう！",
         "desc": "最初に、Nanoのセキュリティを設定します。"
       },
@@ -830,7 +832,7 @@
     },
     "stepSetupDevice": {
       "start": {
-        "title": "始める前にしっかり準備：",
+        "title": "事前準備：",
         "bullets": {
           "0": {
             "label": "余裕を持って作業できるよう、30分ほど時間を確保しましょう。"
@@ -844,7 +846,7 @@
         },
         "cta": "OK、準備完了！",
         "warning": {
-          "title": "注意してください",
+          "title": "要注意",
           "desc": "作業のすべてのステップにおいて、必ずこのアプリの指示通りに進めてください。",
           "ctaText": "了解！"
         }
@@ -858,6 +860,9 @@
             },
             "nanoS": {
               "label": "デバイスをスマートフォンのUSBポートに接続して、デバイスの電源をオンにします。"
+            },
+            "nanoSP": {
+              "label": "Turn on your device by connecting it to the USB port of your phone."
             },
             "blue": {
               "label": "デバイスをスマートフォンのUSBポートに接続し、デバイスの電源ボタンを押してオンにします。"
@@ -948,7 +953,7 @@
               "label": "Ledgerアプリで「新しいデバイスでリカバリーフレーズを復元」を選択。"
             },
             "2": {
-              "label": "新しいデバイスにリカバリーフレーズを入力すると、保有している暗号資産にアクセスできるようになります。"
+              "label": "新しいデバイスにリカバリーフレーズを入力すると、保有している暗号資産にアクセスできます。"
             }
           }
         },
@@ -1034,6 +1039,9 @@
             "nanoS": {
               "label": "デバイスをスマートフォンのUSBポートに接続して、デバイスの電源をオンにします。"
             },
+            "nanoSP": {
+              "label": "Turn on your device by connecting it to the USB port of your phone."
+            },
             "blue": {
               "label": "デバイスをスマートフォンのUSBポートに接続し、デバイスの電源ボタンを押してオンにします。"
             }
@@ -1090,6 +1098,11 @@
         "title": "Nanoを接続する",
         "desc": "このスマートフォンでNanoの初回セットアップを行います。デバイスをさっそく接続しましょう。",
         "cta": "Nanoを接続する"
+      },
+      "nanoSP": {
+        "title": "Connect your Nano",
+        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
+        "cta": "Let’s connect my Nano"
       },
       "blue": {
         "title": "Blueを接続する",
@@ -1275,7 +1288,8 @@
     "manager": "管理",
     "settings": "設定",
     "platform": "Discover",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Market"
   },
   "portfolio": {
     "totalBalance": "合計残高",
@@ -1304,12 +1318,21 @@
   },
   "addAccountsModal": {
     "ctaAdd": "アカウントを追加",
-    "ctaImport": "デスクトップアカウントのインポート"
+    "ctaImport": "デスクトップアカウントをインポート"
   },
   "byteSize": {
     "bytes": "{{size}}バイト",
-    "kbUnit": "{{size}}KB",
-    "mbUnit": "{{size}}MB"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
+  },
+  "numberCompactNotation": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time": {
     "day": "1日",
@@ -1377,7 +1400,7 @@
     "to": "送付先",
     "identifier": "トランザクションID",
     "viewOperation": "エクスプローラーで表示",
-    "whatIsThis": "この操作は何ですか？",
+    "whatIsThis": "操作の詳細はこちら",
     "seeAll": "すべて表示",
     "seeLess": "表示を減らす",
     "viewInExplorer": "エクスプローラーで表示",
@@ -1418,7 +1441,10 @@
       "withdrawUnbondedAmount": "ボンド解除済み額を引き出す",
       "palletMethod": "方法",
       "transferAmount": "送付額",
-      "validatorsCount": "バリデータ（{{number}}）"
+      "validatorsCount": "バリデータ（{{number}}）",
+      "storageLimit": "Storage Limit",
+      "gasLimit": "Gas Limit",
+      "id": "Id"
     },
     "multipleAddresses": "なぜ複数のアドレスがあるのですか？",
     "tokenName": "トークン名",
@@ -1482,7 +1508,7 @@
     "settings": {
       "header": "アカウント設定",
       "title": "アカウントを編集",
-      "advancedLogs": "Advanced logs（詳細ログ）",
+      "advancedLogs": "アドバンス",
       "accountName": {
         "title": "アカウント名",
         "desc": "アカウントの説明",
@@ -1506,14 +1532,15 @@
         "title": "ポートフォリオからアカウントを削除する",
         "desc": "保存されているデータは削除されます。",
         "confirmationTitle": "本当によろしいですか？",
-        "confirmationDesc": "この操作は、暗号資産には影響しません。既存のアカウントは後からいつでも追加できます。"
+        "confirmationDesc": "この操作は、暗号資産には影響しません。既存のアカウントは後からいつでも追加できます。",
+        "confirmationWarn": "このアカウントを削除すると、関連するスワップ取引履歴が消去されます。"
       },
       "archive": {
         "title": "アカウントをアーカイブ",
         "desc": "このアカウントはアーカイブされます。"
       },
       "advanced": {
-        "title": "Advanced logs（詳細ログ）",
+        "title": "アドバンス",
         "desc": ""
       }
     },
@@ -1527,7 +1554,7 @@
         "descBottom": "LiveQRコードを枠内に収めてください。"
       },
       "result": {
-        "title": "アカウントのインポート",
+        "title": "アカウントをインポート",
         "newAccounts": "新しいアカウント",
         "updatedAccounts": "アップデートされたアカウント",
         "empty": "新しいアカウントの追加",
@@ -1608,7 +1635,7 @@
   "help": {
     "gettingStarted": {
       "title": "ご利用ガイド",
-      "desc": "ここからスタート"
+      "desc": "はじめる"
     },
     "helpCenter": {
       "title": "Ledgerサポート",
@@ -1645,6 +1672,8 @@
       "carouselDesc": "ポートフォリオでカルーセルの表示を有効にする。",
       "language": "表示言語",
       "languageDesc": "Ledger Liveの表示言語を設定する。",
+      "region": "地域",
+      "regionDesc": "地域を選択して日付や時間、通貨をアップデートする。",
       "password": "パスワードロック",
       "passwordDesc": "スマートフォン上のLedger Liveのデータを保護するため、パスワードを設定する。",
       "counterValue": "表示通貨",
@@ -1652,7 +1681,6 @@
       "themeDesc": "アプリUIのテーマを設定する。",
       "themes": {
         "dark": "ダーク",
-        "dusk": "夕暮れ",
         "light": "ライト"
       },
       "counterValueDesc": "残高や操作に使用する通貨を選択する。",
@@ -1738,17 +1766,17 @@
       "header": "ヘルプ",
       "desc": "Ledger Liveについての詳細や、ヘルプの利用方法についてはこちらをご覧ください。",
       "support": "Ledgerサポート",
-      "supportDesc": "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
+      "supportDesc": "問題がある場合は、ハードウェアウォレットとLedger Liveの利用に関するヘルプページを参照してください。",
       "configureDevice": "デバイスのセットアップ",
-      "configureDeviceDesc": "新規デバイスとしてセットアップ、または既存のデバイスを復元する。アカウントと設定はそのまま保持されます。",
-      "clearCache": "Cacheを消去",
+      "configureDeviceDesc": "新規デバイスをセットアップ、または既存のデバイスを復元する。アカウントと設定はそのまま保持されます。",
+      "clearCache": "Cacheを削除",
       "clearCacheDesc": "ネットワーク上のトランザクションがスキャンされ、アカウントは再計算されます。",
       "clearCacheModal": "本当によろしいですか？",
       "clearCacheModalDesc": "ネットワーク上のトランザクションの完全なスキャンが新たに実行されます。アカウントの履歴が再構築され、残高は再計算されます。",
-      "clearCacheButton": "クリア",
+      "clearCacheButton": "削除",
       "exportLogs": "ログを保存",
       "exportLogsDesc": "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
-      "hardReset": "Ledger Liveをリセットします",
+      "hardReset": "Ledger Liveをリセット",
       "hardResetDesc": "この操作は、資産には影響しません。アカウントデータやトランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理することも可能です。",
       "repairDevice": "Ledgerデバイスを修理する",
       "repairDeviceDesc": "デバイスのアップデート中に問題が発生し、アップデートを再開できない場合は、この方法でデバイスの修復を試みてください。"
@@ -1759,8 +1787,11 @@
       "disclaimer": "テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にした場合、自己責任でこれらの機能を利用することに同意したことになります。"
     },
     "developer": {
-      "title": "Developer",
-      "desc": "Try out the Developer features and let us know what you think."
+      "title": "デベロッパー",
+      "desc": "試験的機能をお試しになり、フィードバックをお寄せください。",
+      "customManifest": {
+        "title": "カスタムプラットフォームマニフェストを読み込む"
+      }
     }
   },
   "migrateAccounts": {
@@ -1824,14 +1855,14 @@
       "copyAddress": "アドレスをコピー",
       "shareAddress": "アドレスを共有",
       "addressCopied": "アドレスをコピーしました！",
-      "taprootWarning": "Make sure the sender supports taproot",
+      "taprootWarning": "送付元がtaprootに対応しているか確認してください",
       "notSynced": {
         "text": "同期中",
         "desc": "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
       },
       "readOnly": {
         "title": "受け取る",
-        "text": "注意してください",
+        "text": "要注意",
         "desc": "認証されていないアドレスを表示しようとしています。安全のため、デバイス上でアドレスを認証してください。",
         "verify": "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
       }
@@ -1866,8 +1897,8 @@
           "subtitle": "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
           "pending": {
             "cta": "続行",
-            "title": "Your information has been submitted for approval",
-            "subtitle": "It usually takes only a few minutes before you can start swapping",
+            "title": "承認のためデータが提出されました。",
+            "subtitle": "スワップがご利用可能になるまで、数分かかる場合があります",
             "link": "KYC（本人確認）についての詳細"
           },
           "approved": {
@@ -1920,9 +1951,9 @@
         "cta": "閉じる"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
+        "description": "承認のため、スワップ処理がネットワークに送信されました。{{targetCurrency}}を受け取るまでに、最大1時間かかる場合があります。",
         "label": "スワップID：",
-        "title": "Pending operation",
+        "title": "保留中の処理",
         "disclaimer": "{{provider}} のサポートが必要な場合に備えて、スワップID番号を控えておいてください。",
         "cta": "詳細を表示"
       },
@@ -1942,22 +1973,22 @@
         "button": "続行",
         "from": "交換元",
         "to": "交換先",
-        "source": "Source",
-        "target": "Target account",
-        "noAccount": "You don’t have {{currency}} account",
+        "source": "ソース",
+        "target": "ターゲットアカウント",
+        "noAccount": "{{currency}}アカウントを持っていません。",
         "balance": "残高<0>123</0>",
         "fromAccount": "アカウントを選択",
         "toAccount": "アカウントを選択",
         "paraswapCTA": "Paraswapをお探しですか？この項目は「Discover」タブに移動されました！",
-        "quote": "Quote",
-        "receive": "Receive",
+        "quote": "見積もり",
+        "receive": "受け取る",
         "amount": {
           "useMax": "全額を選択",
           "available": "合計利用可能額"
         },
         "noAsset": {
-          "title": "You have no asset to swap",
-          "desc": "Buy some and come back to swap"
+          "title": "スワップする資産がありません",
+          "desc": "暗号資産を購入してスワップへ戻る"
         },
         "noApp": {
           "title": "{{appName}}アプリがインストールされていません。",
@@ -2042,16 +2073,16 @@
     "swapv2": {
       "form": {
         "summary": {
-          "from": "From",
-          "to": "To",
-          "send": "Send",
-          "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
-          "provider": "Provider",
-          "method": "Rate",
-          "fees": "Fees"
+          "from": "送付元",
+          "to": "送付先",
+          "send": "送る",
+          "payoutNetworkFees": "ペイアウト手数料",
+          "payoutNetworkFeesTooltip": "この値はデバイスには表示されません",
+          "receive": "数量",
+          "receiveFloat": "サービス手数料を含まない受け取り額",
+          "provider": "プロバイダー",
+          "method": "レート",
+          "fees": "手数料"
         }
       }
     },
@@ -2562,6 +2593,7 @@
     "quitApp": "デバイス上のアプリケーションを終了する",
     "appNotInstalled": "{{appName}}アプリをインストールしてください。",
     "appNotInstalled_plural": "{{appName}}アプリをインストールしてください。",
+    "useAnotherDevice": "Use another device",
     "verifyAddress": {
       "title": "デバイス上でアドレスを認証する",
       "description": "Ledger Liveに表示された{{currencyName}}アドレスが、Ledgerデバイスに表示されたものと一致していることを確認してください。"
@@ -2696,7 +2728,7 @@
     "intallParentApp": "{{appName}}アプリをインストールしてください",
     "readOnly": {
       "title": "Nano X",
-      "description": "Ledger Nano XにLedger Liveを設定し、場所を問わずいつでもアプリのインストール、アカウントの作成、安全な取引を行えるようにしましょう。",
+      "description": "Ledger LiveにLedger Nano Xに設定して、いつでも好きな場所からアプリのインストールやアカウントの作成、安全な取引を行いましょう。",
       "question": "Ledger Nano Xをお持ちですか？",
       "button": "Nano Xのセットアップを開始",
       "noDevice": "デバイスをお持ちでない場合",
@@ -2855,6 +2887,23 @@
     "introDescription2": "この操作は、暗号資産には影響しません。",
     "action": "アップデートを続行"
   },
+  "systemLanguageAvailable": {
+    "title": "Change your app's language?",
+    "description": {
+      "newSupport": "Good news! Our teams have been working hard and Ledger Live now supports {{language}}.",
+      "advice": "You can always change your language back later in the settings."
+    },
+    "switchButton": "Switch to {{language}}",
+    "no": "I prefer not to",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "ru": "Russian",
+      "es": "Spanish",
+      "zh": "Chinese",
+      "de": "German"
+    }
+  },
   "FirmwareUpdateCheckId": {
     "title": "識別子",
     "description": "同じ識別子が表示されている場合は、{{fullDeviceName}}の両方のボタンを同時に押してください："
@@ -2946,6 +2995,14 @@
             "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションが成立しなかったことを確認した上で、もう一度やり直してください。"
           }
         }
+      }
+    }
+  },
+  "celo": {
+    "info": {
+      "available": {
+        "title": "CELO available",
+        "description": "This amount is disposable."
       }
     }
   },
@@ -3149,6 +3206,19 @@
       }
     }
   },
+  "cryptoOrg": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Crypto.org",
+        "moreInfo": "詳細",
+        "drawerTitle": "Crypto.orgを統合",
+        "title": "Crypto.org (CRO) トークンがLedger Liveでご利用可能になりました",
+        "description": "Ledger Liveで、Crypto.org (CRO) トークンを安全に保管しながら管理することができます。",
+        "description2": "Crypto.orgチェーンのネイティブトークンであるCrypto.org (CRO) は、トランザクションやステーキングなど、さらに多くの機能へ対応予定です。",
+        "website": "全てのウォレットに暗号資産を"
+      }
+    }
+  },
   "elrond": {
     "account": {
       "subHeader": {
@@ -3172,7 +3242,7 @@
   "tron": {
     "voting": {
       "earnRewars": "報酬を獲得する",
-      "delegationEarn": "資産を凍結し投票することで、報酬を得られるようになりました。",
+      "delegationEarn": "資産を凍結して投票することで、報酬を獲得できます。",
       "howItWorks": "投票の仕組み",
       "startEarning": "報酬を獲得する",
       "title": "報酬獲得を申請",
@@ -3666,7 +3736,8 @@
       "selectCurrency": "通貨を選択",
       "selectAccount": "アカウントを選択",
       "connectDevice": "デバイスを接続",
-      "title": "パートナーを通して暗号資産を購入する",
+      "title": "暗号資産を購入するプロバイダーを選択",
+      "coinifyTitle": "パートナーを通して暗号資産を購入する",
       "description": "Coinifyで暗号資産を購入し、Ledgerアカウントで直接受け取ることができます。",
       "CTAButton": "今すぐ購入する",
       "emptyState": {
@@ -3679,6 +3750,11 @@
         "cancel": "キャンセル",
         "address": "{{currency}}アカウントのアドレス",
         "warning": "アドレスがLedgerデバイス上で確認されませんでした。安全のため、アドレスを確認してください。"
+      },
+      "bullets": {
+        "whereToBuy": "どこからでも購入可能",
+        "cryptoSupported": "対応済み暗号資産",
+        "payWith": "カードまたはSEPAで支払う"
       }
     },
     "sell": {
@@ -3779,7 +3855,7 @@
       },
       "banner": {
         "title": "Liveカタログをチェック",
-        "description": "暗号資産の新たな可能性を切り開く。DeFiやNTFをはじめ、様々なサービスに安全にアクセスしましょう。"
+        "description": "暗号資産の新たな可能性を切り開く。DeFiやNFTをはじめ、様々なサービスに安全にアクセスしましょう。"
       },
       "twitterBanner": {
         "description": "追加してほしいサービスを、ハッシュタグでお知らせください。",
@@ -3805,6 +3881,75 @@
       "infoPanel": {
         "website": "ウェブサイト"
       }
+    }
+  },
+  "market": {
+    "title": "Market",
+    "filters": {
+      "sort": "Sort",
+      "filter": "Filter",
+      "view": {
+        "label": "View",
+        "all": "All coins",
+        "liveCompatible": "Live Compatible",
+        "all_label": "All cryptocurrencies",
+        "liveCompatible_label": "Only Live Supported"
+      },
+      "order": {
+        "market_cap": "Rank",
+        "market_cap_asc": "Rank (Market cap) asc.",
+        "market_cap_desc": "Rank (Market cap) desc."
+      },
+      "currency": "Currency",
+      "time": "Time",
+      "apply": "Apply"
+    },
+    "marketList": {
+      "crypto": "Crypto",
+      "price": "Price",
+      "change": "Change",
+      "marketCap": "Market cap",
+      "last7d": "Last 7 days"
+    },
+    "detailsPage": {
+      "holding": "Your Holdings",
+      "priceStatistics": "Price Statistics",
+      "price": "Price",
+      "tradingVolume": "Trading volume",
+      "24hLowHight": "24h Low / 24h High",
+      "7dLowHigh": "7d Low / 7d High",
+      "allTimeHigh": "All time high",
+      "allTimeLow": "All time low",
+      "marketCapRank": "Market cap rank",
+      "marketCapDominance": "Market cap dominance",
+      "supply": "Supply",
+      "circulatingSupply": "Circulating supply",
+      "totalSupply": "Total supply",
+      "maxSupply": "Max supply",
+      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
+    },
+    "range": {
+      "1h": "1H",
+      "24h": "24H",
+      "7d": "7D",
+      "30d": "30D",
+      "1y": "1Y"
+    },
+    "warnings": {
+      "connectionError": "Connection Error",
+      "ledgerUnableToRetrieveData": "Ledger Live is unable to retrieve data.",
+      "checkInternetAndReload": "Please check your internet connection and reload this page.",
+      "reload": "Reload",
+      "noCryptosFound": "No coins found",
+      "noCurrencyFound": "No currency found",
+      "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
+      "noSearchResults": "Sorry, we did not find any search results.",
+      "retrySearchKeyword": "Please retry the search with another keyword.",
+      "retrySearchParams": "Please retry the search with another parameters.",
+      "trackFavAssets": "Track your favourite",
+      "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
+      "browseAssets": "Browse assets"
     }
   },
   "nft": {

@@ -1,6 +1,7 @@
 // @flow
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -15,6 +16,7 @@ import CounterValue from "../../components/CounterValue";
 import CurrencyRate from "../../components/CurrencyRate";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { ensureContrast } from "../../colors";
+import { localeSelector } from "../../reducers/settings";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency,
@@ -33,6 +35,7 @@ export default function DistributionCard({
   highlighting = false,
 }: Props) {
   const { colors } = useTheme();
+  const locale = useSelector(localeSelector);
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.background),
     [colors, currency],
@@ -83,7 +86,7 @@ export default function DistributionCard({
                 semiBold
                 style={styles.percentage}
                 color="smoke"
-              >{`${percentage}%`}</LText>
+              >{`${percentage.toLocaleString(locale)}%`}</LText>
             </View>
           </>
         ) : null}

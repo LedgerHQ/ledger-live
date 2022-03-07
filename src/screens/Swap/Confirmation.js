@@ -185,7 +185,6 @@ const Confirmation = ({
                   exchangeRate: rate,
                   transaction,
                   userId: providerKYC?.id,
-                  requireLatestFirmware: true,
                 }}
                 onResult={({ initSwapResult, initSwapError }) => {
                   if (initSwapError) {

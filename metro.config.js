@@ -5,7 +5,9 @@
  * @format
  */
 
-const defaultSourceExts = require('metro-config/src/defaults/defaults').sourceExts
+const defaultSourceExts = require("metro-config/src/defaults/defaults")
+  .sourceExts;
+const resolve = require("metro-resolver").resolve
 
 module.exports = {
   transformer: {
@@ -17,6 +19,6 @@ module.exports = {
     }),
   },
   resolver: {
-    sourceExts: [...defaultSourceExts, 'cjs'],
+    sourceExts: [...defaultSourceExts, 'cjs']
   }
 };

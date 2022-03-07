@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, NativeModules } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
@@ -48,14 +48,20 @@ export default function SelectDevice({
 
   const handleOnSelect = useCallback(
     deviceInfo => {
-      const { modelId, wired } = deviceInfo;
-      track("Device selection", {
-        modelId,
-        connectionType: wired ? "USB" : "BLE",
-      });
-      // Nb consider a device selection enough to show the fw update banner in portfolio
-      dispatch(setHasConnectedDevice(true));
-      onSelect(deviceInfo);
+      NativeModules.BluetoothHelperModule.prompt()
+        .then(() => {
+          const { modelId, wired } = deviceInfo;
+          track("Device selection", {
+            modelId,
+            connectionType: wired ? "USB" : "BLE",
+          });
+          // Nb consider a device selection enough to show the fw update banner in portfolio
+          dispatch(setHasConnectedDevice(true));
+          onSelect(deviceInfo);
+        })
+        .catch(() => {
+          /* ignore */
+        });
     },
     [dispatch, onSelect],
   );
@@ -63,9 +69,15 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices, {
-      onDone: autoSelectOnAdd ? handleOnSelect : null,
-    });
+    NativeModules.BluetoothHelperModule.prompt()
+      .then(() =>
+        navigation.navigate(ScreenName.PairDevices, {
+          onDone: autoSelectOnAdd ? handleOnSelect : null,
+        }),
+      )
+      .catch(() => {
+        /* ignore */
+      });
   }, [autoSelectOnAdd, navigation, handleOnSelect]);
 
   const renderItem = useCallback(

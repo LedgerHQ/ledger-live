@@ -19,6 +19,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.google.gms:google-services:4.3.10'
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -58,23 +59,20 @@ allprojects {
 }
 
 subprojects {
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'com.android.support' && !details.requested.name.contains('multidex')) {
-                details.useVersion "27.1.1"
-            }
-        }
-    }
+    // Force all subprojects to use one and only one set of versions
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 29
-                buildToolsVersion '30.0.2'
-
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                defaultConfig {
+                    minSdkVersion rootProject.ext.minSdkVersion
+                    targetSdkVersion rootProject.ext.targetSdkVersion
+                }
                 compileOptions {
-                    sourceCompatibility 1.8
-                    targetCompatibility 1.8
-                    kotlinVersion = "1.4.10"
+                    sourceCompatibility JavaVersion.VERSION_1_8
+                    targetCompatibility JavaVersion.VERSION_1_8
+                    kotlinVersion = rootProject.ext.kotlinVersion
                 }
             }
         }

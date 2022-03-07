@@ -5,18 +5,15 @@ import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
+import { Icons } from "@ledgerhq/native-ui";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
-import BellIcon from "../../icons/Bell";
-import SettingsIcon from "../../icons/Settings";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
-import Warning from "../../icons/WarningOutline";
 
 type HeaderInformationProps = { isLoading: boolean, error?: Error | null };
 const HeaderInformation = ({ isLoading, error }: HeaderInformationProps) => {
@@ -33,20 +30,17 @@ export default function PortfolioHeader() {
   const navigation = useNavigation();
 
   const { allIds, seenIds } = useAnnouncements();
-  const { incidents } = useFilteredServiceStatus();
 
   const onNotificationButtonPress = useCallback(() => {
     navigation.navigate(NavigatorName.NotificationCenter);
   }, [navigation]);
 
-  const onStatusErrorButtonPress = useCallback(() => {
-    navigation.navigate(NavigatorName.NotificationCenter, {
-      screen: ScreenName.NotificationCenterStatus,
-    });
-  }, [navigation]);
-
   const onSettingsButtonPress = useCallback(() => {
     navigation.navigate(NavigatorName.Settings);
+  }, [navigation]);
+
+  const onDeviceButtonPress = useCallback(() => {
+    navigation.navigate(NavigatorName.Manager);
   }, [navigation]);
 
   const isUpToDate = useSelector(isUpToDateSelector);
@@ -81,19 +75,17 @@ export default function PortfolioHeader() {
               </LText>
             </View>
           )}
-          <BellIcon size={18} color={colors.grey} />
+          <Icons.NotificationsMedium size={24} color={colors.grey} />
         </Touchable>
       </View>
-      {incidents.length > 0 && (
-        <View style={[styles.distributionButton, styles.marginLeft]}>
-          <Touchable onPress={onStatusErrorButtonPress}>
-            <Warning size={22} color={colors.orange} />
-          </Touchable>
-        </View>
-      )}
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onSettingsButtonPress}>
-          <SettingsIcon size={18} color={colors.grey} />
+          <Icons.SettingsMedium size={24} color={colors.grey} />
+        </Touchable>
+      </View>
+      <View style={[styles.distributionButton, styles.marginLeft]}>
+        <Touchable onPress={onDeviceButtonPress}>
+          <Icons.NanoFoldedMedium size={24} color={colors.grey} />
         </Touchable>
       </View>
     </View>
@@ -118,7 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     alignSelf: "center",
   },
-  marginLeft: { marginLeft: 8 },
+  marginLeft: { marginLeft: 24 },
   badge: {
     width: 16,
     height: 16,

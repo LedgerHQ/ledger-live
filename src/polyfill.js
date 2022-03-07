@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {

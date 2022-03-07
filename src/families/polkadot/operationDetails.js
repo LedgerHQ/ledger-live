@@ -25,7 +25,7 @@ import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector } from "../../reducers/settings";
+import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 import { urls } from "../../config/urls";
 
 import BondIcon from "../../icons/LinkIcon";
@@ -69,6 +69,7 @@ function OperationDetailsExtra({
 }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
+  const locale = useSelector(localeSelector);
 
   switch (type) {
     case "OUT":
@@ -80,6 +81,7 @@ function OperationDetailsExtra({
           showCode: true,
           discreet,
           disableRounding: true,
+          locale,
         },
       );
       return (
@@ -114,6 +116,7 @@ function OperationDetailsExtra({
           showCode: true,
           discreet,
           disableRounding: true,
+          locale,
         },
       );
       return (
@@ -134,6 +137,7 @@ function OperationDetailsExtra({
           showCode: true,
           discreet,
           disableRounding: true,
+          locale,
         },
       );
       return (
@@ -154,6 +158,7 @@ function OperationDetailsExtra({
           showCode: true,
           discreet,
           disableRounding: true,
+          locale,
         },
       );
       return (

@@ -1,12 +1,19 @@
 // @flow
 import React, { useCallback, useMemo, useEffect } from "react";
 
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { View, StyleSheet, SafeAreaView, TextInput } from "react-native";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
@@ -89,6 +96,7 @@ export default function SendAmountNFT({ route }: Props) {
       transaction,
     });
   }, [account, parentAccount, navigation, transaction]);
+  const blur = useCallback(() => Keyboard.dismiss(), []);
 
   const error = (() => {
     if (status?.warnings?.amount) {
@@ -117,46 +125,52 @@ export default function SendAmountNFT({ route }: Props) {
         forceInset={forceInset}
       >
         <KeyboardView style={styles.container}>
-          <View style={styles.amountContainer}>
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  color: colors.black,
-                },
-              ]}
-              autoCorrect={false}
-              autoFocus={true}
-              caretHidden={true}
-              editable={true}
-              multiline={false}
-              keyboardType="numeric"
-              value={quantity}
-              onChangeText={onQuantityChange}
-              placeholder="0"
-            />
-            {error}
-          </View>
-          <View style={styles.availableContainer}>
-            <LText style={styles.available}>
-              {t("send.amount.quantityAvailable")} :{"  "}
-            </LText>
-            <LText bold style={styles.available}>
-              {nft?.amount?.toFixed()}
-            </LText>
-          </View>
-          <View style={styles.continueContainer}>
-            <Button
-              type="primary"
-              title={
-                !bridgePending
-                  ? t("common.continue")
-                  : t("send.amount.loadingNetwork")
-              }
-              onPress={onContinue}
-              disabled={!quantity || !!status.errors.amount || bridgePending}
-            />
-          </View>
+          <TouchableWithoutFeedback onPress={blur}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.amountContainer}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      color: colors.black,
+                    },
+                  ]}
+                  autoCorrect={false}
+                  autoFocus={true}
+                  caretHidden={true}
+                  editable={true}
+                  multiline={false}
+                  keyboardType="numeric"
+                  value={quantity?.toString()}
+                  onChangeText={onQuantityChange}
+                  placeholder="0"
+                />
+                {error}
+              </View>
+              <View style={styles.availableContainer}>
+                <LText style={styles.available}>
+                  {t("send.amount.quantityAvailable")} :{"  "}
+                </LText>
+                <LText bold style={styles.available}>
+                  {nft?.amount?.toFixed()}
+                </LText>
+              </View>
+              <View style={styles.continueContainer}>
+                <Button
+                  type="primary"
+                  title={
+                    !bridgePending
+                      ? t("common.continue")
+                      : t("send.amount.loadingNetwork")
+                  }
+                  onPress={onContinue}
+                  disabled={
+                    !quantity || !!status.errors.amount || bridgePending
+                  }
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </KeyboardView>
       </SafeAreaView>
     </>
@@ -168,7 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flexGrow: 1,
+    flex: 1,
     paddingHorizontal: 16,
   },
   amountContainer: {
@@ -180,7 +194,6 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 50,
     textAlign: "center",
-    width: "100%",
     padding: 16,
   },
   error: {

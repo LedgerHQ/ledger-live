@@ -33,15 +33,31 @@ export type FeatureInteger = {
 
 export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 
+// comma-separated list of currencies that we want to enable as experimental, e.g:
+// const experimentalCurrencies = "solana,cardano";
+const experimentalCurrencies = "";
+
 export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
     title: "Experimental JS impl",
-    description: "Use experimental JS implementations for Algorand and Tezos.",
-    valueOn: "tezos,algorand",
+    description: "Use experimental JS implementation for Tezos.",
+    valueOn: "tezos",
     valueOff: "",
   },
+  ...(experimentalCurrencies.length
+    ? [
+        {
+          type: "toggle",
+          name: "EXPERIMENTAL_CURRENCIES",
+          title: "Experimental integrations",
+          description: "Use available experimental crypto assets integrations.",
+          valueOn: experimentalCurrencies,
+          valueOff: "",
+        },
+      ]
+    : []),
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
@@ -71,23 +87,6 @@ export const experimentalFeatures: Feature[] = [
       "This may cause the countervalues displayed for your accounts to become incorrect.",
     valueOn: "https://countervalues.live.ledger.com",
     valueOff: "https://countervalues-experimental.live.ledger.com",
-  },
-  {
-    type: "toggle",
-    name: "NFT",
-    title: "NFT management features",
-    description:
-      "Display your Ethereum NFT and their metadata in your accounts. Send Ethereum NFT directly from Ledger Live.",
-    valueOn: true,
-    valueOff: false,
-  },
-  {
-    type: "toggle",
-    name: "NFT_ETH_METADATA_SERVICE",
-    title: "NFT staging metadata service",
-    description: "Use staging metadata service instead of production.",
-    valueOn: "https://nft.api.live.ledger-stg.com",
-    valueOff: "https://nft.api.live.ledger.com",
   },
   ...(__DEV__
     ? [
