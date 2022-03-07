@@ -27,6 +27,8 @@ type Props = {
   strokeWidth: number;
 
   children: React.ReactNode;
+
+  frontStrokeLinecap?: "butt" | "round";
 };
 
 const ProgressLoader = ({
@@ -37,6 +39,7 @@ const ProgressLoader = ({
   onPress,
   radius = 48,
   strokeWidth = 4,
+  frontStrokeLinecap,
   children,
 }: Props): React.ReactElement => {
   const { colors } = useTheme();
@@ -46,7 +49,7 @@ const ProgressLoader = ({
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = normalizedRadius * 2 * Math.PI;
 
-  const strokeDashoffset = circumference - progress * circumference;
+  const strokeDashoffset = circumference * (1 - progress);
 
   const rotation = useSharedValue(0);
   const animatedStyles = useAnimatedStyle(
@@ -95,7 +98,7 @@ const ProgressLoader = ({
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${circumference / 4}, ${circumference}`}
                 strokeDashoffset="500"
-                strokeLinecap="round"
+                strokeLinecap={frontStrokeLinecap}
               />
             </Svg>
           </Animated.View>
@@ -112,7 +115,7 @@ const ProgressLoader = ({
           <Circle
             cx={radius}
             cy={radius}
-            r={radius * 0.92}
+            r={normalizedRadius}
             fill="transparent"
             stroke={backgroundColor}
             strokeDashoffset={0}
@@ -122,12 +125,13 @@ const ProgressLoader = ({
             <Circle
               cx={radius}
               cy={radius}
-              r={radius * 0.92}
+              r={normalizedRadius}
               fill="transparent"
               stroke={progressColor}
               strokeWidth={strokeWidth}
               strokeDasharray={`${circumference} ${circumference}`}
               strokeDashoffset={strokeDashoffset}
+              strokeLinecap={frontStrokeLinecap}
             />
           </G>
         </Svg>
