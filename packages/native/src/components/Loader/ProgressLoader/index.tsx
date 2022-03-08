@@ -14,19 +14,21 @@ import Animated, {
 } from "react-native-reanimated";
 
 type Props = {
-  // float number between 0 and 1
+  /**
+   * float number between 0 and 1
+   */
   progress?: number;
-  infinite: boolean;
+  infinite?: boolean;
 
   onPress?: () => void;
 
-  mainColor: string;
-  secondaryColor: string;
+  mainColor?: string;
+  secondaryColor?: string;
 
-  radius: number;
-  strokeWidth: number;
+  radius?: number;
+  strokeWidth?: number;
 
-  children: React.ReactNode;
+  children?: React.ReactNode;
 
   frontStrokeLinecap?: "butt" | "round";
 };
@@ -43,7 +45,7 @@ const ProgressLoader = ({
   children,
 }: Props): React.ReactElement => {
   const { colors } = useTheme();
-  const backgroundColor = secondaryColor || colors.neutral.c40;
+  const backgroundColor = secondaryColor || colors.primary.c30;
   const progressColor = mainColor || colors.primary.c80;
 
   const normalizedRadius = radius - strokeWidth / 2;
@@ -94,7 +96,7 @@ const ProgressLoader = ({
                 cy={radius}
                 fill="transparent"
                 r={normalizedRadius}
-                stroke={mainColor}
+                stroke={progressColor}
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${circumference / 4}, ${circumference}`}
                 strokeDashoffset="500"
