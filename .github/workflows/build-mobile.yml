@@ -11,6 +11,10 @@ on:
     paths:
       - apps/ledger-live-mobile/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-android:
     name: Android
