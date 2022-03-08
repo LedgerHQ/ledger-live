@@ -1,0 +1,39 @@
+name: Version or Release
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Install Dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Create Release Pull Request or Publish to npm/Github
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm bump
+          publish: pnpm changeset tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
