@@ -81,7 +81,19 @@ jobs:
           java-version: 1.8
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2.0.6
+      - uses: ledgerhq/actions/packages/has-hash-commit-deps@main
+        id: has-hash-commit-deps
+        with:
+          workspace: ${{ github.workspace }}
       - name: install dependencies
+        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'true' }}
+        env:
+          JOBS: max
+        run: yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1
+      - name: install dependencies
+        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'false' }}
+        env:
+          JOBS: max
         run: yarn --frozen-lockfile --network-timeout 100000
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
@@ -129,7 +141,19 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
+      - uses: ledgerhq/actions/packages/has-hash-commit-deps@main
+        id: has-hash-commit-deps
+        with:
+          workspace: ${{ github.workspace }}
       - name: install dependencies
+        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'true' }}
+        env:
+          JOBS: max
+        run: yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1
+      - name: install dependencies
+        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'false' }}
+        env:
+          JOBS: max
         run: yarn --frozen-lockfile --network-timeout 100000
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
