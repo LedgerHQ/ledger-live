@@ -1,49 +1,33 @@
-import {
-  AmountRequired,
-  NotEnoughBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated,
-} from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
+import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
 import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
 import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
 
-// FIXME these accounts no longer reflect their expected states..
 export const accountTZrevealedDelegating = makeAccount(
   "TZrevealedDelegating",
+  "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
   "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7",
   "tezbox"
 );
-/*
-const accountTZwithKT = makeAccount(
-  "TZwithKT",
-  "tz1T72nyqnJWwxad6RQnh7imKQz7mzToamWd",
-  "tezbox"
-);
-*/
 const accountTZnew = makeAccount(
   "TZnew",
+  "02a9ae8b0ff5f9a43565793ad78e10db6f12177d904d208ada591b8a5b9999e3fd",
   "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
   "tezbox"
 );
 const accountTZnotRevealed = makeAccount(
   "TZnotRevealed",
+  "020162dc75ad3c2b6e097d15a1513033c60d8a033f2312ff5a6ead812228d9d653",
   "tz1PWFt4Ym6HedY78MgUP2kVDtSampGwprs5",
   "tezosbip44h"
 );
 const accountTZRevealedNoDelegate = makeAccount(
   "TZRevealedNoDelegate",
+  "029bfe70b3e94ff23623f6c42f6e081a9ca8cc78f74b0d8da58f0d4cdc41c33c1a",
   "tz1YkAjh5mm5gJ5u3VbFLEtpAG7cFo7PfCux",
   "tezosbip44h"
 );
-/*
-const accountTZemptyWithKT = makeAccount(
-  "TZemptyWithKT",
-  "tz1TeawWFnUmeP1qQLf4JWe5D7LaNp1qxgMW",
-  "tezbox"
-);
-*/
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
@@ -66,20 +50,6 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
               },
             },
-            {
-              name: "send more than min allowed",
-              transaction: (t, account) => ({
-                ...t,
-                amount: account.balance.minus("100"),
-                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
-              }),
-              expectedStatus: {
-                errors: {
-                  amount: new NotEnoughBalance(),
-                },
-                warnings: {},
-              },
-            },
           ],
         },
         {
@@ -90,15 +60,15 @@ const dataset: DatasetTest<Transaction> = {
           raw: accountTZnotRevealed,
           transactions: [
             {
-              name: "Send to new account",
-              transaction: (t) => ({
+              name: "send more than min allowed",
+              transaction: (t, account) => ({
                 ...t,
-                amount: new BigNumber(100),
-                recipient: accountTZnew.freshAddress,
+                amount: account.balance.minus("100"),
+                recipient: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
               }),
               expectedStatus: {
                 errors: {
-                  amount: new NotEnoughBalanceBecauseDestinationNotCreated(),
+                  amount: new NotEnoughBalance(),
                 },
                 warnings: {},
               },
@@ -126,30 +96,15 @@ const dataset: DatasetTest<Transaction> = {
           },
           transactions: [],
         },
-        // FIXME these accounts have issue
-        /*
-        {
-          raw: accountTZwithKT,
-          transactions: [
-          ],
-        },
-        */
-        /*
-        {
-          raw: accountTZemptyWithKT,
-          transactions: [
-          ],
-        },
-        */
       ],
     },
   },
 };
 export default dataset;
 
-function makeAccount(name, address, derivationMode) {
+function makeAccount(name, pubkey, address, derivationMode) {
   return {
-    id: `js:2:tezos:${address}:${derivationMode}`,
+    id: `js:2:tezos:${pubkey}:${derivationMode}`,
     seedIdentifier: address,
     name: "Tezos " + name,
     derivationMode,
@@ -164,7 +119,7 @@ function makeAccount(name, address, derivationMode) {
     unitMagnitude: 6,
     lastSyncDate: "",
     balance: "0",
-    xpub: "",
+    xpub: pubkey,
     subAccounts: [],
   };
 }

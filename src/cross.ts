@@ -307,7 +307,8 @@ export const accountDataToAccount = ({
     type === "libcore" ||
     // FIXME Dirty hack, since we have no way here to know if "xpubOrAddress" is one or the other.
     // Proposed fix: https://ledgerhq.atlassian.net/browse/LL-7437
-    currency.family === "bitcoin"
+    currency.family === "bitcoin" ||
+    currency.family === "tezos"
   ) {
     // In libcore implementation, xpubOrAddress field always go in the xpub
     // In JS implementation, only Bitcoin-like currencies store the xpub

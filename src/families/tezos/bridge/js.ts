@@ -5,6 +5,9 @@ import {
   DEFAULT_FEE,
   DEFAULT_STORAGE_LIMIT,
 } from "@taquito/taquito";
+import { DerivationType } from "@taquito/ledger-signer";
+import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
+import { b58cencode, prefix, Prefix } from "@taquito/utils";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -40,7 +43,9 @@ import api from "../api/tzkt";
 
 const receive = makeAccountBridgeReceive();
 
-const EXISTENTIAL_DEPOSIT = new BigNumber(275000);
+const EXISTENTIAL_DEPOSIT = new BigNumber(
+  DEFAULT_STORAGE_LIMIT.ORIGINATION * 1000
+);
 
 const createTransaction: () => Transaction = () => ({
   family: "tezos",
@@ -73,13 +78,9 @@ const getTransactionStatus = async (
     feeTooHigh?: Error;
     recipient?: Error;
   } = {};
+  let amountMustReset = false;
 
-  const estimatedFees = t.estimatedFees || new BigNumber(0);
-  let amount = t.amount;
-
-  const { tezosResources } = account;
-  if (!tezosResources) throw new Error("tezosResources is missing");
-
+  // Recipient validation logic
   if (t.mode !== "undelegate") {
     if (account.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
@@ -88,44 +89,25 @@ const getTransactionStatus = async (
         account.currency,
         t.recipient
       );
-
       if (recipientError) {
         errors.recipient = recipientError;
       }
-
       if (recipientWarning) {
         warnings.recipient = recipientWarning;
       }
     }
   }
 
+  // Pre validation of amount field
+  const estimatedFees = t.estimatedFees || new BigNumber(0);
   if (t.mode === "send") {
-    const spendableBalance = account.balance.minus(EXISTENTIAL_DEPOSIT).lt(0)
-      ? account.balance.minus(EXISTENTIAL_DEPOSIT)
-      : account.balance;
     if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
+      amountMustReset = true;
       errors.amount = new AmountRequired();
-    } else if (!errors.amount && t.amount.gt(spendableBalance)) {
-      errors.amount = new NotEnoughBalance();
-      if (t.useAllAmount) {
-        amount = new BigNumber(0);
-      }
     } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
     }
-
-    if (
-      !errors.amount &&
-      (await api.getAccountByAddress(t.recipient)).type === "empty" &&
-      t.amount.lt(EXISTENTIAL_DEPOSIT)
-    ) {
-      errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-        minimalAmount: "0.275 XTZ",
-      });
-    }
-
     const thresholdWarning = 0.5 * 10 ** account.currency.units[0].magnitude;
-
     if (
       !errors.amount &&
       account.balance.minus(t.amount).minus(estimatedFees).lt(thresholdWarning)
@@ -140,6 +122,7 @@ const getTransactionStatus = async (
     }
   }
 
+  // effective amount
   // if we also have taquitoError, we interprete them and they override the previously inferred errors
   if (t.taquitoError) {
     log("taquitoerror", String(t.taquitoError));
@@ -147,7 +130,18 @@ const getTransactionStatus = async (
     // remap taquito errors
     if (t.taquitoError.endsWith("balance_too_low")) {
       if (t.mode === "send") {
-        errors.amount = new NotEnoughBalance();
+        if (
+          (await api.getAccountByAddress(t.recipient)).type === "empty" &&
+          t.amount.lt(EXISTENTIAL_DEPOSIT)
+        ) {
+          amountMustReset = true;
+          errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+            minimalAmount: "0.275 XTZ",
+          });
+        } else {
+          amountMustReset = true;
+          errors.amount = new NotEnoughBalance();
+        }
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
       }
@@ -156,18 +150,22 @@ const getTransactionStatus = async (
     } else if (!errors.amount) {
       // unidentified error case
       errors.amount = new Error(t.taquitoError);
+      amountMustReset = true;
     }
   }
 
   if (!errors.amount && account.balance.lte(0)) {
+    amountMustReset = true;
     errors.amount = new NotEnoughBalance();
   }
+
+  const amount = amountMustReset ? new BigNumber(0) : t.amount;
 
   const result = {
     errors,
     warnings,
     estimatedFees,
-    amount: amount,
+    amount,
     totalSpent: amount.plus(estimatedFees),
   };
   return Promise.resolve(result);
@@ -198,11 +196,19 @@ const prepareTransaction = async (
     }
   }
 
+  const encodedPubKey = b58cencode(
+    compressPublicKey(
+      Buffer.from(account.xpub || "", "hex"),
+      DerivationType.ED25519
+    ),
+    prefix[Prefix.EDPK]
+  );
+
   const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
   tezos.setProvider({
     signer: {
       publicKeyHash: async () => account.freshAddress,
-      publicKey: async () => tezosResources.publicKey,
+      publicKey: async () => encodedPubKey,
       sign: () => Promise.reject(new Error("unsupported")),
       secretKey: () => Promise.reject(new Error("unsupported")),
     },
@@ -212,10 +218,7 @@ const prepareTransaction = async (
 
   let amount = transaction.amount;
   if (transaction.useAllAmount) {
-    // taquito does not accept 0, so we do 1
-    // only failing case is when the account precisely has fees + 1. which is
-    // unlikely
-    amount = new BigNumber(1);
+    amount = new BigNumber(1); // send max do a pre-estimation with minimum amount (taquito refuses 0)
   }
 
   try {
@@ -275,6 +278,7 @@ const prepareTransaction = async (
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {
       t.taquitoError = (e as { id: string }).id;
+      log("taquito-error", "taquito got error " + t.taquitoError);
     } else if ("status" in e) {
       // in case of http 400, log & ignore (more case to handle)
       log(
@@ -282,6 +286,7 @@ const prepareTransaction = async (
         String((e as { message: string }).message || ""),
         { transaction: t }
       );
+      throw e;
     } else {
       throw e;
     }
@@ -289,12 +294,11 @@ const prepareTransaction = async (
 
   // nothing changed
   if (
-    bnEq(t.fees, transaction.fees) &&
+    bnEq(t.estimatedFees, transaction.estimatedFees) &&
     bnEq(t.fees, transaction.fees) &&
     bnEq(t.gasLimit, transaction.gasLimit) &&
-    bnEq(t.amount, transaction.amount) &&
     bnEq(t.storageLimit, transaction.storageLimit) &&
-    bnEq(t.estimatedFees, transaction.estimatedFees) &&
+    bnEq(t.amount, transaction.amount) &&
     t.taquitoError === transaction.taquitoError
   ) {
     return transaction;
