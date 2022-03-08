@@ -14,6 +14,10 @@ on:
     # paths:
     #   - apps/ledger-live-desktop/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   start-runner:
     name: "start ec2 instance"
@@ -70,7 +74,7 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
       - name: install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
@@ -131,7 +135,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@main
         with:
-          node-version: 14.18.3
+          node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       # - uses: actions/setup-python@v2
@@ -142,13 +146,12 @@ jobs:
         # npm i --g npm@8.3.1 --force
         run: |
           pnpm add -g npm
-          npm --version
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
         shell: bash
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
