@@ -6,6 +6,8 @@
   "packageManager": "pnpm@6.29.1",
   "scripts": {
     "clean": "git clean -fdX",
+    "changelog": "changeset add",
+    "bump": "changeset version",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
     "build:libs": "pnpm -r --filter=\"!./apps\" --filter=\"!ledger-live\" build",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
@@ -41,5 +43,8 @@
       "metro-runtime": "^0.67.0",
       "metro-transform-worker": "^0.67.0"
     }
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.21.1"
   }
 }
