@@ -9,11 +9,15 @@ import FlexBox from "../../Layout/Flex";
 
 type AlertType = "info" | "warning" | "error";
 
+export type IconProps = { size?: number; color?: string };
+export type IconType = React.ComponentType<IconProps>;
 export interface AlertProps {
   type?: AlertType;
+  Icon?: IconType;
   title?: string;
   showIcon?: boolean;
   children?: React.ReactNode;
+  renderContent?: ({ textColor }: { textColor: string }) => React.ReactNode | null;
 }
 
 const icons = {
@@ -55,17 +59,20 @@ const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>((p) => (
 
 export default function Alert({
   type = "info",
+  Icon,
   title,
   showIcon = true,
   children,
+  renderContent,
 }: AlertProps): JSX.Element {
   const theme = useTheme();
   const textColor = getColor(theme, alertColors[type || "info"].color);
+  const iconProps = { size: 20, color: textColor };
   return (
     <StyledAlertContainer type={type}>
       {showIcon && !!icons[type] && (
         <StyledIconContainer>
-          {icons[type || "info"]({ size: 20, color: textColor })}
+          {Icon ? <Icon {...iconProps} /> : icons[type || "info"](iconProps)}
         </StyledIconContainer>
       )}
       {title && (
@@ -74,6 +81,7 @@ export default function Alert({
         </Text>
       )}
       {children}
+      {renderContent && renderContent({ textColor })}
     </StyledAlertContainer>
   );
 }
