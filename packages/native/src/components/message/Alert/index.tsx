@@ -13,10 +13,18 @@ export type IconProps = { size?: number; color?: string };
 export type IconType = React.ComponentType<IconProps>;
 export interface AlertProps {
   type?: AlertType;
+  /**
+   * Optional component to replace the default Icon for the given `type` prop.
+   * It will receive a `color: string` and a `size: number` as props.
+   * */
   Icon?: IconType;
   title?: string;
   showIcon?: boolean;
   children?: React.ReactNode;
+  /**
+   * Alternative to using the `children` prop in order to render something using the value of `textColor`
+   * that is passed as a parameter.
+   */
   renderContent?: ({ textColor }: { textColor: string }) => React.ReactNode | null;
 }
 
