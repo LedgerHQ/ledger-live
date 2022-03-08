@@ -3,40 +3,41 @@ import { storiesOf } from "../../storiesOf";
 import { text, button, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
-import Text from "../../../../src/components/Text";
-import Button from "../../../../src/components/cta/Button";
-import { Icons } from "../../../../src/assets";
+import { Alert, Icons, Text } from "../../../../src";
 import { ScrollView } from "react-native";
 
-const BottomDrawerStory = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const makeBottomDrawerStory =
+  ({ noHeaderProps = false }) =>
+  () => {
+    const [isOpen, setIsOpen] = useState(true);
 
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-  }, []);
+    const openModal = useCallback(() => {
+      setIsOpen(true);
+    }, []);
 
-  button("Open modal", openModal);
+    button("Open modal", openModal);
 
-  return (
-    <BottomDrawer
-      isOpen={isOpen}
-      onClose={() => {
-        action("onClose")();
-        setIsOpen(false);
-      }}
-      title={text("title", "title")}
-      description={text("description", "Description")}
-      subtitle={text("subtitle", "Subtitle")}
-      Icon={Icons.TrashMedium}
-      noCloseButton={boolean("noCloseButton", false)}
-    >
-      <Text>Exemple children</Text>
-      <Button type={"main"} onPress={() => setIsOpen(false)}>
-        Close
-      </Button>
-    </BottomDrawer>
-  );
-};
+    return (
+      <BottomDrawer
+        isOpen={isOpen}
+        onClose={() => {
+          action("onClose")();
+          setIsOpen(false);
+        }}
+        {...(noHeaderProps
+          ? {}
+          : {
+              title: text("title", "title"),
+              description: text("description", "Description"),
+              subtitle: text("subtitle", "Subtitle"),
+              Icon: Icons.TrashMedium,
+            })}
+        noCloseButton={boolean("noCloseButton", false)}
+      >
+        <Alert type="info" showIcon={false} title="Example children (Alert component)" />
+      </BottomDrawer>
+    );
+  };
 
 const BottomDrawerScrollViewStory = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -121,15 +122,13 @@ const BottomDrawerScrollViewStory = () => {
           mollis.
         </Text>
       </ScrollView>
-      <Button type={"main"} onPress={() => setIsOpen(false)} mt={4}>
-        Close
-      </Button>
     </BottomDrawer>
   );
 };
 
 storiesOf((story) =>
-  story("Layout/Modal", module)
-    .add("BottomDrawer", () => <BottomDrawerStory />)
+  story("Layout/Drawer", module)
+    .add("BottomDrawer", makeBottomDrawerStory({ noHeaderProps: false }))
+    .add("BottomDrawer without header props", makeBottomDrawerStory({ noHeaderProps: true }))
     .add("BottomDrawer with ScrollView", () => <BottomDrawerScrollViewStory />),
 );
