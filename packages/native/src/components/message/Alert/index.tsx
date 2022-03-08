@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import ShieldSecurityMedium from "@ledgerhq/icons-ui/native/ShieldSecurityMedium";
+import InfoMedium from "@ledgerhq/icons-ui/native/InfoMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/native/CircledCrossMedium";
 import CircledAlertMedium from "@ledgerhq/icons-ui/native/CircledAlertMedium";
 import Text from "../../Text";
@@ -29,7 +29,7 @@ export interface AlertProps {
 }
 
 const icons = {
-  info: ShieldSecurityMedium,
+  info: InfoMedium,
   warning: CircledAlertMedium,
   error: CircledCrossMedium,
 };
