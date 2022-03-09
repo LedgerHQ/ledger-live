@@ -95,6 +95,10 @@
     "rimraf": "^3.0.2",
     "styled-components": "^5.3.3",
     "tiny-glob": "^0.2.9",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "@babel/core": "7",
+    "@svgr/plugin-svgo": "*",
+    "babel-loader": "^8.0.0",
+    "webpack": "*"
   }
 }
