@@ -13,6 +13,13 @@
         "build/**"
       ]
     },
+    "icons-ui#build": {
+      "outputs": [
+        "react/**",
+        "native/**",
+        "index.js"
+      ]
+    },
     "build-ci": {
       "cache": false,
       "dependsOn": [
