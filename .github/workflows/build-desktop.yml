@@ -29,7 +29,7 @@ jobs:
 
   stop-runner:
     name: "stop ec2 instance"
-    if: ${{ always() && needs.start-runner.result == 'success' }}
+    if: ${{ needs.start-runner.result == 'success' }}
     needs: [start-runner, build-linux]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
     with:
