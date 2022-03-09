@@ -58,4 +58,4 @@
 "x-run": patch
 ---
 
-monorepo prerelease tests
+test prerelease monorepo
