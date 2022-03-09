@@ -14,10 +14,6 @@ on:
     # paths:
     #   - apps/ledger-live-desktop/**
 
-env:
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-
 jobs:
   start-runner:
     name: "start ec2 instance"
@@ -94,8 +90,10 @@ jobs:
       #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       #   run: yarn version --new-version="$VERSION"
       - name: build the app
-        run: |
-          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
+        env:
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        run: pnpm build:desktop
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
@@ -169,6 +167,9 @@ jobs:
       #   if: github.event_name == 'push'
       #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
+        env:
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           npm --version
           pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
@@ -231,6 +232,8 @@ jobs:
       - name: build the app
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           eval "$(rbenv init - bash)"
           pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
