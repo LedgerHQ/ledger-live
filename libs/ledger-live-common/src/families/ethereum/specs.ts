@@ -20,6 +20,8 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { TokenCurrency } from "@ledgerhq/cryptoassets";
 import { CompoundAccountSummary } from "../../compound/types";
 
+const testTimeout = 5 * 60 * 1000;
+
 const ethereumBasicMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
@@ -119,7 +121,7 @@ const ethereum: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
-  testTimeout: 4 * 60 * 1000,
+  testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
@@ -357,7 +359,7 @@ const ethereumClassic: AppSpec<Transaction> = {
     appName: "Ethereum Classic",
   },
   dependency: "Ethereum",
-  testTimeout: 2 * 60 * 1000,
+  testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
@@ -380,7 +382,7 @@ const ethereumRopsten: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
   },
-  testTimeout: 2 * 60 * 1000,
+  testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
@@ -405,7 +407,7 @@ const bsc: AppSpec<Transaction> = {
     appName: "Binance Smart Chain",
   },
   dependency: "Ethereum",
-  testTimeout: 2 * 60 * 1000,
+  testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
@@ -452,7 +454,7 @@ const polygon: AppSpec<Transaction> = {
     appName: "Polygon",
   },
   dependency: "Ethereum",
-  testTimeout: 2 * 60 * 1000,
+  testTimeout,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(

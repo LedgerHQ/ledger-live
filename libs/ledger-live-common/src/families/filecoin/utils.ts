@@ -19,6 +19,15 @@ export const isError = (r: { return_code: number; error_message: string }) => {
     throw new Error(`${r.return_code} - ${r.error_message}`);
 };
 
+export const methodToString = (method: number): string => {
+  switch (method) {
+    case 0:
+      return "Transfer";
+    default:
+      return "Unknown";
+  }
+};
+
 export const getBufferFromString = (message: string): Buffer =>
   isValidHex(message)
     ? Buffer.from(message, "hex")

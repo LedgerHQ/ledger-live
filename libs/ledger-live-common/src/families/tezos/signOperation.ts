@@ -49,7 +49,7 @@ export const signOperation = ({
 
         let type = "OUT";
 
-        let res, signature, opbytes;
+        let res, opbytes;
         const params = {
           fee: transaction.fees?.toNumber() || 0,
           storageLimit: transaction.storageLimit?.toNumber() || 0,
@@ -73,7 +73,6 @@ export const signOperation = ({
               amount: transaction.amount.toNumber(),
               ...params,
             });
-            signature = res.raw.opOb.signature;
             opbytes = res.raw.opbytes;
             break;
           case "delegate":
@@ -119,7 +118,6 @@ export const signOperation = ({
           extra: {
             storageLimit: transaction.storageLimit,
             gasLimit: transaction.gasLimit,
-            opbytes,
           },
           blockHash: null,
           blockHeight: null,
@@ -133,7 +131,7 @@ export const signOperation = ({
           type: "signed",
           signedOperation: {
             operation,
-            signature,
+            signature: opbytes,
             expirationDate: null,
           },
         });

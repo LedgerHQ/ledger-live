@@ -331,13 +331,11 @@ const estimateMaxSpendable = async ({
   return s.amount;
 };
 
-const broadcast = async ({ signedOperation: { operation } }) => {
+const broadcast = async ({ signedOperation: { operation, signature } }) => {
   const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const hash = await tezos.contract.context.injector.inject(
-    operation.extra.opbytes
-  );
+  const hash = await tezos.contract.context.injector.inject(signature);
   return patchOperationWithHash(operation, hash);
 };
 

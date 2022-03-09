@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 import useFeature from "./useFeature";
 import { FeatureId } from "./types";
@@ -13,12 +13,12 @@ export const FeatureToggle = ({
   feature: featureId,
   fallback,
   children,
-}: Props): ReactNode => {
+}: Props): JSX.Element => {
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {
-    return fallback ?? null;
+    return <>{fallback || null}</>;
   }
 
-  return children ?? null;
+  return <>{children || null}</>;
 };
