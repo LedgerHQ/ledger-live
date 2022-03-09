@@ -14,6 +14,8 @@ import ethereum from "../families/ethereum/speculos-deviceActions";
 
 import filecoin from "../families/filecoin/speculos-deviceActions";
 
+import hedera from "../families/hedera/speculos-deviceActions";
+
 import polkadot from "../families/polkadot/speculos-deviceActions";
 
 import ripple from "../families/ripple/speculos-deviceActions";
@@ -36,6 +38,7 @@ export default {
   elrond,
   ethereum,
   filecoin,
+  hedera,
   polkadot,
   ripple,
   solana,
