@@ -14,6 +14,10 @@ on:
     # paths:
     #   - apps/ledger-live-desktop/**
 
+env:
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
 jobs:
   start-runner:
     name: "start ec2 instance"
