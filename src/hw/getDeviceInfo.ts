@@ -68,11 +68,14 @@ export default async function getDeviceInfo(
   const managerAllowed = !!(flag & ManagerAllowedFlag);
   const pinValidated = !!(flag & PinValidatedFlag);
 
-  // FIXME Until we have proper flagging of the onboarded status.
+  let isRecoveryMode = false;
   let onboarded = true;
   if (flags.length === 4) {
+    // Nb Since LNS+ unseeded devices are visible + extra flags
+    isRecoveryMode = !!(flags[0] & 0x01);
     onboarded = !!(flags[0] & 0x04);
   }
+
   log(
     "hw",
     "deviceInfo: se@" +
@@ -93,6 +96,7 @@ export default async function getDeviceInfo(
     mcuTargetId,
     isOSU,
     isBootloader,
+    isRecoveryMode,
     managerAllowed,
     pinValidated,
     onboarded,
