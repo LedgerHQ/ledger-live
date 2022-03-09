@@ -175,7 +175,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           npm --version
-          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
+          pnpm build:desktop
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v1
@@ -239,7 +239,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           eval "$(rbenv init - bash)"
-          pnpm run:turbo run -- build-ci --scope=live-desktop --include-dependencies --no-deps
+          pnpm build:desktop
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:
