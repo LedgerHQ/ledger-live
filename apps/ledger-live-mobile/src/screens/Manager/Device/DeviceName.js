@@ -48,7 +48,7 @@ export default function DeviceNameRow({
       >
         {savedName || initialDeviceName || productName}
       </LText>
-      {id !== "nanoS" && (
+      {id === "nanoX" && (
         <Touchable
           style={styles.editButton}
           onPress={onPress}

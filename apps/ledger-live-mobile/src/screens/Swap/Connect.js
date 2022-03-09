@@ -8,6 +8,7 @@ import { useTheme } from "@react-navigation/native";
 import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { TrackScreen } from "../../analytics";
+import SkipSelectDevice from "../SkipSelectDevice";
 
 const action = createAction(connectManager);
 
@@ -37,6 +38,7 @@ const Connect = ({
         name="ConnectDeviceListApps"
         provider={provider}
       />
+      <SkipSelectDevice onResult={setDevice} />
       <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       <DeviceActionModal
         onClose={setDevice}
@@ -45,6 +47,7 @@ const Connect = ({
         onResult={setLocalResult}
         action={action}
         request={null}
+        onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow="swap"
       />
     </View>

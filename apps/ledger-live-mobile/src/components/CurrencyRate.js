@@ -41,9 +41,13 @@ class CurrencyRate extends PureComponent<Props> {
           style={[styles.text, fontStyle]}
           color="grey"
         >
-          <CurrencyUnitValue unit={currency.units[0]} value={one} />
+          <CurrencyUnitValue
+            unit={currency.units[0]}
+            value={one}
+            alwaysShowValue
+          />
           {" = "}
-          <CounterValue currency={currency} value={one} />
+          <CounterValue currency={currency} value={one} alwaysShowValue />
         </LText>
       </View>
     );

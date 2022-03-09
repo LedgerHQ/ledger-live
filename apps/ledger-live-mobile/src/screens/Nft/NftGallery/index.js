@@ -22,6 +22,7 @@ import NftCollectionWithName from "./NftCollectionWithName";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -152,5 +153,4 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
 });
-
-export default NftGallery;
+export default withDiscreetMode(NftGallery);

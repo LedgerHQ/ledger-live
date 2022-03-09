@@ -38,6 +38,7 @@ import {
 } from "@ledgerhq/live-common/lib/families/polkadot/react";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
+import { localeSelector } from "../../../reducers/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
@@ -69,6 +70,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const locale = useSelector(localeSelector);
 
   invariant(account, "account required");
 
@@ -148,6 +150,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
       alwaysShowSign: false,
       showCode: true,
       discreet: false,
+      locale,
     },
   );
 

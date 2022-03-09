@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -31,6 +31,7 @@ export const languageLabels = {
 
 export default function LanguageSettingsRow() {
   const { locale } = useLocale();
+  const { t } = useTranslation();
   const { navigate } = useNavigation();
   const onNavigate = useCallback(() => {
     navigate(NavigatorName.BaseOnboarding, {
@@ -44,8 +45,8 @@ export default function LanguageSettingsRow() {
   return (
     <SettingsRow
       event="LanguageSettingsRow"
-      title={<Trans i18nKey="settings.display.language" />}
-      desc={<Trans i18nKey="settings.display.languageDesc" />}
+      title={t("settings.display.language")}
+      desc={t("settings.display.languageDesc")}
       arrowRight
       onPress={onNavigate}
       alignedTop

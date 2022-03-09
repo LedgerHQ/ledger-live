@@ -109,6 +109,7 @@ const AppRow = ({
                 value={bytes}
                 deviceModel={state.deviceModel}
                 firmwareVersion={deviceInfo.version}
+                formatFunction={Math.ceil}
               />
             </LText>
           </Touchable>
@@ -125,6 +126,7 @@ const AppRow = ({
               value={bytes}
               deviceModel={state.deviceModel}
               firmwareVersion={deviceInfo.version}
+              formatFunction={Math.ceil}
             />
           </LText>
         )}

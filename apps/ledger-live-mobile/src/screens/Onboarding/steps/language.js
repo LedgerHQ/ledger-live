@@ -9,39 +9,19 @@ import {
   ScrollView,
 } from "react-native";
 import { Trans } from "react-i18next";
-import i18next from "i18next";
+import { useDispatch } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import CheckBox from "../../../components/CheckBox";
 import { useLocale } from "../../../context/Locale";
-import { supportedLocales } from "../../../languages";
-
-const languages = {
-  de: "Deutsch",
-  el: "Ελληνικά",
-  en: "English",
-  es: "Español",
-  fi: "suomi",
-  fr: "Français",
-  hu: "magyar",
-  it: "italiano",
-  ja: "日本語",
-  ko: "한국어",
-  nl: "Nederlands",
-  no: "Norsk",
-  pl: "polski",
-  pt: "português",
-  ru: "Русский",
-  sr: "српски",
-  sv: "svenska",
-  tr: "Türkçe",
-  zh: "简体中文",
-};
+import { languages, supportedLocales } from "../../../languages";
+import { setLanguage } from "../../../actions/settings";
 
 function OnboardingStepLanguage({ navigation }: *) {
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
@@ -49,10 +29,10 @@ function OnboardingStepLanguage({ navigation }: *) {
 
   const changeLanguage = useCallback(
     l => {
-      i18next.changeLanguage(l);
+      dispatch(setLanguage(l));
       next();
     },
-    [next],
+    [dispatch, next],
   );
 
   return (

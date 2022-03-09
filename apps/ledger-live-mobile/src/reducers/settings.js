@@ -1,7 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import { Platform, Appearance } from "react-native";
+import { Platform } from "react-native";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
@@ -16,12 +16,14 @@ import type {
   Currency,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
+import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -54,9 +56,7 @@ export type Privacy = {
   biometricsEnabled: boolean,
 };
 
-const colorScheme = Appearance.getColorScheme();
-
-export type Theme = "light" | "dark" | "dusk";
+export type Theme = "system" | "light" | "dark";
 
 export type SettingsState = {
   counterValue: string,
@@ -86,6 +86,8 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
+  languageIsSetByUser: boolean,
+  locale: ?string,
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -93,6 +95,8 @@ export type SettingsState = {
     KYC: {},
   },
   lastSeenDevice: ?DeviceModelInfo,
+  starredMarketCoins: string[],
+  lastConnectedDevice: ?Device,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -114,11 +118,13 @@ export const INITIAL_STATE: SettingsState = {
   blacklistedTokenIds: [],
   dismissedBanners: [],
   hasAvailableUpdate: false,
-  theme: colorScheme === "dark" ? "dusk" : "light",
+  theme: "system",
   osTheme: undefined,
   carouselVisibility: 0,
   discreetMode: false,
-  language: "en",
+  language: getDefaultLanguageLocale(),
+  languageIsSetByUser: false,
+  locale: null,
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -126,6 +132,8 @@ export const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   lastSeenDevice: null,
+  starredMarketCoins: [],
+  lastConnectedDevice: null,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -303,6 +311,11 @@ const handlers: Object = {
   SETTINGS_SET_LANGUAGE: (state: SettingsState, { payload }) => ({
     ...state,
     language: payload,
+    languageIsSetByUser: true,
+  }),
+  SETTINGS_SET_LOCALE: (state: SettingsState, { payload }) => ({
+    ...state,
+    locale: payload,
   }),
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
@@ -343,7 +356,25 @@ const handlers: Object = {
     { payload: dmi }: { payload: DeviceModelInfo },
   ) => ({
     ...state,
-    lastSeenDevice: dmi,
+    lastSeenDevice: {
+      ...(state.lastSeenDevice || {}),
+      ...dmi,
+    },
+  }),
+  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: [...state.starredMarketCoins, payload],
+  }),
+  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  SET_LAST_CONNECTED_DEVICE: (
+    state: SettingsState,
+    { payload: lastConnectedDevice }: { payload: Device },
+  ) => ({
+    ...state,
+    lastConnectedDevice,
   }),
 };
 
@@ -486,11 +517,21 @@ export const discreetModeSelector = (state: State): boolean =>
 
 export default handleActions(handlers, INITIAL_STATE);
 
-export const themeSelector = (state: State) => state.settings.theme;
+export const themeSelector = (state: State) => {
+  const val = state.settings.theme;
+  return val === "dusk" ? "dark" : val;
+};
 
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 
-export const languageSelector = (state: State) => state.settings.language;
+export const languageSelector = (state: State) =>
+  state.settings.language || getDefaultLanguageLocale();
+
+export const languageIsSetByUserSelector = (state: State) =>
+  state.settings.languageIsSetByUser;
+
+export const localeSelector = (state: State) =>
+  state.settings.locale || getDefaultLocale();
 
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
@@ -505,3 +546,9 @@ export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
 
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
+
+export const starredMarketCoinsSelector = (state: State) =>
+  state.settings.starredMarketCoins;
+
+export const lastConnectedDeviceSelector = (state: State) =>
+  state.settings.lastConnectedDevice;

@@ -1,7 +1,7 @@
 // @flow
 
-import React, { memo } from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import React, { memo, useEffect } from "react";
+import { View, StyleSheet, SafeAreaView, NativeModules } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
@@ -13,6 +13,14 @@ import { deviceNames } from "../../wording";
 
 function BluetoothDisabled() {
   const { colors } = useTheme();
+
+  useEffect(() => {
+    // Prompts the user to enable bluetooth using native api calls when the component gets initially rendered.
+    NativeModules.BluetoothHelperModule.prompt().catch(() => {
+      /* ignore */
+    });
+  }, []);
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.card }]}>
       <InfoIcon

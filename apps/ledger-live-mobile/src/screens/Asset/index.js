@@ -41,6 +41,7 @@ import {
   countervalueFirstSelector,
   selectedTimeRangeSelector,
 } from "../../reducers/settings";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const List = globalSyncRefreshControl(SectionList);
 
@@ -230,7 +231,7 @@ class Asset extends PureComponent<AssetProps, any> {
   }
 }
 
-export default function Screen(props: Props) {
+function Screen(props: Props) {
   const dispatch = useDispatch();
   const currency = props.route.params.currency;
   const range = useSelector(selectedTimeRangeSelector);
@@ -270,6 +271,8 @@ export default function Screen(props: Props) {
     />
   );
 }
+
+export default withDiscreetMode(Screen);
 
 const styles = StyleSheet.create({
   root: {

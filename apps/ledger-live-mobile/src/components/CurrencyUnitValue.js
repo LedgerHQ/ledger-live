@@ -4,14 +4,16 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import { useSelector } from "react-redux";
-import { useLocale } from "../context/Locale";
-import { discreetModeSelector } from "../reducers/settings";
+import { useContext } from "react";
+import { discreetModeSelector, localeSelector } from "../reducers/settings";
+import DiscreetModeContext from "../context/DiscreetModeContext";
 
 type Props = {
   unit: Unit,
   value: BigNumber | number,
   showCode?: boolean,
   alwaysShowSign?: boolean,
+  alwaysShowValue?: boolean,
   before?: string,
   after?: string,
   disableRounding?: boolean,
@@ -23,13 +25,15 @@ export default function CurrencyUnitValue({
   value: valueProp,
   showCode = true,
   alwaysShowSign,
+  alwaysShowValue,
   before = "",
   after = "",
   disableRounding = false,
   joinFragmentsSeparator = "",
 }: Props) {
-  const { locale } = useLocale();
+  const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
+  const shouldApplyDiscreetMode = useContext(DiscreetModeContext);
   const value =
     valueProp instanceof BigNumber ? valueProp : BigNumber(valueProp);
 
@@ -41,7 +45,7 @@ export default function CurrencyUnitValue({
           alwaysShowSign,
           locale,
           disableRounding,
-          discreet,
+          discreet: !alwaysShowValue && shouldApplyDiscreetMode && discreet,
           joinFragmentsSeparator,
         })
       : "") +

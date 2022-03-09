@@ -18,7 +18,7 @@ import SendValidationError from "../../screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
-const totalSteps = "6";
+const totalSteps = "5";
 
 export default function SendFundsNavigator() {
   const { t } = useTranslation();
@@ -157,7 +157,7 @@ export default function SendFundsNavigator() {
             <StepHeader
               title={t("send.stepperHeader.connectDevice")}
               subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "6",
+                currentStep: "5",
                 totalSteps,
               })}
             />

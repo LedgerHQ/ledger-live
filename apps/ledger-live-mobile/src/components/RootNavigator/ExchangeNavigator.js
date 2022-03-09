@@ -5,10 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import styles from "../../navigation/styles";
-import Buy from "../../screens/Exchange/Buy";
 import Sell from "../../screens/Exchange/Sell";
-import History from "../../screens/Exchange/History";
 import LText from "../LText";
+import BuyNavigator from "./BuyNavigator";
 
 type TabLabelProps = {
   focused: boolean,
@@ -33,7 +32,7 @@ export default function ExchangeNavigator() {
     >
       <Tab.Screen
         name={ScreenName.ExchangeBuy}
-        component={Buy}
+        component={BuyNavigator}
         options={{
           title: t("exchange.buy.tabTitle"),
           tabBarLabel: ({ focused, color }: TabLabelProps) => (
@@ -53,18 +52,6 @@ export default function ExchangeNavigator() {
             /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("exchange.sell.tabTitle")}
-            </LText>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name={ScreenName.ExchangeHistory}
-        component={History}
-        options={{
-          title: t("exchange.history.tabTitle"),
-          tabBarLabel: ({ focused, color }: TabLabelProps) => (
-            <LText style={{ width: "110%", color }} semiBold={focused}>
-              {t("exchange.history.tabTitle")}
             </LText>
           ),
         }}
