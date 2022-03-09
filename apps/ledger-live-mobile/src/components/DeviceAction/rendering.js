@@ -327,12 +327,14 @@ export function renderError({
   onRetry,
   managerAppName,
   navigation,
+  withOnboardingCTA,
 }: {
   ...RawProps,
   navigation?: any,
   error: Error,
   onRetry?: () => void,
   managerAppName?: string,
+  withOnboardingCTA?: boolean,
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -343,6 +345,16 @@ export function renderError({
           updateModalOpened: true,
         },
       });
+    } else if (withOnboardingCTA && navigation) {
+      navigation.navigate(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.Onboarding,
+        params: {
+          screen: ScreenName.OnboardingUseCase,
+          params: {
+            deviceModelId: "nanoSP",
+          },
+        },
+      });
     } else if (onRetry) {
       onRetry();
     }
@@ -350,7 +362,7 @@ export function renderError({
   return (
     <View style={styles.wrapper}>
       <GenericErrorView error={error} withDescription withIcon />
-      {onRetry || managerAppName ? (
+      {onRetry || managerAppName || withOnboardingCTA ? (
         <View style={styles.actionContainer}>
           <Button
             event="DeviceActionErrorRetry"
@@ -358,6 +370,8 @@ export function renderError({
             title={
               managerAppName
                 ? t("DeviceAction.button.openManager")
+                : withOnboardingCTA
+                ? t("DeviceAction.button.openOnboarding")
                 : t("common.retry")
             }
             onPress={onPress}
