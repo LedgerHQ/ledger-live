@@ -12,13 +12,11 @@ import type {
 
 export type TezosResources = {
   revealed: boolean;
-  publicKey: string;
   counter: number;
 };
 
 export type TezosResourcesRaw = {
   revealed: boolean;
-  publicKey: string;
   counter: number;
 };
 
