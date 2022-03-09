@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import ShieldSecurityMedium from "@ledgerhq/icons-ui/native/ShieldSecurityMedium";
+import InfoMedium from "@ledgerhq/icons-ui/native/InfoMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/native/CircledCrossMedium";
 import CircledAlertMedium from "@ledgerhq/icons-ui/native/CircledAlertMedium";
 import Text from "../../Text";
@@ -9,15 +9,27 @@ import FlexBox from "../../Layout/Flex";
 
 type AlertType = "info" | "warning" | "error";
 
+export type IconProps = { size?: number; color?: string };
+export type IconType = React.ComponentType<IconProps>;
 export interface AlertProps {
   type?: AlertType;
+  /**
+   * Optional component to replace the default Icon for the given `type` prop.
+   * It will receive a `color: string` and a `size: number` as props.
+   * */
+  Icon?: IconType;
   title?: string;
   showIcon?: boolean;
   children?: React.ReactNode;
+  /**
+   * Alternative to using the `children` prop in order to render something using the value of `textColor`
+   * that is passed as a parameter.
+   */
+  renderContent?: ({ textColor }: { textColor: string }) => React.ReactNode | null;
 }
 
 const icons = {
-  info: ShieldSecurityMedium,
+  info: InfoMedium,
   warning: CircledAlertMedium,
   error: CircledCrossMedium,
 };
@@ -55,17 +67,20 @@ const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>((p) => (
 
 export default function Alert({
   type = "info",
+  Icon,
   title,
   showIcon = true,
   children,
+  renderContent,
 }: AlertProps): JSX.Element {
   const theme = useTheme();
   const textColor = getColor(theme, alertColors[type || "info"].color);
+  const iconProps = { size: 20, color: textColor };
   return (
     <StyledAlertContainer type={type}>
       {showIcon && !!icons[type] && (
         <StyledIconContainer>
-          {icons[type || "info"]({ size: 20, color: textColor })}
+          {Icon ? <Icon {...iconProps} /> : icons[type || "info"](iconProps)}
         </StyledIconContainer>
       )}
       {title && (
@@ -74,6 +89,7 @@ export default function Alert({
         </Text>
       )}
       {children}
+      {renderContent && renderContent({ textColor })}
     </StyledAlertContainer>
   );
 }
