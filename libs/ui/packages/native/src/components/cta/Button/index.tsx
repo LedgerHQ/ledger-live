@@ -112,16 +112,21 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, type = "default" } = props;
+  const { Icon, children, type = "default", iconName } = props;
   return (
-    <Base {...props} type={type} iconButton={!!Icon && !children} activeOpacity={0.5}>
+    <Base
+      {...props}
+      type={type}
+      iconButton={(!!Icon || !!iconName) && !children}
+      activeOpacity={0.5}
+    >
       <ButtonContainer {...props} type={type} />
     </Base>
   );
 };
 
 export const PromisableButton = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, onPress, type = "main", disabled = false } = props;
+  const { Icon, children, onPress, type = "main", disabled = false, iconName } = props;
 
   const [spinnerOn, setSpinnerOn] = useState(false);
   const theme = useTheme();
@@ -143,7 +148,7 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
     <Base
       {...props}
       type={type}
-      iconButton={!!Icon && !children}
+      iconButton={(!!Icon || !!iconName) && !children}
       disabled={disabled || spinnerOn}
       onPress={onPressHandler}
     >

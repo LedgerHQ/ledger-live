@@ -73,7 +73,8 @@ export function ModalHeader({
 }: Pick<
   BaseModalProps,
   "Icon" | "iconColor" | "title" | "description" | "subtitle"
->): React.ReactElement {
+>): React.ReactElement | null {
+  if (!(Icon || subtitle || title || description)) return null;
   return (
     <Flex alignItems={"center"} mb={7}>
       {Icon && (
@@ -133,9 +134,11 @@ export default function BaseModal({
       style={[defaultModalStyle, modalStyle]}
     >
       <Container style={containerStyle}>
-        <CloseContainer>
-          {!noCloseButton && <Link Icon={CloseMedium} onPress={onClose} />}
-        </CloseContainer>
+        {!noCloseButton && (
+          <CloseContainer>
+            <Link Icon={CloseMedium} onPress={onClose} />
+          </CloseContainer>
+        )}
         <ModalHeader
           Icon={Icon}
           iconColor={iconColor}
