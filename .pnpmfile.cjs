@@ -110,6 +110,9 @@ function readPackage(pkg, context) {
           jest: "^27.4.7",
           "ts-jest": "^27.1.2",
           "ts-node": "^10.4.0",
+          "@types/node": "*",
+          "source-map-support": "*",
+          "typescript": "4"
         },
         {
           kind: "devDependencies",
