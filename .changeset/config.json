@@ -5,7 +5,7 @@
   "fixed": [],
   "linked": [["@ledgerhq/hw-transport", "@ledgerhq/hw-transport-*"]],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "monorepo-setup",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
