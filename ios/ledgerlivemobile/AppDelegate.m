@@ -4,9 +4,11 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+#import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
 
 #import <Firebase.h>
+
 #if DEBUG
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -25,8 +27,19 @@
 {
   [self initializeFlipper:application];
 
-  [FIRApp configure];
+  // Retrieve the correct GoogleService-Info.plist file name for a given environment
+  NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
+  NSString *googleServiceInfoName = googleServiceInfoEnvName;
 
+  if ([googleServiceInfoName length] == 0) {
+    googleServiceInfoName = @"GoogleService-Info";
+  }
+
+  // Initialize Firebase with the correct GoogleService-Info.plist file
+  NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
+  FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
+  [FIRApp configureWithOptions:options];
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"ledgerlivemobile"
