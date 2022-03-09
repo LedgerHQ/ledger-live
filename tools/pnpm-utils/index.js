@@ -1,8 +1,8 @@
-function bold(str) {
-  return "\033[1m" + str + "\033[0;0m";
+function bold(str, colorCode = "") {
+  return "\033" + `[1${colorCode ? `;${colorCode}`: ""}m` + str + "\033[0;0m";
 }
 
-function field(str, { length = 30, bolden = true } = {}) {
+function field(str, { length = 36, bolden = true } = {}) {
   const paddedField = ("[" + str + "]").padEnd(length)
   return bolden ? bold(paddedField) : paddedField
 }
@@ -34,12 +34,12 @@ function addDependencies(filter, dependencies, {
 
         if (pkg[kind][dep]) {
           if (!ignoreExisting) {
-            context.log(`[!] ${field(depKey)} | ${field(key, { length: 0 })} already declares ${dep}@${pkg[kind][dep]} (${kind})`)
+            console.log(`${bold("[!]", 33)} ${field(depKey)} | ${field(key, { length: 0 })} already declares ${dep}@${pkg[kind][dep]} (${kind})`)
             return
           }
         }
 
-        context.log(`[+] ${field(depKey)} | ${field(key)} (${kind})`)
+        console.log(`${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`)
 
         pkg[kind] = {
           ...pkg[kind],
@@ -54,7 +54,7 @@ function removePeerDeps(filter) {
   return (pkg, context) => {
     const key = `${pkg.name}@${pkg.version}`
     if (filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter) {
-      context.log(`[-] ${field(key)} | (peerDependencies)`)
+      console.log(`${bold("[-]", 31)} ${field(key)} | (peerDependencies)`)
       delete pkg.peerDependencies;
       delete pkg.peerDependenciesMeta;
     }
