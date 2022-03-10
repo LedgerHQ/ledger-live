@@ -1,6 +1,7 @@
 {
   "name": "flow-support",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "copy": "node ./index.mjs"
   },
