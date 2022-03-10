@@ -10,16 +10,19 @@
         "dist/**",
         "lib/**",
         "lib-es/**",
-        "build/**"
-      ]
-    },
-    "icons-ui#build": {
-      "outputs": [
+        "build/**",
         "react/**",
         "native/**",
         "index.js"
       ]
     },
+    // "icons-ui#build": {
+    //   "outputs": [
+    //     "react/**",
+    //     "native/**",
+    //     "index.js"
+    //   ]
+    // },
     "build-ci": {
       "cache": false,
       "dependsOn": [
