@@ -29,6 +29,18 @@
     "lint": {
       "outputs": []
     },
+    "live-mobile#lint": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
+    },
+    "live-desktop#lint": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": []
+    },
     "typecheck": {
       "outputs": [],
       "dependsOn": [
@@ -40,18 +52,6 @@
         "lint",
         "typecheck",
         "build"
-      ],
-      "outputs": []
-    },
-    "live-mobile#lint": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": []
-    },
-    "live-desktop#lint": {
-      "dependsOn": [
-        "^build"
       ],
       "outputs": []
     },
