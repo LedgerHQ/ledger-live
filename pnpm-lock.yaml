@@ -1081,16 +1081,16 @@ importers:
 
   libs/ledgerjs/flow-support:
     specifiers:
-      '@ledgerhq/cryptoassets': ^6.26.1
-      '@ledgerhq/devices': ^6.24.2
-      '@ledgerhq/errors': ^6.10.1
-      '@ledgerhq/logs': ^6.10.1
+      '@ledgerhq/cryptoassets': ^5.52.0
+      '@ledgerhq/devices': ^5.51.1
+      '@ledgerhq/errors': ^5.50.0
+      '@ledgerhq/logs': ^5.50.0
       glob: ^7.1.7
     devDependencies:
-      '@ledgerhq/cryptoassets': link:../packages/cryptoassets
-      '@ledgerhq/devices': link:../packages/devices
-      '@ledgerhq/errors': link:../packages/errors
-      '@ledgerhq/logs': link:../packages/logs
+      '@ledgerhq/cryptoassets': 5.53.0
+      '@ledgerhq/devices': 5.51.1
+      '@ledgerhq/errors': 5.50.0
+      '@ledgerhq/logs': 5.50.0
       glob: 7.2.0
 
   libs/ledgerjs/packages/cryptoassets:
@@ -6649,6 +6649,12 @@ packages:
       commander: 2.20.3
     dev: false
 
+  /@ledgerhq/cryptoassets/5.53.0:
+    resolution: {integrity: sha512-M3ibc3LRuHid5UtL7FI3IC6nMEppvly98QHFoSa7lJU0HDzQxY6zHec/SPM4uuJUC8sXoGVAiRJDkgny54damw==}
+    dependencies:
+      invariant: 2.2.4
+    dev: true
+
   /@ledgerhq/devices/5.51.1:
     resolution: {integrity: sha512-4w+P0VkbjzEXC7kv8T1GJ/9AVaP9I6uasMZ/JcdwZBS3qwvKo5A5z9uGhP5c7TvItzcmPb44b5Mw2kT+WjUuAA==}
     dependencies:
@@ -6656,7 +6662,6 @@ packages:
       '@ledgerhq/logs': 5.50.0
       rxjs: 6.6.7
       semver: 7.3.5
-    dev: false
 
   /@ledgerhq/electron-updater/4.2.2:
     resolution: {integrity: sha512-kPUJDBnic9VAj8bnL+beqWMP7fpng6SvvbkZQ9+ALHpeoZEcVfF0mmcdB78fqNpoAC4nGw8+G1jgpbbbO1yD2Q==}
@@ -6675,7 +6680,6 @@ packages:
 
   /@ledgerhq/errors/5.50.0:
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
-    dev: false
 
   /@ledgerhq/hw-app-eth/5.11.0:
     resolution: {integrity: sha512-qgpPwZzM8UMHYMC5+9xYV2O+8kgkDAl9+38w9JiBksaGmUFqcS4najsB1nj6AWf2rGEuXdKMb2WEYRskVypJrA==}
@@ -6728,7 +6732,6 @@ packages:
 
   /@ledgerhq/logs/5.50.0:
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
-    dev: false
 
   /@ledgerhq/node-pre-gyp-github/1.0.2:
     resolution: {integrity: sha512-JxoXlQrNVMMMRKLOD975CZBCj7qPJHZMUQ8vlZka4YTgM0CnbBA3DwI4uv1c0ox3CWPjLqvbNS8DPuYehmUv3w==}
