@@ -3,40 +3,50 @@ import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 
-// NOTE: Still a WIP
-
-const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-  }) + " HBAR";
-
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Starting Balance",
+      title: "Transaction Summary",
       button: "Rr",
-      expectedValue: expectedAmount,
+      expectedValue: () => "Transfer with Key #0?",
     },
     {
-      title: "Send",
+      title: "Operator",
       button: "Rr",
-      expectedValue: expectedAmount,
+      expectedValue: ({ account: { hederaResources } }) => hederaResources?.accountId.toString()!,
     },
     {
-      title: "Fee",
+      title: "Sender",
       button: "Rr",
-      expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(account.unit, status.estimatedFees, {
-          disableRounding: true,
-        }) + " HBAR",
+      expectedValue: ({ account: { hederaResources } }) => hederaResources?.accountId.toString()!,
     },
     {
-      title: "Destination",
+      title: "Recipient",
       button: "Rr",
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Accept",
+      title: "Amount",
+      button: "Rr",
+      expectedValue: ({ account: { unit }, transaction: { amount } }) =>
+        formatCurrencyUnit(unit, amount, {
+          disableRounding: true,
+        }) + " hbar",
+    },
+    {
+      title: "Fee",
+      button: "Rr",
+      expectedValue: ({ account: { unit }, status: { estimatedFees } }) =>
+        formatCurrencyUnit(unit, estimatedFees, {
+          disableRounding: true,
+        }) + " hbar",
+    },
+    {
+      title: "Memo",
+      button: "Rr",
+    },
+    {
+      title: "Confirm",
       button: "LRlr",
     },
   ],
