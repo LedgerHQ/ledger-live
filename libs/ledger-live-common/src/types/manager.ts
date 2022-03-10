@@ -21,6 +21,7 @@ export type DeviceInfo = {
   targetId: string | number;
   // a technical id
   isBootloader: boolean;
+  isRecoveryMode?: boolean;
   isOSU: boolean;
   providerName: string | null | undefined;
   managerAllowed: boolean;
