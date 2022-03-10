@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport",
-  "version": "6.24.1",
+  "version": "6.24.2-monorepo.0",
   "description": "Ledger Hardware Wallet common interface of the communication layer",
   "keywords": [
     "Ledger",

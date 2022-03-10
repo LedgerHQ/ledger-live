@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-trx",
-  "version": "6.24.1",
+  "version": "6.24.2-monorepo.0",
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
     "Ledger",
