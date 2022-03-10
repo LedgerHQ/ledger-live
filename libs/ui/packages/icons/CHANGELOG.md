@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.2.4-monorepo.1
+
+### Patch Changes
+
+- 1b6fec9db: monorepo prelease 2
+
 ## 0.2.4-monorepo.0
 
 ### Patch Changes
