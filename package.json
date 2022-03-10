@@ -28,6 +28,7 @@
     "run:turbo": "x-run node_modules/turbo/bin/turbo"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.21.1",
     "pnpm-utils": "workspace:*",
     "turbo": "^1.1.6",
     "x-run": "workspace:*"
@@ -43,8 +44,5 @@
       "metro-runtime": "^0.67.0",
       "metro-transform-worker": "^0.67.0"
     }
-  },
-  "dependencies": {
-    "@changesets/cli": "^2.21.1"
   }
 }
