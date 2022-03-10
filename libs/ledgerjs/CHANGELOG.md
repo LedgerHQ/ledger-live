@@ -1,5 +1,11 @@
 # ledger-libs
 
+## 0.0.1-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+
 ## 0.0.1-monorepo.1
 
 ### Patch Changes
