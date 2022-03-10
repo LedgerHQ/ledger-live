@@ -1,6 +1,7 @@
 {
   "name": "pnpm-utils",
   "version": "1.0.1-monorepo.0",
+  "private": true,
   "description": "pnpm utility functions",
   "main": "index.js",
   "author": "",
