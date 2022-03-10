@@ -1,6 +1,6 @@
 {
   "name": "@actions/get-release-by-tag",
-  "version": "1.0.1-monorepo.1",
+  "version": "1.0.1-monorepo.2",
   "description": "Gets the id of the draft release by tag name",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

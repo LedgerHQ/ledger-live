@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.26.1-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+- Updated dependencies [a439963a7]
+  - @ledgerhq/cryptoassets@6.26.1-monorepo.2
+  - @ledgerhq/errors@6.10.1-monorepo.2
+  - @ledgerhq/hw-transport@6.24.2-monorepo.2
+  - @ledgerhq/hw-transport-mocker@6.24.2-monorepo.2
+  - @ledgerhq/logs@6.10.1-monorepo.2
+
 ## 6.26.1-monorepo.1
 
 ### Patch Changes

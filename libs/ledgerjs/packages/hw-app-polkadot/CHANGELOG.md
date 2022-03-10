@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.24.2-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+- Updated dependencies [a439963a7]
+  - @ledgerhq/errors@6.10.1-monorepo.2
+  - @ledgerhq/hw-transport@6.24.2-monorepo.2
+
 ## 6.24.2-monorepo.1
 
 ### Patch Changes
