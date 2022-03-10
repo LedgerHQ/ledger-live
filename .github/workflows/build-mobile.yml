@@ -40,6 +40,10 @@ jobs:
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
