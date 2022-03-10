@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/cryptoassets",
-  "version": "6.26.1-monorepo.1",
+  "version": "6.26.1-monorepo.2",
   "description": "Ledger crypto-assets list",
   "keywords": [
     "Ledger"
