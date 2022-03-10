@@ -1,6 +1,6 @@
 {
   "name": "@actions/extract-live-common-version",
-  "version": "1.0.0",
+  "version": "1.0.1-monorepo.0",
   "description": "Extracts the live-common version from yarn.lock",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
