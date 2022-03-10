@@ -8,6 +8,8 @@
     "clean": "git clean -fdX",
     "changelog": "changeset add",
     "bump": "changeset version",
+    "prerelease": "pnpm run build:libs",
+    "release": "changeset publish",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
     "build:libs": "pnpm run:turbo -- run build --scope=@ledgerhq/* --include-dependencies --no-deps",
     "build:libs:force": "pnpm -r --filter=\"!./apps\" --filter=\"!ledger-live\" build",
