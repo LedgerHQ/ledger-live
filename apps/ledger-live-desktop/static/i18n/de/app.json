@@ -126,6 +126,7 @@
   },
   "devices": {
     "nanoS": "Nano S",
+    "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
     "blue": "Blau"
   },
@@ -192,6 +193,7 @@
   },
   "sidebar": {
     "card": "Karte",
+    "learn": "Learn",
     "menu": "Menü",
     "stars": "Favoriten",
     "accounts": "Konten",
@@ -332,8 +334,8 @@
     "exchangeDrawer": {
       "title": "Swap bestätigen",
       "completed": {
-        "title": "Vorgang ausstehend",
-        "description": "Ihr Tauschvorgang (Swap) wurde zur Bestätigung an das Netzwerk gesendet. Es kann bis zu einer Stunde dauern, bis Sie Ihre {{targetCurrency}} erhalten.",
+        "title": "Transaktion erfolgreich gesendet",
+        "description": "Ihr Swap-Vorgang wurde zur Bestätigung an das Netzwerk gesendet. Bitte warten Sie, bis Ihre Transaktion bestätigt wird und der Anbieter Ihre {{targetCurrency}} verarbeiten und senden kann.",
         "disclaimer": "Notieren Sie sich Ihre Swap-ID-Nummer, falls Sie Unterstützung von <0><0>{{provider}}</0> Unterstützung</0> benötigen.",
         "seeDetails": "Siehe Details"
       }
@@ -545,6 +547,9 @@
       "initialAmount": "Anfangsbetrag",
       "creditedAmount": "Gutschrift"
     }
+  },
+  "lottieDebugger": {
+    "buttonTitle": "Test"
   },
   "fullNode": {
     "status": "Status",
@@ -1130,7 +1135,9 @@
       "confirm": {
         "title": "Verbinden",
         "details": "Will sich mit dem folgenden Ethereum-Konto über Ihren Wallet verbinden:",
-        "deeplinkDetails": "Mit Ledger Live verbinden. Wählen Sie Ihr Ethereum-Konto"
+        "deeplinkDetails": "Mit Ledger Live verbinden. Wählen Sie Ihr Ethereum-Konto",
+        "noEthAccount": "Sie haben kein Ethereum-Konto. Bitte fügen Sie ein Ethereum-Konto hinzu, um Wallet Connect zu nutzen.",
+        "alreadyConnected": "Sie versuchen sich mit einer dApp zu verbinden, während eine andere bereits verbunden ist. Bitte trennen Sie die Verbindung von der angeschlossenen dApp, bevor Sie Live mit einer neuen dApp verbinden."
       }
     },
     "connectedscreen": {
@@ -1178,6 +1185,9 @@
   },
   "genuinecheck": {
     "deviceInBootloader": "Gerät im Bootloader-Modus. Klicken Sie auf <1>Fortfahren</1>, um es zu aktualisieren."
+  },
+  "learn": {
+    "title": "Learn"
   },
   "market": {
     "title": "Markt",
@@ -1505,6 +1515,10 @@
     "sell": {
       "notice": "Überprüfen Sie die Verkaufsdetails auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
       "confirm": "Verkaufstransaktion bestätigen"
+    },
+    "fund": {
+      "notice": "Überprüfen Sie die Zahlungsdaten auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, so dass Sie diese nicht überprüfen müssen.",
+      "confirm": "Transaktion bestätigen"
     }
   },
   "manager": {
@@ -1589,7 +1603,11 @@
         "tokenAppDisclaimer": "Um {{tokenName}} zu verwalten {{tokenType}} Token zu verwalten, <1>installieren Sie die {{appName}} App</1> und vergewissern Sie sich bitte, dass Sie tatsächlich die <1>{{tokenType}} Version</1> haben, bevor Sie <3>an Ihr {{appName}} Konto</3> senden.",
         "tokenAppDisclaimerInstalled": "Zur Verwaltung von <1>{{tokenName}} {{tokenType}}-Token</1> zu verwalten, vergewissern Sie sich bitte, dass Sie tatsächlich die <1>{{tokenType}}-Version</1> haben, bevor Sie <3>an Ihr {{appName}}-Konto</3> senden.",
         "goToAccounts": "Zu den Konten gehen",
-        "intallParentApp": "{{appName}} App installieren"
+        "intallParentApp": "{{appName}} App installieren",
+        "plugin": "Go to app",
+        "swap": "Swap",
+        "tool": "Learn more",
+        "app": "Learn more"
       },
       "uninstall": {
         "title": "Alle deinstallieren",
@@ -2731,9 +2749,13 @@
           "title": "TronGrid.io verwenden",
           "description": "Verwenden Sie TronGrid direkt ohne Ledger-Proxy"
         },
-        "experimentalCurrencies": {
+        "experimentalJSCurrencies": {
           "title": "Experimentelle JS-Implementierungen",
           "description": "Verwenden Sie experimentelle JS-Implementierungen für Algorand und Tezos."
+        },
+        "experimentalCurrencies": {
+          "title": "Experimentelle Integrationen",
+          "description": "Use available experimental crypto assets integrations."
         },
         "experimentalLanguages": {
           "title": "Testen der Übersetzung",
@@ -2758,6 +2780,10 @@
         "forceProvider": {
           "title": "Manager-Anbieter",
           "description": "Das Ändern des App-Anbieters im Manager kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+        },
+        "testAnimations": {
+          "title": "Test Lottie animations",
+          "description": "Test all animations used in Ledger Live"
         }
       }
     },
@@ -3821,6 +3847,9 @@
     "PasswordIncorrect": {
       "title": "Das eingegebene Passwort ist falsch",
       "description": "Bitte versuchen Sie es erneut"
+    },
+    "QuantityNeedsToBePositive": {
+      "title": "Die Menge muss größer als 0 sein"
     },
     "RPCHostRequired": {
       "title": "Host ist erforderlich."

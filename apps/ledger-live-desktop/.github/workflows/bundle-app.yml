@@ -34,7 +34,7 @@ jobs:
 
   bundle-macos:
     name: "[macOS] Build"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     needs: cancel-previous
     steps:
       - uses: actions/checkout@v2
@@ -45,6 +45,8 @@ jobs:
       - uses: actions/setup-node@main
         with:
           node-version: 14.x
+      - name: install yarn
+        run: npm i -g yarn
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -70,6 +72,8 @@ jobs:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
         run: yarn version --new-version="$VERSION"
       - name: build the app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: yarn build-ci
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: post-version
@@ -80,6 +84,16 @@ jobs:
         with:
           name: ${{ steps.post-version.outputs.version }}-mac.dmg
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-mac.dmg
+
+  clean-macos-runner:
+    runs-on: [ledger-live, macos]
+    needs: [bundle-macos]
+    steps:
+      - name: Clean working directory
+        run: |
+          cd $RUNNER_WORKSPACE
+          cd ..
+          rm -r *
 
   start-runner:
     name: "[Runner] start ec2 instance"
@@ -232,9 +246,9 @@ jobs:
       - uses: actions/setup-node@main
         with:
           node-version: 14.x
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v2
         with:
-          python-version: "2.7.x"
+          python-version: 2.x
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"

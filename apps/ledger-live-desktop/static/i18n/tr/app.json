@@ -126,6 +126,7 @@
   },
   "devices": {
     "nanoS": "Nano S",
+    "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
     "blue": "Blue"
   },
@@ -163,8 +164,8 @@
   },
   "byteSize": {
     "bytes": "{{size}} bayt",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
   },
   "time": {
     "minute": "Dakika",
@@ -192,12 +193,13 @@
   },
   "sidebar": {
     "card": "Kart",
+    "learn": "Learn",
     "menu": "Menü",
     "stars": "Favori hesaplar",
     "accounts": "Hesaplar",
     "manager": "Yönetici",
     "exchange": "Al / Sat",
-    "swap": "Takas",
+    "swap": "Takas et",
     "lend": "Borç ver",
     "catalog": "Keşfet",
     "market": "Piyasa"
@@ -218,7 +220,7 @@
     "disconnectButton": "Bağlantıyı Kes"
   },
   "swap2": {
-    "title": "Takas",
+    "title": "Takas et",
     "tabs": {
       "exchange": "Takas",
       "history": "Geçmiş",
@@ -332,15 +334,15 @@
     "exchangeDrawer": {
       "title": "Takas işleminizi onaylayın",
       "completed": {
-        "title": "İşlem Beklemede",
-        "description": "Takas işleminiz onaylanmak üzere ağa gönderildi. {{targetCurrency}} tutarınızı almanız yaklaşık bir saat sürebilir.",
+        "title": "İşlem başarıyla yayınlandı",
+        "description": "Takas işleminiz onaylanmak üzere ağa gönderildi. Lütfen işleminizin onaylanmasını ve sağlayıcının işlemi gerçekleştirerek {{targetCurrency}} varlığınızı göndermesini bekleyin.",
         "disclaimer": "<0><0>{{provider}}</0> desteğinden</0> yardıma ihtiyacınız olursa gerekli olacak Swap ID'nizi (Takas Kimliği) not edin.",
         "seeDetails": "Ayrıntıları gör"
       }
     }
   },
   "swap": {
-    "title": "Takas",
+    "title": "Takas et",
     "titleCrypto": "{{currency}} takas et",
     "whatIsSwap": "Takas (Swap) Nedir?",
     "paraswap": {
@@ -485,7 +487,7 @@
       "cta": "Onayla"
     },
     "modal": {
-      "title": "Takas",
+      "title": "Takas et",
       "steps": {
         "summary": {
           "title": "Özet",
@@ -545,6 +547,9 @@
       "initialAmount": "Başlangıç tutarı",
       "creditedAmount": "Eklenen tutar"
     }
+  },
+  "lottieDebugger": {
+    "buttonTitle": "Test"
   },
   "fullNode": {
     "status": "Durum",
@@ -722,7 +727,7 @@
       "header": "Kripto alın ve satın",
       "title": "Kripto satın almak için bir sağlayıcı seçin",
       "buyFrom": "İstediğiniz yerden satın alın",
-      "cryptoSupported": "desteklenen kriptolar",
+      "cryptoSupported": "kripto destekleniyor",
       "payWith": "Kart veya SEPA ile ödeme yapın",
       "tab": "Satın al",
       "coinify": {
@@ -1004,7 +1009,7 @@
       "star": "Yıldızla",
       "receive": "Al",
       "send": "Gönder",
-      "swap": "Takas",
+      "swap": "Takas et",
       "buy": "Satın al",
       "sell": "Sat",
       "edit": "Hesabı düzenle",
@@ -1130,7 +1135,9 @@
       "confirm": {
         "title": "Bağlan",
         "details": "Cüzdanınız üzerinden bağlanmak istenen Ethereum hesabı:",
-        "deeplinkDetails": "Ledger Live'a bağlanmak istiyor. Ethereum adresinizi seçin:"
+        "deeplinkDetails": "Ledger Live'a bağlanmak istiyor. Ethereum adresinizi seçin:",
+        "noEthAccount": "Ethereum hesabınız yok. Wallet Connect kullanmak için lütfen bir Ethereum hesabı ekleyin.",
+        "alreadyConnected": "Başka bir dApp bağlıyken yeni bir dApp'e bağlanmaya çalışıyorsunuz. Live'ı yeni bir dApp'e bağlamadan önce lütfen bağlı olduğunuz dApp'in bağlantısını kesin."
       }
     },
     "connectedscreen": {
@@ -1178,6 +1185,9 @@
   },
   "genuinecheck": {
     "deviceInBootloader": "Cihaz Bootloader (önyükleyici) modunda. Güncellemek için <1>Devam</1>'a tıklayın."
+  },
+  "learn": {
+    "title": "Learn"
   },
   "market": {
     "title": "Piyasa",
@@ -1505,6 +1515,10 @@
     "sell": {
       "notice": "Göndermeden önce cihazınızdaki Satış bilgilerini doğrulayın. Adresler güvenli bir şekilde değiştirilir, böylece onları doğrulamak zorunda kalmazsınız.",
       "confirm": "Satış işlemini onayla"
+    },
+    "fund": {
+      "notice": "Göndermeden önce cihazınızdaki Fonlama bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "confirm": "Fonlama işlemini onayla"
     }
   },
   "manager": {
@@ -1589,7 +1603,11 @@
         "tokenAppDisclaimer": "{{tokenName}} {{tokenType}} token'larını yönetmek için <1>{{appName}} uygulamasını yükleyin</1> ve lütfen <3>{{appName}} hesabınıza</3> göndermeden önce <1>{{tokenType}} sürümüne</1> sahip olduğunuzdan emin olun.",
         "tokenAppDisclaimerInstalled": "<1>{{tokenName}} {{tokenType}} token'larını</1> yönetmek için lütfen <3>{{appName}} hesabınıza</3> göndermeden önce <1>{{tokenType}} sürümüne</1> sahip olduğunuzdan emin olun.",
         "goToAccounts": "Hesaplara git",
-        "intallParentApp": "{{appName}} uygulamasını yükleyin"
+        "intallParentApp": "{{appName}} uygulamasını yükleyin",
+        "plugin": "Go to app",
+        "swap": "Swap",
+        "tool": "Learn more",
+        "app": "Learn more"
       },
       "uninstall": {
         "title": "Tümünü kaldır",
@@ -2027,7 +2045,7 @@
     "advanced": "Gelişmiş seçenekler",
     "ctaDisabled": "Bu hesapta UTXO yok",
     "whatIs": "Coin seçimi nedir?",
-    "rbf": "İşlemin değiştirilmesine izin ver (Ücretle Değiştir).",
+    "rbf": "İşlemin değiştirilmesine izin ver (Replace-By-Fee).",
     "strategy": "Coin seçimi stratejisi",
     "selected": "Strateji için seçilen coin'ler",
     "amount": "Gönderilecek tutar:",
@@ -2375,7 +2393,7 @@
       }
     },
     "bond": {
-      "title": "Varlıkları bağla",
+      "title": "Varlıkları bağlayın",
       "rewardDestination": {
         "label": "Ödül Hedefi",
         "stash": "Mevcut bakiye",
@@ -2457,7 +2475,7 @@
       }
     },
     "unbond": {
-      "title": "Varlıkları çöz",
+      "title": "Varlıkları çözün",
       "steps": {
         "amount": {
           "title": "Tutar",
@@ -2731,9 +2749,13 @@
           "title": "TronGrid.io kullanın",
           "description": "Trongrid'i doğrudan Ledger sunucusu olmadan kullanın"
         },
-        "experimentalCurrencies": {
+        "experimentalJSCurrencies": {
           "title": "Deneysel JS uygulamaları",
           "description": "Algorand ve Tezos için deneysel JS uygulamalarını kullanın."
+        },
+        "experimentalCurrencies": {
+          "title": "Deneysel entegrasyonlar",
+          "description": "Use available experimental crypto assets integrations."
         },
         "experimentalLanguages": {
           "title": "Çeviri testi",
@@ -2758,6 +2780,10 @@
         "forceProvider": {
           "title": "Yönetici sağlayıcı",
           "description": "Yönetici'de uygulama sağlayıcısını değiştirmek, Ledger cihazınıza uygulama yüklemeyi veya kaldırmayı imkansız hale getirebilir."
+        },
+        "testAnimations": {
+          "title": "Test Lottie animations",
+          "description": "Test all animations used in Ledger Live"
         }
       }
     },
@@ -3821,6 +3847,9 @@
     "PasswordIncorrect": {
       "title": "Girilen parola yanlış",
       "description": "Lütfen tekrar deneyin"
+    },
+    "QuantityNeedsToBePositive": {
+      "title": "Miktar 0'dan büyük olmalıdır"
     },
     "RPCHostRequired": {
       "title": "Sunucu gerekli."

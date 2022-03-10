@@ -126,6 +126,7 @@
   },
   "devices": {
     "nanoS": "Nano S",
+    "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
     "blue": "Blue"
   },
@@ -163,8 +164,8 @@
   },
   "byteSize": {
     "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
   },
   "time": {
     "minute": "Minute",
@@ -192,6 +193,7 @@
   },
   "sidebar": {
     "card": "Card",
+    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -332,8 +334,8 @@
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
       "completed": {
-        "title": "Pending Operation",
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "title": "Transaction broadcast successfully",
+        "description": "Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your {{targetCurrency}}.",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
         "seeDetails": "See details"
       }
@@ -545,6 +547,9 @@
       "initialAmount": "Initial amount",
       "creditedAmount": "Credited amount"
     }
+  },
+  "lottieDebugger": {
+    "buttonTitle": "Test"
   },
   "fullNode": {
     "status": "Status",
@@ -1130,7 +1135,9 @@
       "confirm": {
         "title": "Connect",
         "details": "Wants to connect to the following Ethereum account through your wallet :",
-        "deeplinkDetails": "Wants to connect to Ledger Live. Choose your Ethereum account:"
+        "deeplinkDetails": "Wants to connect to Ledger Live. Choose your Ethereum account:",
+        "noEthAccount": "You don't have any Ethereum account. Please add an Ethereum account to use Wallet Connect.",
+        "alreadyConnected": "You are trying to connect to a dApp while having another one already connected. Please disconnect from the connected dApp before reconnecting Live with a new dApp."
       }
     },
     "connectedscreen": {
@@ -1178,6 +1185,9 @@
   },
   "genuinecheck": {
     "deviceInBootloader": "Device in Bootloader mode. Click on <1>Continue</1> to update it."
+  },
+  "learn": {
+    "title": "Learn"
   },
   "market": {
     "title": "Market",
@@ -1505,6 +1515,10 @@
     "sell": {
       "notice": "Verify the Sell details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
       "confirm": "Confirm Sell transaction"
+    },
+    "fund": {
+      "notice": "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them.",
+      "confirm": "Confirm Fund transaction"
     }
   },
   "manager": {
@@ -1589,7 +1603,11 @@
         "tokenAppDisclaimer": "To manage {{tokenName}} {{tokenType}} tokens, <1>install the {{appName}} app</1> and please verify you indeed have the <1>{{tokenType}} version</1> before sending <3>to your {{appName}} account</3>.",
         "tokenAppDisclaimerInstalled": "To manage <1>{{tokenName}} {{tokenType}} tokens</1>, please verify you indeed have the <1>{{tokenType}} version</1> before sending <3>to your {{appName}} account</3>.",
         "goToAccounts": "Go to accounts",
-        "intallParentApp": "Install {{appName}} app"
+        "intallParentApp": "Install {{appName}} app",
+        "plugin": "Go to app",
+        "swap": "Swap",
+        "tool": "Learn more",
+        "app": "Learn more"
       },
       "uninstall": {
         "title": "Uninstall all",
@@ -2731,9 +2749,13 @@
           "title": "use TronGrid.io",
           "description": "Use trongrid directly without ledger proxy"
         },
-        "experimentalCurrencies": {
+        "experimentalJSCurrencies": {
           "title": "Experimental JS implementations",
           "description": "Use experimental JS implementations for Algorand and Tezos."
+        },
+        "experimentalCurrencies": {
+          "title": "Experimental integrations",
+          "description": "Use available experimental crypto assets integrations."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
@@ -2758,6 +2780,10 @@
         "forceProvider": {
           "title": "Manager provider",
           "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+        },
+        "testAnimations": {
+          "title": "Test Lottie animations",
+          "description": "Test all animations used in Ledger Live"
         }
       }
     },
@@ -3821,6 +3847,9 @@
     "PasswordIncorrect": {
       "title": "The password entered is incorrect",
       "description": "Please try again"
+    },
+    "QuantityNeedsToBePositive": {
+      "title": "The quantity needs to be greater than 0"
     },
     "RPCHostRequired": {
       "title": "Host is required."

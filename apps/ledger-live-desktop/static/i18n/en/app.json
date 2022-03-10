@@ -126,6 +126,7 @@
   },
   "devices": {
     "nanoS": "Nano S",
+    "nanoSP": "Nano S Plus",
     "nanoX": "Nano X",
     "blue": "Blue"
   },
@@ -163,8 +164,8 @@
   },
   "byteSize": {
     "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "kbUnit": "{{size}} KB",
+    "mbUnit": "{{size}} MB"
   },
   "time": {
     "minute": "Minute",
@@ -192,6 +193,7 @@
   },
   "sidebar": {
     "card": "Card",
+    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -545,6 +547,9 @@
       "initialAmount": "Initial amount",
       "creditedAmount": "Credited amount"
     }
+  },
+  "lottieDebugger": {
+    "buttonTitle": "Test"
   },
   "fullNode": {
     "status": "Status",
@@ -1181,6 +1186,9 @@
   "genuinecheck": {
     "deviceInBootloader": "Device in Bootloader mode. Click on <1>Continue</1> to update it."
   },
+  "learn": {
+    "title": "Learn"
+  },
   "market": {
     "title": "Market",
     "currency": "Currency",
@@ -1479,6 +1487,7 @@
     "appNotInstalled": "The {{appName}} app is required to complete this action. Please go to the manager and install it on your device",
     "appNotInstalled_plural": "The {{appName}} apps are required to complete this action. Please go to the manager and install them on your device",
     "openManager": "Open Manager",
+    "openOnboarding": "Setup device",
     "outdated": "App version outdated",
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
     "installApp": "{{appName}} App installation",
@@ -1596,7 +1605,10 @@
         "tokenAppDisclaimerInstalled": "To manage <1>{{tokenName}} {{tokenType}} tokens</1>, please verify you indeed have the <1>{{tokenType}} version</1> before sending <3>to your {{appName}} account</3>.",
         "goToAccounts": "Go to accounts",
         "intallParentApp": "Install {{appName}} app",
-        "platform": "Go to app"
+        "plugin": "Go to app",
+        "swap": "Swap",
+        "tool": "Learn more",
+        "app": "Learn more"
       },
       "uninstall": {
         "title": "Uninstall all",
@@ -2744,7 +2756,7 @@
         },
         "experimentalCurrencies": {
           "title": "Experimental integrations",
-          "description": "Use experimental integration of Solana."
+          "description": "Use available experimental crypto assets integrations."
         },
         "experimentalLanguages": {
           "title": "Translation testing",
@@ -2769,6 +2781,10 @@
         "forceProvider": {
           "title": "Manager provider",
           "description": "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device."
+        },
+        "testAnimations": {
+          "title": "Test Lottie animations",
+          "description": "Test all animations used in Ledger Live"
         }
       }
     },
@@ -3704,6 +3720,10 @@
     "DeviceHalted": {
       "title": "Please restart your Ledger device and retry",
       "description": "An unexpected error occurred. Please try again"
+    },
+    "DeviceNotOnboarded": {
+      "title": "Your device is not ready to use yet",
+      "description": "Set up your device before using it with Ledger Live."
     },
     "DeviceSocketFail": {
       "title": "Please restart your Ledger device and retry",
