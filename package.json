@@ -30,7 +30,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.21.1",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.1.6",
+    "turbo": "1.1.5",
     "x-run": "workspace:*"
   },
   "pnpm": {
