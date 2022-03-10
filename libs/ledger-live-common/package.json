@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "21.34.1-monorepo.0",
+  "version": "21.34.1-monorepo.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",

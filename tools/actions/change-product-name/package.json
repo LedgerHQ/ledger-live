@@ -1,6 +1,6 @@
 {
   "name": "@actions/change-product-name",
-  "version": "1.0.1-monorepo.0",
+  "version": "1.0.1-monorepo.1",
   "description": "Changes `productName` in package.json",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

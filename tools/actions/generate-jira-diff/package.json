@@ -1,6 +1,6 @@
 {
   "name": "@actions/generate-jira-diff",
-  "version": "1.0.1-monorepo.0",
+  "version": "1.0.1-monorepo.1",
   "description": "Generate Jira diff between two version of the repo",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
