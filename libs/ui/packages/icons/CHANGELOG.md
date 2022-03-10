@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.2.4-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+
 ## 0.2.4-monorepo.2
 
 ### Patch Changes
