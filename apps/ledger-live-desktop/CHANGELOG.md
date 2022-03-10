@@ -1,5 +1,20 @@
 # live-desktop
 
+## 2.39.3-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+- Updated dependencies [7f4a91716]
+  - @ledgerhq/live-common@21.34.1-monorepo.3
+  - @ledgerhq/devices@6.24.2-monorepo.3
+  - @ledgerhq/errors@6.10.1-monorepo.3
+  - @ledgerhq/hw-transport@6.24.2-monorepo.3
+  - @ledgerhq/hw-transport-http@6.26.1-monorepo.3
+  - @ledgerhq/hw-transport-node-hid-singleton@6.26.1-monorepo.3
+  - @ledgerhq/logs@6.10.1-monorepo.3
+  - @ledgerhq/react-ui@0.7.5-monorepo.3
+
 ## 2.39.3-monorepo.2
 
 ### Patch Changes

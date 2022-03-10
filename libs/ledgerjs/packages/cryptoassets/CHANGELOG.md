@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 6.26.1-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+
 ## 6.26.1-monorepo.2
 
 ### Patch Changes
