@@ -1,5 +1,12 @@
 # flow-support
 
+## 1.0.1-monorepo.3
+
+### Patch Changes
+
+- ec533cdd6: change dependencies to workspace
+- 7f4a91716: clean pnpm-lock file
+
 ## 1.0.1-monorepo.2
 
 ### Patch Changes

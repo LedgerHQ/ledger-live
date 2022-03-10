@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "6.24.2-monorepo.2",
+  "version": "6.24.2-monorepo.3",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"

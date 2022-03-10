@@ -1,5 +1,16 @@
 # @ledgerhq/hw-transport-node-ble
 
+## 6.24.2-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+- Updated dependencies [7f4a91716]
+  - @ledgerhq/devices@6.24.2-monorepo.3
+  - @ledgerhq/errors@6.10.1-monorepo.3
+  - @ledgerhq/hw-transport@6.24.2-monorepo.3
+  - @ledgerhq/logs@6.10.1-monorepo.3
+
 ## 6.24.2-monorepo.2
 
 ### Patch Changes

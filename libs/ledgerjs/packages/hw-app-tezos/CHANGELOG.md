@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-tezos
 
+## 6.24.2-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+- Updated dependencies [7f4a91716]
+  - @ledgerhq/hw-transport@6.24.2-monorepo.3
+
 ## 6.24.2-monorepo.2
 
 ### Patch Changes

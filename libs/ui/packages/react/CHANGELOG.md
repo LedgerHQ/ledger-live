@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.7.5-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+- Updated dependencies [7f4a91716]
+  - @ledgerhq/icons-ui@0.2.4-monorepo.3
+  - @ledgerhq/ui-shared@0.1.6-monorepo.3
+
 ## 0.7.5-monorepo.2
 
 ### Patch Changes

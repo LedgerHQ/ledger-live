@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-str",
-  "version": "6.24.2-monorepo.2",
+  "version": "6.24.2-monorepo.3",
   "description": "Ledger Hardware Wallet Stellar Application API",
   "keywords": [
     "Ledger",
