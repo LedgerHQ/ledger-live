@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-mocker",
-  "version": "6.24.2-monorepo.0",
+  "version": "6.24.2-monorepo.1",
   "description": "Ledger Hardware Wallet mocker utilities used for tests",
   "keywords": [
     "Ledger",
