@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/lib/featureFlags";
 import { reduce } from "lodash";
@@ -21,16 +21,31 @@ type Props = {
   children?: ReactNode;
 };
 
-export const FirebaseRemoteConfigProvider = ({ children }: Props) => {
+export const FirebaseRemoteConfigProvider = ({
+  children,
+}: Props): JSX.Element | null => {
+  const [loaded, setLoaded] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchConfig = async () => {
-      await remoteConfig().setDefaults({
-        ...formatDefaultFeatures(defaultFeatures),
-      });
-      await remoteConfig().fetchAndActivate();
+      try {
+        await remoteConfig().setDefaults({
+          ...formatDefaultFeatures(defaultFeatures),
+        });
+        await remoteConfig().fetchAndActivate();
+      } catch (error) {
+        console.error(
+          `Failed to fetch Firebase remote config with error: ${error}`,
+        );
+      }
+      setLoaded(true);
     };
     fetchConfig();
   }, []);
 
-  return children;
+  if (!loaded) {
+    return null;
+  }
+
+  return <>{children}</>;
 };

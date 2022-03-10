@@ -9,6 +9,9 @@ import "react-native-gesture-handler";
 // https://github.com/facebook/react-native/issues/23922
 import "react-native-url-polyfill/auto";
 
+// cosmjs use TextEncoder that's not available in React Native but on Node
+import "text-encoding-polyfill";
+
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
