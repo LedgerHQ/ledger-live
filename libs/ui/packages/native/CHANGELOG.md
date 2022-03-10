@@ -1,5 +1,14 @@
 # @ledgerhq/native-ui
 
+## 0.7.4-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+- Updated dependencies [a439963a7]
+  - @ledgerhq/icons-ui@0.2.4-monorepo.2
+  - @ledgerhq/ui-shared@0.1.6-monorepo.2
+
 ## 0.7.4-monorepo.1
 
 ### Patch Changes

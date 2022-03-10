@@ -1,5 +1,20 @@
 # live-desktop
 
+## 2.39.3-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+- Updated dependencies [a439963a7]
+  - @ledgerhq/live-common@21.34.1-monorepo.2
+  - @ledgerhq/devices@6.24.2-monorepo.2
+  - @ledgerhq/errors@6.10.1-monorepo.2
+  - @ledgerhq/hw-transport@6.24.2-monorepo.2
+  - @ledgerhq/hw-transport-http@6.26.1-monorepo.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.26.1-monorepo.2
+  - @ledgerhq/logs@6.10.1-monorepo.2
+  - @ledgerhq/react-ui@0.7.5-monorepo.2
+
 ## 2.39.3-monorepo.1
 
 ### Patch Changes

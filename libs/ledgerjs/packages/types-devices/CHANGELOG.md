@@ -1,5 +1,11 @@
 # @ledgerhq/types-devices
 
+## 6.22.1-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+
 ## 6.22.1-monorepo.1
 
 ### Patch Changes

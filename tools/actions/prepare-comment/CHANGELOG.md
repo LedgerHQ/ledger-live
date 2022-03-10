@@ -1,5 +1,11 @@
 # @actions/prepare-comment
 
+## 1.0.1-monorepo.2
+
+### Patch Changes
+
+- a439963a7: test prerelease
+
 ## 1.0.1-monorepo.1
 
 ### Patch Changes

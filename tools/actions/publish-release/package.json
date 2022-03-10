@@ -1,6 +1,6 @@
 {
   "name": "@actions/publish-release",
-  "version": "1.0.1-monorepo.1",
+  "version": "1.0.1-monorepo.2",
   "description": "Publish a draft release",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
