@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.1.4",
+    "turbo": "^1.1.6",
     "x-run": "workspace:*"
   },
   "pnpm": {
