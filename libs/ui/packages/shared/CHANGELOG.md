@@ -1,5 +1,11 @@
 # @ledgerhq/ui-shared
 
+## 0.1.6-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+
 ## 0.1.6-monorepo.2
 
 ### Patch Changes

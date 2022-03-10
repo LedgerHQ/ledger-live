@@ -1,6 +1,6 @@
 {
   "name": "metro-extra-config",
-  "version": "1.0.1-monorepo.2",
+  "version": "1.0.1-monorepo.3",
   "description": "Extra helpers for configuring the metro bundler",
   "main": "index.js",
   "private": true,

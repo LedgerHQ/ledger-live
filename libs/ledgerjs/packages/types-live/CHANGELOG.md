@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.22.1-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+- Updated dependencies [7f4a91716]
+  - @ledgerhq/types-cryptoassets@6.22.1-monorepo.3
+
 ## 6.22.1-monorepo.2
 
 ### Patch Changes

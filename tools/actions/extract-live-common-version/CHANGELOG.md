@@ -1,5 +1,11 @@
 # @actions/extract-live-common-version
 
+## 1.0.1-monorepo.3
+
+### Patch Changes
+
+- 7f4a91716: clean pnpm-lock file
+
 ## 1.0.1-monorepo.2
 
 ### Patch Changes
