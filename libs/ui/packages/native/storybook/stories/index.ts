@@ -33,6 +33,7 @@ import "./Tabs/GraphTabs/GraphTabs.stories";
 import "./Tag/Badge.stories";
 import "./Tag/Tag.stories";
 import "./message/Alert/Alert.stories";
+import "./message/Log/Log.stories";
 import "./Particles/Spacing.stories";
 import "./Form/Checkbox.stories";
 import "./Layout/ScrollContainerHeader.stories";
