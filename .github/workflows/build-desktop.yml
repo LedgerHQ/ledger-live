@@ -94,7 +94,7 @@ jobs:
       #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       #   run: yarn version --new-version="$VERSION"
       - name: build the app
-        env:
+        # env:
           # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: pnpm build:desktop
@@ -170,7 +170,7 @@ jobs:
       #   if: github.event_name == 'push'
       #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
-        env:
+        # env:
           # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
