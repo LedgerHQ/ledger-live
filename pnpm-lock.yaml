@@ -567,6 +567,7 @@ importers:
       string_decoder: ~1.3.0
       styled-components: ^5.3.3
       styled-system: ^5.1.5
+      text-encoding-polyfill: ^0.6.7
       timers-browserify: ^2.0.12
       tty-browserify: 0.0.1
       url: ^0.11.0
@@ -704,6 +705,7 @@ importers:
       string_decoder: 1.3.0
       styled-components: 5.3.3_react-is@17.0.2+react@17.0.2
       styled-system: 5.1.5
+      text-encoding-polyfill: 0.6.7
       timers-browserify: 2.0.12
       tty-browserify: 0.0.1
       url: 0.11.0
@@ -15032,7 +15034,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.3
+      styled-components: 5.3.3_react-is@17.0.2+react@17.0.2
 
   /babel-plugin-syntax-jsx/6.18.0:
     resolution: {integrity: sha1-CvMqmm4Tyno/1QaeYtew9Y0NiUY=}
@@ -35746,6 +35748,10 @@ packages:
       glob: 7.2.0
       minimatch: 3.1.2
     dev: true
+
+  /text-encoding-polyfill/0.6.7:
+    resolution: {integrity: sha512-/DZ1XJqhbqRkCop6s9ZFu8JrFRwmVuHg4quIRm+ziFkR3N3ec6ck6yBvJ1GYeEQZhLVwRW0rZE+C3SSJpy0RTg==}
+    dev: false
 
   /text-encoding-utf-8/1.0.2:
     resolution: {integrity: sha512-8bw4MY9WjdsD2aMtO0OzOCY3pXGYNx2d2FfHRVUKkiCPDWjKuOlhLVASS+pD7VkLTVjW268LYJHwsnPFlBpbAg==}
