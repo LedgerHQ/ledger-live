@@ -1,6 +1,6 @@
 {
   "name": "@actions/is-org-member",
-  "version": "1.0.0",
+  "version": "1.0.1-monorepo.1",
   "description": "returns true if the user is part of the given organisation",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

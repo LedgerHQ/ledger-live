@@ -1,15 +1,16 @@
 {
   "name": "flow-support",
-  "version": "1.0.0",
+  "version": "1.0.1-monorepo.1",
+  "private": true,
   "scripts": {
     "copy": "node ./index.mjs"
   },
   "license": "MIT",
   "devDependencies": {
-    "@ledgerhq/cryptoassets": "^5.52.0",
-    "@ledgerhq/devices": "^5.51.1",
-    "@ledgerhq/errors": "^5.50.0",
-    "@ledgerhq/logs": "^5.50.0",
+    "@ledgerhq/cryptoassets": "^6.26.1-monorepo.1",
+    "@ledgerhq/devices": "^6.24.2-monorepo.1",
+    "@ledgerhq/errors": "^6.10.1-monorepo.1",
+    "@ledgerhq/logs": "^6.10.1-monorepo.1",
     "glob": "^7.1.7"
   }
 }

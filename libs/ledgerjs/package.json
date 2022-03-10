@@ -1,7 +1,7 @@
 {
   "name": "ledger-libs",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1-monorepo.1",
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
