@@ -6,7 +6,6 @@ import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
-import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("hedera");
 
