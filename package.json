@@ -42,9 +42,9 @@
     "https": false
   },
   "dependencies": {
-    "@celo/contractkit": "^1.5.1",
-    "@celo/wallet-base": "^1.5.1",
-    "@celo/wallet-ledger": "^1.5.1",
+    "@celo/contractkit": "^1.5.2",
+    "@celo/wallet-base": "^1.5.2",
+    "@celo/wallet-ledger": "^1.5.2",
     "@crypto-com/chain-jslib": "0.0.19",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
