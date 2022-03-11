@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-mocker
 
+## 6.24.2-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+- Updated dependencies [f6cb87454]
+  - @ledgerhq/hw-transport@6.24.2-monorepo.4
+  - @ledgerhq/logs@6.10.1-monorepo.4
+
 ## 6.24.2-monorepo.3
 
 ### Patch Changes

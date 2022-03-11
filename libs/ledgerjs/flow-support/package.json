@@ -1,6 +1,6 @@
 {
   "name": "flow-support",
-  "version": "1.0.1-monorepo.3",
+  "version": "1.0.1-monorepo.4",
   "private": true,
   "scripts": {
     "copy": "node ./index.mjs"

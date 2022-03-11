@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.22.1-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+- Updated dependencies [f6cb87454]
+  - @ledgerhq/types-cryptoassets@6.22.1-monorepo.4
+
 ## 6.22.1-monorepo.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.2.4-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+
 ## 0.2.4-monorepo.3
 
 ### Patch Changes

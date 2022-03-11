@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.10.1-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+
 ## 6.10.1-monorepo.3
 
 ### Patch Changes
