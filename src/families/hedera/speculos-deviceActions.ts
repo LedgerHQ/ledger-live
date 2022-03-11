@@ -6,19 +6,22 @@ import { deviceActionFlow } from "../../bot/specs";
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Transaction Summary",
+      title: "Transfer",
       button: "Rr",
-      expectedValue: () => "Transfer with Key #0?",
+    },
+    {
+      title: "with Key #0?",
+      button: "Rr",
     },
     {
       title: "Operator",
       button: "Rr",
-      expectedValue: ({ account: { hederaResources } }) => hederaResources?.accountId.toString()!,
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "Sender",
       button: "Rr",
-      expectedValue: ({ account: { hederaResources } }) => hederaResources?.accountId.toString()!,
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "Recipient",
