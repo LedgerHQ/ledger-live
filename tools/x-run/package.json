@@ -1,7 +1,7 @@
 {
   "name": "x-run",
   "private": true,
-  "version": "1.0.1-monorepo.3",
+  "version": "1.0.1-monorepo.4",
   "description": "Cross-platform runner",
   "main": "index.js",
   "bin": {

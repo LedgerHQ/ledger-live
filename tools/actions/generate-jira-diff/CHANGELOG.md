@@ -1,5 +1,11 @@
 # @actions/generate-jira-diff
 
+## 1.0.1-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+
 ## 1.0.1-monorepo.3
 
 ### Patch Changes

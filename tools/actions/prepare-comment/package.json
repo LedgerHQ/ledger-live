@@ -1,6 +1,6 @@
 {
   "name": "@actions/prepare-comment",
-  "version": "1.0.1-monorepo.3",
+  "version": "1.0.1-monorepo.4",
   "description": "prepare reporting comment for PR",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

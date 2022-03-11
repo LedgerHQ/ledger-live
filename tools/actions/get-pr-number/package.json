@@ -1,6 +1,6 @@
 {
   "name": "@actions/get-pr-number",
-  "version": "1.0.1-monorepo.3",
+  "version": "1.0.1-monorepo.4",
   "description": "returns the PR number that triggers the action",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

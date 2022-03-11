@@ -1,5 +1,11 @@
 # @actions/get-release-by-tag
 
+## 1.0.1-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+
 ## 1.0.1-monorepo.3
 
 ### Patch Changes
