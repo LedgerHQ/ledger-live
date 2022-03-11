@@ -102,6 +102,15 @@ function readPackage(pkg, context) {
           kind: "peerDependencies",
         }
       ),
+      addDependencies(
+        "jest-worker",
+        {
+          metro: "*"
+        },
+        {
+          kind: "peerDependencies"
+        }
+      ),
       // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
       // This is done this way because these packages are not hoisted hence unaccessible otherwise.
       addDependencies(
