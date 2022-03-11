@@ -750,12 +750,12 @@ importers:
 
   libs/ledger-live-common:
     specifiers:
-      '@celo/base': ^1.5.1
-      '@celo/connect': ^1.5.1
-      '@celo/contractkit': ^1.5.1
-      '@celo/utils': ^1.5.1
-      '@celo/wallet-base': ^1.5.1
-      '@celo/wallet-ledger': ^1.5.1
+      '@celo/base': ^1.5.2
+      '@celo/connect': ^1.5.2
+      '@celo/contractkit': ^1.5.2
+      '@celo/utils': ^1.5.2
+      '@celo/wallet-base': ^1.5.2
+      '@celo/wallet-ledger': ^1.5.2
       '@crypto-com/chain-jslib': 0.0.19
       '@ethereumjs/common': ^2.6.2
       '@ethereumjs/tx': ^3.5.0
