@@ -1,5 +1,11 @@
 # @ledgerhq/ui-shared
 
+## 0.1.6-monorepo.4
+
+### Patch Changes
+
+- f6cb87454: test prerelease
+
 ## 0.1.6-monorepo.3
 
 ### Patch Changes

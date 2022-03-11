@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-helium",
-  "version": "6.24.2-monorepo.3",
+  "version": "6.24.2-monorepo.4",
   "description": "Ledger Hardware Wallet Helium Application API",
   "keywords": [
     "Ledger",
