@@ -1,5 +1,4 @@
 /*
- * DEPRECATED => these will eventually be moved into an internal crypto-assets repo
  *
  * ~~ fields ~~
  *
