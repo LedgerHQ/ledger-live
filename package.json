@@ -17,7 +17,7 @@
     "build:actions": "pnpm run:turbo -- run build --scope=@actions/* --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=live-desktop --include-dependencies --no-deps",
     "build:mobile": "pnpm run:turbo -- run build-ci --scope=live-mobile --include-dependencies --no-deps",
-    "build:mobile:ios": "pnpm run:turbo -- run ios:ci:adhoc --scope=live-mobile --include-dependencies --no-deps",
+    "build:mobile:deps": "pnpm run:turbo -- run build --scope=live-mobile --include-dependencies --no-deps",
     "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps --ignore=tools/actions/* --ignore=tools\\actions\\*",
     "lld:dev": "pnpm run:turbo -- run start --scope=live-desktop --include-dependencies --no-deps --no-cache",
     "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps --no-cache",
