@@ -19,7 +19,8 @@ import LText from "../LText";
 import Animation from "../Animation";
 import Item from "./Item";
 
-import lottieUsb from "../../screens/Onboarding/assets/nanoS/plugDevice/data.json";
+import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
+import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 import { track } from "../../analytics";
 
 type Props = {
@@ -202,12 +203,14 @@ const WithoutDeviceHeader = () => (
   </View>
 );
 
-// Fixme Use the illustration instead of the png
-const UsbPlaceholder = () => (
-  <View style={styles.imageContainer}>
-    <Animation style={styles.image} source={lottieUsb} />
-  </View>
-);
+const UsbPlaceholder = () => {
+  const { dark } = useTheme();
+  return (
+    <View style={styles.imageContainer}>
+      <Animation style={styles.image} source={dark ? PairDark : PairLight} />
+    </View>
+  );
+};
 
 function getAll({ knownDevices }, { devices }): Device[] {
   return [
