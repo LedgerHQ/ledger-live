@@ -81,7 +81,7 @@ jobs:
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
-        run: pnpm i --filter="live-mobile..." --no-frozen-lockfile
+        run: pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: version
         with:
