@@ -1,4 +1,4 @@
 export type Item = {
   date: Date;
-  value?: number | string;
-} & { [key: string]: number | string };
+  value?: number;
+} & { [key: string]: number };

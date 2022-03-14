@@ -1,22 +1,19 @@
-import React, { useMemo } from "react";
-import styled, { useTheme } from "styled-components/native";
-import moment from "moment";
+import React, { useMemo, useCallback } from "react";
+import { useTheme } from "styled-components/native";
 import { Defs, LinearGradient, Stop } from "react-native-svg";
 import {
   VictoryLine,
   VictoryChart,
   VictoryAxis,
   VictoryArea,
-  VictoryScatter,
+  VictoryTooltip,
+  VictoryVoronoiContainer,
 } from "victory-native";
 
-import { hex } from "../../styles/helpers";
-import Flex from "../Layout/Flex";
+import { Flex } from "../index";
 import type { Item } from "./types";
 
-const Container = styled(Flex)`
-  background-color: ${(p) => p.theme.colors.background.main};
-`;
+import { hex } from "../../styles/helpers";
 
 const sortByDate = (a: Item, b: Item): -1 | 0 | 1 => {
   if (a.date.getTime() < b.date.getTime()) return -1;
@@ -26,76 +23,136 @@ const sortByDate = (a: Item, b: Item): -1 | 0 | 1 => {
 
 export type ChartProps = {
   data: Array<Item>;
+  backgroundColor: string;
   color: string;
   /*
-   ** This prop is used to format the x-axis using time options from moment format
-   ** See https://momentjs.com/docs/#/displaying/format/
+   ** This prop is used to format the x-axis using time options from Intl.DateTimeFormat format
    */
-  tickFormat?: string;
+  timeFormat?: any;
   /* This prop is used to override the key that store the data */
   valueKey?: string;
   height?: number;
+  yAxisFormatter: (n: number) => string;
+  valueFormatter: (n: number) => string;
+  disableTooltips: boolean;
+  locale: string;
 };
 
 const Chart = ({
   data,
+  backgroundColor,
   color,
-  tickFormat = "MMM",
+  timeFormat = { month: "short" },
   valueKey = "value",
-  height = 191,
+  height = 200,
+  yAxisFormatter,
+  valueFormatter,
+  disableTooltips = false,
+  locale,
 }: ChartProps): JSX.Element => {
   const theme = useTheme();
   const sortData = useMemo(() => data.sort(sortByDate), [data]);
 
+  const labelFormatted = useCallback(
+    ({ datum }) => {
+      const valueFormatted = valueFormatter(datum[valueKey]);
+      return valueFormatted === "-" ? "0" : valueFormatted;
+    },
+    [valueKey, valueFormatter],
+  );
+
+  const domainValues = useMemo(() => {
+    const counterValues = data.map((d) => d[valueKey]);
+
+    return {
+      min: Math.min(...counterValues) * 0.8, // 0.8 So the minimum value of the yAxis is a bit smaller than the min value displayed
+      max: Math.max(...counterValues) * 1.2, // 1.2 So the maximum value of the yAxis is a bit bigger than the max value displayed
+    };
+  }, [data, valueKey]);
+
+  const yAxisStyle = useMemo(
+    () => ({
+      grid: {
+        stroke: theme.colors.neutral.c40,
+        strokeDasharray: "4 4",
+      },
+      axisLabel: { display: "none" },
+      axis: { display: "none" },
+      ticks: { display: "none" },
+      tickLabels: {
+        fill: theme.colors.neutral.c80,
+        fontSize: 12,
+      },
+    }),
+    [theme],
+  );
+
+  const xAxisStyle = useMemo(
+    () => ({
+      axis: {
+        stroke: theme.colors.neutral.c40,
+        strokeDasharray: "4 4",
+      },
+      tickLabels: {
+        fill: theme.colors.neutral.c80,
+        fontSize: 12,
+      },
+      grid: { display: "none" },
+    }),
+    [theme],
+  );
+
   return (
-    <Container>
+    <Flex justifyContent="center" alignItems="center">
       <VictoryChart
         scale={{ x: "time" }}
         height={height}
-        domainPadding={{ x: [0, 5], y: [30, 10] }}
+        domainPadding={{ y: 5 }}
+        padding={{ top: 30, left: 60, right: 35, bottom: 35 }}
+        maxDomain={{ y: domainValues.max }}
+        minDomain={{ y: domainValues.min }}
+        containerComponent={
+          <VictoryVoronoiContainer
+            disable={disableTooltips}
+            voronoiBlacklist={["victory-area"]}
+            labels={labelFormatted}
+            labelComponent={
+              <VictoryTooltip
+                centerOffset={{ y: -10 }}
+                renderInPortal={false}
+                constrainToVisibleArea
+                style={{
+                  fill: color,
+                }}
+                flyoutPadding={7}
+                flyoutStyle={{
+                  fill: backgroundColor,
+                  stroke: color,
+                }}
+              />
+            }
+          />
+        }
       >
         {/* y-axis */}
-        <VictoryAxis
-          dependentAxis
-          crossAxis
-          style={{
-            grid: {
-              stroke: theme.colors.neutral.c40,
-              strokeDasharray: "4 4",
-            },
-            axisLabel: { display: "none" },
-            axis: { display: "none" },
-            ticks: { display: "none" },
-            tickLabels: { display: "none" },
-          }}
-        />
+        <VictoryAxis dependentAxis crossAxis tickFormat={yAxisFormatter} style={yAxisStyle} />
 
         {/* x-axis */}
         <VictoryAxis
           crossAxis={false}
-          tickFormat={(timestamp) => moment(timestamp).format(tickFormat)}
-          style={{
-            axis: {
-              stroke: theme.colors.neutral.c40,
-              strokeDasharray: "4 4",
-            },
-            tickLabels: {
-              fill: theme.colors.neutral.c80,
-              fontSize: 12,
-              lineHeight: "14.52px",
-            },
-            grid: { display: "none" },
-          }}
+          tickFormat={(timestamp) => new Intl.DateTimeFormat(locale, timeFormat).format(timestamp)}
+          style={xAxisStyle}
         />
 
         {/* gradient area */}
         <Defs>
           <LinearGradient id="chartGradient" x1="0.5" x2="0.5" y1="0" y2="1">
-            <Stop stopColor={hex(color)} stopOpacity="0.11" />
+            <Stop stopColor={hex(color)} stopOpacity="0.15" />
             <Stop offset="1" stopColor={hex(theme.colors.neutral.c00)} stopOpacity="0" />
           </LinearGradient>
         </Defs>
         <VictoryArea
+          name="victory-area"
           data={sortData}
           interpolation="monotoneX"
           sortKey="date"
@@ -113,23 +170,8 @@ const Chart = ({
           y={valueKey}
           style={{ data: { stroke: color } }}
         />
-
-        {/* Rendered point */}
-        <VictoryScatter
-          style={{
-            data: {
-              stroke: color,
-              strokeWidth: 3,
-              fill: theme.colors.background.main,
-            },
-          }}
-          size={5}
-          data={[sortData[sortData.length - 1]]}
-          x="date"
-          y={valueKey}
-        />
       </VictoryChart>
-    </Container>
+    </Flex>
   );
 };
 
