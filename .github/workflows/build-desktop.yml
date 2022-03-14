@@ -174,7 +174,6 @@ jobs:
         # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
-          npm --version
           pnpm build:desktop
         shell: bash
       - name: upload windows
