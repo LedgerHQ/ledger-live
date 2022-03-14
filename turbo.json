@@ -3,7 +3,9 @@
   "baseBranch": "origin/develop",
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "dist/**",
         "lib/**",
@@ -23,34 +25,44 @@
     // },
     "build-ci": {
       "cache": false,
-      "dependsOn": ["^build"]
-    },
-    "ios:ci:adhoc": {
-      "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "outputs": []
     },
     "live-mobile#lint": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "live-desktop#lint": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "typecheck": {
       "outputs": [],
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test": {
-      "dependsOn": ["lint", "typecheck", "build"],
+      "dependsOn": [
+        "lint",
+        "typecheck",
+        "build"
+      ],
       "outputs": []
     },
     "start": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     }
   }
 }
