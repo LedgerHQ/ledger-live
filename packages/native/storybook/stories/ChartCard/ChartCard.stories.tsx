@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { storiesOf } from "../storiesOf";
-import { color, text, number, boolean } from "@storybook/addon-knobs";
+import { color, number, boolean } from "@storybook/addon-knobs";
 import { useTheme } from "styled-components/native";
 
 import ChartCard from "../../../src/components/ChartCard";
@@ -59,7 +59,6 @@ const ChartCardDefault = (): JSX.Element => {
         isLoading={boolean("isLoading", false)}
         currencyColor={color("currencyColor", theme.colors.primary.c100)}
         margin={number("margin", 0)}
-        locale={text("locale", "en")}
         yAxisFormatter={(v) => v.toString()}
         valueFormatter={(v) => v.toString()}
       />
