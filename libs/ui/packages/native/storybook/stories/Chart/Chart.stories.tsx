@@ -1,6 +1,6 @@
 import React from "react";
 import { storiesOf } from "../storiesOf";
-import { color, text } from "@storybook/addon-knobs";
+import { color, text, object, boolean } from "@storybook/addon-knobs";
 import { useTheme } from "styled-components/native";
 
 import Chart from "../../../src/components/chart";
@@ -32,9 +32,15 @@ const ChartDefault = (): JSX.Element => {
   return (
     <Flex alignItems="flex-start" flexDirection="column">
       <Chart
-        color={color("color", theme.colors.primary.c100)}
-        tickFormat={text("tickFormat", "MMM")}
+        locale={text("locale", "en")}
         data={generateData()}
+        backgroundColor={color("backgroundColor", theme.colors.neutral.c30)}
+        color={color("color", theme.colors.primary.c100)}
+        timeFormat={object("timeFormat", { month: "short" })}
+        valueKey={text("valueKey", "value")}
+        yAxisFormatter={(value) => value.toString()}
+        valueFormatter={(value) => value.toString()}
+        disableTooltips={boolean("disableTooltips", false)}
       />
     </Flex>
   );
