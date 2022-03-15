@@ -146,7 +146,6 @@ export const AnnouncementProvider = ({
       setAsSeen: (seenId: string) => {
         send({
           type: "SET_AS_SEEN",
-          // @ts-expect-error Bindings issue ?
           seenId,
         });
       },

@@ -484,7 +484,7 @@ PODS:
   - RNAnalytics (1.5.2):
     - Analytics
     - React-Core
-  - RNCAsyncStorage (1.16.1):
+  - RNCAsyncStorage (1.16.2):
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
@@ -540,9 +540,9 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (3.3.0):
+  - RNSentry (3.3.2):
     - React-Core
-    - Sentry (= 7.10.0)
+    - Sentry (= 7.10.1)
   - RNShare (6.5.0):
     - React-Core
   - RNSVG (12.3.0):
@@ -555,9 +555,9 @@ PODS:
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry (7.10.0):
-    - Sentry/Core (= 7.10.0)
-  - Sentry/Core (7.10.0)
+  - Sentry (7.10.1):
+    - Sentry/Core (= 7.10.1)
+  - Sentry/Core (7.10.1)
   - TcpSockets (4.0.0):
     - React
   - Yoga (1.14.0)
@@ -576,7 +576,7 @@ DEPENDENCIES:
   - "EXBarCodeScanner (from `../../../node_modules/.pnpm/expo-barcode-scanner@11.1.2/node_modules/expo-barcode-scanner/ios`)"
   - "EXCamera (from `../../../node_modules/.pnpm/expo-camera@12.0.3_react@17.0.2/node_modules/expo-camera/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@3.1.1_expo@43.0.5/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.5/node_modules/expo/ios`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.7/node_modules/expo/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/Libraries/FBLazyVector`)"
   - "FBReactNativeSpec (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/React/FBReactNativeSpec`)"
@@ -647,7 +647,7 @@ DEPENDENCIES:
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon`)"
   - "ReactNativeART (from `../../../node_modules/.pnpm/@react-native-community+art@1.2.0_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/art`)"
   - "RNAnalytics (from `../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.2/node_modules/@segment/analytics-react-native`)"
-  - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.1_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.2_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.67.3+react@17.0.2/node_modules/react-native-fast-image`)"
@@ -657,9 +657,9 @@ DEPENDENCIES:
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.4.1_a29e8e0df650f56fc8c84bf844584967/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.4.1_c221edd547b249cf4d9d6cb6c36fa250/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-screens`)"
-  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.3.0_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native`)"
+  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.3.2_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_react-native@0.67.3+react@17.0.2/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
@@ -717,7 +717,7 @@ EXTERNAL SOURCES:
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@3.1.1_expo@43.0.5/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.5/node_modules/expo/ios"
+    :path: "../../../node_modules/.pnpm/expo@43.0.5_@babel+core@7.17.7/node_modules/expo/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@0.6.5/node_modules/expo-modules-core/ios"
   FBLazyVector:
@@ -811,7 +811,7 @@ EXTERNAL SOURCES:
   RNAnalytics:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.2/node_modules/@segment/analytics-react-native"
   RNCAsyncStorage:
-    :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.1_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage"
+    :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.2_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/clipboard"
   RNCMaskedView:
@@ -831,11 +831,11 @@ EXTERNAL SOURCES:
   RNOS:
     :path: "../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.4.1_a29e8e0df650f56fc8c84bf844584967/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.4.1_c221edd547b249cf4d9d6cb6c36fa250/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.13.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-screens"
   RNSentry:
-    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.3.0_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native"
+    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.3.2_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native"
   RNShare:
     :path: "../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share"
   RNSVG:
@@ -932,7 +932,7 @@ SPEC CHECKSUMS:
   ReactCommon: 650e33cde4fb7d36781cd3143f5276da0abb2f96
   ReactNativeART: 78edc68dd4a1e675338cd0cd113319cf3a65f2ab
   RNAnalytics: fcf308eeac6d34a74c158ec74d733c877f26fb96
-  RNCAsyncStorage: b49b4e38a1548d03b74b30e558a1d18465b94be7
+  RNCAsyncStorage: 7ebe0ebbb533d9336de2734866d172cce6515fce
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
@@ -944,13 +944,13 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 32c91e28f5780937b8efc07ddde1bab8d373fe0b
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
-  RNSentry: 143980f2f98320eaaf10ccf7235dfc7f68b5ffa5
+  RNSentry: f8c14c77e400a93331b38538f735c2538f8108a8
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
-  Sentry: 6ff0eac197e699126c024993eba40a7462e92941
+  Sentry: ddcd9fde63cfe7e9e2243da59d98daa382413e49
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   Yoga: 90dcd029e45d8a7c1ff059e8b3c6612ff409061a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
