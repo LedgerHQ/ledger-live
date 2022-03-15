@@ -43,9 +43,7 @@ import api from "../api/tzkt";
 
 const receive = makeAccountBridgeReceive();
 
-const EXISTENTIAL_DEPOSIT = new BigNumber(
-  DEFAULT_STORAGE_LIMIT.ORIGINATION * 1000
-);
+const EXISTENTIAL_DEPOSIT = new BigNumber(275000);
 
 const createTransaction: () => Transaction = () => ({
   family: "tezos",
@@ -130,18 +128,8 @@ const getTransactionStatus = async (
     // remap taquito errors
     if (t.taquitoError.endsWith("balance_too_low")) {
       if (t.mode === "send") {
-        if (
-          (await api.getAccountByAddress(t.recipient)).type === "empty" &&
-          t.amount.lt(EXISTENTIAL_DEPOSIT)
-        ) {
-          amountMustReset = true;
-          errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-            minimalAmount: "0.275 XTZ",
-          });
-        } else {
-          amountMustReset = true;
-          errors.amount = new NotEnoughBalance();
-        }
+        amountMustReset = true;
+        errors.amount = new NotEnoughBalance();
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
       }
@@ -157,6 +145,19 @@ const getTransactionStatus = async (
   if (!errors.amount && account.balance.lte(0)) {
     amountMustReset = true;
     errors.amount = new NotEnoughBalance();
+  }
+
+  // Catch a specific case that requires a minimum amount
+  if (
+    !errors.amount &&
+    t.mode === "send" &&
+    t.amount.lt(EXISTENTIAL_DEPOSIT) &&
+    (await api.getAccountByAddress(t.recipient)).type === "empty"
+  ) {
+    amountMustReset = true;
+    errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+      minimalAmount: "0.275 XTZ",
+    });
   }
 
   const amount = amountMustReset ? new BigNumber(0) : t.amount;
@@ -327,8 +328,8 @@ const estimateMaxSpendable = async ({
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,
-    // this seed is empty (worse case scenario is to send to new). addr from: 1. eyebrow 2. odor 3. rice 4. attack 5. loyal 6. tray 7. letter 8. harbor 9. resemble 10. sphere 11. system 12. forward 13. onion 14. buffalo 15. crumble
-    recipient: transaction?.recipient || "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
+    // estimate using a burn address that exists so we don't enter into NotEnoughBalanceBecauseDestinationNotCreated
+    recipient: transaction?.recipient || "tz1burnburnburnburnburnburnburjAYjjX",
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
