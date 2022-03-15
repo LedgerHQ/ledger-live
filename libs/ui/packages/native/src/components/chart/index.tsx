@@ -108,6 +108,7 @@ const Chart = ({
         minDomain={{ y: domainValues.min }}
         containerComponent={
           <VictoryVoronoiContainer
+            // @ts-expect-error disable this error for the sake of the monorepo
             disable={disableTooltips}
             voronoiBlacklist={["victory-area"]}
             labels={labelFormatted}
@@ -133,7 +134,12 @@ const Chart = ({
         <VictoryAxis dependentAxis crossAxis tickFormat={yAxisFormatter} style={yAxisStyle} />
 
         {/* x-axis */}
-        <VictoryAxis crossAxis={false} tickFormat={xAxisFormatter} style={xAxisStyle} />
+        <VictoryAxis
+          crossAxis={false}
+          // @ts-expect-error disable this error for the sake of the monorepo
+          tickFormat={(timestamp) => new Intl.DateTimeFormat(locale, timeFormat).format(timestamp)}
+          style={xAxisStyle}
+        />
 
         {/* gradient area */}
         <Defs>
