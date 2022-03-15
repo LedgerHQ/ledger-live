@@ -11,3 +11,5 @@ export * from "./Tabs";
 export * from "./Loader";
 export { default as ProgressBar } from "./ProgressBar";
 export * as Transitions from "./transitions";
+export { default as Chart } from "./chart";
+export { default as ChartCard } from "./ChartCard";
