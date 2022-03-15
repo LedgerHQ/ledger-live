@@ -238,6 +238,10 @@
       "title": "Cihaz, Kontrol Panelinde değil",
       "description": "Lütfen cihazınızdaki Kontrol Paneline geri dönün."
     },
+    "DeviceNotOnboarded": {
+      "title": "Cihazınız henüz kullanıma hazır değil",
+      "description": "Ledger Live ile kullanmaya başlamadan önce cihazınızı kurun."
+    },
     "DeviceSocketFail": {
       "title": "Üzgünüz, bağlantı başarısız oldu",
       "description": "Lütfen tekrar deneyin."
@@ -519,7 +523,7 @@
     },
     "WrongDeviceForAccount": {
       "title": "Bir hata oluştu",
-      "description": "Lütfen donanım cüzdanınızın, seçilen hesapla ilişkili kurtarma ifadesi veya passphrase ile kurulmuş olduğunu doğrulayın."
+      "description": "Lütfen cüzdanınızın seçilen hesapla bağlantılı kurtarma ifadesi veya passphrase ile kurulmuş olduğundan emin olun."
     },
     "UnexpectedBootloader": {
       "title": "Üzgünüz, cihazınız Bootloader modunda olmamalıdır",
@@ -1289,7 +1293,17 @@
     "settings": "Ayarlar",
     "platform": "Keşfet",
     "nanoX": "Nano X",
-    "market": "Piyasa"
+    "market": "Piyasa",
+    "learn": "Öğren"
+  },
+  "learn": {
+    "pageTitle": "öğren",
+    "noConnection": "Bağlantı yok",
+    "noConnectionDesc": "İnternet bağlantısı kurulamadı. Lütfen bağlantınızı kontrol edin ve tekrar deneyin.",
+    "sectionShows": "Seriler",
+    "sectionVideo": "Videolar",
+    "sectionPodcast": "Podcast",
+    "sectionArticles": "Makaleler"
   },
   "portfolio": {
     "totalBalance": "Toplam bakiye",
@@ -1442,9 +1456,9 @@
       "palletMethod": "Yöntem",
       "transferAmount": "Transfer Tutarı",
       "validatorsCount": "Doğrulayıcılar ({{number}})",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
-      "id": "Id"
+      "storageLimit": "Depolama Sınırı",
+      "gasLimit": "Gas Limiti",
+      "id": "Kimlik"
     },
     "multipleAddresses": "Neden birden fazla adres var?",
     "tokenName": "Token Adı",
@@ -1680,6 +1694,7 @@
       "theme": "Tema",
       "themeDesc": "Uygulama arayüz temasını ayarla",
       "themes": {
+        "system": "Sistem",
         "dark": "Koyu",
         "light": "Açık"
       },
@@ -2607,7 +2622,8 @@
       "alert": "Göndermeden önce cihazınızdaki Satış bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
     "button": {
-      "openManager": "Yöneticiyi Aç"
+      "openManager": "Yöneticiyi Aç",
+      "openOnboarding": "Cihazı kurun"
     },
     "installApp": "{{appName}} Uygulama kurulumu {{percentage}}",
     "installAppDescription": "Lütfen kurulum bitene kadar bekleyin",

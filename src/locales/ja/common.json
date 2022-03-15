@@ -238,6 +238,10 @@
       "title": "ダッシュボードにデバイスがありません。",
       "description": "デバイスのダッシュボードに戻ってください。"
     },
+    "DeviceNotOnboarded": {
+      "title": "Your device is not ready to use yet",
+      "description": "Set up your device before using it with Ledger Live."
+    },
     "DeviceSocketFail": {
       "title": "接続に失敗しました。",
       "description": "もう一度お試しください。"
@@ -1289,7 +1293,17 @@
     "settings": "設定",
     "platform": "Discover",
     "nanoX": "Nano X",
-    "market": "Market"
+    "market": "Market",
+    "learn": "Learn"
+  },
+  "learn": {
+    "pageTitle": "learn",
+    "noConnection": "No connection",
+    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again.",
+    "sectionShows": "Shows",
+    "sectionVideo": "Video",
+    "sectionPodcast": "Podcast",
+    "sectionArticles": "Articles"
   },
   "portfolio": {
     "totalBalance": "合計残高",
@@ -1680,6 +1694,7 @@
       "theme": "テーマ",
       "themeDesc": "アプリUIのテーマを設定する。",
       "themes": {
+        "system": "System",
         "dark": "ダーク",
         "light": "ライト"
       },
@@ -2607,7 +2622,8 @@
       "alert": "送付する前に、売却の詳細をデバイス上で確認してください。アドレスは安全に共有されるため、確認の必要はありません。"
     },
     "button": {
-      "openManager": "管理を開く"
+      "openManager": "管理を開く",
+      "openOnboarding": "Setup device"
     },
     "installApp": "{{appName}}アプリのインストール{{percentage}}",
     "installAppDescription": "インストールが完了するまでお待ちください。",
@@ -3908,48 +3924,48 @@
       "crypto": "Crypto",
       "price": "Price",
       "change": "Change",
-      "marketCap": "Market cap",
-      "last7d": "Last 7 days"
+      "marketCap": "時価総額",
+      "last7d": "過去7日間"
     },
     "detailsPage": {
-      "holding": "Your Holdings",
-      "priceStatistics": "Price Statistics",
-      "price": "Price",
-      "tradingVolume": "Trading volume",
-      "24hLowHight": "24h Low / 24h High",
-      "7dLowHigh": "7d Low / 7d High",
-      "allTimeHigh": "All time high",
-      "allTimeLow": "All time low",
-      "marketCapRank": "Market cap rank",
-      "marketCapDominance": "Market cap dominance",
-      "supply": "Supply",
-      "circulatingSupply": "Circulating supply",
-      "totalSupply": "Total supply",
-      "maxSupply": "Max supply",
-      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
+      "holding": "保有済み",
+      "priceStatistics": "価格統計",
+      "price": "価格",
+      "tradingVolume": "取引高",
+      "24hLowHight": "当日安値 / 当日高値",
+      "7dLowHigh": "週安値 / 週高値",
+      "allTimeHigh": "最高値",
+      "allTimeLow": "最安値",
+      "marketCapRank": "時価総額ランキング",
+      "marketCapDominance": "時価総額ドミナンス",
+      "supply": "供給",
+      "circulatingSupply": "循環サプライ",
+      "totalSupply": "総供給量",
+      "maxSupply": "最大供給量",
+      "assetNotSupportedOnLedgerLive": "この資産はLedger Live未対応です。"
     },
     "range": {
-      "1h": "1H",
-      "24h": "24H",
-      "7d": "7D",
-      "30d": "30D",
-      "1y": "1Y"
+      "1h": "1時間",
+      "24h": "24時間",
+      "7d": "7日間",
+      "30d": "30日間",
+      "1y": "1年間"
     },
     "warnings": {
-      "connectionError": "Connection Error",
-      "ledgerUnableToRetrieveData": "Ledger Live is unable to retrieve data.",
-      "checkInternetAndReload": "Please check your internet connection and reload this page.",
-      "reload": "Reload",
-      "noCryptosFound": "No coins found",
-      "noCurrencyFound": "No currency found",
-      "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
-      "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
-      "noSearchResults": "Sorry, we did not find any search results.",
-      "retrySearchKeyword": "Please retry the search with another keyword.",
-      "retrySearchParams": "Please retry the search with another parameters.",
-      "trackFavAssets": "Track your favourite",
-      "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
-      "browseAssets": "Browse assets"
+      "connectionError": "接続エラー",
+      "ledgerUnableToRetrieveData": "Ledger Liveでデータが取得できません。",
+      "checkInternetAndReload": "インターネットの接続を確認して、再度ページを読み込んでください。",
+      "reload": "再読み込み",
+      "noCryptosFound": "コインが見つかりません",
+      "noCurrencyFound": "通貨が見つかりません",
+      "noSearchResultsFor": "申し訳ありませんが、<0>{{search}}</0>に該当するコインが見つかりません。他のキーワードをお試しください。",
+      "noCurrencySearchResultsFor": "申し訳ありませんが、<0>{{search}}</0>に該当するコインが見つかりませんでした。他のキーワードをお試しください。",
+      "noSearchResults": "申し訳ありません。検索結果が見つかりませんでした。",
+      "retrySearchKeyword": "他のキーワードで再検索してください。",
+      "retrySearchParams": "他のパラメーターで再検索してください。",
+      "trackFavAssets": "お気に入りを追跡する",
+      "clickOnStarIcon": "資産の横に表示される星のアイコンをクリックすると、お気に入りに追加されます。",
+      "browseAssets": "資産を参照する"
     }
   },
   "nft": {
