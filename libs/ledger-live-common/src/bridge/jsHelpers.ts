@@ -89,18 +89,21 @@ Operation[] {
   }
 
   // only keep the newFetched that are not in existing. this array will be mutated
-  const newOpsIds = {};
-  const newOps = newFetched
+  let newOps = newFetched
     .filter((o) => !existingIds[o.id] || !sameOp(existingIds[o.id], o))
-    // FIXME: valueOf for typescript date operations
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
+
+  // Deduplicate new ops to guarantee operations don't have dups
+  const newOpsIds = {};
   newOps.forEach((op) => {
     newOpsIds[op.id] = op;
   });
+  newOps = Object.values(newOpsIds);
+
   // return existing when there is no real new operations
   if (newOps.length === 0) return existing;
   // edge case, existing can be empty. return the sorted list.
-  if (existing.length === 0) return Object.values(newOpsIds);
+  if (existing.length === 0) return newOps;
   // building up merging the ops
   const all: Operation[] = [];
 

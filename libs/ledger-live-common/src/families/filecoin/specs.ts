@@ -9,6 +9,7 @@ import type { AppSpec } from "../../bot/types";
 
 const MIN_SAFE = new BigNumber(100000);
 const filecoinSpecs: AppSpec<Transaction> = {
+  disabled: true, // Bot spec is currently not correctly working
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
   appQuery: {
