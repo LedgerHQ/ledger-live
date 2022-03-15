@@ -166,7 +166,7 @@ const envDefinitions = {
     desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
-    def: "https://crypto.org/explorer",
+    def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org indexer API",
   },
@@ -176,7 +176,7 @@ const envDefinitions = {
     desc: "location of the crypto.org indexer testnet API",
   },
   CRYPTO_ORG_RPC_URL: {
-    def: "https://rpc.mainnet.crypto.org",
+    def: "https://cryptoorg-rpc-node.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org chain node",
   },
