@@ -14,7 +14,7 @@ import {
   DeviceHalted,
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
-import { open, close } from ".";
+import { open, close, setAllowAutoDisconnect } from ".";
 
 export type AccessHook = () => () => void;
 
@@ -88,12 +88,14 @@ export const withDevice =
       let sub;
       const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
 
-      const finalize = (transport, cleanups) =>
-        close(transport, deviceId)
+      const finalize = (transport, cleanups) => {
+        setAllowAutoDisconnect(transport, deviceId, true);
+        return close(transport, deviceId)
           .catch(() => {})
           .then(() => {
             cleanups.forEach((c) => c());
           });
+      };
 
       // when we'll finish all the current job, we'll call finish
       let finish;
@@ -105,6 +107,7 @@ export const withDevice =
       deviceQueue
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
+          setAllowAutoDisconnect(transport, deviceId, false);
           if (unsubscribed) {
             // it was unsubscribed prematurely
             return finalize(transport, [finish]);
