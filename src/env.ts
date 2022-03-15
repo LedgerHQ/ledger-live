@@ -545,6 +545,26 @@ const envDefinitions = {
     parser: stringParser,
     desc: 'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
   },
+  PLATFORM_GLOBAL_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_GLOBAL_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
+  PLATFORM_RAMP_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/trade/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_RAMP_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/trade/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
   PLATFORM_API_URL: {
     def: "",
     parser: stringParser,
