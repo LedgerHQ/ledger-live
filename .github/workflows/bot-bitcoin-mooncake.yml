@@ -1,8 +1,9 @@
-name: Bot 'Tezos'
+name: Bot 'Bitcoin via Mooncake'
 on:
   push:
     branches:
-      - tezos-js
+      - bitcoin-js
+      - bitcoin-js-*
 
 jobs:
   start-runner:
@@ -65,10 +66,10 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
-          SLACK_CHANNEL: ci-xtz-ll
-          BOT_FILTER_FAMILY: tezos
+          SLACK_CHANNEL: ll-bitcoin-ci
+          BOT_FILTER_FAMILY: bitcoin
           EXPERIMENTAL_EXPLORERS: true
-          EXPERIMENTAL_CURRENCIES_JS_BRIDGE: tezos
+          EXPERIMENTAL_CURRENCIES_JS_BRIDGE: algorand,bitcoin,bitcoin_cash,bsc,litecoin,dash,qtum,zcash,bitcoin_gold,stratis,dogecoin,digibyte,komodo,pivx,zencash,vertcoin,peercoin,viacoin,stakenet,stealthcoin,decred,bitcoin_testnet,tezosæ
         run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
       - name: Run coverage
