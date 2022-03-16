@@ -1,7 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, GraphTabs, InfiniteLoader } from "../index";
-import * as Animatable from "react-native-animatable";
+import { Flex, GraphTabs, InfiniteLoader, Transitions } from "../index";
 import Chart from "../chart";
 
 const ChartCard = ({
@@ -13,7 +12,7 @@ const ChartCard = ({
   chartData,
   currencyColor,
   margin = 0,
-  locale,
+  xAxisFormatter,
   ranges,
   yAxisFormatter,
   valueFormatter,
@@ -26,7 +25,7 @@ const ChartCard = ({
   chartData: any;
   currencyColor: string;
   margin: number;
-  locale: string;
+  xAxisFormatter?: (value: number) => string;
   ranges: { label: string; value: string }[];
   yAxisFormatter: (value: number) => string;
   valueFormatter: (value: number) => string;
@@ -46,37 +45,23 @@ const ChartCard = ({
     [isLoading, range, ranges, refreshChart],
   );
 
-  const timeFormat = useMemo(() => {
-    switch (ranges[activeRangeIndex].value) {
-      case "24h":
-        return { hour: "numeric", minute: "numeric" };
-      case "7d":
-        return { weekday: "short" };
-      case "30d":
-        return { month: "short", day: "numeric" };
-      default:
-        return { month: "short" };
-    }
-  }, [ranges, activeRangeIndex]);
-
   return (
     <Flex margin={margin} padding={6} borderRadius={2} bg={"neutral.c30"}>
       {Header}
       <Flex mt={6} height={100} alignItems="center" justifyContent="center">
         {chartData && chartData.length > 0 ? (
-          <Animatable.View animation="fadeIn" duration={400} useNativeDriver>
+          <Transitions.Fade status="entering" duration={400}>
             <Chart
-              locale={locale}
               data={chartData}
               backgroundColor={colors.neutral.c30}
               color={currencyColor}
-              timeFormat={timeFormat}
               valueKey={"value"}
+              xAxisFormatter={xAxisFormatter}
               yAxisFormatter={yAxisFormatter}
               valueFormatter={valueFormatter}
               disableTooltips={false}
             />
-          </Animatable.View>
+          </Transitions.Fade>
         ) : (
           <InfiniteLoader size={32} />
         )}
