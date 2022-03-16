@@ -238,6 +238,10 @@
       "title": "대시보드에 장치가 없습니다",
       "description": "장치에서 대시보드로 돌아가세요."
     },
+    "DeviceNotOnboarded": {
+      "title": "귀하의 장치가 아직 사용될 준비가 되지 않았습니다",
+      "description": "Ledger Live와 함께 사용하기 전에 장치를 설정하세요."
+    },
     "DeviceSocketFail": {
       "title": "죄송하지만, 연결에 실패했습니다",
       "description": "다시 시도해 주세요."
@@ -862,7 +866,7 @@
               "label": "휴대폰의 USB 포트에 연결하여 장치를 켜주세요."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "휴대폰의 USB 포트에 연결하여 장치를 켜주세요."
             },
             "blue": {
               "label": "휴대폰의 USB 포트에 연결하고 전원 버튼을 눌러 장치를 켜주세요."
@@ -1040,7 +1044,7 @@
               "label": "휴대폰의 USB 포트에 연결하여 장치를 켜주세요."
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "휴대폰의 USB 포트에 연결하여 장치를 켜주세요."
             },
             "blue": {
               "label": "휴대폰의 USB 포트에 연결하고 전원 버튼을 눌러 장치를 켜주세요."
@@ -1100,9 +1104,9 @@
         "cta": "Nano를 연결하세요"
       },
       "nanoSP": {
-        "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Nano"
+        "title": "Nano 장치를 연결하세요",
+        "desc": "이 휴대폰에서 Nano를 처음 설정합니다. 장치를 빠르게 페어링 해보세요.",
+        "cta": "Nano를 연결합니다"
       },
       "blue": {
         "title": "Blue를 연결하세요",
@@ -1289,7 +1293,17 @@
     "settings": "설정",
     "platform": "탐색",
     "nanoX": "Nano X",
-    "market": "Market"
+    "market": "마켓",
+    "learn": "배움"
+  },
+  "learn": {
+    "pageTitle": "배움",
+    "noConnection": "연결 없음",
+    "noConnectionDesc": "인터넷에 액세스할 수 없는 것 같습니다. 연결을 확인하고 다시 시도해 주세요.",
+    "sectionShows": "쇼",
+    "sectionVideo": "영상",
+    "sectionPodcast": "팟캐스트",
+    "sectionArticles": "뉴스/기사/포스트"
   },
   "portfolio": {
     "totalBalance": "총 잔액",
@@ -1442,8 +1456,8 @@
       "palletMethod": "방법",
       "transferAmount": "금액 전송",
       "validatorsCount": "검증인 ({{number}})",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
+      "storageLimit": "저장공간 한계",
+      "gasLimit": "가스 한도",
       "id": "Id"
     },
     "multipleAddresses": "왜 주소가 여러 개인가요?",
@@ -1680,6 +1694,7 @@
       "theme": "테마",
       "themeDesc": "앱 UI 테마 설정",
       "themes": {
+        "system": "시스템",
         "dark": "어두운",
         "light": "밝은"
       },
@@ -2593,7 +2608,7 @@
     "quitApp": "장치에서 앱을 중단하세요",
     "appNotInstalled": "{{appName}} 앱을 설치하세요",
     "appNotInstalled_plural": "{{appName}} 앱을 설치하세요",
-    "useAnotherDevice": "Use another device",
+    "useAnotherDevice": "다른 장치 사용",
     "verifyAddress": {
       "title": "장치에서 주소 확인",
       "description": "Ledger Live에서 보이는 {{currencyName}}(이)가 Ledger 장치와 정확히 일치하는지 확인하세요."
@@ -2607,7 +2622,8 @@
       "alert": "장치에서 매도 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
     "button": {
-      "openManager": "관리자 열기"
+      "openManager": "관리자 열기",
+      "openOnboarding": "장치 설정"
     },
     "installApp": "{{appName}} 앱 설치 {{percentage}}",
     "installAppDescription": "설치가 완료될 때까지 기다리세요",
@@ -3001,8 +3017,8 @@
   "celo": {
     "info": {
       "available": {
-        "title": "CELO available",
-        "description": "This amount is disposable."
+        "title": "CELO 이용 가능",
+        "description": "가처분 금액입니다."
       }
     }
   },
@@ -3884,72 +3900,72 @@
     }
   },
   "market": {
-    "title": "Market",
+    "title": "마켓",
     "filters": {
-      "sort": "Sort",
-      "filter": "Filter",
+      "sort": "분류",
+      "filter": "필터",
       "view": {
-        "label": "View",
-        "all": "All coins",
-        "liveCompatible": "Live Compatible",
-        "all_label": "All cryptocurrencies",
-        "liveCompatible_label": "Only Live Supported"
+        "label": "보기",
+        "all": "모든 코인",
+        "liveCompatible": "Live 호환 가능",
+        "all_label": "모든 암호화폐",
+        "liveCompatible_label": "Live만 지원됨"
       },
       "order": {
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "market_cap": "순위",
+        "market_cap_asc": "순위(시가총액) 오름차순",
+        "market_cap_desc": "순위(시가총액) 내림차순"
       },
-      "currency": "Currency",
-      "time": "Time",
-      "apply": "Apply"
+      "currency": "통화",
+      "time": "시간",
+      "apply": "적용"
     },
     "marketList": {
-      "crypto": "Crypto",
-      "price": "Price",
-      "change": "Change",
-      "marketCap": "Market cap",
-      "last7d": "Last 7 days"
+      "crypto": "암호화폐",
+      "price": "가격",
+      "change": "변동",
+      "marketCap": "시가총액",
+      "last7d": "지난 7 일"
     },
     "detailsPage": {
-      "holding": "Your Holdings",
-      "priceStatistics": "Price Statistics",
-      "price": "Price",
-      "tradingVolume": "Trading volume",
-      "24hLowHight": "24h Low / 24h High",
-      "7dLowHigh": "7d Low / 7d High",
-      "allTimeHigh": "All time high",
-      "allTimeLow": "All time low",
-      "marketCapRank": "Market cap rank",
-      "marketCapDominance": "Market cap dominance",
-      "supply": "Supply",
-      "circulatingSupply": "Circulating supply",
-      "totalSupply": "Total supply",
-      "maxSupply": "Max supply",
-      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
+      "holding": "보유하고 있는 자산",
+      "priceStatistics": "가격 통계",
+      "price": "가격",
+      "tradingVolume": "거래량",
+      "24hLowHight": "24시간 최저 / 24시간 최고",
+      "7dLowHigh": "7일 최저 / 7일 최고",
+      "allTimeHigh": "사상 최고치",
+      "allTimeLow": "사상 최저치",
+      "marketCapRank": "시가총액 순위",
+      "marketCapDominance": "시가총액 도미넌스",
+      "supply": "공급",
+      "circulatingSupply": "유통량",
+      "totalSupply": "총 공급량",
+      "maxSupply": "최대 공급량",
+      "assetNotSupportedOnLedgerLive": "이 자산은 Ledger Live에서 지원되지 않습니다."
     },
     "range": {
-      "1h": "1H",
-      "24h": "24H",
-      "7d": "7D",
-      "30d": "30D",
-      "1y": "1Y"
+      "1h": "1시간",
+      "24h": "24시간",
+      "7d": "7일",
+      "30d": "30일",
+      "1y": "1년"
     },
     "warnings": {
-      "connectionError": "Connection Error",
-      "ledgerUnableToRetrieveData": "Ledger Live is unable to retrieve data.",
-      "checkInternetAndReload": "Please check your internet connection and reload this page.",
-      "reload": "Reload",
-      "noCryptosFound": "No coins found",
-      "noCurrencyFound": "No currency found",
-      "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
-      "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
-      "noSearchResults": "Sorry, we did not find any search results.",
-      "retrySearchKeyword": "Please retry the search with another keyword.",
-      "retrySearchParams": "Please retry the search with another parameters.",
-      "trackFavAssets": "Track your favourite",
-      "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
-      "browseAssets": "Browse assets"
+      "connectionError": "연결 오류",
+      "ledgerUnableToRetrieveData": "Ledger Live는 데이터를 검색할 수 없습니다.",
+      "checkInternetAndReload": "인터넷 연결을 확인하고 이 페이지를 새로고침하세요.",
+      "reload": "새로고침",
+      "noCryptosFound": "발견된 코인이 없습니다",
+      "noCurrencyFound": "통화를 찾을 수 없습니다",
+      "noSearchResultsFor": "죄송합니다. <0>{{search}}</0>에 대한 코인을 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
+      "noCurrencySearchResultsFor": "죄송합니다. <0>{{search}}</0>에 대한 통화를 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
+      "noSearchResults": "죄송합니다. 검색 결과를 찾지 못했습니다.",
+      "retrySearchKeyword": "다른 키워드로 검색을 다시 시도해 주세요.",
+      "retrySearchParams": "다른 매개변수로 검색을 다시 시도해 주세요.",
+      "trackFavAssets": "즐겨찾기를 찾아보세요",
+      "clickOnStarIcon": "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
+      "browseAssets": "자산 찾기"
     }
   },
   "nft": {

@@ -238,6 +238,10 @@
       "title": "الجهاز غير موجود في لوحات المعلومات",
       "description": "يرجى العودة إلى لوحات المعلومات على جهازك."
     },
+    "DeviceNotOnboarded": {
+      "title": "جهازك غير جاهز للاستخدام بعد",
+      "description": "قم بإعداد جهازك قبل استخدامه مع Ledger Live."
+    },
     "DeviceSocketFail": {
       "title": "عذراً، فشل الاتصال",
       "description": "يرجى إعادة المحاولة."
@@ -1289,7 +1293,17 @@
     "settings": "إعدادات",
     "platform": "إكتشف",
     "nanoX": "Nano X",
-    "market": "السوق"
+    "market": "السوق",
+    "learn": "تعلم"
+  },
+  "learn": {
+    "pageTitle": "تعلم",
+    "noConnection": "لايوجد اتصال",
+    "noConnectionDesc": "يبدو أنه ليس لديك اتصال بالإنترنت. الرجاء التحقق من اتصالك وحاول مرة أخرى.",
+    "sectionShows": "البرامج",
+    "sectionVideo": "فيديو",
+    "sectionPodcast": "بودكاست",
+    "sectionArticles": "مقالات"
   },
   "portfolio": {
     "totalBalance": "إجمالي الرصيد",
@@ -1442,9 +1456,9 @@
       "palletMethod": "الطريقة",
       "transferAmount": "مبلغ التحويل",
       "validatorsCount": "({{number}}) مدققين",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
-      "id": "Id"
+      "storageLimit": "حدّ مساحة التخزين",
+      "gasLimit": "حد الغاز",
+      "id": "المُعرّف"
     },
     "multipleAddresses": "لماذا عناوين متعددة؟",
     "tokenName": "اسم رّمز التوكن",
@@ -1680,6 +1694,7 @@
       "theme": "السمة",
       "themeDesc": "قم بتعيين السمة لواجهة مستخدم التطبيق",
       "themes": {
+        "system": "النظام",
         "dark": "داكن",
         "light": "فاتح"
       },
@@ -2607,7 +2622,8 @@
       "alert": "تحقق من تفاصيل البيع على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منها."
     },
     "button": {
-      "openManager": "افتح المدير"
+      "openManager": "افتح المدير",
+      "openOnboarding": "إعداد الجهاز"
     },
     "installApp": "تم إنجاز {{percentage}} من تثبيت تطبيق {{appName}} ",
     "installAppDescription": "يُرجى الانتظار حتى الانتهاء من التثبيت",

@@ -238,6 +238,10 @@
       "title": "Tableau de bord (écran d'accueil) non ouvert sur l'appareil",
       "description": "Merci d'ouvrir le tableau de bord (écran d'accueil) sur votre appareil."
     },
+    "DeviceNotOnboarded": {
+      "title": "Votre appareil n'est pas encore prêt à être utilisé.",
+      "description": "Configurez votre appareil avant de l'utiliser avec Ledger Live."
+    },
     "DeviceSocketFail": {
       "title": "Échec de la connexion",
       "description": "Veuillez réessayer."
@@ -1289,7 +1293,17 @@
     "settings": "Paramètres",
     "platform": "Discover",
     "nanoX": "Nano X",
-    "market": "Marché"
+    "market": "Marché",
+    "learn": "Apprendre"
+  },
+  "learn": {
+    "pageTitle": "Apprendre",
+    "noConnection": "Pas de connexion",
+    "noConnectionDesc": "Aucune connexion Internet détectée. Veuillez vérifier votre connexion et réessayer.",
+    "sectionShows": "Séries",
+    "sectionVideo": "Vidéos",
+    "sectionPodcast": "Podcasts",
+    "sectionArticles": "Articles"
   },
   "portfolio": {
     "totalBalance": "Solde total",
@@ -1529,11 +1543,11 @@
         "desc": "Le nœud d'API à utiliser"
       },
       "delete": {
-        "title": "Supprimer le compte du Portefeuille",
+        "title": "Retirer le compte du Portefeuille",
         "desc": "Les données enregistrées seront supprimées.",
         "confirmationTitle": "Êtes-vous sûr(e) ?",
         "confirmationDesc": "Cela n'a pas d'effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
-        "confirmationWarn": "La suppression de ce compte effacera l'historique de vos transactions de swap avec ce dernier."
+        "confirmationWarn": "L'historique de vos transactions de swap en lien avec ce compte sera effacé."
       },
       "archive": {
         "title": "Archiver le compte",
@@ -1680,6 +1694,7 @@
       "theme": "Thème",
       "themeDesc": "Définissez le thème de l'interface utilisateur",
       "themes": {
+        "system": "Système",
         "dark": "Dark",
         "light": "Light"
       },
@@ -2607,7 +2622,8 @@
       "alert": "Vérifiez les détails de la vente sur votre appareil avant de l'envoyer. Les adresses sont échangées de manière sécurisée afin que vous n'ayez pas à les vérifier."
     },
     "button": {
-      "openManager": "Ouvrir le Gestionnaire"
+      "openManager": "Ouvrir le Gestionnaire",
+      "openOnboarding": "Configurer un appareil"
     },
     "installApp": "Installation de l'app {{appName}} {{percentage}}",
     "installAppDescription": "Merci d'attendre la fin de l'installation.",
