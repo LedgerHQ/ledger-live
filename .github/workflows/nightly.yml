@@ -1,0 +1,76 @@
+name: Nightly Release
+
+on:
+  # schedule:
+  #   - cron: "0 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  nightly-release:
+    name: Nightly Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          ref: nightly
+          fetch-depth: 0
+
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+
+      - name: merge develop # TODO: update the branch when we sanitize the monorepo
+        run: |
+          git merge monorepo-setup -X theirs
+
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: install dependencies
+        run: pnpm i -F "ledger-live" -F "{libs}..." --frozen-lockfile
+
+      - name: build libs
+        run: pnpm run build:libs
+
+      - name: versioning
+        run: pnpm changeset version
+
+      - name: commit
+        run: |
+          git add .
+          git commit -m ":rocket: nightly release"
+
+      - name: publish nightly
+        run: pnpm changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: push changes
+        run: |
+          git push origin nightly --follow-tags
+
+      - uses: actions/github-script@v6
+        name: trigger nightly build of desktop and mobile
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-monorepo.yml",
+            });
