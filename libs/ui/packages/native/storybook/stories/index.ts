@@ -42,6 +42,7 @@ import "./Layout/Table.stories";
 import "./Layout/Collapse/Accordion.stories";
 import "./Form/Slider/Slider.stories";
 import "./Chart/Chart.stories";
+import "./ChartCard/ChartCard.stories";
 import "./Form/SelectableList.stories";
 import "./Carousel/Carousel.stories";
 import "./ProgressBar/ProgressBar.stories";

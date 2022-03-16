@@ -33,17 +33,17 @@ export const Bracket = ({ color, style, mb, mt }: BaseBracketProps): React.React
 };
 
 export const BracketTopLeft = ({ color }: BracketProps) => {
-  return <Bracket color={color} mb="-4px" />;
+  return <Bracket color={color} />;
 };
 
 export const BracketTopRight = ({ color }: BracketProps) => {
-  return <Bracket color={color} mb="-4px" style={{ transform: [{ scaleX: -1 }] }} />;
+  return <Bracket color={color} style={{ transform: [{ scaleX: -1 }] }} />;
 };
 
 export const BracketBottomLeft = ({ color }: BracketProps) => {
-  return <Bracket color={color} mt="-4px" style={{ transform: [{ scaleY: -1 }] }} />;
+  return <Bracket color={color} style={{ transform: [{ scaleY: -1 }] }} />;
 };
 
 export const BracketBottomRight = ({ color }: BracketProps) => {
-  return <Bracket color={color} mt="-4px" style={{ transform: [{ scale: -1 }] }} />;
+  return <Bracket color={color} style={{ transform: [{ scale: -1 }] }} />;
 };

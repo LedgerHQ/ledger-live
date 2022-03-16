@@ -25,30 +25,25 @@ export type ChartProps = {
   data: Array<Item>;
   backgroundColor: string;
   color: string;
-  /*
-   ** This prop is used to format the x-axis using time options from Intl.DateTimeFormat format
-   */
-  timeFormat?: any;
   /* This prop is used to override the key that store the data */
   valueKey?: string;
   height?: number;
+  xAxisFormatter?: (timestamp: number) => string;
   yAxisFormatter: (n: number) => string;
   valueFormatter: (n: number) => string;
   disableTooltips: boolean;
-  locale: string;
 };
 
 const Chart = ({
   data,
   backgroundColor,
   color,
-  timeFormat = { month: "short" },
-  valueKey = "value",
-  height = 200,
   yAxisFormatter,
   valueFormatter,
+  valueKey = "value",
+  height = 200,
+  xAxisFormatter = (timestamp: number): string => `${new Date(timestamp).toLocaleDateString()}`,
   disableTooltips = false,
-  locale,
 }: ChartProps): JSX.Element => {
   const theme = useTheme();
   const sortData = useMemo(() => data.sort(sortByDate), [data]);
@@ -138,11 +133,7 @@ const Chart = ({
         <VictoryAxis dependentAxis crossAxis tickFormat={yAxisFormatter} style={yAxisStyle} />
 
         {/* x-axis */}
-        <VictoryAxis
-          crossAxis={false}
-          tickFormat={(timestamp) => new Intl.DateTimeFormat(locale, timeFormat).format(timestamp)}
-          style={xAxisStyle}
-        />
+        <VictoryAxis crossAxis={false} tickFormat={xAxisFormatter} style={xAxisStyle} />
 
         {/* gradient area */}
         <Defs>
