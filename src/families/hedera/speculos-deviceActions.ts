@@ -39,6 +39,18 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Fee",
       button: "Rr",
+      expectedValue: ({ account: { unit }, status: { estimatedFees } }) =>
+        formatCurrencyUnit(unit, estimatedFees, {
+          disableRounding: true,
+        }) + " hbar",
+    },
+    {
+      title: "Max Fee",
+      button: "Rr",
+      expectedValue: ({ account: { unit }, status: { estimatedFees } }) =>
+        formatCurrencyUnit(unit, estimatedFees, {
+          disableRounding: true,
+        }) + " hbar",
     },
     {
       title: "Memo",
