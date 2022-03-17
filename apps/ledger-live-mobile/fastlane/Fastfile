@@ -24,6 +24,44 @@ IPA_DIRECTORY = "#{OUTPUT_DIRECTORY}/#{PROJECT_NAME}.ipa"
 default_platform(:ios)
 package = load_json(json_path: "./package.json")
 
+
+# Infers the build number / version code from the package.json version.
+def infer_build_number
+  v = SemVer.parse package["version"]
+  # A build number is a 32 bits integer.
+  build_number = 0
+  # Bits 25 to 32 are mapped to the major version.
+  # Boundary is set to 32 because according to the android documentation the maximum value is 2100000000, which is between 2^30 and 2^31.
+  # It means that the upper 8 bits cannot be set higher than 118 (in base 10) otherwise the version code will be higher than the allowed max.
+  # See: https://developer.android.com/studio/publish/versioning#appversioning
+  build_number |= [v.major.to_i, 118].min << 24
+  # Bits 17 to 24 are mapped to the minor version.
+  build_number |= [v.minor.to_i, 255].min << 16
+  # Bits 9 to 16 are mapped to the patch version.
+  build_number |= [v.patch.to_i, 255].min << 8
+
+  if !v.special.empty?
+    # If there is a special suffix (like -beta.1 or -nightly.10)
+    special_name, special_number = v.special.split "."
+    if(special_name === "beta")
+      # The lower 8 bits for a beta build should be higher than any nightly build.
+      build_number |= [126 + special_number.to_i, 254].min
+    else
+      build_number |= [special_number.to_i, 125].min
+    end
+  else
+    # Use 255 (11111111) as the lower 8 bits for true releases.
+    build_number |= 255
+  end
+
+  return build_number
+end
+
+def trim_version_number
+  v = SemVer.parse package["version"]
+  return v.format "%M.%m.%p"
+end
+
 lane :beta do |options|
   ensure_git_status_clean
 
@@ -45,14 +83,17 @@ platform :ios do
   desc "private: set version number from package.json"
   private_lane :set_version_number do
     increment_version_number(
-      version_number: package["version"],
+      version_number: trim_version_number(),
       xcodeproj: XCODE_PROJECT
     )
   end
 
   desc "private: bump build number"
   private_lane :bump_build_number do
-    increment_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+    increment_build_number(
+      build_number: infer_build_number(),
+      xcodeproj: "ios/ledgerlivemobile.xcodeproj"
+    )
   end
 
   desc "private: prepare iOS for beta release"
@@ -310,7 +351,10 @@ platform :android do
 
   desc "private: bump version code"
   private_lane :bump_version_code do
-    android_set_version_code(gradle_file: 'android/app/build.gradle')
+    android_set_version_code(
+      version_code: infer_build_number(),
+      gradle_file: 'android/app/build.gradle'
+    )
   end
 
   desc "private: prepare android for internal"
