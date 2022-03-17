@@ -40,6 +40,16 @@ jobs:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs}..." --frozen-lockfile
 
@@ -63,8 +73,19 @@ jobs:
         run: |
           git push origin nightly --follow-tags
 
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: post-desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - uses: actions/github-script@v6
-        name: trigger nightly build of desktop and mobile
+        name: trigger nightly build of desktop
+        if: ${{ steps.desktop-version.outputs.version }} != ${{ steps.post-desktop-version.outputs.version }}
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
@@ -72,5 +93,18 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "nightly-monorepo.yml",
+              workflow_id: "nightly-desktop-mono.yml",
+            });
+
+      - uses: actions/github-script@v6
+        name: trigger nightly build of mobile
+        if: ${{ steps.desktop-version.outputs.version }} != ${{ steps.post-desktop-version.outputs.version }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-mobile-mono.yml",
             });
