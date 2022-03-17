@@ -23,7 +23,7 @@ jobs:
 
       - name: merge develop # TODO: update the branch when we sanitize the monorepo
         run: |
-          git merge monorepo-setup -X theirs
+          git merge origin/monorepo-setup -X theirs
 
       - uses: pnpm/action-setup@v2.1.0
         with:
