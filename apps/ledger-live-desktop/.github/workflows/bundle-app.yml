@@ -114,7 +114,7 @@ jobs:
 
   stop-runner:
     name: "[Runner] stop ec2 instance"
-    if: ${{ always() }}
+    if: ${{ always() && needs.start-runner.result == 'success' }}
     needs: [start-runner, bundle-linux-hosted]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     with:
