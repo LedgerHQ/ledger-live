@@ -1,5 +1,11 @@
 # live-mobile
 
+## 2.38.4-monorepo.5
+
+### Patch Changes
+
+- b8a2af772: test with changelogs
+
 ## 2.38.4-monorepo.4
 
 ### Patch Changes

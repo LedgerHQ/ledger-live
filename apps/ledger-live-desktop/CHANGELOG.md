@@ -1,5 +1,11 @@
 # live-desktop
 
+## 2.39.3-monorepo.5
+
+### Patch Changes
+
+- b8a2af772: test with changelogs
+
 ## 2.39.3-monorepo.4
 
 ### Patch Changes
