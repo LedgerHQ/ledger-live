@@ -16,7 +16,7 @@ jobs:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, run-bot]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
+    if: ${{ always() && needs.start-runner.result == 'success' }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
