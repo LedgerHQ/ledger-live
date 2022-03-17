@@ -11,6 +11,7 @@
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
+    "nightly": "pnpm run:turbo -- run nightly --include-dependencies --no-deps",
     "build:libs": "pnpm run:turbo -- run build --scope=@ledgerhq/* --include-dependencies --no-deps",
     "build:libs:force": "pnpm -r --filter=\"!./apps\" --filter=\"!ledger-live\" build",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
