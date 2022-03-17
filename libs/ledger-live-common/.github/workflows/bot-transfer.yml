@@ -9,7 +9,6 @@ on:
         description: "index of the seed to receive the funds (e.g. 4)"
         required: true
 
-
 jobs:
   start-runner:
     name: "start ec2 instance (Linux)"
@@ -22,7 +21,7 @@ jobs:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, run-bot]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
-    if: ${{ always() }}
+    if: ${{ always() && needs.start-runner.result == 'success' }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}

@@ -57,7 +57,7 @@ jobs:
 
   stop-runner:
     name: "[Runner] stop ec2 instance"
-    if: always() && github.event.issue.pull_request != ''
+    if: always() && github.event.issue.pull_request != '' && needs.start-runner.result == 'success'
     needs: [start-runner, generate-screenshots-linux]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     with:
