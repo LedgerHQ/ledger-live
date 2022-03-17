@@ -25,10 +25,9 @@ IPA_DIRECTORY = "#{OUTPUT_DIRECTORY}/#{PROJECT_NAME}.ipa"
 default_platform(:ios)
 package = load_json(json_path: "./package.json")
 
-
 # Infers the build number / version code from the package.json version.
-def infer_build_number
-  v = SemVer.parse package["version"]
+def infer_build_number(version)
+  v = SemVer.parse version
   # A build number is a 32 bits integer.
   build_number = 0
   # Bits 25 to 32 are mapped to the major version.
@@ -55,12 +54,11 @@ def infer_build_number
     build_number |= 255
   end
 
-  return build_number
+  build_number
 end
 
-def trim_version_number
-  v = SemVer.parse package["version"]
-  return v.format "%M.%m.%p"
+def trim_version_number(version)
+  SemVer.parse(version).format "%M.%m.%p"
 end
 
 lane :beta do |options|
@@ -83,7 +81,7 @@ platform :ios do
   desc "private: set version number from package.json"
   private_lane :set_version_number do
     increment_version_number(
-      version_number: trim_version_number(),
+      version_number: trim_version_number(package["version"]),
       xcodeproj: XCODE_PROJECT
     )
   end
@@ -91,7 +89,7 @@ platform :ios do
   desc "private: bump build number"
   private_lane :bump_build_number do
     increment_build_number(
-      build_number: infer_build_number(),
+      build_number: infer_build_number(package["version"]),
       xcodeproj: "ios/ledgerlivemobile.xcodeproj"
     )
   end
@@ -352,7 +350,7 @@ platform :android do
   desc "private: bump version code"
   private_lane :bump_version_code do
     android_set_version_code(
-      version_code: infer_build_number(),
+      version_code: infer_build_number(package["version"]),
       gradle_file: 'android/app/build.gradle'
     )
   end
