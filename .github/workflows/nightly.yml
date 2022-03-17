@@ -85,7 +85,7 @@ jobs:
 
       - uses: actions/github-script@v6
         name: trigger nightly build of desktop
-        if: ${{ steps.desktop-version.outputs.version }} != ${{ steps.post-desktop-version.outputs.version }}
+        if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
@@ -98,7 +98,7 @@ jobs:
 
       - uses: actions/github-script@v6
         name: trigger nightly build of mobile
-        if: ${{ steps.desktop-version.outputs.version }} != ${{ steps.post-desktop-version.outputs.version }}
+        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
