@@ -4,11 +4,8 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
-import type { Account } from "../../types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
-
-// NOTE: Still a WIP
 
 const currency = getCryptoCurrencyById("hedera");
 
@@ -25,20 +22,20 @@ const checkSendableToEmptyAccount = (amount, recipient) => {
   }
 };
 
+// NOTE: because we can't create Hedera accounts in Ledger Live,
+// the bot will only use the 3 existing accounts that have been setup
 const hedera: AppSpec<Transaction> = {
   name: "Hedera",
   appQuery: {
     model: DeviceModelId.nanoS,
-    firmware: "2.1.0",
-    appVersion: "1.0.8",
     appName: "Hedera",
   },
   currency,
   mutations: [
     {
-      name: "Transfer ~50%",
+      name: "Send ~50%",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+      transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
 
@@ -56,12 +53,27 @@ const hedera: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
-        const rewards =
-          accountBeforeTransaction.algorandResources?.rewards || 0;
-
-        expect(account.balance.plus(rewards).toString()).toBe(
+        expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
+      },
+    },
+    {
+      name: "Send max",
+      maxRun: 2,
+      transaction: ({ account, siblings, bridge }) => {
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [{ recipient }, { useAllAmount: true }],
+        };
+      },
+      test: ({ account }) => {
+        expect(account.balance.toNumber()).toBe(0);
       },
     },
   ],
