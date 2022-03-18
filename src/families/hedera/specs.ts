@@ -6,6 +6,7 @@ import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
+import BigNumber from "bignumber.js";
 
 const currency = getCryptoCurrencyById("hedera");
 
@@ -67,9 +68,13 @@ const hedera: AppSpec<Transaction> = {
 
         const transaction = bridge.createTransaction(account);
 
+        // calculate max amount to send
+        const estimatedFees = new BigNumber("83300").multipliedBy(2);
+        const amount = account.balance.minus(estimatedFees);
+
         return {
           transaction,
-          updates: [{ recipient }, { useAllAmount: true }],
+          updates: [{ amount }, { recipient }, { useAllAmount: true }],
         };
       },
       test: ({ account }) => {
