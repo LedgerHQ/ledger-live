@@ -36,7 +36,8 @@
     "@changesets/cli": "^2.21.1",
     "pnpm-utils": "workspace:*",
     "turbo": "^1.1.6",
-    "x-run": "workspace:*"
+    "x-run": "workspace:*",
+    "create-release-hash": "workspace:*"
   },
   "pnpm": {
     "overrides": {
