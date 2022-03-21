@@ -1,5 +1,5 @@
 /* @flow */
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Text } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import getFontStyle from "./getFontStyle";
@@ -31,6 +31,14 @@ export type Res = {|
     | "900",
 |};
 
+const getColor = (clrs, key, defaultValue) => {
+  if (!key || !(key in clrs)) {
+    return defaultValue;
+  }
+
+  return clrs[key];
+};
+
 /**
  * Usage:
  *
@@ -40,7 +48,7 @@ export type Res = {|
  * <LText secondary>alternate font</LText>
  * <LText style={styles.text}>some specific styles</LText>
  */
-export default function LText({
+function LText({
   bold,
   semiBold,
   secondary,
@@ -55,31 +63,32 @@ export default function LText({
   ...
 }) {
   const { colors } = useTheme();
-  const getColor = (clrs, key, defaultValue) => {
-    if (!key || !(key in clrs)) {
-      return defaultValue;
-    }
 
-    return clrs[key];
-  };
+  const memoizedStyle = useMemo(
+    () => [
+      {
+        color: getColor(colors, color, colors.darkBlue),
+        backgroundColor: getColor(colors, bg, "transparent"),
+      },
+      style,
+      getFontStyle({
+        bold,
+        semiBold,
+        secondary,
+        monospace,
+      }),
+    ],
+    [colors, style, bold, semiBold, secondary, monospace, bg],
+  );
+
   return (
     // $FlowFixMe
-    <Text
-      {...newProps}
-      allowFontScaling={false}
-      style={[
-        {
-          color: getColor(colors, color, colors.darkBlue),
-          backgroundColor: getColor(colors, bg, "transparent"),
-        },
-        style,
-        getFontStyle({
-          bold,
-          semiBold,
-          secondary,
-          monospace,
-        }),
-      ]}
-    />
+    <Text {...newProps} allowFontScaling={false} style={memoizedStyle} />
   );
 }
+
+export default memo<{
+  ...Opts,
+  style?: *,
+  ...
+}>(LText);

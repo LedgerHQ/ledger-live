@@ -210,6 +210,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "flipper-plugin-rn-performance-android": "^0.1.0",
     "flow-bin": "0.122.0",
     "flow-typed": "^2.6.2",
     "jest": "^26.6.3",

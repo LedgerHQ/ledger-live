@@ -234,6 +234,8 @@ dependencies {
         exclude group:'com.facebook.flipper'
     }
 
+    debugImplementation project(':flipper-plugin-rn-performance-android')
+
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")

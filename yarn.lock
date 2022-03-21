@@ -8748,6 +8748,11 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.4.tgz#28d9969ea90661b5134259f312ab6aa7929ac5e2"
   integrity sha512-8/sOawo8tJ4QOBX8YlQBMxL8+RLZfxMQOif9o0KUKTNTjMYElWPE0r/m5VNFxTRd0NSw8qSy8dajrwX4RYI1Hw==
 
+flipper-plugin-rn-performance-android@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/flipper-plugin-rn-performance-android/-/flipper-plugin-rn-performance-android-0.1.0.tgz#ee8f649be4b1e03d9a4e806c601c67a337dfa5be"
+  integrity sha512-GfzhKeMfWxLDeXArkit91bXE2m+g4SyVoBCpwsxMO/s0zB1mcZbqx6oIOSKwjpGFlQ3b/BpNNQ1+Xms3OeV5fw==
+
 flow-bin@0.122.0:
   version "0.122.0"
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.122.0.tgz#c723a2b33b1a70bd10204704ae1dc776d5d89d79"

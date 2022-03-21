@@ -1,6 +1,6 @@
 // @flow
 
-import React, { memo, useRef, useEffect } from "react";
+import React, { memo, useRef, useEffect, useMemo } from "react";
 import { Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
@@ -42,19 +42,18 @@ const Skeleton = ({
     }
   }, []);
 
-  return loading ? (
-    <Animated.View
-      style={[
-        style,
-        {
-          backgroundColor: colors.skeletonBg,
-          opacity: opacityAnim,
-        },
-      ]}
-    />
-  ) : (
-    children
+  const animatedStyle = useMemo(
+    () => [
+      style,
+      {
+        backgroundColor: colors.skeletonBg,
+        opacity: opacityAnim,
+      },
+    ],
+    [style, colors.skeletonBg, opacityAnim],
   );
+
+  return loading ? <Animated.View style={animatedStyle} /> : children;
 };
 
 export default memo<Props>(Skeleton);
