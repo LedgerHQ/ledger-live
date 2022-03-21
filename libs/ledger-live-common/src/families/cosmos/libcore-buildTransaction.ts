@@ -136,7 +136,10 @@ export async function cosmosBuildTransaction({
     const gasRequest = await core.CosmosGasLimitRequest.init(
       memoTransaction,
       messages,
-      String(getEnv("COSMOS_GAS_AMPLIFIER"))
+      // COSMOS_GAS_AMPLIFIER env use by JS implementation
+      // Set as 4 int in order to not break libcore implementation
+      // String(getEnv("COSMOS_GAS_AMPLIFIER"))
+      String(4)
     );
     estimatedGas = await libcoreBigIntToBigNumber(
       // NOTE: With new cosmos code, this call might fail if the account hasn't been synchronized

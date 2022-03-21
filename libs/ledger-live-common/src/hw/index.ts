@@ -24,6 +24,13 @@ export type TransportModule = {
   // disconnect/interrupt a device connection globally
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => Promise<void> | null | undefined;
+  // here, setAllowAutoDisconnect determines whether an autodisconnect can
+  // happen at this time or not. Currently only used by TransportNodeHid
+  setAllowAutoDisconnect?: (
+    transport: Transport,
+    id: string,
+    allow: boolean
+  ) => Promise<void> | null | undefined;
   // optional observable that allows to discover a transport
   discovery?: Discovery;
 };
@@ -76,6 +83,19 @@ export const close = (
 
   // fallback on an actual close
   return transport.close();
+};
+export const setAllowAutoDisconnect = (
+  transport: Transport,
+  deviceId: string,
+  allow: boolean
+): Promise<void> | null | undefined => {
+  for (let i = 0; i < modules.length; i++) {
+    const m = modules[i];
+    const p =
+      m.setAllowAutoDisconnect &&
+      m.setAllowAutoDisconnect(transport, deviceId, allow);
+    if (p) return p;
+  }
 };
 export const disconnect = (deviceId: string): Promise<void> => {
   for (let i = 0; i < modules.length; i++) {

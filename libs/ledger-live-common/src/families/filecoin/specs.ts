@@ -9,6 +9,7 @@ import type { AppSpec } from "../../bot/types";
 
 const MIN_SAFE = new BigNumber(100000);
 const filecoinSpecs: AppSpec<Transaction> = {
+  disabled: true, // Bot spec is currently not correctly working
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
   appQuery: {
@@ -22,7 +23,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "send 50%~",
+      name: "Send 50%~",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
@@ -46,6 +47,23 @@ const filecoinSpecs: AppSpec<Transaction> = {
             },
             {
               amount,
+            },
+          ],
+        };
+      },
+    },
+    {
+      name: "Transfer Max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: pickSiblings(siblings, 2).freshAddress,
+            },
+            {
+              useAllAmount: true,
             },
           ],
         };

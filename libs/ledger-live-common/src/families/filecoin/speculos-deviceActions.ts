@@ -6,20 +6,14 @@ import { formatCurrencyUnit } from "../../currencies";
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "To [1/2]",
+      title: "To",
       button: "Rr",
+      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "To [2/2]",
+      title: "From",
       button: "Rr",
-    },
-    {
-      title: "From [1/2]",
-      button: "Rr",
-    },
-    {
-      title: "From [2/2]",
-      button: "Rr",
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "Nonce",

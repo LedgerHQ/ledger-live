@@ -78,8 +78,7 @@ const cmd = ({
           concatMap((deviceInfo) => {
             timeoutSub.unsubscribe();
 
-            // FIXME Until we have proper flagging of the onboarded status.
-            if (!deviceInfo.onboarded) {
+            if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
               throw new DeviceNotOnboarded();
             }
 

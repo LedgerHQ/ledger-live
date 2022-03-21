@@ -156,7 +156,7 @@ const envDefinitions = {
     desc: "location of the compound API",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 4,
+    def: 1.4,
     parser: intParser,
     desc: "estimate gas multiplier",
   },
@@ -166,7 +166,7 @@ const envDefinitions = {
     desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
-    def: "https://crypto.org/explorer",
+    def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org indexer API",
   },
@@ -176,7 +176,7 @@ const envDefinitions = {
     desc: "location of the crypto.org indexer testnet API",
   },
   CRYPTO_ORG_RPC_URL: {
-    def: "https://rpc.mainnet.crypto.org",
+    def: "https://cryptoorg-rpc-node.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org chain node",
   },
@@ -545,6 +545,26 @@ const envDefinitions = {
     parser: stringParser,
     desc: 'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
   },
+  PLATFORM_GLOBAL_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_GLOBAL_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
+  PLATFORM_RAMP_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/trade/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_RAMP_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/trade/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
   PLATFORM_API_URL: {
     def: "",
     parser: stringParser,
@@ -559,6 +579,11 @@ const envDefinitions = {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,
     desc: "Market data api",
+  },
+  USE_LEARN_STAGING_URL: {
+    def: false,
+    parser: boolParser,
+    desc: "use the staging URL for the learn page",
   },
 };
 

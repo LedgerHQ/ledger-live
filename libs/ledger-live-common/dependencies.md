@@ -1,5 +1,12 @@
 This document allows to track, explain and maintain the dependencies we have defined in package.json.
 
+You can see at any point in time what libraries are upgradable using:
+
+```
+yarn upgrade-interactive -i --latest
+```
+
+
 ### Direct Dependencies
 
 | library name (what).   | description of its usage (why) | ideal frequency of update (when) / status |
@@ -56,7 +63,7 @@ This document allows to track, explain and maintain the dependencies we have def
 |bip32                   | coin integrations              | monthly                          |
 |bip32-path              | coin integrations              | monthly                          |
 |bip39                   | needed for bot                 | monthly                          |
-|bitcoinjs-lib           | Bitcoin coin integration       | monthly                          |
+|bitcoinjs-lib           | Bitcoin coin integration       | **ticket missing**: apparently blocking LLM                          |
 |blake-hash              | Bitcoin coin integration       | monthly                          |
 |bs58                    | Bitcoin coin integration       | monthly                          |
 |bs58check               | Bitcoin coin integration       | monthly                          |
