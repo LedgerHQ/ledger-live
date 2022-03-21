@@ -1,0 +1,11 @@
+{
+  "name": "create-release-hash",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Get release hash from desktop release binaries",
+  "main": "index.js",
+  "bin": {
+    "create-release-hash": "./index.js"
+  },
+  "license": "ISC"
+}
