@@ -68,13 +68,9 @@ const hedera: AppSpec<Transaction> = {
 
         const transaction = bridge.createTransaction(account);
 
-        // calculate max amount to send
-        const estimatedFees = new BigNumber("83300").multipliedBy(2);
-        const amount = account.balance.minus(estimatedFees);
-
         return {
           transaction,
-          updates: [{ amount }, { recipient }, { useAllAmount: true }],
+          updates: [{ recipient }, { useAllAmount: true }],
         };
       },
       test: ({ account }) => {

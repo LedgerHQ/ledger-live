@@ -81,7 +81,7 @@ async function buildOptimisticOperation({
   account: Account;
   transaction: Transaction;
 }): Promise<Operation> {
-  const { amount, estimatedFees } = await calculateAmount({
+  const { estimatedFees } = await calculateAmount({
     account,
     transaction,
   });
@@ -90,7 +90,7 @@ async function buildOptimisticOperation({
     id: `${account.id}--OUT`,
     hash: "",
     type: "OUT",
-    value: amount,
+    value: transaction.amount,
     fee: estimatedFees,
     blockHash: null,
     blockHeight: null,
