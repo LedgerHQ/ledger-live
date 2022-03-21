@@ -2804,6 +2804,7 @@
         "title": "Installieren {{App-Bezeichnung}}",
         "desc": "Bitte warten Sie, bis die {{appName}} App installiert ist",
         "button": "Installieren ...",
+        "queued": "In der Warteschlange",
         "button_plural": "Installiere... {{progressPercentage}}%"
       },
       "done": {
