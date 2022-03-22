@@ -152,7 +152,7 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4195731
+        versionCode 36176128
         versionName "2.40.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
@@ -233,6 +233,8 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
+
+    debugImplementation project(':flipper-plugin-rn-performance-android')
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

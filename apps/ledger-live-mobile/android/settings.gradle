@@ -4,6 +4,9 @@ project(':react-native-webview').projectDir = new File(rootProject.projectDir, '
 
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 
+include ':flipper-plugin-rn-performance-android'
+project(':flipper-plugin-rn-performance-android').projectDir = new File(rootProject.projectDir, '../node_modules/flipper-plugin-rn-performance-android')
+
 include ':app'
 
 apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute().text.trim(), "../scripts/autolinking.gradle")

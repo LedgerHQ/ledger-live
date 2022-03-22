@@ -2804,6 +2804,7 @@
         "title": "{{appName}}をインストール中",
         "desc": "{{appName}}アプリのインストール完了まで、お待ちください。",
         "button": "インストール中...",
+        "queued": "Queued",
         "button_plural": "インストール中... {{progressPercentage}}%"
       },
       "done": {

@@ -2804,6 +2804,7 @@
         "title": "جاري تثبيت {{appName}}",
         "desc": "يرجى الانتظار حتى يتم تثبيت تطبيق {{appName}}",
         "button": "جاري التثبيت...",
+        "queued": "Queued",
         "button_plural": "جاري التثبيت... {{progressPercentage}}%"
       },
       "done": {

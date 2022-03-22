@@ -2804,6 +2804,7 @@
         "title": "正在安装 {{appName}}",
         "desc": "请等待 {{appName}} 应用程序完成安装",
         "button": "正在安装……",
+        "queued": "Queued",
         "button_plural": "正在安装…… {{progressPercentage}}%"
       },
       "done": {

@@ -17,9 +17,20 @@ type Props = {
   style?: Object,
 };
 
-const NftCard = ({ nft, collection, style }: Props) => {
+const NftCardView = ({
+  nft,
+  collection,
+  style,
+  status,
+  metadata,
+}: {
+  nft: NFT | $Diff<NFT, { collection: * }>,
+  collection: CollectionWithNFT,
+  style?: Object,
+  status: "queued" | "loading" | "loaded" | "error" | "nodata",
+  metadata?: Object,
+}) => {
   const amount = nft.amount.toFixed();
-  const { status, metadata } = useNftMetadata(collection.contract, nft.tokenId);
   const { colors } = useTheme();
   const navigation = useNavigation();
   const loading = status === "loading";
@@ -78,6 +89,23 @@ const NftCard = ({ nft, collection, style }: Props) => {
         </View>
       </RectButton>
     </View>
+  );
+};
+
+const NftCardMemo = memo(NftCardView);
+// this technique of splitting the usage of context and memoing the presentational component is used to prevent
+// the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
+const NftCard = ({ nft, collection, style }: Props) => {
+  const { status, metadata } = useNftMetadata(collection.contract, nft.tokenId);
+
+  return (
+    <NftCardMemo
+      nft={nft}
+      collection={collection}
+      style={style}
+      status={status}
+      metadata={metadata}
+    />
   );
 };
 

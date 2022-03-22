@@ -28,9 +28,6 @@ const BUTTON_HEIGHT = 48;
 const ANIM_OFFSET = 20;
 const ANIM_DURATION = 300;
 
-type LTextProps = React$ElementProps<typeof LText>;
-type LTextStyleProp = $PropertyType<LTextProps, "style">;
-
 type ButtonType =
   | "primary"
   | "lightPrimary"
@@ -52,7 +49,7 @@ export type BaseButtonProps = {
   // text of the button
   title?: React$Node | string,
   containerStyle?: ViewStyleProp,
-  titleStyle?: LTextStyleProp,
+  titleStyle?: *,
   IconLeft?: React$ComponentType<{ size: number, color: string }>,
   IconRight?: React$ComponentType<{ size: number, color: string }>,
   disabled?: boolean,
