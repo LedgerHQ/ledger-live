@@ -53,7 +53,7 @@ const setupTasks = args => [
     task: async () => {
       await exec("pnpm", [
         "i",
-        "--filter=live-desktop",
+        "--filter=ledger-live-desktop",
         "--filter=ledger-live",
         "--unsafe-perm",
         "--package-import-method=copy",
