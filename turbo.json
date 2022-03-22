@@ -37,7 +37,7 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
-    "live-desktop#lint": {
+    "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
       "outputs": []
     },

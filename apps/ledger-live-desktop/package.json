@@ -2,7 +2,7 @@
   "engines": {
     "node": ">=12"
   },
-  "name": "live-desktop",
+  "name": "ledger-live-desktop",
   "productName": "Ledger Live",
   "description": "Ledger Live - Desktop",
   "author": "Ledger Live Team <team-live@ledger.fr>",

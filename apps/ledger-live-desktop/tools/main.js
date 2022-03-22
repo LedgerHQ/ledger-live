@@ -10,7 +10,7 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 
 const pkg = require("./../package.json");
 
-const NIGHTLY = pkg.name.includes("nightly");
+const NIGHTLY = pkg.name.includes("nightly") || pkg.version.includes("nightly");
 
 const { SENTRY_URL } = process.env;
 
