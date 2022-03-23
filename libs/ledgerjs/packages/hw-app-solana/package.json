@@ -1,6 +1,6 @@
 {
     "name": "@ledgerhq/hw-app-solana",
-    "version": "6.26.0",
+    "version": "6.27.0",
     "description": "Ledger Hardware Wallet Solana Application API",
     "keywords": [
         "Ledger",
@@ -34,7 +34,7 @@
     },
     "devDependencies": {
         "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
-        "axios": "^0.26.0"
+        "axios": "^0.26.1"
     },
     "scripts": {
         "clean": "bash ../../script/clean.sh",
