@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.26.0",
+  "version": "6.27.0",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",
@@ -30,7 +30,7 @@
     "@ledgerhq/errors": "^6.10.0",
     "@ledgerhq/hw-transport": "^6.24.1",
     "@ledgerhq/logs": "^6.10.0",
-    "axios": "^0.26.0",
+    "axios": "^0.26.1",
     "ws": "8.5.0"
   },
   "scripts": {

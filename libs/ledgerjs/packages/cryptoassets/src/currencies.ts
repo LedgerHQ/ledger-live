@@ -519,8 +519,39 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://cardanoexplorer.com/tx/$hash",
-        address: "https://cardanoexplorer.com/address/$address",
+        tx: "https://cardanoscan.io/transaction/$hash",
+        address: "https://cardanoscan.io/address/$address",
+      },
+    ],
+  },
+  cardano_testnet: {
+    type: "CryptoCurrency",
+    id: "cardano_testnet",
+    coinType: 1815,
+    name: "Cardano (Testnet)",
+    managerAppName: "Cardano ADA",
+    ticker: "tADA",
+    scheme: "cardano_testnet",
+    isTestnetFor: "cardano",
+    color: "#0A1D2C",
+    family: "cardano",
+    blockAvgTime: 20,
+    units: [
+      {
+        name: "ada",
+        code: "tADA",
+        magnitude: 6,
+      },
+      {
+        name: "Lovelace",
+        code: "tLovelace",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://testnet.cardanoscan.io/transaction/$hash",
+        address: "https://testnet.cardanoscan.io/address/$address",
       },
     ],
   },
@@ -1711,6 +1742,30 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  nervos: {
+    type: "CryptoCurrency",
+    id: "nervos",
+    coinType: 309,
+    name: "Nervos",
+    managerAppName: "Nervos",
+    ticker: "CKB",
+    scheme: "nervos",
+    color: "#3EC58A",
+    family: "nervos",
+    units: [
+      {
+        name: "CKB",
+        code: "CKB",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.nervos.org/transaction/$hash",
+        address: "https://explorer.nervos.org/address/$address",
+      },
+    ],
+  },
   nimiq: {
     type: "CryptoCurrency",
     id: "nimiq",
@@ -2298,11 +2353,11 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.solana.com/",
+        address: "https://explorer.solana.com/address/$address",
         tx: "https://explorer.solana.com/tx/$hash",
       },
       {
-        address: "https://solanabeach.io/",
+        address: "https://solanabeach.io/address/$address",
         tx: "https://solanabeach.io/transaction/$hash",
       },
     ],
@@ -3047,11 +3102,11 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ].map(makeTestnetUnit),
     explorerViews: [
       {
-        address: "https://explorer.solana.com/?cluster=testnet",
+        address: "https://explorer.solana.com/address/$address?cluster=testnet",
         tx: "https://explorer.solana.com/tx/$hash?cluster=testnet",
       },
       {
-        address: "https://solanabeach.io/?cluster=testnet",
+        address: "https://solanabeach.io/address/$address?cluster=testnet",
         tx: "https://solanabeach.io/transaction/$hash?cluster=testnet",
       },
     ],
@@ -3081,11 +3136,11 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ].map(makeTestnetUnit),
     explorerViews: [
       {
-        address: "https://explorer.solana.com/?cluster=devnet",
+        address: "https://explorer.solana.com/address/$address?cluster=devnet",
         tx: "https://explorer.solana.com/tx/$hash?cluster=devnet",
       },
       {
-        address: "https://solanabeach.io/?cluster=devnet",
+        address: "https://solanabeach.io/address/$address?cluster=devnet",
         tx: "https://solanabeach.io/transaction/$hash?cluster=devnet",
       },
     ],
