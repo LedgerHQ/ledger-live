@@ -78,7 +78,10 @@ const buildTasks = args => [
       const commands = ["dist:internal", "--"];
       if (args.dir) commands.push("--dir");
       if (args.publish) {
-        commands.push("--publish", "always");
+        // TODO: let's see how we fix this later,
+        // we do the publishing in CI now, as a separate step after Quorum Sign
+        // probably could be removed
+        // commands.push("--publish", "always");
       } else {
         commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
