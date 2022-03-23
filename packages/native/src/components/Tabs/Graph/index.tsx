@@ -49,16 +49,21 @@ export const GraphTab = ({
     <TabBox onPress={onPress} disabled={disabled}>
       {isActive ? (
         <TabText
-          variant="small"
+          variant="body"
           size={size}
           bg={activeBg}
           color={disabled ? "neutral.c70" : activeColor}
-          fontWeight="semiBold"
+          fontWeight="bold"
         >
           {label}
         </TabText>
       ) : (
-        <TabText variant="small" size={size} color={disabled ? "neutral.c70" : "neutral.c90"}>
+        <TabText
+          variant="small"
+          size={size}
+          color={disabled ? "neutral.c70" : "neutral.c90"}
+          fontWeight="semiBold"
+        >
           {label}
         </TabText>
       )}
