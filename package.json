@@ -10,6 +10,7 @@
     "bump": "changeset version",
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
+    "release:desktop": "pnpm run:turbo -- run release --scope=ledger-live-desktop --include-dependencies --no-deps",
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
     "nightly": "pnpm run:turbo -- run nightly --include-dependencies --no-deps",
     "nightly:publish": "pnpm run:turbo -- run nightly-publish --include-dependencies --no-deps",
