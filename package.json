@@ -134,8 +134,7 @@
     "stellar-sdk": "^10.0.1",
     "triple-beam": "^1.3.0",
     "winston": "^3.4.0",
-    "xstate": "^4.28.1",
-    "zcash-bitcore-lib": "^0.13.20-rc3"
+    "xstate": "^4.28.1"
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",

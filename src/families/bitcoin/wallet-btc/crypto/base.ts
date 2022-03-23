@@ -29,9 +29,8 @@ export function fallbackValidateAddress(address: string): boolean {
 class Base implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
-  protected static publickeyCache = {}; // xpub + account + index to publicKey
+  protected static bip32Cache = {}; // xpub + account + index to publicKey
   public static addressCache = {}; // derivationMode + xpub + account + index to address
-  protected static bech32Cache = {}; // xpub to bech32 interface
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
@@ -41,14 +40,24 @@ class Base implements ICrypto {
     this.network.usesTimestampedTransaction = false;
   }
 
-  protected getPubkeyAt(xpub: string, account: number, index: number): Buffer {
-    if (!Base.bech32Cache[`${this.network.name}-${xpub}`]) {
+  protected async getPubkeyAt(
+    xpub: string,
+    account: number,
+    index: number
+  ): Promise<Buffer> {
+    // a cache is stored in Base.bip32Cache to optimize the calculation
+    // at each step, we make sure the level has been calculated and calc if necessary
+
+    // 0: root level
+    const keyRoot = `${this.network.name}-${xpub}`;
+    let rootLevel = Base.bip32Cache[keyRoot]; // it's stored "in sync"
+    if (!rootLevel) {
       const buffer: Buffer = bs58.decode(xpub);
       const depth: number = buffer[4];
       const i: number = buffer.readUInt32BE(9);
       const chainCode: Buffer = buffer.slice(13, 45);
       const publicKey: Buffer = buffer.slice(45, 78);
-      Base.bech32Cache[`${this.network.name}-${xpub}`] = new BIP32(
+      Base.bip32Cache[keyRoot] = rootLevel = new BIP32(
         publicKey,
         chainCode,
         this.network,
@@ -56,51 +65,53 @@ class Base implements ICrypto {
         i
       );
     }
-    if (
-      Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`]
-    ) {
-      return Base.publickeyCache[
-        `${this.network.name}-${xpub}-${account}-${index}`
-      ];
+
+    // 1: account level
+    const keyAccount = `${keyRoot}-${account}`;
+    let accountLevelP = Base.bip32Cache[keyAccount]; // it's stored as promise
+    if (!accountLevelP) {
+      Base.bip32Cache[keyAccount] = accountLevelP = rootLevel.derive(account);
     }
-    if (Base.publickeyCache[`${this.network.name}-${xpub}-${account}`]) {
-      const publicKey =
-        Base.publickeyCache[`${this.network.name}-${xpub}-${account}`].derive(
-          index
-        ).publicKey;
-      Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`] =
-        publicKey;
-      return publicKey;
+
+    // 2: index level
+    const keyIndex = `${keyAccount}-${index}`;
+    let indexLevelP = Base.bip32Cache[keyIndex]; // it's stored as promise
+    if (!indexLevelP) {
+      Base.bip32Cache[keyIndex] = indexLevelP = accountLevelP.then((a) =>
+        a.derive(index)
+      );
     }
-    Base.publickeyCache[`${this.network.name}-${xpub}-${account}`] =
-      Base.bech32Cache[`${this.network.name}-${xpub}`].derive(account);
-    const publicKey =
-      Base.publickeyCache[`${this.network.name}-${xpub}-${account}`].derive(
-        index
-      ).publicKey;
-    Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`] =
-      publicKey;
-    return publicKey;
+
+    // We can finally return the publicKey. in most case, indexLevelP will be "resolved"
+    return (await indexLevelP).publicKey;
   }
 
   // derive legacy address at account and index positions
-  protected getLegacyAddress(
+  protected async getLegacyAddress(
     xpub: string,
     account: number,
     index: number
-  ): string {
-    const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
+  ): Promise<string> {
+    const publicKeyBuffer: Buffer = await this.getPubkeyAt(
+      xpub,
+      account,
+      index
+    );
     const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
     return bjs.address.toBase58Check(publicKeyHash160, this.network.pubKeyHash);
   }
 
   // derive native SegWit at account and index positions
-  private getNativeSegWitAddress(
+  private async getNativeSegWitAddress(
     xpub: string,
     account: number,
     index: number
-  ): string {
-    const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
+  ): Promise<string> {
+    const publicKeyBuffer: Buffer = await this.getPubkeyAt(
+      xpub,
+      account,
+      index
+    );
     const publicKeyHash160: Buffer = bjs.crypto.hash160(publicKeyBuffer);
     const words: number[] = bech32.toWords(publicKeyHash160);
     words.unshift(0x00);
@@ -108,12 +119,16 @@ class Base implements ICrypto {
   }
 
   // derive SegWit at account and index positions
-  private getSegWitAddress(
+  private async getSegWitAddress(
     xpub: string,
     account: number,
     index: number
-  ): string {
-    const publicKeyBuffer: Buffer = this.getPubkeyAt(xpub, account, index);
+  ): Promise<string> {
+    const publicKeyBuffer: Buffer = await this.getPubkeyAt(
+      xpub,
+      account,
+      index
+    );
     const redeemOutput: Buffer = bjs.script.compile([
       0,
       bjs.crypto.hash160(publicKeyBuffer),
@@ -126,12 +141,12 @@ class Base implements ICrypto {
   }
 
   // get address given an address type
-  getAddress(
+  async getAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
+  ): Promise<string> {
     if (
       Base.addressCache[
         `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
@@ -148,19 +163,19 @@ class Base implements ICrypto {
     return res;
   }
 
-  customGetAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
+  ): Promise<string> {
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        return this.getLegacyAddress(xpub, account, index);
+        return await this.getLegacyAddress(xpub, account, index);
       case DerivationModes.SEGWIT:
-        return this.getSegWitAddress(xpub, account, index);
+        return await this.getSegWitAddress(xpub, account, index);
       case DerivationModes.NATIVE_SEGWIT:
-        return this.getNativeSegWitAddress(xpub, account, index);
+        return await this.getNativeSegWitAddress(xpub, account, index);
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }

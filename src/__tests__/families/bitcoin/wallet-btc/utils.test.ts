@@ -162,6 +162,7 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBik"], "dash", true);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS4B"], "qtum", true);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8"], "zcash", true);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGhSRto8qK2qXCUiW3"], "zcash", true);
     validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFr"], "bitcoin_gold", true);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
     validateAddrs(
@@ -193,6 +194,7 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBii"], "dash", false);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS44"], "qtum", false);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKtyy"], "zcash", false);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGySRto8qK2qXCUiW3"], "zcash", false);
     validateAddrs(
       ["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFF"],
       "bitcoin_gold",

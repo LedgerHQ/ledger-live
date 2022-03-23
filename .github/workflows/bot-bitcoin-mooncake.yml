@@ -4,6 +4,9 @@ on:
     branches:
       - bitcoin-js
       - bitcoin-js-*
+      - feat/bitcoin-js-*
+      - bugfix/bitcoin-js-*
+      - support/bitcoin-js-*
 
 jobs:
   start-runner:
