@@ -34,11 +34,10 @@
   ],
   "scripts": {
     "storybook": "start-storybook -p 6006 -s ./src",
-    "build-storybook": "npm run build:icons && npm run build:storybook",
     "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
-    "watch": "tsc --watch",
-    "build:icons": "node -e \"process.env['VERCEL_BUILD'] ? process.exit(1) : process.exit(0)\" || (cd ../icons && npm run build)",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
     "build:storybook": "build-storybook -s ./src",
+    "watch": "tsc --watch",
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix --cache",

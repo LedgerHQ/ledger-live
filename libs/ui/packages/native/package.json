@@ -26,9 +26,8 @@
   "scripts": {
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
-    "build:storybook": "build-storybook -o web-build",
-    "build:icons": "node -e \"process.env['VERCEL_BUILD'] ? process.exit(1) : process.exit(0)\" || (cd ../icons && npm run build)",
-    "build:web": "npm run build:icons && npm run build:storybook",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "build:storybook": "pnpm build-storybook -o web-build",
     "watch": "tsc --watch",
     "clean": "rimraf lib",
     "eject": "expo eject",
