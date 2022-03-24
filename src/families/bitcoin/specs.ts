@@ -96,7 +96,8 @@ const genericTest = ({
   // verify that no utxo that was supposed to be exploded were used
   expect(
     utxosPicked.filter(
-      (u) => getUTXOStatus(u, transaction.utxoStrategy).excluded
+      (u: BitcoinOutput) =>
+        u.blockHeight && getUTXOStatus(u, transaction.utxoStrategy).excluded
     )
   ).toEqual([]);
 };
@@ -256,7 +257,7 @@ const bitcoinLikeMutations = ({
     test: ({ account }) => {
       expect(
         account.bitcoinResources?.utxos
-          .filter((u) => u.blockHeight) // Exclude pending UTXOs
+          .filter((u) => u.blockHeight && u.blockHeight < account.blockHeight) // Exclude pending UTXOs and the Utxos just written into new block
           .reduce((p, c) => p.plus(c.value), new BigNumber(0))
           .toString()
       ).toBe("0");
