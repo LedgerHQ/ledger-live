@@ -97,11 +97,12 @@ module.exports = args => {
       title: "Check that git remote branch matches package.json `repository`",
       task: checkRemote(args.nightly),
     },
-    {
-      title: "Check that the local git repository is clean",
-      task: isClean,
-      skip: () => !!args.nightly,
-    },
+    // TODO: make sure this is not needed anymore
+    // {
+    //   title: "Check that the local git repository is clean",
+    //   task: isClean,
+    //   skip: () => !!args.nightly,
+    // },
     {
       title: "Check that HEAD is tagged",
       task: isTagged(args.nightly),
