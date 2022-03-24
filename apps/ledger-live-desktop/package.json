@@ -6,7 +6,7 @@
   "productName": "Ledger Live",
   "description": "Ledger Live - Desktop",
   "author": "Ledger Live Team <team-live@ledger.fr>",
-  "repository": "https://github.com/LedgerHQ/ledger-live-desktop",
+  "repository": "https://github.com/LedgerHQ/ledger-live",
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
