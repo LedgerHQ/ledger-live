@@ -89,6 +89,9 @@ const buildTasks = args => [
       if (args.nightly) {
         commands.push("--config");
         commands.push("electron-builder-nightly.yml");
+        if (args.publish) {
+          commands.push("--publish", "always");
+        }
       }
       if (args.ci) {
         commands.push("--config");
