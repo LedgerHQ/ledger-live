@@ -60,15 +60,16 @@ const checkRemote = nightly => ctx => {
 const checkEnv = nightly => ctx => {
   const platform = require("os").platform();
 
-  const { GH_TOKEN, APPLEID, APPLEID_PASSWORD } = process.env;
+  // const { GH_TOKEN, APPLEID, APPLEID_PASSWORD } = process.env;
+  const { APPLEID, APPLEID_PASSWORD } = process.env;
 
-  if (!GH_TOKEN) {
-    throw new Error("GH_TOKEN is not set");
-  }
+  // if (!GH_TOKEN) {
+  //   throw new Error("GH_TOKEN is not set");
+  // }
 
-  log("GH_TOKEN is set");
+  // log("GH_TOKEN is set");
 
-  ctx.token = GH_TOKEN;
+  // ctx.token = GH_TOKEN;GH
 
   if (!nightly) {
     if (platform !== "darwin") {
