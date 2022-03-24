@@ -16,12 +16,14 @@ importers:
     specifiers:
       '@changesets/cli': ^2.21.1
       create-release-hash: workspace:*
+      migrate-branch: workspace:*
       pnpm-utils: workspace:*
       turbo: ^1.1.9
       x-run: workspace:*
     devDependencies:
       '@changesets/cli': 2.21.1
       create-release-hash: link:tools/create-release-hash
+      migrate-branch: link:tools/migrate-branch
       pnpm-utils: link:tools/pnpm-utils
       turbo: 1.1.9
       x-run: link:tools/x-run
@@ -2459,6 +2461,12 @@ importers:
       '@rnx-kit/metro-resolver-symlinks': 0.1.16
       metro-config: 0.67.0
       metro-resolver: 0.67.0
+
+  tools/migrate-branch:
+    specifiers:
+      chalk: ^4.1.2
+    dependencies:
+      chalk: 4.1.2
 
   tools/pnpm-utils:
     specifiers: {}
