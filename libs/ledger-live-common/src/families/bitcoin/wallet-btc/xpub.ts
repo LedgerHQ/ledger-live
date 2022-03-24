@@ -59,7 +59,7 @@ class Xpub extends EventEmitter {
   }
 
   async syncAddress(account: number, index: number) {
-    const address = this.crypto.getAddress(
+    const address = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       account,
@@ -176,7 +176,7 @@ class Xpub extends EventEmitter {
     }
 
     this.emitSynced({ type: "all", account });
-    this.freshAddress = this.crypto.getAddress(
+    this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       0,
@@ -234,7 +234,7 @@ class Xpub extends EventEmitter {
       index = lastIndex + gap;
     }
     const address: Address = {
-      address: this.crypto.getAddress(
+      address: await this.crypto.getAddress(
         this.derivationMode,
         this.xpub,
         account,

@@ -68,12 +68,12 @@ class Decred extends Base {
   }
 
   // get address given an address type
-  customGetAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
+  ): Promise<string> {
     let buffer: Buffer;
     try {
       buffer = Decred.bs58check.decode(xpub);
@@ -85,7 +85,8 @@ class Decred extends Base {
     const chainCode = buffer.slice(13, 45);
     const X = buffer.slice(45, 78);
     const hd = new BIP32(X, chainCode, this.network, depth, i);
-    const publicKey = hd.derive(account).derive(index).publicKey;
+    const publicKey = (await (await hd.derive(account)).derive(index))
+      .publicKey;
     return Decred.getAddressFromPk(publicKey);
   }
 }
