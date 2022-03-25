@@ -42,6 +42,7 @@ const Chart = ({
   valueFormatter,
   valueKey = "value",
   height = 200,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   xAxisFormatter = (timestamp: number): string => `${new Date(timestamp).toLocaleDateString()}`,
   disableTooltips = false,
 }: ChartProps): JSX.Element => {
