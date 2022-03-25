@@ -818,7 +818,7 @@ importers:
       algo-msgpack-with-bigint: ^2.1.1
       algosdk: 1.13.0
       async: ^3.2.3
-      axios: 0.25.0
+      axios: 0.26.1
       axios-retry: ^3.2.4
       base32-decode: ^1.0.0
       bchaddrjs: ^0.5.2
@@ -959,7 +959,7 @@ importers:
       algo-msgpack-with-bigint: 2.1.1
       algosdk: 1.13.0
       async: 3.2.3
-      axios: 0.25.0
+      axios: 0.26.1
       axios-retry: 3.2.4
       base32-decode: 1.0.0
       bchaddrjs: 0.5.2
@@ -1077,7 +1077,7 @@ importers:
       prettier: ^2.2.1
       source-map-support: ^0.5.21
       typescript: ^4.6.2
-      uglify-js: ^3.15.2
+      uglify-js: ^3.15.3
     dependencies:
       js-levenshtein: 1.1.6
     devDependencies:
@@ -1283,7 +1283,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
-      axios: ^0.26.0
+      axios: ^0.26.1
       bignumber.js: ^9.0.2
       jest: ^27.4.7
       source-map-support: '*'
@@ -1319,7 +1319,7 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
-      axios: ^0.26.0
+      axios: ^0.26.1
       bignumber.js: ^9.0.1
       bip32-path: ^0.4.2
       jest: ^27.4.7
@@ -1380,7 +1380,7 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
-      axios: ^0.26.0
+      axios: ^0.26.1
       bip32-path: ^0.4.2
       jest: ^27.4.7
       source-map-support: '*'
@@ -1532,7 +1532,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
-      axios: ^0.26.0
+      axios: ^0.26.1
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1731,7 +1731,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
-      axios: ^0.26.0
+      axios: ^0.26.1
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -4703,7 +4703,7 @@ packages:
       '@cosmjs/socket': 0.25.6
       '@cosmjs/stream': 0.25.6
       '@cosmjs/utils': 0.25.0-alpha.2
-      axios: 0.21.1
+      axios: 0.21.4
       readonly-date: 1.0.0
       xstream: 11.14.0
     transitivePeerDependencies:
