@@ -20,7 +20,7 @@ import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
 import jsBridges from "../generated/bridge/js";
 
-const experimentalIntegrations = ["tezos"];
+const experimentalIntegrations: string[] = [];
 
 export function shouldUseJS(currency: CryptoCurrency) {
   const jsBridge = jsBridges[currency.family];
