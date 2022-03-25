@@ -69,7 +69,8 @@ const ChartCard = ({
       <Flex mt={70}>
         <GraphTabs
           activeIndex={activeRangeIndex}
-          activeBg="neutral.c30"
+          activeBg={currencyColor}
+          activeColor="neutral.c30"
           onChange={setRange}
           labels={rangesLabels}
         />
