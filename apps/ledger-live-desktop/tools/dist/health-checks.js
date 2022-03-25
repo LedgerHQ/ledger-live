@@ -10,6 +10,7 @@ const log = str => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const isClean = () => {
   const isDirty = git.isDirty();
 
@@ -20,6 +21,7 @@ const isClean = () => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const isTagged = nightly => ctx => {
   const isTagDirty = git.isTagDirty();
 
@@ -36,6 +38,7 @@ const isTagged = nightly => ctx => {
   ctx.tag = tag;
 };
 
+// eslint-disable-next-line no-unused-vars
 const checkRemote = nightly => ctx => {
   const { repository } = pkg;
   const gitRemote = git.remoteUrl();
