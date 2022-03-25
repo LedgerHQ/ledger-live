@@ -38,8 +38,10 @@
     "test": "pnpm test:jest && pnpm test:codecheck && pnpm test:playwright",
     "test:codecheck": "node ./tools/ci.js",
     "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
+    "pretest:playwright": "playwright install",
     "test:playwright": "nyc playwright test --config=tests/playwright.config.ts",
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
+    "pretest:playwright:recorder": "playwright install",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts"
   },
   "dependencies": {
