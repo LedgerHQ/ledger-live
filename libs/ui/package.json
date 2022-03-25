@@ -13,8 +13,9 @@
     "lint-staged": "^11.2.6"
   },
   "scripts": {
-    "prepare": "playwright install",
+    "pretest:react": "playwright install",
     "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
+    "pretest:react:update-snapshots": "playwright install",
     "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
   }
 }
