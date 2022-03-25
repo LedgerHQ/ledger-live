@@ -5,10 +5,11 @@ import Text from "../../Text";
 
 export interface TagProps extends FlexBoxProps {
   active?: boolean;
+  uppercase?: boolean;
   children: React.ReactNode;
 }
 
-export default function Tag({ active, children, ...props }: TagProps): JSX.Element {
+export default function Tag({ active, uppercase, children, ...props }: TagProps): JSX.Element {
   return (
     <Flex
       px={2}
@@ -23,7 +24,7 @@ export default function Tag({ active, children, ...props }: TagProps): JSX.Eleme
         variant="tiny"
         fontWeight="semiBold"
         lineHeight="16px"
-        textTransform="uppercase"
+        uppercase={uppercase !== false}
         textAlign="center"
         color={active ? "primary.c70" : "neutral.c80"}
       >
