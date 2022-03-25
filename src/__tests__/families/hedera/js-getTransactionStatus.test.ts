@@ -9,6 +9,7 @@ import {
 import BigNumber from "bignumber.js";
 import type { Account } from "../../../types";
 import type { Transaction } from "../../../families/hedera/types";
+import { AccountId } from "@hashgraph/sdk";
 
 let account: Account;
 let transaction: Transaction;
@@ -35,7 +36,7 @@ describe("js-getTransactionStatus", () => {
     });
 
     test("InvalidAddressBecauseDestinationIsAlsoSource", async () => {
-      account.seedIdentifier = "0.0.3";
+      account.hederaResources!.accountId = AccountId.fromString("0.0.3");
       transaction.recipient = "0.0.3";
 
       const result = await getTransactionStatus(account, transaction);
@@ -53,7 +54,7 @@ describe("js-getTransactionStatus", () => {
       const result = await getTransactionStatus(account, transaction);
 
       data.errors.recipient = new InvalidAddress(
-        "Error: invalid format for entity ID"
+        `Error: failed to parse entity id: ${transaction.recipient}`
       );
 
       expect(result).toEqual(data);
@@ -133,6 +134,9 @@ function resetTestData(): void {
       magnitude: 0,
       showAllDigits: undefined,
       prefixCode: undefined,
+    },
+    hederaResources: {
+      accountId: AccountId.fromString("0.0.3")
     },
   };
 
