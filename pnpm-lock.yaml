@@ -16,15 +16,23 @@ importers:
     specifiers:
       '@changesets/cli': ^2.21.1
       create-release-hash: workspace:*
+      eslint: ^8.11.0
+      eslint-config-prettier: ^8.5.0
+      eslint-plugin-prettier: ^4.0.0
       migrate-branch: workspace:*
       pnpm-utils: workspace:*
+      prettier: ^2.6.1
       turbo: ^1.1.9
       x-run: workspace:*
     devDependencies:
       '@changesets/cli': 2.21.1
       create-release-hash: link:tools/create-release-hash
+      eslint: 8.11.0
+      eslint-config-prettier: 8.5.0_eslint@8.11.0
+      eslint-plugin-prettier: 4.0.0_e2923b5169e23c4db59b86a638c599a3
       migrate-branch: link:tools/migrate-branch
       pnpm-utils: link:tools/pnpm-utils
+      prettier: 2.6.1
       turbo: 1.1.9
       x-run: link:tools/x-run
 
@@ -2465,8 +2473,10 @@ importers:
   tools/migrate-branch:
     specifiers:
       chalk: ^4.1.2
+      yargs: ^17.1.1-candidate.0
     dependencies:
       chalk: 4.1.2
+      yargs: 17.1.1-candidate.0
 
   tools/pnpm-utils:
     specifiers: {}
@@ -20512,6 +20522,23 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
+  /eslint-plugin-prettier/4.0.0_e2923b5169e23c4db59b86a638c599a3:
+    resolution: {integrity: sha512-98MqmCJ7vJodoQK359bqQWaxOE0CS8paAz/GgjaZLyex4TTk3g9HugoO89EqWCrFiOqn9EVvcoo7gZzONCWVwQ==}
+    engines: {node: '>=6.0.0'}
+    peerDependencies:
+      eslint: '>=7.28.0'
+      eslint-config-prettier: '*'
+      prettier: '>=2.0.0'
+    peerDependenciesMeta:
+      eslint-config-prettier:
+        optional: true
+    dependencies:
+      eslint: 8.11.0
+      eslint-config-prettier: 8.5.0_eslint@8.11.0
+      prettier: 2.6.1
+      prettier-linter-helpers: 1.0.0
+    dev: true
+
   /eslint-plugin-promise/5.2.0_eslint@7.32.0:
     resolution: {integrity: sha512-SftLb1pUG01QYq2A/hGAWfDRXqYD82zE7j7TopDOyNdU+7SvvoXREls/+PRTY17vUXzXnZA/zfnyKgRH6x4JJw==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -31428,6 +31455,12 @@ packages:
     hasBin: true
     dev: true
 
+  /prettier/2.6.1:
+    resolution: {integrity: sha512-8UVbTBYGwN37Bs9LERmxCPjdvPxlEowx2urIL6urHzdb3SDq4B/Z6xLFCblrSnE4iKWcS6ziJ3aOYrc1kz/E2A==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
   /pretty-bytes/5.6.0:
     resolution: {integrity: sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==}
     engines: {node: '>=6'}
@@ -40246,6 +40279,19 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 20.2.9
+
+  /yargs/17.1.1-candidate.0:
+    resolution: {integrity: sha512-Ftfk8B5HLHpNSOD9FQ08LVbuvhjqngT4klgsykPkTq5iRy+hVDh+OD9R15lTBIWqiTonFFZji2xwAKLzQ6wDHA==}
+    engines: {node: '>=12'}
+    dependencies:
+      cliui: 7.0.4
+      escalade: 3.1.1
+      get-caller-file: 2.0.5
+      require-directory: 2.1.1
+      string-width: 4.2.3
+      y18n: 5.0.8
+      yargs-parser: 20.2.9
+    dev: false
 
   /yargs/17.3.1:
     resolution: {integrity: sha512-WUANQeVgjLbNsEmGk20f+nlHgOqzRFpiGWVaBrYGYIGANIIu3lWjoyi0fNlFmJkvfhCZ6BXINe7/W2O2bV4iaA==}
