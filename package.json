@@ -37,12 +37,8 @@
   "devDependencies": {
     "@changesets/cli": "^2.21.1",
     "create-release-hash": "workspace:*",
-    "eslint": "^8.11.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "prettier": "^2.6.1",
     "turbo": "^1.1.9",
     "x-run": "workspace:*"
   },
