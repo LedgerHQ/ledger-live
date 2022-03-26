@@ -57,7 +57,8 @@ jobs:
       - name: BOT
         env:
           SEED: ${{ secrets.SEED4 }}
-          VERBOSE_FILE: bot-tests.txt
+          BOT_REPORT_FOLDER: botreport
+          VERBOSE_FILE: botreport/logs.txt
           GITHUB_SHA: ${GITHUB_SHA}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_RUN_ID: ${{ github.run_id }}
@@ -66,7 +67,7 @@ jobs:
           SLACK_CHANNEL: ci-xtz-ll
           BOT_FILTER_FAMILY: tezos
           EXPERIMENTAL_CURRENCIES_JS_BRIDGE: tezos
-        run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
       - name: Run coverage
         if: failure() || success()
@@ -75,5 +76,5 @@ jobs:
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
-          name: bot-tests.txt
-          path: bot-tests.txt
+          name: botreport
+          path: botreport/
