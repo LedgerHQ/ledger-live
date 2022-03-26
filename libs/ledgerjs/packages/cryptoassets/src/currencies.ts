@@ -3025,11 +3025,11 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "stacks",
     coinType: 5757,
-    name: "stacks",
+    name: "Stacks",
     managerAppName: "Stacks",
     ticker: "STX",
     scheme: "stacks",
-    color: "#000",
+    color: "#5546ff",
     family: "stacks",
     // currently not available as countervalue and ticker collides with token Stox(STX)
     disableCountervalue: true,
@@ -3149,11 +3149,11 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "filecoin",
     coinType: 461,
-    name: "filecoin",
+    name: "Filecoin",
     managerAppName: "Filecoin",
     ticker: "FIL",
     scheme: "filecoin",
-    color: "#000",
+    color: "#0090ff",
     family: "filecoin",
     units: [
       {
