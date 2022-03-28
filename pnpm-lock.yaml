@@ -96,6 +96,7 @@ importers:
       css-loader: ^3.5.3
       debug: ^4.3.3
       dotenv: ^8.2.0
+      dotenv-webpack: ^7.1.0
       electron: 13.5.2
       electron-builder: 22.13.1
       electron-context-menu: ^2.5.2
@@ -356,6 +357,7 @@ importers:
       copy-webpack-plugin: 10.2.4_webpack@5.70.0
       cross-env: 7.0.3
       css-loader: 3.6.0_webpack@5.70.0
+      dotenv-webpack: 7.1.0_webpack@5.70.0
       electron: 13.5.2
       electron-builder: 22.13.1
       electron-devtools-installer: 3.2.0
@@ -19297,8 +19299,24 @@ packages:
       is-obj: 2.0.0
     dev: true
 
+  /dotenv-defaults/2.0.2:
+    resolution: {integrity: sha512-iOIzovWfsUHU91L5i8bJce3NYK5JXeAwH50Jh6+ARUdLiiGlYWfGw6UkzsYqaXZH/hjE/eCd/PlfM/qqyK0AMg==}
+    dependencies:
+      dotenv: 8.6.0
+    dev: true
+
   /dotenv-expand/5.1.0:
     resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
+    dev: true
+
+  /dotenv-webpack/7.1.0_webpack@5.70.0:
+    resolution: {integrity: sha512-+aUOe+nqgLerA/n611oyC15fY79BIkGm2fOxJAcHDonMZ7AtDpnzv/Oe591eHAenIE0t6w03UyxDnLs/YUxx5Q==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      webpack: ^4 || ^5
+    dependencies:
+      dotenv-defaults: 2.0.2
+      webpack: 5.70.0_webpack-cli@4.9.2
     dev: true
 
   /dotenv/10.0.0:
