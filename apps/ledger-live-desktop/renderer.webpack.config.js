@@ -121,6 +121,7 @@ module.exports = {
   plugins: [
     new Dotenv({
       path: getDotenvPathFromEnv(),
+      ignoreStub: true,
     }),
     new HtmlWebpackPlugin({
       template: "./src/renderer/index.html",
@@ -163,21 +164,21 @@ module.exports = {
       },
       process.env.V3
         ? {
-          test: /\.woff2/,
-          use: [
-            {
-              loader: "file-loader",
-              options: {
-                name: "[name].[ext]",
-                outputPath: "assets/fonts/",
+            test: /\.woff2/,
+            use: [
+              {
+                loader: "file-loader",
+                options: {
+                  name: "[name].[ext]",
+                  outputPath: "assets/fonts/",
+                },
               },
-            },
-          ],
-        }
+            ],
+          }
         : {
-          test: /\.(woff|woff2|eot|ttf|otf)$/i,
-          use: ["file-loader"],
-        },
+            test: /\.(woff|woff2|eot|ttf|otf)$/i,
+            use: ["file-loader"],
+          },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: {
@@ -217,30 +218,30 @@ module.exports = {
     },
     ...(process.env.V3
       ? {
-        extensions: [
-          ".v3.tsx",
-          ".v3.ts",
-          ".v3.jsx",
-          ".v3.js",
-          ".tsx",
-          ".ts",
-          ".jsx",
-          ".js",
-          "...",
-        ],
-      }
+          extensions: [
+            ".v3.tsx",
+            ".v3.ts",
+            ".v3.jsx",
+            ".v3.js",
+            ".tsx",
+            ".ts",
+            ".jsx",
+            ".js",
+            "...",
+          ],
+        }
       : {
-        extensions: [
-          ".jsx",
-          ".js",
-          ".v3.tsx",
-          ".v3.ts",
-          ".v3.jsx",
-          ".v3.js",
-          ".tsx",
-          ".ts",
-          "...",
-        ],
-      }),
+          extensions: [
+            ".jsx",
+            ".js",
+            ".v3.tsx",
+            ".v3.ts",
+            ".v3.jsx",
+            ".v3.js",
+            ".tsx",
+            ".ts",
+            "...",
+          ],
+        }),
   },
 };
