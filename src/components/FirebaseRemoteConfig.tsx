@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
+import messaging from "@react-native-firebase/messaging";
 import { defaultFeatures } from "@ledgerhq/live-common/lib/featureFlags";
 import { reduce } from "lodash";
 import { FeatureId, DefaultFeatures } from "@ledgerhq/live-common/lib/types";
@@ -26,21 +27,36 @@ export const FirebaseRemoteConfigProvider = ({
 }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
+  const loadRemoteConfig = async () => {
+    try {
+      await remoteConfig().setDefaults({
+        ...formatDefaultFeatures(defaultFeatures),
+      });
+      await remoteConfig().fetchAndActivate();
+    } catch (error) {
+      console.error(
+        `Failed to fetch Firebase remote config with error: ${error}`,
+      );
+    }
+    setLoaded(true);
+  };
+
+  const requestUserPermissions = async () => {
+    const authStatus = await messaging().requestPermission();
+
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      const token = await messaging().getToken();
+      console.log(`Notifications enabled with token: ${token}`);
+    }
+  };
+
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        await remoteConfig().setDefaults({
-          ...formatDefaultFeatures(defaultFeatures),
-        });
-        await remoteConfig().fetchAndActivate();
-      } catch (error) {
-        console.error(
-          `Failed to fetch Firebase remote config with error: ${error}`,
-        );
-      }
-      setLoaded(true);
-    };
-    fetchConfig();
+    loadRemoteConfig();
+    requestUserPermissions();
   }, []);
 
   if (!loaded) {
