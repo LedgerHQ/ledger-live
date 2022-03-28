@@ -32,6 +32,24 @@ export const operationStatusList = {
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
+const ftx = {
+    nameAndPubkey: Buffer.concat([
+      Buffer.from([3]),
+      Buffer.from("FTX", "ascii"),
+      Buffer.from(
+        "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
+        "hex"
+      ),
+    ]),
+    signature: Buffer.from(
+      "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
+      "hex"
+    ),
+    curve: "secp256k1",
+    needsKYC: true,
+    needsBearerToken: true,
+}
+
 const swapProviders: Record<string, SwapProviderConfig> = {
   changelly: {
     nameAndPubkey: Buffer.from(
@@ -59,40 +77,8 @@ const swapProviders: Record<string, SwapProviderConfig> = {
     needsKYC: true,
     needsBearerToken: false,
   },
-  ftx: {
-    nameAndPubkey: Buffer.concat([
-      Buffer.from([3]),
-      Buffer.from("FTX", "ascii"),
-      Buffer.from(
-        "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
-        "hex"
-      ),
-    ]),
-    signature: Buffer.from(
-      "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
-      "hex"
-    ),
-    curve: "secp256k1",
-    needsKYC: true,
-    needsBearerToken: true,
-  },
-  ftxus: {
-    nameAndPubkey: Buffer.concat([
-      Buffer.from([6]),
-      Buffer.from("FTX.US", "ascii"),
-      Buffer.from(
-        "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
-        "hex"
-      ),
-    ]),
-    signature: Buffer.from(
-      "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
-      "hex"
-    ),
-    curve: "secp256k1",
-    needsKYC: true,
-    needsBearerToken: true,
-  },
+  ftx,
+  ftxus: ftx,
 };
 
 // FIXME: rename to getProviderConfig
