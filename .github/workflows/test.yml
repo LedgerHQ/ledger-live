@@ -53,6 +53,8 @@ jobs:
         if: runner.os == 'Windows'
       - name: Install dependencies
         run: pnpm i
+      - name: Install playwright dependencies
+        run: npx playwright install-deps
       - name: Build and Test affected packages
         env:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
