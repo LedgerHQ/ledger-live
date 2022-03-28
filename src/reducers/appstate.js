@@ -38,6 +38,7 @@ const handlers: Object = {
   SET_MODAL_LOCK: (state: AppState, { modalLock }: { modalLock: boolean }) => ({
     ...state,
     modalLock,
+  }),
   ADD_BACKGROUND_EVENT: (state: AppState, { event }: *) => ({
     ...state,
     backgroundEvents: [event, ...state.backgroundEvents].slice(0, 10), // Don't think we need more, probably only one to be honest
