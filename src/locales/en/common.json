@@ -3052,6 +3052,9 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
+    "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
+    "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
+    "success": "Firmware updated successfully!",
     "Installing": {
       "title": "{{stepName}}...",
       "subtitle": "If requested on your device, please enter your PIN to finish the process."

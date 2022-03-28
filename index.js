@@ -16,6 +16,7 @@ import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 
+import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
@@ -71,3 +72,7 @@ if (Config.DISABLE_YELLOW_BOX) {
 logReport.logReportInit();
 
 AppRegistry.registerComponent("ledgerlivemobile", () => App);
+AppRegistry.registerHeadlessTask(
+  "BackgroundRunnerService",
+  () => BackgroundRunnerService,
+);

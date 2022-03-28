@@ -9,6 +9,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import FirmwareUpdateModal from "../../components/FirmwareUpdate";
 import { TrackScreen } from "../../analytics";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
@@ -33,6 +34,7 @@ type Props = {
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
       searchQuery?: string,
+      firmwareUpdate?: boolean,
       updateModalOpened?: boolean,
       tab: ManagerTab,
     },
@@ -47,6 +49,7 @@ const Manager = ({
       deviceInfo,
       result,
       searchQuery,
+      firmwareUpdate,
       updateModalOpened,
       tab = MANAGER_TABS.CATALOG,
     },
@@ -194,6 +197,7 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
+      {firmwareUpdate ? <FirmwareUpdateModal device={device} /> : null}
     </>
   );
 };

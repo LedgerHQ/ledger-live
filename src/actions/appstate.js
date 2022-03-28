@@ -21,3 +21,14 @@ export const setHasConnectedDevice = (hasConnectedDevice: boolean) => (
 
 export const setModalLock = (modalLock: boolean) => (dispatch: *) =>
   dispatch({ type: "SET_MODAL_LOCK", modalLock });
+
+export const addBackgroundEvent = (event: *) => (dispatch: *) =>
+  dispatch({
+    type: "ADD_BACKGROUND_EVENT",
+    event,
+  });
+
+export const clearBackgroundEvents = () => (dispatch: *) =>
+  dispatch({
+    type: "CLEAR_BACKGROUND_EVENTS",
+  });

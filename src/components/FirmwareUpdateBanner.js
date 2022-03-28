@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useCallback, useState, useEffect, useContext } from "react";
 
 import {
   View,
@@ -11,13 +11,14 @@ import {
 } from "react-native";
 import manager from "@ledgerhq/live-common/lib/manager";
 import * as Animatable from "react-native-animatable";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import type {
   DeviceModelInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { ScreenName, NavigatorName } from "../const";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import {
   lastSeenDeviceSelector,
@@ -39,6 +40,7 @@ const FirmwareUpdateBanner = () => {
   const hasCompletedOnboarding: boolean = useSelector(
     hasCompletedOnboardingSelector,
   );
+  const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [showBanner, setShowBanner] = useState<boolean>(false);
   const [version, setVersion] = useState<string>("");
@@ -46,6 +48,13 @@ const FirmwareUpdateBanner = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const useTouchable = useContext(ButtonUseTouchable);
+  const onExperimentalFirmwareUpdate = useCallback(() => {
+    navigation.navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+      params: { firmwareUpdate: true },
+    });
+    setShowDrawer(false);
+  }, [navigation]);
 
   useEffect(() => {
     async function getLatestFirmwareForDevice() {
@@ -148,6 +157,15 @@ const FirmwareUpdateBanner = () => {
             isFocused={true}
             onPress={onCloseDrawer}
           />
+          <View style={{ height: 8 }} />
+            <Button
+              type="alert"
+              title={"Or... do it here 😯"}
+              colors={colors}
+              useTouchable={useTouchable}
+              isFocused={true}
+              onPress={onExperimentalFirmwareUpdate}
+            />
         </View>
       </BottomModal>
     </>
