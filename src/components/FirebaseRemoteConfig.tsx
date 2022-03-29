@@ -1,11 +1,14 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import messaging from "@react-native-firebase/messaging";
-import { defaultFeatures } from "@ledgerhq/live-common/lib/featureFlags";
-import { reduce } from "lodash";
+import {
+  defaultFeatures,
+  useFeature,
+} from "@ledgerhq/live-common/lib/featureFlags";
+import { reduce, snakeCase } from "lodash";
 import { FeatureId, DefaultFeatures } from "@ledgerhq/live-common/lib/types";
 
-export const formatFeatureId = (id: FeatureId) => `feature_${id}`;
+export const formatFeatureId = (id: FeatureId) => `feature_${snakeCase(id)}`;
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
@@ -26,6 +29,7 @@ export const FirebaseRemoteConfigProvider = ({
   children,
 }: Props): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
+  const pushNotificationsFeature = useFeature("pushNotifications");
 
   const loadRemoteConfig = async () => {
     try {
@@ -56,8 +60,10 @@ export const FirebaseRemoteConfigProvider = ({
 
   useEffect(() => {
     loadRemoteConfig();
-    requestUserPermissions();
-  }, []);
+    if (pushNotificationsFeature?.enabled) {
+      requestUserPermissions();
+    }
+  }, [pushNotificationsFeature?.enabled]);
 
   if (!loaded) {
     return null;
