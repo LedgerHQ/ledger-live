@@ -156,8 +156,8 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 36176131
-        versionName "2.40.0"
+        versionCode 36176132
+        versionName "3.0.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
