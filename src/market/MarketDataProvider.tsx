@@ -7,7 +7,6 @@ import React, {
   ReactElement,
   useReducer,
   useEffect,
-  useState,
 } from "react";
 
 import { useDebounce } from "../hooks/useDebounce";
@@ -19,9 +18,9 @@ import {
   MarketCurrencyChartDataRequestParams,
   CurrencyData,
   SingleCoinState,
+  SupportedCoins,
 } from "./types";
 import defaultFetchApi from "./api/api";
-
 type Props = {
   children: React.ReactNode;
   fetchApi?: MarketDataApi;
@@ -31,7 +30,7 @@ type Props = {
 type API = {
   refresh: (param?: MarketListRequestParams) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
-  selectCurrency: (key: string) => void;
+  selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
   loadNextPage: () => Promise<boolean>;
   setCounterCurrency: (counterCurrency: string) => void;
 };
@@ -113,23 +112,25 @@ function marketDataReducer(state, action) {
       };
     }
     case ACTIONS.UPDATE_SINGLE_MARKET_DATA: {
-      const marketData = [...state.marketData.map((data) => ({ ...data }))];
-      const index = marketData.findIndex(({ id }) => id === action.payload.id);
-      if (index >= 0) {
-        marketData[index] = { ...marketData[index], ...action.payload };
-      }
-      return { ...state, marketData, loading: false };
+      return {
+        ...state,
+        selectedCoinData: { ...state.selectedCoinData, ...action.payload },
+        loading: false,
+      };
     }
     case ACTIONS.UPDATE_SINGLE_CHART_DATA: {
-      const marketData = [...state.marketData.map((data) => ({ ...data }))];
-      const index = marketData.findIndex(({ id }) => id === action.payload.id);
-      if (index >= 0) {
-        marketData[index].chartData = {
-          ...marketData[index].chartData,
-          ...action.payload.chartData,
-        };
-      }
-      return { ...state, marketData, loading: false };
+      const chartRequestParams = {
+        ...state.chartRequestParams,
+        loadingChart: false,
+      };
+      const selectedCoinData = { ...state.selectedCoinData };
+
+      selectedCoinData.chartData = {
+        ...selectedCoinData.chartData,
+        ...action.payload.chartData,
+      };
+
+      return { ...state, selectedCoinData, chartRequestParams };
     }
 
     case ACTIONS.REFRESH_MARKET_DATA: {
@@ -184,12 +185,23 @@ function marketDataReducer(state, action) {
       return { ...state, loadingChart: action.payload };
     case ACTIONS.SET_ERROR:
       return { ...state, error: action.payload, loading: false };
-    case ACTIONS.SELECT_CURRENCY:
+    case ACTIONS.SELECT_CURRENCY: {
+      const chartRequestParams = {
+        ...state.chartRequestParams,
+        counterCurrency: state.requestParams.counterCurrency,
+        range: action.payload.range || state.requestParams.range,
+        id: action.payload.id,
+        loadingChart: !!action.payload.id,
+        lastRequestTime: Date.now(),
+      };
       return {
         ...state,
-        selectedCurrency: action.payload,
-        loading: !!action.payload,
+        selectedCurrency: action.payload.id,
+        selectedCoinData: action.payload.data,
+        loading: !!action.payload.id,
+        chartRequestParams,
       };
+    }
     default:
       return state;
   }
@@ -207,15 +219,15 @@ export const MarketDataProvider = ({
   });
   const api = fetchApi || defaultFetchApi;
   const {
-    marketData,
     requestParams,
     chartRequestParams,
     loading,
     loadingChart,
     page,
+    selectedCoinData,
   } = useDebounce(state, 300);
 
-  const handleError = useCallback((payload) => {
+  const handleError = useCallback((payload: Error) => {
     dispatch({ type: ACTIONS.SET_ERROR, payload });
   }, []);
 
@@ -224,7 +236,7 @@ export const MarketDataProvider = ({
       const ticker = countervalue.ticker.toLowerCase();
       api.supportedCounterCurrencies().then(
         (supportedCounterCurrencies) =>
-          api.setSupportedCoinsList().then((coins) => {
+          api.setSupportedCoinsList().then((coins: SupportedCoins) => {
             dispatch({
               type: ACTIONS.IS_READY,
               payload: {
@@ -250,12 +262,9 @@ export const MarketDataProvider = ({
       chartRequestParams?.counterCurrency &&
       !loadingChart
     ) {
-      const currentMarketData = marketData.find(
-        ({ id }: CurrencyData) => id === chartRequestParams.id
-      );
       const range = chartRequestParams.range;
 
-      if (currentMarketData && !currentMarketData?.chartData?.[range]) {
+      if (selectedCoinData && !selectedCoinData?.chartData?.[range]) {
         api.currencyChartData(chartRequestParams).then(
           (chartData) =>
             dispatch({
@@ -270,14 +279,10 @@ export const MarketDataProvider = ({
           payload: false,
         });
     }
-  }, [chartRequestParams, marketData, loadingChart, api, handleError]);
+  }, [chartRequestParams, selectedCoinData, api, handleError, loadingChart]);
 
   useEffect(() => {
-    if (
-      chartRequestParams?.id &&
-      chartRequestParams?.counterCurrency &&
-      !loading
-    ) {
+    if (chartRequestParams?.id && chartRequestParams?.counterCurrency) {
       dispatch({ type: ACTIONS.SET_LOADING, payload: true });
       api
         .listPaginated({
@@ -321,37 +326,34 @@ export const MarketDataProvider = ({
     dispatch({ type: ACTIONS.REFRESH_CHART_DATA, payload });
   }, []);
 
-  const selectCurrency = useCallback((id) => {
-    dispatch({
-      type: ACTIONS.REFRESH_CHART_DATA,
-      payload: {
-        id,
-      },
-    });
+  const selectCurrency = useCallback((id, data, range) => {
+    dispatch({ type: ACTIONS.SELECT_CURRENCY, payload: { id, data, range } });
   }, []);
 
-  const loadNextPage = useCallback(() => {
-    return new Promise((resolve, reject) => {
-      if (loading) {
-        reject(new Error());
-      } else {
-        const newPage = page + 1;
-        api.listPaginated({ ...requestParams, page: newPage }).then(
-          (marketData) => {
-            dispatch({
-              type: ACTIONS.UPDATE_MARKET_DATA,
-              payload: { marketData, page: newPage },
-            });
-            resolve(true);
-          },
-          (err) => {
-            handleError(err);
-            reject(new Error(err));
-          }
-        );
-      }
-    });
-  }, [loading, page, api, requestParams, handleError]);
+  const loadNextPage = useCallback(
+    () =>
+      new Promise((resolve, reject) => {
+        if (loading) {
+          reject(new Error());
+        } else {
+          const newPage = page + 1;
+          api.listPaginated({ ...requestParams, page: newPage }).then(
+            (marketData) => {
+              dispatch({
+                type: ACTIONS.UPDATE_MARKET_DATA,
+                payload: { marketData, page: newPage },
+              });
+              resolve(true);
+            },
+            (err) => {
+              handleError(err);
+              reject(new Error(err));
+            }
+          );
+        }
+      }),
+    [loading, page, api, requestParams, handleError]
+  );
 
   const setCounterCurrency = useCallback(
     (payload) => dispatch({ type: ACTIONS.UPDATE_COUNTERVALUE, payload }),
@@ -379,16 +381,16 @@ export function useMarketData(): MarketDataContextType {
 }
 
 type SingleCoinProviderData = SingleCoinState & {
+  selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
   setCounterCurrency: (counterCurrency: string) => void;
 };
 
-export function useSingleCoinMarketData(
-  currencyId: string
-): SingleCoinProviderData {
+export function useSingleCoinMarketData(): SingleCoinProviderData {
   const {
-    marketData,
     selectedCurrency,
+    selectedCoinData,
+    selectCurrency,
     chartRequestParams,
     loading,
     loadingChart,
@@ -399,9 +401,10 @@ export function useSingleCoinMarketData(
     supportedCounterCurrencies,
   } = useContext(MarketDataContext);
 
-  const [state, setState] = useState<SingleCoinProviderData>({
-    selectedCoinData: undefined,
+  return {
     selectedCurrency,
+    selectedCoinData,
+    selectCurrency,
     chartRequestParams,
     loading,
     loadingChart,
@@ -410,33 +413,5 @@ export function useSingleCoinMarketData(
     refreshChart,
     setCounterCurrency,
     supportedCounterCurrencies,
-  });
-
-  useEffect(() => {
-    if (marketData)
-      setState((s) => ({
-        ...s,
-        selectedCoinData:
-          marketData.find(({ id }) => id === currencyId) || s.selectedCoinData,
-        selectedCurrency,
-        chartRequestParams,
-        loading,
-        loadingChart,
-        error,
-        counterCurrency,
-        supportedCounterCurrencies,
-      }));
-  }, [
-    marketData,
-    currencyId,
-    selectedCurrency,
-    chartRequestParams,
-    loading,
-    loadingChart,
-    error,
-    counterCurrency,
-    supportedCounterCurrencies,
-  ]);
-
-  return state;
+  };
 }
