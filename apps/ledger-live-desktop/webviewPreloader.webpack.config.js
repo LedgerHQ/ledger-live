@@ -33,9 +33,6 @@ module.exports = {
     path: path.resolve(__dirname, ".webpack"),
     filename: "webviewPreloader.bundle.js",
   },
-  optimization: {
-    minimize: false,
-  },
   plugins: [],
   module: {
     rules: [

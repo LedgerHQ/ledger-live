@@ -57,9 +57,6 @@ module.exports = {
     path: path.resolve(__dirname, ".webpack"),
     filename: "preloader.bundle.js",
   },
-  optimization: {
-    minimize: false,
-  },
   plugins: [],
   module: {
     rules: [

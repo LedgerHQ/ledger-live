@@ -18,37 +18,9 @@ const babelConfig = {
   plugins: babelPlugins,
 };
 
-const babelTsConfig = {
-  presets: [
-    "@babel/preset-typescript",
-    [
-      "@babel/preset-env",
-      {
-        targets: {
-          electron: "7.1.9",
-        },
-      },
-    ],
-    "@babel/preset-react",
-    "@babel/preset-flow",
-  ],
-  plugins: [
-    ...babelPlugins,
-    [
-      "babel-plugin-styled-components",
-      {
-        ssr: false,
-      },
-    ],
-  ],
-};
-
 module.exports = {
   stats: "errors-only",
   target: "electron-main",
-  optimization: {
-    minimize: false,
-  },
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, ".webpack"),
@@ -81,6 +53,10 @@ module.exports = {
     ],
   },
   resolve: {
+    // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)
+    // Picking the the main field first is safer.
+    // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
+    mainFields: ["main", "module"],
     alias: {
       "~": path.resolve(__dirname, "src"),
     },
