@@ -31,7 +31,6 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import Alert from "../../components/Alert";
 import BottomModal from "../../components/BottomModal";
-import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
@@ -193,10 +192,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <SkipLock />
         </>
       )}
-      <NavigationScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.root}
-      >
+      <NavigationScrollView style={{ flex: 1 }}>
         <View style={styles.container}>
           <Touchable event="QRZoom" onPress={onZoom}>
             {width < 350 ? (
@@ -346,13 +342,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             </View>
           </View>
         ) : null}
-        <Touchable
-          event="ReceiveClose"
-          style={styles.close}
-          onPress={onModalClose}
-        >
-          <Close color={colors.fog} size={20} />
-        </Touchable>
       </BottomModal>
     </SafeAreaView>
   );
@@ -465,11 +454,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     paddingTop: 8,
-  },
-  close: {
-    position: "absolute",
-    right: 10,
-    top: 10,
   },
   learnmore: {
     paddingLeft: 8,

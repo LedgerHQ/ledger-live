@@ -4,10 +4,9 @@ import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity, Image } from "react-native";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
-import { useTheme } from "styled-components/native";
 
 const RenderEmptyList = ({
   theme,

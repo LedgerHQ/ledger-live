@@ -80,7 +80,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
-        <NavigationScrollView contentContainerStyle={styles.root}>
+        <NavigationScrollView>
           <View style={styles.inputBox}>
             <TextInput
               autoFocus

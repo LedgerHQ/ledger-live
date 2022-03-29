@@ -6,7 +6,9 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
+import { Flex, Icons } from "@ledgerhq/native-ui";
+import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -49,6 +51,8 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
+// eslint-disable-next-line import/no-unresolved
+import AnalyticsNavigator from "./AnalyticsNavigator";
 import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
@@ -62,12 +66,15 @@ import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
-import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
+import ManagerNavigator from "./ManagerNavigator";
 
 import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccountScreen";
 import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
+
+import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -76,16 +83,23 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
   return (
     <Stack.Navigator
       screenOptions={{
         ...stackNavigationConfig,
-        ...TransitionPresets.ModalTransition,
+        ...TransitionPresets.ModalPresentation,
       }}
     >
       <Stack.Screen
         name={NavigatorName.Main}
         component={Main}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.BuyDeviceScreen}
+        component={BuyDeviceScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -107,6 +121,11 @@ export default function BaseNavigator() {
         name={ScreenName.PlatformApp}
         component={PlatformApp}
         options={({ route }) => ({
+          headerBackImage: () => (
+            <Flex pl="16px">
+              <Icons.CloseMedium color="neutral.c100" size="20px" />
+            </Flex>
+          ),
           headerStyle: styles.headerNoShadow,
           title: route.params.name,
         })}
@@ -273,18 +292,32 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-        component={ExchangeNavigator}
-        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        {...(readOnlyModeEnabled
+          ? {
+              component: BuyDeviceScreen,
+              options: {
+                ...TransitionPresets.ModalTransition,
+                headerShown: false,
+              },
+            }
+          : {
+              component: ExchangeNavigator,
+              options: { headerStyle: styles.headerNoShadow, headerLeft: null },
+            })}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}
-        component={ExchangeBuyFlowNavigator}
+        component={
+          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeBuyFlowNavigator
+        }
         initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeSellFlow}
-        component={ExchangeSellFlowNavigator}
+        component={
+          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeSellFlowNavigator
+        }
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -356,6 +389,7 @@ export default function BaseNavigator() {
         options={{
           title: t("EditDeviceName.title"),
           headerLeft: null,
+          ...TransitionPresets.ModalPresentationIOS,
         }}
       />
       <Stack.Screen
@@ -383,8 +417,18 @@ export default function BaseNavigator() {
         }}
       />
       <Stack.Screen
+        name={NavigatorName.Analytics}
+        component={AnalyticsNavigator}
+        options={{
+          title: t("analytics.title"),
+          headerStyle: styles.headerNoShadow,
+          headerRight: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.Asset}
-        component={Asset}
+        component={readOnlyModeEnabled ? BuyDeviceScreen : Asset}
         options={{
           headerTitle: () => <HeaderTitle />,
           headerRight: null,
@@ -400,7 +444,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={Account}
+        component={readOnlyModeEnabled ? BuyDeviceScreen : Account}
         options={({ route, navigation }) => ({
           headerLeft: () => (
             <BackButton navigation={navigation} route={route} />
@@ -479,28 +523,20 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Manager}
-        component={ManagerNavigator}
-        options={{
-          tabBarIcon: (props: any) => <ManagerTabIcon {...props} />,
-          tabBarTestID: "TabBarManager",
-          headerShown: false,
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: e => {
-            e.preventDefault();
-            // NB The default behaviour is not reset route params, leading to always having the same
-            // search query or preselected tab after the first time (ie from Swap/Sell)
-            // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-            navigation.navigate(NavigatorName.Manager, {
-              screen: ScreenName.Manager,
-              params: {
-                tab: undefined,
-                searchQuery: undefined,
-                updateModalOpened: undefined,
+        {...(readOnlyModeEnabled
+          ? {
+              component: BuyDeviceScreen,
+              options: {
+                ...TransitionPresets.ModalTransition,
+                headerShown: false,
               },
-            });
-          },
-        })}
+            }
+          : {
+              component: ManagerNavigator,
+              options: {
+                headerShown: false,
+              },
+            })}
       />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];

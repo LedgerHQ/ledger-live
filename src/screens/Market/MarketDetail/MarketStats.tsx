@@ -195,7 +195,6 @@ export default function MarketStats({
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
         <TextLabel>
           {counterValueFormatter({
-            currency: counterCurrency,
             value: circulatingSupply,
             locale,
             t,
@@ -205,7 +204,6 @@ export default function MarketStats({
       <StatRow label={t("market.detailsPage.totalSupply")}>
         <TextLabel>
           {counterValueFormatter({
-            currency: counterCurrency,
             value: totalSupply,
             locale,
             t,
@@ -215,7 +213,6 @@ export default function MarketStats({
       <StatRow label={t("market.detailsPage.maxSupply")}>
         <TextLabel>
           {counterValueFormatter({
-            currency: counterCurrency,
             value: maxSupply,
             locale,
             t,

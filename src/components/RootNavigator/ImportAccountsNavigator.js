@@ -1,7 +1,7 @@
 // @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
@@ -21,25 +21,24 @@ export default function ImportAccountsNavigator() {
     [colors],
   );
   return (
-    <Stack.Navigator
-      screenOptions={{ ...stackNavigationConfig, headerMode: "float" }}
-    >
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
       <Stack.Screen
         name={ScreenName.ScanAccounts}
         component={ScanAccounts}
         options={{
           ...TransparentHeaderNavigationOptions,
           headerShown: true,
-          title: t("account.import.scan.title"),
+          headerTitle: t("account.import.scan.title"),
           headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
           headerLeft: null,
+          headerTitleStyle: { color: "#fff" },
         }}
       />
       <Stack.Screen
         name={ScreenName.DisplayResult}
         component={DisplayResult}
         options={{
-          title: t("account.import.result.title"),
+          headerTitle: t("account.import.result.title"),
           headerLeft: () => <BackButton />,
         }}
       />
@@ -47,7 +46,7 @@ export default function ImportAccountsNavigator() {
         name={ScreenName.FallBackCameraScreen}
         component={FallBackCameraScreen}
         options={{
-          title: t("account.import.fallback.header"),
+          headerTitle: "",
         }}
       />
     </Stack.Navigator>

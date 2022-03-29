@@ -85,7 +85,6 @@ export const ScreenName = {
   GeneralSettings: "GeneralSettings",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
-  ManagerAppsList: "ManagerAppsList",
   ManagerDevice: "ManagerDevice",
   ManagerMain: "ManagerMain",
   MigrateAccountsConnectDevice: "MigrateAccountsConnectDevice",
@@ -124,7 +123,7 @@ export const ScreenName = {
   SendSummary: "SendSummary",
   SendValidationError: "SendValidationError",
   SendValidationSuccess: "SendValidationSuccess",
-  Settings: "Settings",
+  SettingsScreen: "SettingsScreen",
   SignConnectDevice: "SignConnectDevice",
   SignSelectDevice: "SignSelectDevice",
   SignSummary: "SignSummary",
@@ -279,13 +278,20 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
+  OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",
   OnboardingTermsOfUse: "OnboardingTermsOfUse",
   OnboardingDeviceSelection: "OnboardingDeviceSelection",
   OnboardingUseCase: "OnboardingUseCase",
+  OnboardingModalDiscoverLive: "OnboardingModalDiscoverLive",
 
   OnboardingSetNewDeviceInfo: "OnboardingSetNewDeviceInfo",
   OnboardingSetNewDevice: "OnboardingSetNewDevice",
+  OnboardingSetupDeviceInformation: "OnboardingSetupDeviceInformation",
+  OnboardingSetupDeviceRecoveryPhrase: "OnboardingSetupDeviceRecoveryPhrase",
+  OnboardingGeneralInformation: "OnboardingGeneralInformation",
+  OnboardingBluetoothInformation: "OnboardingBluetoothInformation",
   OnboardingInfoModal: "OnboardingInfoModal",
   OnboardingRecoveryPhrase: "OnboardingRecoveryPhrase",
 
@@ -299,6 +305,17 @@ export const ScreenName = {
   OnboardingQuizFinal: "OnboardingQuizFinal",
 
   OnboardingFinish: "OnboardingFinish",
+
+  OnboardingLanguageModal: "OnboardingLanguageModal",
+  OnboardingModalSetupNewDevice: "OnboardingModalSetupNewDevice",
+  OnboardingModalSetupSteps: "OnboardingModalSetupSteps",
+  OnboardingModalSetupSecureRecovery: "OnboardingModalSetupSecureRecovery",
+  OnboardingModalWarning: "OnboardingModalWarning",
+  OnboardingModalGeneralInformation: "OnboardingModalGeneralInformation",
+  OnboardingPreQuizModal: "OnboardingPreQuizModal",
+  OnboardingModalSyncDesktopInformation:
+    "OnboardingModalSyncDesktopInformation",
+  OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
@@ -325,8 +342,16 @@ export const ScreenName = {
 
   VerifyAccount: "VerifyAccount",
 
+  AnalyticsAllocation: "AnalyticsAllocation",
+  AnalyticsOperations: "AnalyticsOperations",
+
   // solana
   SolanaEditMemo: "SolanaEditMemo",
+
+  BuyDeviceScreen: "BuyDeviceScreen",
+
+  DiscoverScreen: "DiscoverScreen",
+  Learn: "Learn",
 };
 
 export const NavigatorName = {
@@ -334,8 +359,11 @@ export const NavigatorName = {
   /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
   Accounts: "AccountsNavigator",
+  Portfolio: "PorfolioNavigator",
+  PortfolioAccounts: "PortfolioAccountsNavigator",
   AccountSettings: "AccountSettings",
   AddAccounts: "AddAccounts",
+  Analytics: "Analytics",
   Exchange: "Exchange",
   ExchangeBuyFlow: "ExchangeBuyFlow",
   ExchangeSellFlow: "ExchangeSellFlow",
@@ -392,6 +420,5 @@ export const NavigatorName = {
 
   // Root
   RootNavigator: "RootNavigator",
-
-  Learn: "Learn",
+  Discover: "Discover",
 };

@@ -31,6 +31,7 @@ import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
+import RecipientInput from "../../components/RecipientInput";
 
 const withoutHiddenError = error =>
   error instanceof RecipientRequired ? null : error;
@@ -202,39 +203,17 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 ]}
               />
             </View>
-            <TouchableOpacity
-              style={styles.pasteContainer}
-              onPress={async () => {
-                const text = await Clipboard.getString();
-                onChangeText(text);
-              }}
-            >
-              <Paste size={16} color={colors.live} />
-              <LText style={styles.pasteTitle} semiBold color="live">
-                <Trans i18nKey="common.paste" />
-              </LText>
-            </TouchableOpacity>
             <View style={styles.inputWrapper}>
-              {/* make this a recipient component */}
-              <TextInput
-                placeholder={t("send.recipient.input")}
-                placeholderTextColor={colors.fog}
-                style={[
-                  styles.addressInput,
-                  { color: colors.darkBlue },
-                  error && { color: colors.alert },
-                  warning && { color: colors.orange },
-                ]}
+              <RecipientInput
+                onPaste={async () => {
+                  const text = await Clipboard.getString();
+                  onChangeText(text);
+                }}
                 onFocus={onRecipientFieldFocus}
                 onChangeText={onChangeText}
                 onInputCleared={clear}
                 value={transaction.recipient}
                 ref={input}
-                scrollEnabled={false}
-                multiline
-                blurOnSubmit
-                autoCapitalize="none"
-                clearButtonMode="always"
               />
             </View>
             {(error || warning) && (
@@ -300,15 +279,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: "transparent",
   },
-  pasteContainer: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: 8,
-    marginTop: 32,
-  },
-  pasteTitle: {
-    marginLeft: 8,
-  },
   infoBox: {
     marginBottom: 24,
   },
@@ -323,12 +293,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginHorizontal: 8,
   },
-  addressInput: {
-    flex: 1,
-    ...getFontStyle({ semiBold: true }),
-    fontSize: 20,
-    paddingVertical: 16,
-  },
   warningBox: {
     marginTop: 8,
     ...Platform.select({
@@ -338,6 +302,7 @@ const styles = StyleSheet.create({
     }),
   },
   inputWrapper: {
+    marginTop: 32,
     flexDirection: "row",
     alignItems: "center",
   },

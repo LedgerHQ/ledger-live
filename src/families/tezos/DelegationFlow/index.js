@@ -35,9 +35,7 @@ function DelegationFlow() {
         name={ScreenName.DelegationStarted}
         component={DelegationStarted}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title="" />,
         }}
       />
       <Stack.Screen

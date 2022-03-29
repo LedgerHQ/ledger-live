@@ -243,6 +243,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 64,
+    marginHorizontal: 8,
     flexGrow: 1,
   },
 });

@@ -32,7 +32,7 @@ export function DebugMocks() {
   const accounts = useSelector(accountsSelector);
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       {config.BRIDGESTREAM_DATA ? (
         // $FlowFixMe
         <ImportBridgeStreamData
@@ -67,7 +67,7 @@ export function DebugDevices() {
   }
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <OpenDebugHttpTransport />
       <ConfigUSBDeviceSupport />
       <View style={styles.wrapper}>
@@ -79,7 +79,7 @@ export function DebugDevices() {
 
 export default function DebugSettings({ navigation: { navigate } }: any) {
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
       <SettingsRow
         title="Mock & Test"

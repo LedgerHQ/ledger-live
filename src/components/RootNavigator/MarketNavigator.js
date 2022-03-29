@@ -3,7 +3,7 @@
 
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 // $FlowFixMe
@@ -22,7 +22,11 @@ export default function MarketNavigator() {
     [colors],
   );
   return (
-    <Stack.Navigator screenOptions={stackNavigationConfig}>
+    <Stack.Navigator
+      screenOptions={stackNavigationConfig}
+      initialRouteName={ScreenName.MarketList}
+      backBehavior={"initialRoute"}
+    >
       <Stack.Screen
         name={ScreenName.MarketList}
         component={MarketList}
@@ -35,6 +39,7 @@ export default function MarketNavigator() {
         component={MarketCurrencySelect}
         options={{
           headerTitle: t("market.filters.currency"),
+          unmountOnBlur: true,
         }}
       />
       <Stack.Screen

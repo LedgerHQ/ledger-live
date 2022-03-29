@@ -29,7 +29,6 @@ function Styles() {
     header: {
       ...headerStyle,
       // $FlowFixMe
-      ...headerStyleShadow,
     },
     headerNoShadow: {
       ...headerStyle,

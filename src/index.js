@@ -90,6 +90,7 @@ import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags"
 import StyleProvider from "./StyleProvider";
 // $FlowFixMe
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
+import AdjustProvider from "./components/AdjustProvider";
 
 const themes = {
   light: lightTheme,
@@ -239,17 +240,31 @@ const linkingOptions = {
               /**
                * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
                */
-              [ScreenName.Portfolio]: "portfolio",
-              [NavigatorName.Accounts]: {
+              [NavigatorName.Portfolio]: {
                 screens: {
-                  /**
-                   * @params ?currency: string
-                   * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
-                   */
-                  [ScreenName.Accounts]: "account",
+                  [ScreenName.Portfolio]: "portfolio",
+                  [NavigatorName.PortfolioAccounts]: {
+                    screens: {
+                      /**
+                       * @params ?currency: string
+                       * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
+                       */
+                      [ScreenName.Accounts]: "account",
+                    },
+                  },
                 },
               },
-              [NavigatorName.Platform]: {
+              [NavigatorName.Market]: {
+                screens: {
+                  /**
+                   * @params ?platform: string
+                   * ie: "ledgerlive://discover" will open the catalog
+                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                   */
+                  [ScreenName.MarketList]: "market",
+                },
+              },
+              [NavigatorName.Discover]: {
                 screens: {
                   /**
                    * @params ?platform: string
@@ -317,7 +332,8 @@ const linkingOptions = {
           [NavigatorName.Exchange]: {
             initialRouteName: "buy",
             screens: {
-              [ScreenName.Coinify]: "coinify",
+              [ScreenName.ExchangeBuy]: "buy",
+              [ScreenName.Coinify]: "buy/coinify",
             },
           },
           /**
@@ -325,12 +341,12 @@ const linkingOptions = {
            */
           [NavigatorName.Swap]: "swap",
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.Settings],
+            initialRouteName: [ScreenName.SettingsScreen],
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
                */
-              [ScreenName.Settings]: "settings",
+              [ScreenName.SettingsScreen]: "settings",
               [ScreenName.GeneralSettings]: "settings/general",
               [ScreenName.AccountsSettings]: "settings/accounts",
               [ScreenName.AboutSettings]: "settings/about",
@@ -391,8 +407,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
     compareOsTheme();
     const osThemeChangeHandler = nextAppState =>
       nextAppState === "active" && compareOsTheme();
-    AppState.addEventListener("change", osThemeChangeHandler);
-    return () => AppState.removeEventListener("change", osThemeChangeHandler);
+    const sub = AppState.addEventListener("change", osThemeChangeHandler);
+    return () => sub.remove();
   }, [compareOsTheme]);
 
   const resolvedTheme = useMemo(
@@ -456,10 +472,13 @@ export default class Root extends Component<
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
+                <AdjustProvider />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
                   <PlatformAppProvider
-                    platformAppsServerURL={getProvider("production").url}
+                    platformAppsServerURL={
+                      getProvider(__DEV__ ? "staging" : "production").url
+                    }
                   >
                     <FirebaseRemoteConfigProvider>
                       <FirebaseFeatureFlagsProvider>

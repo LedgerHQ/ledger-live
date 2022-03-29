@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import LendingTerms from "../../screens/Lending/modals/InfoModals/TermsStep";
 import LendingInfo1 from "../../screens/Lending/modals/InfoModals/Step-1";
@@ -44,7 +44,6 @@ export default function LendingInfoNavigator() {
         headerLeft: null,
         headerRight: () => <CloseButton navigation={navigation} />,
         gestureEnabled: false,
-        headerMode: "float",
       })}
     >
       <Stack.Screen

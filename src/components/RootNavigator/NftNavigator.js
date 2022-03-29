@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useMemo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import NftViewer from "../Nft/NftViewer";

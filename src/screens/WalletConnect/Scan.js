@@ -2,6 +2,7 @@
 import React, { useEffect, useContext } from "react";
 import Config from "react-native-config";
 import Clipboard from "@react-native-community/clipboard";
+import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -44,7 +45,11 @@ const ScanWalletConnect = ({ navigation, route }: Props) => {
   return (
     <>
       <TrackScreen category="WalletConnect" screen="Scan" />
-      <Scanner navigation={navigation} onResult={onResult} />
+      <Scanner
+        navigation={navigation}
+        onResult={onResult}
+        instruction={<Trans i18nKey="walletconnect.scan" />}
+      />
     </>
   );
 };

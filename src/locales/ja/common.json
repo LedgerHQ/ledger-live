@@ -1966,7 +1966,7 @@
         "cta": "閉じる"
       },
       "pendingOperation": {
-        "description": "承認のため、スワップ処理がネットワークに送信されました。{{targetCurrency}}を受け取るまでに、最大1時間かかる場合があります。",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "スワップID：",
         "title": "保留中の処理",
         "disclaimer": "{{provider}} のサポートが必要な場合に備えて、スワップID番号を控えておいてください。",

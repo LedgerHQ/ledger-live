@@ -16,6 +16,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
 
+import com.brentvatne.react.ReactVideoPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           packages.add(new BluetoothHelperPackage());
+          packages.add(new ReactVideoPackage());
           return packages;
         }
 

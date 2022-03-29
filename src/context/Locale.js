@@ -34,10 +34,13 @@ export { i18next as i18n };
 type Props = {
   children: React$Node,
 };
+
+export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru";
+
 type LocaleState = {
   i18n: any,
   t: TFunction,
-  locale: string,
+  locale: SupportedLanguages,
 };
 
 function getLocaleState(i18n): LocaleState {

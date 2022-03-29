@@ -44,16 +44,16 @@ export function withTheme(Component: React$ComponentType<*>) {
 export const lightTheme = {
   dark: false,
   colors: {
-    primary: "rgb(255, 45, 85)",
-    background: "#fafafa",
-    card: "#FFFFFF",
+    primary: "hsla(247, 56%, 68%, 1)",
+    background: "hsla(0, 0%, 100%, 1)",
+    card: "hsla(0, 0%, 100%, 1)",
     text: "rgb(28, 28, 30)",
     border: "rgb(199, 199, 204)",
     notification: "rgb(255, 69, 58)",
     contrastBackground: "#142533",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
-    live: "#6490f1",
+    live: "#bdb3ff",
     alert: "#ea2e49",
     success: "#66BE54",
     darkBlue: "#142533",
@@ -71,21 +71,21 @@ export const lightTheme = {
     darkWarning: "#E08700",
 
     /* DERIVATIVES */
-    lightLive: "#4b84ff19",
+    lightLive: "#bdb3ff19",
     lightAlert: "#ea2e490c",
     lightFog: "#EEEEEE",
     lightGrey: "#F9F9F9",
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
-    lightLiveBg: "#eef0ff",
+    lightLiveBg: "#e3dfff",
 
     errorBg: "#ff0042",
 
     /* PILLS */
     pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
+    pillActiveBackground: rgba("#bdb3ff", 0.1),
+    pillActiveForeground: "#bdb3ff",
     pillActiveDisabledForeground: "#999999",
 
     /** SNACKBAR */
@@ -100,7 +100,7 @@ export const lightTheme = {
 export const darkTheme = {
   dark: true,
   colors: {
-    primary: "rgb(255, 45, 85)",
+    primary: "hsla(247, 56%, 68%, 1)",
     card: "#1C1D1F",
     background: "#131415",
     text: "#FFFFFF",
@@ -109,7 +109,7 @@ export const darkTheme = {
     contrastBackground: "#223544",
     contrastBackgroundText: "#ffffff",
     /* MAIN */
-    live: "#6490f1",
+    live: "#bdb3ff",
     alert: "#ea2e49",
     success: "#66BE54",
     darkBlue: "#FAFAFA",
@@ -127,7 +127,7 @@ export const darkTheme = {
     darkWarning: "#E08700",
 
     /* DERIVATIVES */
-    lightLive: "#4b84ff19",
+    lightLive: "#bdb3ff19",
     lightAlert: "#ea2e490c",
     lightFog: "#1c202b",
     lightGrey: "rgba(255,255,255, 0.05)",
@@ -140,8 +140,8 @@ export const darkTheme = {
 
     /* PILLS */
     pillForeground: "#999999",
-    pillActiveBackground: rgba("#6490f1", 0.1),
-    pillActiveForeground: "#6490f1",
+    pillActiveBackground: rgba("#bdb3ff", 0.1),
+    pillActiveForeground: "#bdb3ff",
     pillActiveDisabledForeground: "#999999",
 
     /** SNACKBAR */

@@ -96,26 +96,28 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
               onPress={() => next(item)}
               style={[styles.button, { backgroundColor: colors.lightLive }]}
             >
-              <LText semiBold style={[styles.label]} color="live">
-                <Trans i18nKey={`onboarding.stepUseCase.${item.key}.label`} />
-              </LText>
-              <LText semiBold style={styles.subTitle}>
-                <Trans
-                  i18nKey={`onboarding.stepUseCase.${item.key}.subTitle`}
-                />
-              </LText>
-              <LText style={styles.desc}>
-                <Trans i18nKey={`onboarding.stepUseCase.${item.key}.desc`} />
-              </LText>
-              <View style={styles.imageContainer}>
-                {item.image && (
-                  <Image
-                    style={styles.image}
-                    resizeMode="contain"
-                    source={item.image}
+              <>
+                <LText semiBold style={[styles.label]} color="live">
+                  <Trans i18nKey={`onboarding.stepUseCase.${item.key}.label`} />
+                </LText>
+                <LText semiBold style={styles.subTitle}>
+                  <Trans
+                    i18nKey={`onboarding.stepUseCase.${item.key}.subTitle`}
                   />
-                )}
-              </View>
+                </LText>
+                <LText style={styles.desc}>
+                  <Trans i18nKey={`onboarding.stepUseCase.${item.key}.desc`} />
+                </LText>
+                <View style={styles.imageContainer}>
+                  {item.image && (
+                    <Image
+                      style={styles.image}
+                      resizeMode="contain"
+                      source={item.image}
+                    />
+                  )}
+                </View>
+              </>
             </Touchable>
             {index === 0 && useCases.length > 1 && (
               <View style={styles.separator}>

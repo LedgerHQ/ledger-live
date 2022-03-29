@@ -1,9 +1,9 @@
 /* eslint-disable import/named */
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
-import { MarketDataProvider } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import apiMock from "@ledgerhq/live-common/lib/market/api/api.mock";
 import Config from "react-native-config";
+import { MarketDataProvider } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 
 type Props = {
@@ -27,7 +27,7 @@ export default function MarketDataProviderWrapper({
       initState={{
         requestParams: {
           range: "24h",
-          limit: 20,
+          limit: 100,
           ids: [],
           starred: [],
           orderBy: "market_cap",

@@ -30,7 +30,6 @@ import Touchable from "../../components/Touchable";
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import Close from "../../icons/Close";
 import { rgba } from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 import BakerImage from "./BakerImage";
@@ -47,11 +46,6 @@ type Props = {
 const styles = StyleSheet.create({
   modal: {
     position: "relative",
-  },
-  close: {
-    position: "absolute",
-    top: 8,
-    right: 16,
   },
   root: {
     padding: 16,
@@ -229,16 +223,6 @@ export default function DelegationDetailsModal({
       style={styles.modal}
     >
       <View style={styles.root}>
-        <Touchable
-          event="DelegationDetailsModalClose"
-          style={styles.close}
-          onPress={onClose}
-        >
-          <Circle size={32} bg={colors.lightFog}>
-            <Close size={16} color={colors.grey} />
-          </Circle>
-        </Touchable>
-
         <DelegatingContainer
           left={
             <Circle size={64} bg={rgba(color, 0.2)}>

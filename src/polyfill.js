@@ -1,4 +1,39 @@
 /* eslint-disable no-console */
+
+import "@formatjs/intl-getcanonicallocales/polyfill";
+import "@formatjs/intl-locale/polyfill";
+import "@formatjs/intl-pluralrules/polyfill";
+import "@formatjs/intl-pluralrules/locale-data/en";
+import "@formatjs/intl-pluralrules/locale-data/fr";
+import "@formatjs/intl-pluralrules/locale-data/es";
+import "@formatjs/intl-pluralrules/locale-data/ru";
+import "@formatjs/intl-pluralrules/locale-data/zh";
+import "@formatjs/intl-pluralrules/locale-data/de";
+import "@formatjs/intl-pluralrules/locale-data/tr";
+import "@formatjs/intl-pluralrules/locale-data/ja";
+import "@formatjs/intl-pluralrules/locale-data/ko";
+import "@formatjs/intl-numberformat/polyfill";
+import "@formatjs/intl-numberformat/locale-data/en";
+import "@formatjs/intl-numberformat/locale-data/fr";
+import "@formatjs/intl-numberformat/locale-data/es";
+import "@formatjs/intl-numberformat/locale-data/ru";
+import "@formatjs/intl-numberformat/locale-data/zh";
+import "@formatjs/intl-numberformat/locale-data/de";
+import "@formatjs/intl-numberformat/locale-data/tr";
+import "@formatjs/intl-numberformat/locale-data/ja";
+import "@formatjs/intl-numberformat/locale-data/ko";
+import "@formatjs/intl-datetimeformat/polyfill";
+import "@formatjs/intl-datetimeformat/locale-data/en";
+import "@formatjs/intl-datetimeformat/locale-data/fr";
+import "@formatjs/intl-datetimeformat/locale-data/es";
+import "@formatjs/intl-datetimeformat/locale-data/ru";
+import "@formatjs/intl-datetimeformat/locale-data/zh";
+import "@formatjs/intl-datetimeformat/locale-data/de";
+import "@formatjs/intl-datetimeformat/locale-data/tr";
+import "@formatjs/intl-datetimeformat/locale-data/ja";
+import "@formatjs/intl-datetimeformat/locale-data/ko";
+import "@formatjs/intl-datetimeformat/add-all-tz";
+
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {

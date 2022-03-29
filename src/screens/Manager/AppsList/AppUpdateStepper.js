@@ -25,7 +25,7 @@ const AppUpdateStepper = ({ state }: Props) => {
   const { updateAllQueue } = state;
   const updateProgress = updateAllProgress(state);
 
-  if (updateProgress === 1) return null;
+  if (updateProgress === 0) return null;
 
   const count = updateAllQueue.length;
 

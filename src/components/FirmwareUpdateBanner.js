@@ -4,10 +4,10 @@ import React, { useState, useEffect, useContext } from "react";
 
 import {
   View,
-  TouchableOpacity,
   TouchableHighlight,
   StyleSheet,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import manager from "@ledgerhq/live-common/lib/manager";
 import * as Animatable from "react-native-animatable";
@@ -27,8 +27,8 @@ import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import IconExclamation from "../icons/ExclamationCircleFull";
 import { BaseButton as Button } from "./Button";
 import IconDownload from "../icons/Download";
-import BottomModal from "./BottomModal";
 import IconClose from "../icons/Close";
+import BottomModal from "./BottomModal";
 import IconNano from "../icons/NanoS";
 import { rgba } from "../colors";
 import LText from "./LText";
@@ -120,13 +120,6 @@ const FirmwareUpdateBanner = () => {
         isOpened={showDrawer}
         onClose={onCloseDrawer}
       >
-        <TouchableOpacity
-          style={styles.drawer.closeIcon}
-          onPress={onCloseDrawer}
-        >
-          <IconClose size={18} />
-        </TouchableOpacity>
-
         <View
           style={[
             styles.drawer.roundIconContainer,

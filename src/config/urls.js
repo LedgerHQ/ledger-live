@@ -25,6 +25,9 @@ export const urls = {
       "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
     ru:
       "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    // TODO: Add the correct zh link
+    zh:
+      "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
   },
   buyNanoX:
     "https://www.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=manager_emptystate",

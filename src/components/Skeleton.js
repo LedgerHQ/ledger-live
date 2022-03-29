@@ -44,9 +44,11 @@ const Skeleton = ({
 
   const animatedStyle = useMemo(
     () => [
-      style,
       {
         backgroundColor: colors.skeletonBg,
+      },
+      style,
+      {
         opacity: opacityAnim,
       },
     ],
