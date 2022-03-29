@@ -38,14 +38,6 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 const experimentalCurrencies = "";
 
 export const experimentalFeatures: Feature[] = [
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
-    title: "Experimental JS impl",
-    description: "Use experimental JS implementation for Tezos.",
-    valueOn: "tezos",
-    valueOff: "",
-  },
   ...(experimentalCurrencies.length
     ? [
         {

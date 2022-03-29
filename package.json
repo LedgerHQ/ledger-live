@@ -65,7 +65,7 @@
     "@ledgerhq/devices": "6.24.1",
     "@ledgerhq/errors": "6.10.0",
     "@ledgerhq/hw-transport": "6.24.1",
-    "@ledgerhq/hw-transport-http": "6.26.0",
+    "@ledgerhq/hw-transport-http": "6.27.0",
     "@ledgerhq/live-common": "https://github.com/LedgerHQ/ledger-live-common.git#develop",
     "@ledgerhq/logs": "6.10.0",
     "@ledgerhq/native-ui": "^0.7.0",
