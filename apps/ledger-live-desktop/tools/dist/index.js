@@ -47,21 +47,21 @@ const cleaningTasks = args => [
   },
 ];
 
-const setupTasks = args => [
-  {
-    title: "Installing packages",
-    task: async () => {
-      await exec("pnpm", [
-        "i",
-        "--filter=ledger-live-desktop",
-        "--filter=ledger-live",
-        "--unsafe-perm",
-        "--package-import-method=copy",
-        "--node-linker=hoisted",
-      ]);
-    },
-  },
-];
+// const setupTasks = args => [
+//   {
+//     title: "Installing packages",
+//     task: async () => {
+//       await exec("pnpm", [
+//         "i",
+//         "--filter=ledger-live-desktop...",
+//         "--filter=ledger-live",
+//         "--unsafe-perm",
+//         "--package-import-method=copy",
+//         "--node-linker=hoisted",
+//       ]);
+//     },
+//   },
+// ];
 
 const buildTasks = args => [
   {
@@ -160,11 +160,11 @@ const mainTask = (args = {}) => {
       skip: () => (dirty ? "--dirty flag passed" : false),
       task: () => setupList(cleaningTasks, args),
     },
-    {
-      title: "Setup",
-      skip: () => (dirty ? "--dirty flag passed" : false),
-      task: () => setupList(setupTasks, args),
-    },
+    // {
+    //   title: "Setup",
+    //   skip: () => (dirty ? "--dirty flag passed" : false),
+    //   task: () => setupList(setupTasks, args),
+    // },
     {
       title: publish ? "Build and publish" : "Build",
       task: () => setupList(buildTasks, args),
