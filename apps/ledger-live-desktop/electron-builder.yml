@@ -50,13 +50,16 @@ nsis:
   uninstallerIcon: build/windows/uninstaller.ico
   uninstallerSidebar: build/windows/uninstallerSidebar.bmp
 
+includeSubNodeModules: true
 files:
   # Include files
   - .webpack/**/*
+  - from: "dist/node_modules"
+    to: "node_modules"
+    filter:
+      - "**/*"
   # Exclude files
-  - "!node_modules/sodium-native/prebuilds"
-  - "!node_modules/sodium-native/tmp"
-  # Exclude modules
+  - "!node_modules"
 
 publish:
   - provider: s3
