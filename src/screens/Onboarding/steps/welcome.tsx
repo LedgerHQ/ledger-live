@@ -42,9 +42,13 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const { locale } = useLocale();
 
-  const onTermsLink = useCallback(() => Linking.openURL(urls.terms[locale]), [
-    locale,
-  ]);
+  const onTermsLink = useCallback(
+    () =>
+      Linking.openURL(
+        (urls.terms as Record<string, string>)[locale] || urls.terms.en,
+      ),
+    [locale],
+  );
 
   const onPrivacyLink = useCallback(
     () => Linking.openURL(urls.privacyPolicy[locale]),

@@ -88,7 +88,7 @@ function OnboardingStepTerms() {
     >
       <LinkBox
         text={t("Terms.service")}
-        url={urls.terms[locale]}
+        url={(urls.terms as Record<string, string>)[locale] || urls.terms.en}
         event="OpenTerms"
         mb={6}
       />

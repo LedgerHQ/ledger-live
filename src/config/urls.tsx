@@ -4,15 +4,10 @@ export const urls = {
   contact:
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
   terms: {
-    en: "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md",
-    fr:
-      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.fr.md",
-    es:
-      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.es.md",
-    zh:
-      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.zh.md",
-    ru:
-      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.ru.md",
+    en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",
+    fr: "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live",
+    es: "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live",
+    de: "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live",
   },
   privacyPolicy: {
     en:
