@@ -34,6 +34,7 @@ setSupportedCurrencies([
   "dogecoin",
   "cosmos",
   "crypto_org",
+  "celo",
   "dash",
   "tron",
   "tezos",
