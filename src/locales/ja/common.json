@@ -239,8 +239,8 @@
       "description": "デバイスのダッシュボードに戻ってください。"
     },
     "DeviceNotOnboarded": {
-      "title": "Your device is not ready to use yet",
-      "description": "Set up your device before using it with Ledger Live."
+      "title": "お使いのデバイスはまだ使用できません",
+      "description": "Ledger Liveで使用する前にデバイスを設定する。"
     },
     "DeviceSocketFail": {
       "title": "接続に失敗しました。",
@@ -866,7 +866,7 @@
               "label": "デバイスをスマートフォンのUSBポートに接続して、デバイスの電源をオンにします。"
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "デバイスをスマートフォンのUSBポートに接続して、デバイスの電源を入れる。"
             },
             "blue": {
               "label": "デバイスをスマートフォンのUSBポートに接続し、デバイスの電源ボタンを押してオンにします。"
@@ -1044,7 +1044,7 @@
               "label": "デバイスをスマートフォンのUSBポートに接続して、デバイスの電源をオンにします。"
             },
             "nanoSP": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "スマートフォンのUSBポートに接続して、デバイスの電源を折れる。"
             },
             "blue": {
               "label": "デバイスをスマートフォンのUSBポートに接続し、デバイスの電源ボタンを押してオンにします。"
@@ -1104,9 +1104,9 @@
         "cta": "Nanoを接続する"
       },
       "nanoSP": {
-        "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Nano"
+        "title": "Nanoを接続する",
+        "desc": "このスマートフォンで初めてのNanoのセットアップです。デバイスを接続しましょう。",
+        "cta": "Nanoを接続しましょう"
       },
       "blue": {
         "title": "Blueを接続する",
@@ -1293,17 +1293,17 @@
     "settings": "設定",
     "platform": "Discover",
     "nanoX": "Nano X",
-    "market": "Market",
-    "learn": "Learn"
+    "market": "マーケット",
+    "learn": "学ぶ"
   },
   "learn": {
-    "pageTitle": "learn",
-    "noConnection": "No connection",
-    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again.",
-    "sectionShows": "Shows",
-    "sectionVideo": "Video",
-    "sectionPodcast": "Podcast",
-    "sectionArticles": "Articles"
+    "pageTitle": "学ぶ",
+    "noConnection": "接続なし",
+    "noConnectionDesc": "インターネットにアクセスできません。接続を確認して、もう一度やり直してください。",
+    "sectionShows": "表示",
+    "sectionVideo": "動画",
+    "sectionPodcast": "ポッドキャスト",
+    "sectionArticles": "記事"
   },
   "portfolio": {
     "totalBalance": "合計残高",
@@ -1336,8 +1336,8 @@
   },
   "byteSize": {
     "bytes": "{{size}}バイト",
-    "kbUnit": "{{size}} KB",
-    "mbUnit": "{{size}} MB"
+    "kbUnit": "{{size}}KB",
+    "mbUnit": "{{size}}MB"
   },
   "numberCompactNotation": {
     "d": "",
@@ -1456,9 +1456,9 @@
       "palletMethod": "方法",
       "transferAmount": "送付額",
       "validatorsCount": "バリデータ（{{number}}）",
-      "storageLimit": "Storage Limit",
-      "gasLimit": "Gas Limit",
-      "id": "Id"
+      "storageLimit": "ストレージ上限",
+      "gasLimit": "ガスリミット",
+      "id": "id"
     },
     "multipleAddresses": "なぜ複数のアドレスがあるのですか？",
     "tokenName": "トークン名",
@@ -1694,7 +1694,7 @@
       "theme": "テーマ",
       "themeDesc": "アプリUIのテーマを設定する。",
       "themes": {
-        "system": "System",
+        "system": "システム",
         "dark": "ダーク",
         "light": "ライト"
       },
@@ -2608,7 +2608,7 @@
     "quitApp": "デバイス上のアプリケーションを終了する",
     "appNotInstalled": "{{appName}}アプリをインストールしてください。",
     "appNotInstalled_plural": "{{appName}}アプリをインストールしてください。",
-    "useAnotherDevice": "Use another device",
+    "useAnotherDevice": "別のデバイスを使用",
     "verifyAddress": {
       "title": "デバイス上でアドレスを認証する",
       "description": "Ledger Liveに表示された{{currencyName}}アドレスが、Ledgerデバイスに表示されたものと一致していることを確認してください。"
@@ -2623,7 +2623,7 @@
     },
     "button": {
       "openManager": "管理を開く",
-      "openOnboarding": "Setup device"
+      "openOnboarding": "デバイスをセットアップ"
     },
     "installApp": "{{appName}}アプリのインストール{{percentage}}",
     "installAppDescription": "インストールが完了するまでお待ちください。",
@@ -2905,20 +2905,20 @@
     "action": "アップデートを続行"
   },
   "systemLanguageAvailable": {
-    "title": "Change your app's language?",
+    "title": "アプリの表示言語を変更しますか？",
     "description": {
-      "newSupport": "Good news! Our teams have been working hard and Ledger Live now supports {{language}}.",
-      "advice": "You can always change your language back later in the settings."
+      "newSupport": "お知らせです！Ledger Liveが{{language}}対応を開始しました。",
+      "advice": "表示言語は後からいつでも変更可能です。"
     },
-    "switchButton": "Switch to {{language}}",
-    "no": "I prefer not to",
+    "switchButton": "{{language}} に切り替える",
+    "no": "希望しない",
     "languages": {
-      "en": "English",
-      "fr": "French",
-      "ru": "Russian",
-      "es": "Spanish",
-      "zh": "Chinese",
-      "de": "German"
+      "en": "英語",
+      "fr": "フランス語",
+      "ru": "ロシア語",
+      "es": "スペイン語",
+      "zh": "中国語",
+      "de": "ドイツ語"
     }
   },
   "FirmwareUpdateCheckId": {
@@ -3018,8 +3018,8 @@
   "celo": {
     "info": {
       "available": {
-        "title": "CELO available",
-        "description": "This amount is disposable."
+        "title": "CELO利用可能",
+        "description": "これは利用可能額です。"
       }
     }
   },
@@ -3901,30 +3901,30 @@
     }
   },
   "market": {
-    "title": "Market",
+    "title": "マーケット",
     "filters": {
-      "sort": "Sort",
-      "filter": "Filter",
+      "sort": "並べ替え",
+      "filter": "フィルター",
       "view": {
-        "label": "View",
-        "all": "All coins",
-        "liveCompatible": "Live Compatible",
-        "all_label": "All cryptocurrencies",
-        "liveCompatible_label": "Only Live Supported"
+        "label": "表示",
+        "all": "全てのコイン",
+        "liveCompatible": "互換性のあるLive",
+        "all_label": "全ての暗号資産",
+        "liveCompatible_label": "Live対応のみ"
       },
       "order": {
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "market_cap": "ランク",
+        "market_cap_asc": "ランク(マーケットキャップ)高い順",
+        "market_cap_desc": "ランク(マーケットキャップ)低い順"
       },
-      "currency": "Currency",
-      "time": "Time",
-      "apply": "Apply"
+      "currency": "通貨",
+      "time": "時間",
+      "apply": "適用"
     },
     "marketList": {
-      "crypto": "Crypto",
-      "price": "Price",
-      "change": "Change",
+      "crypto": "暗号資産",
+      "price": "価格",
+      "change": "前日比",
       "marketCap": "時価総額",
       "last7d": "過去7日間"
     },
