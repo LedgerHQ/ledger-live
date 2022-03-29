@@ -521,6 +521,7 @@ export default handleActions(handlers, INITIAL_STATE);
 
 export const themeSelector = (state: State) => {
   const val = state.settings.theme;
+  return "light";
   return val === "dusk" ? "dark" : val;
 };
 

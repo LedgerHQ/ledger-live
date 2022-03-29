@@ -1,6 +1,6 @@
 import React from "react";
-import { Pressable } from "react-native";
-import { Flex, ScrollContainer } from "@ledgerhq/native-ui";
+import { Platform, Pressable } from "react-native";
+import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import styled from "styled-components/native";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/layout/Flex";
@@ -10,11 +10,26 @@ export const MIN_MODAL_HEIGHT = 30;
 
 const ScreenContainer = styled(Flex).attrs(p => ({
   edges: ["bottom"],
-  flex: 1,
+  flex: 2, 
   p: p.p ?? 6,
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
 }))``;
+
+/* shitty hack to make the screen overflow under the empty space that is above the iOS menu bar at the bottom */
+const bottomMenuBarOverflow = Platform.OS === "ios" ? 50 : 0
+
+const SafeContainer = styled(SafeAreaView)`
+  flex: 1;
+  margin-bottom: -${bottomMenuBarOverflow}px; 
+`;
+
+const InnerContainer = styled(Flex).attrs({
+  flex: 1,
+  borderRadius: 50,
+  paddingBottom: bottomMenuBarOverflow,
+})``;
+
 type Props = StackScreenProps<{}> & { 
   children: React.ReactNode, 
   contentContainerProps?: FlexBoxProps,
@@ -30,7 +45,7 @@ export default function NavigationModalContainer({
   backgroundColor = "palette.neutral.c00",
 }: Props) {
   return (
-    <SafeAreaView style={{flex: 1 }}>
+    <SafeContainer>
       <Flex minHeight={MIN_MODAL_HEIGHT} {...deadZoneProps}>
         <Pressable
           style={{ flex: 1 }}
@@ -41,10 +56,10 @@ export default function NavigationModalContainer({
       </Flex>
 
       <ScreenContainer backgroundColor={backgroundColor} {...contentContainerProps}>
-        <Flex style={{ flex: 1, borderRadius: 50 }}>
+        <InnerContainer>
           {children}
-        </Flex>
+        </InnerContainer>
       </ScreenContainer>
-    </SafeAreaView>
+    </SafeContainer>
   );
 }
