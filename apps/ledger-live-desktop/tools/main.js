@@ -7,7 +7,15 @@ const yargs = require("yargs");
 const nodeExternals = require("webpack-node-externals");
 const childProcess = require("child_process");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const {
+  findNativeModules,
+  copyNodeModule,
+  dependencyTree,
+  buildWebpackExternals,
+} = require("native-modules-tools");
+const path = require("path");
 
+const lldRoot = path.resolve(__dirname, "..");
 const pkg = require("./../package.json");
 
 const NIGHTLY = pkg.name.includes("nightly") || pkg.version.includes("nightly");
@@ -51,6 +59,8 @@ const buildMainEnv = (mode, config, argv) => {
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     __NIGHTLY__: NIGHTLY,
+    // See: https://github.com/node-formidable/formidable/issues/337
+    "global.GENTLY": false,
   };
 
   if (mode === "development") {
@@ -91,13 +101,6 @@ const buildRendererConfig = (mode, config, argv) => {
         ]
       : wpConf.plugins;
 
-  // const alias =
-  //   mode === "development"
-  //     ? { ...wpConf.resolve.alias, "react-dom": "@hot-loader/react-dom" }
-  //     : wpConf.resolve.alias;
-
-  const alias = wpConf.resolve.alias;
-
   const module = {
     ...wpConf.module,
     rules:
@@ -131,10 +134,6 @@ const buildRendererConfig = (mode, config, argv) => {
       __dirname: false,
       __filename: false,
     },
-    resolve: {
-      ...wpConf.resolve,
-      alias,
-    },
     output: {
       ...wpConf.output,
       publicPath: mode === "production" ? "./" : "/webpack",
@@ -143,13 +142,20 @@ const buildRendererConfig = (mode, config, argv) => {
   };
 };
 
-const buildMainConfig = (mode, config, argv) => {
+const buildMainConfig = (mode, config, argv, mappedNativeModules) => {
   const { wpConf, color, name } = config;
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
     devtool: mode === "development" ? "eval-source-map" : undefined,
-    externals: [nodeExternals()],
+    // In dev mode, treat everything as an external module so we can rely on the node_modules folder.
+    // In prod. mode rely on the detected native modules to exclude them from the bundle.
+    externals:
+      mode !== "production"
+        ? [nodeExternals()]
+        : mappedNativeModules
+        ? buildWebpackExternals(mappedNativeModules)
+        : wpConf.externals,
     node: {
       __dirname: false,
       __filename: false,
@@ -194,9 +200,54 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  const mainConfig = buildMainConfig("production", bundles.main, argv);
-  const preloaderConfig = buildMainConfig("production", bundles.preloader, argv);
-  const webviewPreloaderConfig = buildMainConfig("production", bundles.webviewPreloader, argv);
+  // First, we crawl the production dependencies and fin every node.js native modules.
+  const nativeModulesPaths = findNativeModules(lldRoot);
+  console.log("Found the following native modules:", nativeModulesPaths);
+
+  // Then for each one of these native modules…
+  const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
+    // We copy the module to a special directory that will be copied by electron-bundler in place of the node_modules.
+    const copyResults = copyNodeModule(module, {
+      destination: "dist",
+      appendVersion: true,
+    });
+    const { target } = copyResults;
+    // Based on the target directory (dist/node_modules/name@version) we crawl the dependencies.
+    const tree = dependencyTree(module);
+    // And we populate nested node_modules manually (npm-like).
+    const stack = [[target, tree.dependencies]];
+    let current = null;
+    while ((current = stack.shift())) {
+      const [path, dependencies] = current;
+      dependencies.forEach(dependency => {
+        const copyResult = copyNodeModule(dependency.path, {
+          destination: path,
+        });
+        stack.push([copyResult.target, dependency.dependencies]);
+      });
+    }
+    acc[copyResults.source] = copyResults;
+
+    // And finally we return an object containing useful data for the module.
+    // (its source/destination directories, name and version)
+    // This will be used to tell webpack to treat them as externals and to require from the correct path.
+    // (something like 'dist/node_modules/name@version')
+    return acc;
+  }, {});
+
+  const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
+  const preloaderConfig = buildMainConfig(
+    "production",
+    bundles.preloader,
+    argv,
+    mappedNativeModules,
+  );
+  const webviewPreloaderConfig = buildMainConfig(
+    "production",
+    bundles.webviewPreloader,
+    argv,
+    mappedNativeModules,
+  );
   const rendererConfig = buildRendererConfig("production", bundles.renderer, argv);
 
   const mainWorker = new WebpackWorker("main", mainConfig);
