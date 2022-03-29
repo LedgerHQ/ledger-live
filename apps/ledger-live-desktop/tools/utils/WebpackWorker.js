@@ -35,7 +35,7 @@ class WebpackWorker {
         if (err || stats.hasErrors()) {
           return reject(err || stats);
         }
-        return resolve();
+        return resolve(stats);
       });
     });
   }
