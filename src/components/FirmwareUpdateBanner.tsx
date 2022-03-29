@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 
 import { StyleSheet, TouchableOpacity } from "react-native";
 import manager from "@ledgerhq/live-common/lib/manager";
 import * as Animatable from "react-native-animatable";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import {
   DeviceModelInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { ScreenName, NavigatorName } from "../const";
 import { BottomDrawer, Notification } from "@ledgerhq/native-ui";
 import {
   DownloadMedium,
@@ -31,6 +32,8 @@ const FirmwareUpdateBanner = () => {
   const hasCompletedOnboarding: boolean = useSelector(
     hasCompletedOnboardingSelector,
   );
+
+  const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [showBanner, setShowBanner] = useState<boolean>(false);
   const [version, setVersion] = useState<string>("");
@@ -38,6 +41,13 @@ const FirmwareUpdateBanner = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const useTouchable = useContext(ButtonUseTouchable);
+  const onExperimentalFirmwareUpdate = useCallback(() => {
+    navigation.navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+      params: { firmwareUpdate: true },
+    });
+    setShowDrawer(false);
+  }, [navigation]);
 
   useEffect(() => {
     async function getLatestFirmwareForDevice() {
@@ -65,7 +75,7 @@ const FirmwareUpdateBanner = () => {
     setShowBanner(false);
   };
 
-  return showBanner && hasConnectedDevice && hasCompletedOnboarding ? (
+  return showBanner && hasCompletedOnboarding ? (
     <>
       <Animatable.View
         animation="fadeInDownBig"
@@ -96,6 +106,14 @@ const FirmwareUpdateBanner = () => {
           useTouchable={useTouchable}
           isFocused={true}
           onPress={onCloseDrawer}
+        />
+        <Button
+          type="alert"
+          title={"Or... do it here 😯"}
+          colors={colors}
+          useTouchable={useTouchable}
+          isFocused={true}
+          onPress={onExperimentalFirmwareUpdate}
         />
       </BottomDrawer>
     </>

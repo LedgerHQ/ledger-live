@@ -15,6 +15,7 @@ import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
+import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -31,6 +32,7 @@ type Props = {
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
       searchQuery?: string,
+      firmwareUpdate?: boolean,
       updateModalOpened?: boolean,
       tab: ManagerTab,
     },
@@ -45,6 +47,7 @@ const Manager = ({
       deviceInfo,
       result,
       searchQuery,
+      firmwareUpdate,
       updateModalOpened,
       tab = MANAGER_TABS.CATALOG,
     },
@@ -176,6 +179,7 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
+       {firmwareUpdate && <FirmwareUpdateScreen device={device} />}
     </>
   );
 };
