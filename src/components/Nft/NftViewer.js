@@ -171,6 +171,15 @@ const NftViewer = ({ route }: Props) => {
     return null;
   }, [isLoading, metadata]);
 
+  const nftImage = (
+    <NftImage
+      resizeMode="contain"
+      style={styles.image}
+      src={metadata?.media}
+      status={status}
+    />
+  );
+
   return (
     <View>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -192,11 +201,22 @@ const NftViewer = ({ route }: Props) => {
           </Skeleton>
 
           <View style={styles.imageContainer}>
-            <NftImage
-              style={styles.image}
-              src={metadata?.media}
-              status={status}
-            />
+            {metadata?.media ? (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(NavigatorName.NftNavigator, {
+                    screen: ScreenName.NftImageViewer,
+                    params: {
+                      media: metadata.media,
+                    },
+                  })
+                }
+              >
+                {nftImage}
+              </TouchableOpacity>
+            ) : (
+              nftImage
+            )}
           </View>
 
           <View style={styles.buttons}>
