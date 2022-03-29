@@ -136,7 +136,6 @@
     "uncontrollable": "^7.2.1",
     "usb-detection": "4.13.0",
     "uuid": "^8.3.2",
-    "web3-eth-contract": "^1.7.0",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0",
     "write-file-atomic": "^3.0.3",
