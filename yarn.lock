@@ -2608,10 +2608,10 @@
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"
 
-
-"@ledgerhq/live-common@https://github.com/LedgerHQ/ledger-live-common.git#develop":
-  version "21.35.0"
-  resolved "https://github.com/LedgerHQ/ledger-live-common.git#0fcca21bd57f31bd34e83c27c7a0539a661509fc"
+"@ledgerhq/live-common@21.36.0":
+  version "21.36.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.36.0.tgz#c0164daa4a913269f0977c55ccb0c9e423fd162c"
+  integrity sha512-cGmBGCv11sNiGXv61mgNDd5bSLTq2Efn5EYP+rCnQsau4Nm8fBrSKw3VIIwiIVIsXlhyicuW5ol/TlWW9xwgxA==
   dependencies:
     "@celo/contractkit" "^1.5.2"
     "@celo/wallet-base" "^1.5.2"
@@ -7511,6 +7511,11 @@ elliptic@6.5.4, elliptic@^6.4.0, elliptic@^6.5.2, elliptic@^6.5.3, elliptic@^6.5
     inherits "^2.0.4"
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
+
+eme-encryption-scheme-polyfill@^2.0.1:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/eme-encryption-scheme-polyfill/-/eme-encryption-scheme-polyfill-2.0.4.tgz#7d818302af3f3b19d5974255dcc92dc087413845"
+  integrity sha512-MHYJX1v145Pjj2YJTrVVuJOYyXrxGVy8LWf6kV5M4jrV/GyoeuJKyTuD+GaD+VAiE8Ip+MptiH4dXk6ZVmMNow==
 
 emittery@^0.7.1:
   version "0.7.2"
