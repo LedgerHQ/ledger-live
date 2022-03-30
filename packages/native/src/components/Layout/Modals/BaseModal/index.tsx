@@ -10,6 +10,7 @@ import Text from "../../../Text";
 import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
+import { space } from "styled-system";
 
 const { width, height } = sizes;
 
@@ -44,6 +45,13 @@ const CloseContainer = styled.View`
   display: flex;
   align-items: flex-end;
   margin-bottom: ${(p) => p.theme.space[7]}px;
+`;
+
+const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
+  p: 5,
+  m: -5,
+})`
+  ${space};
 `;
 
 const StyledTitle = styled(Text).attrs({ variant: "h2" })`
@@ -136,7 +144,9 @@ export default function BaseModal({
       <Container style={containerStyle}>
         {!noCloseButton && (
           <CloseContainer>
-            <Link Icon={CloseMedium} onPress={onClose} />
+            <ClosePressableExtendedBounds onPress={onClose}>
+              <Link Icon={CloseMedium} onPress={onClose} />
+            </ClosePressableExtendedBounds>
           </CloseContainer>
         )}
         <ModalHeader
