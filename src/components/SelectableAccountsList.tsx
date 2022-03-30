@@ -293,7 +293,7 @@ const SelectableAccount = ({
         />
       </Flex>
       {!isDisabled && (
-        <Flex marginLeft={6}>
+        <Flex marginLeft={4}>
           <CheckBox isChecked={!!isSelected} />
         </Flex>
       )}

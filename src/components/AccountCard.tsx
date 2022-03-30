@@ -65,7 +65,7 @@ const AccountCard = ({
           flexDirection="row"
           alignItems="center"
         >
-          <Flex flexShrink={1}>
+          <Flex minWidth={20} flexShrink={1}>
             <Text
               variant="paragraph"
               fontWeight="semiBold"
@@ -77,9 +77,9 @@ const AccountCard = ({
             </Text>
             {AccountSubTitle}
           </Flex>
-          {tag && <Tag marginLeft={5}>{tag}</Tag>}
+          {tag && <Tag marginLeft={3}>{tag}</Tag>}
         </Flex>
-        <Flex marginLeft={5} alignItems="flex-end">
+        <Flex marginLeft={3} alignItems="flex-end">
           <Text variant="small" fontWeight="medium" color="neutral.c70">
             <CurrencyUnitValue
               showCode
