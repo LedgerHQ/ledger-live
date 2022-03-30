@@ -52,6 +52,8 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   };
 
   const onValidateText = useCallback(() => {
+    if (BigNumber(ownSatPerByte || 0).isZero()) return;
+
     Keyboard.dismiss();
 
     setSatPerByte(BigNumber(ownSatPerByte || 0));
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: 20,
   },
   body: {
