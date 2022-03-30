@@ -12,6 +12,7 @@ import ProgressBar from "../../components/ProgressBar";
 import CounterValue from "../../components/CounterValue";
 import { ensureContrast } from "../../colors";
 import CurrencyIcon from "../../components/CurrencyIcon";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
@@ -61,7 +62,7 @@ const DistributionRow = styled(Flex).attrs({
   alignItems: "center",
 })``;
 
-export default function DistributionCard({
+function DistributionCard({
   item: { currency, amount, distribution },
 }: Props) {
   const { colors } = useTheme();
@@ -126,3 +127,5 @@ export default function DistributionCard({
     </Container>
   );
 }
+
+export default withDiscreetMode(DistributionCard);

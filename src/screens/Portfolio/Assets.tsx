@@ -3,6 +3,7 @@ import { FlatList } from "react-native";
 import { BalanceHistory } from "@ledgerhq/live-common/lib/types";
 import { useNavigation } from "@react-navigation/native";
 import AccountRow from "../Accounts/AccountRow";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type ListProps = {
   balanceHistory: BalanceHistory;
@@ -37,4 +38,4 @@ const AssetsList = ({ balanceHistory, assets }: ListProps) => {
   );
 };
 
-export default AssetsList;
+export default withDiscreetMode(AssetsList);

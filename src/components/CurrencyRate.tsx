@@ -22,9 +22,9 @@ export default function CurrencyRate({ currency }: Props) {
       fontWeight={"semiBold"}
       color="neutral.c100"
     >
-      <CurrencyUnitValue unit={currency.units[0]} value={one} />
+      <CurrencyUnitValue unit={currency.units[0]} value={one} alwaysShowValue />
       {" = "}
-      <CounterValue currency={currency} value={one} />
+      <CounterValue currency={currency} value={one} alwaysShowValue />
     </Text>
   );
 }

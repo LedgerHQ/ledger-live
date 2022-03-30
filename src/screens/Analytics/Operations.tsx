@@ -28,6 +28,7 @@ import LoadingFooter from "../../components/LoadingFooter";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = {
   navigation: any;
@@ -141,4 +142,4 @@ export function Operations({ navigation }: Props) {
   );
 }
 
-export default memo<Props>(Operations);
+export default withDiscreetMode(memo<Props>(Operations));

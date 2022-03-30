@@ -10,6 +10,7 @@ import { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
 import GraphCard from "../../components/GraphCard";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const GraphCardContainer = ({
   portfolio,
@@ -38,4 +39,4 @@ const GraphCardContainer = ({
   );
 };
 
-export default GraphCardContainer;
+export default withDiscreetMode(GraphCardContainer);

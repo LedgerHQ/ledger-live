@@ -7,6 +7,7 @@ import RingChart from "./RingChart";
 import { useDistribution } from "../../actions/general";
 import DistributionCard, { DistributionItem } from "./DistributionCard";
 import { TrackScreen } from "../../analytics";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const Container = styled(Flex).attrs({
   paddingHorizontal: 16,
@@ -63,4 +64,4 @@ function Allocation() {
   );
 }
 
-export default memo(Allocation);
+export default withDiscreetMode(memo(Allocation));
