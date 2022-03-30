@@ -200,7 +200,7 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  // First, we crawl the production dependencies and fin every node.js native modules.
+  // First, we crawl the production dependencies and find every node.js native modules.
   const nativeModulesPaths = findNativeModules(lldRoot);
   console.log("Found the following native modules:", nativeModulesPaths);
 
