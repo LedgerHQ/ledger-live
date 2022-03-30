@@ -52,6 +52,7 @@ function findNativeModules(root) {
 
       const depPath = findPackageRoot(resolvedPath);
 
+      // The guard check prevents infinite loops caused by cyclic dependencies.
       if(depPath && !guard.has(depPath)) {
         stack.push(depPath);
         guard.add(depPath);
@@ -88,28 +89,32 @@ function dependencyTree(modulePath, { root } = {}) {
     currentTree.version = package.version;
     currentTree.path = currentPath;
     currentTree.dependencies = [];
-    Object.keys(dependencies).forEach(dependency => {
-      try {
-        // console.log("Requiring: ", dependency)
-        // console.log("Paths: ", [currentPath])
-        const resolvedPath = require.resolve(dependency, { paths: [fs.realpathSync(currentPath)]});
-        if(!resolvedPath || !resolvedPath.startsWith("/")) {
+
+    // Prevents infinite loops caused by cyclic dependencies.
+    if(!guard.has(currentPath)) {
+      guard.add(currentPath);
+      Object.keys(dependencies).forEach(dependency => {
+        try {
+          // console.log("Requiring: ", dependency)
+          // console.log("Paths: ", [currentPath])
+          const resolvedPath = require.resolve(dependency, { paths: [fs.realpathSync(currentPath)]});
+          if(!resolvedPath || !resolvedPath.startsWith("/")) {
+            return
+          }
+          const depPath = findPackageRoot(resolvedPath);
+          // console.log("depPath: ", depPath)
+          const depTree = {};
+          if(depPath) {
+            currentTree.dependencies.push(depTree);
+            stack.push([depPath, depTree])
+          }
+        } catch(error) {
+          // swallow the error
+          // console.error(error)
           return
         }
-        const depPath = findPackageRoot(resolvedPath);
-        // console.log("depPath: ", depPath)
-        const depTree = {};
-        if(depPath && !guard.has(depPath)) {
-          currentTree.dependencies.push(depTree);
-          stack.push([depPath, depTree])
-          guard.add(depPath);
-        }
-      } catch(error) {
-        // swallow the error
-        // console.error(error)
-        return
-      }
-    })
+      })
+    }
   }
 
   return tree;
