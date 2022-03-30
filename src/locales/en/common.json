@@ -2022,7 +2022,9 @@
         "text": "Please be careful",
         "desc": "You are about to view an address which was not verified. Verify addresses on your device to stay secure.",
         "verify": "The address of {{accountType}} was not verified. Verify addresses on your device to stay secure."
-      }
+      },
+      "noResultsFound": "No crypto asset found",
+      "noResultsDesc": "Please verify the spelling and try again"
     },
     "exchange": {
       "title": "Buy / Sell"

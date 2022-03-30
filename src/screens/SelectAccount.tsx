@@ -13,7 +13,6 @@ import {
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";
-import KeyboardView from "../components/KeyboardView";
 import AccountSelector from "../components/AccountSelector";
 import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
 

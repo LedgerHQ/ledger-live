@@ -2,9 +2,8 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
-import { useTheme } from "styled-components/native";
-
+import { useTranslation } from "react-i18next";
+import NoResultsFound from "../icons/NoResultsFound";
 import AccountList from "./AccountList";
 import FilteredSearchBar from "./FilteredSearchBar";
 import { formatSearchResults } from "../helpers/formatAccountSearchResults";
@@ -27,8 +26,37 @@ const AccountSelector = ({
   onAddAccount,
   initialCurrencySelected,
 }: Props) => {
-  const { colors } = useTheme();
+  const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
+
+  const renderEmptySearch = useCallback(
+    () => (
+      <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
+        <NoResultsFound />
+        <Text
+          color="neutral.c100"
+          fontWeight="medium"
+          variant="h2"
+          mt={6}
+          textAlign="center"
+        >
+          {t("transfer.receive.noResultsFound")}
+        </Text>
+        <Flex>
+          <Text
+            color="neutral.c80"
+            fontWeight="medium"
+            variant="body"
+            pt={6}
+            textAlign="center"
+          >
+            {t("transfer.receive.noResultsDesc")}
+          </Text>
+        </Flex>
+      </Flex>
+    ),
+    [t],
+  );
 
   const renderList = useCallback(
     items => {
@@ -52,18 +80,7 @@ const AccountSelector = ({
       list={list}
       renderList={renderList}
       initialQuery={initialCurrencySelected}
-      renderEmptySearch={() => (
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text fontSize={16} color={colors.primary.c50}>
-            <Trans i18nKey="transfer.receive.noAccount" />
-          </Text>
-        </Flex>
-      )}
+      renderEmptySearch={renderEmptySearch}
     />
   );
 };
