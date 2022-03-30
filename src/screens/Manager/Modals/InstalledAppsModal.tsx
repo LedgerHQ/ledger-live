@@ -6,6 +6,7 @@ import { App } from "@ledgerhq/live-common/lib/types/manager";
 import { State, Action } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "../../../components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
@@ -185,12 +186,21 @@ const InstalledAppsModal = ({
     if (!appList || !appList.length) onClose();
   }, [appList]);
 
+  const insets = useSafeAreaInsets();
+  const { top: safeAreaTop, bottom: safeAreaBottom } = insets;
+
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
       modalStyle={modalStyleOverrides.modal}
-      containerStyle={modalStyleOverrides.container}
+      containerStyle={[
+        modalStyleOverrides.container,
+        {
+          paddingTop: safeAreaTop,
+          paddingBottom: safeAreaBottom,
+        },
+      ]}
       propagateSwipe={true}
     >
       <Flex flex={1}>
