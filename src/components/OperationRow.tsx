@@ -65,7 +65,7 @@ const BodyRightContainer = styled(Flex).attrs({
   justifyContent: "flex-start",
   alignItems: "flex-end",
   flexShrink: 0,
-  pl: 3,
+  pl: 4,
 })``;
 
 type Props = {

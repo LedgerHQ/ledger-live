@@ -76,7 +76,7 @@ export const urls = {
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
-    "https://support.ledger.com/hc/en-us/articles/360019187260?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
+    "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
 
   swap: {
     info:
