@@ -5,6 +5,7 @@ import { TextProps, TouchableOpacity, TouchableOpacityProps } from "react-native
 import Text from "../../Text";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
 import { Flex } from "../../Layout";
+import { space } from "styled-system";
 
 type Props = {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
@@ -31,6 +32,13 @@ const NotificationContainer = styled.View<Partial<Props>>`
   background-color: ${(p) =>
     p.variant === "primary" ? p.theme.colors.primary.c90 : "transparent"};
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
+`;
+
+const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
+  p: 5,
+  m: -5,
+})`
+  ${space};
 `;
 
 export default function Notification({
@@ -85,9 +93,9 @@ export default function Notification({
       </FlexBox>
       {onClose && (
         <FlexBox marginLeft={"auto"} pl={16}>
-          <TouchableOpacity onPress={onClose}>
+          <ClosePressableExtendedBounds onPress={onClose}>
             <CloseMedium size={14} color={textColor} />
-          </TouchableOpacity>
+          </ClosePressableExtendedBounds>
         </FlexBox>
       )}
     </NotificationContainer>
