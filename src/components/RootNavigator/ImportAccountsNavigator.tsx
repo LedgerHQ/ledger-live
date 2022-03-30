@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
@@ -6,9 +5,7 @@ import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
-import DisplayResult, {
-  BackButton,
-} from "../../screens/ImportAccounts/DisplayResult";
+import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "../../screens/ImportAccounts/FallBackCameraScreen";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
@@ -42,12 +39,7 @@ export default function ImportAccountsNavigator() {
         name={ScreenName.DisplayResult}
         component={DisplayResult}
         options={{
-          headerTitle: (
-            <Text variant="h3" color="constant.white" uppercase>
-              {t("account.import.result.title")}
-            </Text>
-          ),
-          headerLeft: () => <BackButton />,
+          title: t("account.import.result.title"),
         }}
       />
       <Stack.Screen
