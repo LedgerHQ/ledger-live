@@ -1,8 +1,8 @@
-import React from "react";
-import { Switch as NativeSwitch } from "react-native";
+import React, { useCallback } from "react";
+import { Pressable as BasePressable, Switch as NativeSwitch } from "react-native";
 import { useTheme } from "styled-components/native";
 import Text from "../../Text";
-import Flex from "../../Layout/Flex";
+import proxyStyled from "../../../components/styled";
 
 type SwitchProps = {
   checked: boolean;
@@ -11,11 +11,21 @@ type SwitchProps = {
   label?: string;
 };
 
+const Pressable = proxyStyled(BasePressable).attrs({
+  flexDirection: "row",
+  alignItems: "center",
+})``;
+
 const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Element => {
   const { colors, space } = useTheme();
 
+  const handlePress = useCallback(() => {
+    if (disabled) return;
+    onChange && onChange(!checked);
+  }, [checked, disabled, onChange]);
+
   return (
-    <Flex flexDirection="row" alignItems="center">
+    <Pressable onPress={handlePress}>
       <NativeSwitch
         trackColor={{
           false: colors.neutral.c50,
@@ -36,7 +46,7 @@ const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Elemen
           {label}
         </Text>
       ) : null}
-    </Flex>
+    </Pressable>
   );
 };
 
