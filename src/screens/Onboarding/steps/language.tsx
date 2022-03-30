@@ -70,13 +70,6 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           </SelectableList>
         </Flex>
       </ScrollView>
-      <Button
-        event="Onboarding - Language confirm"
-        type="primary"
-        onPress={next}
-        outline={false}
-        title={<Trans i18nKey="onboarding.stepLanguage.cta" />}
-      />
     </Flex>
   );
 }
