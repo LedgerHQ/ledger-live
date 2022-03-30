@@ -1770,7 +1770,9 @@
         "hideTokens": "Hide ASA",
         "hideTokens_plural": "Hide ASA"
       }
-    }
+    },
+    "noResultsFound": "No asset found",
+    "noResultsDesc": "Please verify the spelling and try again"
   },
   "distribution": {
     "header": "Asset allocation",

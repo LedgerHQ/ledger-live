@@ -9,12 +9,13 @@ import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import TrackScreen from "../../analytics/TrackScreen";
+import NoResultsFound from "../../icons/NoResultsFound";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
@@ -112,10 +113,28 @@ function Accounts({ navigation, route }: Props) {
 
   const renderEmptySearch = useCallback(
     () => (
-      <Flex>
-        <Text variant="h3" color="fog">
-          {t("transfer.receive.noAccount")}
+      <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
+        <NoResultsFound />
+        <Text
+          color="neutral.c100"
+          fontWeight="medium"
+          variant="h2"
+          mt={6}
+          textAlign="center"
+        >
+          <Trans i18nKey="accounts.noResultsFound" />
         </Text>
+        <Flex>
+          <Text
+            color="neutral.c80"
+            fontWeight="medium"
+            variant="body"
+            pt={6}
+            textAlign="center"
+          >
+            <Trans i18nKey="accounts.noResultsDesc" />
+          </Text>
+        </Flex>
       </Flex>
     ),
     [t],
