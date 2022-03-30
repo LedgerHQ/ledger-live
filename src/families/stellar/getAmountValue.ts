@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
-import { findSubAccountById } from "../../../account";
-import type { Account, TokenAccount } from "../../../types";
-import type { Transaction } from "../types";
+import { findSubAccountById } from "../../account";
+import type { Account, TokenAccount } from "../../types";
+import type { Transaction } from "./types";
 
 export const getAmountValue = (
   account: Account,
@@ -21,6 +21,6 @@ export const getAmountValue = (
 
   // Native
   return transaction.useAllAmount && transaction.networkInfo
-    ? account.spendableBalance.minus(fees)
+    ? BigNumber.max(account.spendableBalance.minus(fees), 0)
     : transaction.amount;
 };

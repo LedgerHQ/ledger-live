@@ -7,6 +7,7 @@ import {
   NotEnoughSpendableBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   RecipientRequired,
+  InvalidAddress,
 } from "@ledgerhq/errors";
 import {
   StellarWrongMemoFormat,
@@ -20,7 +21,6 @@ import {
   StellarFeeSmallerThanBase,
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
-  StellarInvalidAddress,
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -32,7 +32,7 @@ import {
   isMemoValid,
   getRecipientAccount,
 } from "./logic";
-import { BASE_RESERVE } from "./api";
+import { BASE_RESERVE, MIN_BALANCE } from "./api";
 
 const getTransactionStatus = async (
   a: Account,
@@ -42,7 +42,6 @@ const getTransactionStatus = async (
   warnings: Record<string, Error>;
   estimatedFees: BigNumber;
   amount: BigNumber;
-  maxAmount: BigNumber;
   totalSpent: BigNumber;
 }> => {
   const errors: Record<string, Error> = {};
@@ -51,7 +50,7 @@ const getTransactionStatus = async (
 
   const destinationNotExistMessage =
     new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: "1 XLM",
+      minimalAmount: `${MIN_BALANCE} XLM`,
     });
 
   if (a.pendingOperations.length > 0) {
@@ -103,16 +102,19 @@ const getTransactionStatus = async (
     if (!t.recipient) {
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(t.recipient)) {
-      errors.recipient = new StellarInvalidAddress("");
+      errors.recipient = new InvalidAddress("");
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
-    const recipientAccount = await getRecipientAccount(t.recipient);
+    const recipientAccount = await getRecipientAccount({
+      account: a,
+      recipient: t.recipient,
+    });
 
     // Check recipient account
-    if (!recipientAccount.id && !errors.recipient && !warnings.recipient) {
-      if (recipientAccount.isMuxedAccount) {
+    if (!recipientAccount?.id && !errors.recipient && !warnings.recipient) {
+      if (recipientAccount?.isMuxedAccount) {
         errors.recipient = new StellarMuxedAccountNotExist();
       } else {
         if (isAssetPayment) {
@@ -134,7 +136,7 @@ const getTransactionStatus = async (
 
       // Check recipient account accepts asset
       if (
-        recipientAccount.id &&
+        recipientAccount?.id &&
         !errors.recipient &&
         !warnings.recipient &&
         !recipientAccount.assetIds.includes(`${t.assetCode}:${t.assetIssuer}`)
@@ -163,7 +165,6 @@ const getTransactionStatus = async (
         errors.amount = new NotEnoughBalance();
       }
 
-      // TODO: ??? do we need to include fee in total?
       totalSpent = useAllAmount
         ? nativeAmountAvailable
         : t.amount.plus(estimatedFees);
@@ -171,7 +172,7 @@ const getTransactionStatus = async (
       // Need to send at least 1 XLM to create an account
       if (
         !errors.recipient &&
-        !recipientAccount.id &&
+        !recipientAccount?.id &&
         !errors.amount &&
         amount.lt(10000000)
       ) {
@@ -218,7 +219,6 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
-    maxAmount,
     totalSpent,
   });
 };

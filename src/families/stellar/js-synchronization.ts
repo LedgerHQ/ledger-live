@@ -1,12 +1,34 @@
-import type { Account, Operation } from "../../types";
+import { BigNumber } from "bignumber.js";
+import type { Account, Operation, TokenAccount } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeScanAccounts, makeSync } from "../../bridge/jsHelpers";
+import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
 
+const getOldAssetOperations = (
+  subAccounts?: TokenAccount[]
+):
+  | {
+      [tokenId: string]: Operation[];
+    }
+  | undefined => {
+  return subAccounts?.reduce((result, tokenAccount) => {
+    if (result[tokenAccount.id]) {
+      result[tokenAccount.id] = [
+        ...result[tokenAccount.id],
+        ...(tokenAccount.operations || []),
+      ];
+    } else {
+      result[tokenAccount.id] = tokenAccount.operations || [];
+    }
+
+    return result;
+  }, {});
+};
+
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
-  const { address, currency, derivationMode } = info;
+  const { address, currency, initialAccount, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -18,9 +40,42 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     address
   );
 
-  // TODO: ??? How could we optimize this to avoid fetching all data on every
-  // request? Could we save allOperations on the Account object?
-  const allOperations = (await fetchOperations(accountId, address)) || [];
+  const oldNativeOps = initialAccount?.operations || [];
+  // Creating a map of asset operations
+  const oldAssetOps =
+    getOldAssetOperations(initialAccount?.subAccounts as TokenAccount[]) || [];
+  const oldOperations = [
+    ...oldNativeOps,
+    ...Object.values(oldAssetOps).reduce(
+      (result, ops) => [...result, ...ops],
+      []
+    ),
+  ];
+
+  const oldNativeOpsLastPagingToken = oldNativeOps[0]?.extra?.pagingToken || 0;
+  // Find the last cursor/paging token for every asset's last op
+  const oldAssetOpsLastPagingTokens = Object.values(oldAssetOps).reduce(
+    (result: string[], ops) => [...result, ops[0]?.extra?.pagingToken || 0],
+    []
+  );
+  // Find the last paging token from all
+  const lastPagingToken = BigNumber.max(
+    oldNativeOpsLastPagingToken,
+    ...oldAssetOpsLastPagingTokens,
+    0
+  ).toString();
+
+  const newOperations =
+    (await fetchOperations({
+      accountId,
+      addr: address,
+      // To fetch new records, use "desc" + "now"
+      // To fetch latest records, use "asc" + paging token
+      order: lastPagingToken === "0" ? "desc" : "asc",
+      cursor: lastPagingToken === "0" ? "now" : lastPagingToken,
+    })) || [];
+
+  const allOperations = mergeOps(oldOperations, newOperations);
 
   const nativeOperations: Operation[] = [];
   const assetOperations: Operation[] = [];

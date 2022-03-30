@@ -11,7 +11,7 @@ import {
   loadAccount,
 } from "./api";
 import { getRecipientAccount } from "./logic";
-import { getAmountValue } from "./helpers/getAmountValue";
+import { getAmountValue } from "./getAmountValue";
 import {
   StellarAssetRequired,
   StellarMuxedAccountNotExist,
@@ -65,18 +65,20 @@ export const buildTransaction = async (
       throw new AmountRequired();
     }
 
-    // TODO: use cache with checkRecipientExist | getRecipientAccount instead?
-    const recipientAccount = await getRecipientAccount(transaction.recipient);
+    const recipientAccount = await getRecipientAccount({
+      account,
+      recipient: transaction.recipient,
+    });
 
-    if (recipientAccount.id) {
-      operation = buildPaymentOperation(
-        recipient,
+    if (recipientAccount?.id) {
+      operation = buildPaymentOperation({
+        destination: recipient,
         amount,
         assetCode,
-        assetIssuer
-      );
+        assetIssuer,
+      });
     } else {
-      if (recipientAccount.isMuxedAccount) {
+      if (recipientAccount?.isMuxedAccount) {
         throw new StellarMuxedAccountNotExist("");
       }
 

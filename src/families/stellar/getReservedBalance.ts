@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { ServerApi } from "stellar-sdk";
-import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT } from "../api";
-import { BalanceAsset } from "../types";
+import { BASE_RESERVE, BASE_RESERVE_MIN_COUNT } from "./api";
+import { BalanceAsset } from "./types";
 
 export const getReservedBalance = (
   account: ServerApi.AccountRecord

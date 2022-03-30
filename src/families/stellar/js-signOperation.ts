@@ -7,7 +7,7 @@ import { open, close } from "../../hw";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
-import { getAmountValue } from "./helpers/getAmountValue";
+import { getAmountValue } from "./getAmountValue";
 
 const buildOptimisticOperation = async (
   account: Account,

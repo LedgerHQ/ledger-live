@@ -79,18 +79,3 @@ export type BalanceAsset = {
   asset_issuer: string;
   liquidity_pool_id?: string;
 };
-
-export type StellarOperation = {
-  id: string;
-  paging_token: string;
-  transaction_successful: boolean;
-  source_account: string;
-  type: string;
-  type_i: number;
-  created_at: string;
-  transaction_hash: string;
-  asset_type: string;
-  from: string;
-  to: string;
-  amount: string;
-};

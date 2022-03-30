@@ -16,7 +16,7 @@ import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel } from "../types";
-import { getReservedBalance } from "../helpers/getReservedBalance";
+import { getReservedBalance } from "../getReservedBalance";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
@@ -28,6 +28,7 @@ const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
 // Constants
 export const BASE_RESERVE = 0.5;
 export const BASE_RESERVE_MIN_COUNT = 2;
+export const MIN_BALANCE = 1;
 
 StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
 
@@ -49,11 +50,9 @@ StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
 });
 
 const getFormattedAmount = (amount: BigNumber) => {
-  // TODO: ??? not sure why we need this conditional, but it is more consistent
-  // with it. Otherwise, some transactions would just freeze on broadcasting at
-  // the very end.
-  const magnitude = currency?.units[0]?.magnitude || 7;
-  return amount.div(new BigNumber(10).pow(magnitude)).toString(10);
+  return amount
+    .div(new BigNumber(10).pow(currency.units[0].magnitude))
+    .toString(10);
 };
 
 export const fetchBaseFee = async (): Promise<{
@@ -144,15 +143,23 @@ export const fetchAccount = async (
  *
  * @param {string} accountId
  * @param {string} addr
- * @param {number} startAt - blockHeight after which you fetch this op (included)
+ * @param {string} order - "desc" or "asc" order of returned records
+ * @param {string} cursor - point to start fetching records
  *
  * @return {Operation[]}
  */
-export const fetchOperations = async (
-  accountId: string,
-  addr: string
-): Promise<Operation[]> => {
-  if (!addr || !addr.length) {
+export const fetchOperations = async ({
+  accountId,
+  addr,
+  order,
+  cursor,
+}: {
+  accountId: string;
+  addr: string;
+  order: "asc" | "desc";
+  cursor: string;
+}): Promise<Operation[]> => {
+  if (!addr) {
     return [];
   }
 
@@ -163,10 +170,11 @@ export const fetchOperations = async (
     rawOperations = await server
       .operations()
       .forAccount(addr)
-      .join("transactions")
-      .includeFailed(true)
       .limit(LIMIT)
-      .order("desc")
+      .order(order)
+      .cursor(cursor)
+      .includeFailed(true)
+      .join("transactions")
       .call();
   } catch (e: any) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
@@ -276,12 +284,17 @@ export const broadcastTransaction = async (
   return res.hash;
 };
 
-export const buildPaymentOperation = (
-  destination: string,
-  amount: BigNumber,
-  assetCode: string | undefined,
-  assetIssuer: string | undefined
-): any => {
+export const buildPaymentOperation = ({
+  destination,
+  amount,
+  assetCode,
+  assetIssuer,
+}: {
+  destination: string;
+  amount: BigNumber;
+  assetCode: string | undefined;
+  assetIssuer: string | undefined;
+}): any => {
   const formattedAmount = getFormattedAmount(amount);
   // Non-native assets should always have asset code and asset issuer. If an
   // asset doesn't have both, we assume it is native asset.

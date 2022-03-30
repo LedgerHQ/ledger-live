@@ -1,8 +1,5 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
-export const StellarInvalidAddress = createCustomErrorClass(
-  "StellarInvalidAddress"
-);
 export const StellarMemoRecommended = createCustomErrorClass(
   "StellarMemoRecommended"
 );

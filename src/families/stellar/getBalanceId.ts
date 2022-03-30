@@ -1,4 +1,4 @@
-import { BalanceAsset } from "../types";
+import { BalanceAsset } from "./types";
 
 export const getBalanceId = (balance: BalanceAsset): string | null => {
   switch (balance.asset_type) {

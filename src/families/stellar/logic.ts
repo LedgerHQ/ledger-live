@@ -6,8 +6,8 @@ import type { Account, Operation, OperationType } from "../../types";
 import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
-import { getReservedBalance } from "./helpers/getReservedBalance";
-import { getBalanceId } from "./helpers/getBalanceId";
+import { getReservedBalance } from "./getReservedBalance";
+import { getBalanceId } from "./getBalanceId";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -107,6 +107,7 @@ export const formatOperation = async (
     hasFailed: !rawOperation.transaction_successful,
     blockHash: null,
     extra: {
+      pagingToken: rawOperation.paging_token,
       // @ts-expect-error check transaction_successful property
       assetCode: rawOperation?.asset_code,
       // @ts-expect-error check transaction_successful property
@@ -144,31 +145,10 @@ const getValue = (
     case "path_payment_strict_receive":
       return parseCurrencyUnit(currency.units[0], operation.amount);
 
-    // TODO: ??? do we need to include fee in the amount?
-    // if (type === "OUT") {
-    //   value = value.plus(transaction.fee_charged);
-    //
-
     default:
       return type !== "IN" ? new BigNumber(transaction.fee_charged) : value;
   }
 };
-
-// TODO: Move to cache.js
-export const checkRecipientExist: CacheRes<
-  Array<{
-    account: Account;
-    recipient: string;
-  }>,
-  boolean
-> = makeLRUCache(
-  async ({ recipient }) => await addressExists(recipient),
-  (extract) => extract.recipient,
-  {
-    max: 300,
-    maxAge: 5 * 60,
-  } // 5 minutes
-);
 
 export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   switch (memoType) {
@@ -198,7 +178,9 @@ export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   return true;
 };
 
-export const isAccountMultiSign = async (account: Account) => {
+export const isAccountMultiSign = async (
+  account: Account
+): Promise<boolean> => {
   const signers = await fetchSigners(account);
   return signers.length > 1;
 };
@@ -221,33 +203,34 @@ export const isAddressValid = (address: string): boolean => {
   }
 };
 
-/**
- * Checks if the current account exists on the stellar Network. If it doesn't the account needs
- * to be activated by sending an account creation operation with an amount of at least the base reserve.
- *
- * @param {*} address
- * @param {*} assetCode
- * @param {*} assetIssuer
- */
-export const addressExists = async (address: string): Promise<boolean> => {
-  const account = await loadAccount(address);
-  return !!account;
-};
+export const getRecipientAccount: CacheRes<
+  Array<{
+    account: Account;
+    recipient: string;
+  }>,
+  {
+    id: string | null;
+    isMuxedAccount: boolean;
+    assetIds: string[];
+  } | null
+> = makeLRUCache(
+  async ({ recipient }) => await recipientAccount(recipient),
+  (extract) => extract.recipient,
+  {
+    max: 300,
+    maxAge: 5 * 60,
+  } // 5 minutes
+);
 
-// TODO: could we cache this?
-export const getRecipientAccount = async (
+export const recipientAccount = async (
   address?: string
 ): Promise<{
   id: string | null;
   isMuxedAccount: boolean;
   assetIds: string[];
-}> => {
+} | null> => {
   if (!address) {
-    return {
-      id: null,
-      isMuxedAccount: false,
-      assetIds: [],
-    };
+    return null;
   }
 
   let accountAddress = address;
@@ -264,11 +247,7 @@ export const getRecipientAccount = async (
   const account = await loadAccount(accountAddress);
 
   if (!account) {
-    return {
-      id: null,
-      isMuxedAccount,
-      assetIds: [],
-    };
+    return null;
   }
 
   return {
