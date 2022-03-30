@@ -74,7 +74,7 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
       - name: install dependencies
-        run: pnpm i --frozen-lockfile
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
@@ -151,7 +151,7 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: pnpm i --frozen-lockfile
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
         shell: bash
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
@@ -212,7 +212,7 @@ jobs:
           LANG: en_US.UTF-8
         run: |
           eval "$(rbenv init - bash)"
-          pnpm i --frozen-lockfile
+          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
         id: version
         with:
