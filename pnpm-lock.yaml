@@ -17,7 +17,6 @@ importers:
       '@changesets/cli': ^2.21.1
       create-release-hash: workspace:*
       migrate-branch: workspace:*
-      native-modules-tools: workspace:*
       pnpm-utils: workspace:*
       turbo: ^1.1.9
       x-run: workspace:*
@@ -25,7 +24,6 @@ importers:
       '@changesets/cli': 2.21.1
       create-release-hash: link:tools/create-release-hash
       migrate-branch: link:tools/migrate-branch
-      native-modules-tools: link:tools/native-modules-tools
       pnpm-utils: link:tools/pnpm-utils
       turbo: 1.1.9
       x-run: link:tools/x-run
@@ -145,6 +143,7 @@ importers:
       lru-cache: ^5.1.1
       measure-scrollbar: ^1.1.0
       moment: ^2.29.1
+      native-modules-tools: workspace:*
       node-abi: ^2.30.0
       nyc: ^15.1.0
       openpgp: ^4.10.10
@@ -387,6 +386,7 @@ importers:
       jest: 26.6.3
       listr: 0.14.3
       listr-verbose-renderer: 0.6.0
+      native-modules-tools: link:../../tools/native-modules-tools
       nyc: 15.1.0
       playwright: 1.17.2
       prebuild-install: 7.0.1
@@ -22367,7 +22367,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.3_supports-color@6.1.0
+      debug: 4.3.3
     dev: false
 
   /fontfaceobserver/2.1.0:
@@ -37419,6 +37419,7 @@ packages:
     resolution: {integrity: sha512-6iCVm2omGJbsu3JWac+p6kUiOpg3wFO2f8lIXjfEb8RrmLjzog1wTPMmwKB7swfzzqxj9YM+sGUM++u1qN4qJg==}
     engines: {node: '>=0.8.0'}
     hasBin: true
+    requiresBuild: true
     dev: true
 
   /ultron/1.0.2:
