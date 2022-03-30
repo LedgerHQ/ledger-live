@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../components/SettingsRow";
 import { ScreenName } from "../../../const";
@@ -28,18 +28,20 @@ export const languageLabels = {
   zh: "简体中文",
 };
 
-export default function LanguageSettingsRow() {
+const LanguageSettingsRow = () => {
   const { locale } = useLocale();
   const { navigate } = useNavigation();
   const onNavigate = useCallback(() => {
     navigate(ScreenName.OnboardingLanguage);
   }, [navigate]);
 
+  const { t } = useTranslation();
+
   return (
     <SettingsRow
       event="LanguageSettingsRow"
-      title={<Trans i18nKey="settings.display.language" />}
-      desc={<Trans i18nKey="settings.display.languageDesc" />}
+      title={t("settings.display.language")}
+      desc={t("settings.display.languageDesc")}
       arrowRight
       onPress={onNavigate}
     >
@@ -48,4 +50,6 @@ export default function LanguageSettingsRow() {
       </Text>
     </SettingsRow>
   );
-}
+};
+
+export default LanguageSettingsRow;
