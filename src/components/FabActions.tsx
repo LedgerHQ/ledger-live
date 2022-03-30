@@ -21,7 +21,7 @@ import {
 } from "../reducers/settings";
 import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
-import FabAccountButtonBar from "./FabAccountButtonBar";
+import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
 import useLendingActions from "../screens/Account/hooks/useLendingActions";
 
@@ -36,6 +36,12 @@ type FabAccountActionsProps = {
   account: AccountLike;
   parentAccount?: Account;
 };
+
+const iconBuy = Icons.PlusMedium;
+const iconSwap = Icons.BuyCryptoMedium;
+const iconReceive = Icons.ArrowBottomMedium;
+const iconSend = Icons.ArrowTopMedium;
+const iconAddAccount = Icons.WalletMedium;
 
 export const FabAccountActionsComponent = ({
   account,
@@ -53,55 +59,51 @@ export const FabAccountActionsComponent = ({
 
   const canBeBought = isCurrencySupported(currency, "buy");
 
-  const allActions = [
-    ...(!readOnlyModeEnabled && canBeBought
-      ? [
-          {
-            navigationParams: [
-              NavigatorName.Exchange,
-              {
-                screen: ScreenName.ExchangeBuy,
-                params: {
-                  accountId: account.id,
-                  // mode: "buy",
-                  parentId: parentAccount && parentAccount.id,
-                },
-              },
-            ],
-            label: <Trans i18nKey="account.buy" />,
-            Icon: Icons.BuyCryptoAltMedium,
-            event: "Buy Crypto Account Button",
-            eventProperties: {
-              currencyName: currency.name,
-            },
-          },
-        ]
-      : []),
-    ...(availableOnSwap
-      ? [
-          {
-            navigationParams: [
-              NavigatorName.Swap,
-              {
-                screen: ScreenName.Swap,
-                params: {
-                  defaultAccount: account,
-                  defaultParentAccount: parentAccount,
-                },
-              },
-            ],
-            label: (
-              <Trans
-                i18nKey="transfer.swap.main.header"
-                values={{ currency: currency.name }}
-              />
-            ),
-            Icon: Icons.BuyCryptoMedium,
-            event: "Swap Crypto Account Button",
-            eventProperties: { currencyName: currency.name },
-          },
-        ]
-      : []),
+  const actionButtonSwap: ActionButton = {
+    navigationParams: [
+      NavigatorName.Swap,
+      {
+        screen: ScreenName.Swap,
+        params: {
+          defaultAccount: account,
+          defaultParentAccount: parentAccount,
+        },
+      },
+    ],
+    label: (
+      <Trans
+        i18nKey="transfer.swap.main.header"
+        values={{ currency: currency.name }}
+      />
+    ),
+    Icon: iconSwap,
+    event: "Swap Crypto Account Button",
+    eventProperties: { currencyName: currency.name },
+  };
+
+  const actionButtonBuy: ActionButton = {
+    navigationParams: [
+      NavigatorName.Exchange,
+      {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          accountId: account.id,
+          // mode: "buy",
+          parentId: parentAccount && parentAccount.id,
+        },
+      },
+    ],
+    label: <Trans i18nKey="account.buy" />,
+    Icon: iconBuy,
+    event: "Buy Crypto Account Button",
+    eventProperties: {
+      currencyName: currency.name,
+    },
+  };
+
+  const allActions: ActionButton[] = [
+    ...(availableOnSwap ? [actionButtonSwap] : []),
+    ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...useActions({ account, parentAccount, colors }),
   ];
 
@@ -153,14 +155,14 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
 
   const canBeBought = currency && isCurrencySupported(currency, "buy");
 
-  const actions = useMemo(
+  const actions: ActionButton[] = useMemo(
     () => [
       ...(canBeBought
         ? [
             {
               event: "TransferExchange",
               label: <Trans i18nKey="exchange.buy.tabTitle" />,
-              Icon: Icons.BuyCryptoAltMedium,
+              Icon: iconBuy,
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -178,7 +180,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
                   {
                     event: "TransferSwap",
                     label: <Trans i18nKey="transfer.swap.title" />,
-                    Icon: Icons.BuyCryptoMedium,
+                    Icon: iconSwap,
                     navigationParams: [
                       NavigatorName.Swap,
                       {
@@ -193,7 +195,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
             {
               event: "TransferReceive",
               label: <Trans i18nKey="transfer.receive.title" />,
-              Icon: Icons.PlusMedium,
+              Icon: iconReceive,
               navigationParams: [
                 NavigatorName.ReceiveFunds,
                 {
@@ -207,7 +209,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
             {
               event: "TransferSend",
               label: <Trans i18nKey="transfer.send.title" />,
-              Icon: Icons.MinusMedium,
+              Icon: iconSend,
               navigationParams: [
                 NavigatorName.SendFunds,
                 {
@@ -226,7 +228,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
                   {
                     event: "TransferAddAccount",
                     label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
-                    Icon: Icons.WalletMedium,
+                    Icon: iconAddAccount,
                     navigationParams: [
                       NavigatorName.AddAccounts,
                       {
@@ -261,90 +263,86 @@ const FabActions = () => {
   const accountsCount: number = useSelector(accountsCountSelector);
   const hasAccounts = accountsCount > 0;
 
-  const actions = useMemo(
-    () => [
-      {
-        event: "TransferExchange",
-        label: <Trans i18nKey="exchange.buy.tabTitle" />,
-        Icon: Icons.BuyCryptoAltMedium,
-        navigationParams: [
-          NavigatorName.Exchange,
-          {
-            screen: ScreenName.ExchangeBuy,
-          },
-        ],
-      },
+  const actions: ActionButton[] = useMemo(() => {
+    const actionButtonBuy: ActionButton = {
+      event: "TransferExchange",
+      label: <Trans i18nKey="exchange.buy.tabTitle" />,
+      Icon: iconBuy,
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeBuy,
+        },
+      ],
+    };
+
+    const actionButtonTransferSwap: ActionButton = {
+      event: "TransferSwap",
+      label: <Trans i18nKey="transfer.swap.title" />,
+      Icon: iconSwap,
+      navigationParams: [
+        NavigatorName.Swap,
+        {
+          screen: ScreenName.Swap,
+        },
+      ],
+    };
+
+    const actionButtonTransferReceive: ActionButton = {
+      event: "TransferReceive",
+      label: <Trans i18nKey="transfer.receive.title" />,
+      Icon: iconReceive,
+      navigationParams: [
+        NavigatorName.ReceiveFunds,
+        {
+          screen: ScreenName.ReceiveSelectAccount,
+        },
+      ],
+      type: "shade",
+      outline: true,
+    };
+
+    const actionButtonTransferSend: ActionButton = {
+      event: "TransferSend",
+      label: <Trans i18nKey="transfer.send.title" />,
+      Icon: iconSend,
+      navigationParams: [
+        NavigatorName.SendFunds,
+        {
+          screen: ScreenName.SendCoin,
+        },
+      ],
+      type: "shade",
+      outline: true,
+    };
+
+    const actionButtonTransferAddAccount: ActionButton = {
+      event: "TransferAddAccount",
+      label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
+      Icon: iconAddAccount,
+      navigationParams: [
+        NavigatorName.AddAccounts,
+        {
+          screen: ScreenName.AddAccountsSelectCrypto,
+        },
+      ],
+      type: "shade",
+      outline: true,
+    };
+    return [
+      ...(hasAccounts && !readOnlyModeEnabled
+        ? [actionButtonTransferSwap]
+        : []),
+      actionButtonBuy,
       ...(hasAccounts && !readOnlyModeEnabled
         ? [
-            {
-              event: "TransferSwap",
-              label: <Trans i18nKey="transfer.swap.title" />,
-              Icon: Icons.BuyCryptoMedium,
-              navigationParams: [
-                NavigatorName.Swap,
-                {
-                  screen: ScreenName.Swap,
-                },
-              ],
-            },
-            {
-              event: "TransferReceive",
-              label: <Trans i18nKey="transfer.receive.title" />,
-              Icon: Icons.PlusMedium,
-              navigationParams: [
-                NavigatorName.ReceiveFunds,
-                {
-                  screen: ScreenName.ReceiveSelectAccount,
-                },
-              ],
-              type: "shade",
-              outline: true,
-            },
-            {
-              event: "TransferSend",
-              label: <Trans i18nKey="transfer.send.title" />,
-              Icon: Icons.MinusMedium,
-              navigationParams: [
-                NavigatorName.SendFunds,
-                {
-                  screen: ScreenName.SendCoin,
-                },
-              ],
-              type: "shade",
-              outline: true,
-            },
-            {
-              event: "TransferAddAccount",
-              label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
-              Icon: Icons.WalletMedium,
-              navigationParams: [
-                NavigatorName.AddAccounts,
-                {
-                  screen: ScreenName.AddAccountsSelectCrypto,
-                },
-              ],
-              type: "shade",
-              outline: true,
-            },
+            actionButtonTransferReceive,
+            actionButtonTransferSend,
+            actionButtonTransferAddAccount,
           ]
-        : [
-            {
-              event: "TransferAddAccount",
-              label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
-              Icon: Icons.WalletMedium,
-              navigationParams: [
-                NavigatorName.AddAccounts,
-                {
-                  screen: ScreenName.AddAccountsSelectCrypto,
-                },
-              ],
-              type: "shade",
-              outline: true,
-            },
-          ]),
-    ],
-    [hasAccounts, readOnlyModeEnabled],
-  );
+        : [actionButtonTransferAddAccount]),
+    ];
+  }, [hasAccounts, readOnlyModeEnabled]);
 
   return <FabAccountButtonBar buttons={actions} />;
 };

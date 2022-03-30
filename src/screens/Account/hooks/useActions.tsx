@@ -15,7 +15,6 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 import { isCurrencySupported } from "../../Exchange/coinifyConfig";
 import Lending from "../../../icons/Lending";
 import WalletConnect from "../../../icons/WalletConnect";
-import Exchange from "../../../icons/Exchange";
 import useCompoundAccountEnabled from "../../Lending/shared/useCompoundAccountEnabled";
 
 type Props = {
@@ -67,7 +66,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ],
     label: <Trans i18nKey="account.send" />,
     event: "AccountSend",
-    Icon: Icons.MinusMedium,
+    Icon: Icons.ArrowTopMedium,
     disabled: balance.lte(0),
     ...extraSendActionParams,
   };
@@ -81,7 +80,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ],
     label: <Trans i18nKey="account.receive" />,
     event: "AccountReceive",
-    Icon: Icons.PlusMedium,
+    Icon: Icons.ArrowBottomMedium,
     ...extraReceiveActionParams,
   };
 
@@ -96,15 +95,12 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     [];
 
   const actions = [
-    ...(!readOnlyModeEnabled ? [SendAction] : []),
-    ReceiveAction,
-    ...baseActions,
     ...(!readOnlyModeEnabled && canBeSold
       ? [
           {
             navigationParams: [NavigatorName.ExchangeSellFlow, { accountId }],
             label: <Trans i18nKey="account.sell" />,
-            Icon: Exchange,
+            Icon: Icons.MinusMedium,
             event: "Sell Crypto Account Button",
             eventProperties: {
               currencyName: currency?.name,
@@ -112,6 +108,9 @@ export default function useActions({ account, parentAccount, colors }: Props) {
           },
         ]
       : []),
+    ...(!readOnlyModeEnabled ? [SendAction] : []),
+    ReceiveAction,
+    ...baseActions,
     ...(walletConnectAvailable
       ? [
           {
