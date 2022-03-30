@@ -63,7 +63,10 @@ function OnboardingCarefulWarning(props: StackScreenProps<{}>) {
     <NavigationModalContainer
       {...props}
       deadZoneProps={{ flex: 1 }}
-      contentContainerProps={{ minHeight: 500, maxHeight: "50%" }}
+      contentContainerProps={{
+        maxHeight: "70%",
+        flexDirection: "row",
+      }}
       backgroundColor="background.main"
     >
       <OnboardingCarefulWarningStack.Navigator>
@@ -110,7 +113,7 @@ function OnboardingPreQuizModalNavigator(props: StackScreenProps<{}>) {
       {...props}
       backgroundColor="constant.purple"
       deadZoneProps={{ flex: 1 }}
-      contentContainerProps={{ minHeight: 500, maxHeight: "50%" }}
+      contentContainerProps={{ maxHeight: "50%" }}
     >
       <OnboardingPreQuizModalStack.Navigator>
         <OnboardingPreQuizModalStack.Screen

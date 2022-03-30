@@ -79,6 +79,8 @@ export default function BuyDeviceScreen() {
         alignItems="center"
         width="100%"
         height={48}
+        mb={-60}
+        zIndex={1}
       >
         <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
       </Flex>
@@ -100,8 +102,8 @@ export default function BuyDeviceScreen() {
           resizeMode={"cover"}
         />
       </Flex>
-      <Flex flex={1} p={6}>
-        <Flex mt={8} mb={10} justifyContent="center" alignItems="stretch">
+      <Flex flex={1} p={6} pt={0}>
+        <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
           <Text textAlign="center" variant="h2">
             {t("buyDevice.title")}
           </Text>
@@ -119,7 +121,8 @@ export default function BuyDeviceScreen() {
         />
       </Flex>
       <Button
-        m={6}
+        mx={6}
+        my={4}
         type="main"
         outline={false}
         event="BuyDeviceScreen - Buy Ledger"
@@ -128,7 +131,7 @@ export default function BuyDeviceScreen() {
       >
         {t("buyDevice.cta")}
       </Button>
-      <Flex p={6} pb={8}>
+      <Flex px={6} pt={0} pb={5}>
         <TextLink type="color" onPress={setupDevice}>
           {t("buyDevice.footer")}
         </TextLink>

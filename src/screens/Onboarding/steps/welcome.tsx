@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
@@ -42,9 +42,13 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const { locale } = useLocale();
 
-  const onTermsLink = useCallback(() => Linking.openURL(urls.terms[locale]), [
-    locale,
-  ]);
+  const onTermsLink = useCallback(
+    () =>
+      Linking.openURL(
+        (urls.terms as Record<string, string>)[locale] || urls.terms.en,
+      ),
+    [locale],
+  );
 
   const onPrivacyLink = useCallback(
     () => Linking.openURL(urls.privacyPolicy[locale]),
