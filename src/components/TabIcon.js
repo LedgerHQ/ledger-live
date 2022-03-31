@@ -2,8 +2,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components/native";
 import LText from "./LText";
+import styled from "styled-components/native";
 
 const ICON_SIZE = 24;
 
