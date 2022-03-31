@@ -7,6 +7,7 @@ import React, {
   ReactNode,
 } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { Linking } from "react-native";
 
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 
@@ -17,6 +18,7 @@ import Button from "./wrappedUi/Button";
 
 type ActionButtonEventProps = {
   navigationParams?: any[];
+  linkUrl?: string;
   confirmModalProps?: {
     withCancel?: boolean;
     id?: string;
@@ -81,10 +83,14 @@ function FabAccountButtonBar({
 
   const onPress = useCallback(
     (data: ActionButtonEventProps) => {
-      const { navigationParams, confirmModalProps } = data;
+      const { navigationParams, confirmModalProps, linkUrl } = data;
       if (!confirmModalProps) {
         setInfoModalProps();
-        if (navigationParams) onNavigate(...navigationParams);
+        if (linkUrl) {
+          Linking.openURL(linkUrl);
+        } else if (navigationParams) {
+          onNavigate(...navigationParams);
+        }
       } else {
         setInfoModalProps(data);
         setIsModalInfoOpened(true);
@@ -102,8 +108,10 @@ function FabAccountButtonBar({
     setIsModalInfoOpened();
   }, []);
 
-  const onChoiceSelect = useCallback(({ navigationParams }) => {
-    if (navigationParams) {
+  const onChoiceSelect = useCallback(({ navigationParams, linkUrl }) => {
+    if (linkUrl) {
+      Linking.openURL(linkUrl);
+    } else if (navigationParams) {
       onNavigate(...navigationParams);
     }
   }, []);

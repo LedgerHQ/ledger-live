@@ -1639,6 +1639,7 @@
     "receive": "Receive",
     "buy": "Buy",
     "walletconnect": "WalletConnect",
+    "stake": "Stake",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",

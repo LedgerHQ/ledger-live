@@ -32,7 +32,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const walletConnectAvailable = currency.id === "ethereum";
+  const isEthereum = currency.id === "ethereum";
 
   const accountId = account.id;
 
@@ -111,8 +111,15 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
     ...baseActions,
-    ...(walletConnectAvailable
+    ...(isEthereum
       ? [
+          {
+            linkUrl: "ledgerlive://discover/lido",
+            label: <Trans i18nKey="account.stake" />,
+            Icon: Icons.ClaimRewardsMedium,
+            event: "Stake Ethereum Account Button",
+            eventProperties: { currencyName: currency?.name },
+          },
           {
             navigationParams: [
               NavigatorName.Base,
