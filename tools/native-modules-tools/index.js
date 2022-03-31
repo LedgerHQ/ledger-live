@@ -94,13 +94,6 @@ function dependencyTree(modulePath, { root } = {}) {
   // Prevents infinite loops when crawling circular dependencies.
   function isDependencyRequireable(path, tree) {
     if (tree.path === path || tree.dependencies.has(path)) {
-      console.log(
-        "[isDependencyRequireable]",
-        "\nfrom:",
-        tree.path,
-        "\nrequires:",
-        path
-      );
       return true;
     }
 
