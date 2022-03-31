@@ -67,6 +67,7 @@ import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
 import AccountsNavigator from "./AccountsNavigator";
 
+import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccountScreen";
 import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
@@ -434,6 +435,15 @@ export default function BaseNavigator() {
           title: t("analytics.title"),
           headerRight: null,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.MarketCurrencySelect}
+        component={MarketCurrencySelect}
+        options={{
+          title: t("market.filters.currency"),
+          headerLeft: null,
+          unmountOnBlur: true,
         }}
       />
       <Stack.Screen
