@@ -1,5 +1,4 @@
 var whitelist = [
-  1002000, // BTT
   1000226, // TERC
   1000001, // SEED
   1002413, // BTZC

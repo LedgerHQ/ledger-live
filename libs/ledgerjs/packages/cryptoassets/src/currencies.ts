@@ -3021,6 +3021,34 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  ethereum_goerli: {
+    type: "CryptoCurrency",
+    id: "ethereum_goerli",
+    coinType: 1,
+    name: "Ethereum Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "ethereum_goerli",
+    color: "#00ff00",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "ethereum",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      baseChain: "goerli",
+      chainId: 5, // goerli
+      networkId: 5,
+      hardfork: "petersburg",
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.etherscan.io/tx/$hash",
+        address: "https://goerli.etherscan.io/address/$address",
+      },
+    ],
+  },
   stacks: {
     type: "CryptoCurrency",
     id: "stacks",

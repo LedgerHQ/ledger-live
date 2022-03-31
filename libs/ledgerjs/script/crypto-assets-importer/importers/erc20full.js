@@ -29,7 +29,7 @@ module.exports = {
   output: "data/erc20.js",
 
   validate: (everything, countervaluesTickers) =>
-    ["ethereum", "ethereum_ropsten"].flatMap((cid) => {
+    ["ethereum", "ethereum_ropsten", "ethereum_goerli"].flatMap((cid) => {
       const all = everything.filter((a) => a[0] === cid);
       const fiatCollisions = all.filter(
         (a) =>

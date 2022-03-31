@@ -63,7 +63,7 @@ async function fetchTrc10Tokens() {
   );
   const tokens = result.results.map((r) => {
     const ledgerSignature = get(
-      signedList.find((t) => t.id.toString() === r.id),
+      signedList.find((t) => t.id.toString() === r.id.toString()),
       "message",
       undefined
     );
