@@ -81,6 +81,7 @@ const DescriptionText = styled(CenteredText).attrs({
 
 const ConnectDeviceNameText = styled(Tag).attrs({
   my: "8",
+  uppercase: false,
 })``;
 
 const StyledButton = styled(Button).attrs({
