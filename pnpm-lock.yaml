@@ -22367,7 +22367,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.3_supports-color@6.1.0
     dev: false
 
   /fontfaceobserver/2.1.0:
