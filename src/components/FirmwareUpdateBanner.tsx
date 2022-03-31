@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 
-import { StyleSheet, TouchableOpacity } from "react-native";
 import manager from "@ledgerhq/live-common/lib/manager";
-import * as Animatable from "react-native-animatable";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import {
   DeviceModelInfo,
   FirmwareUpdateContext,
@@ -11,18 +9,19 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
-import { BottomDrawer, Notification } from "@ledgerhq/native-ui";
+import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components";
 import {
   DownloadMedium,
   NanoFirmwareUpdateMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import ButtonUseTouchable from "../context/ButtonUseTouchable";
+
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
-import { BaseButton as Button } from "./Button";
+import Button from "./Button";
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -40,7 +39,7 @@ const FirmwareUpdateBanner = () => {
 
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const useTouchable = useContext(ButtonUseTouchable);
+
   const onExperimentalFirmwareUpdate = useCallback(() => {
     navigation.navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
@@ -71,26 +70,31 @@ const FirmwareUpdateBanner = () => {
   const onCloseDrawer = () => {
     setShowDrawer(false);
   };
-  const onDismissBanner = () => {
-    setShowBanner(false);
-  };
 
   return showBanner && hasCompletedOnboarding ? (
     <>
-      <Animatable.View
-        animation="fadeInDownBig"
-        easing="ease-out-expo"
-        useNativeDriver
-        style={styles.banner.root}
+      <Flex
+        mx={6}
+        my={4}
+        backgroundColor={colors.primary.c20}
+        flexDirection="row"
+        alignItems="center"
+        p={6}
+        borderRadius={5}
       >
-        <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-          <Notification
-            title={t("FirmwareUpdate.newVersion", { version })}
-            onClose={onDismissBanner}
-            Icon={NanoFirmwareUpdateMedium}
-          />
-        </TouchableOpacity>
-      </Animatable.View>
+        <Text flexShrink={1}>
+          {t("FirmwareUpdate.newVersion", { version })}
+        </Text>
+        <Button
+          ml={5}
+          Icon={NanoFirmwareUpdateMedium}
+          iconPosition="left"
+          type="color"
+          title={"Update"}
+          onPress={onPress}
+          outline={false}
+        />
+      </Flex>
 
       <BottomDrawer
         isOpen={showDrawer}
@@ -102,35 +106,16 @@ const FirmwareUpdateBanner = () => {
         <Button
           type="primary"
           title={t("common.close")}
-          colors={colors}
-          useTouchable={useTouchable}
-          isFocused={true}
           onPress={onCloseDrawer}
         />
         <Button
           type="alert"
           title={"Or... do it here 😯"}
-          colors={colors}
-          useTouchable={useTouchable}
-          isFocused={true}
           onPress={onExperimentalFirmwareUpdate}
         />
       </BottomDrawer>
     </>
   ) : null;
-};
-
-const styles = {
-  banner: StyleSheet.create({
-    root: {
-      position: "absolute",
-      width: "100%",
-      top: 30,
-      left: 0,
-      zIndex: 100,
-      padding: 16,
-    },
-  }),
 };
 
 export default FirmwareUpdateBanner;

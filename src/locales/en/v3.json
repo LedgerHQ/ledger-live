@@ -2816,7 +2816,7 @@
       "flash": "Flashing your device",
       "firmware": "Firmware updating"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "Firmware to {{version}} is available",
     "drawerUpdate": {
       "title": "Firmware Update",
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"

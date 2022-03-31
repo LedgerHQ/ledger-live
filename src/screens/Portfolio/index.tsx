@@ -271,8 +271,7 @@ function PortfolioScreen({ navigation }: Props) {
   );
 
   return (
-    <>
-      <FirmwareUpdateBanner />
+    <> 
       <ContentContainer>
         <RequireTerms />
 
@@ -290,6 +289,7 @@ function PortfolioScreen({ navigation }: Props) {
             hidePortfolio={areAccountsEmpty}
           />
         </Box>
+        <FirmwareUpdateBanner />
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{ flex: 1, position: "relative" }}
