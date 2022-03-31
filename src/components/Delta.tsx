@@ -1,22 +1,29 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Unit } from "@ledgerhq/live-common/lib/types";
-import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import {
+  PortfolioRange,
+  ValueChange,
+} from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { Text } from "@ledgerhq/native-ui";
 import {
   ArrowUpMedium,
   ArrowDownMedium,
 } from "@ledgerhq/native-ui/assets/icons";
+import { useTranslation } from "react-i18next";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
   valueChange: ValueChange;
   percent?: boolean;
   unit?: Unit;
+  range?: PortfolioRange;
   style?: any;
 };
 
-function Delta({ valueChange, percent, unit, style }: Props) {
+function Delta({ valueChange, percent, unit, range, style }: Props) {
+  const { t } = useTranslation();
+
   if (percent && (!valueChange.percentage || valueChange.percentage === 0)) {
     return null;
   }
@@ -54,6 +61,7 @@ function Delta({ valueChange, percent, unit, style }: Props) {
           ) : percent ? (
             `${absDelta.toFixed(0)}%`
           ) : null}
+          {range && ` (${t(`time.${range}`)})`}
         </Text>
       </View>
     </View>
