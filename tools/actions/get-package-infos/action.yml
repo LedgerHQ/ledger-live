@@ -16,6 +16,11 @@ outputs:
     description: clean version found in package.json so it looks like X.Y.Z
   version:
     description: version found in package.json
+  prerelease:
+    description: boolean if version is prerelease
+  channel:
+    description: null if not prerelease, otherwise channel name (v1.2.3-nightly.0 => nightly)
+
 runs:
   using: node12
   main: build/index.js
