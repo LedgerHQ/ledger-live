@@ -219,7 +219,7 @@ const build = async argv => {
     let current = null;
     while ((current = stack.shift())) {
       const [path, dependencies] = current;
-      dependencies.forEach(dependency => {
+      Array.from(dependencies.values()).forEach(dependency => {
         const copyResult = copyNodeModule(dependency.path, {
           destination: path,
         });
