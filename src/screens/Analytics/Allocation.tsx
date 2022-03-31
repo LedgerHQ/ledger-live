@@ -12,6 +12,7 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 const Container = styled(Flex).attrs({
   paddingHorizontal: 16,
   paddingVertical: 20,
+  flex: 1,
 })``;
 
 const AssetWrapperContainer = styled(Flex).attrs({
