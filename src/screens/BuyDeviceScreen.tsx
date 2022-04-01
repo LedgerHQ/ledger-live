@@ -16,6 +16,7 @@ import Button from "../components/wrappedUi/Button";
 import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
+import useIsAppInBackground from "../components/useIsAppInBackground";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -71,6 +72,8 @@ export default function BuyDeviceScreen() {
     Linking.openURL(urls.buyNanoX);
   }, []);
 
+  const videoMounted = !useIsAppInBackground();
+
   return (
     <StyledSafeAreaView>
       <Flex
@@ -85,22 +88,25 @@ export default function BuyDeviceScreen() {
         <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
       </Flex>
       <Flex height={250} width="100%" position="relative" overflow="hidden">
-        <Video
-          source={theme === "light" ? sourceLight : sourceDark}
-          style={{
-            height: "100%",
-            width: "100%",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            backgroundColor: colors.background.main,
-            transform: [{ scale: 1.5 }],
-          }}
-          muted
-          resizeMode={"cover"}
-        />
+        {videoMounted && (
+          <Video
+            disableFocus
+            source={theme === "light" ? sourceLight : sourceDark}
+            style={{
+              height: "100%",
+              width: "100%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              backgroundColor: colors.background.main,
+              transform: [{ scale: 1.5 }],
+            }}
+            muted
+            resizeMode={"cover"}
+          />
+        )}
       </Flex>
       <Flex flex={1} p={6} pt={0}>
         <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">

@@ -15,6 +15,7 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
+import useIsAppInBackground from "../../../components/useIsAppInBackground";
 
 const source = require("../../../../assets/videos/onboarding.mp4");
 
@@ -65,16 +66,21 @@ function OnboardingStepWelcome({ navigation }: any) {
     navigation.navigate({ name: ScreenName.OnboardingPostWelcomeSelection });
   }, [setAccepted, dispatch, navigation]);
 
+  const videoMounted = !useIsAppInBackground();
+
   return (
     <Flex flex={1} position="relative" bg="constant.black">
       <StyledStatusBar barStyle="light-content" />
-      <Video
-        source={source}
-        style={absoluteStyle}
-        muted
-        repeat
-        resizeMode={"cover"}
-      />
+      {videoMounted && (
+        <Video
+          disableFocus
+          source={source}
+          style={absoluteStyle}
+          muted
+          repeat
+          resizeMode={"cover"}
+        />
+      )}
       <Svg
         style={absoluteStyle}
         width="100%"
