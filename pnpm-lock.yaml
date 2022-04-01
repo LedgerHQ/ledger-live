@@ -18,14 +18,14 @@ importers:
       create-release-hash: workspace:*
       migrate-branch: workspace:*
       pnpm-utils: workspace:*
-      turbo: ^1.1.9
+      turbo: ^1.2.0-canary.5
       x-run: workspace:*
     devDependencies:
       '@changesets/cli': 2.21.1
       create-release-hash: link:tools/create-release-hash
       migrate-branch: link:tools/migrate-branch
       pnpm-utils: link:tools/pnpm-utils
-      turbo: 1.1.9
+      turbo: 1.2.0-canary.5
       x-run: link:tools/x-run
 
   apps/ledger-live-desktop:
@@ -37104,119 +37104,119 @@ packages:
     resolution: {integrity: sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg==}
     engines: {node: '>=0.6.11 <=0.7.0 || >=0.7.3'}
 
-  /turbo-darwin-64/1.1.9:
-    resolution: {integrity: sha512-DAeQkBXvIVMwdlT/OvJYKNbhijUJQr4ug/sLJpNMEMPVW2Fs1aVZpr+ea4W+Xo90nOk+Ac0oCbv4nx3v8UZ1iQ==}
+  /turbo-darwin-64/1.2.0-canary.5:
+    resolution: {integrity: sha512-OJmJjF39fEUvkeno8LCUw5dH+LYzI+FaunEMcQrJ6bQl2ldn+CCjgJN064Fg/6fycGDURomyW39oPp8o3iqbUw==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.1.9:
-    resolution: {integrity: sha512-15WTOOngcUALX1Pso6tG/vot8ksi1l5/Sljv4sXjfpFup9Xkc2m6AE6QlKllextL10SD4x52K2z01ClV7YIKEQ==}
+  /turbo-darwin-arm64/1.2.0-canary.5:
+    resolution: {integrity: sha512-LQlTiuk1+NVgeQ3KnQ0dAB9lsWlWnVslB7IipTgRMw6uBlZiAA1GVgUGr1QPr8KBYKFbDo/aQMl7ufBPPf+01A==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.1.9:
-    resolution: {integrity: sha512-DqDt4o79guYef7MlYQChHMOMxJNbvE+SVuBP0+CxG4WreSUnsT+D4+/+KBs9e/o2p1xHRoDOtuKbDai8tWgKaQ==}
+  /turbo-freebsd-64/1.2.0-canary.5:
+    resolution: {integrity: sha512-rW1VghenPc0IiQkCvo6Nzpv8IBBDyuf7a+6FLXj8KK+m3CxrTN5Ae+C0jmf78c8V3cklCzxSIOe2tXQ8vgTJmQ==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.1.9:
-    resolution: {integrity: sha512-tiudLNRsOmmWD9guqWEoW63x3F0YKtkQis0DRrFqJBVcnMDfKYtMWIr6kP7DhK9PxKwnJY4Y1WIawXPIWl66EQ==}
+  /turbo-freebsd-arm64/1.2.0-canary.5:
+    resolution: {integrity: sha512-ZfqVHbHvmztfDAYonZyXup+dUxAKzF3ixwjTM3SA8GvKzVUzPf96+SwxlkGJi8BUwFvvzezccycKb7vv2y4/FA==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.1.9:
-    resolution: {integrity: sha512-u0VI41gqxRqGR41+nVmWvNZ6d2AS/KYfrfDeFbw8mRVsuAR2OP6emsbt7cUN++0ZzH9qsRgGcBR/k2Ge/EEx5g==}
+  /turbo-linux-32/1.2.0-canary.5:
+    resolution: {integrity: sha512-K7TgPfTwDl/hhiQZBhce/iTYYUhbF6qqHCWoTT6xvsvgr3/332D6gN/Lqfq5NUZRvWpz6bULX83Tli/E5hDC7A==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.1.9:
-    resolution: {integrity: sha512-BU3ulyNivyrDwGVA2NnMcqUH9o4njk59DgantoF7rRSWNeyt5abneOG7CVAdaAy03JIc1gzErjVV+QSQ25H9ug==}
+  /turbo-linux-64/1.2.0-canary.5:
+    resolution: {integrity: sha512-zw2q5ZzFqs8zc8vXBqD1z59V+Ac6YHLIz1d1V9tmBkviKrGm/NPfoD8oS1bU5hWXdEeSPg7P/x3g2jLO8oacuw==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.1.9:
-    resolution: {integrity: sha512-sAI2BqkipyvH6fQhhnOGhY9C9z9AMUdTizOm0Luj6gmEMZhUmjfk5K8BsX3uKzY6cWx5+twaTPXFd1EGV/o7Pg==}
+  /turbo-linux-arm/1.2.0-canary.5:
+    resolution: {integrity: sha512-v+AI2U51iofZrsniiRfj4AMarH02KEht7vrhherx6Nknmgu7odtSsz9OrSAhyJl0c/Ml7klTm8J61SIaFjcrCQ==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.1.9:
-    resolution: {integrity: sha512-bVD+8n8qDDlZxG6Z8rn58m50BjczIV4zCgjDQDIN2E6H9FjWuLOpKXk3mdTgM31w1Om8HYZgkbvla/jQSwWHrQ==}
+  /turbo-linux-arm64/1.2.0-canary.5:
+    resolution: {integrity: sha512-e9Bpq19EStcxJu0Jd9Fsrf5AvaqoI9gEPewGVpxONFnQrbLh6EHjYHyFng60cv5iTskq+fToMxHA3snQQo3tvg==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.1.9:
-    resolution: {integrity: sha512-/34pGwWKRes3FYAUpZn+s8rKIbi76ZHuGxvXWx7clIfmLwNw1dN04c7cXU/t2PwDv4CzsGkqPgVNMGitnLxeUQ==}
+  /turbo-linux-mips64le/1.2.0-canary.5:
+    resolution: {integrity: sha512-Tft8sbVMmlDcrml/0mfJKp2LwfbtU1whqE7kwkIptCNGnoTIFj+3An9KnPoB6mRP0CeTAMsbFh3xr+UPlpnZcw==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.1.9:
-    resolution: {integrity: sha512-5yR59wLf+HTV2Zb7ycPHXloTgYql22F4lhL6H7cWBVmbDFzrWR3N1d/sPaNLHtaDEE4l6UtTOFd/WQCfPDq/Hw==}
+  /turbo-linux-ppc64le/1.2.0-canary.5:
+    resolution: {integrity: sha512-IIsyZNarksBmjSDx+iV2eTgM5WwOuINxSn+VkvVL9N+U0tvQPwn6Q76H7mU16f+m4oMN9jaAEI7uGHN+tIiwEA==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.1.9:
-    resolution: {integrity: sha512-dVwjFWg/SsW+pVk1iOnfovXSzsMsIgiEQvkAEnN3+XNEkjtYhLQ73bntZhP/mO4IKpDEkPoBcOlV/092uwadOg==}
+  /turbo-windows-32/1.2.0-canary.5:
+    resolution: {integrity: sha512-lkZTED8ARoBPM+dbE/QCml4EH2mk03DTkq8gO9FM0BLYOq0dSXZl9NH9JAc+H+4gC15wVVpYwT7fDMe9yHUdOA==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.1.9:
-    resolution: {integrity: sha512-fzjO2D9lzhrBNjnuqaFTBpRU9DjYMhhgFgvD3ynwNWiBgm4wcer58DpRMDEzjq51Q+0HwFIrsKzEMyVK4Ubu/Q==}
+  /turbo-windows-64/1.2.0-canary.5:
+    resolution: {integrity: sha512-DX7ltRDyz5eQqYsFaotxg1HI/fvZExxsILt2+/aqdRk3g775gGpKJjghzot5QxLu56SCp6DElmvDOswjfgfHWg==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.1.9:
-    resolution: {integrity: sha512-xFtKZ9EFEkENhRxn89RQWmgMKCnUvKWPwiOXz60ztp4HEKXAdOBgEmgCOhyn5osfgQYOiaOI6gBIjSf/UMorQQ==}
+  /turbo/1.2.0-canary.5:
+    resolution: {integrity: sha512-mTqzorXP6ELhjcEdb6TWZahgEP2d70rQclI21uNPqzP0RekogywUiDQkfBdF5DqEJcqaRJ4HzwkCYaqu1tUDig==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.1.9
-      turbo-darwin-arm64: 1.1.9
-      turbo-freebsd-64: 1.1.9
-      turbo-freebsd-arm64: 1.1.9
-      turbo-linux-32: 1.1.9
-      turbo-linux-64: 1.1.9
-      turbo-linux-arm: 1.1.9
-      turbo-linux-arm64: 1.1.9
-      turbo-linux-mips64le: 1.1.9
-      turbo-linux-ppc64le: 1.1.9
-      turbo-windows-32: 1.1.9
-      turbo-windows-64: 1.1.9
+      turbo-darwin-64: 1.2.0-canary.5
+      turbo-darwin-arm64: 1.2.0-canary.5
+      turbo-freebsd-64: 1.2.0-canary.5
+      turbo-freebsd-arm64: 1.2.0-canary.5
+      turbo-linux-32: 1.2.0-canary.5
+      turbo-linux-64: 1.2.0-canary.5
+      turbo-linux-arm: 1.2.0-canary.5
+      turbo-linux-arm64: 1.2.0-canary.5
+      turbo-linux-mips64le: 1.2.0-canary.5
+      turbo-linux-ppc64le: 1.2.0-canary.5
+      turbo-windows-32: 1.2.0-canary.5
+      turbo-windows-64: 1.2.0-canary.5
     dev: true
 
   /turndown/7.0.0:
