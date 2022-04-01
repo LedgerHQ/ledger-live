@@ -20,7 +20,7 @@ jobs:
   stop-runner:
     name: stop self-hosted EC2 runner
     runs-on: [ledger-live, linux]
-    if: ${{ always() }}
+    timeout-minutes: 5
     steps:
       - name: Stop EC2 runner
         uses: machulav/ec2-github-runner@v2
