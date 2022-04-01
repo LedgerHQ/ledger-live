@@ -108,11 +108,13 @@ export function BaseStepperView({
   steps,
   metadata,
   deviceModelId,
+  params,
 }: {
   onNext: () => void;
   steps: any[];
   metadata: Metadata[];
   deviceModelId: DeviceNames;
+  params: any;
 }) {
   const [index, setIndex] = React.useState(0);
   const navigation = useNavigation();
@@ -151,7 +153,11 @@ export function BaseStepperView({
               >
                 {metadata[i]?.illustration}
               </Flex>
-              <Children onNext={nextPage} deviceModelId={deviceModelId} />
+              <Children
+                onNext={nextPage}
+                deviceModelId={deviceModelId}
+                {...params}
+              />
             </ScrollListContainer>
             {Children.Next ? (
               <Flex p={6}>
