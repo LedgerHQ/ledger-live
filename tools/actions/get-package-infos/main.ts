@@ -9,7 +9,7 @@ const main = async (): Promise<void> => {
   const pkg = JSON.parse(json);
 
   const { version } = semver.coerce(pkg.version);
-  const [channel] = semver.prerelease(pkg.version);
+  const prerelease = semver.prerelease(pkg.version);
 
   core.setOutput("version", pkg.version);
   core.info(`version ${pkg.version}`);
@@ -17,11 +17,11 @@ const main = async (): Promise<void> => {
   core.info(`clean ${version}`);
   core.setOutput("name", pkg.name);
   core.info(`name ${pkg.name}`);
-  if (channel) {
+  if (prerelease) {
     core.setOutput(`prerelease`, true);
     core.info(`prerelease detected`);
-    core.setOutput(`channel`, channel);
-    core.info(`prerelease type ${channel}`);
+    core.setOutput(`channel`, prerelease[0]);
+    core.info(`prerelease type ${prerelease[0]}`);
   } else {
     core.setOutput(`prerelease`, false);
     core.info(`no prerelease detected`);
