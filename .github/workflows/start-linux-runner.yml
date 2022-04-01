@@ -35,7 +35,7 @@ jobs:
           echo "::set-output name=ami-id::$(aws ec2 describe-images  --filters 'Name=name,Values=ledger-live-runner' --query 'Images[*].ImageId' --output text)"
       - name: start EC2 runner
         id: start-ec2-runner
-        uses: skyzh/ec2-github-runner@ba2298a67875dfdd29a88fafbc1ba27f4f94af39
+        uses: machulav/ec2-github-runner@v2
         with:
           mode: start
           github-token: ${{ secrets.CI_BOT_TOKEN }}
