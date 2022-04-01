@@ -148,10 +148,10 @@ const buildMainConfig = (mode, config, argv, mappedNativeModules) => {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
     devtool: mode === "development" ? "eval-source-map" : undefined,
-    // In dev mode, treat everything as an external module so we can rely on the node_modules folder.
-    // In prod. mode rely on the detected native modules to exclude them from the bundle.
+    // In 'normal' mode, treat everything as an external module so we can rely on the node_modules folder.
+    // In 'externalize native modules' mode rely on the detected native modules to exclude them from the bundle.
     externals:
-      mode !== "production"
+      mode !== "production" || process.env.DO_NOT_EXTERNALIZE_NATIVE_MODULES
         ? [nodeExternals()]
         : mappedNativeModules
         ? buildWebpackExternals(mappedNativeModules)
@@ -200,40 +200,43 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  // First, we crawl the production dependencies and find every node.js native modules.
-  const nativeModulesPaths = findNativeModules(lldRoot);
-  console.log("Found the following native modules:", nativeModulesPaths);
+  let mappedNativeModules;
+  if (!process.env.DO_NOT_EXTERNALIZE_NATIVE_MODULES) {
+    // First, we crawl the production dependencies and find every node.js native modules.
+    const nativeModulesPaths = findNativeModules(lldRoot);
+    console.log("Found the following native modules:", nativeModulesPaths);
 
-  // Then for each one of these native modules…
-  const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
-    // We copy the module to a special directory that will be copied by electron-bundler in place of the node_modules.
-    const copyResults = copyNodeModule(module, {
-      destination: "dist",
-      appendVersion: true,
-    });
-    const { target } = copyResults;
-    // Based on the target directory (dist/node_modules/name@version) we crawl the dependencies.
-    const tree = dependencyTree(module);
-    // And we populate nested node_modules manually (npm-like).
-    const stack = [[target, tree.dependencies]];
-    let current = null;
-    while ((current = stack.shift())) {
-      const [path, dependencies] = current;
-      Array.from(dependencies.values()).forEach(dependency => {
-        const copyResult = copyNodeModule(dependency.path, {
-          destination: path,
-        });
-        stack.push([copyResult.target, dependency.dependencies]);
+    // Then for each one of these native modules…
+    mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
+      // We copy the module to a special directory that will be copied by electron-bundler in place of the node_modules.
+      const copyResults = copyNodeModule(module, {
+        destination: "dist",
+        appendVersion: true,
       });
-    }
-    acc[copyResults.source] = copyResults;
+      const { target } = copyResults;
+      // Based on the target directory (dist/node_modules/name@version) we crawl the dependencies.
+      const tree = dependencyTree(module);
+      // And we populate nested node_modules manually (npm-like).
+      const stack = [[target, tree.dependencies]];
+      let current = null;
+      while ((current = stack.shift())) {
+        const [path, dependencies] = current;
+        Array.from(dependencies.values()).forEach(dependency => {
+          const copyResult = copyNodeModule(dependency.path, {
+            destination: path,
+          });
+          stack.push([copyResult.target, dependency.dependencies]);
+        });
+      }
+      acc[copyResults.source] = copyResults;
 
-    // And finally we return an object containing useful data for the module.
-    // (its source/destination directories, name and version)
-    // This will be used to tell webpack to treat them as externals and to require from the correct path.
-    // (something like 'dist/node_modules/name@version')
-    return acc;
-  }, {});
+      // And finally we return an object containing useful data for the module.
+      // (its source/destination directories, name and version)
+      // This will be used to tell webpack to treat them as externals and to require from the correct path.
+      // (something like 'dist/node_modules/name@version')
+      return acc;
+    }, {});
+  }
 
   const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
   const preloaderConfig = buildMainConfig(
