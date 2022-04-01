@@ -64,6 +64,7 @@
     }
   },
   "dependencies": {
+    "@azure/core-asynciterator-polyfill": "^1.0.2",
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",
     "@formatjs/intl-datetimeformat": "^5.0.0",
     "@formatjs/intl-getcanonicallocales": "^1.9.1",

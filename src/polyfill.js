@@ -34,6 +34,9 @@ import "@formatjs/intl-datetimeformat/locale-data/ja";
 import "@formatjs/intl-datetimeformat/locale-data/ko";
 import "@formatjs/intl-datetimeformat/add-all-tz";
 
+// Fix error when adding Solana account
+import "@azure/core-asynciterator-polyfill";
+
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
