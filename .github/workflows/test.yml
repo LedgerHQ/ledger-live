@@ -63,7 +63,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           NODE_ENV: production
           TESTING: 1
-        run: pnpm test -- --continue --concurrency=1 --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
+        run: pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v2
