@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, memo } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -83,7 +83,7 @@ function Accounts({ navigation, route }: Props) {
   }, [params, accounts, navigation]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Account; index: number }) => (
+    ({ item, index }: { item: Account | TokenAccount; index: number }) => (
       <AccountRow
         navigation={navigation}
         account={item}
@@ -93,6 +93,8 @@ function Accounts({ navigation, route }: Props) {
         portfolioValue={
           portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
         }
+        topLink={item.type === "TokenAccount"}
+        bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
     [navigation, accounts.length, portfolio.balanceHistory],

@@ -37,6 +37,8 @@ type Props = {
   portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
+  topLink?: boolean;
+  bottomLink?: boolean;
 };
 
 const AccountRow = ({
@@ -46,10 +48,12 @@ const AccountRow = ({
   portfolioValue,
   navigationParams,
   hideDelta,
+  topLink,
+  bottomLink
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
 
   const currency = getAccountCurrency(account);
   const name = getAccountName(account);
@@ -119,7 +123,16 @@ const AccountRow = ({
 
   return (
     <TouchableOpacity onPress={onAccountPress}>
-      <Flex flexDirection="row" py={5}>
+      {topLink && (
+        <Flex
+          width="1px"
+          height={space[4]}
+          marginLeft="21px"
+          backgroundColor={colors.neutral.c40}
+          mb={2}
+        />
+      )}
+      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
         <Flex mr={6}>
           <ProgressLoader
             strokeWidth={2}
@@ -189,6 +202,15 @@ const AccountRow = ({
           </Flex>
         </Flex>
       </Flex>
+      {bottomLink && (
+        <Flex
+          width="1px"
+          height={space[4]}
+          marginLeft="21px"
+          backgroundColor={colors.neutral.c40}
+          mt={2}
+        />
+      )}
     </TouchableOpacity>
   );
 };
