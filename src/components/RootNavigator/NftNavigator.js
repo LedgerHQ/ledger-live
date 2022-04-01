@@ -29,10 +29,10 @@ const NftNavigator = () => {
       <Stack.Screen
         name={ScreenName.NftImageViewer}
         component={NftImageViewer}
-        options={({ navigation }) => ({
+        options={() => ({
           title: null,
           headerRight: null,
-          headerLeft: () => <CloseButton navigation={navigation} />,
+          headerLeft: null,
         })}
       />
     </Stack.Navigator>
