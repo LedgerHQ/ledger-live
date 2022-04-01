@@ -22,7 +22,7 @@ export const MANAGER_TABS = {
   INSTALLED_APPS: "INSTALLED_APPS",
 };
 
-export type ManagerTab = $Keys<typeof MANAGER_TABS>;
+export type ManagerTab = keyof typeof MANAGER_TABS;
 
 type Props = {
   navigation: any,
@@ -49,7 +49,7 @@ const Manager = ({
       searchQuery,
       firmwareUpdate,
       updateModalOpened,
-      tab = MANAGER_TABS.CATALOG,
+      tab = "CATALOG",
     },
   },
 }: Props) => {
@@ -62,10 +62,10 @@ const Manager = ({
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
 
-  const [quitManagerAction, setQuitManagerAction] = useState(false);
+  const [quitManagerAction, setQuitManagerAction] = useState<((...args: any[]) => void) | null>(null);
 
   /** general error state */
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
   const [storageWarning, setStorageWarning] = useState(null);
   /** install app with dependencies modal state */
@@ -93,7 +93,7 @@ const Manager = ({
     const dmi = {
       modelId: device.modelId,
       deviceInfo,
-      appsInstalled: state.installed.map(({ name, version }) => ({
+      apps: state.installed.map(({ name, version }) => ({
         name,
         version,
       })),
@@ -179,7 +179,7 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
-       {firmwareUpdate && <FirmwareUpdateScreen device={device} />}
+       {firmwareUpdate && <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} />}
     </>
   );
 };

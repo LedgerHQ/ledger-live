@@ -65,6 +65,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",
+    "@cassiozen/usestatemachine": "^1.0.1",
     "@formatjs/intl-datetimeformat": "^5.0.0",
     "@formatjs/intl-getcanonicallocales": "^1.9.1",
     "@formatjs/intl-locale": "^2.4.46",

@@ -24,7 +24,7 @@ export const setModalLock = (modalLock: boolean) => (dispatch: *) =>
 
 export const addBackgroundEvent = (event: *) => (dispatch: *) =>
   dispatch({
-    type: "ADD_BACKGROUND_EVENT",
+    type: "QUEUE_BACKGROUND_EVENT",
     event,
   });
 

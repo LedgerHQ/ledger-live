@@ -7,11 +7,28 @@ export type AsyncState = {
   isConnected: boolean | null,
 };
 
+export type BackgroundEvent = {
+  type: "error",
+  error: any
+} | {
+  type: "completed" | "installing"
+} | {
+  type: "deviceInfo",
+  deviceInfo: any
+} | {
+  type: "latestFirmware",
+  latestFirmware: any
+} | {
+  type: "progress",
+  progress?: number,
+  displayedOnDevice?: any
+}
+
 export type AppState = {
   isConnected: boolean | null,
   hasConnectedDevice: boolean,
   modalLock: boolean,
-  backgroundEvents: Array<any>, // TODO type this properly
+  backgroundEvents: Array<BackgroundEvent>,
 };
 
 const initialState: AppState = {
@@ -37,10 +54,17 @@ const handlers: Object = {
     ...state,
     modalLock,
   }),
-  ADD_BACKGROUND_EVENT: (state: AppState, { event }: any) => ({
+  QUEUE_BACKGROUND_EVENT: (state: AppState, { event }: any) => ({
     ...state,
-    backgroundEvents: [event, ...state.backgroundEvents].slice(0, 10), // Don't think we need more, probably only one to be honest
+    backgroundEvents: [...state.backgroundEvents, event],
   }),
+  DEQUEUE_BACKGROUND_EVENT: (state: AppState) => {
+    const [_, ...tail] = state.backgroundEvents;
+    return ({
+      ...state,
+      backgroundEvents: tail,
+    });
+  },
   CLEAR_BACKGROUND_EVENTS: (state: AppState) => ({
     ...state,
     backgroundEvents: [],
@@ -54,8 +78,11 @@ export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) =>
   state.appstate.hasConnectedDevice;
 
-export const backgroundEventsSelector = (state: State) =>
+  export const backgroundEventsSelector = (state: State) =>
   state.appstate.backgroundEvents;
+
+  export const nextBackgroundEventSelector = (state: State) =>
+  state.appstate.backgroundEvents[0];
 
 const globalNetworkDown = new NetworkDown();
 

@@ -21,6 +21,7 @@ import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
+import useLatestFirmware from "../hooks/useLatestFirmware";
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -33,8 +34,6 @@ const FirmwareUpdateBanner = () => {
 
   const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
-  const [showBanner, setShowBanner] = useState<boolean>(false);
-  const [version, setVersion] = useState<string>("");
 
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -47,21 +46,10 @@ const FirmwareUpdateBanner = () => {
     setShowDrawer(false);
   }, [navigation]);
 
-  useEffect(() => {
-    async function getLatestFirmwareForDevice() {
-      const fw:
-        | FirmwareUpdateContext
-        | null
-        | undefined = await manager.getLatestFirmwareForDevice(
-        lastSeenDevice?.deviceInfo,
-      );
 
-      setShowBanner(Boolean(fw));
-      setVersion(fw?.final?.name ?? "");
-    }
-
-    getLatestFirmwareForDevice();
-  }, [lastSeenDevice, setShowBanner, setVersion]);
+  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
+  const showBanner = Boolean(latestFirmware);
+  const version = latestFirmware?.final?.name ?? "";
 
   const onPress = () => {
     setShowDrawer(true);
