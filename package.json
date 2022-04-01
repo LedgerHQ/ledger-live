@@ -21,7 +21,7 @@
     "build:desktop": "pnpm run:turbo -- run build-ci --scope=ledger-live-desktop --include-dependencies --no-deps",
     "build:mobile": "pnpm run:turbo -- run build-ci --scope=live-mobile --include-dependencies --no-deps",
     "build:mobile:deps": "pnpm run:turbo -- run build --scope=live-mobile --include-dependencies --no-deps",
-    "test": "pnpm run:turbo -- run build test --include-dependencies --no-deps --ignore=tools/actions/* --ignore=tools\\actions\\*",
+    "test": "pnpm run:turbo -- run test --include-dependencies --no-deps --ignore=tools/actions/* --ignore=tools\\actions\\*",
     "lld:dev": "pnpm run:turbo -- run start --scope=ledger-live-desktop --include-dependencies --no-deps",
     "llm:dev": "pnpm run:turbo -- run start --scope=live-mobile --include-dependencies --no-deps",
     "desktop": "pnpm --filter ledger-live-desktop",
@@ -39,7 +39,7 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.1.9",
+    "turbo": "^1.2.0-canary.5",
     "x-run": "workspace:*"
   },
   "pnpm": {
