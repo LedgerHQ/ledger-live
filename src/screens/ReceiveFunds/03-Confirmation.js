@@ -160,11 +160,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     const device = route.params.device;
 
     if (device && !verified) {
-      setAllowNavigation(false);
       verifyOnDevice(device);
-    } else {
-      setAllowNavigation(true);
     }
+    setAllowNavigation(true);
   }, [route.params, verified, verifyOnDevice]);
 
   if (!account) return null;
