@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Button, Text, Icons, IconBox } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { ScrollView } from "react-native";
 
 type WarningRouteProps = RouteProp<
   { params: { onNext?: () => void } },
@@ -20,7 +21,7 @@ const OnboardingPreQuizModal = () => {
 
   return (
     <Flex flex={1} justifyContent="space-between" bg="constant.purple">
-      <Flex alignItems="center">
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
         <IconBox
           Icon={Icons.TrophyMedium}
           color="constant.black"
@@ -39,7 +40,7 @@ const OnboardingPreQuizModal = () => {
         <Text variant="body" color="constant.black" mt={6} textAlign="center">
           {t("onboarding.stepSetupDevice.hideRecoveryPhrase.warning.desc")}
         </Text>
-      </Flex>
+      </ScrollView>
       <Button type="main" size="large" onPress={handlePress}>
         {t("onboarding.stepSetupDevice.hideRecoveryPhrase.warning.cta")}
       </Button>
