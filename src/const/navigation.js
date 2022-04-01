@@ -39,6 +39,7 @@ export const ScreenName = {
   DebugLogs: "DebugLogs",
   DebugLottie: "DebugLottie",
   DebugMocks: "DebugMocks",
+  DebugMockGenerateAccounts: "DebugMockGenerateAccounts",
   DebugPlayground: "DebugPlayground",
   DebugSettings: "DebugSettings",
   DebugStore: "DebugStore",
