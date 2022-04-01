@@ -39,6 +39,8 @@ jobs:
     name: Android
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - name: prepare runner
         run: |
