@@ -103,6 +103,7 @@ export default function SelectAccount({ navigation, route }: Props) {
               setAccount && setAccount(account);
               navigation.navigate(ScreenName.SwapForm, {
                 ...route.params,
+                transaction: undefined, // reset transaction after switching source account
                 swap: {
                   ...route.params.swap,
                   from: {
