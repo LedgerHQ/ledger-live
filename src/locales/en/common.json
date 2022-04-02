@@ -2005,7 +2005,7 @@
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address was not confirmed on your Ledger device. Please verify your {{accountType}} address to stay secure.",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your device exactly matches the one displayed on your phone.",
+      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
       "verified": "Address confirmed. Check again if you copied or scanned it.",
       "verifyAgain": "Check again",
       "noAccount": "No account found",
