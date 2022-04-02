@@ -43,7 +43,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
   return (
     <Button type="main" size="large" onPress={onNext}>
-      {t("onboarding.stepSetupDevice.pinCode.cta")}
+      {t("onboarding.stepSetupDevice.pinCodeSetup.cta")}
     </Button>
   );
 };
