@@ -15,6 +15,7 @@ import BaseStepperView, {
 } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
+import SeedWarning from "../shared/SeedWarning";
 
 // @TODO Replace
 const images = {
@@ -61,7 +62,7 @@ function OnboardingStepRecoveryPhrase() {
     RouteProp<{ params: { deviceModelId: DeviceNames } }, "params">
   >();
 
-  const { deviceModelId } = route.params;
+  const { deviceModelId, showSeedWarning } = route.params;
 
   const metadata: Array<Metadata> = useMemo(
     () => [
@@ -182,6 +183,7 @@ function OnboardingStepRecoveryPhrase() {
         metadata={metadata}
         deviceModelId={deviceModelId}
       />
+      {showSeedWarning ? <SeedWarning deviceModelId={deviceModelId} /> : null}
     </>
   );
 }

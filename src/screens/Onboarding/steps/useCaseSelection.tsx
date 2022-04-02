@@ -213,6 +213,7 @@ const OnboardingStepUseCaseSelection = () => {
                       title: "onboarding.stepUseCase.restoreDevice.label",
                       subTitle: "onboarding.stepUseCase.restoreDevice.subTitle",
                       event: "Onboarding - Restore",
+                      showRecoveryWarning: true,
                     },
                     {
                       route: ScreenName.OnboardingImportAccounts,

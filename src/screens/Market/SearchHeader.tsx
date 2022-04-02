@@ -1,5 +1,6 @@
 import { SearchInput } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { track } from "../../analytics";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 
 function SearchHeader({ search, refresh }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
+  const { t } = useTranslation();
 
   const onSubmit = useCallback(() => {
     if (inputSearch !== search) {
@@ -29,6 +31,7 @@ function SearchHeader({ search, refresh }: Props) {
       onChange={setInputSearch}
       onSubmitEditing={onSubmit}
       onEndEditing={onSubmit}
+      placeholder={t("common.search")}
     />
   );
 }
