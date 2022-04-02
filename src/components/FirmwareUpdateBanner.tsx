@@ -88,6 +88,7 @@ const FirmwareUpdateBanner = () => {
         Icon={DownloadMedium}
         title={t("FirmwareUpdate.drawerUpdate.title")}
         description={t("FirmwareUpdate.drawerUpdate.description")}
+        noCloseButton
       >
         <Button
           type="primary"
