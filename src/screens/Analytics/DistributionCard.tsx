@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   CryptoCurrency,
   TokenCurrency,
@@ -13,6 +13,9 @@ import CounterValue from "../../components/CounterValue";
 import { ensureContrast } from "../../colors";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "../../const";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;
@@ -25,12 +28,12 @@ type Props = {
   item: DistributionItem;
 };
 
-const Container = styled(Flex).attrs({
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: 32,
-  width: "100%",
-})``;
+const Container = styled(TouchableOpacity)`
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  width: 100%;
+`;
 
 const IconContainer = styled(Flex).attrs({
   marginRight: 6,
@@ -62,18 +65,30 @@ const DistributionRow = styled(Flex).attrs({
   alignItems: "center",
 })``;
 
-function DistributionCard({
-  item: { currency, amount, distribution },
-}: Props) {
+function DistributionCard({ item: { currency, amount, distribution } }: Props) {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.background.main),
     [colors, currency],
   );
   const percentage = Math.round(distribution * 1e4) / 1e2;
 
+  const navigateToAccounts = useCallback(() => {
+    // @ts-expect-error navigation type issue
+    navigation.navigate(NavigatorName.Portfolio, {
+      screen: NavigatorName.PortfolioAccounts,
+      params: {
+        screen: ScreenName.Accounts,
+        params: {
+          search: currency.name,
+        },
+      },
+    });
+  }, [currency.name, navigation]);
+
   return (
-    <Container>
+    <Container onPress={navigateToAccounts}>
       <Flex flexDirection="row">
         <IconContainer>
           <Flex
