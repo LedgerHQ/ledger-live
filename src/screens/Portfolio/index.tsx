@@ -7,7 +7,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
@@ -79,6 +79,7 @@ const SectionTitle = ({
   seeMoreText?: React.ReactElement;
   containerProps?: FlexBoxProps;
 }) => {
+  const { t } = useTranslation();
   const onLinkPress = useCallback(() => {
     if (onSeeAllPress) {
       onSeeAllPress();
@@ -101,7 +102,7 @@ const SectionTitle = ({
       </Text>
       {onSeeAllPress || navigatorName ? (
         <TextLink onPress={onLinkPress} type={"color"}>
-          {seeMoreText || <Trans i18nKey={"common.seeAll"} />}
+          {seeMoreText || t("common.seeAll")}
         </TextLink>
       ) : null}
     </Flex>
@@ -111,6 +112,7 @@ const SectionTitle = ({
 const maxAssetsToDisplay = 3;
 
 function PortfolioScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const showCarousel = useMemo(
     () => Object.values(carouselVisibility).some(Boolean),
@@ -180,7 +182,7 @@ function PortfolioScreen({ navigation }: Props) {
             <Flex mt={8}>
               <Flex mx={6}>
                 <SectionTitle
-                  title={<Trans i18nKey={"tabs.platform"} />}
+                  title={t("tabs.platform")}
                   navigation={navigation}
                   navigatorName={NavigatorName.Discover}
                   screenName={ScreenName.PlatformCatalog}
@@ -195,7 +197,7 @@ function PortfolioScreen({ navigation }: Props) {
         ? [
             <Flex mx={6} mt={8}>
               <SectionTitle
-                title={<Trans i18nKey={"distribution.title"} />}
+                title={t("distribution.title")}
                 navigation={navigation}
                 navigatorName={NavigatorName.PortfolioAccounts}
               />
@@ -217,7 +219,7 @@ function PortfolioScreen({ navigation }: Props) {
                       iconPosition={"left"}
                       type={"color"}
                     >
-                      <Trans i18nKey={"distribution.moreAssets"} />
+                      {t("distribution.moreAssets")}
                     </TextLink>
                   </Flex>
                   <AddAccountsModal
@@ -234,9 +236,7 @@ function PortfolioScreen({ navigation }: Props) {
         ? [
             <Flex mt={8}>
               <Flex mx={6}>
-                <SectionTitle
-                  title={<Trans i18nKey={"portfolio.recommended.title"} />}
-                />
+                <SectionTitle title={t("portfolio.recommended.title")} />
               </Flex>
               <Carousel cardsVisibility={carouselVisibility} />
             </Flex>,
@@ -244,28 +244,30 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       <Flex mx={6} my={8}>
         <SectionTitle
-          title={<Trans i18nKey={"portfolio.topGainers.title"} />}
+          title={t("portfolio.topGainers.title")}
           navigation={navigation}
           navigatorName={NavigatorName.Market}
-          seeMoreText={<Trans i18nKey={"portfolio.topGainers.seeMarket"} />}
+          seeMoreText={t("portfolio.topGainers.seeMarket")}
           containerProps={{ mb: 5 }}
         />
         <MarketSection />
       </Flex>,
     ],
     [
+      showAssets,
+      onPortfolioCardLayout,
       counterValueCurrency,
       portfolio,
       areAccountsEmpty,
-      showAssets,
-      onPortfolioCardLayout,
       accounts.length,
+      t,
       navigation,
       assetsToDisplay,
       colors.neutral.c40,
       openAddModal,
       isAddModalOpened,
       closeAddModal,
+      showCarousel,
       carouselVisibility,
     ],
   );
