@@ -66,7 +66,7 @@ export default function AccountSelect({
             </View>
             <View style={styles.accountColumn}>
               <View style={styles.labelContainer}>
-                <LText semiBold style={styles.label}>
+                <LText semiBold style={styles.label} numberOfLines={1}>
                   {name}
                 </LText>
                 {currency.type === "TokenCurrency" &&
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    flex: 1,
   },
   label: {
     fontSize: 16,
@@ -126,15 +127,14 @@ const styles = StyleSheet.create({
   },
   accountColumn: {
     flexDirection: "column",
+    flex: 1,
   },
   accountTicker: {
     fontSize: 13,
     lineHeight: 16,
   },
   labelContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flex: 0,
   },
   currencyLabel: {
     flexGrow: 0,

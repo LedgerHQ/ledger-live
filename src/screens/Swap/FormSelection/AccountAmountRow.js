@@ -184,7 +184,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   wrapper: {
-    flex: 1,
+    flexShrink: 0,
+    minWidth: 100,
     alignItems: "flex-end",
     justifyContent: "center",
     height: 32,
