@@ -380,7 +380,7 @@ export const NavigatorName = {
   FirmwareUpdate: "FirmwareUpdate",
   Freeze: "Freeze",
   ImportAccounts: "ImportAccounts",
-  Manager: "Manager",
+  Manager: "ManagerNavigator",
   ManagerStack: "ManagerStack",
   MigrateAccountsFlow: "MigrateAccountsFlow",
   NftNavigator: "NftNavigator",

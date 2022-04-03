@@ -6,7 +6,6 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { Text, Icons, Flex } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
@@ -42,24 +41,29 @@ type RouteParams = {
 };
 
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
-  const { colors } = useTheme();
   const [name, setName] = useState<string>(route.params?.deviceName);
   const [error, setError] = useState(null);
   const [connecting, setConnecting] = useState(null);
 
-  const validate = useCallback(() => {
-    const invalidCharacters = name.replace(/[\x00-\x7F]*/g, "");
-    setError(
-      invalidCharacters
-        ? new DeviceNameInvalid("", { invalidCharacters })
-        : undefined,
-    );
-  }, [name]);
+  const validate = useCallback(
+    n => {
+      const invalidCharacters = n.replace(/[\x00-\x7F]*/g, "");
+      setError(
+        invalidCharacters
+          ? new DeviceNameInvalid("", { invalidCharacters })
+          : undefined,
+      );
+    },
+    [setError],
+  );
 
-  const onChangeText = useCallback((name: string) => {
-    setName(name);
-    validate();
-  }, []);
+  const onChangeText = useCallback(
+    (name: string) => {
+      setName(name);
+      validate(name);
+    },
+    [validate],
+  );
 
   const onInputCleared = useCallback(() => {
     setName("");
