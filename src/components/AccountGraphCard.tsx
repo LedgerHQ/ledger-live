@@ -156,7 +156,7 @@ function AccountGraphCard({
             <Graph
               isInteractive
               isLoading={!isAvailable}
-              height={100}
+              height={120}
               width={width - 32}
               color={colors.primary.c80}
               data={history}
