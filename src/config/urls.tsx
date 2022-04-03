@@ -23,7 +23,7 @@ export const urls = {
       "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
   },
   buyNanoX:
-    "https://www.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=manager_emptystate",
+    "https://shop.ledger.com/pages/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestore:
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
@@ -154,10 +154,12 @@ export const urls = {
   },
   discover: {
     ledgerApps:
-      "https://support.ledger.com/hc/en-us/articles/4404599625233-Discover-Live-Apps?docs=true&utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
+      "https://support.ledger.com/hc/en-us/articles/4404599625233-Discover-Live-Apps?docs=true&utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     earn:
-      "https://www.ledger.com/grow-your-assets?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
+      "https://www.ledger.com/grow-your-assets?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     academy:
-      "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
+      "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
+    tellMeMore:
+      "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
   },
 };

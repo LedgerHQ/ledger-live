@@ -2,7 +2,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
+import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
@@ -11,25 +11,11 @@ import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
 
-const discoverImg = {
-  dark: require("../../images/illustration/Dark/_030.png"),
-  light: require("../../images/illustration/Light/_030.png"),
-};
+const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
-const learnImg = {
-  dark: require("../../images/illustration/Dark/_Learn.png"),
-  light: require("../../images/illustration/Light/_Learn.png"),
-};
+const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
-const appsImg = {
-  dark: require("../../images/illustration/Dark/_Apps.png"),
-  light: require("../../images/illustration/Light/_Apps.png"),
-};
-
-const earnImg = {
-  dark: require("../../images/illustration/Dark/_Earn.png"),
-  light: require("../../images/illustration/Light/_Earn.png"),
-};
+const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -41,7 +27,7 @@ function Discover() {
   const navigation = useNavigation();
 
   const onTellMeMore = useCallback(() => {
-    Linking.openURL(urls.discover.academy);
+    Linking.openURL(urls.discover.tellMeMore);
   }, []);
 
   const learn = useFeature("learn");
@@ -49,24 +35,6 @@ function Discover() {
   const featuresList = useMemo(
     () =>
       [
-        {
-          title: t("discover.sections.learn.title"),
-          subTitle: t("discover.sections.learn.desc"),
-          onPress: () => {
-            // TODO: FIX @react-navigation/native using Typescript
-            // @ts-ignore next-line
-            navigation.navigate(ScreenName.Learn);
-          },
-          disabled: !learn?.enabled,
-          labelBadge: !learn?.enabled ? t("discover.comingSoon") : undefined,
-          Image: (
-            <Illustration
-              size={130}
-              darkSource={learnImg.dark}
-              lightSource={learnImg.light}
-            />
-          ),
-        },
         {
           title: t("discover.sections.ledgerApps.title"),
           subTitle: t("discover.sections.ledgerApps.desc"),
@@ -79,11 +47,33 @@ function Discover() {
               });
             } else Linking.openURL(urls.discover.ledgerApps);
           },
+          disabled: false,
           Image: (
             <Illustration
               size={130}
-              darkSource={appsImg.dark}
-              lightSource={appsImg.light}
+              darkSource={appsImg}
+              lightSource={appsImg}
+            />
+          ),
+        },
+        {
+          title: t("discover.sections.learn.title"),
+          subTitle: t("discover.sections.learn.desc"),
+          onPress: () => {
+            if (!learn?.enabled) {
+              Linking.openURL(urls.discover.academy);
+            } else {
+              // TODO: FIX @react-navigation/native using Typescript
+              // @ts-ignore next-line
+              navigation.navigate(ScreenName.Learn);
+            }
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={130}
+              darkSource={learnImg}
+              lightSource={learnImg}
             />
           ),
         },
@@ -93,12 +83,13 @@ function Discover() {
           onPress: () => {
             Linking.openURL(urls.discover.earn);
           },
-          labelBadge: t("discover.mostPopular"),
+          labelBadge: t("discover.comingSoon"),
+          disabled: false,
           Image: (
             <Illustration
               size={130}
-              darkSource={earnImg.dark}
-              lightSource={earnImg.light}
+              darkSource={earnImg}
+              lightSource={earnImg}
             />
           ),
         },
@@ -112,20 +103,18 @@ function Discover() {
         <Flex p={8} mt={8} flexDirection="row">
           <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
             <Text variant="h1">{t("discover.title")}</Text>
-            <Text variant="body" mb={6} mt={4} color="neutral.c90">
+            <Text variant="body" mb={6} mt={4} color="neutral.c70">
               {t("discover.desc")}
             </Text>
-            <TextLink type="color" onPress={onTellMeMore}>
+            <TextLink
+              type="color"
+              onPress={onTellMeMore}
+              Icon={Icons.ArrowRightMedium}
+            >
               {t("discover.link")}
             </TextLink>
           </Flex>
-          <Flex flex={1} justifyContent="flex-end" alignItems="flex-end">
-            <Illustration
-              size={130}
-              darkSource={discoverImg.dark}
-              lightSource={discoverImg.light}
-            />
-          </Flex>
+          <Flex flex={1} />
         </Flex>
         {featuresList.map(
           ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (

@@ -392,7 +392,7 @@ export const NavigatorName = {
   SendFunds: "SendFunds",
   Settings: "Settings",
   SignMessage: "SignMessage",
-  Swap: "Swap",
+  Swap: "SwapNavigator",
   TezosDelegationFlow: "TezosDelegationFlow",
   TronVoteFlow: "TronVoteFlow",
   Unfreeze: "Unfreeze",
