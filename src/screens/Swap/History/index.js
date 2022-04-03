@@ -161,7 +161,7 @@ const History = () => {
             />
           )
         }
-        keyExtractor={({ swapId }) => swapId}
+        keyExtractor={({ swapId, operation }) => swapId + operation?.id}
         renderItem={renderItem}
         renderSectionHeader={({ section }) => (
           <LText semiBold style={styles.section} color="grey">

@@ -1,5 +1,4 @@
-import React, { ComponentType, memo, useMemo } from "react";
-import { View } from "react-native";
+import React, { ComponentType, memo } from "react";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,

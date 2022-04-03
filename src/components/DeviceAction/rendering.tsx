@@ -47,6 +47,7 @@ const AnimationContainer = styled(Flex).attrs(p => ({
 
 const ActionContainer = styled(Flex).attrs({
   alignSelf: "stretch",
+  mt: 6,
 })``;
 
 const SpinnerContainer = styled(Flex).attrs({
@@ -383,7 +384,8 @@ export function renderError({
         <ActionContainer>
           <StyledButton
             event="DeviceActionErrorRetry"
-            type="primary"
+            type="main"
+            outline={false}
             title={
               managerAppName
                 ? t("DeviceAction.button.openManager")

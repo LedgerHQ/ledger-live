@@ -2854,7 +2854,7 @@
     "GenuineCheck": {
       "title": "Device authentication check",
       "accept": "Please don't turn off your Nano X. Make sure you allow <1>Ledger Manager</1>.",
-      "info": "This step is meant to ensure that your Nano is authentical."
+      "info": "This step is meant to ensure that your Nano is authentic."
     },
     "ScanningHeader": {
       "title": "Looking for devices",

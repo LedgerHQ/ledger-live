@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { View, StyleSheet, Platform } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
@@ -173,10 +172,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="ReceiveFunds"
         name="Confirmation"
@@ -255,7 +251,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </View>
         <View style={styles.bottomContainer}>
           {unsafe ? (
-            <Alert type="danger">
+            <Alert type="warning">
               <Trans
                 i18nKey={
                   readOnlyModeEnabled
@@ -341,7 +337,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           </View>
         ) : null}
       </BottomModal>
-    </SafeAreaView>
+    </View>
   );
 }
 
