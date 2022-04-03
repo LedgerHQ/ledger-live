@@ -1,5 +1,6 @@
 import { SearchInput } from "@ledgerhq/native-ui";
-import React, { memo, useCallback, useState } from "react";
+import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
+import React, { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { track } from "../../analytics";
 
@@ -10,27 +11,27 @@ type Props = {
 
 function SearchHeader({ search, refresh }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
+  const debouncedSearch = useDebounce(inputSearch, 300);
   const { t } = useTranslation();
 
-  const onSubmit = useCallback(() => {
-    if (inputSearch !== search) {
+  useEffect(() => {
+    if (debouncedSearch !== search) {
       track("Page Market Query", {
-        currencyName: inputSearch,
+        currencyName: debouncedSearch,
       });
       refresh({
-        search: inputSearch ? inputSearch.trim() : "",
+        search: debouncedSearch ? debouncedSearch.trim() : "",
         starred: [],
         liveCompatible: false,
+        top100: false,
       });
     }
-  }, [inputSearch, search, refresh]);
+  }, [debouncedSearch, refresh, search]);
 
   return (
     <SearchInput
       value={inputSearch}
       onChange={setInputSearch}
-      onSubmitEditing={onSubmit}
-      onEndEditing={onSubmit}
       placeholder={t("common.search")}
     />
   );

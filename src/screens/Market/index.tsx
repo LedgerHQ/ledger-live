@@ -11,6 +11,7 @@ import {
   Icon,
   ScrollContainer,
   InfiniteLoader,
+  Icons,
 } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -24,6 +25,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+import { useRoute } from "@react-navigation/native";
 import { starredMarketCoinsSelector } from "../../reducers/settings";
 import MarketRowItem from "./MarketRowItem";
 import { useLocale } from "../../context/Locale";
@@ -51,7 +53,7 @@ function getAnalyticsProperties(
 const BottomSection = ({ navigation }: { navigation: any }) => {
   const { t } = useTranslation();
   const { requestParams, refresh, counterCurrency } = useMarketData();
-  const { range, starred = [], orderBy, order } = requestParams;
+  const { range, starred = [], orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
 
@@ -93,13 +95,16 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
    * if using useCallback (even with requestParams in the dependencies)
    * TODO: investigate this for a possible optimization with useCallback
    * */
-  const onChange = (value: any) => {
-    track(
-      "Page Market",
-      getAnalyticsProperties({ ...requestParams, ...value }),
-    );
-    refresh(value);
-  };
+  const onChange = useCallback(
+    (value: any) => {
+      track(
+        "Page Market",
+        getAnalyticsProperties({ ...requestParams, ...value }),
+      );
+      refresh(value);
+    },
+    [refresh, requestParams],
+  );
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
@@ -126,22 +131,55 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
       )}
       <SortBadge
         label={t("market.filters.sort")}
-        valueLabel={t(`market.filters.order.${orderBy}`)}
-        value={`${orderBy}_${order}`}
+        valueLabel={t(
+          top100
+            ? `market.filters.order.topGainers`
+            : `market.filters.order.${orderBy}`,
+        )}
+        Icon={
+          top100
+            ? Icons.GraphGrowMedium
+            : order === "asc"
+            ? Icons.ArrowTopMedium
+            : Icons.ArrowBottomMedium
+        }
+        value={top100 ? "top100" : `${orderBy}_${order}`}
         options={[
           {
+            label: t(`market.filters.order.topGainers`),
+            requestParam: {
+              limit: 100,
+              ids: [],
+              starred: [],
+              orderBy: "market_cap",
+              order: "desc",
+              search: "",
+              liveCompatible: false,
+              sparkline: false,
+              top100: true,
+            },
+            value: "top100",
+          },
+          {
             label: t(`market.filters.order.${orderBy}_asc`),
-            requestParam: { order: "asc", orderBy: "market_cap" },
+            requestParam: {
+              order: "asc",
+              orderBy: "market_cap",
+              top100: false,
+            },
             value: "market_cap_asc",
           },
           {
             label: t(`market.filters.order.${orderBy}_desc`),
-            requestParam: { order: "desc", orderBy: "market_cap" },
+            requestParam: {
+              order: "desc",
+              orderBy: "market_cap",
+              top100: false,
+            },
             value: "market_cap_desc",
           },
         ]}
         onChange={onChange}
-        type="sort"
       />
       <SortBadge
         label={t("market.filters.time")}
@@ -171,6 +209,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
           </Text>
         </Badge>
       </TouchableOpacity>
+
       {/* The following is disabled for now as the mapping for supported coins is not 100% working (ERC20 etc.) */}
       {/* <SortBadge
         label={t("market.filters.view.label")}
@@ -200,6 +239,8 @@ export default function Market({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
+  const { params }: { params: any } = useRoute();
+  const initialTop100 = params?.top100;
 
   useProviders();
 
@@ -214,12 +255,44 @@ export default function Market({ navigation }: { navigation: any }) {
     selectCurrency,
   } = useMarketData();
 
-  const { limit, search, range } = requestParams;
+  const { limit, search, range, top100 } = requestParams;
   const [isLoading, setIsLoading] = useState(true);
 
   const resetSearch = useCallback(
-    () => refresh({ search: "", starred: [], liveCompatible: false }),
+    () =>
+      refresh({
+        search: "",
+        starred: [],
+        liveCompatible: false,
+        top100: false,
+      }),
     [refresh],
+  );
+
+  useEffect(() => {
+    if (initialTop100) {
+      refresh({
+        limit: 100,
+        ids: [],
+        starred: [],
+        orderBy: "market_cap",
+        order: "desc",
+        search: "",
+        liveCompatible: false,
+        sparkline: false,
+        top100: true,
+      });
+    }
+  }, [initialTop100, refresh]);
+
+  const listData = useMemo(
+    () =>
+      top100
+        ? marketData?.sort(
+            (a, b) => b.priceChangePercentage - a.priceChangePercentage,
+          )
+        : marketData,
+    [marketData, top100],
   );
 
   const renderItems = useCallback(
@@ -289,7 +362,8 @@ export default function Market({ navigation }: { navigation: any }) {
       isNaN(limit) ||
       !marketData ||
       page * limit > marketData.length ||
-      loading
+      loading ||
+      top100
     ) {
       setIsLoading(false);
       return Promise.resolve();
@@ -305,7 +379,7 @@ export default function Market({ navigation }: { navigation: any }) {
         },
       )
       .finally(() => setIsLoading(false));
-  }, [limit, marketData, page, loading, loadNextPage]);
+  }, [limit, marketData, page, loading, top100, loadNextPage]);
 
   const renderFooter = useCallback(
     () => (
@@ -349,7 +423,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
       <FlatList
         contentContainerStyle={{ paddingHorizontal: 16 }}
-        data={marketData}
+        data={listData}
         renderItem={renderItems}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}

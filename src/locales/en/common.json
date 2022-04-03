@@ -4085,6 +4085,7 @@
         "liveCompatible_label": "Only Live Supported"
       },
       "order": {
+        "topGainers": "Top gainers",
         "market_cap": "Rank",
         "market_cap_asc": "Rank (Market cap) asc.",
         "market_cap_desc": "Rank (Market cap) desc."
