@@ -28,7 +28,14 @@ export const addBackgroundEvent = (event: *) => (dispatch: *) =>
     event,
   });
 
+  export const dequeueBackgroundEvent = () => (dispatch: *) =>
+  dispatch({
+    type: "DEQUEUE_BACKGROUND_EVENT",
+  });
+
 export const clearBackgroundEvents = () => (dispatch: *) =>
   dispatch({
     type: "CLEAR_BACKGROUND_EVENTS",
   });
+
+// TODO: migrate to TS

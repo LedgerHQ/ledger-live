@@ -74,12 +74,12 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     @ReactMethod
-    fun start(deviceId: String?, uninstall: Boolean?) {
+    fun start(deviceId: String?, serializedFirmware: String?) {
         createOrUpdateNotification(0, "");
         HeadlessJsTaskService.acquireWakeLockNow(context)
         val service = Intent(context, BackgroundService::class.java)
         service.putExtra("deviceId", deviceId)
-        service.putExtra("uninstall", uninstall)
+        service.putExtra("serializedFirmware", serializedFirmware)
 
         context.startService(service)
     }

@@ -25,12 +25,15 @@ import { BackgroundEvent } from "../src/reducers/appstate";
 const TAG = "headlessJS";
 const BackgroundRunnerService = async ({
   deviceId,
-  latestFirmware,
+  serializedFirmware
 }: {
   deviceId: string;
-  latestFirmware: FirmwareUpdateContext | null | undefined;
+  serializedFirmware: string;
 }) => {
   const emitEvent = (e: BackgroundEvent) => store.dispatch(addBackgroundEvent(e));
+  const latestFirmware = JSON.parse(serializedFirmware);
+
+  emitEvent({ type: "LOG", deviceId, serializedFirmware });
 
   if (!latestFirmware) {
     log(TAG, "no need to update");
@@ -43,6 +46,7 @@ const BackgroundRunnerService = async ({
     progress?: number,
     displayedOnDevice?: any
   }) => {
+    
     emitEvent({ ...event, type: "progress" }); // Forward them up so UI JS can update itself.
     const { progress, displayedOnDevice } = event;
     if (displayedOnDevice) {
@@ -69,19 +73,22 @@ const BackgroundRunnerService = async ({
     error: onError,
     complete: () => {
       // Depending on the update path, we might need to run the firmwareMain or simply wait
-      emitEvent({ type: "installing" });
+      emitEvent({ type: "completed" });
+      emitEvent({ type: "YOLO" });
       if (
         latestFirmware.shouldFlashMCU ||
         hasFinalFirmware(latestFirmware.final)
       ) {
+        emitEvent({ type: "LOG: main update", should: latestFirmware.shouldFlashMCU, has: hasFinalFirmware(latestFirmware.final) });
         // TODO adapt to the case where we enter auto-update here too, until then, the UI
         // will just show a 100% progress but still not completed if I got it right.
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
-          next: onNext,
+          next: (a) => { console.log("main next"); onNext(a)},
           error: onError,
           complete: onComplete,
         });
       } else {
+        emitEvent({ type: "LOG: device polling" });
         // We're waiting forever condition that make getDeviceInfo work
         withDevicePolling(deviceId)(
           t => from(getDeviceInfo(t)),

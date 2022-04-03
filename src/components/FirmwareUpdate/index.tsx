@@ -7,7 +7,7 @@ import { useTheme } from "styled-components/native";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { Button } from "@ledgerhq/native-ui";
 import { nextBackgroundEventSelector } from "../../reducers/appstate";
-import { clearBackgroundEvents } from "../../actions/appstate";
+import { clearBackgroundEvents, dequeueBackgroundEvent } from "../../actions/appstate";
 import FirmwareProgress from "../FirmwareProgress";
 import LText from "../LText";
 import BottomModal from "../BottomModal";
@@ -137,10 +137,10 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
     console.log({ nextBackgroundEvent })
 
     if (!nextBackgroundEvent) return;
+
     const { type } = nextBackgroundEvent;
     switch (type) {
       case "completed":
-      case "installing":
         send("next");
         break;
       case "error":
@@ -152,12 +152,14 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
       default:
         break;
     }
+
+    dispatch(dequeueBackgroundEvent());
   }, [nextBackgroundEvent, send]);
 
 
   const launchUpdate = useCallback(() => {
     if(firmware) {
-      NativeModules.BackgroundRunner.start(device.deviceId, false);
+      NativeModules.BackgroundRunner.start(device.deviceId, JSON.stringify(firmware));
       send("next");
     }
   }, [firmware]);

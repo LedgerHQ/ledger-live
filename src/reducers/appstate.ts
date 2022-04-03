@@ -11,13 +11,7 @@ export type BackgroundEvent = {
   type: "error",
   error: any
 } | {
-  type: "completed" | "installing"
-} | {
-  type: "deviceInfo",
-  deviceInfo: any
-} | {
-  type: "latestFirmware",
-  latestFirmware: any
+  type: "completed"
 } | {
   type: "progress",
   progress?: number,
