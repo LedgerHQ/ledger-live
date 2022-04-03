@@ -251,7 +251,7 @@ const AppsScreen = ({
                 color={"neutral.c100"}
                 numberOfLines={1}
               >
-                <Trans i18nKey="ManagerDevice.title" />
+                <Trans i18nKey="manager.title" />
               </Text>
             </Flex>
             <DeviceCard

@@ -2882,8 +2882,8 @@
     }
   },
   "manager": {
-    "tabTitle": "Device Manager",
-    "title": "Manager",
+    "tabTitle": "My Ledger",
+    "title": "My Ledger",
     "connect": "Select your device",
     "appsCatalog": "App catalog",
     "installedApps": "Apps installed",
@@ -2961,9 +2961,6 @@
       "subtitle": "Updates available",
       "updateAll": "Update"
     }
-  },
-  "ManagerDevice": {
-    "title": "Device"
   },
   "AppAction": {
     "install": {
