@@ -429,6 +429,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
         ref={navigationRef}
         onReady={() => {
           isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
         }}
       >
         {children}
@@ -452,9 +453,7 @@ export default class Root extends Component<
     throw e;
   }
 
-  onInitFinished = () => {
-    this.initTimeout = setTimeout(() => SplashScreen.hide(), 300);
-  };
+  onInitFinished = () => {};
 
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
@@ -482,8 +481,8 @@ export default class Root extends Component<
                   >
                     <FirebaseRemoteConfigProvider>
                       <FirebaseFeatureFlagsProvider>
-                        <DeepLinkingNavigator>
-                          <SafeAreaProvider>
+                        <SafeAreaProvider>
+                          <DeepLinkingNavigator>
                             <StyledStatusBar />
                             <NavBarColorHandler />
                             <AuthPass>
@@ -516,8 +515,8 @@ export default class Root extends Component<
                                 </LocaleProvider>
                               </I18nextProvider>
                             </AuthPass>
-                          </SafeAreaProvider>
-                        </DeepLinkingNavigator>
+                          </DeepLinkingNavigator>
+                        </SafeAreaProvider>
                       </FirebaseFeatureFlagsProvider>
                     </FirebaseRemoteConfigProvider>
                   </PlatformAppProvider>
