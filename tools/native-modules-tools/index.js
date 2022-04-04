@@ -22,7 +22,6 @@ function copyFolderRecursivelySync(source, target) {
   }
 }
 
-
 // Given a module subfolder, finds the nearest root.
 // A root is a parent folder containing a package.json file.
 function findPackageRoot(folder) {
