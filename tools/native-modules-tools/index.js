@@ -1,5 +1,27 @@
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
+
+// Copy a folder and its contents recursively.
+function copyFolderRecursivelySync(source, target) {
+  if (!fs.existsSync(target)) {
+    fs.mkdirSync(target, { recursive: true });
+  }
+
+  if (fs.statSync(source).isDirectory()) {
+    const files = fs.readdirSync(source);
+    files.forEach(function (file) {
+      var curSource = path.join(source, file);
+      if (fs.statSync(curSource).isDirectory()) {
+        copyFolderRecursivelySync(curSource, path.join(target, file));
+      } else {
+        // Loads the whole file in memory, very ugly…
+        const src = fs.readFileSync(curSource);
+        fs.writeFileSync(path.join(target, path.basename(file)), src);
+      }
+    });
+  }
+}
+
 
 // Given a module subfolder, finds the nearest root.
 // A root is a parent folder containing a package.json file.
@@ -80,7 +102,7 @@ function copyNodeModule(
     "node_modules",
     appendVersion ? name + "@" + version : name
   );
-  fs.copySync(source, target, { dereference: true });
+  copyFolderRecursivelySync(source, target);
   return { name, version, source, target };
 }
 
@@ -146,7 +168,7 @@ function dependencyTree(modulePath, { root } = {}) {
   return tree;
 }
 
-// Populates an 'externals' object given a list of native modules.
+// Populates an 'externals' function given a list of native modules.
 // See: https://webpack.js.org/configuration/externals
 function buildWebpackExternals(nativeModules) {
   return function ({ context, request }, callback) {
@@ -170,9 +192,50 @@ function buildWebpackExternals(nativeModules) {
   };
 }
 
+function processNativeModules({ root, destination }) {
+  // First, we crawl the production dependencies and find every node.js native modules.
+  const nativeModulesPaths = findNativeModules(root);
+  console.log("Found the following native modules:", nativeModulesPaths);
+
+  // Then for each one of these native modules…
+  const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
+    // We copy the module to a special directory that will be copied by electron-bundler in place of the node_modules.
+    const copyResults = copyNodeModule(module, {
+      destination,
+      appendVersion: true,
+    });
+    const { target } = copyResults;
+    // Based on the target directory (dist/node_modules/name@version) we crawl the dependencies.
+    const tree = dependencyTree(module);
+    // And we populate nested node_modules manually (npm-like).
+    const stack = [[target, tree.dependencies]];
+    let current = null;
+    while ((current = stack.shift())) {
+      const [path, dependencies] = current;
+      Array.from(dependencies.values()).forEach(dependency => {
+        const copyResult = copyNodeModule(dependency.path, {
+          destination: path,
+        });
+        stack.push([copyResult.target, dependency.dependencies]);
+      });
+    }
+    acc[copyResults.source] = copyResults;
+
+    // And finally we return an object containing useful data for the module.
+    // (its source/destination directories, name and version)
+    // This will be used to tell webpack to treat them as externals and to require from the correct path.
+    // (something like 'dist/node_modules/name@version')
+    return acc;
+  }, {});
+
+  return mappedNativeModules;
+}
+
 module.exports = {
   findNativeModules,
   copyNodeModule,
   dependencyTree,
   buildWebpackExternals,
+  copyFolderRecursivelySync,
+  processNativeModules
 };
