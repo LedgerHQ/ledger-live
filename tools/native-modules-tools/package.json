@@ -4,8 +4,5 @@
   "version": "1.0.0",
   "description": "Tools to crawl and package native nodejs addons",
   "main": "index.js",
-  "license": "ISC",
-  "dependencies": {
-    "fs-extra": "^10.0.1"
-  }
+  "license": "ISC"
 }
