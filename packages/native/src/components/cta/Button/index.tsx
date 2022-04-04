@@ -19,6 +19,7 @@ export type ButtonProps = TouchableOpacityProps &
     disabled?: boolean;
     pressed?: boolean;
     children?: React.ReactNode;
+    pending?: boolean;
   };
 
 const IconContainer = styled.View<{
@@ -112,15 +113,21 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, type = "default", iconName } = props;
+  const { Icon, children, type = "default", iconName, disabled = false, pending = false } = props;
+  const theme = useTheme();
+
   return (
     <Base
       {...props}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
       activeOpacity={0.5}
+      disabled={disabled || pending}
     >
-      <ButtonContainer {...props} type={type} />
+      <ButtonContainer {...props} type={type} hide={pending} />
+      <SpinnerContainer>
+        <ActivityIndicator color={theme.colors.neutral.c50} animating={pending} />
+      </SpinnerContainer>
     </Base>
   );
 };
