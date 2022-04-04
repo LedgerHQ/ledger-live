@@ -35,7 +35,6 @@
     "build-ci": "cross-env STAGING=1 node ./tools/dist --ci -v",
     "draft-release": "node ./tools/dist draft",
     "release": "node ./tools/dist --publish -v",
-    "pretest": "pnpm build:testing",
     "test": "pnpm test:jest && pnpm test:codecheck && pnpm test:playwright",
     "test:codecheck": "node ./tools/ci.js",
     "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
