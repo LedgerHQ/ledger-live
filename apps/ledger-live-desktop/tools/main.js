@@ -202,7 +202,10 @@ const build = async argv => {
   // Find native modules and copy them to ./dist/node_modules with their dependencies.
   const mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
   // Also copy to ./node_modules to be able to run the production build with playwright.
-  copyFolderRecursivelySync(path.join(lldRoot, "dist", "node_modules"), path.join(lldRoot, "node_modules"));
+  copyFolderRecursivelySync(
+    path.join(lldRoot, "dist", "node_modules"),
+    path.join(lldRoot, "node_modules"),
+  );
   const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
   const preloaderConfig = buildMainConfig(
     "production",
