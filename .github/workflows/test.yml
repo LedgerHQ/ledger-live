@@ -21,6 +21,8 @@ jobs:
   test:
     env:
       NODE_OPTIONS: "--max-old-space-size=4096"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
@@ -57,10 +59,12 @@ jobs:
         run: pnpm i
       - name: Install playwright dependencies
         run: npx playwright install-deps
-      - name: Build and Test affected packages
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      - name: Build and Test affected packages [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
+        shell: bash
+      - name: Build and Test affected packages [!Linux]
+        if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
       - name: (On Failure) Upload react-ui test results
