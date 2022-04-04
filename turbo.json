@@ -63,7 +63,7 @@
       "outputs": [],
       "cache": false
     },
-    "icons-ui#build": {
+    "@ledgerhq/icons-ui#build": {
       "outputs": [
         "react/**",
         "native/**",
