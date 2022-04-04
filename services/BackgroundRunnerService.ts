@@ -5,7 +5,10 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/lib/hw/hasFinalFirmware";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
+import {
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/live-common/lib/types/manager";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 
@@ -25,80 +28,82 @@ import { BackgroundEvent } from "../src/reducers/appstate";
 const TAG = "headlessJS";
 const BackgroundRunnerService = async ({
   deviceId,
-  serializedFirmware
+  firmwareSerializedJson,
 }: {
   deviceId: string;
-  serializedFirmware: string;
+  firmwareSerializedJson: string;
 }) => {
-  const emitEvent = (e: BackgroundEvent) => store.dispatch(addBackgroundEvent(e));
-  const latestFirmware = JSON.parse(serializedFirmware);
-
-  emitEvent({ type: "LOG", deviceId, serializedFirmware });
+  const emitEvent = (e: BackgroundEvent) =>
+    store.dispatch(addBackgroundEvent(e));
+  const latestFirmware = JSON.parse(firmwareSerializedJson) as
+    | FirmwareUpdateContext
+    | null
+    | undefined;
 
   if (!latestFirmware) {
     log(TAG, "no need to update");
-    emitEvent({ type: "completed" });
     return 0;
   }
-
-  const onNext = (event: {
-    type: "progress",
-    progress?: number,
-    displayedOnDevice?: any
-  }) => {
-    
-    emitEvent({ ...event, type: "progress" }); // Forward them up so UI JS can update itself.
-    const { progress, displayedOnDevice } = event;
-    if (displayedOnDevice) {
-      NativeModules.BackgroundRunner.requireUserAction("firmware version");
-    } else if (progress) {
-      NativeModules.BackgroundRunner.update(
-        Math.round(progress * 100),
-      );
-    }
-  };
 
   const onError = (error: any) => {
     emitEvent({ type: "error", error });
     NativeModules.BackgroundRunner.stop();
   };
 
-  const onComplete = () => {
-    log(TAG, "completed firmware update");
-    emitEvent({ type: "completed" });
+  const waitForOnlineDevice = (maxWait: number) => {
+    return withDevicePolling(deviceId)(
+      t => from(getDeviceInfo(t)),
+      () => true,
+    ).pipe(timeout(maxWait));
   };
 
   prepareFirmwareUpdate(deviceId, latestFirmware).subscribe({
-    next: onNext,
+    next: ({
+      progress,
+      displayedOnDevice,
+    }: {
+      progress?: number;
+      displayedOnDevice?: boolean;
+    }) => {
+      if (displayedOnDevice) {
+        emitEvent({ type: "confirmUpdate" });
+      } else {
+        emitEvent({ type: "downloadingUpdate", progress });
+        if (progress) {
+          // update progress bar on notification
+          NativeModules.BackgroundRunner.update(Math.round(progress * 100));
+        }
+      }
+    },
     error: onError,
     complete: () => {
-      // Depending on the update path, we might need to run the firmwareMain or simply wait
-      emitEvent({ type: "completed" });
-      emitEvent({ type: "YOLO" });
+      // Depending on the update path, we might need to run the firmwareMain or simply wait until
+      // the device is online.
+
       if (
         latestFirmware.shouldFlashMCU ||
         hasFinalFirmware(latestFirmware.final)
       ) {
-        emitEvent({ type: "LOG: main update", should: latestFirmware.shouldFlashMCU, has: hasFinalFirmware(latestFirmware.final) });
         // TODO adapt to the case where we enter auto-update here too, until then, the UI
         // will just show a 100% progress but still not completed if I got it right.
+        emitEvent({ type: "flashingMcu" });
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
-          next: (a) => { console.log("main next"); onNext(a)},
           error: onError,
-          complete: onComplete,
+          complete: () => {
+            emitEvent({ type: "confirmPin" });
+            waitForOnlineDevice(5 * 60 * 1000).subscribe({
+              error: onError,
+              complete: () => emitEvent({ type: "firmwareUpdated" }),
+            });
+          },
         });
       } else {
-        emitEvent({ type: "LOG: device polling" });
+        emitEvent({ type: "confirmPin" })
         // We're waiting forever condition that make getDeviceInfo work
-        withDevicePolling(deviceId)(
-          t => from(getDeviceInfo(t)),
-          () => true,
-        )
-          .pipe(timeout(5 * 60 * 1000))
-          .subscribe({
-            error: onError,
-            complete: onComplete,
-          });
+        waitForOnlineDevice(5 * 60 * 1000).subscribe({
+          error: onError,
+          complete: () => emitEvent({ type: "firmwareUpdated" }),
+        });
       }
     },
   });

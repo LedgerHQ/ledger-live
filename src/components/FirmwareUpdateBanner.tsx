@@ -77,6 +77,7 @@ const FirmwareUpdateBanner = () => {
         p={6}
         borderRadius={5}
       >
+        {/* replace flex for Alert component */}
         <Text flexShrink={1}>
           {t("FirmwareUpdate.newVersion", { version })}
         </Text>

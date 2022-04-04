@@ -8,15 +8,20 @@ export type AsyncState = {
 };
 
 export type BackgroundEvent = {
+  type: "confirmPin"
+} | {
+  type: "downloadingUpdate",
+  progress?: number
+} | {
+  type: "confirmUpdate"
+} | {
+  type: "flashingMcu"
+} | {
+  type: "firmwareUpdated"
+} | {
   type: "error",
   error: any
-} | {
-  type: "completed"
-} | {
-  type: "progress",
-  progress?: number,
-  displayedOnDevice?: any
-}
+};
 
 export type AppState = {
   isConnected: boolean | null,

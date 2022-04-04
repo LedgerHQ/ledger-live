@@ -74,12 +74,12 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     @ReactMethod
-    fun start(deviceId: String?, serializedFirmware: String?) {
+    fun start(deviceId: String?, firmwareSerializedJson: String?) {
         createOrUpdateNotification(0, "");
         HeadlessJsTaskService.acquireWakeLockNow(context)
         val service = Intent(context, BackgroundService::class.java)
         service.putExtra("deviceId", deviceId)
-        service.putExtra("serializedFirmware", serializedFirmware)
+        service.putExtra("firmwareSerializedJson", firmwareSerializedJson)
 
         context.startService(service)
     }

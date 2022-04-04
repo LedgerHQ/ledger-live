@@ -3074,6 +3074,8 @@
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
+    "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution. Don’t have your recovery phrase?",
+    "confirmRecoveryPhrase": "I have my recovery phrase",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
     "introDescription2": "This has no impact on your crypto assets.",
     "action": "Continue update"
