@@ -59,7 +59,7 @@ function findNativeModules(root) {
         resolvedPath = require.resolve(dependency, { paths: [realPath] });
       } catch (_) {
         try {
-          resolvedPath = require.resolve(dependency + "/package.json", {
+          resolvedPath = require.resolve(path.resolve(dependency, "package.json"), {
             paths: [realPath],
           });
         } catch (error) {
@@ -69,7 +69,7 @@ function findNativeModules(root) {
         }
       }
 
-      if (!resolvedPath || !resolvedPath.startsWith("/")) {
+      if (!resolvedPath || !path.isAbsolute(resolvedPath)) {
         return;
       }
 
