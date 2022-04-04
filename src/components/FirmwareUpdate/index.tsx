@@ -105,7 +105,6 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
   const openRecoveryPhraseInfo = React.useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(urls.recoveryPhraseInfo);
-    console.log("supported", supported);
     if (!supported) return;
 
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
