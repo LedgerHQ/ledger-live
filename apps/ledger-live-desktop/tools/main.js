@@ -228,16 +228,17 @@ const build = async argv => {
 
   await Promise.all([
     mainWorker.bundle(),
-    rendererWorker.bundle(),
     preloaderWorker.bundle(),
     webviewPreloaderWorker.bundle(),
-  ]).catch(err => {
-    if (err instanceof Error) {
-      throw err;
-    }
-    console.error(err.compilation.errors);
-    throw new Error("Build failed.");
-  });
+  ])
+    .then(() => rendererWorker.bundle())
+    .catch(err => {
+      if (err instanceof Error) {
+        throw err;
+      }
+      console.error(err.compilation.errors);
+      throw new Error("Build failed.");
+    });
 };
 
 yargs
