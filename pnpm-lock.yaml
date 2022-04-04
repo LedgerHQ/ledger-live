@@ -2473,10 +2473,7 @@ importers:
       yargs: 17.3.1
 
   tools/native-modules-tools:
-    specifiers:
-      fs-extra: ^10.0.1
-    dependencies:
-      fs-extra: 10.0.1
+    specifiers: {}
 
   tools/pnpm-utils:
     specifiers: {}
@@ -22632,6 +22629,7 @@ packages:
       graceful-fs: 4.2.9
       jsonfile: 6.1.0
       universalify: 2.0.0
+    dev: true
 
   /fs-extra/4.0.3:
     resolution: {integrity: sha512-q6rbdDd1o2mAnQreO7YADIxf/Whx4AHBiRf6d+/cVT8h44ss+lHgxf1FemcqDnQt9X3ct4McHr+JMGlYSsK7Cg==}
