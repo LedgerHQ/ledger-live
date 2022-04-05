@@ -40,6 +40,7 @@ setSupportedCurrencies([
   "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
+  "ethereum_goerli",
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
