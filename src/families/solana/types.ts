@@ -3,12 +3,6 @@ import type {
   TransactionCommonRaw,
 } from "../../types/transaction";
 
-// for legacy reasons export the types
-export type CoreStatics = Record<string, never>;
-export type CoreAccountSpecifics = Record<string, never>;
-export type CoreOperationSpecifics = Record<string, never>;
-export type CoreCurrencySpecifics = Record<string, never>;
-
 export type TransferCommand = {
   kind: "transfer";
   sender: string;
@@ -106,5 +100,3 @@ export type TransactionRaw = TransactionCommonRaw & {
     lamportsPerSignature: number;
   };
 };
-
-export const reflect = (_declare: unknown): void => {};

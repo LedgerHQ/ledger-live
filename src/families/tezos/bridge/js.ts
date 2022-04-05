@@ -16,8 +16,10 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendUndelegation,
   NotEnoughBalanceBecauseDestinationNotCreated,
+  RecipientRequired,
+  InvalidAddress,
 } from "@ledgerhq/errors";
-import { validateRecipient } from "../../../bridge/shared";
+import { validateAddress, ValidationResult } from "@taquito/utils";
 import type {
   CurrencyBridge,
   AccountBridge,
@@ -40,6 +42,19 @@ import { patchOperationWithHash } from "../../../operation";
 import { log } from "@ledgerhq/logs";
 import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
 import api from "../api/tzkt";
+
+const validateRecipient = (currency, recipient) => {
+  let recipientError = null;
+  const recipientWarning = null;
+  if (!recipient) {
+    recipientError = new RecipientRequired("");
+  } else if (validateAddress(recipient) !== ValidationResult.VALID) {
+    recipientError = new InvalidAddress(undefined, {
+      currencyName: currency.name,
+    });
+  }
+  return Promise.resolve({ recipientError, recipientWarning });
+};
 
 const receive = makeAccountBridgeReceive();
 
