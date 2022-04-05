@@ -10,7 +10,7 @@ import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
-import { getMinRelayFee, getUTXOStatus, isChangeOutput } from "./logic";
+import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -80,7 +80,7 @@ const genericTest = ({
         ? operation.senders
         : txInputs.map((t) => t.address).filter(Boolean),
       recipients: txOutputs
-        .filter((o) => o.address && !o.isChange && !isChangeOutput(o))
+        .filter((o) => o.address && !o.isChange)
         .map((o) => o.address)
         .filter(Boolean),
     })

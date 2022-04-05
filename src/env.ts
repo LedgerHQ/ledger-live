@@ -235,11 +235,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
   },
-  EXPERIMENTAL_CURRENCIES_JS_BRIDGE: {
-    def: "",
-    parser: stringParser,
-    desc: "enable JS integration of currencies (comma separated)",
-  },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,
@@ -254,11 +249,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "enable experimental languages",
-  },
-  EXPERIMENTAL_LIBCORE: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental libcore implementation of a currency (affects scan accounts)",
   },
   EXPERIMENTAL_MANAGER: {
     def: false,
@@ -345,17 +335,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIBCORE_BALANCE_HISTORY_NOGO: {
-    def: "ripple,ethereum,tezos,stellar",
-    // LLC-475
-    parser: stringParser,
-    desc: "comma-separated list of currencies which does not properly support balance history libcore implementation",
-  },
-  LIBCORE_PASSWORD: {
-    def: "",
-    parser: stringParser,
-    desc: "libcore encryption password",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
@@ -413,7 +392,7 @@ const envDefinitions = {
   OPERATION_OPTIMISTIC_RETENTION: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API",
+    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from the coin implementation or the API",
   },
   OPERATION_PAGE_SIZE_INITIAL: {
     def: 100,
