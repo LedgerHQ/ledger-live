@@ -380,7 +380,7 @@ const envDefinitions = {
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
   NFT_CURRENCIES: {
-    def: "ethereum",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
