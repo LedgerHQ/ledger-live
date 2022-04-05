@@ -32,7 +32,16 @@ function Discover() {
 
   const learn = useFeature("learn");
 
-  const featuresList = useMemo(
+  const featuresList: {
+    title: string;
+    titleProps?: any;
+    subTitle?: string;
+    subTitleProps?: any;
+    labelBadge?: string;
+    Image: React.ReactNode;
+    onPress: () => void;
+    disabled?: boolean;
+  }[] = useMemo(
     () =>
       [
         {
@@ -83,7 +92,6 @@ function Discover() {
           onPress: () => {
             Linking.openURL(urls.discover.earn);
           },
-          labelBadge: t("discover.comingSoon"),
           disabled: false,
           Image: (
             <Illustration
