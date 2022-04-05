@@ -1,19 +1,15 @@
-import React from "react";
+import React, { memo, useEffect } from "react";
 import { Trans } from "react-i18next";
+import { NativeModules } from "react-native";
 import { Box, Button, Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
+import { BluetoothRequired } from "@ledgerhq/errors";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
 import DownloadFileIcon from "../icons/DownloadFile";
 
-const GenericErrorView = ({
-  error,
-  outerError,
-  withDescription = true,
-  withIcon = true,
-  hasExportLogButton = true,
-}: {
+type Props = {
   error: Error;
   // sometimes we want to "hide" the technical error into a category
   // for instance, for Genuine check we want to express "Genuine check failed" because "<actual error>"
@@ -22,7 +18,23 @@ const GenericErrorView = ({
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;
-}) => {
+};
+
+const GenericErrorView = ({
+  error,
+  outerError,
+  withDescription = true,
+  withIcon = true,
+  hasExportLogButton = true,
+}: Props) => {
+  useEffect(() => {
+    if (error instanceof BluetoothRequired) {
+      NativeModules.BluetoothHelperModule.prompt().catch(() => {
+        /* ignore */
+      });
+    }
+  }, [error]);
+
   const onExport = useExportLogs();
 
   const titleError = outerError || error;
@@ -78,4 +90,4 @@ const GenericErrorView = ({
   );
 };
 
-export default GenericErrorView;
+export default memo<Props>(GenericErrorView);
