@@ -34,7 +34,7 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
       const knownDevice = knownDevices.find(d => d.id === item.id);
       const deviceMeta = {
         deviceId: item.id,
-        deviceName: item.name,
+        deviceName: item.localName ?? item.name,
         wired: false,
         modelId: "nanoX" as DeviceModelId,
       };
