@@ -11,7 +11,7 @@ import type {
   OperationType,
   SignOperationEvent,
 } from "../../types";
-import { open, close } from "../../hw";
+import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
@@ -157,69 +157,69 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  new Observable((o) => {
-    async function main() {
-      const transport = await open(deviceId);
+  withDevice(deviceId)(
+    (transport) =>
+      new Observable((o) => {
+        async function main() {
+          o.next({
+            type: "device-signature-requested",
+          });
 
-      try {
-        o.next({
-          type: "device-signature-requested",
-        });
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
 
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
+          // Ensure amount is filled when useAllAmount
+          const transactionToSign = {
+            ...transaction,
+            amount: calculateAmount({
+              a: account,
+              t: transaction,
+            }),
+          };
+          const { unsigned, registry } = await buildTransaction(
+            account,
+            transactionToSign,
+            true
+          );
+          const payload = registry
+            .createType("ExtrinsicPayload", unsigned, {
+              version: unsigned.version,
+            })
+            .toU8a({
+              method: true,
+            });
+          // Sign by device
+          const polkadot = new Polkadot(transport);
+          // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
+          const r = await polkadot.sign(
+            account.freshAddressPath,
+            payload as any
+          );
+          const signed = await signExtrinsic(unsigned, r.signature, registry);
+          o.next({
+            type: "device-signature-granted",
+          });
+          const operation = buildOptimisticOperation(
+            account,
+            transactionToSign,
+            transactionToSign.fees ?? new BigNumber(0)
+          );
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: signed,
+              expirationDate: null,
+            },
+          });
         }
 
-        // Ensure amount is filled when useAllAmount
-        const transactionToSign = {
-          ...transaction,
-          amount: calculateAmount({
-            a: account,
-            t: transaction,
-          }),
-        };
-        const { unsigned, registry } = await buildTransaction(
-          account,
-          transactionToSign,
-          true
+        main().then(
+          () => o.complete(),
+          (e) => o.error(e)
         );
-        const payload = registry
-          .createType("ExtrinsicPayload", unsigned, {
-            version: unsigned.version,
-          })
-          .toU8a({
-            method: true,
-          });
-        // Sign by device
-        const polkadot = new Polkadot(transport);
-        // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
-        const r = await polkadot.sign(account.freshAddressPath, payload as any);
-        const signed = await signExtrinsic(unsigned, r.signature, registry);
-        o.next({
-          type: "device-signature-granted",
-        });
-        const operation = buildOptimisticOperation(
-          account,
-          transactionToSign,
-          transactionToSign.fees ?? new BigNumber(0)
-        );
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: signed,
-            expirationDate: null,
-          },
-        });
-      } finally {
-        close(transport, deviceId);
-      }
-    }
-
-    main().then(
-      () => o.complete(),
-      (e) => o.error(e)
-    );
-  });
+      })
+  );
 
 export default signOperation;
