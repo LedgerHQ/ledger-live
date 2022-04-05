@@ -1087,18 +1087,14 @@
   dependencies:
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"
-
-"@ledgerhq/live-common@https://github.com/LedgerHQ/ledger-live-common.git#082c946830a332f764f3c95c0eb9c0572b493825":
-  version "21.35.0"
-  resolved "https://github.com/LedgerHQ/ledger-live-common.git#082c946830a332f764f3c95c0eb9c0572b493825"
+    
+"@ledgerhq/live-common@https://github.com/LedgerHQ/ledger-live-common.git#31177aae3a559e17f8452ed8dc6e010cd1d6f41e":
+  version "21.32.4"
+  resolved "https://github.com/LedgerHQ/ledger-live-common.git#31177aae3a559e17f8452ed8dc6e010cd1d6f41e"
   dependencies:
-    "@celo/contractkit" "^1.5.2"
-    "@celo/wallet-base" "^1.5.2"
-    "@celo/wallet-ledger" "^1.5.2"
-    "@cosmjs/crypto" "^0.26.5"
-    "@cosmjs/ledger-amino" "^0.26.5"
-    "@cosmjs/proto-signing" "^0.26.5"
-    "@cosmjs/stargate" "^0.26.5"
+    "@celo/contractkit" "^1.5.1"
+    "@celo/wallet-base" "^1.5.1"
+    "@celo/wallet-ledger" "^1.5.1"
     "@crypto-com/chain-jslib" "0.0.19"
     "@ethereumjs/common" "^2.6.2"
     "@ethereumjs/tx" "^3.5.0"
