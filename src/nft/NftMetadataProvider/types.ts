@@ -10,7 +10,7 @@ export type NFTResourceLoading = {
 
 export type NFTResourceLoaded = {
   status: "loaded";
-  metadata: Pick<NFTMetadataResponse, "result">;
+  metadata: NFTMetadataResponse["result"];
   updatedAt: number;
 };
 
@@ -37,12 +37,26 @@ export type NFTMetadataContextState = {
 };
 
 export type NFTMetadataContextAPI = {
-  loadNFTMetadata: (contract: string, tokenId: string) => Promise<void>;
+  loadNFTMetadata: (
+    contract: string,
+    tokenId: string,
+    currencyId: string
+  ) => Promise<void>;
   clearCache: () => void;
 };
 
 export type NFTMetadataContextType = NFTMetadataContextState &
   NFTMetadataContextAPI;
+
+export type Batcher = {
+  load: ({
+    contract,
+    tokenId,
+  }: {
+    contract: string;
+    tokenId: string;
+  }) => Promise<NFTMetadataResponse>;
+};
 
 export type BatchElement = {
   couple: {

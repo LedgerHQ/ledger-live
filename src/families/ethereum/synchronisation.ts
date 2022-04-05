@@ -336,7 +336,7 @@ const txToOps =
             const receiver = safeEncodeEIP55(event.receiver);
             const contract = safeEncodeEIP55(event.contract);
             const tokenId = event.token_id;
-            const nftId = encodeNftId(id, event.contract, tokenId);
+            const nftId = encodeNftId(id, event.contract, tokenId, currency.id);
             const sending = addr === sender;
             const receiving = addr === receiver;
 
@@ -414,7 +414,12 @@ const txToOps =
             event.transfers.forEach((transfer, j) => {
               const tokenId = transfer.id;
               const value = new BigNumber(transfer.value);
-              const nftId = encodeNftId(id, event.contract, tokenId);
+              const nftId = encodeNftId(
+                id,
+                event.contract,
+                tokenId,
+                currency.id
+              );
 
               if (sending) {
                 const type = "NFT_OUT";

@@ -1,19 +1,22 @@
 import "../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
 import { toNFTRaw } from "../../account";
-import type { NFT } from "../../types";
+import type { ProtoNFT } from "../../types";
 import { mergeNfts } from "../../bridge/jsHelpers";
 import { encodeNftId } from "../../nft";
 
 describe("nft merging", () => {
-  const makeNFT = (tokenId: string, contract: string, amount: number): NFT => ({
-    id: encodeNftId("test", contract, tokenId),
+  const makeNFT = (
+    tokenId: string,
+    contract: string,
+    amount: number
+  ): ProtoNFT => ({
+    id: encodeNftId("test", contract, tokenId, "ethereum"),
     tokenId,
     amount: new BigNumber(amount),
-    collection: {
-      contract,
-      standard: "erc721",
-    },
+    contract,
+    standard: "ERC721",
+    currencyId: "ethereum",
   });
   const oldNfts = [
     makeNFT("1", "contract1", 10),

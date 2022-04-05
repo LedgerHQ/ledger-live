@@ -16,8 +16,8 @@ import type {
   OperationRaw,
   SubAccount,
   SubAccountRaw,
-  NFT,
-  NFTRaw,
+  ProtoNFT,
+  ProtoNFTRaw,
 } from "../types";
 import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import {
@@ -949,20 +949,42 @@ export function toAccountRaw({
   return res;
 }
 
-export function toNFTRaw({ id, tokenId, amount, collection }: NFT): NFTRaw {
+export function toNFTRaw({
+  id,
+  tokenId,
+  amount,
+  contract,
+  standard,
+  currencyId,
+  metadata,
+}: ProtoNFT): ProtoNFTRaw {
   return {
     id,
     tokenId,
     amount: amount.toFixed(),
-    collection,
+    contract,
+    standard,
+    currencyId,
+    metadata,
   };
 }
 
-export function fromNFTRaw({ id, tokenId, amount, collection }: NFTRaw): NFT {
+export function fromNFTRaw({
+  id,
+  tokenId,
+  amount,
+  contract,
+  standard,
+  currencyId,
+  metadata,
+}: ProtoNFTRaw): ProtoNFT {
   return {
     id,
     tokenId,
     amount: new BigNumber(amount),
-    collection,
+    contract,
+    standard,
+    currencyId,
+    metadata,
   };
 }
