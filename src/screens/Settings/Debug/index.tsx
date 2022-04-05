@@ -25,6 +25,7 @@ import ToggleMockServiceStatusButton from "./ToggleMockStatusIncident";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import MockModeRow from "../General/MockModeRow";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
+import OpenDebugEnv from "./OpenDebugEnv";
 
 export function DebugMocks() {
   return (
@@ -44,6 +45,7 @@ export function DebugMocks() {
       <OpenDebugLogs />
       <OpenDebugCrash />
       <OpenDebugStore />
+      <OpenDebugEnv />
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugPlayground />
