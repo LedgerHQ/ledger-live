@@ -3,7 +3,10 @@ import { StyleSheet, View, Platform, NativeModules } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme as useNavTheme } from "@react-navigation/native";
+import {
+  useNavigation,
+  useTheme as useNavTheme,
+} from "@react-navigation/native";
 import { discoverDevices, TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Button } from "@ledgerhq/native-ui";
