@@ -9,7 +9,6 @@ import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
 import Button from "../../../components/Button";
-import { useLocale } from "../../../context/Locale";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
@@ -41,7 +40,9 @@ function OnboardingStepWelcome({ navigation }: any) {
     [navigation],
   );
 
-  const { locale } = useLocale();
+  const {
+    i18n: { language: locale },
+  } = useTranslation();
 
   const onTermsLink = useCallback(
     () =>
@@ -52,7 +53,8 @@ function OnboardingStepWelcome({ navigation }: any) {
   );
 
   const onPrivacyLink = useCallback(
-    () => Linking.openURL(urls.privacyPolicy[locale]),
+    () =>
+      Linking.openURL((urls.privacyPolicy as Record<string, string>)[locale]),
     [locale],
   );
 
