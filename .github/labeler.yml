@@ -1,0 +1,17 @@
+desktop:
+  - apps/ledger-live-desktop/**/*
+
+mobile:
+  - apps/ledger-live-mobile/**/*
+
+common:
+  - libs/ledger-live-common/**/*
+
+ui:
+  - libs/ui/**/*
+
+ledgerjs:
+  - libs/ledgerjs/**/*
+
+tools:
+  - tools/**/*
