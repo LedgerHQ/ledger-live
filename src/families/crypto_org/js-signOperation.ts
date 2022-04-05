@@ -117,10 +117,9 @@ const signOperation = ({
 
         // Get the public key
         const hwApp = new CryptoOrgApp(transport);
-        const address = account.freshAddresses[0];
         const cointype = isTestNet(account.currency.id) ? "tcro" : "cro";
         const { publicKey } = await hwApp.getAddress(
-          address.derivationPath,
+          account.freshAddressPath,
           cointype,
           false
         );
@@ -131,7 +130,7 @@ const signOperation = ({
         );
         // Sign by device
         const { signature } = await hwApp.sign(
-          address.derivationPath,
+          account.freshAddressPath,
           unsigned.toSignDocument(0).toUint8Array()
         );
 
