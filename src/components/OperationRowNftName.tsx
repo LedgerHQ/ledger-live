@@ -3,7 +3,7 @@ import React from "react";
 import { Operation } from "@ledgerhq/live-common/lib/types";
 import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
 import { StyleSheet } from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
 
 type Props = {
