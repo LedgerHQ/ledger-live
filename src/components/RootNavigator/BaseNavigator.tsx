@@ -559,7 +559,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.ManagerMain}
         component={ManagerMain}
-        options={{ title: "" }}
+        options={{ title: "", headerRight: null }}
       />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];
