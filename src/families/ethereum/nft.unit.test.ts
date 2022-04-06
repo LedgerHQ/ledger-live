@@ -1,9 +1,10 @@
 import "../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
-import { toNFTRaw } from "../../account";
-import type { ProtoNFT } from "../../types";
+import { encodeAccountId, toNFTRaw } from "../../account";
+import { Operation } from "../../types";
+import { ProtoNFT } from "../../types/nft";
 import { mergeNfts } from "../../bridge/jsHelpers";
-import { encodeNftId } from "../../nft";
+import { encodeNftId, nftsFromOperations } from "../../nft";
 
 describe("nft merging", () => {
   const makeNFT = (
@@ -77,5 +78,64 @@ describe("nft merging", () => {
     expect(oldNfts[1]).toBe(addToNft1[2]);
     expect(oldNfts[2]).toBe(addToNft1[3]);
     expect(addToNft1[0]).toBe(nfts[3]);
+  });
+});
+
+describe("OpenSea lazy minting bs", () => {
+  test("should have a correct on-chain nft amount even with OpenSea lazy minting", () => {
+    const makeNftOperation = (type: Operation["type"], value): Operation => {
+      if (!["NFT_IN", "NFT_OUT"].includes(type)) {
+        return {} as Operation;
+      }
+
+      const id = encodeAccountId({
+        type: "type",
+        currencyId: "polygon",
+        xpubOrAddress: "0xbob",
+        derivationMode: "",
+        version: "1",
+      });
+      const sender = type === "NFT_IN" ? "0xbob" : "0xkvn";
+      const receiver = type === "NFT_IN" ? "0xkvn" : "0xbob";
+      const contract = "0x0000000000000000000000000000000000000000";
+      const fee = new BigNumber(0);
+      const tokenId = "42069";
+      const hash = "FaKeHasH";
+
+      return {
+        id,
+        hash,
+        senders: [sender],
+        recipients: [receiver],
+        contract,
+        fee,
+        standard: "ERC1155",
+        tokenId,
+        value: new BigNumber(value),
+        type,
+        accountId: id,
+      } as Operation;
+    };
+
+    // scenario with bob lazy minting 10 NFTs
+    const ops = [
+      makeNftOperation("NFT_OUT", 5), // lazy mint sending 5 NFT
+      makeNftOperation("NFT_IN", 1), // receiving 1 of them back
+      makeNftOperation("NFT_IN", 2), // receiving 2 of them back
+      makeNftOperation("NFT_OUT", 2), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 1/2 (off-chain)
+      makeNftOperation("NFT_OUT", 3), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 2/2 (on-chain)
+      makeNftOperation("NFT_IN", 1), // receiving 1 back
+    ];
+
+    // What happened for bob:
+    //
+    // -5 off-chain -> 0 on-chain (5 off-chain)
+    // +1 on-chain -> 1 on-chain (5 off-chain)
+    // +2 on-chain -> 3 on-chain (5 off-chain)
+    // -2 off-chain & -3 on-chain -> 0 on-chain (3 off-chain)
+    // +1 on-chain -> 1 on-chain (and 3 off-chain)
+
+    const nfts = nftsFromOperations(ops);
+    expect(nfts[0].amount.toNumber()).toBe(1);
   });
 });
