@@ -6,7 +6,7 @@ import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { track } from "../../analytics";
-import { getDefaultSlides, SLIDES } from "./shared";
+import { getDefaultSlides, SLIDES, WIDTH } from "./shared";
 
 const DismissCarousel = styled(TouchableOpacity)`
   position: absolute;
@@ -123,6 +123,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onMomentumScrollEnd={onScrollEnd}
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
+      snapToInterval={WIDTH + 16}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

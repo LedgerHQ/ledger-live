@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import { urls } from "../../config/urls";
 import Slide from "./Slide";
 import Illustration from "../../images/illustration/Illustration";
+import { width } from "../../helpers/normalizeSize";
 
 const illustrations = {
   dark: {
@@ -186,6 +187,8 @@ export const SLIDES =
         AcademySlide,
       ];
 
+export const WIDTH = width * 0.8;
+
 export const getDefaultSlides = () =>
   SLIDES.map((slide: any) => ({
     id: slide.name,
@@ -199,6 +202,7 @@ export const getDefaultSlides = () =>
         image={slide.image}
         icon={slide.icon}
         position={slide.position}
+        width={WIDTH}
       />
     ),
   }));

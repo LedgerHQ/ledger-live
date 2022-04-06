@@ -43,7 +43,7 @@ export default function ThemeSettingsRow() {
         onClose={onClose}
         title={t("settings.display.theme")}
       >
-        {(["light", "dark"] as Theme[]).map((theme, i) => (
+        {(["system", "light", "dark"] as Theme[]).map((theme, i) => (
           <StyledTouchableThemeRow
             event="ThemeSettingsRow"
             eventProperties={{ theme }}

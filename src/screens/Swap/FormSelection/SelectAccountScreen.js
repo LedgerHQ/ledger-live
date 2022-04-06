@@ -185,7 +185,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}
-            inputWrapperStyle={styles.card}
+            inputWrapperStyle={[ styles.card, styles.searchBarContainer ]}
             list={elligibleAccountsForSelectedCurrency}
             renderList={renderList}
             renderEmptySearch={() => (
@@ -225,6 +225,9 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     flex: 1,
   },
+  searchBarContainer: {
+    paddingBottom: 8,
+  },
   list: {
     paddingTop: 8,
   },
@@ -255,5 +258,6 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     marginBottom: 24,
     flexDirection: "row",
+    alignItems: "center",
   },
 });

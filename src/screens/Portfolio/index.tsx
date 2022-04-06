@@ -37,7 +37,6 @@ import RequireTerms from "../../components/RequireTerms";
 import { NavigatorName, ScreenName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import DiscoverSection from "./DiscoverSection";
 import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
 import MarketSection from "./MarketSection";
@@ -177,22 +176,6 @@ function PortfolioScreen({ navigation }: Props) {
             <Box mt={6}>
               <FabActions />
             </Box>,
-          ]
-        : []),
-      ...(Platform.OS !== "ios"
-        ? [
-            <Flex mt={8}>
-              <Flex mx={6}>
-                <SectionTitle
-                  title={t("tabs.platform")}
-                  navigation={navigation}
-                  navigatorName={NavigatorName.Discover}
-                  screenName={ScreenName.PlatformCatalog}
-                />
-              </Flex>
-
-              <DiscoverSection />
-            </Flex>,
           ]
         : []),
       ...(showAssets

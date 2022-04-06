@@ -73,6 +73,7 @@ import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccoun
 import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
+import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
 import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -178,6 +179,14 @@ export default function BaseNavigator() {
           ),
           headerRight: null,
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapOperationDetails}
+        component={SwapOperationDetails}
+        options={{
+          title: t("transfer.swap.form.tab"),
+          headerRight: null,
+        }}
       />
       <Stack.Screen
         name={ScreenName.SwapV2FormSelectCurrency}

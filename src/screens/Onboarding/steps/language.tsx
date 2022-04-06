@@ -11,32 +11,10 @@ import {
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch } from "react-redux";
 import { useLocale } from "../../../context/Locale";
-import { supportedLocales } from "../../../languages";
+import { languages, supportedLocales } from "../../../languages";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
-
-const languages = {
-  de: "Deutsch",
-  el: "Ελληνικά",
-  en: "English",
-  es: "Español",
-  fi: "suomi",
-  fr: "Français",
-  hu: "magyar",
-  it: "italiano",
-  ja: "日本語",
-  ko: "한국어",
-  nl: "Nederlands",
-  no: "Norsk",
-  pl: "polski",
-  pt: "português",
-  ru: "Русский",
-  sr: "српски",
-  sv: "svenska",
-  tr: "Türkçe",
-  zh: "简体中文",
-};
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
