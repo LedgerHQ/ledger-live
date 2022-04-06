@@ -379,22 +379,23 @@ export function renderError({
   };
   return (
     <Wrapper>
-      <GenericErrorView error={error} withDescription withIcon />
-      {onRetry || managerAppName ? (
-        <ActionContainer>
-          <StyledButton
-            event="DeviceActionErrorRetry"
-            type="main"
-            outline={false}
-            title={
-              managerAppName
-                ? t("DeviceAction.button.openManager")
-                : t("common.retry")
-            }
-            onPress={onPress}
-          />
-        </ActionContainer>
-      ) : null}
+      <GenericErrorView error={error} withDescription withIcon>
+        {onRetry || managerAppName ? (
+          <ActionContainer marginBottom={0} marginTop={32}>
+            <StyledButton
+              event="DeviceActionErrorRetry"
+              type="main"
+              outline={false}
+              title={
+                managerAppName
+                  ? t("DeviceAction.button.openManager")
+                  : t("common.retry")
+              }
+              onPress={onPress}
+            />
+          </ActionContainer>
+        ) : null}
+      </GenericErrorView>
     </Wrapper>
   );
 }
