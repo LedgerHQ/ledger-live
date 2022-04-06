@@ -21,10 +21,6 @@ type Props = {
 
 const IconContainer = styled(Flex).attrs({
   flexDirection: "row",
-  marginVertical: 20,
-  padding: 22,
-  borderWidth: 1,
-  borderRadius: 8,
   alignItems: "center",
   justifyContent: "center",
 })``;
@@ -38,8 +34,8 @@ const LinkIconContainer = styled(Flex).attrs({
 })``;
 
 const TextContainer = styled(Flex).attrs({
-  marginTop: 4,
-  marginBottom: 32,
+  marginTop: "24px",
+  marginBottom: "32px",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
@@ -47,7 +43,6 @@ const TextContainer = styled(Flex).attrs({
 
 const ModalText = styled(Text).attrs({
   textAlign: "center",
-  marginTop: 16,
 })``;
 
 const SeparatorText = styled(Text).attrs({
@@ -55,7 +50,6 @@ const SeparatorText = styled(Text).attrs({
 })``;
 
 const ButtonsContainer = styled(Flex).attrs({
-  marginTop: 24,
   width: "100%",
 })``;
 
@@ -89,7 +83,7 @@ function AppDependenciesModal({
       <Flex alignItems="center">
         {!!dependencies.length && (
           <>
-            <IconContainer borderColor="neutral.c40">
+            <IconContainer>
               <AppIcon app={app} size={40} />
               <SeparatorText color="neutral.c40">- - -</SeparatorText>
               <LinkIconContainer backgroundColor="neutral.c30">
@@ -105,7 +99,12 @@ function AppDependenciesModal({
                   values={{ dependency: dependencies[0].name }}
                 />
               </ModalText>
-              <ModalText color="neutral.c70" fontWeight="medium" variant="body">
+              <ModalText
+                marginTop="16px"
+                color="neutral.c70"
+                fontWeight="medium"
+                variant="bodyLineHeight"
+              >
                 <Trans
                   i18nKey="AppAction.install.dependency.description_one"
                   values={{ dependency: dependencies[0].name, app: name }}

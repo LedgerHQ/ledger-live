@@ -1,13 +1,13 @@
 import React, { memo, useEffect } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
-import { Box, Button, Flex, IconBox, Text } from "@ledgerhq/native-ui";
+import styled from "styled-components/native";
+import { Box, Flex, IconBox, Icons, Link, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import DownloadFileIcon from "../icons/DownloadFile";
 
 type Props = {
   error: Error;
@@ -18,7 +18,15 @@ type Props = {
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;
+  children?: React.ReactNode;
 };
+
+const StyledLink = styled(Link).attrs({
+  iconPosition: "left",
+})`
+  margin-top: 32px;
+  margin-bottom: 10px;
+`;
 
 const GenericErrorView = ({
   error,
@@ -26,6 +34,7 @@ const GenericErrorView = ({
   withDescription = true,
   withIcon = true,
   hasExportLogButton = true,
+  children,
 }: Props) => {
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
@@ -34,6 +43,8 @@ const GenericErrorView = ({
       });
     }
   }, [error]);
+
+  const { t } = useTranslation();
 
   const onExport = useExportLogs();
 
@@ -65,6 +76,7 @@ const GenericErrorView = ({
           <Text
             variant={"bodyLineHeight"}
             color="neutral.c80"
+            textAlign="center"
             numberOfLines={6}
           >
             <TranslatedError error={error} field="description" />
@@ -72,19 +84,11 @@ const GenericErrorView = ({
           <SupportLinkError error={error} />
         </>
       ) : null}
+      {children}
       {hasExportLogButton ? (
-        <>
-          <Button
-            alignSelf="stretch"
-            type={"main"}
-            outline={true}
-            Icon={DownloadFileIcon}
-            onPress={onExport}
-            mt={32}
-          >
-            <Trans i18nKey="common.saveLogs" />
-          </Button>
-        </>
+        <StyledLink Icon={Icons.DownloadMedium} onPress={onExport}>
+          {t("common.saveLogs")}
+        </StyledLink>
       ) : null}
     </Flex>
   );
