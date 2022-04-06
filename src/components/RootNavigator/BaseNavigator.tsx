@@ -27,6 +27,7 @@ import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
+import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
 import SignMessageNavigator from "./SignMessageNavigator";
@@ -101,8 +102,8 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.BuyDeviceScreen}
-        component={BuyDeviceScreen}
+        name={NavigatorName.BuyDevice}
+        component={BuyDeviceNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen

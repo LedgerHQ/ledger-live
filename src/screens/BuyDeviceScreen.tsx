@@ -69,7 +69,7 @@ export default function BuyDeviceScreen() {
   }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
-    Linking.openURL(urls.buyNanoX);
+    navigation.navigate(ScreenName.PurchaseDevice);
   }, []);
 
   const videoMounted = !useIsAppInBackground();
