@@ -61,7 +61,7 @@ const QuitManagerModal = ({
   );
 
   return (
-    <BottomModal isOpened={true || !!isOpened} onClose={onClose} noCloseButton>
+    <BottomModal isOpened={!!isOpened} onClose={onClose} noCloseButton>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
           <Icons.QuitMedium size={24} color="neutral.c100" />
