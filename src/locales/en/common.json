@@ -839,13 +839,16 @@
       "and": "and"
     },
     "postWelcomeStep": {
-      "title": "It’s your choice",
-      "subtitle": "You can choose to set up your Ledger now or take a look around the ledger live app first.",
+      "title": "Let’s get started",
+      "subtitle": "Set up your Ledger or buy one now.",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
         "title": "Set up my Ledger",
-        "subtitle": "Secure your crypto now",
-        "label": "30 mins"
+        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+      },
+      "buyNano": {
+        "title": "Buy a Ledger Nano X",
+        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
       },
       "discoverLedger": {
         "title": "Discover Ledger Live",
@@ -890,7 +893,8 @@
       "firstUse": {
         "title": "First time using your Nano?",
         "subTitle": "Set up a new Nano",
-        "desc": "Let’s start and set up your device!"
+        "desc": "Let’s start and set up your device!",
+        "label": "30 mins"
       },
       "devicePairing": {
         "title": "Already have a recovery phrase?",

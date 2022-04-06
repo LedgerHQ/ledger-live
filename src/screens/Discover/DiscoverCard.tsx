@@ -12,6 +12,7 @@ const DiscoverCard = ({
   onPress,
   Image,
   disabled,
+  cardProps,
   ...props
 }: {
   title: string;
@@ -22,6 +23,10 @@ const DiscoverCard = ({
   Image: React.ReactNode;
   onPress: TouchableOpacityProps["onPress"];
   disabled?: boolean;
+  event?: string;
+  eventProperties?: any;
+  testID?: string;
+  cardProps?: any;
 }) => (
   <Touchable onPress={onPress} disabled={disabled} {...props}>
     <Flex
@@ -36,6 +41,7 @@ const DiscoverCard = ({
       minHeight={130}
       opacity={disabled ? 0.6 : 1}
       position="relative"
+      {...cardProps}
     >
       <Flex
         py={7}
@@ -80,16 +86,15 @@ const DiscoverCard = ({
       </Flex>
     </Flex>
     {labelBadge && (
-      <Flex position="absolute" top="-10px" left="40px">
+      <Flex position="absolute" top="16px" right="16px">
         <Text
-          variant="tiny"
+          variant="small"
           px={3}
           py={1}
           mb={2}
           borderRadius={1}
           bg={disabled ? "neutral.c100" : "constant.purple"}
-          color={disabled ? "neutral.c00" : "neutral.c100"}
-          uppercase
+          color={disabled ? "neutral.c00" : "constant.black"}
           fontWeight="bold"
         >
           {labelBadge}
