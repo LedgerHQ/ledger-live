@@ -14,27 +14,26 @@ type Props = {
 };
 
 const IconContainer = styled(Flex).attrs({
-  marginVertical: 20,
+  marginTop: 20,
   padding: 22,
   borderWidth: 1,
   borderRadius: 8,
 })``;
 
 const TextContainer = styled(Flex).attrs({
-  marginTop: 4,
-  marginBottom: 32,
+  marginTop: "24px",
+  marginBottom: "32px",
   flexDirection: "column",
   alignItems: "center",
+  alignSelf: "stretch",
   justifyContent: "center",
 })``;
 
 const ModalText = styled(Text).attrs({
   textAlign: "center",
-  marginTop: 16,
 })``;
 
 const ButtonsContainer = styled(Flex).attrs({
-  marginTop: 24,
   width: "100%",
 })``;
 
@@ -62,7 +61,7 @@ const QuitManagerModal = ({
   );
 
   return (
-    <BottomModal isOpened={!!isOpened} onClose={onClose} noCloseButton>
+    <BottomModal isOpened={true || !!isOpened} onClose={onClose} noCloseButton>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
           <Icons.QuitMedium size={24} color="neutral.c100" />
@@ -71,7 +70,12 @@ const QuitManagerModal = ({
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.title`} />
           </ModalText>
-          <ModalText color="neutral.c70" fontWeight="medium" variant="body">
+          <ModalText
+            marginTop="16px"
+            color="neutral.c70"
+            fontWeight="medium"
+            variant="body"
+          >
             <Trans
               i18nKey={`errors.ManagerQuitPage.${actionRunning}.description`}
             />
