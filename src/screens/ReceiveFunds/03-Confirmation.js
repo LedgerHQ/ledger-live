@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    paddingHorizontal: 8,
+    marginVertical: 8,
     alignItems: "flex-end",
     flexGrow: 1,
   },
@@ -441,7 +441,6 @@ const styles = StyleSheet.create({
   },
   bigButton: {
     flexGrow: 2,
-    marginHorizontal: 8,
   },
   footer: {
     flexDirection: "row",
