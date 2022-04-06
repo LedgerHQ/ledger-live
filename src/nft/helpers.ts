@@ -42,7 +42,21 @@ export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
       if (nftOp.type === "NFT_IN") {
         nft.amount = nft.amount.plus(nftOp.value);
       } else if (nftOp.type === "NFT_OUT") {
-        nft.amount = nft.amount.minus(nftOp.value);
+        const newAmount = nft.amount.minus(nftOp.value);
+
+        // In case of OpenSea lazy minting feature (minting an NFT off-chain)
+        // OpenSea will fire a false ERC1155 event saying that you sent an NFT
+        // from your account that you never received first.
+        //
+        // E.g.: I'm creating 10 ERC1155 on OpenSea. It's not going to create anything on-chain.
+        // Then I (bob) decide to transfer 5 to someone (kvn). OpenSea is going to mint the NFT in its
+        // collection (`OpenSea Shared Storefront` / `OpenSea Collections`) and transfer it to kvn.
+        // But the event fired by the Smart Contract is going to be `bob transfered 5 NFT to kvn` which is false.
+        // It would then result in bob have -5 NFTs since he never received them first.
+        // If kvn send 2 back to bob, based on the events we would think that bob has -3 NFTs.
+        //
+        // To mitigate that we put a minimum value of 0 when an account is transferring some NFTs.
+        nft.amount = newAmount.isNegative() ? new BigNumber(0) : newAmount;
       }
 
       acc[id] = nft;
