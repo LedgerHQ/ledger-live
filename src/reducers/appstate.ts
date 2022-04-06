@@ -15,7 +15,9 @@ export type BackgroundEvent = {
 } | {
   type: "confirmUpdate"
 } | {
-  type: "flashingMcu"
+  type: "flashingMcu",
+  progress?: number,
+  installing?: string | null,
 } | {
   type: "firmwareUpdated"
 } | {

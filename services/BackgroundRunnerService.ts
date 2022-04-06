@@ -61,9 +61,6 @@ const BackgroundRunnerService = async ({
     next: ({
       progress,
       displayedOnDevice,
-    }: {
-      progress?: number;
-      displayedOnDevice?: boolean;
     }) => {
       if (displayedOnDevice) {
         emitEvent({ type: "confirmUpdate" });
@@ -79,7 +76,6 @@ const BackgroundRunnerService = async ({
     complete: () => {
       // Depending on the update path, we might need to run the firmwareMain or simply wait until
       // the device is online.
-
       if (
         latestFirmware.shouldFlashMCU ||
         hasFinalFirmware(latestFirmware.final)
@@ -88,9 +84,21 @@ const BackgroundRunnerService = async ({
         // will just show a 100% progress but still not completed if I got it right.
         emitEvent({ type: "flashingMcu" });
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
+          next: ({
+            progress,
+            installing,
+          }) => {            
+            if (progress === 1) {
+              // this is the point where we lose communication with the device until the update
+              // is finished and the user has entered their PIN. Therefore the message here should 
+              // be generic about waiting for the firmware to finish and then entering the pin
+              emitEvent({ type: "confirmPin" });
+            } else {
+              emitEvent({ type: "flashingMcu", progress, installing });
+            }
+          },          
           error: onError,
           complete: () => {
-            emitEvent({ type: "confirmPin" });
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
               complete: () => emitEvent({ type: "firmwareUpdated" }),
