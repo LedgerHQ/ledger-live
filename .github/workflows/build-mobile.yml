@@ -40,7 +40,7 @@ jobs:
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - name: prepare runner
         run: |
