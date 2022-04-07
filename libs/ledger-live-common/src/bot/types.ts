@@ -86,6 +86,8 @@ export type AppSpec<T extends Transaction> = {
   testTimeout?: number;
   // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
   multipleRuns?: number;
+  // define the frequency of exporting/importing back the account to simulate mobile export
+  crossAccountFrequency?: number;
   // if the nano app depends on an app, name of this app
   dependency?: string;
   // a query to select one nano app. the most up to date version is selected when fields aren't set.

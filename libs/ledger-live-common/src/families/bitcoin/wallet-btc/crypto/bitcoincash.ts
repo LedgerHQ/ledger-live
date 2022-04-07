@@ -21,22 +21,24 @@ class BitcoinCash extends Base {
   }
 
   // eslint-disable-next-line
-  getLegacyBitcoinCashAddress(
+  async getLegacyBitcoinCashAddress(
     xpub: string,
     account: number,
     index: number
-  ): string {
-    return bchaddr.toCashAddress(super.getLegacyAddress(xpub, account, index));
+  ): Promise<string> {
+    return bchaddr.toCashAddress(
+      await super.getLegacyAddress(xpub, account, index)
+    );
   }
 
   // get address given an address type
-  customGetAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
-    return this.getLegacyBitcoinCashAddress(xpub, account, index);
+  ): Promise<string> {
+    return await this.getLegacyBitcoinCashAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

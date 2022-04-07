@@ -45,21 +45,21 @@ class Zen extends Base {
   }
 
   // eslint-disable-next-line
-  getLegacyAddress(xpub: string, account: number, index: number): string {
-    const pk = bjs.crypto.hash160(this.getPubkeyAt(xpub, account, index));
+  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+    const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
     pk.copy(payload, 2);
     return bs58check.encode(payload);
   }
 
-  customGetAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
-    return this.getLegacyAddress(xpub, account, index);
+  ): Promise<string> {
+    return await this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

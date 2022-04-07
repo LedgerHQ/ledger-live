@@ -6,6 +6,7 @@ import {
 import {
   Connection,
   FeeCalculator,
+  FetchMiddleware,
   PublicKey,
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
@@ -57,8 +58,24 @@ export type ChainAPI = Readonly<{
   config: Config;
 }>;
 
-export function getChainAPI(config: Config): ChainAPI {
-  const connection = () => new Connection(config.endpoint, "finalized");
+export function getChainAPI(
+  config: Config,
+  logger?: (url: string, options: any) => void
+): ChainAPI {
+  const fetchMiddleware: FetchMiddleware | undefined =
+    logger === undefined
+      ? undefined
+      : (url, options, fetch) => {
+          logger(url, options);
+          fetch(url, options);
+        };
+
+  const connection = () => {
+    return new Connection(config.endpoint, {
+      commitment: "finalized",
+      fetchMiddleware,
+    });
+  };
 
   return {
     getBalance: (address: string) =>

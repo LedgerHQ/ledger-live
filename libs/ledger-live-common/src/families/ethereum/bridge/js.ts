@@ -45,8 +45,8 @@ const broadcast = async ({
   return patchOperationWithHash(operation, hash);
 };
 
-const scanAccounts = makeScanAccounts(getAccountShape);
-const sync = makeSync(getAccountShape, postSyncPatch);
+const scanAccounts = makeScanAccounts({ getAccountShape });
+const sync = makeSync({ getAccountShape, postSync: postSyncPatch });
 
 const createTransaction = (): Transaction => ({
   family: "ethereum",

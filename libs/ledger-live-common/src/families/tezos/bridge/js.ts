@@ -76,7 +76,7 @@ const getTransactionStatus = async (
     feeTooHigh?: Error;
     recipient?: Error;
   } = {};
-  let amountMustReset = false;
+  let resetTotalSpent = false;
 
   // Recipient validation logic
   if (t.mode !== "undelegate") {
@@ -100,7 +100,7 @@ const getTransactionStatus = async (
   const estimatedFees = t.estimatedFees || new BigNumber(0);
   if (t.mode === "send") {
     if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
-      amountMustReset = true;
+      resetTotalSpent = true;
       errors.amount = new AmountRequired();
     } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
@@ -128,7 +128,7 @@ const getTransactionStatus = async (
     // remap taquito errors
     if (t.taquitoError.endsWith("balance_too_low")) {
       if (t.mode === "send") {
-        amountMustReset = true;
+        resetTotalSpent = true;
         errors.amount = new NotEnoughBalance();
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
@@ -138,12 +138,12 @@ const getTransactionStatus = async (
     } else if (!errors.amount) {
       // unidentified error case
       errors.amount = new Error(t.taquitoError);
-      amountMustReset = true;
+      resetTotalSpent = true;
     }
   }
 
   if (!errors.amount && account.balance.lte(0)) {
-    amountMustReset = true;
+    resetTotalSpent = true;
     errors.amount = new NotEnoughBalance();
   }
 
@@ -154,20 +154,20 @@ const getTransactionStatus = async (
     t.amount.lt(EXISTENTIAL_DEPOSIT) &&
     (await api.getAccountByAddress(t.recipient)).type === "empty"
   ) {
-    amountMustReset = true;
+    resetTotalSpent = true;
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
       minimalAmount: "0.275 XTZ",
     });
   }
 
-  const amount = amountMustReset ? new BigNumber(0) : t.amount;
-
   const result = {
     errors,
     warnings,
     estimatedFees,
-    amount,
-    totalSpent: amount.plus(estimatedFees),
+    amount: t.amount,
+    totalSpent: resetTotalSpent
+      ? new BigNumber(0)
+      : t.amount.plus(estimatedFees),
   };
   return Promise.resolve(result);
 };
@@ -344,9 +344,9 @@ const broadcast = async ({ signedOperation: { operation, signature } }) => {
   return patchOperationWithHash(operation, hash);
 };
 
-const scanAccounts = makeScanAccounts(getAccountShape);
+const scanAccounts = makeScanAccounts({ getAccountShape });
 
-const sync = makeSync(getAccountShape);
+const sync = makeSync({ getAccountShape });
 
 const getPreloadStrategy = (_currency) => ({
   preloadMaxAge: 30 * 1000,

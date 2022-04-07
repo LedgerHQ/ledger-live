@@ -634,7 +634,8 @@ export const createAction = (
       ...state,
       inWrongDeviceForAccount:
         state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress
+          ? state.derivation.address !== appRequest.account.freshAddress &&
+            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
             ? {
                 accountName: getAccountName(appRequest.account),
               }

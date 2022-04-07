@@ -45,11 +45,11 @@ export interface IStorage {
   appendTxs(txs: TX[]): number;
   getAddressUnspentUtxos(address: Address): Output[];
   getLastTx(txFilter: {
-    account?: number;
-    index?: number;
-    address?: string;
+    account: number;
+    index: number;
     confirmed?: boolean;
   }): TX | undefined;
+  getLastUnconfirmedTx(): TX | undefined;
   getTx(address: string, hash: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;
