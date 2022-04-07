@@ -135,6 +135,11 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
+  SOLANA_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "http://validators-solana.coin.ledger.com/api/v1/validators/",
+    desc: "base url for validators.app validator list",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,

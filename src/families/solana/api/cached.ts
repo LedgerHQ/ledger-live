@@ -17,6 +17,8 @@ const cacheKeyAddress = (address: string) => address;
 const cacheKeyEmpty = () => "" as const;
 const cacheKeyAssocTokenAccAddress = (owner: string, mint: string) =>
   `${owner}:${mint}`;
+const cacheKeyMinimumBalanceForRentExemption = (dataLengt: number) =>
+  dataLengt.toString();
 
 const cacheKeyTransactions = (signatures: string[]) =>
   hash([...signatures].sort());
@@ -63,6 +65,36 @@ export function cached(api: ChainAPI): ChainAPI {
       minutes(1)
     ),
 
+    getStakeAccountsByStakeAuth: makeLRUCache(
+      api.getStakeAccountsByStakeAuth,
+      cacheKeyAddress,
+      minutes(1)
+    ),
+
+    getStakeAccountsByWithdrawAuth: makeLRUCache(
+      api.getStakeAccountsByWithdrawAuth,
+      cacheKeyAddress,
+      minutes(1)
+    ),
+
+    getStakeActivation: makeLRUCache(
+      api.getStakeActivation,
+      cacheKeyAddress,
+      minutes(1)
+    ),
+
+    getInflationReward: makeLRUCache(
+      api.getInflationReward,
+      cacheKeyByArgs,
+      minutes(5)
+    ),
+
+    getVoteAccounts: makeLRUCache(
+      api.getVoteAccounts,
+      cacheKeyEmpty,
+      minutes(1)
+    ),
+
     getRecentBlockhash: makeLRUCache(
       api.getRecentBlockhash,
       cacheKeyEmpty,
@@ -81,8 +113,16 @@ export function cached(api: ChainAPI): ChainAPI {
       seconds(30)
     ),
 
+    getMinimumBalanceForRentExemption: makeLRUCache(
+      api.getMinimumBalanceForRentExemption,
+      cacheKeyMinimumBalanceForRentExemption,
+      minutes(5)
+    ),
+
     // do not cache
     sendRawTransaction: api.sendRawTransaction,
+
+    getEpochInfo: makeLRUCache(api.getEpochInfo, cacheKeyEmpty, minutes(1)),
 
     config: api.config,
   };

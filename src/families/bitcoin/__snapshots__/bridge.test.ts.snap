@@ -22955,6 +22955,77 @@ Array [
       "type": "IN",
       "value": "1000000",
     },
+  ],
+  Array [],
+]
+`;
+
+exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
+Array [
+  Object {
+    "balance": "83389840",
+    "currencyId": "solana",
+    "derivationMode": "solanaMain",
+    "freshAddress": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "freshAddressPath": "44'/501'",
+    "freshAddresses": Array [
+      Object {
+        "address": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+        "derivationPath": "44'/501'",
+      },
+    ],
+    "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain",
+    "index": 0,
+    "name": "Solana 1",
+    "nfts": undefined,
+    "operationsCount": 2,
+    "pendingOperations": Array [],
+    "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "solanaResources": Object {
+      "stakes": "[]",
+    },
+    "spendableBalance": "83389840",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": true,
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "solana",
+    "derivationMode": "solanaSub",
+    "freshAddress": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
+    "freshAddressPath": "44'/501'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
+        "derivationPath": "44'/501'/0'",
+      },
+    ],
+    "id": "js:2:solana:6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A:solanaSub",
+    "index": 0,
+    "name": "Solana 1",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "solanaResources": Object {
+      "stakes": "[]",
+    },
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+  },
+]
+`;
+
+exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
+Array [
+  Array [
     Object {
       "accountId": "js:2:qtum:xpub6D97ABLAcapXNWjS2pNwYpmUjYYt5f2Tyj4PDSp7pvY2gySb2iAvejKNPm18raeU8WxtXVCpQfZjMN7eEdgtor8T5141ZLH7o2WkL1nyNQb:segwit",
       "blockHash": "eb38de048b4f1a0b52cafb7ee7a6708bd02ccf59c77cadd3b0d078652e785abd",
