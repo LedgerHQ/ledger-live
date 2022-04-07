@@ -3,7 +3,11 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
-import type { CryptoCurrency, NFTMetadataResponse } from "../types";
+import type {
+  CryptoCurrency,
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+} from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
@@ -83,6 +87,11 @@ export type NFTMetadataInput = Readonly<
     tokenId: string;
   }>
 >;
+export type NFTCollectionMetadataInput = Readonly<
+  Array<{
+    contract: string;
+  }>
+>;
 export type API = {
   getTransactions: (
     address: string,
@@ -100,6 +109,10 @@ export type API = {
     input: NFTMetadataInput,
     chainId: string
   ) => Promise<NFTMetadataResponse[]>;
+  getNFTCollectionMetadata: (
+    input: NFTCollectionMetadataInput,
+    chainId: string
+  ) => Promise<NFTCollectionMetadataResponse[]>;
   getAccountBalance: (address: string) => Promise<BigNumber>;
   roughlyEstimateGasLimit: (address: string) => Promise<BigNumber>;
   getERC20ApprovalsPerContract: (
@@ -216,6 +229,20 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         )}/v1/ethereum/${chainId}/contracts/tokens/infos`,
         data: input,
       });
+
+      return data;
+    },
+
+    async getNFTCollectionMetadata(input, chainId) {
+      const { data }: { data: NFTCollectionMetadataResponse[] } = await network(
+        {
+          method: "POST",
+          url: `${getEnv(
+            "NFT_ETH_METADATA_SERVICE"
+          )}/v1/ethereum/${chainId}/contracts/infos`,
+          data: input,
+        }
+      );
 
       return data;
     },

@@ -20,7 +20,11 @@ import type {
   CryptoCurrencyIds,
   NFTMetadataResponse,
 } from ".";
-import { NFTMetadata } from "./nft";
+import {
+  NFTCollectionMetadata,
+  NFTCollectionMetadataResponse,
+  NFTMetadata,
+} from "./nft";
 export type ScanAccountEvent = {
   type: "discovered";
   account: Account;
@@ -68,12 +72,19 @@ export interface CurrencyBridge {
     preferredNewAccountScheme?: DerivationMode;
   }): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
-  nftMetadataResolver?: (arg: {
-    contract: string;
-    tokenId: string;
-    currencyId: string;
-    metadata?: NFTMetadata;
-  }) => Promise<NFTMetadataResponse>;
+  nftResolvers?: {
+    nftMetadata: (arg: {
+      contract: string;
+      tokenId: string;
+      currencyId: string;
+      metadata?: NFTMetadata;
+    }) => Promise<NFTMetadataResponse>;
+    collectionMetadata: (arg: {
+      contract: string;
+      currencyId: string;
+      metadata?: NFTCollectionMetadata;
+    }) => Promise<NFTCollectionMetadataResponse>;
+  };
 }
 // Abstraction related to an account
 export interface AccountBridge<T extends Transaction> {
