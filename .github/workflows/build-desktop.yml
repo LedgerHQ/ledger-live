@@ -43,7 +43,7 @@ jobs:
     needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - name: prepare runner
         run: |
@@ -114,7 +114,7 @@ jobs:
     name: "Windows"
     runs-on: [ledger-live, windows]
     env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v2
         with:
@@ -190,7 +190,7 @@ jobs:
     name: "macOS"
     runs-on: [ledger-live, macos]
     env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v2
         with:
