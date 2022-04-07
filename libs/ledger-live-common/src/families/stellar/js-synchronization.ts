@@ -1,4 +1,3 @@
-import type { Account } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
@@ -32,9 +31,5 @@ const getAccountShape: GetAccountShape = async (info) => {
   return { ...shape, operations };
 };
 
-const postSync = (initial: Account, parent: Account) => {
-  return parent;
-};
-
-export const sync = makeSync(getAccountShape, postSync);
-export const scanAccounts = makeScanAccounts(getAccountShape);
+export const sync = makeSync({ getAccountShape });
+export const scanAccounts = makeScanAccounts({ getAccountShape });

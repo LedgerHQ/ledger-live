@@ -408,5 +408,8 @@ const getAddressFn = (transport) => {
   return (opts) => getAddressWithBtcInstance(transport, btc, opts);
 };
 
-export const scanAccounts = makeScanAccounts(getAccountShape, getAddressFn);
-export const sync = makeSync(getAccountShape, postSync);
+export const scanAccounts = makeScanAccounts({
+  getAccountShape,
+  getAddressFn,
+});
+export const sync = makeSync({ getAccountShape, postSync });

@@ -113,7 +113,7 @@ const getCompleteSwapHistory = (
       day = startOfDay(swap.operation.date);
       data = [swap];
       continue;
-    } else if (!skip) {
+    } else if (!skip && !data.find((d) => d.swapId === swap.swapId)) {
       data.push(swap);
     }
 
