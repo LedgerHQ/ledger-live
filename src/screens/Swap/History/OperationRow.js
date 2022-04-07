@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
   },
   arrow: {
     flex: 1,
-    marginLeft: 16,
-    marginRight: 16,
     alignItems: "center",
   },
   name: {

@@ -124,15 +124,7 @@ const History = () => {
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
-        <View
-          style={[
-            styles.alertWrapper,
-            {
-              backgroundColor: colors.white,
-              borderColor: colors.lightFog,
-            },
-          ]}
-        >
+        <View style={styles.alertWrapper}>
           <Alert type="primary" horizontal>
             <Trans i18nKey="transfer.swap.history.disclaimer" />
           </Alert>
@@ -200,7 +192,6 @@ const styles = StyleSheet.create({
   },
   alertWrapper: {
     padding: 20,
-    borderBottomWidth: 1,
   },
 });
 
