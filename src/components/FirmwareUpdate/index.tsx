@@ -72,15 +72,18 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
 
   const onClose = useCallback(() => {
     if(step === "confirmRecoveryBackup" || step === "firmwareUpdated" || step === "error") {
-      onReset();
       setClosed(true);
     }
-  }, [onReset, setClosed]);
-  console.log({ state });
+  }, [setClosed, step]);
 
   useEffect(() => {
-    console.log({ nextBackgroundEvent })
+    // reset the state whenever we re-open the modal
+    if(!closed) {
+      onReset();
+    }
+   }, [closed, onReset]);
 
+  useEffect(() => {
     if (!nextBackgroundEvent) return;
 
     dispatchEvent(nextBackgroundEvent);
