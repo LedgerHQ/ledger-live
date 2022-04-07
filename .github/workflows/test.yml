@@ -23,6 +23,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=4096"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      DEBUG: pw:browser
     strategy:
       fail-fast: false
       matrix:
@@ -62,10 +63,14 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
+        env:
+          INSTRUMENT_BUILD: true
       - name: Build and Test affected packages [!Linux]
         if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
+        env:
+          INSTRUMENT_BUILD: true
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v2
         if: failure()
