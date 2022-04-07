@@ -10,6 +10,8 @@ import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
+// @ts-ignore issue with exports
+import { TrackScreen, track } from "../../analytics";
 
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
@@ -50,7 +52,12 @@ function Discover() {
               navigation.navigate(NavigatorName.Discover, {
                 screen: ScreenName.PlatformCatalog,
               });
-            } else Linking.openURL(urls.discover.ledgerApps);
+            } else {
+              track("Discover - Apps - OpenUrl", {
+                url: urls.discover.ledgerApps,
+              });
+              Linking.openURL(urls.discover.ledgerApps);
+            }
           },
           disabled: false,
           Image: (
@@ -66,6 +73,9 @@ function Discover() {
           subTitle: t("discover.sections.learn.desc"),
           onPress: () => {
             if (!learn?.enabled) {
+              track("Discover - Learn - OpenUrl", {
+                url: urls.discover.academy,
+              });
               Linking.openURL(urls.discover.academy);
             } else {
               // TODO: FIX @react-navigation/native using Typescript
@@ -86,6 +96,7 @@ function Discover() {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
           onPress: () => {
+            track("Discover - Earn - OpenUrl", { url: urls.discover.earn });
             Linking.openURL(urls.discover.earn);
           },
           disabled: false,
@@ -103,6 +114,7 @@ function Discover() {
 
   return (
     <StyledSafeAreaView>
+      <TrackScreen category="Discover" />
       <ScrollView>
         <Flex p={8} mt={8} flexDirection="row">
           <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
