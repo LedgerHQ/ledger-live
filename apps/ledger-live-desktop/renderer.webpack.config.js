@@ -115,6 +115,12 @@ module.exports = {
     path: path.resolve(__dirname, ".webpack"),
     filename: "renderer.bundle.js",
   },
+  optimization: {
+    minimize: false,
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  },
   plugins: [
     new Dotenv({
       path: getDotenvPathFromEnv(),
