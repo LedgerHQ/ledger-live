@@ -89,13 +89,14 @@
       "outputs": []
     },
     "ledger-live-desktop#build:testing": {
+      "cache": false,
       "dependsOn": [
         "^build"
       ],
-      "outputs": [
-        ".webpack/**",
-        "dist/**"
-      ]
+      // "outputs": [
+      //   ".webpack/**",
+      //   "dist/**"
+      // ]
     }
   }
 }
