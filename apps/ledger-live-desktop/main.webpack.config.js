@@ -26,6 +26,12 @@ module.exports = {
     path: path.resolve(__dirname, ".webpack"),
     filename: "main.bundle.js",
   },
+  optimization: {
+    minimize: false,
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  },
   plugins: [
     new UnusedWebpackPlugin({
       directories: [path.join(__dirname, "src/main"), path.join(__dirname, "src/internal")],
