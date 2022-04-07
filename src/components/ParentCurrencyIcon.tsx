@@ -1,9 +1,8 @@
-// @flow
-
-import React, { memo } from "react";
-import { View, StyleSheet } from "react-native";
-
-import { useTheme } from "@react-navigation/native";
+import React, { memo, useMemo } from "react";
+import { Flex } from "@ledgerhq/native-ui";
+import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import { useTheme } from "styled-components";
+import { ensureContrast } from "../colors";
 import CurrencyIcon from "./CurrencyIcon";
 
 type Props = {
@@ -13,41 +12,63 @@ type Props = {
 
 const ParentCurrencyIcon = ({ currency, size }: Props) => {
   const { colors } = useTheme();
-  return currency.type === "TokenCurrency" ? (
-    <View style={{ width: size }}>
-      <View style={styles.parentIconWrapper}>
-        <CurrencyIcon size={size} currency={currency.parentCurrency} />
-      </View>
-      <View
-        style={[
-          styles.tokenIconWrapper,
-          {
-            borderColor: colors.card,
-            backgroundColor: colors.card,
-          },
-        ]}
-      >
-        <CurrencyIcon size={size - 2} currency={currency} />
-      </View>
-    </View>
-  ) : (
-    <CurrencyIcon size={size} currency={currency} />
+  const color = useMemo(
+    () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
+    [colors, currency],
+  );
+  const parentColor = useMemo(() => {
+    if (!currency.parentCurrency) {
+      return null;
+    }
+    return ensureContrast(
+      getCurrencyColor(currency.parentCurrency),
+      colors.constant.white,
+    );
+  }, [colors, currency]);
+
+  const iconSize = size * 0.625;
+  const parentIconBorderWidth = 2;
+  const parentIconCircleSize = size * 0.375 + parentIconBorderWidth * 2;
+  const parentIconSize = size * 0.25;
+
+  return (
+    <Flex
+      bg={color}
+      width={size}
+      height={size}
+      alignItems={"center"}
+      justifyContent={"center"}
+      borderRadius={32}
+    >
+      <CurrencyIcon
+        size={iconSize}
+        currency={currency}
+        color={colors.constant.white}
+      />
+      {currency.type === "TokenCurrency" && (
+        <Flex
+          position={"absolute"}
+          left={size - parentIconCircleSize}
+          // Border width offset
+          bottom={parentIconBorderWidth * -1}
+          bg={parentColor}
+          width={parentIconCircleSize}
+          height={parentIconCircleSize}
+          alignItems={"center"}
+          justifyContent={"center"}
+          borderRadius={32}
+          borderWidth={"2px"}
+          borderColor={"background.main"}
+        >
+          <CurrencyIcon
+            size={parentIconSize}
+            currency={currency.parentCurrency}
+            color={colors.constant.white}
+          />
+        </Flex>
+      )}
+    </Flex>
   );
 };
 
 export default memo<Props>(ParentCurrencyIcon);
-
-const styles = StyleSheet.create({
-  tokenIconWrapper: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignContent: "center",
-    marginLeft: 0,
-    marginTop: -6,
-    borderWidth: 2,
-    borderRadius: 4,
-  },
-  parentIconWrapper: {
-    marginLeft: -5,
-  },
-});
