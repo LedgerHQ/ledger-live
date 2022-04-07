@@ -18,7 +18,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      DEBUG: pw:browser
+      # DEBUG: pw:browser
     strategy:
       fail-fast: false
       matrix:
