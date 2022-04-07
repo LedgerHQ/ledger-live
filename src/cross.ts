@@ -295,7 +295,7 @@ export const accountDataToAccount = ({
   derivationMode: derivationModeStr,
   seedIdentifier,
 }: AccountData): Account => {
-  const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
+  const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
   const derivationMode = asDerivationMode(derivationModeStr);
   const currency = getCryptoCurrencyById(currencyId);
@@ -304,13 +304,11 @@ export const accountDataToAccount = ({
   let freshAddressPath = "";
 
   if (
-    type === "libcore" ||
     // FIXME Dirty hack, since we have no way here to know if "xpubOrAddress" is one or the other.
     // Proposed fix: https://ledgerhq.atlassian.net/browse/LL-7437
     currency.family === "bitcoin"
   ) {
-    // In libcore implementation, xpubOrAddress field always go in the xpub
-    // In JS implementation, only Bitcoin-like currencies store the xpub
+    // In bitcoin implementation, xpubOrAddress field always go in the xpub
     xpub = xpubOrAddress;
   } else {
     if (currency.family === "tezos") {
