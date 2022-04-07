@@ -92,11 +92,7 @@
       "cache": false,
       "dependsOn": [
         "^build"
-      ],
-      // "outputs": [
-      //   ".webpack/**",
-      //   "dist/**"
-      // ]
+      ]
     }
   }
 }
