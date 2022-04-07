@@ -803,7 +803,12 @@
     "title": "GET YOUR LEDGER",
     "desc": "Protect your cryptocurrencies with industry-leading security",
     "cta": "Buy your Ledger now",
-    "footer": "I already have a device, set it up now"
+    "footer": "I already have a device, set it up now",
+    "debugDrawer": {
+      "title": "Update iframe URL",
+      "subtitle": "Debug Settings",
+      "cta": "Save"
+    }
   },
   "discover": {
     "title": "Discover",
