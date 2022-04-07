@@ -1,0 +1,68 @@
+name: Test Desktop App
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      DEBUG: pw:browser
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "2.7.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Setup TimeZone for Windows
+        run: tzutil /s "Eastern Standard Time"
+        if: runner.os == 'Windows'
+      - name: Install dependencies
+        run: pnpm i
+      - name: Install playwright dependencies
+        run: npx playwright install-deps
+      - name: Build and Test affected packages [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm test -- --filter=ledger-live-desktop
+        shell: bash
+        env:
+          INSTRUMENT_BUILD: true
+      - name: Build and Test affected packages [!Linux]
+        if: matrix.os != 'ubuntu-latest'
+        run: pnpm test -- --filter=ledger-live-desktop
+        shell: bash
+        env:
+          INSTRUMENT_BUILD: true
