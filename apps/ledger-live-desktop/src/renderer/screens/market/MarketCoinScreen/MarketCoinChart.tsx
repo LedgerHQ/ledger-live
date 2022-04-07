@@ -9,6 +9,7 @@ import styled from "styled-components";
 import Chart from "~/renderer/components/Chart";
 import FormattedDate from "~/renderer/components/FormattedDate";
 import ChartPlaceholder from "../assets/ChartPlaceholder";
+import CountervalueSelect from "../CountervalueSelect";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -54,6 +55,7 @@ function Tooltip({
     <Flex flexDirection="column" p={1}>
       <TooltipText variant="large">
         {counterValueFormatter({
+          shorten: String(data.value).length > 7,
           currency: counterCurrency,
           value: data.value,
           locale,
@@ -79,6 +81,8 @@ type Props = {
   t: any;
   locale: string;
   loading: boolean;
+  setCounterCurrency: (currency: string) => void;
+  supportedCounterCurrencies: string[];
 };
 
 function MarkeCoinChartComponent({
@@ -91,6 +95,8 @@ function MarkeCoinChartComponent({
   t,
   locale,
   loading,
+  setCounterCurrency,
+  supportedCounterCurrencies,
 }: Props) {
   const { range, counterCurrency } = chartRequestParams;
   const { scale } = rangeDataTable[range];
@@ -149,15 +155,29 @@ function MarkeCoinChartComponent({
             )}
           </Flex>
         </Flex>
-        <Bar onTabChange={setRange} initialActiveIndex={activeRangeIndex}>
-          {ranges
-            .filter(k => k !== "1h")
-            .map(key => (
-              <Text color="inherit" variant="small" key={key}>
-                {t(`market.range.${key}`)}
-              </Text>
-            ))}
-        </Bar>
+        <Flex flexDirection="column" justifyContent="space-between">
+          <Flex mb={3}>
+            <CountervalueSelect
+              data-test-id="market-coin-counter-value-select"
+              counterCurrency={counterCurrency}
+              setCounterCurrency={setCounterCurrency}
+              supportedCounterCurrencies={supportedCounterCurrencies}
+            />
+          </Flex>
+          <Bar
+            data-test-id="market-coin-range-select"
+            onTabChange={setRange}
+            initialActiveIndex={activeRangeIndex}
+          >
+            {ranges
+              .filter(k => k !== "1h")
+              .map(key => (
+                <Text color="inherit" variant="small" key={key}>
+                  {t(`market.range.${key}`)}
+                </Text>
+              ))}
+          </Bar>
+        </Flex>
       </Flex>
       <SwitchTransition>
         <Transition

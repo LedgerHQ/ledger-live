@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
@@ -10,8 +10,6 @@ import {
   useMarketData,
 } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import styled, { useTheme } from "styled-components";
-import CounterValueSelect from "../CountervalueSelect";
-import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
@@ -23,6 +21,9 @@ import Track from "~/renderer/analytics/Track";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
+import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -43,9 +44,8 @@ const Container = styled(Flex).attrs({
 })``;
 
 const StarContainer = styled(Flex).attrs({
-  height: 33,
-  ml: 2,
-  p: 1,
+  ml: 3,
+  pb: 1,
 })`
   cursor: pointer;
 `;
@@ -66,13 +66,15 @@ export default function MarketCoinScreen() {
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
   const allAccounts = useSelector(accountsSelector);
+  const flattenedAccounts = flattenAccounts(allAccounts);
   const { providers, storedProviders } = useProviders();
-  const swapAvailableIds =
-    providers || storedProviders
+  const swapAvailableIds = useMemo(() => {
+    return providers || storedProviders
       ? (providers || storedProviders)
           .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
+  }, [providers, storedProviders]);
 
   const {
     selectedCoinData: currency,
@@ -85,8 +87,7 @@ export default function MarketCoinScreen() {
     supportedCounterCurrencies,
   } = useSingleCoinMarketData(currencyId);
 
-  const availableOnBuy = currency && isCurrencySupported("BUY", currency);
-  const availableOnSwap = currency && swapAvailableIds.includes(currency.id);
+  const rampCatalog = useRampCatalog();
 
   const {
     id,
@@ -112,6 +113,17 @@ export default function MarketCoinScreen() {
     chartData,
   } = currency || {};
 
+  const [onRampAvailableTickers] = useMemo(() => {
+    if (!rampCatalog.value) {
+      return [[], []];
+    }
+    return [getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp)];
+  }, [rampCatalog.value]);
+
+  const availableOnBuy =
+    currency && currency.ticker && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+  const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
+
   useEffect(() => {
     return () => {
       // @ts-expect-error can be an input
@@ -132,11 +144,12 @@ export default function MarketCoinScreen() {
       history.push({
         pathname: "/exchange",
         state: {
-          defaultCurrency: internalCurrency,
+          mode: "onRamp",
+          defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
         },
       });
     },
-    [internalCurrency, history],
+    [internalCurrency, history, currency],
   );
 
   const openAddAccounts = useCallback(() => {
@@ -156,20 +169,27 @@ export default function MarketCoinScreen() {
         e.stopPropagation();
         setTrackingSource("Page Market");
 
-        const defaultAccount = getAvailableAccountsById(
-          currency?.internalCurrency?.id,
-          allAccounts,
-        ).find(Boolean);
+        const currencyId = currency?.internalCurrency?.id;
+
+        const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
+          Boolean,
+        );
 
         if (!defaultAccount) return openAddAccounts();
 
         history.push({
           pathname: "/swap",
-          state: { defaultCurrency: currency.internalCurrency, defaultAccount },
+          state: {
+            defaultCurrency: currency.internalCurrency,
+            defaultAccount,
+            defaultParentAccount: defaultAccount?.parentId
+              ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
+              : null,
+          },
         });
       }
     },
-    [allAccounts, currency, history, openAddAccounts],
+    [currency?.internalCurrency, flattenedAccounts, history, openAddAccounts],
   );
 
   const toggleStar = useCallback(() => {
@@ -206,10 +226,10 @@ export default function MarketCoinScreen() {
             )}
           </CryptoCurrencyIconWrapper>
           <Flex pl={3} flexDirection="column" alignItems="left" pr={16}>
-            <Flex flexDirection="row" alignItems="center">
+            <Flex flexDirection="row" alignItems="center" justifyContent={"center"}>
               <Title>{name}</Title>
-              <StarContainer onClick={toggleStar}>
-                <Icon name={isStarred > 0 ? "StarSolid" : "Star"} size={18} />
+              <StarContainer data-test-id="market-coin-star-button" onClick={toggleStar}>
+                <Icon name={isStarred > 0 ? "StarSolid" : "Star"} size={28} />
               </StarContainer>
             </Flex>
             <Text variant="small" color="neutral.c60">
@@ -221,24 +241,22 @@ export default function MarketCoinScreen() {
           {internalCurrency && (
             <>
               {availableOnBuy && (
-                <Button variant="shade" mr={1} onClick={onBuy}>
+                <Button
+                  data-test-id="market-coin-buy-button"
+                  variant="color"
+                  mr={1}
+                  onClick={onBuy}
+                >
                   {t("accounts.contextMenu.buy")}
                 </Button>
               )}
               {availableOnSwap && (
-                <Button variant="shade" onClick={onSwap}>
+                <Button data-test-id="market-coin-swap-button" variant="color" onClick={onSwap}>
                   {t("accounts.contextMenu.swap")}
                 </Button>
               )}
             </>
           )}
-          <Flex justifyContent="flex-end" ml={4}>
-            <CounterValueSelect
-              counterCurrency={counterCurrency}
-              setCounterCurrency={setCounterCurrency}
-              supportedCounterCurrencies={supportedCounterCurrencies}
-            />
-          </Flex>
         </Flex>
       </Flex>
       <MarketCoinChart
@@ -251,6 +269,8 @@ export default function MarketCoinScreen() {
         t={t}
         locale={locale}
         loading={loadingChart}
+        setCounterCurrency={setCounterCurrency}
+        supportedCounterCurrencies={supportedCounterCurrencies}
       />
       <MarketInfo
         marketcap={marketcap}

@@ -1,8 +1,5 @@
-import React, { useCallback, useEffect, useState, memo } from "react";
-import {
-  MarketDataContextType,
-  useMarketData,
-} from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import React, { useCallback, memo, useMemo } from "react";
+import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import styled from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { Trans, useTranslation } from "react-i18next";
@@ -11,19 +8,16 @@ import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
 import MarketRowItem from "./MarketRowItem";
 import LoadingPlaceholder from "../../components/LoadingPlaceholder";
-import NoCryptoFound from "./assets/noCryptoFound";
 import { Button } from ".";
-import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { useSelector, useDispatch } from "react-redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { useProviders } from "../exchange/Swap2/Form";
 import Track from "~/renderer/analytics/Track";
-
-type Props = {
-  data: MarketDataContextType;
-  t: any;
-};
+import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+import Image from "~/renderer/components/Image";
+import NoResultsFound from "~/renderer/images/no-results-found.png";
 
 export const TableCellBase = styled(Flex).attrs({
   alignItems: "center",
@@ -61,7 +55,8 @@ const ChevronContainer = styled(Flex).attrs({ m: 1 })<{
   }
 `;
 
-export const miniChartThreshold = 1050;
+export const miniChartThreshold = 900;
+export const miniMarketCapThreshold = 1100;
 
 export const SortTableCell = ({
   onClick,
@@ -126,16 +121,19 @@ export const TableRow = styled(Flex).attrs({
     padding-left: 5px;
   }
   ${TableCellBase}:nth-child(2) {
-    flex: 1 0 150px;
+    flex: 1 0 230px;
     justify-content: flex-start;
   }
   ${TableCellBase}:nth-child(3) {
-    flex: 1 0 150px;
+    flex: 1 0 80px;
     justify-content: flex-end;
   }
-  ${TableCellBase}:nth-child(4),
+  ${TableCellBase}:nth-child(4) {
+    flex: 1 0 30px;
+    justify-content: flex-end;
+  }
   ${TableCellBase}:nth-child(5) {
-    flex: 1 0 100px;
+    flex: 1 0 90px;
     justify-content: flex-end;
   }
   ${TableCellBase}:nth-child(6) {
@@ -151,6 +149,21 @@ export const TableRow = styled(Flex).attrs({
       fill: currentColor;
     }
   }
+
+  @media (max-width: ${miniChartThreshold}px) {
+    ${TableCellBase}:nth-child(6) {
+      display: none;
+    }
+  }
+
+  @media (max-width: ${miniMarketCapThreshold}px) {
+    ${TableCellBase}:nth-child(3) {
+      flex: inherit;
+    }
+    ${TableCellBase}:nth-child(1), ${TableCellBase}:nth-child(5) {
+      display: none;
+    }
+  }
 `;
 
 const NoCryptoPlaceholder = ({ requestParams, t, resetSearch }: any) => (
@@ -164,7 +177,7 @@ const NoCryptoPlaceholder = ({ requestParams, t, resetSearch }: any) => (
   >
     <Track event="Page Market Search" success={false} />
     <Flex justifyContent="center" alignItems="center">
-      <NoCryptoFound size={75} />
+      <Image alt="no result found" resource={NoResultsFound} width={192} height={192} />
     </Flex>
     <Text variant="large" my={3} textAlign="center">
       {t("market.warnings.noCryptosFound")}
@@ -197,13 +210,14 @@ const CurrencyRow = memo(function CurrencyRowItem({
   starredMarketCoins,
   locale,
   swapAvailableIds,
+  onRampAvailableTickers,
   style,
-  displayChart,
 }: any) {
   const currency = data ? data[index] : null;
+  const internalCurrency = currency ? currency.internalCurrency : null;
   const isStarred = currency && starredMarketCoins.includes(currency.id);
-  const availableOnBuy = currency && isCurrencySupported("BUY", currency);
-  const availableOnSwap = currency && swapAvailableIds.includes(currency.id);
+  const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
+  const availableOnSwap = internalCurrency && swapAvailableIds.includes(internalCurrency.id);
   return (
     <MarketRowItem
       loading={!currency || (index === data.length && index > 50 && loading)}
@@ -217,7 +231,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
       availableOnBuy={availableOnBuy}
       availableOnSwap={availableOnSwap}
       style={{ ...style }}
-      displayChart={displayChart}
     />
   );
 });
@@ -232,15 +245,27 @@ function MarketList({
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const { providers, storedProviders } = useProviders();
+  const rampCatalog = useRampCatalog();
+
+  const [onRampAvailableTickers, offRampAvailableTickers] = useMemo(() => {
+    if (!rampCatalog.value) {
+      return [[], []];
+    }
+    return [
+      getAllSupportedCryptoCurrencyTickers(rampCatalog.value.onRamp),
+      getAllSupportedCryptoCurrencyTickers(rampCatalog.value.offRamp),
+    ];
+  }, [rampCatalog.value]);
+
   const swapAvailableIds =
     providers || storedProviders
       ? (providers || storedProviders)
-          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
+          .map(({ pairs }: any) => pairs.map(({ from, to }: any) => [from, to]))
           .flat(2)
       : [];
 
   const {
-    marketData,
+    marketData = [],
     loading,
     endOfList,
     requestParams,
@@ -286,14 +311,6 @@ function MarketList({
   const isItemLoaded = useCallback((index: number) => !!marketData[index], [marketData]);
   const itemCount = endOfList ? currenciesLength : currenciesLength + 1;
 
-  const [width, setWidth] = useState(window.innerWidth);
-  useEffect(() => {
-    const handleWindowResize = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handleWindowResize);
-
-    return () => window.removeEventListener("resize", handleWindowResize);
-  }, []);
-
   return (
     <Flex flex="1" flexDirection="column">
       {!currenciesLength && !loading ? (
@@ -305,6 +322,7 @@ function MarketList({
           )}
           <TableRow header>
             <SortTableCell
+              data-test-id="market-sort-button"
               onClick={toggleSortBy}
               orderByKey="market_cap"
               orderBy={orderBy}
@@ -315,11 +333,12 @@ function MarketList({
             <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
             <TableCell disabled>{t("market.marketList.price")}</TableCell>
             <TableCell disabled>{t("market.marketList.change")}</TableCell>
+
             <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
-            {width > miniChartThreshold && (
-              <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
-            )}
+
+            <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
             <TableCell
+              data-test-id="market-star-button"
               disabled={starredMarketCoins.length <= 0 && starred.length <= 0}
               onClick={toggleStarredAccounts}
             >
@@ -348,6 +367,7 @@ function MarketList({
                         starredMarketCoins={starredMarketCoins}
                         locale={locale}
                         swapAvailableIds={swapAvailableIds}
+                        onRampAvailableTickers={onRampAvailableTickers}
                       />
                     )}
                   </List>
@@ -357,7 +377,7 @@ function MarketList({
                     itemCount={itemCount}
                     loadMoreItems={loadNextPage}
                   >
-                    {({ onItemsRendered, ref }) => (
+                    {({ onItemsRendered, ref }: any) => (
                       <List
                         height={height}
                         width="100%"
@@ -379,7 +399,7 @@ function MarketList({
                             starredMarketCoins={starredMarketCoins}
                             locale={locale}
                             swapAvailableIds={swapAvailableIds}
-                            displayChart={width > miniChartThreshold}
+                            onRampAvailableTickers={onRampAvailableTickers}
                           />
                         )}
                       </List>

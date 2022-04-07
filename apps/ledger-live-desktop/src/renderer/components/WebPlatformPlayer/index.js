@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
@@ -226,7 +227,16 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
             allowAddAccount,
             onResult: account => {
               tracking.platformRequestAccountSuccess(manifest);
-              resolve(serializePlatformAccount(accountToPlatformAccount(account)));
+              /**
+               * If account does not exist, it means one (or multiple) account(s) have been created
+               * In this case, to notify the user of the API that an account has been created,
+               * and that he should refetch the accounts list, we return an empty object
+               * (that will be deserialized as an empty Account object in the SDK)
+               *
+               * FIXME: this overall handling of created accounts could be improved and might not handle "onCancel"
+               */
+              //
+              resolve(account ? serializePlatformAccount(accountToPlatformAccount(account)) : {});
             },
             onCancel: error => {
               tracking.platformRequestAccountFail(manifest);
@@ -506,6 +516,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
 
   return (
     <Container>
+      <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />
       <TopBar
         manifest={manifest}
         onReload={handleReload}

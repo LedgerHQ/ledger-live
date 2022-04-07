@@ -23,6 +23,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import { closeAllModal } from "~/renderer/actions/modals";
+import { setNotSeededDeviceRelaunch } from "~/renderer/actions/application";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -55,8 +56,7 @@ import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = styled.div`
   width: 600px;
   max-width: 100%;
-  height: ${p => (p.modelId === "blue" ? 300 : 200)}px;
-  padding-bottom: ${p => (p.modelId === "blue" ? 20 : 0)}px;
+  padding-bottom: 20px;
   align-self: center;
   display: flex;
   align-items: center;
@@ -201,12 +201,14 @@ const OpenManagerBtn = ({
   updateApp,
   firmwareUpdate,
   mt = 2,
+  ml = 0,
 }: {
   closeAllModal: () => void,
   appName?: string,
   updateApp?: boolean,
   firmwareUpdate?: boolean,
   mt?: number,
+  ml?: number,
 }) => {
   const history = useHistory();
   const { setDrawer } = useContext(context);
@@ -228,7 +230,7 @@ const OpenManagerBtn = ({
   }, [updateApp, firmwareUpdate, appName, history, closeAllModal, setDrawer]);
 
   return (
-    <Button mt={mt} primary onClick={onClick}>
+    <Button mt={mt} ml={ml} primary onClick={onClick}>
       <Trans i18nKey="DeviceAction.openManager" />
     </Button>
   );
@@ -240,9 +242,10 @@ const OpenOnboardingBtn = () => {
 
   const onClick = useCallback(() => {
     setTrackingSource("device action open onboarding button");
+    dispatch(setNotSeededDeviceRelaunch(true));
     dispatch(relaunchOnboarding(true));
     dispatch(closeAllModal());
-    closeAllModal(setDrawer(undefined));
+    setDrawer(undefined);
   }, [dispatch, setDrawer]);
 
   return (
@@ -279,11 +282,15 @@ export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[]
 };
 
 export const InstallingApp = ({
+  modelId,
+  type,
   appName,
   progress,
   request,
   analyticsPropertyFlow = "unknown",
 }: {
+  modelId: DeviceModelId,
+  type: "light" | "dark",
   appName: string,
   progress: number,
   request: any,
@@ -291,6 +298,7 @@ export const InstallingApp = ({
 }) => {
   const currency = request?.currency || request?.account?.currency;
   const appNameToTrack = appName || request?.appName || currency?.managerAppName;
+  const cleanProgress = progress ? Math.round(progress * 100) : null;
   useEffect(() => {
     const trackingArgs = [
       "In-line app install",
@@ -301,15 +309,9 @@ export const InstallingApp = ({
   return (
     <Wrapper id="deviceAction-loading">
       <Header />
-      <ProgressWrapper>
-        {progress ? (
-          <ProgressCircle size={58} progress={progress} />
-        ) : (
-          <Rotating size={58}>
-            <ProgressCircle hideProgress size={58} progress={0.06} />
-          </Rotating>
-        )}
-      </ProgressWrapper>
+      <AnimationWrapper modelId={modelId}>
+        <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
+      </AnimationWrapper>
       <Footer>
         <Title>
           <Trans i18nKey="DeviceAction.installApp" values={{ appName }} />
@@ -317,6 +319,7 @@ export const InstallingApp = ({
         <SubTitle>
           <Trans i18nKey="DeviceAction.installAppDescription" />
         </SubTitle>
+        {cleanProgress ? <Title>{`${cleanProgress}%`}</Title> : null}
       </Footer>
     </Wrapper>
   );
@@ -489,7 +492,9 @@ export const renderError = ({
               mx={1}
             />
           ) : null}
-          {onRetry ? (
+          {withOpenManager ? (
+            <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
+          ) : onRetry ? (
             <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
               <Trans i18nKey="common.retry" />
             </Button>
