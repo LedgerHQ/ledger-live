@@ -2720,6 +2720,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
+      },
+      "bep20": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
+        "learnMore": "Learn more about BEP-20"
       }
     },
     "showMoreChainType": "More address types",
