@@ -60,11 +60,11 @@ jobs:
         shell: bash
         env:
           INSTRUMENT_BUILD: true
-          DEV_TOOLS: 1
+          # DEV_TOOLS: 1
       - name: Build and Test affected packages [!Linux]
         if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --filter=ledger-live-desktop
         shell: bash
         env:
           INSTRUMENT_BUILD: true
-          DEV_TOOLS: 1
+          # DEV_TOOLS: 1
