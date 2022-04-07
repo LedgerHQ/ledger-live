@@ -287,14 +287,13 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     flexGrow: 1,
     flexShrink: 1,
   },
   inputStyle: {
-    flex: 1,
     ...getFontStyle(),
-    textAlign: "center",
-
+    padding: 30,
     fontSize: 32,
   },
   maxLabel: {
