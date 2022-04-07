@@ -14,10 +14,10 @@
     "build": "pnpm run:turbo -- run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
     "nightly": "pnpm run:turbo -- run nightly --include-dependencies --no-deps",
     "nightly:publish": "pnpm run:turbo -- run nightly-publish --include-dependencies --no-deps",
-    "build:libs": "pnpm run:turbo -- run build --scope=@ledgerhq/* --include-dependencies --no-deps",
+    "build:libs": "pnpm run:turbo -- run build --filter=@ledgerhq/* --include-dependencies --no-deps",
     "build:libs:force": "pnpm -r --filter=\"!./apps\" --filter=\"!ledger-live\" build",
     "build:apps": "pnpm run:turbo -- run build-ci --include-dependencies --no-deps",
-    "build:actions": "pnpm run:turbo -- run build --scope=@actions/* --no-deps",
+    "build:actions": "pnpm run:turbo -- run build --filter=@actions/* --no-deps",
     "build:desktop": "pnpm run:turbo -- run build-ci --filter=ledger-live-desktop",
     "build:mobile": "pnpm run:turbo -- run build-ci --filter=live-mobile",
     "build:mobile:deps": "pnpm run:turbo -- run build --filter='...live-mobile'",
@@ -39,7 +39,7 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.2.0-canary.5",
+    "turbo": "^1.2.0-canary.7",
     "x-run": "workspace:*"
   },
   "pnpm": {
