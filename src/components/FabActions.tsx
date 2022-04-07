@@ -315,31 +315,14 @@ const FabActions = () => {
       outline: true,
     };
 
-    const actionButtonTransferAddAccount: ActionButton = {
-      event: "TransferAddAccount",
-      label: t("addAccountsModal.ctaAdd"),
-      Icon: iconAddAccount,
-      navigationParams: [
-        NavigatorName.AddAccounts,
-        {
-          screen: ScreenName.AddAccountsSelectCrypto,
-        },
-      ],
-      type: "shade",
-      outline: true,
-    };
     return [
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferSwap]
         : []),
       actionButtonBuy,
       ...(hasAccounts && !readOnlyModeEnabled
-        ? [
-            actionButtonTransferReceive,
-            actionButtonTransferSend,
-            actionButtonTransferAddAccount,
-          ]
-        : [actionButtonTransferAddAccount]),
+        ? [actionButtonTransferReceive, actionButtonTransferSend]
+        : []),
     ];
   }, [hasAccounts, readOnlyModeEnabled, t]);
 
