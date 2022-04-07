@@ -23,11 +23,10 @@ export async function prepareTransaction(
   const { collection, collectionName, tokenIds } = transaction;
   if (collection && tokenIds && typeof collectionName === "undefined") {
     const api = apiForCurrency(account.currency);
-    const [{ status, result }] = await api.getNFTMetadata(
+    const [{ status, result }] = await api.getNFTCollectionMetadata(
       [
         {
           contract: collection,
-          tokenId: tokenIds[0],
         },
       ],
       account.currency?.ethereumLikeInfo?.chainId?.toString() || "1"

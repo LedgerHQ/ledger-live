@@ -12,6 +12,10 @@ export type NFTMetadata = {
   links: Record<NFTMetadataLinksProviders, string>;
 };
 
+export type NFTCollectionMetadata = {
+  tokenName: string | null;
+};
+
 export type ProtoNFT = {
   // id crafted by live
   id: string;
@@ -45,5 +49,13 @@ export type NFTMetadataResponse = {
     description: string | null;
     properties: Array<Record<"key" | "value", string>>;
     links: Record<NFTMetadataLinksProviders, string>;
+  } | null;
+};
+
+export type NFTCollectionMetadataResponse = {
+  status: 200 | 404 | 500;
+  result?: {
+    contract: string;
+    tokenName: string | null;
   } | null;
 };

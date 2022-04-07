@@ -10,6 +10,7 @@ import type {
   ProtoNFT,
   NFT,
   CryptoCurrency,
+  NFTCollectionMetadataResponse,
 } from "../types";
 import { API, apiForCurrency } from "../api/Ethereum";
 
@@ -104,6 +105,13 @@ export const getNftKey = (
   return `${currencyId}-${contract}-${tokenId}`;
 };
 
+export const getNftCollectionKey = (
+  contract: string,
+  currencyId: string
+): string => {
+  return `${currencyId}-${contract}`;
+};
+
 /**
  * Factory to make a metadata API call batcher.
  *
@@ -112,7 +120,10 @@ export const getNftKey = (
  * Once the response is received, it will then spread the metadata to each request Promise,
  * just like if each request had been made separately.
  */
-const makeBatcher = (api: API, chainId: number): Batcher =>
+const makeBatcher = (
+  call: API["getNFTMetadata"] | API["getNFTCollectionMetadata"],
+  chainId: number
+): Batcher =>
   (() => {
     const queue: BatchElement[] = [];
 
@@ -124,23 +135,22 @@ const makeBatcher = (api: API, chainId: number): Batcher =>
       // Schedule a new call with the whole batch
       debounce = setTimeout(() => {
         // Seperate each batch element properties into arrays by type and index
-        const { couples, resolvers, rejecters } = queue.reduce(
-          (acc, { couple, resolve, reject }) => {
-            acc.couples.push(couple);
+        const { elements, resolvers, rejecters } = queue.reduce(
+          (acc, { element, resolve, reject }) => {
+            acc.elements.push(element);
             acc.resolvers.push(resolve);
             acc.rejecters.push(reject);
 
             return acc;
           },
-          { couples: [], resolvers: [], rejecters: [] } as Batch
+          { elements: [], resolvers: [], rejecters: [] } as Batch
         );
         // Empty the queue
         queue.length = 0;
 
         // Make the call with all the couples of contract and tokenId at once
-        api
-          .getNFTMetadata(couples, chainId.toString())
-          .then((res) => {
+        call(elements, chainId.toString())
+          .then((res: any) => {
             // Resolve each batch element with its own resolver and only its response
             res.forEach((metadata, index) => resolvers[index](metadata));
           })
@@ -153,15 +163,16 @@ const makeBatcher = (api: API, chainId: number): Batcher =>
 
     return {
       // Load the metadata for a given couple contract + tokenId
-      load({
-        contract,
-        tokenId,
-      }: {
-        contract: string;
-        tokenId: string;
-      }): Promise<NFTMetadataResponse> {
+      load(
+        element:
+          | {
+              contract: string;
+              tokenId: string;
+            }
+          | { contract: string }
+      ): Promise<NFTMetadataResponse | NFTCollectionMetadataResponse> {
         return new Promise((resolve, reject) => {
-          queue.push({ couple: { contract, tokenId }, resolve, reject });
+          queue.push({ element, resolve, reject });
           timeoutBatchCall();
         });
       },
@@ -176,7 +187,9 @@ const batchersMap = new Map();
  * This method is still EVM based for now but can be improved
  * to implement an even more generic solution
  */
-export const metadataCallBatcher = (currency: CryptoCurrency): Batcher => {
+export const metadataCallBatcher = (
+  currency: CryptoCurrency
+): { loadNft: Batcher["load"]; loadCollection: Batcher["load"] } => {
   const api: API = apiForCurrency(currency);
   const chainId = currency?.ethereumLikeInfo?.chainId;
 
@@ -185,8 +198,15 @@ export const metadataCallBatcher = (currency: CryptoCurrency): Batcher => {
   }
 
   if (!batchersMap.has(currency.id)) {
-    batchersMap.set(currency.id, makeBatcher(api, chainId));
+    batchersMap.set(currency.id, {
+      nft: makeBatcher(api.getNFTMetadata, chainId),
+      collection: makeBatcher(api.getNFTCollectionMetadata, chainId),
+    });
   }
 
-  return batchersMap.get(currency.id);
+  const batchers = batchersMap.get(currency.id);
+  return {
+    loadNft: batchers.nft.load,
+    loadCollection: batchers.collection.load,
+  };
 };
