@@ -97,6 +97,7 @@ function Graph({
 
       {grads.map(h => (
         <Path
+          key={`${h}`}
           d={`M0,${h} H${width}`}
           stroke={colors.constant.overlay}
           strokeDasharray="1 5"
