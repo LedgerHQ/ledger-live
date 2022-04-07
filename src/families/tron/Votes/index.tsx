@@ -129,16 +129,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
     });
   }, [accountId, navigation, parentId]);
 
-  const onManageVotes = useCallback(() => {
-    navigation.navigate(NavigatorName.TronVoteFlow, {
-      screen: ScreenName.VoteCast,
-      params: {
-        accountId,
-        parentId,
-      },
-    });
-  }, [navigation, accountId, parentId]);
-
   const onDelegate = useCallback(() => {
     const screenName = lastVotedDate
       ? ScreenName.VoteSelectValidator
@@ -202,7 +192,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
       {tronPower > 0 ? (
         formattedVotes.length > 0 ? (
           <>
-            <Header count={formattedVotes.length} onPress={onManageVotes} />
+            <Header count={formattedVotes.length} onPress={onDelegate} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
                 {formattedVotes.map(
