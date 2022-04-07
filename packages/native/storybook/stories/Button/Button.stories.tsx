@@ -23,6 +23,7 @@ const Regular = (): JSX.Element => (
     iconName={iconName()}
     disabled={boolean("disabled", false)}
     pending={boolean("pending", false)}
+    displayContentWhenPending={boolean("displayContentWhenPending", false)}
     outline={boolean("outline", false)}
     onPress={action("onPress")}
   >

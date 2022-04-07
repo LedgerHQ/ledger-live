@@ -20,6 +20,7 @@ export type ButtonProps = TouchableOpacityProps &
     pressed?: boolean;
     children?: React.ReactNode;
     pending?: boolean;
+    displayContentWhenPending?: boolean;
   };
 
 const IconContainer = styled.View<{
@@ -68,8 +69,10 @@ const Container = styled.View<{
   opacity: ${(p) => (p.hide ? 0 : 1)};
 `;
 
-const SpinnerContainer = styled.View`
-  position: absolute;
+const SpinnerContainer = styled.View<{
+  displayContentWhenPending?: boolean;
+}>`
+  position: ${(p) => (p.displayContentWhenPending ? "relative" : "absolute")};
   top: 0;
   left: 0;
   right: 0;
@@ -80,7 +83,16 @@ const SpinnerContainer = styled.View`
 `;
 
 const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactElement => {
-  const { Icon, iconPosition = "right", children, hide = false, size = "medium", iconName } = props;
+  const {
+    Icon,
+    iconPosition = "right",
+    children,
+    hide = false,
+    size = "medium",
+    iconName,
+    pending,
+    displayContentWhenPending,
+  } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
 
@@ -91,20 +103,31 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
     [iconName, size, Icon, text.color],
   );
 
+  const textColor = useMemo(
+    () => (pending ? theme.colors.neutral.c50 : text.color),
+    [pending, theme.colors.neutral.c50, text.color],
+  );
+
   return (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={text.color}>
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={textColor}>
           {children}
         </Text>
       ) : null}
-      {IconNode && (
+      {pending && displayContentWhenPending ? (
+        <IconContainer iconPosition={iconPosition}>
+          <SpinnerContainer displayContentWhenPending>
+            <ActivityIndicator color={theme.colors.neutral.c50} animating />
+          </SpinnerContainer>
+        </IconContainer>
+      ) : IconNode ? (
         <IconContainer iconButton={!children} iconPosition={iconPosition}>
           {IconNode}
         </IconContainer>
-      )}
+      ) : null}
       {iconPosition === "left" && children ? (
-        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={text.color}>
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={textColor}>
           {children}
         </Text>
       ) : null}
@@ -113,7 +136,15 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, type = "default", iconName, disabled = false, pending = false } = props;
+  const {
+    Icon,
+    children,
+    type = "default",
+    iconName,
+    disabled = false,
+    pending = false,
+    displayContentWhenPending = false,
+  } = props;
   const theme = useTheme();
 
   return (
@@ -124,9 +155,9 @@ const Button = (props: ButtonProps): React.ReactElement => {
       activeOpacity={0.5}
       disabled={disabled || pending}
     >
-      <ButtonContainer {...props} type={type} hide={pending} />
-      {pending ? (
-        <SpinnerContainer>
+      <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />
+      {pending && !displayContentWhenPending ? (
+        <SpinnerContainer displayContentWhenPending={displayContentWhenPending}>
           <ActivityIndicator color={theme.colors.neutral.c50} animating />
         </SpinnerContainer>
       ) : null}
