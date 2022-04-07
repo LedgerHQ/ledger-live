@@ -83,7 +83,11 @@ describe("nft merging", () => {
 
 describe("OpenSea lazy minting bs", () => {
   test("should have a correct on-chain nft amount even with OpenSea lazy minting", () => {
-    const makeNftOperation = (type: Operation["type"], value): Operation => {
+    const makeNftOperation = (
+      type: Operation["type"],
+      value: string | number,
+      dateOrder: number
+    ): Operation => {
       if (!["NFT_IN", "NFT_OUT"].includes(type)) {
         return {} as Operation;
       }
@@ -101,6 +105,7 @@ describe("OpenSea lazy minting bs", () => {
       const fee = new BigNumber(0);
       const tokenId = "42069";
       const hash = "FaKeHasH";
+      const date = new Date(Date.now() + dateOrder ?? 0);
 
       return {
         id,
@@ -114,17 +119,18 @@ describe("OpenSea lazy minting bs", () => {
         value: new BigNumber(value),
         type,
         accountId: id,
+        date,
       } as Operation;
     };
 
     // scenario with bob lazy minting 10 NFTs
     const ops = [
-      makeNftOperation("NFT_OUT", 5), // lazy mint sending 5 NFT
-      makeNftOperation("NFT_IN", 1), // receiving 1 of them back
-      makeNftOperation("NFT_IN", 2), // receiving 2 of them back
-      makeNftOperation("NFT_OUT", 2), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 1/2 (off-chain)
-      makeNftOperation("NFT_OUT", 3), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 2/2 (on-chain)
-      makeNftOperation("NFT_IN", 1), // receiving 1 back
+      makeNftOperation("NFT_OUT", 5, 0), // lazy mint sending 5 NFT
+      makeNftOperation("NFT_IN", 1, 1), // receiving 1 of them back
+      makeNftOperation("NFT_IN", 2, 2), // receiving 2 of them back
+      makeNftOperation("NFT_OUT", 2, 3), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 1/2 (off-chain)
+      makeNftOperation("NFT_OUT", 3, 4), // lazy mint sending 5 NFT (transformed by OpenSea in 2 txs) 2/2 (on-chain)
+      makeNftOperation("NFT_IN", 1, 5), // receiving 1 back
     ];
 
     // What happened for bob:
