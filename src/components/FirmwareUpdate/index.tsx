@@ -16,6 +16,8 @@ import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { urls } from "../../config/urls";
 import Markdown from 'react-native-markdown-display';
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName, NavigatorName } from "../../const";
 
 // TODO: this should be retrieved as the actual changelogs
 const notes = "## What's new in firmware version 2.0.2?\n\nFirmware version 2.0.2 features a faster Bluetooth transfer rate, as well as several user experience improvements, an update to the user interface, and some bug fixes.\n\n**Before you update**\n\n- Make sure you have updated Ledger Live through the notification banner or downloaded [the latest version of Ledger Live](https://www.ledger.com/ledger-live/download)\n\n**Better user experience**\n\n- Increased Bluetooth transfer rate, which will result in faster app installations with Ledger Live mobile version 2.37 or higher.\n- Improved the legibility of the PIN screen with more readable digits.\n\n\n**Updated user interface**\n \n- Updated the boot logo and screensaver to match Ledger's rebranding.\n\n**Fixes**\n\n- Fixed a bug that could cause the device screen to become unresponsive.\n- The Reset pairings option resets the Bluetooth pairing properly.\n- Fixed other miscellaneous bugs.";
@@ -23,6 +25,7 @@ const notes = "## What's new in firmware version 2.0.2?\n\nFirmware version 2.0.
 type Props = {
   device: Device,
   deviceInfo: DeviceInfo,
+  appsToRestore?: string[]
 };
 
 type FwUpdateStep = "confirmRecoveryBackup" | "downloadingUpdate" | "error" | "flashingMcu" | "confirmPin" | "confirmUpdate" | "firmwareUpdated";
@@ -51,11 +54,11 @@ const fwUpdateStateReducer = (state: FwUpdateState, event: BackgroundEvent | { t
 }
 
 
-export default function FirmwareUpdate({ device, deviceInfo }: Props) {
+export default function FirmwareUpdate({ device, deviceInfo, appsToRestore }: Props) {
   const nextBackgroundEvent = useSelector(nextBackgroundEventSelector);
   const [closed, setClosed] = useState(false);
   const dispatch = useDispatch();
-  const { colors, theme } = useTheme();
+  const { theme } = useTheme();
   const latestFirmware = useLatestFirmware(deviceInfo);
 
   const { t } = useTranslation();
@@ -70,9 +73,16 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
     NativeModules.BackgroundRunner.stop();
   }, [dispatch]);
 
-  const onClose = useCallback(() => {
+  const navigation = useNavigation();
+  const onClose = useCallback((restoreApps?: boolean) => {
     if(step === "confirmRecoveryBackup" || step === "firmwareUpdated" || step === "error") {
       setClosed(true);
+      // we renavigate to the manager to force redetection of the apps and restore apps if needed
+      // TODO: check if we can navigate with the device directly connected as params
+      navigation.navigate(NavigatorName.Manager, {
+        screen: ScreenName.Manager,
+        params: { appsToRestore: restoreApps ? appsToRestore : undefined },
+      });
     }
   }, [setClosed, step]);
 
@@ -214,7 +224,13 @@ export default function FirmwareUpdate({ device, deviceInfo }: Props) {
         }
         {
           step === "error" && (
+            <>
             <GenericErrorView error={error} />
+            {/* TODO: the button is here only for testing, remove it (maybe?) */}
+            <Button type="main" alignSelf="stretch" mt={10} onPress={() => onClose(true)}>
+              {t("FirmwareUpdate.reinstallApps")}
+            </Button>
+            </>
           )
         }
         {

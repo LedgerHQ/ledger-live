@@ -33,6 +33,7 @@ type Props = {
       result: ListAppsResult,
       searchQuery?: string,
       firmwareUpdate?: boolean,
+      appsToRestore?: string[],
       updateModalOpened?: boolean,
       tab: ManagerTab,
     },
@@ -48,13 +49,14 @@ const Manager = ({
       result,
       searchQuery,
       firmwareUpdate,
+      appsToRestore,
       updateModalOpened,
       tab = "CATALOG",
     },
   },
 }: Props) => {
   const { deviceId, deviceName, modelId } = device;
-  const [state, dispatch] = useApps(result, deviceId);
+  const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
@@ -100,6 +102,8 @@ const Manager = ({
     };
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
+
+  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [state.installed]);
 
   /**
    * Resets the navigation params in order to unlock navigation
@@ -179,7 +183,7 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
-       {firmwareUpdate && <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} />}
+       {firmwareUpdate && <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} appsToRestore={installedApps} />}
     </>
   );
 };

@@ -5,12 +5,12 @@ import { useAppsRunner } from "@ledgerhq/live-common/lib/apps/react";
 import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 
-export function useApps(listAppsRes: ListAppsResult, deviceId: string) {
+export function useApps(listAppsRes: ListAppsResult, deviceId: string, appsToRestore?: string[]) {
   const exec = useCallback(
     (...a) =>
       withDevice(deviceId)(transport => execWithTransport(transport)(...a)),
     [deviceId],
   );
 
-  return useAppsRunner(listAppsRes, exec);
+  return useAppsRunner(listAppsRes, exec, appsToRestore);
 }
