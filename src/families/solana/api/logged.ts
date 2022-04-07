@@ -1,6 +1,7 @@
 import { ChainAPI } from "./chain";
 
 //import fs from "fs";
+import { PublicKey } from "@solana/web3.js";
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function write(file: string, str: string) {
@@ -24,10 +25,14 @@ export function logged(api: ChainAPI, file: string): ChainAPI {
               params: args,
               answer,
             };
+            const publicKeytoJSON = PublicKey.prototype.toJSON;
+            // @ts-expect-error hack to temporary remove toJSON so it doesn't affect JSON.stringify
+            delete PublicKey.prototype.toJSON;
             const summaryJson = JSON.stringify(summary).replace(
               /{"_bn":(".*?")}/g,
               "new PublicKey(Buffer.from($1, 'hex'))"
             );
+            PublicKey.prototype.toJSON = publicKeytoJSON;
             write(file, summaryJson + ",\n");
           };
           if (result instanceof Promise) {

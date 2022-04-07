@@ -31,6 +31,7 @@ import type {
   CryptoOrgResources,
   CryptoOrgResourcesRaw,
 } from "../families/crypto_org/types";
+import { SolanaResources, SolanaResourcesRaw } from "../families/solana/types";
 import type {
   BalanceHistory,
   BalanceHistoryRaw,
@@ -212,6 +213,7 @@ export type Account = {
   tezosResources?: TezosResources;
   elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
+  solanaResources?: SolanaResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
@@ -301,6 +303,7 @@ export type AccountRaw = {
   elrondResources?: ElrondResourcesRaw;
   tezosResources?: TezosResourcesRaw;
   cryptoOrgResources?: CryptoOrgResourcesRaw;
+  solanaResources?: SolanaResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
   nfts?: ProtoNFTRaw[];
