@@ -1,6 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type {
   Command,
+  StakeCreateAccountCommand,
+  StakeDelegateCommand,
+  StakeSplitCommand,
+  StakeUndelegateCommand,
+  StakeWithdrawCommand,
   TokenCreateATACommand,
   TokenTransferCommand,
   Transaction,
@@ -19,23 +24,21 @@ import { toTokenId } from "./logic";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
-  const { family, model, feeCalculator } = tr;
+  const { family, model } = tr;
   return {
     ...common,
     family,
     model: JSON.parse(model),
-    feeCalculator,
   };
 };
 
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
-  const { family, model, feeCalculator } = t;
+  const { family, model } = t;
   return {
     ...common,
     family,
     model: JSON.stringify(model),
-    feeCalculator,
   };
 };
 
@@ -54,14 +57,11 @@ export const formatTransaction = (
     throw new Error("can not format unprepared transaction");
   }
   const { commandDescriptor } = tx.model;
-  switch (commandDescriptor.status) {
-    case "valid":
-      return formatCommand(mainAccount, tx, commandDescriptor.command);
-    case "invalid":
-      throw new Error("can not format invalid transaction");
-    default:
-      return assertUnreachable(commandDescriptor);
+
+  if (Object.keys(commandDescriptor.errors).length > 0) {
+    throw new Error("can not format invalid transaction");
   }
+  return formatCommand(mainAccount, tx, commandDescriptor.command);
 };
 
 function formatCommand(
@@ -75,10 +75,42 @@ function formatCommand(
     case "token.transfer":
       return formatTokenTransfer(mainAccount, tx, command);
     case "token.createATA":
-      return formatCreateATA(mainAccount, tx, command);
+      return formatCreateATA(command);
+    case "stake.createAccount":
+      return formatStakeCreateAccount(mainAccount, tx, command);
+    case "stake.delegate":
+      return formatStakeDelegate(command);
+    case "stake.undelegate":
+      return formatStakeUndelegate(command);
+    case "stake.withdraw":
+      return formatStakeWithdraw(mainAccount, tx, command);
+    case "stake.split":
+      return formatStakeSplit(mainAccount, tx, command);
     default:
       return assertUnreachable(command);
   }
+}
+
+function formatStakeCreateAccount(
+  mainAccount: Account,
+  tx: Transaction,
+  command: StakeCreateAccountCommand
+) {
+  const amount = lamportsToSOL(
+    mainAccount,
+    command.amount + command.stakeAccRentExemptAmount
+  );
+  const str = [
+    `  CREATE STAKE ACCOUNT: ${command.stakeAccAddress}`,
+    `  FROM: ${command.fromAccAddress}`,
+    `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
+    `  SEED: ${command.seed}`,
+    `  VALIDATOR: ${command.delegate.voteAccAddress}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return "\n" + str;
 }
 
 function formatTransfer(
@@ -129,13 +161,58 @@ function formatTokenTransfer(
   return "\n" + str;
 }
 
-function formatCreateATA(
-  mainAccount: Account,
-  tx: Transaction,
-  command: TokenCreateATACommand
-) {
+function formatCreateATA(command: TokenCreateATACommand) {
   const token = getTokenById(toTokenId(command.mint));
   const str = [`  OPT IN TOKEN: ${token.ticker}`].filter(Boolean).join("\n");
+  return "\n" + str;
+}
+
+function formatStakeDelegate(command: StakeDelegateCommand) {
+  const str = [
+    `  DELEGATE: ${command.stakeAccAddr}`,
+    `  TO: ${command.voteAccAddr}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatStakeUndelegate(command: StakeUndelegateCommand) {
+  const str = [`  UNDELEGATE: ${command.stakeAccAddr}`]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatStakeWithdraw(
+  mainAccount: Account,
+  tx: Transaction,
+  command: StakeWithdrawCommand
+) {
+  const amount = lamportsToSOL(mainAccount, command.amount);
+  const str = [
+    `  WITHDRAW FROM: ${command.stakeAccAddr}`,
+    `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
+    `  TO: ${command.toAccAddr}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+  return "\n" + str;
+}
+
+function formatStakeSplit(
+  mainAccount: Account,
+  tx: Transaction,
+  command: StakeSplitCommand
+) {
+  const amount = lamportsToSOL(mainAccount, command.amount);
+  const str = [
+    `  SPLIT: ${command.stakeAccAddr}`,
+    `  AMOUNT: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,
+    `  TO: ${command.splitStakeAccAddr}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
   return "\n" + str;
 }
 

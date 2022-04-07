@@ -8,11 +8,7 @@ import type {
   Transaction,
   NetworkInfo,
   UtxoStrategy,
-  CoreBitcoinLikeOutput,
-  CoreBitcoinLikeInput,
-  BitcoinInput,
 } from "./types";
-import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
 const minFees = {
@@ -69,12 +65,6 @@ export const isValidRecipient = async (params: {
   }
   return Promise.resolve(null);
 };
-export function isChangeOutput(output: BitcoinOutput): boolean {
-  if (!output.path) return false;
-  const p = output.path.split("/");
-  return p[p.length - 2] === "1";
-}
-
 type UTXOStatus =
   | {
       excluded: true;
@@ -191,67 +181,3 @@ export const perCoinLogic: Record<
     }),
   },
 };
-
-// vvvvv DEPRECATED - used only by legacy libcore implementation vvvvv
-
-export async function parseBitcoinInput(
-  input: CoreBitcoinLikeInput
-): Promise<BitcoinInput> {
-  const address = await input.getAddress();
-  const rawValue = await input.getValue();
-  const value = rawValue ? await libcoreAmountToBigNumber(rawValue) : null;
-  const previousTxHash = await input.getPreviousTxHash();
-  const previousOutputIndex = await input.getPreviousOutputIndex();
-  return {
-    address,
-    value,
-    previousTxHash,
-    previousOutputIndex,
-  };
-}
-
-export async function parseBitcoinOutput(
-  output: CoreBitcoinLikeOutput
-): Promise<BitcoinOutput> {
-  let blockHeight = await output.getBlockHeight();
-
-  if (!blockHeight || blockHeight < 0) {
-    blockHeight = undefined;
-  }
-
-  const hash = await output.getTransactionHash();
-  const outputIndex = await output.getOutputIndex();
-  const address = await output.getAddress();
-  const derivationPath = await output.getDerivationPath();
-  let path;
-
-  if (derivationPath) {
-    const isDerivationPathNull = await derivationPath.isNull();
-
-    if (!isDerivationPathNull) {
-      path = await derivationPath.toString();
-    }
-  }
-
-  const value = await libcoreAmountToBigNumber(await output.getValue());
-  const rbf = false; // this is unsafe to generically call this at the moment. libcore segfault.
-
-  return {
-    hash,
-    outputIndex,
-    blockHeight,
-    address,
-    isChange: false,
-    path,
-    value,
-    rbf,
-  };
-}
-
-export async function parseBitcoinUTXO(
-  output: CoreBitcoinLikeOutput
-): Promise<BitcoinOutput> {
-  const utxo = await parseBitcoinOutput(output);
-  utxo.rbf = await output.isReplaceable();
-  return utxo;
-}

@@ -9,23 +9,42 @@ import {
 import BigNumber from "bignumber.js";
 
 import { emptyHistoryCache } from "../../account";
-import { getTransactions, TransactionDescriptor } from "./api/chain/web3";
+import {
+  getTransactions,
+  ParsedOnChainStakeAccountWithInfo,
+  toStakeAccountWithInfo,
+  TransactionDescriptor,
+} from "./api/chain/web3";
 import { getTokenById } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "../../operation";
 import {
   Awaited,
   encodeAccountIdWithTokenAccountAddress,
+  isStakeLockUpInForce,
   tokenIsListedOnLedger,
   toTokenId,
   toTokenMint,
+  withdrawableFromStake,
 } from "./logic";
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-import { compact, filter, groupBy, keyBy, toPairs, pipe, map } from "lodash/fp";
+import {
+  compact,
+  filter,
+  groupBy,
+  keyBy,
+  toPairs,
+  pipe,
+  map,
+  uniqBy,
+  flow,
+  sortBy,
+} from "lodash/fp";
 import { parseQuiet } from "./api/chain/program";
 import {
+  InflationReward,
   ParsedConfirmedTransactionMeta,
   ParsedMessageAccount,
   ParsedTransaction,
+  StakeActivationData,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 import {
@@ -33,6 +52,8 @@ import {
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   toTokenAccountWithInfo,
 } from "./api/chain/web3";
+import { drainSeq } from "./utils";
+import { SolanaStake } from "./types";
 
 type OnChainTokenAccount = Awaited<
   ReturnType<typeof getAccount>
@@ -54,6 +75,7 @@ export const getAccountShapeWithAPI = async (
     balance: mainAccBalance,
     spendableBalance: mainAccSpendableBalance,
     tokenAccounts: onChaintokenAccounts,
+    stakes: onChainStakes,
   } = await getAccount(mainAccAddress, api);
 
   const mainAccountId = encodeAccountId({
@@ -123,6 +145,65 @@ export const getAccountShapeWithAPI = async (
     nextSubAccs.push(nextSubAcc);
   }
 
+  const { epoch } = await api.getEpochInfo();
+
+  const stakes: SolanaStake[] = onChainStakes.map(
+    ({ account, activation, reward }) => {
+      const {
+        info: { meta, stake },
+      } = account;
+      const rentExemptReserve = account.info.meta.rentExemptReserve.toNumber();
+      const stakeAccBalance = account.onChainAcc.account.lamports;
+      const hasWithdrawAuth =
+        meta.authorized.withdrawer.toBase58() === mainAccAddress &&
+        !isStakeLockUpInForce({
+          lockup: meta.lockup,
+          custodianAddress: mainAccAddress,
+          epoch,
+        });
+      return {
+        stakeAccAddr: account.onChainAcc.pubkey.toBase58(),
+        stakeAccBalance,
+        rentExemptReserve,
+        hasStakeAuth: meta.authorized.staker.toBase58() === mainAccAddress,
+        hasWithdrawAuth,
+        delegation:
+          stake === null
+            ? undefined
+            : {
+                stake:
+                  activation.state === "inactive"
+                    ? 0
+                    : stake.delegation.stake.toNumber(),
+                voteAccAddr: stake.delegation.voter.toBase58(),
+              },
+        activation,
+        withdrawable: hasWithdrawAuth
+          ? withdrawableFromStake({
+              stakeAccBalance,
+              activation,
+              rentExemptReserve,
+            })
+          : 0,
+        reward:
+          reward === null
+            ? undefined
+            : {
+                amount: reward.amount,
+              },
+      };
+    }
+  );
+
+  const sortedStakes = flow(
+    () => stakes,
+    sortBy([
+      (stake) => -(stake.delegation?.stake ?? 0),
+      (stake) => -stake.withdrawable,
+      (stake) => -stake.stakeAccAddr,
+    ])
+  )();
+
   const mainAccountLastTxSignature = mainInitialAcc?.operations[0]?.hash;
 
   const newMainAccTxs = await getTransactions(
@@ -150,6 +231,9 @@ export const getAccountShapeWithAPI = async (
     spendableBalance: mainAccSpendableBalance,
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
+    solanaResources: {
+      stakes: sortedStakes,
+    },
   };
 
   return shape;
@@ -263,26 +347,28 @@ function txToMainAccOperation(
     balanceDelta,
   });
 
-  const { senders, recipients } = message.accountKeys.reduce(
-    (acc, account, i) => {
-      const delta = new BigNumber(postBalances[i]).minus(
-        new BigNumber(preBalances[i])
-      );
-      if (delta.lt(0)) {
-        const shouldConsiderAsSender = i > 0 || !delta.negated().eq(txFee);
-        if (shouldConsiderAsSender) {
-          acc.senders.push(account.pubkey.toBase58());
-        }
-      } else if (delta.gt(0)) {
-        acc.recipients.push(account.pubkey.toBase58());
-      }
-      return acc;
-    },
-    {
-      senders: [] as string[],
-      recipients: [] as string[],
-    }
-  );
+  const accum = {
+    senders: [] as string[],
+    recipients: [] as string[],
+  };
+
+  const { senders, recipients } =
+    opType === "IN" || opType === "OUT"
+      ? message.accountKeys.reduce((acc, account, i) => {
+          const delta = new BigNumber(postBalances[i]).minus(
+            new BigNumber(preBalances[i])
+          );
+          if (delta.lt(0)) {
+            const shouldConsiderAsSender = i > 0 || !delta.negated().eq(txFee);
+            if (shouldConsiderAsSender) {
+              acc.senders.push(account.pubkey.toBase58());
+            }
+          } else if (delta.gt(0)) {
+            acc.recipients.push(account.pubkey.toBase58());
+          }
+          return acc;
+        }, accum)
+      : accum;
 
   const txHash = tx.info.signature;
   const txDate = new Date(tx.info.blockTime * 1000);
@@ -406,42 +492,59 @@ function getMainAccOperationTypeFromTx(
   tx: ParsedTransaction
 ): OperationType | undefined {
   const { instructions } = tx.message;
-  const [mainIx, ...otherIxs] = instructions
+
+  const parsedIxs = instructions
     .map((ix) => parseQuiet(ix))
     .filter(({ program }) => program !== "spl-memo");
 
-  if (mainIx === undefined || otherIxs.length > 0) {
-    return undefined;
+  if (parsedIxs.length === 3) {
+    const [first, second, third] = parsedIxs;
+    if (
+      first.program === "system" &&
+      (first.instruction.type === "createAccountWithSeed" ||
+        first.instruction.type === "createAccount") &&
+      second.program === "stake" &&
+      second.instruction.type === "initialize" &&
+      third.program === "stake" &&
+      third.instruction.type === "delegate"
+    ) {
+      return "DELEGATE";
+    }
   }
 
-  switch (mainIx.program) {
-    case "spl-associated-token-account":
-      switch (mainIx.instruction.type) {
-        case "associate":
-          return "OPT_IN";
-      }
-      // needed for lint
-      break;
-    case "spl-token":
-      switch (mainIx.instruction.type) {
-        case "closeAccount":
-          return "OPT_OUT";
-      }
-      break;
-    // disabled until staking support
-    /*
-    case "stake":
-      switch (mainIx.instruction.type) {
-        case "delegate":
-          return "DELEGATE";
-        case "deactivate":
-          return "UNDELEGATE";
-      }
-      break;
-      */
-    default:
-      return undefined;
+  if (parsedIxs.length === 1) {
+    const first = parsedIxs[0];
+
+    switch (first.program) {
+      case "spl-associated-token-account":
+        switch (first.instruction.type) {
+          case "associate":
+            return "OPT_IN";
+        }
+        // needed for lint
+        break;
+      case "spl-token":
+        switch (first.instruction.type) {
+          case "closeAccount":
+            return "OPT_OUT";
+        }
+        break;
+      case "stake":
+        switch (first.instruction.type) {
+          case "delegate":
+            return "DELEGATE";
+          case "deactivate":
+            return "UNDELEGATE";
+          case "withdraw":
+            return "IN";
+        }
+        break;
+      default:
+        return undefined;
+    }
   }
+
+  return undefined;
 }
 
 function getTokenSendersRecipients({
@@ -525,6 +628,11 @@ async function getAccount(
   spendableBalance: BigNumber;
   blockHeight: number;
   tokenAccounts: ParsedOnChainTokenAccountWithInfo[];
+  stakes: {
+    account: ParsedOnChainStakeAccountWithInfo;
+    activation: StakeActivationData;
+    reward: InflationReward | null;
+  }[];
 }> {
   const balanceLamportsWithContext = await api.getBalanceAndContext(address);
 
@@ -537,13 +645,46 @@ async function getAccount(
     .then(map(toTokenAccountWithInfo));
     */
 
+  const stakeAccountsRaw = [
+    ...(await api.getStakeAccountsByStakeAuth(address)),
+    ...(await api.getStakeAccountsByWithdrawAuth(address)),
+  ];
+
+  const stakeAccounts = flow(
+    () => stakeAccountsRaw,
+    uniqBy((acc) => acc.pubkey.toBase58()),
+    map(toStakeAccountWithInfo),
+    compact
+  )();
+
+  /*
+  Ledger team still decides if we should show rewards
+  const stakeRewards = await api.getInflationReward(
+    stakeAccounts.map(({ onChainAcc }) => onChainAcc.pubkey.toBase58())
+  );
+  */
+
+  const stakes = await drainSeq(
+    stakeAccounts.map((account) => async () => {
+      return {
+        account,
+        activation: await api.getStakeActivation(
+          account.onChainAcc.pubkey.toBase58()
+        ),
+        //reward: stakeRewards[idx],
+        reward: null,
+      };
+    })
+  );
+
   const balance = new BigNumber(balanceLamportsWithContext.value);
   const blockHeight = balanceLamportsWithContext.context.slot;
 
   return {
-    tokenAccounts,
     balance,
     spendableBalance: balance,
     blockHeight,
+    tokenAccounts,
+    stakes,
   };
 }

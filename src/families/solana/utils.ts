@@ -1,5 +1,8 @@
-import { clusterApiUrl } from "@solana/web3.js";
+import { Cluster, clusterApiUrl } from "@solana/web3.js";
 import { getEnv } from "../../env";
+
+export const LEDGER_VALIDATOR_ADDRESS =
+  "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
@@ -17,6 +20,14 @@ export async function drainSeqAsyncGen<T>(
   return items;
 }
 
+export async function drainSeq<T>(jobs: (() => Promise<T>)[]) {
+  const items: T[] = [];
+  for (const job of jobs) {
+    items.push(await job());
+  }
+  return items;
+}
+
 export function endpointByCurrencyId(currencyId: string): string {
   const endpoints: Record<string, string> = {
     solana: getEnv("API_SOLANA_PROXY"),
@@ -29,6 +40,40 @@ export function endpointByCurrencyId(currencyId: string): string {
   }
 
   throw Error(
+    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
+  );
+}
+
+export function clusterByCurrencyId(currencyId: string): Cluster {
+  const clusters: Record<string, Cluster> = {
+    solana: "mainnet-beta",
+    solana_devnet: "devnet",
+    solana_testnet: "testnet",
+  };
+
+  if (currencyId in clusters) {
+    return clusters[currencyId];
+  }
+
+  throw Error(
+    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
+  );
+}
+
+export function defaultVoteAccAddrByCurrencyId(
+  currencyId: string
+): string | undefined {
+  const voteAccAddrs: Record<string, string | undefined> = {
+    solana: LEDGER_VALIDATOR_ADDRESS,
+    solana_devnet: undefined,
+    solana_testnet: undefined,
+  };
+
+  if (currencyId in voteAccAddrs) {
+    return voteAccAddrs[currencyId];
+  }
+
+  throw new Error(
     `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
   );
 }
@@ -78,4 +123,10 @@ export function asyncQueue(config: { delayBetweenRuns: number }): {
   return {
     submit,
   };
+}
+
+export function swap(arr: any[], i: number, j: number) {
+  const tmp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = tmp;
 }

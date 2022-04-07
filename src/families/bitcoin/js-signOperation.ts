@@ -47,11 +47,6 @@ const signOperation = ({
           fee = res.fees;
         });
 
-        // FIXME (legacy)
-        // should be `transaction.getLockTime()` as soon as lock time is
-        // handled by libcore (actually: it always returns a default value
-        // and that caused issue with zcash (see #904))
-        // cf. https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/transaction_builders/BitcoinLikeUtxoPicker.cpp#L156-L159
         let lockTime;
 
         // (legacy) Set lockTime for Komodo to enable reward claiming on UTXOs created by

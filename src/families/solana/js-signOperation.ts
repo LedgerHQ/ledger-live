@@ -5,14 +5,18 @@ import type {
   OperationType,
   SignOperationEvent,
 } from "../../types";
-import { open, close } from "../../hw";
+import { withDevice } from "../../hw/deviceAccess";
 import type {
   Command,
-  TokenCreateATACommand,
+  CommandDescriptor,
+  StakeCreateAccountCommand,
+  StakeDelegateCommand,
+  StakeSplitCommand,
+  StakeUndelegateCommand,
+  StakeWithdrawCommand,
   TokenTransferCommand,
   Transaction,
   TransferCommand,
-  ValidCommandDescriptor,
 } from "./types";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
 import Solana from "@ledgerhq/hw-app-solana";
@@ -31,18 +35,15 @@ const buildOptimisticOperation = (
 
   const { commandDescriptor } = transaction.model;
 
-  switch (commandDescriptor.status) {
-    case "valid":
-      return buildOptimisticOperationForCommand(
-        account,
-        transaction,
-        commandDescriptor
-      );
-    case "invalid":
-      throw new Error("invalid command");
-    default:
-      return assertUnreachable(commandDescriptor);
+  if (Object.keys(commandDescriptor.errors).length > 0) {
+    throw new Error("invalid command");
   }
+
+  return buildOptimisticOperationForCommand(
+    account,
+    transaction,
+    commandDescriptor
+  );
 };
 
 export const signOperationWithAPI = (
@@ -57,54 +58,51 @@ export const signOperationWithAPI = (
   },
   api: () => Promise<ChainAPI>
 ): Observable<SignOperationEvent> =>
-  new Observable((subscriber) => {
-    const main = async () => {
-      const transport = await open(deviceId);
+  withDevice(deviceId)(
+    (transport) =>
+      new Observable((subscriber) => {
+        const main = async () => {
+          const [msgToHardwareBytes, signOnChainTransaction] =
+            await buildTransactionWithAPI(account, transaction, await api());
 
-      try {
-        const [msgToHardwareBytes, signOnChainTransaction] =
-          await buildTransactionWithAPI(account, transaction, await api());
+          const hwApp = new Solana(transport);
 
-        const hwApp = new Solana(transport);
+          subscriber.next({
+            type: "device-signature-requested",
+          });
 
-        subscriber.next({
-          type: "device-signature-requested",
-        });
+          const { signature } = await hwApp.signTransaction(
+            account.freshAddressPath,
+            msgToHardwareBytes
+          );
 
-        const { signature } = await hwApp.signTransaction(
-          account.freshAddressPath,
-          msgToHardwareBytes
+          subscriber.next({
+            type: "device-signature-granted",
+          });
+
+          const signedOnChainTxBytes = signOnChainTransaction(signature);
+
+          subscriber.next({
+            type: "signed",
+            signedOperation: {
+              operation: buildOptimisticOperation(account, transaction),
+              signature: signedOnChainTxBytes.toString("hex"),
+              expirationDate: null,
+            },
+          });
+        };
+
+        main().then(
+          () => subscriber.complete(),
+          (e) => subscriber.error(e)
         );
-
-        subscriber.next({
-          type: "device-signature-granted",
-        });
-
-        const signedOnChainTxBytes = signOnChainTransaction(signature);
-
-        subscriber.next({
-          type: "signed",
-          signedOperation: {
-            operation: buildOptimisticOperation(account, transaction),
-            signature: signedOnChainTxBytes.toString("hex"),
-            expirationDate: null,
-          },
-        });
-      } finally {
-        close(transport, deviceId);
-      }
-    };
-
-    main().then(
-      () => subscriber.complete(),
-      (e) => subscriber.error(e)
-    );
-  });
+      })
+  );
 
 function buildOptimisticOperationForCommand(
   account: Account,
   transaction: Transaction,
-  commandDescriptor: ValidCommandDescriptor
+  commandDescriptor: CommandDescriptor
 ): Operation {
   const { command } = commandDescriptor;
   switch (command.kind) {
@@ -123,12 +121,26 @@ function buildOptimisticOperationForCommand(
         commandDescriptor
       );
     case "token.createATA":
-      return optimisticOpForCATA(
+      return optimisticOpForCATA(account, commandDescriptor);
+    case "stake.createAccount":
+      return optimisticOpForStakeCreateAccount(
         account,
         transaction,
         command,
         commandDescriptor
       );
+    case "stake.delegate":
+      return optimisticOpForStakeDelegate(account, command, commandDescriptor);
+    case "stake.undelegate":
+      return optimisticOpForStakeUndelegate(
+        account,
+        command,
+        commandDescriptor
+      );
+    case "stake.withdraw":
+      return optimisticOpForStakeWithdraw(account, command, commandDescriptor);
+    case "stake.split":
+      return optimisticOpForStakeSplit(account, command, commandDescriptor);
     default:
       return assertUnreachable(command);
   }
@@ -137,9 +149,9 @@ function optimisticOpForTransfer(
   account: Account,
   transaction: Transaction,
   command: TransferCommand,
-  commandDescriptor: ValidCommandDescriptor
+  commandDescriptor: CommandDescriptor
 ): Operation {
-  const commons = optimisticOpcommons(transaction, commandDescriptor);
+  const commons = optimisticOpcommons(commandDescriptor);
   return {
     ...commons,
     id: encodeOperationId(account.id, "", "OUT"),
@@ -156,13 +168,13 @@ function optimisticOpForTokenTransfer(
   account: Account,
   transaction: Transaction,
   command: TokenTransferCommand,
-  commandDescriptor: ValidCommandDescriptor
+  commandDescriptor: CommandDescriptor
 ): Operation {
   if (!transaction.subAccountId) {
     throw new Error("sub account id is required for token transfer");
   }
   return {
-    ...optimisticOpcommons(transaction, commandDescriptor),
+    ...optimisticOpcommons(commandDescriptor),
     id: encodeOperationId(account.id, "", "FEES"),
     type: "FEES",
     accountId: account.id,
@@ -172,7 +184,7 @@ function optimisticOpForTokenTransfer(
     extra: getOpExtras(command),
     subOperations: [
       {
-        ...optimisticOpcommons(transaction, commandDescriptor),
+        ...optimisticOpcommons(commandDescriptor),
         id: encodeOperationId(transaction.subAccountId, "", "OUT"),
         type: "OUT",
         accountId: transaction.subAccountId,
@@ -187,36 +199,25 @@ function optimisticOpForTokenTransfer(
 
 function optimisticOpForCATA(
   account: Account,
-  transaction: Transaction,
-  _: TokenCreateATACommand,
-  commandDescriptor: ValidCommandDescriptor
+  commandDescriptor: CommandDescriptor
 ): Operation {
   const opType: OperationType = "OPT_IN";
 
   return {
-    ...optimisticOpcommons(transaction, commandDescriptor),
+    ...optimisticOpcommons(commandDescriptor),
     id: encodeOperationId(account.id, "", opType),
     type: opType,
     accountId: account.id,
     senders: [],
     recipients: [],
-    value: new BigNumber(commandDescriptor.fees ?? 0),
+    value: new BigNumber(commandDescriptor.fee),
   };
 }
 
-function optimisticOpcommons(
-  transaction: Transaction,
-  commandDescriptor: ValidCommandDescriptor
-) {
-  if (!transaction.feeCalculator) {
-    throw new Error("fee calculator is not loaded");
-  }
-  const fees =
-    transaction.feeCalculator.lamportsPerSignature +
-    (commandDescriptor.fees ?? 0);
+function optimisticOpcommons(commandDescriptor: CommandDescriptor) {
   return {
     hash: "",
-    fee: new BigNumber(fees),
+    fee: new BigNumber(commandDescriptor.fee),
     blockHash: null,
     blockHeight: null,
     date: new Date(),
@@ -234,9 +235,111 @@ function getOpExtras(command: Command): Record<string, any> {
       }
       break;
     case "token.createATA":
+    case "stake.createAccount":
+    case "stake.delegate":
+    case "stake.undelegate":
+    case "stake.withdraw":
+    case "stake.split":
       break;
     default:
       return assertUnreachable(command);
   }
   return extra;
+}
+
+function optimisticOpForStakeCreateAccount(
+  account: Account,
+  transaction: Transaction,
+  command: StakeCreateAccountCommand,
+  commandDescriptor: CommandDescriptor
+): Operation {
+  const opType: OperationType = "DELEGATE";
+  const commons = optimisticOpcommons(commandDescriptor);
+
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", opType),
+    type: opType,
+    accountId: account.id,
+    senders: [],
+    recipients: [],
+    value: new BigNumber(command.amount).plus(commons.fee),
+    extra: getOpExtras(command),
+  };
+}
+
+function optimisticOpForStakeDelegate(
+  account: Account,
+  command: StakeDelegateCommand,
+  commandDescriptor: CommandDescriptor
+): Operation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  const opType: OperationType = "DELEGATE";
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", opType),
+    type: opType,
+    accountId: account.id,
+    senders: [],
+    recipients: [],
+    value: commons.fee,
+    extra: getOpExtras(command),
+  };
+}
+
+function optimisticOpForStakeUndelegate(
+  account: Account,
+  command: StakeUndelegateCommand,
+  commandDescriptor: CommandDescriptor
+): Operation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  const opType: OperationType = "UNDELEGATE";
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", opType),
+    type: opType,
+    accountId: account.id,
+    senders: [],
+    recipients: [],
+    value: commons.fee,
+    extra: getOpExtras(command),
+  };
+}
+
+function optimisticOpForStakeWithdraw(
+  account: Account,
+  command: StakeWithdrawCommand,
+  commandDescriptor: CommandDescriptor
+): Operation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  const opType: OperationType = "IN";
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", opType),
+    type: opType,
+    accountId: account.id,
+    senders: [command.stakeAccAddr],
+    recipients: [command.toAccAddr],
+    value: new BigNumber(command.amount).minus(commons.fee),
+    extra: getOpExtras(command),
+  };
+}
+
+function optimisticOpForStakeSplit(
+  account: Account,
+  command: StakeSplitCommand,
+  commandDescriptor: CommandDescriptor
+): Operation {
+  const commons = optimisticOpcommons(commandDescriptor);
+  const opType: OperationType = "OUT";
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", opType),
+    type: opType,
+    accountId: account.id,
+    senders: [command.stakeAccAddr],
+    recipients: [command.splitStakeAccAddr],
+    value: commons.fee,
+    extra: getOpExtras(command),
+  };
 }

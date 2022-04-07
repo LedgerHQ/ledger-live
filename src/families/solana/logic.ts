@@ -1,6 +1,9 @@
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { TokenAccount } from "../../types/account";
+import { StakeMeta } from "./api/chain/account/stake";
+import { SolanaStake } from "./types";
+import { assertUnreachable } from "./utils";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
@@ -49,4 +52,81 @@ export function toSubAccMint(subAcc: TokenAccount): string {
 
 export function tokenIsListedOnLedger(mint: string): boolean {
   return findTokenById(toTokenId(mint))?.type === "TokenCurrency";
+}
+
+type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
+
+export function stakeActions(stake: SolanaStake): StakeAction[] {
+  const actions: StakeAction[] = [];
+
+  if (stake.withdrawable > 0) {
+    actions.push("withdraw");
+  }
+
+  switch (stake.activation.state) {
+    case "active":
+    case "activating":
+      actions.push("deactivate");
+      break;
+    case "deactivating":
+      actions.push("reactivate");
+      break;
+    case "inactive":
+      actions.push("activate");
+      break;
+    default:
+      return assertUnreachable(stake.activation.state);
+  }
+
+  return actions;
+}
+
+export function withdrawableFromStake({
+  stakeAccBalance,
+  activation,
+  rentExemptReserve,
+}: {
+  stakeAccBalance: number;
+  activation: SolanaStake["activation"];
+  rentExemptReserve: number;
+}) {
+  switch (activation.state) {
+    case "active":
+    case "activating":
+      return (
+        stakeAccBalance -
+        rentExemptReserve -
+        activation.active -
+        activation.inactive
+      );
+    case "deactivating":
+      return stakeAccBalance - rentExemptReserve - activation.active;
+    case "inactive":
+      return stakeAccBalance;
+    default:
+      return assertUnreachable(activation.state);
+  }
+}
+
+export function isStakeLockUpInForce({
+  lockup,
+  custodianAddress,
+  epoch,
+}: {
+  lockup: StakeMeta["lockup"];
+  custodianAddress: string;
+  epoch: number;
+}) {
+  if (custodianAddress === lockup.custodian.toBase58()) {
+    return false;
+  }
+  return lockup.unixTimestamp > Date.now() / 1000 || lockup.epoch > epoch;
+}
+
+export function stakeActivePercent(stake: SolanaStake) {
+  const amount = stake.delegation?.stake;
+  if (amount === undefined || amount === 0) {
+    return 0;
+  }
+  return (stake.activation.active / amount) * 100;
 }

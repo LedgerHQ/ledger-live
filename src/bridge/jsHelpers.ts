@@ -34,7 +34,7 @@ import type {
   SyncConfig,
   CryptoCurrency,
   DerivationMode,
-  NFT,
+  ProtoNFT,
 } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
@@ -136,9 +136,12 @@ Operation[] {
   return all;
 }
 
-export const mergeNfts = (oldNfts: NFT[], newNfts: NFT[]): NFT[] => {
+export const mergeNfts = (
+  oldNfts: ProtoNFT[],
+  newNfts: ProtoNFT[]
+): ProtoNFT[] => {
   // Getting a map of id => NFT
-  const newNftsPerId: Record<string, NFT> = {};
+  const newNftsPerId: Record<string, ProtoNFT> = {};
   newNfts.forEach((n) => {
     newNftsPerId[n.id] = n;
   });
