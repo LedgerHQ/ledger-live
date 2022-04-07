@@ -125,9 +125,11 @@ const Button = (props: ButtonProps): React.ReactElement => {
       disabled={disabled || pending}
     >
       <ButtonContainer {...props} type={type} hide={pending} />
-      <SpinnerContainer>
-        <ActivityIndicator color={theme.colors.neutral.c50} animating={pending} />
-      </SpinnerContainer>
+      {pending ? (
+        <SpinnerContainer>
+          <ActivityIndicator color={theme.colors.neutral.c50} animating />
+        </SpinnerContainer>
+      ) : null}
     </Base>
   );
 };
