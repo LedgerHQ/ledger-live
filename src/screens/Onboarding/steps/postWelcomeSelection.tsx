@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { Link as TextLink } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { track, TrackScreen } from "../../../analytics";
 import ChoiceCard from "../../../components/ChoiceCard";
@@ -9,33 +8,20 @@ import { NavigatorName, ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
+import DiscoverCard from "../../Discover/DiscoverCard";
 
-const setupLedgerImg = {
-  dark: require("../../../images/illustration/Dark/_079.png"),
-  light: require("../../../images/illustration/Light/_079.png"),
-};
+const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 
-const discoverLedgerImg = {
-  dark: require("../../../images/illustration/Dark/_075.png"),
-  light: require("../../../images/illustration/Light/_075.png"),
-};
+const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
 
 function PostWelcomeSelection() {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
-  const onboardingWithoutNano = useFeature("onboardingWithoutNano");
-
   const setupLedger = useCallback(() => {
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
-  }, [navigation]);
-
-  const discoverLedger = useCallback(() => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
   }, [navigation]);
 
   const buyLedger = useCallback(() => {
@@ -50,40 +36,38 @@ function PostWelcomeSelection() {
       subTitle={t("onboarding.postWelcomeStep.subtitle")}
     >
       <StyledStatusBar barStyle="dark-content" />
-      <ChoiceCard
+      <DiscoverCard
         title={t("onboarding.postWelcomeStep.setupLedger.title")}
+        titleProps={{ variant: "h3" }}
         subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
-        labelBadge={t("onboarding.postWelcomeStep.setupLedger.label")}
         event="Onboarding PostWelcome - Setup Ledger"
         testID={`Onboarding PostWelcome - Selection|SetupLedger`}
         onPress={setupLedger}
+        cardProps={{ mx: 0 }}
         Image={
           <Illustration
-            size={80}
-            darkSource={setupLedgerImg.dark}
-            lightSource={setupLedgerImg.light}
+            size={130}
+            darkSource={setupLedgerImg}
+            lightSource={setupLedgerImg}
           />
         }
       />
-      <ChoiceCard
-        disabled={!onboardingWithoutNano?.enabled}
-        title={t("onboarding.postWelcomeStep.discoverLedger.title")}
-        subTitle={t("onboarding.postWelcomeStep.discoverLedger.subtitle")}
-        labelBadge={t("platform.catalog.branch.soon")}
-        event="Onboarding PostWelcome - Discover Ledger"
-        testID={`Onboarding PostWelcome - Selection|DiscoverLedger`}
-        onPress={discoverLedger}
+      <DiscoverCard
+        title={t("onboarding.postWelcomeStep.buyNano.title")}
+        titleProps={{ variant: "h3" }}
+        subTitle={t("onboarding.postWelcomeStep.buyNano.subtitle")}
+        event="Onboarding PostWelcome - Buy Nano"
+        testID={`Onboarding PostWelcome - Selection|BuyNano`}
+        onPress={buyLedger}
+        cardProps={{ mx: 0 }}
         Image={
           <Illustration
-            size={100}
-            darkSource={discoverLedgerImg.dark}
-            lightSource={discoverLedgerImg.light}
+            size={130}
+            darkSource={buyNanoImg}
+            lightSource={buyNanoImg}
           />
         }
       />
-      <TextLink type="color" onPress={buyLedger}>
-        {t("onboarding.postWelcomeStep.noLedgerLink")}
-      </TextLink>
       <TrackScreen category="Onboarding" name="SelectDevice" />
     </OnboardingView>
   );

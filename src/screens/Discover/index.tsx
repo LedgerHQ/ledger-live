@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
@@ -10,6 +10,8 @@ import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
+// @ts-ignore issue with exports
+import { TrackScreen, track } from "../../analytics";
 
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
@@ -19,16 +21,12 @@ const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
-  backgroundcolor: ${({ theme }) => theme.colors.background.main};
+  background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
 function Discover() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-
-  const onTellMeMore = useCallback(() => {
-    Linking.openURL(urls.discover.tellMeMore);
-  }, []);
 
   const learn = useFeature("learn");
 
@@ -54,7 +52,12 @@ function Discover() {
               navigation.navigate(NavigatorName.Discover, {
                 screen: ScreenName.PlatformCatalog,
               });
-            } else Linking.openURL(urls.discover.ledgerApps);
+            } else {
+              track("Discover - Apps - OpenUrl", {
+                url: urls.discover.ledgerApps,
+              });
+              Linking.openURL(urls.discover.ledgerApps);
+            }
           },
           disabled: false,
           Image: (
@@ -70,6 +73,9 @@ function Discover() {
           subTitle: t("discover.sections.learn.desc"),
           onPress: () => {
             if (!learn?.enabled) {
+              track("Discover - Learn - OpenUrl", {
+                url: urls.discover.academy,
+              });
               Linking.openURL(urls.discover.academy);
             } else {
               // TODO: FIX @react-navigation/native using Typescript
@@ -90,6 +96,7 @@ function Discover() {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
           onPress: () => {
+            track("Discover - Earn - OpenUrl", { url: urls.discover.earn });
             Linking.openURL(urls.discover.earn);
           },
           disabled: false,
@@ -107,20 +114,14 @@ function Discover() {
 
   return (
     <StyledSafeAreaView>
+      <TrackScreen category="Discover" />
       <ScrollView>
         <Flex p={8} mt={8} flexDirection="row">
           <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
             <Text variant="h1">{t("discover.title")}</Text>
-            <Text variant="body" mb={6} mt={4} color="neutral.c70">
+            <Text variant="body" mb={4} mt={4} color="neutral.c70">
               {t("discover.desc")}
             </Text>
-            <TextLink
-              type="color"
-              onPress={onTellMeMore}
-              Icon={Icons.ArrowRightMedium}
-            >
-              {t("discover.link")}
-            </TextLink>
           </Flex>
           <Flex flex={1} />
         </Flex>

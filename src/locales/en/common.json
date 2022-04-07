@@ -844,13 +844,16 @@
       "and": "and"
     },
     "postWelcomeStep": {
-      "title": "It’s your choice",
-      "subtitle": "You can choose to set up your Ledger now or take a look around the ledger live app first.",
+      "title": "Let’s get started",
+      "subtitle": "Set up your Ledger or buy one now.",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
         "title": "Set up my Ledger",
-        "subtitle": "Secure your crypto now",
-        "label": "30 mins"
+        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+      },
+      "buyNano": {
+        "title": "Buy a Ledger Nano X",
+        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
       },
       "discoverLedger": {
         "title": "Discover Ledger Live",
@@ -895,7 +898,8 @@
       "firstUse": {
         "title": "First time using your Nano?",
         "subTitle": "Set up a new Nano",
-        "desc": "Let’s start and set up your device!"
+        "desc": "Let’s start and set up your device!",
+        "label": "30 mins"
       },
       "devicePairing": {
         "title": "Already have a recovery phrase?",
@@ -2709,17 +2713,17 @@
       "createParentCurrencyAccount": "Add {{parrentCurrencyName}} account",
       "erc20": {
         "title": "Add token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
         "learnMore": "Learn more about ERC20"
       },
       "trc10": {
         "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC10"
       },
       "trc20": {
         "title": "Add Token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
       }
     },
@@ -3014,7 +3018,7 @@
         "showAll": "Show apps to uninstall",
         "description": "Apps on your device that need the {{app}} app will be uninstalled too.",
         "description_one": "Some apps are dependent of the {{app}} app.",
-        "description_two": "Some apps are dependent of the {{app}} app.\\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
       },
       "continueUninstall": "Uninstall {{app}} and other apps"
     },
@@ -4066,7 +4070,7 @@
     "disclaimer": {
       "title": "External Application",
       "description": "You are about to be redirected to an application not operated by Ledger.",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\\n\\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
       "legalAdviceShort": "Ledger is not responsible for any loss of funds. Always make sure to verify the information displayed on your device.",
       "checkbox": "Do not remind me again.",
       "CTA": "Continue"
