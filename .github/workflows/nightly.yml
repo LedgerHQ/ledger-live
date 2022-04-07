@@ -10,7 +10,7 @@ jobs:
     name: Nightly Release
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
