@@ -15,6 +15,8 @@ import { API, apiForCurrency } from "../api/Ethereum";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
   const nftsMap = ops
+    // make sure we have the operation in chronological order (older first)
+    .sort((a, b) => a.date.getTime() - b.date.getTime())
     // if ops are Operations get the prop nftOperations, else ops are considered nftOperations already
     .flatMap((op) => (op?.nftOperations?.length ? op.nftOperations : op))
     .reduce((acc: Record<string, ProtoNFT>, nftOp: Operation) => {
