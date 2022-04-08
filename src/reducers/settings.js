@@ -107,7 +107,7 @@ export const INITIAL_STATE: SettingsState = {
   analyticsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,

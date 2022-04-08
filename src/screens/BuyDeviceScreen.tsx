@@ -56,6 +56,16 @@ const items = [
   },
 ];
 
+const videoStyle = {
+  height: "100%",
+  width: "100%",
+  position: "absolute",
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0,
+};
+
 export default function BuyDeviceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -98,19 +108,13 @@ export default function BuyDeviceScreen() {
           <Icons.ArrowLeftMedium size="24px" />
         </TouchableOpacity>
       </Flex>
-      <Flex height={250} width="100%" position="relative" overflow="hidden">
+      <Flex height={240} width="100%" position="relative" overflow="hidden">
         {videoMounted && (
           <Video
             disableFocus
             source={theme === "light" ? sourceLight : sourceDark}
             style={{
-              height: "100%",
-              width: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
+              ...videoStyle,
               backgroundColor: colors.background.main,
               transform: [{ scale: 1.5 }],
             }}
@@ -118,8 +122,15 @@ export default function BuyDeviceScreen() {
             resizeMode={"cover"}
           />
         )}
+        <Flex
+          style={{
+            ...videoStyle,
+            opacity: 0.1,
+          }}
+          bg="background.main"
+        />
       </Flex>
-      <Flex flex={1} p={6} pt={0}>
+      <Flex flex={1} p={6} pt={6}>
         <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
           <Text textAlign="center" variant="h2">
             {t("buyDevice.title")}

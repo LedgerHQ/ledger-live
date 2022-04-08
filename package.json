@@ -77,7 +77,7 @@
     "@ledgerhq/hw-transport-http": "6.27.0",
     "@ledgerhq/live-common": "21.36.2",
     "@ledgerhq/logs": "6.10.0",
-    "@ledgerhq/native-ui": "^0.7.12",
+    "@ledgerhq/native-ui": "^0.7.13",
     "@ledgerhq/react-native-hid": "6.24.1",
     "@ledgerhq/react-native-hw-transport-ble": "6.25.1",
     "@ledgerhq/react-native-ledger-core": "4.19.1",

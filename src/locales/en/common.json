@@ -1456,8 +1456,8 @@
       "title": "Recommended"
     },
     "topGainers": {
-      "title": "Top gainers (24H)",
-      "seeMarket": "See market"
+      "title": "Market gainers (24H)",
+      "seeMarket": "See all"
     }
   },
   "addAccountsModal": {

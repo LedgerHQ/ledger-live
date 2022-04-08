@@ -158,7 +158,7 @@ export const urls = {
     ledgerApps:
       "https://support.ledger.com/hc/en-us/articles/4404599625233-Discover-Live-Apps?docs=true&utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     earn:
-      "https://www.ledger.com/grow-your-assets?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
+      "https://www.ledger.com/staking?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     academy:
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:
