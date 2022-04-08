@@ -44,19 +44,26 @@ function Element<V>(props: ElementProps<V>) {
       <ElementContainer
         p={6}
         mt={first ? 0 : 4}
-        backgroundColor={selected ? "primary.c20" : "neutral.c00"}
+        backgroundColor={selected ? "primary.c20" : "transparent"}
         border="1px solid"
-        borderColor={selected ? "primary.c100" : "neutral.c40"}
+        borderColor={selected ? "primary.c50" : "neutral.c40"}
         borderRadius={1}
         flexDirection={"row"}
         alignItems={"center"}
       >
         {Icon && (
           <Flex mr={6} flexShrink={0}>
-            <Icon size={24} color={disabled ? "neutral.c50" : "neutral.c100"} />
+            <Icon
+              size={24}
+              color={disabled ? "neutral.c50" : selected ? "primary.c90" : "neutral.c100"}
+            />
           </Flex>
         )}
-        <Text variant="large" flex={1} color={disabled ? "neutral.c50" : "neutral.c100"}>
+        <Text
+          variant="large"
+          flex={1}
+          color={disabled ? "neutral.c50" : selected ? "primary.c90" : "neutral.c100"}
+        >
           {children || value}
         </Text>
         {RenderRight && (
