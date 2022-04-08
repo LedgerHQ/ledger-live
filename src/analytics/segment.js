@@ -8,6 +8,7 @@ import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import Locale from "react-native-locale";
+import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
 import {
   getAndroidArchitecture,
@@ -32,7 +33,7 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = store => {
   const state: State = store.getState();
-  const { localeIdentifier, preferredLanguages } = Locale.constants();
+  const systemLanguage = RNLocalize.getLocales()[0]?.languageTag;
   const language = languageSelector(state);
   const region = localeSelector(state);
   const devices = knownDevicesSelector(state);
@@ -52,8 +53,7 @@ const extraProperties = store => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
-    localeIdentifier,
-    preferredLanguage: preferredLanguages ? preferredLanguages[0] : null,
+    systemLanguage,
     language,
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,

@@ -403,8 +403,6 @@ PODS:
     - react-native-flipper-performance-plugin/FBDefines (= 0.2.0)
   - react-native-flipper-performance-plugin/FBDefines (0.2.0):
     - React-Core
-  - react-native-locale (0.0.19):
-    - React
   - react-native-netinfo (6.2.1):
     - React-Core
   - react-native-performance (2.1.0):
@@ -529,6 +527,8 @@ PODS:
   - RNLibLedgerCore (4.19.1):
     - ledger-core-objc
     - React
+  - RNLocalize (2.2.1):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNReanimated (2.4.1):
@@ -658,7 +658,6 @@ DEPENDENCIES:
   - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-flipper-performance-plugin (from `../node_modules/react-native-flipper-performance-plugin`)
-  - react-native-locale (from `../node_modules/react-native-locale`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -692,6 +691,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -820,8 +820,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fingerprint-scanner"
   react-native-flipper-performance-plugin:
     :path: "../node_modules/react-native-flipper-performance-plugin"
-  react-native-locale:
-    :path: "../node_modules/react-native-locale"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-performance:
@@ -888,6 +886,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNLibLedgerCore:
     :path: "../node_modules/@ledgerhq/react-native-ledger-core"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNReanimated:
@@ -977,7 +977,6 @@ SPEC CHECKSUMS:
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-flipper-performance-plugin: fccda3ebbcee11cda4e5dee85b335835e9c7e714
-  react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
@@ -1011,6 +1010,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
+  RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 32c91e28f5780937b8efc07ddde1bab8d373fe0b
   RNScreens: 2559f98b0835103cbef3b26ba77fa61d4bb37ae7
