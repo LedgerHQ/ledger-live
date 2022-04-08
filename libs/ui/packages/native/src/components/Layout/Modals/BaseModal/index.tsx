@@ -29,6 +29,10 @@ export type BaseModalProps = {
   noCloseButton?: boolean;
 } & Partial<ModalProps>;
 
+const SafeContainer = styled.SafeAreaView`
+  background-color: ${(p) => p.theme.colors.background.main};
+`;
+
 const Container = styled.View`
   background-color: ${(p) => p.theme.colors.background.main};
   width: 100%;
@@ -141,23 +145,25 @@ export default function BaseModal({
       onModalHide={onClose}
       style={[defaultModalStyle, modalStyle]}
     >
-      <Container style={containerStyle}>
-        {!noCloseButton && (
-          <CloseContainer>
-            <ClosePressableExtendedBounds onPress={onClose}>
-              <Link Icon={CloseMedium} onPress={onClose} />
-            </ClosePressableExtendedBounds>
-          </CloseContainer>
-        )}
-        <ModalHeader
-          Icon={Icon}
-          iconColor={iconColor}
-          title={title}
-          description={description}
-          subtitle={subtitle}
-        />
-        <ContentContainer>{children}</ContentContainer>
-      </Container>
+      <SafeContainer>
+        <Container style={containerStyle}>
+          {!noCloseButton && (
+            <CloseContainer>
+              <ClosePressableExtendedBounds onPress={onClose}>
+                <Link Icon={CloseMedium} onPress={onClose} />
+              </ClosePressableExtendedBounds>
+            </CloseContainer>
+          )}
+          <ModalHeader
+            Icon={Icon}
+            iconColor={iconColor}
+            title={title}
+            description={description}
+            subtitle={subtitle}
+          />
+          <ContentContainer>{children}</ContentContainer>
+        </Container>
+      </SafeContainer>
     </ReactNativeModal>
   );
 }
