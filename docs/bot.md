@@ -164,7 +164,7 @@ What the test engine is simply doing is scanning accounts with the seed and for 
 
 We can see here that for EACH account of my seed, it tries to do a transaction. At this current stage, we only have defined 2 possible transactions. This is highly driven by defining these "mutations" for all coins (what are all the possible actions that can be performed on these actions). Once they are all defined, we can assume the accounts will transition over and "see" all the possible states we support.
 
-Essentially, 95% of the focus of Ledger-Live Bot is about maintaining and defining all possible scenarios one can do with Ledger Live and the bot autonomously do them with the whole Ledger stack (libcore, live-common, nano app running in speculos).
+Essentially, 95% of the focus of Ledger-Live Bot is about maintaining and defining all possible scenarios one can do with Ledger Live and the bot autonomously do them with the whole Ledger stack (live-common, nano app running in speculos).
 
 > Note: in the example above, we can see some errors are happening, which actually made the test fails. This is because we are too optimistic on the minimal account required for the fees. In the future, when we fix this, everything should fall into the case `🤷‍♂️ couldn't find a mutation to do!` which is not an error.
 

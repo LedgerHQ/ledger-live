@@ -22,7 +22,6 @@ We can highlight this library have:
 This library does not have/is agnostic of:
 
 - The actual HW transport you use. But you can easily find one on [ledgerjs libraries](https://github.com/LedgerHQ/ledgerjs) (or implement your own). _There are many communication channel possible: webusb, u2f, webhid, webble, node-hid, react-native-hid, react-native bluetooth,...)_
-- A [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) implementation (but you can attach a binding easily)
 
 ### One library, multiple usecases
 
@@ -32,11 +31,9 @@ This works by having multiple entry points.
 
 For instance, the Manager apps logic is imported from `@ledgerhq/live-common/lib/apps` and the currencies logic is in `@ledgerhq/live-common/lib/currencies`.
 
-> Some of the bricks have different requirements. For instance `@ledgerhq/live-common/lib/bridge` will require you to provide a [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core) implementation (Node bindings or React Native bindings) while other utility like `@ledgerhq/live-common/lib/countervalues` just requires networking and can run on the web.
-
 ### Modular coins support architecture
 
-Ledger Live Common is designed to have very generic models (for currencies, accounts) but to also facilitate new coin integrations and via different ways (pure JS implementation, lib-ledger-core integrations,...).
+Ledger Live Common is designed to have very generic models (for currencies, accounts) but to also facilitate new coin integrations and via different ways (pure JS implementation,...).
 
 [More information in Coin Integration Introduction...](./ci-intro.md)
 

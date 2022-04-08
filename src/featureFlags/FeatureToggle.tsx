@@ -9,7 +9,7 @@ type Props = {
   children?: ReactNode;
 };
 
-export const FeatureToggle = ({
+const FeatureToggle = ({
   feature: featureId,
   fallback,
   children,
@@ -22,3 +22,5 @@ export const FeatureToggle = ({
 
   return <>{children || null}</>;
 };
+
+export default FeatureToggle;

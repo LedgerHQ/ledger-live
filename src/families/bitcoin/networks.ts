@@ -173,7 +173,7 @@ export const getNetworkParameters = (
       dustAmount: new BigNumber(10000),
       messagePrefix: "StealthCoin Signed Message:\n",
       usesTimestampedTransaction: false,
-      // Used to depend on "version", cf. https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/networks.cpp#L250
+      // Used to depend on "version"
       timestampDelay: new BigNumber(15),
       sigHash: BitcoinLikeSigHashType.SIGHASH_ALL,
       additionalBIPs: [],

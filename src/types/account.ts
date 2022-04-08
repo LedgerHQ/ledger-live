@@ -31,6 +31,7 @@ import type {
   CryptoOrgResources,
   CryptoOrgResourcesRaw,
 } from "../families/crypto_org/types";
+import { SolanaResources, SolanaResourcesRaw } from "../families/solana/types";
 import type {
   HederaResources,
   HederaResourcesRaw,
@@ -41,7 +42,8 @@ import type {
   PortfolioRange,
 } from "./portfolio";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
-import type { NFT, NFTRaw } from "./nft";
+import type { ProtoNFT } from "./nft";
+import { ProtoNFTRaw } from ".";
 // This is the old cache and now DEPRECATED (pre v2 portfoli)
 export type BalanceHistoryMap = Partial<Record<PortfolioRange, BalanceHistory>>;
 export type BalanceHistoryRawMap = Record<PortfolioRange, BalanceHistoryRaw>;
@@ -216,12 +218,13 @@ export type Account = {
   elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
   hederaResources?: HederaResources;
+  solanaResources?: SolanaResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
   syncHash?: string;
   // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
-  nfts?: NFT[];
+  nfts?: ProtoNFT[];
 };
 export type SubAccount = TokenAccount | ChildAccount;
 export type AccountLike = Account | SubAccount;
@@ -306,9 +309,10 @@ export type AccountRaw = {
   tezosResources?: TezosResourcesRaw;
   cryptoOrgResources?: CryptoOrgResourcesRaw;
   hederaResources?: HederaResourcesRaw;
+  solanaResources?: SolanaResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
-  nfts?: NFTRaw[];
+  nfts?: ProtoNFTRaw[];
 };
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
 export type AccountRawLike = AccountRaw | SubAccountRaw;

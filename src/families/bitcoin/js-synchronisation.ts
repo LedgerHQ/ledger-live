@@ -62,7 +62,6 @@ const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
     value: new BigNumber(utxo.value),
     rbf: utxo.rbf,
     isChange: false, // wallet-btc limitation: doesn't provide it
-    path: "",
   };
 };
 
@@ -408,5 +407,8 @@ const getAddressFn = (transport) => {
   return (opts) => getAddressWithBtcInstance(transport, btc, opts);
 };
 
-export const scanAccounts = makeScanAccounts(getAccountShape, getAddressFn);
-export const sync = makeSync(getAccountShape, postSync);
+export const scanAccounts = makeScanAccounts({
+  getAccountShape,
+  getAddressFn,
+});
+export const sync = makeSync({ getAccountShape, postSync });

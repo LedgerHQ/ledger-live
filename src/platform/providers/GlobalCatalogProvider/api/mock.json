@@ -394,6 +394,19 @@
       "platform": "all",
       "branch": "debug",
       "currencies": "*"
+    },
+    {
+      "appId": "dummy-live-app",
+      "type": "LIVE_APP",
+      "tags": [
+        "tools"
+      ],
+      "categories": [
+        "other"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": "*"
     }
   ]
 }
