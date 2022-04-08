@@ -36,7 +36,7 @@ describe("js-getTransactionStatus", () => {
     });
 
     test("InvalidAddressBecauseDestinationIsAlsoSource", async () => {
-      account.hederaResources!.accountId = AccountId.fromString("0.0.3");
+      account.freshAddress = "0.0.3";
       transaction.recipient = "0.0.3";
 
       const result = await getTransactionStatus(account, transaction);
@@ -134,9 +134,6 @@ function resetTestData(): void {
       magnitude: 0,
       showAllDigits: undefined,
       prefixCode: undefined,
-    },
-    hederaResources: {
-      accountId: AccountId.fromString("0.0.3")
     },
   };
 

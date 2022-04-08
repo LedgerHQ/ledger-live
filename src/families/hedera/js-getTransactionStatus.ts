@@ -26,9 +26,7 @@ export default async function getTransactionStatus(
     try {
       AccountId.fromString(transaction.recipient);
     } catch (err) {
-      errors.recipient = new InvalidAddress("", {
-        currencyName: account.currency.name,
-      });
+      errors.recipient = new InvalidAddress(`${err}`);
     }
   }
 
