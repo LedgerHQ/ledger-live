@@ -8,7 +8,6 @@ import type { TransactionMode, ModeModule } from "./modules";
 import type { Range, RangeRaw } from "../../range";
 import type { CryptoCurrency } from "../../types";
 import type { DerivationMode } from "../../derivation";
-
 export type EthereumGasLimitRequest = {
   from?: string;
   to?: string;
@@ -92,3 +91,9 @@ export type TypedMessageData = {
     stringHash: string;
   };
 };
+//
+export type CoreStatics = Record<string, never>;
+export type CoreAccountSpecifics = Record<string, never>;
+export type CoreOperationSpecifics = Record<string, never>;
+export type CoreCurrencySpecifics = Record<string, never>;
+export const reflect = (_declare: any) => {};

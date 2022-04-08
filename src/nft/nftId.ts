@@ -1,26 +1,17 @@
 export const encodeNftId = (
   accountId: string,
   contract: string,
-  tokenId: string,
-  currencyId: string
+  tokenId: string
 ): string => {
-  return `${accountId}+${contract}+${tokenId}+${currencyId}`;
+  return `${accountId}+${contract}+${tokenId.toString()}`;
 };
 
-export const decodeNftId = (
-  id: string
-): {
-  accountId: string;
-  contract: string;
-  tokenId: string;
-  currencyId: string;
-} => {
-  const [accountId, contract, tokenId, currencyId] = id.split("+");
+export const decodeNftId = (id: string): unknown => {
+  const [accountId, contract, tokenId] = id.split("+");
 
   return {
     accountId,
     contract,
     tokenId,
-    currencyId,
   };
 };

@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { listen } from "@ledgerhq/logs";
 import "./setup";
+import "./implement-react-native-libcore";
 
 declare global {
   namespace NodeJS {

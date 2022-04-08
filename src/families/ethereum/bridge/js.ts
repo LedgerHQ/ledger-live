@@ -33,7 +33,6 @@ import { signOperation } from "../signOperation";
 import { modes } from "../modules";
 import postSyncPatch from "../postSyncPatch";
 import { inferDynamicRange } from "../../../range";
-import { nftMetadata, collectionMetadata } from "../nftResolvers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -211,10 +210,6 @@ const currencyBridge: CurrencyBridge = {
   preload,
   hydrate,
   scanAccounts,
-  nftResolvers: {
-    nftMetadata,
-    collectionMetadata,
-  },
 };
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
