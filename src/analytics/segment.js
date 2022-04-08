@@ -7,7 +7,6 @@ import Config from "react-native-config";
 import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
-import Locale from "react-native-locale";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
 import {
