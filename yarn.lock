@@ -2723,10 +2723,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.50.0.tgz#29c6419e8379d496ab6d0426eadf3c4d100cd186"
   integrity sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==
 
-"@ledgerhq/native-ui@^0.7.11":
-  version "0.7.11"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.11.tgz#c2cb59836f878b728b33cd6d4adf463f3d9018ae"
-  integrity sha512-hbKjtsG+EVvrj1DsJ6TXOVTk+PvYa9fM/Xxad78uxt+EX3agpMvnw3clyXbfgZS8dklMXB5AF8TE2/IJvhMZ3g==
+"@ledgerhq/native-ui@^0.7.12":
+  version "0.7.12"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.12.tgz#b37560dcac27459efb3ee459bf050442efcbd567"
+  integrity sha512-DU4EDTo9kMp3dpas0gt2whb6M8eOgZXI4dBF45qZkybJIYbYAUoyIXCcN2MAphEYpIudHLB9X+K2XpFFo5aNLg==
   dependencies:
     "@ledgerhq/icons-ui" "^0.2.3"
     "@ledgerhq/ui-shared" "^0.1.6"
