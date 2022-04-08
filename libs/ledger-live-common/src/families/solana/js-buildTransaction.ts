@@ -5,6 +5,11 @@ import {
   buildTransferInstructions,
   buildTokenTransferInstructions,
   buildCreateAssociatedTokenAccountInstruction,
+  buildStakeCreateAccountInstructions,
+  buildStakeDelegateInstructions,
+  buildStakeUndelegateInstructions,
+  buildStakeWithdrawInstructions,
+  buildStakeSplitInstructions,
 } from "./api/chain/web3";
 import { assertUnreachable } from "./utils";
 import {
@@ -44,19 +49,15 @@ export const buildTransactionWithAPI = async (
   ] as const;
 };
 
-function buildInstructions(tx: Transaction) {
+function buildInstructions(tx: Transaction): TransactionInstruction[] {
   const { commandDescriptor } = tx.model;
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  switch (commandDescriptor.status) {
-    case "valid":
-      return buildInstructionsForCommand(commandDescriptor.command);
-    case "invalid":
-      throw new Error("can not build invalid command");
-    default:
-      return assertUnreachable(commandDescriptor);
+  if (Object.keys(commandDescriptor.errors).length > 0) {
+    throw new Error("can not build invalid command");
   }
+  return buildInstructionsForCommand(commandDescriptor.command);
 }
 
 function buildInstructionsForCommand(
@@ -69,6 +70,16 @@ function buildInstructionsForCommand(
       return buildTokenTransferInstructions(command);
     case "token.createATA":
       return buildCreateAssociatedTokenAccountInstruction(command);
+    case "stake.createAccount":
+      return buildStakeCreateAccountInstructions(command);
+    case "stake.delegate":
+      return buildStakeDelegateInstructions(command);
+    case "stake.undelegate":
+      return buildStakeUndelegateInstructions(command);
+    case "stake.withdraw":
+      return buildStakeWithdrawInstructions(command);
+    case "stake.split":
+      return buildStakeSplitInstructions(command);
     default:
       return assertUnreachable(command);
   }

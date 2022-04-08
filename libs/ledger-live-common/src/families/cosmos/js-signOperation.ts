@@ -69,6 +69,14 @@ const signOperation = ({
         // Cosmos API expects a different sorting, resulting in a separate signature.
         // https://github.com/LedgerHQ/app-cosmos/blob/6c194daa28936e273f9548eabca9e72ba04bb632/app/src/tx_parser.c#L52
 
+        // Cosmos App sign data in Amino way only, not Protobuf.
+        // This is a legacy outdated standard and a long-term blocking point.
+
+        // @ledgerhq/hw-app-cosmos don't allow to push message to device message converted
+        // by the AminoConverter from @cosmjs/stargate. There's two things who don't work:
+        // 1st, the way who message is sorted.
+        // 2nd, cast of numeric value (integer/numeric versus string).
+
         const signed = await ledgerSigner.signAmino(account.freshAddress, {
           chain_id: chainId,
           account_number: accountNumber.toString(),

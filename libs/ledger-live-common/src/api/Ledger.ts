@@ -15,7 +15,6 @@ export const findCurrencyExplorer = (
   const config = getExplorerConfig()[currency.id];
   if (!config) return;
   const { id } = config;
-
   if (getEnv("SATSTACK") && currency.id === "bitcoin") {
     return {
       endpoint: getEnv("EXPLORER_SATSTACK"),
@@ -23,19 +22,9 @@ export const findCurrencyExplorer = (
       version: "v3",
     };
   }
-
   if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
     const base = config.experimental.base;
-    let version = config.experimental.version;
-    const CURRENCIES_JS = getEnv("EXPERIMENTAL_CURRENCIES_JS_BRIDGE");
-    let useJS = false;
-    if (CURRENCIES_JS) {
-      useJS = CURRENCIES_JS.split(",").includes(currency.id);
-    }
-    //V2 explorer for doge and bitcoin cash when libcore is used
-    if ((currency.id === "bitcoin_cash" || currency.id === "doge") && !useJS) {
-      version = "v2";
-    }
+    const version = config.experimental.version;
     return {
       endpoint: getEnv(base),
       id,

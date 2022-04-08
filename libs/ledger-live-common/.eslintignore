@@ -1,9 +1,7 @@
 src/data/icons
 src/data/flags
 
-src/libcore/types/*.js
 src/families/*/types.js
-src/libcore/platforms/*.js
 src/generated
 src/load/tokens/
 mobile-test-app/
