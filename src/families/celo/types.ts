@@ -12,3 +12,9 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";
   fees: string | null | undefined;
 };
+
+export type CoreStatics = Record<string, never>;
+export type CoreAccountSpecifics = Record<string, never>;
+export type CoreOperationSpecifics = Record<string, never>;
+export type CoreCurrencySpecifics = Record<string, never>;
+export const reflect = (_declare: any) => {};

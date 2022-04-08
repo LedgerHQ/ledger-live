@@ -18,11 +18,28 @@ import {
 import { isCurrencySupported } from "../currencies";
 import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
+import jsBridges from "../generated/bridge/js";
 
+const experimentalIntegrations: string[] = [];
+
+export function shouldUseJS(currency: CryptoCurrency) {
+  const jsBridge = jsBridges[currency.family];
+  if (!jsBridge) return false;
+
+  if (experimentalIntegrations.includes(currency.id)) {
+    return getEnv("EXPERIMENTAL_CURRENCIES_JS_BRIDGE")
+      .split(",")
+      .includes(currency.id);
+  }
+
+  return true;
+}
+export const libcoreNoGoBalanceHistory = () =>
+  getEnv("LIBCORE_BALANCE_HISTORY_NOGO").split(",");
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
-): boolean => {
+) => {
   const modes = getDerivationModesForCurrency(currency);
   // last mode is always creatable by convention
   if (modes[modes.length - 1] === derivationMode) return true;
@@ -62,7 +79,7 @@ export function canSend(
     return false;
   }
 }
-export function canBeMigrated(account: Account): boolean {
+export function canBeMigrated(account: Account) {
   try {
     const { version } = decodeAccountId(account.id);
 

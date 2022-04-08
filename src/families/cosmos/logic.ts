@@ -13,8 +13,11 @@ import type {
   CosmosRedelegation,
   CosmosMappedRedelegation,
 } from "./types";
+import type { CacheRes } from "../../cache";
 import type { Unit, Account } from "../../types";
-import { calculateFees } from "./js-prepareTransaction";
+import type { Transaction } from "./types";
+import { getFeesForTransaction } from "../../libcore/getFeesForTransaction";
+import { makeLRUCache } from "../../cache";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;
@@ -160,7 +163,37 @@ export const getMaxEstimatedBalance = (
 
   return amount;
 };
-
+export const calculateFees: CacheRes<
+  Array<{
+    a: Account;
+    t: Transaction;
+  }>,
+  {
+    estimatedFees: BigNumber;
+    estimatedGas: BigNumber | null | undefined;
+  }
+> = makeLRUCache(
+  async ({
+    a,
+    t,
+  }): Promise<{
+    estimatedFees: BigNumber;
+    estimatedGas: BigNumber | null | undefined;
+  }> => {
+    return getFeesForTransaction({
+      account: a,
+      transaction: t,
+    });
+  },
+  ({ a, t }) =>
+    `${a.id}_${a.currency.id}_${t.amount.toString()}_${t.recipient}_${String(
+      t.useAllAmount
+    )}_${t.mode}_${
+      t.validators ? t.validators.map((v) => v.address).join("-") : ""
+    }_${t.memo ? t.memo.toString() : ""}_${
+      t.cosmosSourceValidator ? t.cosmosSourceValidator : ""
+    }`
+);
 export function canUndelegate(account: Account): boolean {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmosResources should exist");
@@ -197,8 +230,8 @@ export async function canClaimRewards(
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmosResources should exist");
   const res = await calculateFees({
-    account,
-    transaction: {
+    a: account,
+    t: {
       family: "cosmos",
       mode: "claimReward",
       amount: new BigNumber(0),

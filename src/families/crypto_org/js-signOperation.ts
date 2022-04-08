@@ -1,16 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { utils } from "@crypto-com/chain-jslib";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
 import {
   CryptoOrgWrongSignatureHeader,
   CryptoOrgSignatureSize,
 } from "./errors";
 import type { Transaction } from "./types";
 import type { Account, Operation, SignOperationEvent } from "../../types";
+import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
-import { withDevice } from "../../hw/deviceAccess";
+import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
+import { utils } from "@crypto-com/chain-jslib";
 import { buildTransaction } from "./js-buildTransaction";
 import { isTestNet } from "./logic";
 
@@ -104,9 +104,11 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
-      async function main() {
+  Observable.create((o) => {
+    async function main() {
+      const transport = await open(deviceId);
+
+      try {
         o.next({
           type: "device-signature-requested",
         });
@@ -117,9 +119,10 @@ const signOperation = ({
 
         // Get the public key
         const hwApp = new CryptoOrgApp(transport);
+        const address = account.freshAddresses[0];
         const cointype = isTestNet(account.currency.id) ? "tcro" : "cro";
         const { publicKey } = await hwApp.getAddress(
-          account.freshAddressPath,
+          address.derivationPath,
           cointype,
           false
         );
@@ -130,7 +133,7 @@ const signOperation = ({
         );
         // Sign by device
         const { signature } = await hwApp.sign(
-          account.freshAddressPath,
+          address.derivationPath,
           unsigned.toSignDocument(0).toUint8Array()
         );
 
@@ -162,13 +165,15 @@ const signOperation = ({
             },
           });
         }
+      } finally {
+        close(transport, deviceId);
       }
+    }
 
-      main().then(
-        () => o.complete(),
-        (e) => o.error(e)
-      );
-    })
-  );
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 export default signOperation;

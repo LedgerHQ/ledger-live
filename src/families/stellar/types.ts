@@ -3,6 +3,10 @@ import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "../../types/transaction";
+export type CoreStatics = Record<string, never>;
+export type CoreAccountSpecifics = Record<string, never>;
+export type CoreOperationSpecifics = Record<string, never>;
+export type CoreCurrencySpecifics = Record<string, never>;
 
 export type NetworkInfo = {
   family: "stellar";
@@ -39,3 +43,4 @@ export type TransactionRaw = TransactionCommonRaw & {
   memoType: string | null | undefined;
   memoValue: string | null | undefined;
 };
+export const reflect = (_declare: any): void => {};

@@ -16,8 +16,8 @@ import type {
   OperationRaw,
   SubAccount,
   SubAccountRaw,
-  ProtoNFT,
-  ProtoNFTRaw,
+  NFT,
+  NFTRaw,
 } from "../types";
 import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import {
@@ -48,12 +48,6 @@ import {
   toCryptoOrgResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
-
-import {
-  toSolanaResourcesRaw,
-  fromSolanaResourcesRaw,
-} from "../families/solana/serialization";
-
 import {
   getCryptoCurrencyById,
   getTokenById,
@@ -74,7 +68,6 @@ export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
-export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -714,7 +707,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     polkadotResources,
     elrondResources,
     cryptoOrgResources,
-    solanaResources,
     nfts,
   } = rawAccount;
   const subAccounts =
@@ -836,10 +828,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.cryptoOrgResources = fromCryptoOrgResourcesRaw(cryptoOrgResources);
   }
 
-  if (solanaResources) {
-    res.solanaResources = fromSolanaResourcesRaw(solanaResources);
-  }
-
   return res;
 }
 export function toAccountRaw({
@@ -878,7 +866,6 @@ export function toAccountRaw({
   polkadotResources,
   elrondResources,
   cryptoOrgResources,
-  solanaResources,
   nfts,
 }: Account): AccountRaw {
   const res: AccountRaw = {
@@ -959,50 +946,23 @@ export function toAccountRaw({
   if (cryptoOrgResources) {
     res.cryptoOrgResources = toCryptoOrgResourcesRaw(cryptoOrgResources);
   }
-
-  if (solanaResources) {
-    res.solanaResources = toSolanaResourcesRaw(solanaResources);
-  }
-
   return res;
 }
 
-export function toNFTRaw({
-  id,
-  tokenId,
-  amount,
-  contract,
-  standard,
-  currencyId,
-  metadata,
-}: ProtoNFT): ProtoNFTRaw {
+export function toNFTRaw({ id, tokenId, amount, collection }: NFT): NFTRaw {
   return {
     id,
     tokenId,
     amount: amount.toFixed(),
-    contract,
-    standard,
-    currencyId,
-    metadata,
+    collection,
   };
 }
 
-export function fromNFTRaw({
-  id,
-  tokenId,
-  amount,
-  contract,
-  standard,
-  currencyId,
-  metadata,
-}: ProtoNFTRaw): ProtoNFT {
+export function fromNFTRaw({ id, tokenId, amount, collection }: NFTRaw): NFT {
   return {
     id,
     tokenId,
     amount: new BigNumber(amount),
-    contract,
-    standard,
-    currencyId,
-    metadata,
+    collection,
   };
 }

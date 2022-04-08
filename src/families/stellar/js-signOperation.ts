@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import Stellar from "@ledgerhq/hw-app-str";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account, Operation, SignOperationEvent } from "../../types";
-import { withDevice } from "../../hw/deviceAccess";
+import { open, close } from "../../hw";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
@@ -48,9 +48,11 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
-      async function main() {
+  Observable.create((o) => {
+    async function main() {
+      const transport = await open(deviceId);
+
+      try {
         o.next({
           type: "device-signature-requested",
         });
@@ -84,13 +86,15 @@ const signOperation = ({
             expirationDate: null,
           },
         });
+      } finally {
+        close(transport, deviceId);
       }
+    }
 
-      main().then(
-        () => o.complete(),
-        (e) => o.error(e)
-      );
-    })
-  );
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 export default signOperation;

@@ -10,7 +10,7 @@ import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
-import { getMinRelayFee, getUTXOStatus } from "./logic";
+import { getMinRelayFee, getUTXOStatus, isChangeOutput } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -80,7 +80,7 @@ const genericTest = ({
         ? operation.senders
         : txInputs.map((t) => t.address).filter(Boolean),
       recipients: txOutputs
-        .filter((o) => o.address && !o.isChange)
+        .filter((o) => o.address && !o.isChange && !isChangeOutput(o))
         .map((o) => o.address)
         .filter(Boolean),
     })
@@ -257,9 +257,7 @@ const bitcoinLikeMutations = ({
     test: ({ account }) => {
       expect(
         account.bitcoinResources?.utxos
-          .filter(
-            (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
-          ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
+          .filter((u) => u.blockHeight && u.blockHeight < account.blockHeight) // Exclude pending UTXOs and the Utxos just written into new block
           .reduce((p, c) => p.plus(c.value), new BigNumber(0))
           .toString()
       ).toBe("0");
