@@ -3,7 +3,7 @@ import winston from "winston";
 import { listen } from "@ledgerhq/logs";
 import "./setup";
 import { EnvName, setEnvUnsafe } from "../../env";
-import implementLibcore from "../../libcore/platforms/nodejs";
+
 let setupCalled = null;
 export const setup = (testId) => {
   if (setupCalled) {
@@ -11,13 +11,7 @@ export const setup = (testId) => {
       "setup(" + testId + "): was already called with " + setupCalled
     );
   }
-
   setupCalled = testId;
-  implementLibcore({
-    lib: () => require("@ledgerhq/ledger-core"),
-    // eslint-disable-line global-require
-    dbPath: "./libcoredb/" + testId,
-  });
 };
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
