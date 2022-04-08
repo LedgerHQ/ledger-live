@@ -29,14 +29,14 @@ export default {
         const { currencyId } = decodeAccountId(account.id);
         const currency = getCryptoCurrencyById(currencyId);
         const currencyBridge = getCurrencyBridge(currency);
-        const { nftMetadataResolver } = currencyBridge;
+        const { nftResolvers } = currencyBridge;
 
-        return account.nfts?.length && nftMetadataResolver
+        return account.nfts?.length && nftResolvers?.nftMetadata
           ? {
               ...account,
               nfts: await Promise.all(
                 account.nfts.map(async (nft) => {
-                  const { result: metadata } = await nftMetadataResolver({
+                  const { result: metadata } = await nftResolvers?.nftMetadata({
                     contract: nft.contract,
                     tokenId: nft.tokenId,
                     currencyId: nft.currencyId,
