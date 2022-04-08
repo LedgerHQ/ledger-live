@@ -737,9 +737,9 @@
         "cta": "Buy now"
       },
       "familyPackX": {
-        "title": "Family pack LNX",
+        "title": "Ledger Nano X Family pack",
         "description": "Discounted Nano X 3-pack, perfect for gifts or backups",
-        "cta": "Buy now"
+        "cta": "Save now"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "Gain financial freedom",
+      "title": "It's your money. Own it.",
       "desc": "Take charge and unlock the freedom to manage your crypto on your own."
     },
     "1": {
-      "title": "Access a world of Defi",
+      "title": "Access DeFi and NFTs",
       "desc": "Securely interact with our trusted DeFi applications directly from the app."
     },
     "2": {
-      "title": "Your one stop shop for crypto",
+      "title": "Your key to Web3",
       "desc": "You can buy, sell and swap major cryptocurrencies from our partners safely with your Ledger."
     },
     "3": {
-      "title": "Peace of mind with certified security",
+      "title": "Certified security",
       "desc": "Our products are the only hardware wallets certified for their security by national cyber security agencies."
     },
     "title": "GET YOUR LEDGER",
-    "desc": "Protect your cryptocurrencies with industry-leading security",
+    "desc": "Protect your crypto & NFTs with industry-leading security",
     "cta": "Buy your Ledger now",
     "footer": "I already have a device, set it up now"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "Learn",
-        "desc": "Educate yourself about web3 and stay informed"
+        "desc": "Learn about crypto, NFTs, digital security and more"
       },
       "ledgerApps": {
         "title": "Apps",
-        "desc": "Explore Ledger’s integrated apps all in one place"
+        "desc": "Explore Ledger's partner apps all in one place"
       },
       "earn": {
         "title": "Earn",
@@ -1052,7 +1052,7 @@
         "title": "Recovery phrase",
         "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
         "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
-        "cta": "Recovery phrase",
+        "cta": "Next step",
         "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
       },
       "recoveryPhraseSetup": {
@@ -1106,7 +1106,8 @@
             "label": "Never share your 24 words with anyone, not even with Ledger."
           }
         },
-        "cta": "OK, I’m done!",
+        "cta": "Close",
+        "finalCta": "OK, I’m done!",
         "infoModal": {
           "label": "Learn how to hide it",
           "title": "Where should I keep my recovery phrase?",
@@ -1442,8 +1443,9 @@
         "managerSecondary": "Install apps on my device"
       },
       "addAccounts": {
-        "title": "Add assets",
-        "description": "You’re one step away from fully exploring Ledger Live and truly owning your money"
+        "addAccounts": "Add asset",
+        "title": "Get started",
+        "description": "You can either purchase crypto from our partners or setup your wallet"
       }
     },
     "noOpState": {

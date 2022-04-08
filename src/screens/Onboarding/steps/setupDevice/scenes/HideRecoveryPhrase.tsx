@@ -42,7 +42,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <Button type="main" size="large" onPress={onNext}>
-      {t("onboarding.stepSetupDevice.hideRecoveryPhrase.cta")}
+      {t("onboarding.stepSetupDevice.hideRecoveryPhrase.finalCta")}
     </Button>
   );
 };
