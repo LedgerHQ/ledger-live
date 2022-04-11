@@ -18,8 +18,9 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      DEBUG: "pw:browser*"
-      DEBUG_LOGS: 1
+      INSTRUMENT_BUILD: true
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
     strategy:
       fail-fast: false
       matrix:
@@ -57,15 +58,11 @@ jobs:
         run: pnpm i
       - name: Install playwright dependencies
         run: npx playwright install-deps
-      - name: Build and Test affected packages [Linux]
+      - name: Build and Test affected packages [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm test -- --filter=ledger-live-desktop
         shell: bash
-        env:
-          INSTRUMENT_BUILD: true
-      - name: Build and Test affected packages [!Linux]
+      - name: Build and Test affected packages
         if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --filter=ledger-live-desktop
         shell: bash
-        env:
-          INSTRUMENT_BUILD: true
