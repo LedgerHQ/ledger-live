@@ -19,7 +19,7 @@ function Placeholder({ width, containerHeight, style }: Props) {
         height={8}
         borderRadius={4}
         width={width || 100}
-        backgroundColor="colors.fog"
+        backgroundColor="neutral.c70"
         style={[style]}
       />
     </Flex>
