@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "Знакомство с приложением",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Исследуйте приложение Ledger Live и узнайте, как покупать, приумножать и правильно хранить ваши активы",
         "cta": "Осмотритесь"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "Купить"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Семейный набор Ledger Nano X",
         "description": "Набор из 3 Nano X по скидке. Идеально для подарка или резервной копии кошелька",
-        "cta": "Save now"
+        "cta": "Сэкономьте"
       },
       "buyCrypto": {
         "title": "Покупайте криптовалюту",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "Это ваши деньги. Распоряжайтесь ими.",
       "desc": "Возьмите всё в свои руки, и получите полную свободу в управлении своими криптовалютами."
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "Пользуйтесь DeFi и NFT",
       "desc": "Безопасно взаимодействуйте с проверенными DeFi-сервисами прямо в приложении."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Ваш ключ к Web3",
       "desc": "Вы можете покупать, продавать и обменивать криптовалюты через наших партнёров прямо в кошельке Ledger."
     },
     "3": {
-      "title": "Certified security",
+      "title": "Сертифицированная безопасность",
       "desc": "Наши продукты – единственные аппаратные кошельки, отмеченные сертификатами национальных служб кибербезопасности."
     },
     "title": "ЗАВЕДИТЕ СЕБЕ LEDGER",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "Защитите свои криптовалюты и NFT лучшим кошельком в отрасли",
     "cta": "Купить Ledger",
     "footer": "У меня уже есть устройство, его необходимо настроить"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "Образование",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "Узнайте о криптовалюте, NFT, цифровой безопасности и многом другом"
       },
       "ledgerApps": {
         "title": "Приложения",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Познакомьтесь с интегрированными приложениями прямо внутри Ledger"
       },
       "earn": {
         "title": "Заработок",
@@ -839,16 +839,16 @@
       "and": "и"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "Давайте начнём",
+      "subtitle": "Настройте Ledger или приобретите новый кошелёк.",
       "noLedgerLink": "У меня нет кошелька Ledger и я хотел бы его приобрести",
       "setupLedger": {
         "title": "Настроить мой Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "Мы расскажем вам о защите криптовалют и NFT шаг за шагом"
       },
       "buyNano": {
         "title": "Купите Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Ваш ключ к Web3 — Обретите свободу контролировать собственные активы"
       },
       "discoverLedger": {
         "title": "Исследуйте Ledger Live",
@@ -894,7 +894,7 @@
         "title": "Впервые подключаете Nano?",
         "subTitle": "Настройка нового Nano",
         "desc": "Первичная настройка устройства.",
-        "label": "30 mins"
+        "label": "30 мин."
       },
       "devicePairing": {
         "title": "Есть фраза восстановления?",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "Закрыть",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "Всё понятно!",
         "infoModal": {
           "label": "Как спрятать фразу восстановления",
           "title": "Где хранить фразу восстановления?",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "Добавить актив",
         "title": "Приступить",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "Вы можете купить криптовалюту у наших партнёров или настроить кошелёк"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "Рекомендуем"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "Самые прибыльные (24Ч)",
       "seeMarket": "Просмотреть все"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "Получить",
     "buy": "Купить",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "Стейкать",
     "sell": "Продать",
     "swap": "Обменять",
     "manage": "Управление",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "Скрыть ASA"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "Активы не найдены",
     "noResultsDesc": "Проверьте написание и повторите попытку"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "Криптоактивы",
       "titleDevice": "Подключение устройства",
       "verifySkipped": "Адрес получения не подтверждён на устройстве Ledger. В целях безопасности подтвердите адрес {{accountType}}.",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "Убедитесь, что адрес {{currencyName}} на экране устройства в точности совпадает с адресом на экране телефона.",
       "verified": "Адрес подтверждён. Если вы скопировали или отсканировали адрес, проверьте его ещё раз.",
       "verifyAgain": "Проверить ещё раз",
       "noAccount": "Счета не найдены",
@@ -2030,7 +2030,7 @@
         "desc": "Вы собираетесь просмотреть неподтверждённый адрес. В целях безопасности подтверждайте адреса на устройстве.",
         "verify": "Адрес {{accountType}} не подтверждён. В целях безопасности подтверждайте адреса на устройстве."
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "Криптоактивы не найдены",
       "noResultsDesc": "Проверьте написание и повторите попытку"
     },
     "exchange": {
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "Добавить счёт {{parrentCurrencyName}}",
       "erc20": {
         "title": "Добавить токен",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}} – это ERC20-токен.\nПолучать токены можно непосредственно на счёт в сети Эфириума.",
         "learnMore": "Подробнее об ERC-20"
       },
       "trc10": {
         "title": "Добавить токен",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} – это токен TRC10.\nПолучать токены можно непосредственно на счёт в сети Tron.",
         "learnMore": "Подробнее о TRC10"
       },
       "trc20": {
         "title": "Добавить токен",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} – это токен TRC20.\nПолучать токены можно непосредственно на счёт в сети Tron.",
         "learnMore": "Подробнее о TRC20"
       },
       "bep20": {
         "title": "Добавить токен",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}} – это токен BEP-20.\nПолучать токены можно непосредственно на счёт BNB.",
+        "learnMore": "Подробнее о BEP-20"
       }
     },
     "showMoreChainType": "Дополнительные типы адресов",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "Оставайтесь в приложении и держите при себе Nano X",
     "allowAppPermission": "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken": "для управления токенами {{token}}",
     "allowManagerPermission": "Разрешите использовать {{wording}} на устройстве",
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "Проверка подлинности устройства",
       "accept": "Не выключайте Nano X и одобрите работу <1>Диспетчера</1> на устройстве.",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "Это необходимо для подтверждения подлинности кошелька Nano."
     },
     "ScanningHeader": {
       "title": "Поиск устройств",
@@ -3020,7 +3020,7 @@
         "showAll": "Показать приложения для удаления",
         "description": "Приложения, которые установлены на вашем устройстве и связаны с приложением {{app}}, также будут удалены.",
         "description_one": "Некоторые приложения зависят от {{app}}.",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "Некоторые приложения зависят от {{app}}.\nС устройства также будут удалены приложения, зависимые от {{app}}."
       },
       "continueUninstall": "Удалить {{app}} и другие приложения"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "Стороннее приложение",
       "description": "Вы будете перенаправлены на приложение, которое не принадлежит компании Ledger.",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "Данное приложение не принадлежит компании Ledger. Компания не несёт ответственности за потерю средств или качество обслуживания данного приложения.\n\nВсегда тщательно проверяйте информацию на экране устройства.",
       "legalAdviceShort": "Ledger не несёт ответственности за любые потери средств. Всегда тщательно проверяйте информацию на экране устройства.",
       "checkbox": "Больше не напоминать.",
       "CTA": "Продолжить"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "Только поддерживаемые в Live"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "Самые прибыльные",
         "market_cap": "Рейтинг",
         "market_cap_asc": "Рейтинг (капитализация) возр.",
         "market_cap_desc": "Рейтинг (капитализация) убыв."
