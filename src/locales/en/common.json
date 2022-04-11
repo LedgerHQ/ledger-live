@@ -2675,7 +2675,7 @@
       "title": "Cancel add account",
       "desc": "Are you sure you want to cancel adding accounts?"
     },
-    "imported": "Accounts added successfully",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "View your accounts or add other accounts",
-      "secondaryCTA": "Add other accounts",
-      "cta": "Go to Accounts"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
