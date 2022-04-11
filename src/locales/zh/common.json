@@ -2675,7 +2675,7 @@
       "title": "取消添加账户",
       "desc": "您确定要取消添加账户？"
     },
-    "imported": "账户已成功添加",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "添加现有账户"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "查看您的账户或添加其他账户",
-      "secondaryCTA": "添加其他账户",
-      "cta": "前往账户"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "停止扫描",
     "retryScanning": "重试扫描",
