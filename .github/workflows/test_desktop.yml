@@ -48,6 +48,8 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
+      - name: Bump npm to latest
+        run: npm i -g npm
       - name: Setup TimeZone for Windows
         run: tzutil /s "Eastern Standard Time"
         if: runner.os == 'Windows'
