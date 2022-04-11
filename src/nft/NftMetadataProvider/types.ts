@@ -1,4 +1,7 @@
-import { NFTMetadataResponse } from "../../types";
+import {
+  NFTCollectionMetadataResponse,
+  NFTMetadataResponse,
+} from "../../types";
 
 export type NFTResourceQueued = {
   status: "queued";
@@ -10,7 +13,9 @@ export type NFTResourceLoading = {
 
 export type NFTResourceLoaded = {
   status: "loaded";
-  metadata: Pick<NFTMetadataResponse, "result">;
+  metadata:
+    | NFTMetadataResponse["result"]
+    | NFTCollectionMetadataResponse["result"];
   updatedAt: number;
 };
 
@@ -37,24 +42,42 @@ export type NFTMetadataContextState = {
 };
 
 export type NFTMetadataContextAPI = {
-  loadNFTMetadata: (contract: string, tokenId: string) => Promise<void>;
+  loadNFTMetadata: (
+    contract: string,
+    tokenId: string,
+    currencyId: string
+  ) => Promise<void>;
+  loadCollectionMetadata: (
+    contract: string,
+    currencyId: string
+  ) => Promise<void>;
   clearCache: () => void;
 };
 
 export type NFTMetadataContextType = NFTMetadataContextState &
   NFTMetadataContextAPI;
 
+export type Batcher = {
+  load: (
+    element:
+      | {
+          contract: string;
+          tokenId: string;
+        }
+      | {
+          contract: string;
+        }
+  ) => Promise<NFTMetadataResponse | NFTCollectionMetadataResponse>;
+};
+
 export type BatchElement = {
-  couple: {
-    contract: string;
-    tokenId: string;
-  };
+  element: any;
   resolve: (value: NFTMetadataResponse) => void;
   reject: (reason?: Error) => void;
 };
 
 export type Batch = {
-  couples: Array<BatchElement["couple"]>;
+  elements: Array<BatchElement["element"]>;
   resolvers: Array<BatchElement["resolve"]>;
   rejecters: Array<BatchElement["reject"]>;
 };

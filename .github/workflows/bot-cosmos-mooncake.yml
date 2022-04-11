@@ -2,7 +2,7 @@ name: Bot 'Cosmos JS'
 on:
   push:
     branches:
-      - cosmos-js
+      - family/cosmos
 
 jobs:
   start-runner:
@@ -66,7 +66,7 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
-          SLACK_CHANNEL: live-ft-atom-js
+          SLACK_CHANNEL: ci-atom-ll
           BOT_FILTER_FAMILY: cosmos
           EXPERIMENTAL_CURRENCIES_JS_BRIDGE: cosmos
         run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
@@ -80,4 +80,3 @@ jobs:
         with:
           name: botreport
           path: botreport/
-

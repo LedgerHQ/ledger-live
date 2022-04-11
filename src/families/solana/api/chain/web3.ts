@@ -6,9 +6,15 @@ import {
   ConfirmedSignatureInfo,
   ParsedConfirmedTransaction,
   TransactionInstruction,
+  StakeProgram,
 } from "@solana/web3.js";
 import { chunk } from "lodash";
 import {
+  StakeCreateAccountCommand,
+  StakeDelegateCommand,
+  StakeSplitCommand,
+  StakeUndelegateCommand,
+  StakeWithdrawCommand,
   TokenCreateATACommand,
   TokenTransferCommand,
   TransferCommand,
@@ -18,11 +24,18 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
 } from "@solana/spl-token";
-import { tryParseAsTokenAccount, parseTokenAccountInfo } from "./account";
+import {
+  tryParseAsTokenAccount,
+  parseTokenAccountInfo,
+  tryParseAsVoteAccount,
+} from "./account";
 import { TokenAccountInfo } from "./account/token";
 import { drainSeqAsyncGen } from "../../utils";
 import { Awaited } from "../../logic";
 import { ChainAPI } from ".";
+import { VoteAccountInfo } from "./account/vote";
+import { parseStakeAccountInfo } from "./account/parser";
+import { StakeAccountInfo } from "./account/stake";
 
 const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 
@@ -30,9 +43,18 @@ type ParsedOnChainTokenAccount = Awaited<
   ReturnType<Connection["getParsedTokenAccountsByOwner"]>
 >["value"][number];
 
+type ParsedOnChainStakeAccount = Awaited<
+  ReturnType<Connection["getParsedProgramAccounts"]>
+>[number];
+
 export type ParsedOnChainTokenAccountWithInfo = {
   onChainAcc: ParsedOnChainTokenAccount;
   info: TokenAccountInfo;
+};
+
+export type ParsedOnChainStakeAccountWithInfo = {
+  onChainAcc: ParsedOnChainStakeAccount;
+  info: StakeAccountInfo;
 };
 
 export function toTokenAccountWithInfo(
@@ -41,6 +63,17 @@ export function toTokenAccountWithInfo(
   const parsedInfo = onChainAcc.account.data.parsed.info;
   const info = parseTokenAccountInfo(parsedInfo);
   return { onChainAcc, info };
+}
+
+export function toStakeAccountWithInfo(
+  onChainAcc: ParsedOnChainStakeAccount
+): ParsedOnChainStakeAccountWithInfo | undefined {
+  if ("parsed" in onChainAcc.account.data) {
+    const parsedInfo = onChainAcc.account.data.parsed.info;
+    const info = parseStakeAccountInfo(parsedInfo);
+    return { onChainAcc, info };
+  }
+  return undefined;
 }
 
 export type TransactionDescriptor = {
@@ -234,6 +267,39 @@ export const getMaybeTokenAccount = async (
   return tokenAccount;
 };
 
+export async function getMaybeVoteAccount(
+  address: string,
+  api: ChainAPI
+): Promise<VoteAccountInfo | undefined | Error> {
+  const accInfo = await api.getAccountInfo(address);
+  const voteAccount =
+    accInfo !== null && "parsed" in accInfo.data
+      ? tryParseAsVoteAccount(accInfo.data)
+      : undefined;
+
+  return voteAccount;
+}
+
+export function getStakeAccountMinimumBalanceForRentExemption(api: ChainAPI) {
+  return api.getMinimumBalanceForRentExemption(StakeProgram.space);
+}
+
+export async function getStakeAccountAddressWithSeed({
+  fromAddress,
+  seed,
+}: {
+  fromAddress: string;
+  seed: string;
+}) {
+  const pubkey = await PublicKey.createWithSeed(
+    new PublicKey(fromAddress),
+    seed,
+    StakeProgram.programId
+  );
+
+  return pubkey.toBase58();
+}
+
 export function buildCreateAssociatedTokenAccountInstruction({
   mint,
   owner,
@@ -255,4 +321,110 @@ export function buildCreateAssociatedTokenAccountInstruction({
   ];
 
   return instructions;
+}
+
+export function buildStakeDelegateInstructions({
+  authorizedAccAddr,
+  stakeAccAddr,
+  voteAccAddr,
+}: StakeDelegateCommand): TransactionInstruction[] {
+  const tx = StakeProgram.delegate({
+    authorizedPubkey: new PublicKey(authorizedAccAddr),
+    stakePubkey: new PublicKey(stakeAccAddr),
+    votePubkey: new PublicKey(voteAccAddr),
+  });
+
+  return tx.instructions;
+}
+
+export function buildStakeUndelegateInstructions({
+  authorizedAccAddr,
+  stakeAccAddr,
+}: StakeUndelegateCommand): TransactionInstruction[] {
+  const tx = StakeProgram.deactivate({
+    authorizedPubkey: new PublicKey(authorizedAccAddr),
+    stakePubkey: new PublicKey(stakeAccAddr),
+  });
+
+  return tx.instructions;
+}
+
+export function buildStakeWithdrawInstructions({
+  authorizedAccAddr,
+  stakeAccAddr,
+  amount,
+  toAccAddr,
+}: StakeWithdrawCommand): TransactionInstruction[] {
+  const tx = StakeProgram.withdraw({
+    authorizedPubkey: new PublicKey(authorizedAccAddr),
+    stakePubkey: new PublicKey(stakeAccAddr),
+    lamports: amount,
+    toPubkey: new PublicKey(toAccAddr),
+  });
+
+  return tx.instructions;
+}
+
+export function buildStakeSplitInstructions({
+  authorizedAccAddr,
+  stakeAccAddr,
+  seed,
+  amount,
+  splitStakeAccAddr,
+}: StakeSplitCommand): TransactionInstruction[] {
+  // HACK: switch to split_with_seed when supported by @solana/web3.js
+  const splitIx = StakeProgram.split({
+    authorizedPubkey: new PublicKey(authorizedAccAddr),
+    lamports: amount,
+    stakePubkey: new PublicKey(stakeAccAddr),
+    splitStakePubkey: new PublicKey(splitStakeAccAddr),
+  }).instructions[1];
+
+  if (splitIx === undefined) {
+    throw new Error("expected split instruction");
+  }
+
+  const allocateIx = SystemProgram.allocate({
+    accountPubkey: new PublicKey(splitStakeAccAddr),
+    basePubkey: new PublicKey(authorizedAccAddr),
+    programId: StakeProgram.programId,
+    seed,
+    space: StakeProgram.space,
+  });
+
+  return [allocateIx, splitIx];
+}
+
+export function buildStakeCreateAccountInstructions({
+  fromAccAddress,
+  stakeAccAddress,
+  seed,
+  amount,
+  stakeAccRentExemptAmount,
+  delegate,
+}: StakeCreateAccountCommand): TransactionInstruction[] {
+  const fromPubkey = new PublicKey(fromAccAddress);
+  const stakePubkey = new PublicKey(stakeAccAddress);
+
+  const tx = StakeProgram.createAccountWithSeed({
+    fromPubkey,
+    stakePubkey,
+    basePubkey: fromPubkey,
+    seed,
+    lamports: amount + stakeAccRentExemptAmount,
+    authorized: {
+      staker: fromPubkey,
+      withdrawer: fromPubkey,
+    },
+  });
+
+  tx.add(
+    StakeProgram.delegate({
+      authorizedPubkey: fromPubkey,
+      stakePubkey,
+      votePubkey: new PublicKey(delegate.voteAccAddress),
+    })
+  );
+
+  return tx.instructions;
 }

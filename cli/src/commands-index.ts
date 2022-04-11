@@ -25,11 +25,8 @@ import generateAppJsonFromDataset from "./commands/generateAppJsonFromDataset";
 import generateTestScanAccounts from "./commands/generateTestScanAccounts";
 import generateTestTransaction from "./commands/generateTestTransaction";
 import genuineCheck from "./commands/genuineCheck";
-import getAccountNetworkInfo from "./commands/getAccountNetworkInfo";
 import getAddress from "./commands/getAddress";
 import getTransactionStatus from "./commands/getTransactionStatus";
-import libcoreReset from "./commands/libcoreReset";
-import libcoreSetPassword from "./commands/libcoreSetPassword";
 import liveData from "./commands/liveData";
 import makeCompoundSummary from "./commands/makeCompoundSummary";
 import managerListApps from "./commands/managerListApps";
@@ -48,7 +45,6 @@ import sync from "./commands/sync";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
-import validRecipient from "./commands/validRecipient";
 import version from "./commands/version";
 import walletconnect from "./commands/walletconnect";
 
@@ -80,11 +76,8 @@ export default {
   generateTestScanAccounts,
   generateTestTransaction,
   genuineCheck,
-  getAccountNetworkInfo,
   getAddress,
   getTransactionStatus,
-  libcoreReset,
-  libcoreSetPassword,
   liveData,
   makeCompoundSummary,
   managerListApps,
@@ -103,7 +96,6 @@ export default {
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   user,
-  validRecipient,
   version,
   walletconnect,
 };

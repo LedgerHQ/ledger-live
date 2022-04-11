@@ -14,11 +14,15 @@ import {
 import {
   SolanaAccountNotFunded,
   SolanaAddressOffEd25519,
+  SolanaInvalidValidator,
   SolanaMemoIsTooLong,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
+  SolanaStakeAccountNotFound,
+  SolanaStakeAccountRequired,
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   SolanaTokenAccountHoldsAnotherToken,
+  SolanaValidatorRequired,
 } from "./errors";
 import {
   encodeAccountIdWithTokenAccountAddress,
@@ -30,7 +34,7 @@ import { assertUnreachable } from "./utils";
 import { getEnv } from "../../env";
 
 // do not change real properties or the test will break
-const testOnChainData = {
+export const testOnChainData = {
   //  --- real props ---
   unfundedAddress: "7b6Q3ap8qRzfyvDw1Qce3fUV8C7WgFNzJQwYNTJm3KQo",
   // 0/0
@@ -46,12 +50,14 @@ const testOnChainData = {
     "Ax69sAxqBSdT3gMAUqXb8pUvgxSLCiXfTitMALEnFZTS",
   // 0/0
   notWSolTokenAccAddress: "Hsm3S2rhX4HwxYBaCyqgJ1cCtFyFSBu6HLy1bdvh7fKs",
+  validatorAddress: "9QU2QSxhb24FUX3Tu2FpczXjpK3VYrvRudywSZaM29mF",
+  fees: {
+    stakeAccountRentExempt: 2282880,
+    lamportsPerSignature: 5000,
+  },
   // ---  maybe outdated or not real, fine for tests ---
   offEd25519Address: "6D8GtWkKJgToM5UoiByHqjQCCC9Dq1Hh7iNmU4jKSs14",
   offEd25519Address2: "12rqwuEgBYiGhBrDJStCiqEtzQpTTiZbh7teNVLuYcFA",
-  feeCalculator: {
-    lamportsPerSignature: 5000,
-  },
 };
 
 const mainAccId = encodeAccountId({
@@ -69,14 +75,15 @@ const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
 );
 
 const fees = (signatureCount: number) =>
-  new BigNumber(
-    signatureCount * testOnChainData.feeCalculator.lamportsPerSignature
-  );
+  new BigNumber(signatureCount * testOnChainData.fees.lamportsPerSignature);
 
 const zero = new BigNumber(0);
 
 const solana: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
+  // FIXME Ordering of validators must be always the same, for this test to be stable:
+  // https://github.com/LedgerHQ/ledger-live-common/blob/develop/src/__tests__/test-helpers/bridge.ts#L171-L188
+  FIXME_ignorePreloadFields: ["validators"],
   accounts: [
     {
       raw: makeAccount(testOnChainData.fundedSenderAddress),
@@ -110,325 +117,9 @@ const solana: CurrenciesData<Transaction> = {
             totalSpent: fees(1),
           },
         },
-        {
-          name: "transfer :: status is success: not all amount",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: testOnChainData.fundedSenderBalance.dividedBy(2),
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {},
-            estimatedFees: fees(1),
-            amount: testOnChainData.fundedSenderBalance.dividedBy(2),
-            totalSpent: testOnChainData.fundedSenderBalance
-              .dividedBy(2)
-              .plus(fees(1)),
-          },
-        },
-        {
-          name: "transfer :: status is success: all amount",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            useAllAmount: true,
-            amount: zero,
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {},
-            estimatedFees: fees(1),
-            amount: testOnChainData.fundedSenderBalance.minus(fees(1)),
-            totalSpent: testOnChainData.fundedSenderBalance,
-          },
-        },
-        {
-          name: "transfer :: status is error: not enough balance, not all amount",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: testOnChainData.fundedSenderBalance,
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              amount: new NotEnoughBalance(),
-            },
-            warnings: {},
-            estimatedFees: fees(1),
-            amount: testOnChainData.fundedSenderBalance,
-            totalSpent: testOnChainData.fundedSenderBalance.plus(fees(1)),
-          },
-        },
-        {
-          name: "transfer :: status is error: not enough balance, all amount",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {
-                memo: "a memo",
-              },
-            },
-            useAllAmount: true,
-            amount: zero,
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: {
-              lamportsPerSignature: testOnChainData.fundedSenderBalance
-                .plus(1)
-                .toNumber(),
-            },
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              amount: new NotEnoughBalance(),
-            },
-            warnings: {},
-            estimatedFees: testOnChainData.fundedSenderBalance.plus(1),
-            amount: zero,
-            totalSpent: testOnChainData.fundedSenderBalance.plus(1),
-          },
-        },
-        {
-          name: "transfer :: status is error: amount is 0",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: zero,
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              amount: new AmountRequired(),
-            },
-            warnings: {},
-            estimatedFees: fees(1),
-            amount: zero,
-            totalSpent: fees(1),
-          },
-        },
-        {
-          name: "transfer :: status is error: amount is negative",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: new BigNumber(-1),
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              amount: new AmountRequired(),
-            },
-            warnings: {},
-            estimatedFees: fees(1),
-            amount: new BigNumber(-1),
-            totalSpent: new BigNumber(-1).plus(fees(1)),
-          },
-        },
-        {
-          name: "transfer :: status is warning: recipient wallet not funded",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: new BigNumber(1),
-            recipient: testOnChainData.unfundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {
-              recipient: new SolanaAccountNotFunded(),
-            },
-            estimatedFees: fees(1),
-            amount: new BigNumber(1),
-            totalSpent: fees(1).plus(1),
-          },
-        },
-        {
-          name: "transfer :: status is warning: recipient address is off ed25519",
-          transaction: {
-            model: {
-              kind: "transfer",
-              uiState: {},
-            },
-            amount: new BigNumber(1),
-            recipient: testOnChainData.offEd25519Address,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {
-              recipient: new SolanaAccountNotFunded(),
-              recipientOffCurve: new SolanaAddressOffEd25519(),
-            },
-            estimatedFees: fees(1),
-            amount: new BigNumber(1),
-            totalSpent: fees(1).plus(1),
-          },
-        },
-        // no tokens for first release
-        /*
-        {
-          name: "token.transfer :: status is success: recipient is funded wallet, assoc token acc exists",
-          transaction: {
-            model: {
-              kind: "token.transfer",
-              uiState: {
-                subAccountId: wSolSubAccId,
-              },
-            },
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            recipient: testOnChainData.fundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {},
-            estimatedFees: fees(1),
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            totalSpent:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-          },
-        },
-        {
-          name: "token.transfer :: status is success: recipient is correct mint token acc",
-          transaction: {
-            model: {
-              kind: "token.transfer",
-              uiState: {
-                subAccountId: wSolSubAccId,
-              },
-            },
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            recipient:
-              testOnChainData.wSolFundedAccountAssocTokenAccAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {},
-            estimatedFees: fees(1),
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            totalSpent:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-          },
-        },
-        {
-          name: "token.transfer :: status is error: recipient is another mint token acc",
-          transaction: {
-            model: {
-              kind: "token.transfer",
-              uiState: {
-                subAccountId: wSolSubAccId,
-              },
-            },
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            recipient: testOnChainData.notWSolTokenAccAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              recipient: new SolanaTokenAccountHoldsAnotherToken(),
-            },
-            warnings: {},
-            estimatedFees: fees(1),
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            totalSpent: zero,
-          },
-        },
-        {
-          name: "token.transfer :: status is warning: recipient is off curve",
-          transaction: {
-            model: {
-              kind: "token.transfer",
-              uiState: {
-                subAccountId: wSolSubAccId,
-              },
-            },
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            recipient: testOnChainData.offEd25519Address,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {
-              recipient: new SolanaAddressOffEd25519(),
-            },
-            warnings: {},
-            estimatedFees: fees(1),
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            totalSpent: zero,
-          },
-        },
-        {
-          name: "token.transfer :: status is success: recipient is wallet and no assoc token acc exists (will be created)",
-          transaction: {
-            model: {
-              kind: "token.transfer",
-              uiState: {
-                subAccountId: wSolSubAccId,
-              },
-            },
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            recipient: testOnChainData.unfundedAddress,
-            feeCalculator: testOnChainData.feeCalculator,
-            family: "solana",
-          },
-          expectedStatus: {
-            errors: {},
-            warnings: {
-              recipient: new SolanaAccountNotFunded(),
-              recipientAssociatedTokenAccount:
-                new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
-            },
-            // this fee is dynamic, skip
-            //estimatedFees: new BigNumber(2044280),
-            amount:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-            totalSpent:
-              testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
-          },
-        },
-        */
+        ...transferTests(),
+        ...stakingTests(),
+        //...tokenTests()
       ],
     },
   ],
@@ -471,12 +162,15 @@ type TransactionTestSpec = Exclude<
 
 function recipientRequired(): TransactionTestSpec[] {
   const models: TransactionModel[] = [
+    // uncomment when tokens are supported
+    /*
     {
       kind: "token.transfer",
       uiState: {
         subAccountId: "",
       },
     },
+    */
     {
       kind: "transfer",
       uiState: {},
@@ -489,7 +183,6 @@ function recipientRequired(): TransactionTestSpec[] {
         model,
         amount: zero,
         recipient: "",
-        feeCalculator: testOnChainData.feeCalculator,
         family: "solana",
       },
       expectedStatus: {
@@ -563,12 +256,699 @@ function memoIsTooLong(): TransactionTestSpec[] {
             },
           };
         case "token.createATA":
+        case "stake.createAccount":
+        case "stake.delegate":
+        case "stake.undelegate":
+        case "stake.withdraw":
+        case "stake.split":
           return undefined;
         default:
           return assertUnreachable(tx.model);
       }
     })
   );
+}
+
+function transferTests(): TransactionTestSpec[] {
+  return [
+    {
+      name: "transfer :: status is success: not all amount",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: testOnChainData.fundedSenderBalance.dividedBy(2),
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.fundedSenderBalance.dividedBy(2),
+        totalSpent: testOnChainData.fundedSenderBalance
+          .dividedBy(2)
+          .plus(fees(1)),
+      },
+    },
+    {
+      name: "transfer :: status is success: all amount",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        useAllAmount: true,
+        amount: zero,
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.fundedSenderBalance.minus(fees(1)),
+        totalSpent: testOnChainData.fundedSenderBalance,
+      },
+    },
+    {
+      name: "transfer :: status is error: not enough balance, not all amount",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: testOnChainData.fundedSenderBalance,
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {
+          amount: new NotEnoughBalance(),
+        },
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.fundedSenderBalance,
+        totalSpent: testOnChainData.fundedSenderBalance.plus(fees(1)),
+      },
+    },
+    {
+      name: "transfer :: status is error: amount is 0",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: zero,
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {
+          amount: new AmountRequired(),
+        },
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: zero,
+        totalSpent: fees(1),
+      },
+    },
+    {
+      name: "transfer :: status is error: amount is negative",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: new BigNumber(-1),
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {
+          amount: new AmountRequired(),
+        },
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: new BigNumber(-1),
+        totalSpent: zero,
+      },
+    },
+    {
+      name: "transfer :: status is warning: recipient wallet not funded",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: new BigNumber(1),
+        recipient: testOnChainData.unfundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {
+          recipient: new SolanaAccountNotFunded(),
+        },
+        estimatedFees: fees(1),
+        amount: new BigNumber(1),
+        totalSpent: fees(1).plus(1),
+      },
+    },
+    {
+      name: "transfer :: status is warning: recipient address is off ed25519",
+      transaction: {
+        model: {
+          kind: "transfer",
+          uiState: {},
+        },
+        amount: new BigNumber(1),
+        recipient: testOnChainData.offEd25519Address,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {
+          recipient: new SolanaAccountNotFunded(),
+          recipientOffCurve: new SolanaAddressOffEd25519(),
+        },
+        estimatedFees: fees(1),
+        amount: new BigNumber(1),
+        totalSpent: fees(1).plus(1),
+      },
+    },
+  ];
+}
+
+// uncomment when tokens are supported
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+function tokenTests(): TransactionTestSpec[] {
+  return [
+    {
+      name: "token.transfer :: status is success: recipient is funded wallet, assoc token acc exists",
+      transaction: {
+        model: {
+          kind: "token.transfer",
+          uiState: {
+            subAccountId: wSolSubAccId,
+          },
+        },
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        recipient: testOnChainData.fundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+      },
+    },
+    {
+      name: "token.transfer :: status is success: recipient is correct mint token acc",
+      transaction: {
+        model: {
+          kind: "token.transfer",
+          uiState: {
+            subAccountId: wSolSubAccId,
+          },
+        },
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        recipient: testOnChainData.wSolFundedAccountAssocTokenAccAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+      },
+    },
+    {
+      name: "token.transfer :: status is error: recipient is another mint token acc",
+      transaction: {
+        model: {
+          kind: "token.transfer",
+          uiState: {
+            subAccountId: wSolSubAccId,
+          },
+        },
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        recipient: testOnChainData.notWSolTokenAccAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {
+          recipient: new SolanaTokenAccountHoldsAnotherToken(),
+        },
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        totalSpent: zero,
+      },
+    },
+    {
+      name: "token.transfer :: status is warning: recipient is off curve",
+      transaction: {
+        model: {
+          kind: "token.transfer",
+          uiState: {
+            subAccountId: wSolSubAccId,
+          },
+        },
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        recipient: testOnChainData.offEd25519Address,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {
+          recipient: new SolanaAddressOffEd25519(),
+        },
+        warnings: {},
+        estimatedFees: fees(1),
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        totalSpent: zero,
+      },
+    },
+    {
+      name: "token.transfer :: status is success: recipient is wallet and no assoc token acc exists (will be created)",
+      transaction: {
+        model: {
+          kind: "token.transfer",
+          uiState: {
+            subAccountId: wSolSubAccId,
+          },
+        },
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        recipient: testOnChainData.unfundedAddress,
+        family: "solana",
+      },
+      expectedStatus: {
+        errors: {},
+        warnings: {
+          recipient: new SolanaAccountNotFunded(),
+          recipientAssociatedTokenAccount:
+            new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
+        },
+        // this fee is dynamic, skip
+        //estimatedFees: new BigNumber(2044280),
+        amount: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+        totalSpent: testOnChainData.wSolSenderAssocTokenAccBalance.dividedBy(2),
+      },
+    },
+  ];
+}
+
+function stakingTests(): TransactionTestSpec[] {
+  return [
+    {
+      name: "stake.createAccount :: status is error: amount is negative",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.validatorAddress },
+          },
+        },
+        recipient: "",
+        amount: new BigNumber(-1),
+      },
+      expectedStatus: {
+        amount: new BigNumber(-1),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: zero,
+        errors: {
+          amount: new AmountRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is error: amount is zero",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.validatorAddress },
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        errors: {
+          amount: new AmountRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is error: not enough balance, not all amount",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.validatorAddress },
+          },
+        },
+        recipient: "",
+        amount: testOnChainData.fundedSenderBalance,
+      },
+      expectedStatus: {
+        amount: testOnChainData.fundedSenderBalance,
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1)
+          .plus(testOnChainData.fees.stakeAccountRentExempt)
+          .plus(testOnChainData.fundedSenderBalance),
+        errors: {
+          amount: new NotEnoughBalance(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is error: validator required",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: "" },
+          },
+        },
+        recipient: "",
+        amount: new BigNumber(1),
+      },
+      expectedStatus: {
+        amount: new BigNumber(1),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1)
+          .plus(testOnChainData.fees.stakeAccountRentExempt)
+          .plus(1),
+        errors: {
+          voteAccAddr: new SolanaValidatorRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is error: validator has invalid address",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: "invalid address" },
+          },
+        },
+        recipient: "",
+        amount: new BigNumber(1),
+      },
+      expectedStatus: {
+        amount: new BigNumber(1),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1)
+          .plus(testOnChainData.fees.stakeAccountRentExempt)
+          .plus(1),
+        errors: {
+          voteAccAddr: new InvalidAddress(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is error: validator invalid",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.fundedSenderAddress },
+          },
+        },
+        recipient: "",
+        amount: new BigNumber(1),
+      },
+      expectedStatus: {
+        amount: new BigNumber(1),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1)
+          .plus(testOnChainData.fees.stakeAccountRentExempt)
+          .plus(1),
+        errors: {
+          voteAccAddr: new SolanaInvalidValidator(),
+        },
+      },
+    },
+    {
+      name: "stake.createAccount :: status is success, not all amount",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.validatorAddress },
+          },
+        },
+        recipient: "",
+        amount: new BigNumber(1),
+      },
+      expectedStatus: {
+        amount: new BigNumber(1),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: fees(1)
+          .plus(testOnChainData.fees.stakeAccountRentExempt)
+          .plus(1),
+        errors: {},
+      },
+    },
+    {
+      name: "stake.createAccount :: status is success, all amount",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.createAccount",
+          uiState: {
+            delegate: { voteAccAddress: testOnChainData.validatorAddress },
+          },
+        },
+        recipient: "",
+        useAllAmount: true,
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: testOnChainData.fundedSenderBalance
+          .minus(fees(1))
+          .minus(testOnChainData.fees.stakeAccountRentExempt),
+        estimatedFees: fees(1).plus(
+          testOnChainData.fees.stakeAccountRentExempt
+        ),
+        totalSpent: testOnChainData.fundedSenderBalance,
+        errors: {},
+      },
+    },
+    {
+      name: "stake.delegate :: status is error: stake account address and validator address required",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.delegate",
+          uiState: {
+            stakeAccAddr: "",
+            voteAccAddr: "",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountRequired(),
+          voteAccAddr: new SolanaValidatorRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.delegate :: status is error: stake account address and validator address are invalid",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.delegate",
+          uiState: {
+            stakeAccAddr: "invalid address",
+            voteAccAddr: "invalid address",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new InvalidAddress(),
+          voteAccAddr: new InvalidAddress(),
+        },
+      },
+    },
+    {
+      name: "stake.delegate :: status is error: stake account not found",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.delegate",
+          uiState: {
+            stakeAccAddr: testOnChainData.unfundedAddress,
+            voteAccAddr: testOnChainData.validatorAddress,
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountNotFound(),
+        },
+      },
+    },
+    {
+      name: "stake.undelegate :: status is error: stake account required",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.undelegate",
+          uiState: {
+            stakeAccAddr: "",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.undelegate :: status is error: stake account invalid",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.undelegate",
+          uiState: {
+            stakeAccAddr: "invalid address",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new InvalidAddress(),
+        },
+      },
+    },
+    {
+      name: "stake.undelegate :: status is error: stake account not found",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.undelegate",
+          uiState: {
+            stakeAccAddr: testOnChainData.unfundedAddress,
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountNotFound(),
+        },
+      },
+    },
+    {
+      name: "stake.withdraw :: status is error: stake account required",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.withdraw",
+          uiState: {
+            stakeAccAddr: "",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountRequired(),
+        },
+      },
+    },
+    {
+      name: "stake.withdraw :: status is error: stake account address invalid",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.withdraw",
+          uiState: {
+            stakeAccAddr: "invalid address",
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new InvalidAddress(),
+        },
+      },
+    },
+    {
+      name: "stake.withdraw :: status is error: stake account not found",
+      transaction: {
+        family: "solana",
+        model: {
+          kind: "stake.withdraw",
+          uiState: {
+            stakeAccAddr: testOnChainData.unfundedAddress,
+          },
+        },
+        recipient: "",
+        amount: zero,
+      },
+      expectedStatus: {
+        amount: zero,
+        estimatedFees: fees(1),
+        totalSpent: fees(1),
+        errors: {
+          stakeAccAddr: new SolanaStakeAccountNotFound(),
+        },
+      },
+    },
+  ];
 }
 
 export default dataset;
