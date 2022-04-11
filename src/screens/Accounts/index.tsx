@@ -143,7 +143,10 @@ function Accounts({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{ flex: 1 }}
+      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+    >
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
         <Flex p={6} flexDirection="row" alignItems="center">

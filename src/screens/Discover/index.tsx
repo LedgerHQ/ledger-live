@@ -19,7 +19,9 @@ const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
-const StyledSafeAreaView = styled(SafeAreaView)`
+const StyledSafeAreaView = styled(SafeAreaView).attrs({
+  edges: ["top", "left", "right"], // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+})`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
