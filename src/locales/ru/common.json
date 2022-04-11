@@ -2675,7 +2675,7 @@
       "title": "Отменить добавление счёта",
       "desc": "Уверены, что не хотите добавить счета?"
     },
-    "imported": "Счета добавлены",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "Добавить существующий счёт"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Просмотрите счета или добавьте новые",
-      "secondaryCTA": "Добавить другие счета",
-      "cta": "Перейти к Счетам"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "Остановить сканирование",
     "retryScanning": "Повторить сканирование",
