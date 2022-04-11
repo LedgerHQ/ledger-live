@@ -60,6 +60,12 @@ jobs:
         run: npx playwright install-deps
       - name: Build dependencies
         run: pnpm turbo run ledger-live-desktop#build:testing -- --filter=ledger-live-desktop
+      - name: Run code checkers [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: pnpm desktop test:codecheck
+      - name: Run unit tests [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: pnpm desktop test:jest
       - name: Run playwright tests [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
