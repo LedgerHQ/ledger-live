@@ -140,6 +140,9 @@ jobs:
           yarn global add yalc
           yarn --frozen-lockfile --network-timeout 100000
           yarn ci-setup-cli
+      - name: Run CLI tests
+        run: yarn ci-test-cli
+        timeout-minutes: 60
 
   cli:
     strategy:
@@ -160,3 +163,6 @@ jobs:
           yarn global add yalc
           yarn --frozen-lockfile --network-timeout 100000
           yarn ci-setup-cli
+      - name: Run CLI tests
+        run: yarn ci-test-cli
+        timeout-minutes: 60

@@ -11,7 +11,7 @@ import type { ModeModule, Transaction } from "../types";
 import type { Account } from "../../../types";
 import { apiForCurrency } from "../../../api/Ethereum";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
+const notOwnedNft = createCustomErrorClass("NotOwnedNft");
 
 export type Modes = "erc721.transfer";
 
@@ -23,14 +23,12 @@ export async function prepareTransaction(
   const { collection, collectionName, tokenIds } = transaction;
   if (collection && tokenIds && typeof collectionName === "undefined") {
     const api = apiForCurrency(account.currency);
-    const [{ status, result }] = await api.getNFTCollectionMetadata(
-      [
-        {
-          contract: collection,
-        },
-      ],
-      account.currency?.ethereumLikeInfo?.chainId?.toString() || "1"
-    );
+    const [{ status, result }] = await api.getNFTMetadata([
+      {
+        contract: collection,
+        tokenId: tokenIds[0],
+      },
+    ]);
     let collectionName = ""; // default value fallback if issue
     if (status === 200) {
       collectionName = result?.tokenName || "";
@@ -68,10 +66,12 @@ const erc721Transfer: ModeModule = {
 
       if (
         !a.nfts?.find?.(
-          (n) => n.tokenId === t.tokenIds?.[0] && n.contract === t.collection
+          (n) =>
+            n.tokenId === t.tokenIds?.[0] &&
+            n.collection.contract === t.collection
         )
       ) {
-        result.errors.amount = new NotOwnedNft();
+        result.errors.amount = new notOwnedNft();
       }
     }
   },

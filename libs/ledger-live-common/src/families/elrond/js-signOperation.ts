@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
 import type { Account, Operation, SignOperationEvent } from "../../types";
-import { withDevice } from "../../hw/deviceAccess";
+import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransaction } from "./js-buildTransaction";
@@ -48,9 +48,11 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
-      async function main() {
+  Observable.create((o) => {
+    async function main() {
+      const transport = await open(deviceId);
+
+      try {
         if (!transaction.fees) {
           throw new FeeNotLoaded();
         }
@@ -87,13 +89,15 @@ const signOperation = ({
             expirationDate: null,
           },
         });
+      } finally {
+        close(transport, deviceId);
       }
+    }
 
-      main().then(
-        () => o.complete(),
-        (e) => o.error(e)
-      );
-    })
-  );
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 export default signOperation;

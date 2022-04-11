@@ -48,7 +48,6 @@ setSupportedCurrencies([
   "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
-  "ethereum_goerli",
   "tron",
   "stellar",
   "filecoin",

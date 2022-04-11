@@ -6,7 +6,7 @@ import {
   getAccountName,
   getAccountUnit,
 } from ".";
-import type { Account, Operation, ProtoNFT, Unit } from "../types";
+import type { Account, Operation, Unit } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
@@ -138,11 +138,13 @@ const cliFormat = (account, level?: string) => {
     const NFTCollections = nftsByCollections(nfts);
 
     str += "\n";
-    str += `NFT Collections (${Object.keys(NFTCollections).length}) `;
+    str += `NFT Collections (${NFTCollections.length}) `;
     str += "\n";
 
-    str += Object.entries(NFTCollections)
-      .map(([contract, nfts]: [string, ProtoNFT[]]) => {
+    str += NFTCollections.map(
+      // nfts are set to any because there not just NFT, we added a metadata prop on the fly
+      // in the first step of the Rxjs flow to avoid having some async code here
+      ({ contract, nfts }: { contract: string; nfts: any[] }) => {
         const tokenName = nfts?.[0]?.metadata?.tokenName;
         const { bold, magenta, cyan, reverse } = styling;
 
@@ -160,8 +162,8 @@ const cliFormat = (account, level?: string) => {
             )
             .join()
         );
-      })
-      .join("\n");
+      }
+    ).join("\n");
   }
 
   if (level === "basic") return str;

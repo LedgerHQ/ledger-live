@@ -3,6 +3,7 @@ import winston from "winston";
 import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import simple from "@ledgerhq/live-common/lib/logs/simple";
 import { listen } from "@ledgerhq/logs";
+import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 
@@ -40,7 +41,6 @@ setSupportedCurrencies([
   "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
-  "ethereum_goerli",
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
@@ -106,11 +106,14 @@ listen((log) => {
   const { type } = log;
   let level = "info";
 
-  if (
+  if (type === "libcore-call" || type === "libcore-result") {
+    level = "silly";
+  } else if (
     type === "apdu" ||
     type === "hw" ||
     type === "speculos" ||
-    type.includes("debug")
+    type.includes("debug") ||
+    type.startsWith("libcore")
   ) {
     level = "debug";
   } else if (type.includes("warn")) {
@@ -124,4 +127,9 @@ listen((log) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   logger.log(level, log);
+});
+implementLibcore({
+  lib: () => require("@ledgerhq/ledger-core"),
+  // eslint-disable-line global-require
+  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
 });

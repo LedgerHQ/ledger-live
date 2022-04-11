@@ -1,4 +1,5 @@
-// reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
+// libcore reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
+// TODO move to account/
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { sameOp } from "./bridge/jsHelpers";
@@ -26,12 +27,11 @@ import {
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
-  fromSolanaResourcesRaw,
   fromNFTRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 
-// aim to build operations with the minimal diff & call to coin implementation possible
+// aim to build operations with the minimal diff & call to libcore possible
 export async function minimalOperationsBuilder<CO>(
   existingOperations: Operation[],
   coreOperations: CO[],
@@ -383,11 +383,6 @@ export function patchAccount(
     changed = true;
   }
 
-  if (updatedRaw.solanaResources) {
-    next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
-    changed = true;
-  }
-
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);
   if (!updatedRaw.nfts && account.nfts) {
     delete next.nfts;
@@ -563,12 +558,12 @@ function stepBuilder(state, newOp, i) {
     const rest = state.existingOps.slice(j);
 
     if (rest.length > i + 1) {
-      // if coin implementation happen to have less ops that what we had,
+      // if libcore happen to have less ops that what we had,
       // we actually need to continue because we don't know where hole will be,
       // but we can keep existingOp
       state.operations.push(existingOp);
     } else {
-      // otherwise we stop the coin implementation iteration and continue with previous data
+      // otherwise we stop the libcore iteration and continue with previous data
       // and we're done on the iteration
       if (state.operations.length === 0 && j === 0) {
         // special case: we preserve the operations array as much as possible

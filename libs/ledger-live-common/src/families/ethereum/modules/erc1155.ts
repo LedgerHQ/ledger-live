@@ -11,10 +11,10 @@ import type { ModeModule, Transaction } from "../types";
 import type { Account } from "../../../types";
 import { prepareTransaction } from "./erc721";
 
-const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
-const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
-const NotTokenIdsProvided = createCustomErrorClass("NotTokenIdsProvided");
-const QuantityNeedsToBePositive = createCustomErrorClass(
+const notOwnedNft = createCustomErrorClass("NotOwnedNft");
+const notEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
+const notTokenIdsProvided = createCustomErrorClass("NotTokenIdsProvided");
+const quantityNeedsToBePositive = createCustomErrorClass(
   "QuantityNeedsToBePositive"
 );
 
@@ -47,8 +47,8 @@ const erc1155Transfer: ModeModule = {
       }
 
       t.quantities?.forEach((quantity) => {
-        if (!quantity || quantity.isLessThan(1)) {
-          result.errors.amount = new QuantityNeedsToBePositive();
+        if (quantity.isLessThan(1)) {
+          result.errors.amount = new quantityNeedsToBePositive();
         }
       });
 
@@ -62,15 +62,15 @@ const erc1155Transfer: ModeModule = {
           const transferQuantity = Number(t.quantities?.[index]);
 
           if (!nft) {
-            return new NotOwnedNft();
+            return new notOwnedNft();
           }
 
           if (transferQuantity && !nft.amount.gte(transferQuantity)) {
-            return new NotEnoughNftOwned();
+            return new notEnoughNftOwned();
           }
 
           return true;
-        }, true as true | Error) || new NotTokenIdsProvided();
+        }, true as true | Error) || new notTokenIdsProvided();
 
       if (!enoughTokensOwned || enoughTokensOwned instanceof Error) {
         result.errors.amount = enoughTokensOwned;
