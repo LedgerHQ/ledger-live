@@ -55,6 +55,8 @@ jobs:
       - name: Setup TimeZone for Windows
         run: tzutil /s "Eastern Standard Time"
         if: runner.os == 'Windows'
+      - name: Bump npm to latest
+        run: npm i -g npm
       - name: Install dependencies
         run: pnpm i
       - name: Install playwright dependencies
