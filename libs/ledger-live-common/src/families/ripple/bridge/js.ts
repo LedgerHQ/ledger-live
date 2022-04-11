@@ -32,7 +32,7 @@ import {
   emptyHistoryCache,
 } from "../../../account";
 import getAddress from "../../../hw/getAddress";
-import { withDevice } from "../../../hw/deviceAccess";
+import { open, close } from "../../../hw";
 import {
   parseAPIValue,
   parseAPICurrencyObject,
@@ -89,104 +89,106 @@ const signOperation = ({
   transaction,
   deviceId,
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
-        delete cacheRecipientsNew[transaction.recipient];
-        const { fee } = transaction;
-        if (!fee) throw new FeeNotLoaded();
+  new Observable((o) => {
+    delete cacheRecipientsNew[transaction.recipient];
+    const { fee } = transaction;
+    if (!fee) throw new FeeNotLoaded();
 
-        async function main() {
-          const amount = formatAPICurrencyXRP(transaction.amount);
-          const tag = transaction.tag ? transaction.tag : undefined;
-          const payment = {
-            source: {
-              address: account.freshAddress,
-              amount,
-            },
-            destination: {
-              address: transaction.recipient,
-              minAmount: amount,
-              tag,
-            },
-          };
-          const instruction = {
-            fee: formatAPICurrencyXRP(fee).value,
-            maxLedgerVersionOffset: 12,
-          };
-          if (tag)
-            invariant(
-              validateTag(new BigNumber(tag)),
-              `tag is set but is not in a valid format, should be between [0 - ${uint32maxPlus1
-                .minus(1)
-                .toString()}]`
-            );
-          const prepared = await preparePayment(
-            account.freshAddress,
-            payment,
-            instruction
+    async function main() {
+      try {
+        const amount = formatAPICurrencyXRP(transaction.amount);
+        const tag = transaction.tag ? transaction.tag : undefined;
+        const payment = {
+          source: {
+            address: account.freshAddress,
+            amount,
+          },
+          destination: {
+            address: transaction.recipient,
+            minAmount: amount,
+            tag,
+          },
+        };
+        const instruction = {
+          fee: formatAPICurrencyXRP(fee).value,
+          maxLedgerVersionOffset: 12,
+        };
+        if (tag)
+          invariant(
+            validateTag(new BigNumber(tag)),
+            `tag is set but is not in a valid format, should be between [0 - ${uint32maxPlus1
+              .minus(1)
+              .toString()}]`
           );
-          let signature;
+        const prepared = await preparePayment(
+          account.freshAddress,
+          payment,
+          instruction
+        );
+        let signature;
+        const transport = await open(deviceId);
 
-          try {
-            o.next({
-              type: "device-signature-requested",
-            });
-            signature = await signTransaction(
-              account.currency,
-              transport,
-              account.freshAddressPath,
-              JSON.parse(prepared.txJSON)
-            );
-            o.next({
-              type: "device-signature-granted",
-            });
-
-            const hash = "";
-            const operation: Operation = {
-              id: `${account.id}-${hash}-OUT`,
-              hash,
-              accountId: account.id,
-              type: "OUT",
-              value: transaction.amount,
-              fee,
-              blockHash: null,
-              blockHeight: null,
-              senders: [account.freshAddress],
-              recipients: [transaction.recipient],
-              date: new Date(),
-              // we probably can't get it so it's a predictive value
-              transactionSequenceNumber: await getSequenceNumber(account),
-              extra: {} as any,
-            };
-
-            if (transaction.tag) {
-              operation.extra.tag = transaction.tag;
-            }
-
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature,
-                expirationDate: null,
-              },
-            });
-          } catch (e: any) {
-            if (e && e.name === "RippledError" && e.data.resultMessage) {
-              throw new Error(e.data.resultMessage);
-            }
-
-            throw e;
-          }
+        try {
+          o.next({
+            type: "device-signature-requested",
+          });
+          signature = await signTransaction(
+            account.currency,
+            transport,
+            account.freshAddressPath,
+            JSON.parse(prepared.txJSON)
+          );
+          o.next({
+            type: "device-signature-granted",
+          });
+        } finally {
+          close(transport, deviceId);
         }
 
-        main().then(
-          () => o.complete(),
-          (e) => o.error(e)
-        );
-      })
-  );
+        const hash = "";
+        const operation: Operation = {
+          id: `${account.id}-${hash}-OUT`,
+          hash,
+          accountId: account.id,
+          type: "OUT",
+          value: transaction.amount,
+          fee,
+          blockHash: null,
+          blockHeight: null,
+          senders: [account.freshAddress],
+          recipients: [transaction.recipient],
+          date: new Date(),
+          // we probably can't get it so it's a predictive value
+          transactionSequenceNumber: await getSequenceNumber(account),
+          extra: {} as any,
+        };
+
+        if (transaction.tag) {
+          operation.extra.tag = transaction.tag;
+        }
+
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature,
+            expirationDate: null,
+          },
+        });
+      } catch (e: any) {
+        if (e && e.name === "RippledError" && e.data.resultMessage) {
+          throw new Error(e.data.resultMessage);
+        }
+
+        throw e;
+      }
+    }
+
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 const broadcast = async ({ signedOperation: { signature, operation } }) => {
   const submittedPayment = await submit(signature);
@@ -358,184 +360,185 @@ const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
   hydrate: () => {},
   scanAccounts: ({ currency, deviceId }) =>
-    withDevice(deviceId)(
-      (transport) =>
-        new Observable((o) => {
-          let finished = false;
+    new Observable((o) => {
+      let finished = false;
 
-          const unsubscribe = () => {
-            finished = true;
-          };
+      const unsubscribe = () => {
+        finished = true;
+      };
 
-          async function main() {
-            try {
-              const serverInfo = await getServerInfo();
-              const ledgers = serverInfo.completeLedgers.split("-");
-              const minLedgerVersion = Number(ledgers[0]);
-              const maxLedgerVersion = Number(ledgers[1]);
-              const derivationModes = getDerivationModesForCurrency(currency);
+      async function main() {
+        let transport;
 
-              for (const derivationMode of derivationModes) {
-                const derivationScheme = getDerivationScheme({
-                  derivationMode,
-                  currency,
-                });
-                const stopAt = isIterableDerivationMode(derivationMode)
-                  ? 255
-                  : 1;
+        try {
+          transport = await open(deviceId);
+          const serverInfo = await getServerInfo();
+          const ledgers = serverInfo.completeLedgers.split("-");
+          const minLedgerVersion = Number(ledgers[0]);
+          const maxLedgerVersion = Number(ledgers[1]);
+          const derivationModes = getDerivationModesForCurrency(currency);
 
-                for (let index = 0; index < stopAt; index++) {
-                  if (!derivationModeSupportsIndex(derivationMode, index))
-                    continue;
-                  const freshAddressPath = runDerivationScheme(
-                    derivationScheme,
-                    currency,
-                    {
-                      account: index,
-                    }
-                  );
-                  const { address } = await getAddress(transport, {
-                    currency,
-                    path: freshAddressPath,
-                    derivationMode,
-                  });
-                  if (finished) return;
-                  const accountId = `ripplejs:2:${currency.id}:${address}:${derivationMode}`;
-                  let info;
+          for (const derivationMode of derivationModes) {
+            const derivationScheme = getDerivationScheme({
+              derivationMode,
+              currency,
+            });
+            const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
 
-                  try {
-                    info = await getAccountInfo(address);
-                  } catch (e) {
-                    if (checkAccountNotFound(e)) {
-                      throw e;
-                    }
-                  }
+            for (let index = 0; index < stopAt; index++) {
+              if (!derivationModeSupportsIndex(derivationMode, index)) continue;
+              const freshAddressPath = runDerivationScheme(
+                derivationScheme,
+                currency,
+                {
+                  account: index,
+                }
+              );
+              const { address } = await getAddress(transport, {
+                currency,
+                path: freshAddressPath,
+                derivationMode,
+              });
+              if (finished) return;
+              const accountId = `ripplejs:2:${currency.id}:${address}:${derivationMode}`;
+              let info;
 
-                  // fresh address is address. ripple never changes.
-                  const freshAddress = address;
-
-                  if (!info) {
-                    // account does not exist in Ripple server
-                    // we are generating a new account locally
-                    if (derivationMode === "") {
-                      o.next({
-                        type: "discovered",
-                        account: {
-                          type: "Account",
-                          id: accountId,
-                          seedIdentifier: freshAddress,
-                          derivationMode,
-                          name: getNewAccountPlaceholderName({
-                            currency,
-                            index,
-                            derivationMode,
-                          }),
-                          starred: false,
-                          used: false,
-                          freshAddress,
-                          freshAddressPath,
-                          freshAddresses: [
-                            {
-                              address: freshAddress,
-                              derivationPath: freshAddressPath,
-                            },
-                          ],
-                          balance: new BigNumber(0),
-                          spendableBalance: new BigNumber(0),
-                          blockHeight: maxLedgerVersion,
-                          index,
-                          currency,
-                          operationsCount: 0,
-                          operations: [],
-                          pendingOperations: [],
-                          unit: currency.units[0],
-                          // @ts-expect-error archived does not exists on type Account
-                          archived: false,
-                          lastSyncDate: new Date(),
-                          creationDate: new Date(),
-                          swapHistory: [],
-                          balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-                        },
-                      });
-                    }
-
-                    break;
-                  }
-
-                  if (finished) return;
-                  const balance = parseAPIValue(info.xrpBalance);
-                  invariant(
-                    !balance.isNaN() && balance.isFinite(),
-                    `Ripple: invalid balance=${balance.toString()} for address ${address}`
-                  );
-                  const transactions = await getTransactions(address, {
-                    minLedgerVersion,
-                    maxLedgerVersion,
-                    types: ["payment"],
-                  });
-                  if (finished) return;
-                  const account: Account = {
-                    type: "Account",
-                    id: accountId,
-                    seedIdentifier: freshAddress,
-                    derivationMode,
-                    name: getAccountPlaceholderName({
-                      currency,
-                      index,
-                      derivationMode,
-                    }),
-                    starred: false,
-                    used: true,
-                    freshAddress,
-                    freshAddressPath,
-                    freshAddresses: [
-                      {
-                        address: freshAddress,
-                        derivationPath: freshAddressPath,
-                      },
-                    ],
-                    balance,
-                    spendableBalance: balance,
-                    // TODO calc with base reserve
-                    blockHeight: maxLedgerVersion,
-                    index,
-                    currency,
-                    operationsCount: 0,
-                    operations: [],
-                    pendingOperations: [],
-                    unit: currency.units[0],
-                    lastSyncDate: new Date(),
-                    creationDate: new Date(),
-                    swapHistory: [],
-                    balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-                  };
-                  account.operations = transactions
-                    .map(txToOperation(account))
-                    .filter(Boolean);
-                  account.operationsCount = account.operations.length;
-
-                  if (account.operations.length > 0) {
-                    account.creationDate =
-                      account.operations[account.operations.length - 1].date;
-                  }
-
-                  o.next({
-                    type: "discovered",
-                    account,
-                  });
+              try {
+                info = await getAccountInfo(address);
+              } catch (e) {
+                if (checkAccountNotFound(e)) {
+                  throw e;
                 }
               }
 
-              o.complete();
-            } catch (e) {
-              o.error(e);
+              // fresh address is address. ripple never changes.
+              const freshAddress = address;
+
+              if (!info) {
+                // account does not exist in Ripple server
+                // we are generating a new account locally
+                if (derivationMode === "") {
+                  o.next({
+                    type: "discovered",
+                    account: {
+                      type: "Account",
+                      id: accountId,
+                      seedIdentifier: freshAddress,
+                      derivationMode,
+                      name: getNewAccountPlaceholderName({
+                        currency,
+                        index,
+                        derivationMode,
+                      }),
+                      starred: false,
+                      used: false,
+                      freshAddress,
+                      freshAddressPath,
+                      freshAddresses: [
+                        {
+                          address: freshAddress,
+                          derivationPath: freshAddressPath,
+                        },
+                      ],
+                      balance: new BigNumber(0),
+                      spendableBalance: new BigNumber(0),
+                      blockHeight: maxLedgerVersion,
+                      index,
+                      currency,
+                      operationsCount: 0,
+                      operations: [],
+                      pendingOperations: [],
+                      unit: currency.units[0],
+                      // @ts-expect-error archived does not exists on type Account
+                      archived: false,
+                      lastSyncDate: new Date(),
+                      creationDate: new Date(),
+                      swapHistory: [],
+                      balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
+                    },
+                  });
+                }
+
+                break;
+              }
+
+              if (finished) return;
+              const balance = parseAPIValue(info.xrpBalance);
+              invariant(
+                !balance.isNaN() && balance.isFinite(),
+                `Ripple: invalid balance=${balance.toString()} for address ${address}`
+              );
+              const transactions = await getTransactions(address, {
+                minLedgerVersion,
+                maxLedgerVersion,
+                types: ["payment"],
+              });
+              if (finished) return;
+              const account: Account = {
+                type: "Account",
+                id: accountId,
+                seedIdentifier: freshAddress,
+                derivationMode,
+                name: getAccountPlaceholderName({
+                  currency,
+                  index,
+                  derivationMode,
+                }),
+                starred: false,
+                used: true,
+                freshAddress,
+                freshAddressPath,
+                freshAddresses: [
+                  {
+                    address: freshAddress,
+                    derivationPath: freshAddressPath,
+                  },
+                ],
+                balance,
+                spendableBalance: balance,
+                // TODO calc with base reserve
+                blockHeight: maxLedgerVersion,
+                index,
+                currency,
+                operationsCount: 0,
+                operations: [],
+                pendingOperations: [],
+                unit: currency.units[0],
+                lastSyncDate: new Date(),
+                creationDate: new Date(),
+                swapHistory: [],
+                balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
+              };
+              account.operations = transactions
+                .map(txToOperation(account))
+                .filter(Boolean);
+              account.operationsCount = account.operations.length;
+
+              if (account.operations.length > 0) {
+                account.creationDate =
+                  account.operations[account.operations.length - 1].date;
+              }
+
+              o.next({
+                type: "discovered",
+                account,
+              });
             }
           }
 
-          main();
-          return unsubscribe;
-        })
-    ),
+          o.complete();
+        } catch (e) {
+          o.error(e);
+        } finally {
+          if (transport) {
+            await close(transport, deviceId);
+          }
+        }
+      }
+
+      main();
+      return unsubscribe;
+    }),
 };
 
 const sync = ({

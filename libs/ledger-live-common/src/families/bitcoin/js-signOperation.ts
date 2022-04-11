@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import type { Account, Operation, SignOperationEvent } from "./../../types";
 import { isSegwitDerivationMode } from "./../../derivation";
 import { encodeOperationId } from "./../../operation";
-import { withDevice } from "../../hw/deviceAccess";
+import { open, close } from "./../../hw";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildTransaction } from "./js-buildTransaction";
@@ -22,13 +22,14 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
-      async function main() {
-        const { currency } = account;
-        const hwApp = new Btc(transport);
-        const walletAccount = getWalletAccount(account);
+  Observable.create((o) => {
+    async function main() {
+      const { currency } = account;
+      const transport = await open(deviceId);
+      const hwApp = new Btc(transport);
+      const walletAccount = getWalletAccount(account);
 
+      try {
         log("hw", `signTransaction ${currency.id} for account ${account.id}`);
         const txInfo = await buildTransaction(account, transaction);
         let senders = new Set<string>();
@@ -151,13 +152,15 @@ const signOperation = ({
             expirationDate: null,
           },
         });
+      } finally {
+        close(transport, deviceId);
       }
+    }
 
-      main().then(
-        () => o.complete(),
-        (e) => o.error(e)
-      );
-    })
-  );
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 export default signOperation;

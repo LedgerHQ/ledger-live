@@ -1,16 +1,16 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { utils } from "@crypto-com/chain-jslib";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
 import {
   CryptoOrgWrongSignatureHeader,
   CryptoOrgSignatureSize,
 } from "./errors";
 import type { Transaction } from "./types";
 import type { Account, Operation, SignOperationEvent } from "../../types";
+import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
-import { withDevice } from "../../hw/deviceAccess";
+import CryptoOrgApp from "@ledgerhq/hw-app-cosmos";
+import { utils } from "@crypto-com/chain-jslib";
 import { buildTransaction } from "./js-buildTransaction";
 import { isTestNet } from "./logic";
 
@@ -104,9 +104,11 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) =>
-    Observable.create((o) => {
-      async function main() {
+  Observable.create((o) => {
+    async function main() {
+      const transport = await open(deviceId);
+
+      try {
         o.next({
           type: "device-signature-requested",
         });
@@ -163,13 +165,15 @@ const signOperation = ({
             },
           });
         }
+      } finally {
+        close(transport, deviceId);
       }
+    }
 
-      main().then(
-        () => o.complete(),
-        (e) => o.error(e)
-      );
-    })
-  );
+    main().then(
+      () => o.complete(),
+      (e) => o.error(e)
+    );
+  });
 
 export default signOperation;

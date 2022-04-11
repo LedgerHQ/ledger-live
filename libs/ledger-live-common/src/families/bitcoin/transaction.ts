@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { bchToCashaddrAddressWithoutPrefix } from "./logic";
+import bchaddr from "bchaddrjs";
 import cashaddr from "cashaddrjs";
 import type {
   Transaction,
@@ -133,6 +133,9 @@ function bchExplicit(str: string): string {
 
   return str;
 }
+
+const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+  recipient ? bchaddr.toCashAddress(recipient).split(":")[1] : recipient;
 
 export type CoinLogic = {
   hasExtraData?: boolean;

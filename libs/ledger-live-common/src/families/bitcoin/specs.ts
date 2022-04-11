@@ -257,9 +257,7 @@ const bitcoinLikeMutations = ({
     test: ({ account }) => {
       expect(
         account.bitcoinResources?.utxos
-          .filter(
-            (u) => u.blockHeight && u.blockHeight < account.blockHeight - 10
-          ) // Exclude pending UTXOs and the Utxos just written into new block (10 blocks time)
+          .filter((u) => u.blockHeight && u.blockHeight < account.blockHeight) // Exclude pending UTXOs and the Utxos just written into new block
           .reduce((p, c) => p.plus(c.value), new BigNumber(0))
           .toString()
       ).toBe("0");
