@@ -2675,7 +2675,7 @@
       "title": "계정 추가 취소",
       "desc": "계정 추가를 취소할까요?"
     },
-    "imported": "계정이 성공적으로 추가되었습니다",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "기존 계정 추가"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "귀하의 계정을 보거나 다른 계정을 추가하세요",
-      "secondaryCTA": "다른 계정 추가",
-      "cta": "계정으로 이동"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "스캔 중단",
     "retryScanning": "스캔 재시도",
