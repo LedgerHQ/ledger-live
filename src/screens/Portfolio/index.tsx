@@ -109,7 +109,7 @@ const SectionTitle = ({
       </Text>
       {onSeeAllPress || navigatorName ? (
         <StyledTouchableOpacity onPress={onLinkPress}>
-          <TextLink type={"color"}>
+          <TextLink onPress={onLinkPress} type={"color"}>
             {seeMoreText || t("common.seeAll")}
           </TextLink>
         </StyledTouchableOpacity>
