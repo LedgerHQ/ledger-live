@@ -96,7 +96,7 @@
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/stack": "^6.0.11",
     "@segment/analytics-react-native": "^1.5.0",
-    "@sentry/react-native": "^3.1.1",
+    "@sentry/react-native": "^3.4.0",
     "@tradle/react-native-http": "^2.0.0",
     "assert": "^2.0.0",
     "async": "^3.2.1",
