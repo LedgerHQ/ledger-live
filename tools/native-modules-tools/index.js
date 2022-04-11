@@ -59,9 +59,12 @@ function findNativeModules(root) {
         resolvedPath = require.resolve(dependency, { paths: [realPath] });
       } catch (_) {
         try {
-          resolvedPath = require.resolve(path.resolve(dependency, "package.json"), {
-            paths: [realPath],
-          });
+          resolvedPath = require.resolve(
+            path.resolve(dependency, "package.json"),
+            {
+              paths: [realPath],
+            }
+          );
         } catch (error) {
           // swallow the error
           // console.error(error)
@@ -144,7 +147,7 @@ function dependencyTree(modulePath, { root } = {}) {
         const resolvedPath = require.resolve(dependency, {
           paths: [fs.realpathSync(currentPath)],
         });
-        if (!resolvedPath || !resolvedPath.startsWith("/")) {
+        if (!resolvedPath || !path.isAbsolute(resolvedPath)) {
           return;
         }
         const depPath = findPackageRoot(resolvedPath);
@@ -211,7 +214,7 @@ function processNativeModules({ root, destination }) {
     let current = null;
     while ((current = stack.shift())) {
       const [path, dependencies] = current;
-      Array.from(dependencies.values()).forEach(dependency => {
+      Array.from(dependencies.values()).forEach((dependency) => {
         const copyResult = copyNodeModule(dependency.path, {
           destination: path,
         });
@@ -236,5 +239,5 @@ module.exports = {
   dependencyTree,
   buildWebpackExternals,
   copyFolderRecursivelySync,
-  processNativeModules
+  processNativeModules,
 };
