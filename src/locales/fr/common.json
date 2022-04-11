@@ -2675,7 +2675,7 @@
       "title": "Annuler l'ajout de compte",
       "desc": "Voulez-vous vraiment annuler l'ajout de comptes ?"
     },
-    "imported": "Asset added successfully",
+    "imported": "Actif bien ajouté",
     "sections": {
       "importable": {
         "title": "Ajouter un compte existant"
@@ -2691,9 +2691,9 @@
       }
     },
     "success": {
-      "desc": "Voir ses comptes ou ajouter d'autres comptes",
-      "secondaryCTA": "Add new asset",
-      "cta": "See your asset"
+      "desc": "Accédez à vos comptes ou ajoutez d'autres comptes.",
+      "secondaryCTA": "Ajouter un nouvel actif",
+      "cta": "Afficher votre actif"
     },
     "stopScanning": "Mettre fin au balayage",
     "retryScanning": "Réessayer le balayage",
@@ -2784,7 +2784,7 @@
     },
     "installApp": "Installation de l'app {{appName}} {{percentage}}",
     "installAppDescription": "Merci d'attendre la fin de l'installation.",
-    "listApps": "Vérification en cours des dépendances des apps",
+    "listApps": "Vérification en cours des applications nécessaires",
     "listAppsDescription": "Patientez pendant que nous vérifions que vous avez toutes les apps requises."
   },
   "SelectDevice": {
@@ -3019,8 +3019,8 @@
         "title": "D'autres apps ont besoin de l'app {{app}}.",
         "showAll": "Afficher les apps à désinstaller",
         "description": "Les apps de votre appareil qui ont besoin de l'app {{app}} seront aussi désinstallées.",
-        "description_one": "Certaines apps dépendent de l'app {{app}}.",
-        "description_two": "Certaines apps dépendent de l'app {{app}}.\nLes apps sur votre appareil qui dépendent de l'app {{app}} seront également désinstallées."
+        "description_one": "Certaines apps ont besoin de l'app {{app}}.",
+        "description_two": "Certaines apps ont besoin de l'app {{app}}.\nLes apps sur votre appareil qui ont besoin de l'app {{app}} seront également désinstallées."
       },
       "continueUninstall": "Désinstaller {{app}} et les autres apps"
     },
