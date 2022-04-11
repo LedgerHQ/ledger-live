@@ -2675,7 +2675,7 @@
       "title": "إلغاء إضافة حساب",
       "desc": "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
     },
-    "imported": "تمت إضافة الحسابات بنجاح",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "إضافة حساب موجود"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "عرض حساباتك أو إضافة حسابات أخرى",
-      "secondaryCTA": "إضافة حسابات أخرى",
-      "cta": "الذهاب إلى الحسابات"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "إيقاف المسح الضوئي",
     "retryScanning": "إعادة محاولة المسح الضوئي",
