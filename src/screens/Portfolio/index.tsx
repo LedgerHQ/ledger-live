@@ -15,6 +15,7 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Currency } from "@ledgerhq/live-common/lib/types";
@@ -67,6 +68,11 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
 const ContentContainer = styled(SafeAreaView)`
   flex: 1;
 `;
+
+const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
+  mt: 9,
+  px: p.px ?? 6,
+}))``;
 
 const SectionTitle = ({
   title,
@@ -188,11 +194,12 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <Flex mx={6} mt={8}>
+            <SectionContainer>
               <SectionTitle
                 title={t("distribution.title")}
                 navigation={navigation}
                 navigatorName={NavigatorName.PortfolioAccounts}
+                containerProps={{ mb: "9px" }}
               />
               <Assets
                 balanceHistory={portfolio.balanceHistory}
@@ -222,20 +229,21 @@ function PortfolioScreen({ navigation }: Props) {
                   />
                 </>
               )}
-            </Flex>,
+            </SectionContainer>,
           ]
         : []),
       ...(showCarousel
         ? [
-            <Flex mt={8}>
-              <Flex mx={6}>
-                <SectionTitle title={t("portfolio.recommended.title")} />
-              </Flex>
+            <SectionContainer px={0}>
+              <SectionTitle
+                title={t("portfolio.recommended.title")}
+                containerProps={{ mb: 7, mx: 6 }}
+              />
               <Carousel cardsVisibility={carouselVisibility} />
-            </Flex>,
+            </SectionContainer>,
           ]
         : []),
-      <Flex mx={6} my={8}>
+      <SectionContainer mb={9}>
         <SectionTitle
           title={t("portfolio.topGainers.title")}
           navigation={navigation}
@@ -243,10 +251,10 @@ function PortfolioScreen({ navigation }: Props) {
           screenName={ScreenName.MarketList}
           params={{ top100: true }}
           seeMoreText={t("portfolio.topGainers.seeMarket")}
-          containerProps={{ mb: 5 }}
+          containerProps={{ mb: "17px" }}
         />
         <MarketSection />
-      </Flex>,
+      </SectionContainer>,
     ],
     [
       showAssets,
