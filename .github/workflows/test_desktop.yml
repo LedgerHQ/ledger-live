@@ -19,6 +19,7 @@ jobs:
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       # DEBUG: pw:browser
+      DEBUG_LOGS: 1
     strategy:
       fail-fast: false
       matrix:
@@ -60,11 +61,9 @@ jobs:
         shell: bash
         env:
           INSTRUMENT_BUILD: true
-          # DEV_TOOLS: 1
       - name: Build and Test affected packages [!Linux]
         if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --filter=ledger-live-desktop
         shell: bash
         env:
           INSTRUMENT_BUILD: true
-          # DEV_TOOLS: 1
