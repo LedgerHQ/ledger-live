@@ -39,7 +39,7 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.2.0-canary.7",
+    "turbo": "^1.2.1",
     "x-run": "workspace:*"
   },
   "pnpm": {
