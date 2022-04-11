@@ -403,6 +403,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView
+      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
       style={{
         flex: 1,
         backgroundColor: colors.background.main,

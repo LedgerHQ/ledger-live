@@ -87,6 +87,7 @@ const NftGallery = () => {
 
   return (
     <SafeAreaView
+      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
       style={[
         styles.root,
         {

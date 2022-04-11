@@ -67,7 +67,10 @@ const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
   my: -5,
 })``;
 
-const ContentContainer = styled(SafeAreaView)`
+const ContentContainer = styled(SafeAreaView).attrs({
+  /** This view doesn't touch the bottom of the screen https://github.com/th3rdwave/react-native-safe-area-context#edges */
+  edges: ["top", "left", "right"],
+})`
   flex: 1;
 `;
 
