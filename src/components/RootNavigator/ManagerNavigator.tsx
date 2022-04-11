@@ -15,6 +15,7 @@ import styles from "../../navigation/styles";
 import ReadOnlyTab from "../ReadOnlyTab";
 import NanoXIcon from "../../icons/TabNanoX";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
+import ManagerMain from "../../screens/Manager/Manager";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -76,6 +77,11 @@ export default function ManagerNavigator() {
           headerRight: null,
           gestureEnabled: false,
         }}
+      />      
+      <Stack.Screen
+        name={ScreenName.ManagerMain}
+        component={ManagerMain}
+        options={{ title: "" }}
       />
     </Stack.Navigator>
   );

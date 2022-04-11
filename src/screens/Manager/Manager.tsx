@@ -15,7 +15,10 @@ import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
+import { CommonActions } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -25,7 +28,7 @@ export const MANAGER_TABS = {
 export type ManagerTab = keyof typeof MANAGER_TABS;
 
 type Props = {
-  navigation: any,
+  navigation: StackNavigationProp<any>,
   route: {
     params: {
       device: Device,
@@ -42,8 +45,9 @@ type Props = {
 
 const Manager = ({
   navigation,
-  route: {
-    params: {
+  route,
+}: Props) => {
+  const {
       device,
       deviceInfo,
       result,
@@ -52,9 +56,8 @@ const Manager = ({
       appsToRestore,
       updateModalOpened,
       tab = "CATALOG",
-    },
-  },
-}: Props) => {
+    } = route.params;
+
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
@@ -64,8 +67,9 @@ const Manager = ({
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
 
-  const [quitManagerAction, setQuitManagerAction] = useState<((...args: any[]) => void) | null>(null);
+  const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
 
+  const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(firmwareUpdate ?? false);
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
@@ -132,6 +136,29 @@ const Manager = ({
     setStorageWarning,
   ]);
 
+  const onCloseFirmwareUpdate = useCallback((restoreApps?: boolean) => {
+      setIsFirmwareUpdateOpen(false);
+
+      // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
+      // if the user comes back to this page within the stack
+      navigation.dispatch(state => {
+        const routes = state.routes.map(route => ({ ...route, params: { ...route.params, firmwareUpdate: false }}));
+        return CommonActions.reset({ ...state, routes });
+      });
+      if(restoreApps) {
+        // we renavigate to the manager to force redetection of the apps and restore apps if needed        
+        navigation.replace(ScreenName.ManagerMain, {
+          ...route.params,
+          result: {
+            ...result,
+            installed: []
+          },
+          appsToRestore: installedApps,
+          firmwareUpdate: false
+        });
+      }
+  }, [installedApps, navigation]);
+
   return (
     <>
       <TrackScreen
@@ -183,7 +210,7 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
-       {firmwareUpdate && <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} appsToRestore={installedApps} />}
+      <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} isOpen={isFirmwareUpdateOpen} onClose={onCloseFirmwareUpdate} />
     </>
   );
 };
