@@ -125,12 +125,12 @@ jobs:
       - name: update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-        env:
-          imageOS: win19
+      # - uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 2.7 # Not needed with a .ruby-version file
+      #     bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      #   env:
+      #     imageOS: win19
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 2.1.816
