@@ -9,7 +9,6 @@ import type {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  CryptoCurrency,
   CurrencyBridge,
   SignOperationFnSignature,
 } from "../../../types";
@@ -21,7 +20,6 @@ import createTransaction, { updateTransaction } from "../js-createTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { broadcastWithAPI } from "../js-broadcast";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
-import { hydrate, preloadWithAPI } from "../js-preload";
 import { ChainAPI, Config } from "../api";
 import { makeLRUCache } from "../../../cache";
 import { endpointByCurrencyId } from "../utils";
@@ -102,16 +100,8 @@ function makeEstimateMaxSpendable(
     return estimateMaxSpendableWithAPI(arg, api);
   }
 
-  const cacheKeyByAccBalance = ({
-    account,
-    transaction,
-  }: {
-    account: AccountLike;
-    transaction?: Transaction | null;
-  }) =>
-    `${account.id}:${account.balance.toString()}:tx:${
-      transaction?.model.kind ?? "<no transaction>"
-    }`;
+  const cacheKeyByAccBalance = ({ account }: { account: AccountLike }) =>
+    `${account.id}:${account.balance.toString()}`;
 
   return makeLRUCache(estimateMaxSpendable, cacheKeyByAccBalance, minutes(5));
 }
@@ -138,19 +128,6 @@ function makeSign(
     const api = () => getChainAPI(config);
     return signOperationWithAPI(info, api);
   };
-}
-
-function makePreload(
-  getChainAPI: (config: Config) => Promise<ChainAPI>
-): CurrencyBridge["preload"] {
-  const preload = (currency: CryptoCurrency): Promise<Record<string, any>> => {
-    const config: Config = {
-      endpoint: endpointByCurrencyId(currency.id),
-    };
-    const api = () => getChainAPI(config);
-    return preloadWithAPI(currency, api);
-  };
-  return preload;
 }
 
 export function makeBridges({
@@ -180,8 +157,8 @@ export function makeBridges({
   };
 
   const currencyBridge: CurrencyBridge = {
-    preload: makePreload(getQueuedAndCachedAPI),
-    hydrate,
+    preload: async (): Promise<any> => {},
+    hydrate: (): void => {},
     scanAccounts: scan,
   };
 

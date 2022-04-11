@@ -19,17 +19,8 @@ import {
   parseStakeInstruction,
   StakeInstructionDescriptor,
 } from "../instruction/stake";
-import {
-  parseSystemInstruction,
-  SystemInstructionDescriptor,
-} from "../instruction/system";
 
 type ParsedProgram =
-  | {
-      program: "system";
-      title: string;
-      instruction: SystemInstructionDescriptor;
-    }
   | {
       program: "spl-associated-token-account";
       title: string;
@@ -64,15 +55,6 @@ export const parse = (
       ix.program as any;
 
     switch (program) {
-      case "system":
-        return {
-          program,
-          title: "System",
-          instruction: parseSystemInstruction({
-            ...ix,
-            program,
-          }),
-        };
       case "spl-associated-token-account":
         return {
           program,

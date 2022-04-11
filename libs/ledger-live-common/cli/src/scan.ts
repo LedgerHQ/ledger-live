@@ -146,6 +146,7 @@ const implTypePerFamily = {
 };
 const possibleImpls = {
   js: 1,
+  libcore: 1,
   mock: 1,
 };
 export const inferCurrency = <
@@ -293,7 +294,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
             const type =
               findAndEat((s) => possibleImpls[s]) ||
               implTypePerFamily[currency.family] ||
-              "js";
+              "libcore";
             const version = findAndEat((s) => s.match(/^\d+$/)) || "1";
             const derivationMode = asDerivationMode(
               findAndEat((s) => {

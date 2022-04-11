@@ -151,7 +151,7 @@ const getDelegations = async (address: string): Promise<any> => {
       if (r.validator_address === d.validatorAddress) {
         for (const reward of r.reward) {
           d.pendingRewards = d.pendingRewards.plus(
-            new BigNumber(reward.amount).integerValue()
+            new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL)
           );
         }
       }

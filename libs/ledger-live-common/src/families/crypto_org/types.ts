@@ -3,7 +3,10 @@ import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "../../types/transaction";
-
+export type CoreStatics = Record<any, any>;
+export type CoreAccountSpecifics = Record<any, any>;
+export type CoreOperationSpecifics = Record<any, any>;
+export type CoreCurrencySpecifics = Record<any, any>;
 export type CryptoOrgResources = {
   bondedBalance: BigNumber;
   redelegatingBalance: BigNumber;
@@ -35,3 +38,4 @@ export type NetworkInfo = {
 export type NetworkInfoRaw = {
   family: "crypto_org";
 };
+export const reflect = (_declare: any) => {};
