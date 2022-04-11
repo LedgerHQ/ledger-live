@@ -58,12 +58,14 @@ type Props = {
   navigation: any;
 };
 
-const StyledTouchableOpacity = styled.TouchableOpacity`
-  justify-content: center;
-  align-items: flex-end;
-  padding-left: 24px;
-  padding-vertical: 16px;
-`;
+const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
+  justifyContent: "center",
+  alignItems: "flex-end",
+  px: 7,
+  mx: -7,
+  py: 5,
+  my: -5,
+})``;
 
 const ContentContainer = styled(SafeAreaView)`
   flex: 1;
