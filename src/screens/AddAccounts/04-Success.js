@@ -57,9 +57,6 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
       </LText>
-      <LText style={styles.desc} color="grey">
-        <Trans i18nKey="addAccounts.success.desc" />
-      </LText>
       <View style={styles.buttonsContainer}>
         <Button
           event="AddAccountsDone"
@@ -156,6 +153,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 32,
+    marginBottom: 32,
     fontSize: 18,
   },
   desc: {
