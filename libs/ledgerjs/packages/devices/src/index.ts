@@ -26,6 +26,7 @@ export enum DeviceModelId {
   nanoS = "nanoS",
   nanoSP = "nanoSP",
   nanoX = "nanoX",
+  nanoFTS = "nanoFTS",
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -73,17 +74,28 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     getBlockSize: (_firwareVersion: string): number => 4 * 1024,
     bluetoothSpec: [
       {
-        // this is the legacy one (prototype version). we will eventually drop it.
-        serviceUuid: "d973f2e0-b19e-11e2-9e96-0800200c9a66",
-        notifyUuid: "d973f2e1-b19e-11e2-9e96-0800200c9a66",
-        writeUuid: "d973f2e2-b19e-11e2-9e96-0800200c9a66",
-        writeCmdUuid: "d973f2e3-b19e-11e2-9e96-0800200c9a66",
-      },
-      {
         serviceUuid: "13d63400-2c97-0004-0000-4c6564676572",
         notifyUuid: "13d63400-2c97-0004-0001-4c6564676572",
         writeUuid: "13d63400-2c97-0004-0002-4c6564676572",
         writeCmdUuid: "13d63400-2c97-0004-0003-4c6564676572",
+      },
+    ],
+  },
+  [DeviceModelId.nanoFTS]: {
+    id: DeviceModelId.nanoFTS,
+    productName: "Ledger Nano FTS",
+    productIdMM: 0x60,
+    legacyUsbProductId: 0x0006,
+    usbOnly: false,
+    memorySize: 2 * 1024 * 1024, // ← ↓ TODO Update with actual values
+    masks: [0x33200000],
+    getBlockSize: (_firwareVersion: string): number => 4 * 1024,
+    bluetoothSpec: [
+      {
+        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572",
+        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572",
+        writeUuid: "13d63400-2c97-6004-0002-4c6564676572",
+        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572",
       },
     ],
   },
@@ -92,7 +104,9 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
 const productMap = {
   Blue: DeviceModelId.blue,
   "Nano S": DeviceModelId.nanoS,
+  "Nano S Plus": DeviceModelId.nanoSP,
   "Nano X": DeviceModelId.nanoX,
+  "Nano FTS": DeviceModelId.nanoFTS,
 };
 
 const devicesList: DeviceModel[] = Object.values(devices);
@@ -141,11 +155,7 @@ export const identifyUSBProductId = (
 export const identifyProductName = (
   productName: string
 ): DeviceModel | null | undefined => {
-  let productId = productMap[productName];
-  if (!productId && productName.startsWith("Nano S")) {
-    productId = DeviceModelId.nanoSP;
-  }
-  const deviceModel = devicesList.find((d) => d.id === productId);
+  const deviceModel = devicesList.find((d) => d.id === productMap[productName]);
   return deviceModel;
 };
 
