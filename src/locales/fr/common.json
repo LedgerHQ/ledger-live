@@ -2743,7 +2743,7 @@
       },
       "legacy": {
         "title": "Legacy",
-        "desc": "Format d'adresse original de {{currency}}. Frais les plus élevés pour chaque transaction. Certains wallets/échanges ne prennent toujours en charge que les Legacy."
+        "desc": "Format d'adresse originel de {{currency}}. Frais les plus élevés pour chaque transaction. Certains wallets/échanges ne prennent toujours en charge que les Legacy."
       },
       "taproot": {
         "title": "Taproot",
