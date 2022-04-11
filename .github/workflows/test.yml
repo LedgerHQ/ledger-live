@@ -23,7 +23,9 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      DEBUG: pw:browser
+      INSTRUMENT_BUILD: true
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
     strategy:
       fail-fast: false
       matrix:
@@ -61,18 +63,14 @@ jobs:
         run: pnpm i
       - name: Install playwright dependencies
         run: npx playwright install-deps
-      - name: Build and Test affected packages [Linux]
+      - name: Build and Test affected packages [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
-        env:
-          INSTRUMENT_BUILD: true
-      - name: Build and Test affected packages [!Linux]
+      - name: Build and Test affected packages
         if: matrix.os != 'ubuntu-latest'
         run: pnpm test -- --continue --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
-        env:
-          INSTRUMENT_BUILD: true
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v2
         if: failure()
