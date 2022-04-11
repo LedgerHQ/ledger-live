@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "Recorrido introductorio",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Explora la aplicación Ledger Live y aprende cómo comprar, hacer crecer y proteger tus activos",
         "cta": "Explorar"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "Comprar ahora"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Paquete familiar Nano X Ledger",
         "description": "Paquete de 3 Nano X con descuento, perfecto para regalos o como respaldos",
-        "cta": "Save now"
+        "cta": "Ahorra ahora"
       },
       "buyCrypto": {
         "title": "Comprar cripto",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "Es tu dinero. Contrólalo tú.",
       "desc": "Toma el mando y desbloquea la libertad de administrar tus cripto por tu cuenta."
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "Accede a DeFi y NFTs",
       "desc": "Interactúa de forma segura con nuestras aplicaciones DeFi confiables directamente desde la aplicación."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Tu acceso a la Web3",
       "desc": "Puedes comprar, vender y permutar las principales criptomonedas de nuestros socios de forma segura con tu Ledger."
     },
     "3": {
-      "title": "Certified security",
+      "title": "Seguridad certificada",
       "desc": "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias nacionales de seguridad cibernética."
     },
     "title": "OBTÉN TU LEDGER",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "Protege tus criptomonedas y NFTs con seguridad líder en la industria",
     "cta": "Compra tu Ledger ahora",
     "footer": "Ya tengo un dispositivo, configurarlo ahora"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "Learn",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "Aprende sobre cripto, NFTs, seguridad digital y más"
       },
       "ledgerApps": {
         "title": "Aplicaciones",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Explorar las aplicaciones de los socios de Ledger desde un solo lugar"
       },
       "earn": {
         "title": "Gana",
@@ -839,16 +839,16 @@
       "and": "y"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "¡Comencemos!",
+      "subtitle": "Configura tu Ledger o compra uno ahora.",
       "noLedgerLink": "No tengo un Ledger y me gustaría comprar uno",
       "setupLedger": {
         "title": "Configurar mi Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "Te guiaremos paso a paso para proteger tus criptomonedas y NFTs"
       },
       "buyNano": {
         "title": "Compra un Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Tu acceso a la Web3 — Desbloquea la libertad de controlar tus activos"
       },
       "discoverLedger": {
         "title": "Descubre Ledger Live",
@@ -894,7 +894,7 @@
         "title": "¿Es la primera vez que utilizas tu Nano?",
         "subTitle": "Configurar un nuevo Nano",
         "desc": "¡Comencemos y configuremos tu dispositivo!",
-        "label": "30 mins"
+        "label": "30 min."
       },
       "devicePairing": {
         "title": "¿Ya tienes una Frase de recuperación?",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "Cerrar",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "Bien, ¡he terminado!",
         "infoModal": {
           "label": "Aprende cómo ocultarla",
           "title": "¿Dónde debo guardar mi Frase de recuperación?",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "Añadir activo",
         "title": "Comenzar",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "Puedes comprar criptomonedas a nuestros socios o configurar tu billetera"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "Recomendado"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "Ganadores del mercado (24H)",
       "seeMarket": "Ver todo"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "Recibir",
     "buy": "Comprar",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "Participación",
     "sell": "Vender",
     "swap": "Permutar",
     "manage": "Administrar",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "Ocultar ASA"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "No se encontraron activos",
     "noResultsDesc": "Verifica la ortografía e inténtalo de nuevo"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "Activo cripto",
       "titleDevice": "Conectar dispositivo",
       "verifySkipped": "Tu dirección de recepción no ha sido confirmada en el dispositivo Ledger. Verifica tu dirección de {{accountType}} para mayor protección.",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "Verifica que la dirección de {{currencyName}} que aparece en tu dispositivo Ledger coincida exactamente con la que aparece en el teléfono.",
       "verified": "Dirección confirmada. Verifícala de nuevo, si la has copiado o escaneado.",
       "verifyAgain": "Verifícala de nuevo",
       "noAccount": "No se han encontrado cuentas.",
@@ -2030,7 +2030,7 @@
         "desc": "Estás a punto de ver una dirección que no ha sido verificada. Verifica las direcciones en el dispositivo para mayor seguridad.",
         "verify": "No se ha verificado la dirección de {{accountType}}. Verifica las direcciones en el dispositivo para mayor seguridad."
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "No se encontraron activos cripto",
       "noResultsDesc": "Verifica la ortografía e inténtalo de nuevo"
     },
     "exchange": {
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "Agregar cuenta {{parentCurrencyName}}",
       "erc20": {
         "title": "Agregar token",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "El {{tokenName}} es un Token ERC20.\nPuedes recibir tokens directamente en una cuenta de Ethereum.",
         "learnMore": "Más información acerca de ERC20"
       },
       "trc10": {
         "title": "Agregar token",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "El {{tokenName}} es un Token TRC10.\nPuedes recibir tokens directamente en una cuenta de Tron.",
         "learnMore": "Más información acerca de TRC10"
       },
       "trc20": {
         "title": "Agregar token",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "El {{tokenName}} es un Token TRC20.\nPuedes recibir tokens directamente en una cuenta de Tron.",
         "learnMore": "Más información acerca de TRC20"
       },
       "bep20": {
         "title": "Agregar token",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "El {{tokenName}} es un Token BEP-20.\nPuedes recibir tokens directamente a una cuenta de BNB.",
+        "learnMore": "Más información acerca de BEP-20"
       }
     },
     "showMoreChainType": "Más tipos de direcciones",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "Mantente dentro de la aplicación y con tu Nano X disponible",
     "allowAppPermission": "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken": "para administrar los tokens {{token}}",
     "allowManagerPermission": "Permite (Allow) {{wording}} en tu dispositivo",
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "Comprobación de la autenticación del dispositivo",
       "accept": "No apagues tu Nano X. Asegúrate de habilitar <1>Ledger Manager</1>.",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "Este paso está pensado para garantizar que tu Nano sea auténtico."
     },
     "ScanningHeader": {
       "title": "Buscando dispositivos",
@@ -3020,7 +3020,7 @@
         "showAll": "Mostrar aplicaciones a desinstalar",
         "description": "También se desinstalarán las aplicaciones del dispositivo que necesiten la aplicación {{app}}.",
         "description_one": "Algunas aplicaciones dependen de la aplicación {{app}}.",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "Algunas aplicaciones dependen de la aplicación {{app}}. También se desinstalarán las aplicaciones de tu dispositivo que dependan de la aplicación {{app}}."
       },
       "continueUninstall": "Desinstalar {{app}} y otras aplicaciones"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "Aplicación externa",
       "description": "Estás a punto de ser redireccionado a una aplicación no operada por Ledger.",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "Esta aplicación no es operada por Ledger. Ledger no será responsable de ninguna pérdida de fondos o de calidad de servicio con respecto a dicha aplicación.\n\nSiempre asegúrate de verificar cuidadosamente la información que se muestra en tu dispositivo.",
       "legalAdviceShort": "Ledger no será responsable de ninguna pérdida de fondos. Siempre asegúrate de verificar la información mostrada en tu dispositivo.",
       "checkbox": "No recordarme de nuevo.",
       "CTA": "Continuar"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "Solo las compatibles con Live"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "Máximos Ganadores",
         "market_cap": "Clasificación",
         "market_cap_asc": "Posición (capitalización) asc.",
         "market_cap_desc": "Posición (capitalización) desc."
