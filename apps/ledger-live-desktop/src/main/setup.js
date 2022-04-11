@@ -19,7 +19,7 @@ const loggerFirmwareTransport = new LoggerTransportFirmware();
 logger.add(loggerTransport);
 logger.add(loggerFirmwareTransport);
 
-if (process.env.DEV_TOOLS) {
+if (process.env.DEV_TOOLS || process.env.DEBUG_LOGS) {
   enableDebugLogger();
 }
 
