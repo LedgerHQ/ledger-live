@@ -26,6 +26,7 @@ const illustrations = {
   },
 };
 
+/*
 const AcademySlide = {
   url: urls.banners.ledgerAcademy,
   name: "takeTour",
@@ -46,6 +47,7 @@ const AcademySlide = {
     height: 93,
   },
 };
+*/
 
 const BuySlide = {
   url: "ledgerlive://buy",
@@ -177,15 +179,8 @@ const FamilyPackXSlide = {
 
 export const SLIDES =
   Platform.OS === "ios"
-    ? [SwapSlide, BuySlide, MarketSlide, FamilyPackXSlide, AcademySlide]
-    : [
-        SwapSlide,
-        LidoSlide,
-        BuySlide,
-        MarketSlide,
-        FamilyPackXSlide,
-        AcademySlide,
-      ];
+    ? [SwapSlide, BuySlide, MarketSlide, FamilyPackXSlide]
+    : [SwapSlide, LidoSlide, BuySlide, MarketSlide, FamilyPackXSlide];
 
 export const WIDTH = width * 0.8;
 

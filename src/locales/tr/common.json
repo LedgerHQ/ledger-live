@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "Tura katılın",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Ledger Live uygulamasını keşfedin ve varlıklarınızı nasıl satın alacağınızı, artıracağınızı ve güvence altına alacağınızı öğrenin",
         "cta": "Göz Atın"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "Şimdi satın al"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Ledger Nano X Aile paketi",
         "description": "İndirimli Nano X 3'lü paketi, hediye etmek veya yedeklemek için mükemmel",
-        "cta": "Save now"
+        "cta": "Şimdi kaydet"
       },
       "buyCrypto": {
         "title": "Kripto Satın Alın",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "Paranıza sahip çıkın.",
       "desc": "Kontrolü ele geçirin ve kriptolarınızı kendi başınıza yönetme özgürlüğünü kazanın."
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "DeFi'a ve NFT'lere erişin",
       "desc": "Doğrudan uygulama içinde güvenilir DeFi uygulamalarımızla güvenle etkileşime girin."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Web3 anahtarınız",
       "desc": "Ledger'ınızı kullanarak ortaklarımız aracılığıyla başlıca kripto paraları güvenle satın alabilir, satabilir ve takas edebilirsiniz."
     },
     "3": {
-      "title": "Certified security",
+      "title": "Sertifikalı güvenlik",
       "desc": "Ürünlerimiz, ulusal siber güvenlik ajanslarından güvenlikleri için sertifikalandırılmış tek donanım cüzdanlarıdır."
     },
     "title": "LEDGER'INIZA KAVUŞUN",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "Kripto ve NFT'lerinizi sektör lideri güvenlikle koruyun",
     "cta": "Ledger'ınızı şimdi satın alın",
     "footer": "Zaten bir cihazım var, şimdi kurmak istiyorum"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "Öğren",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "Kriptolar, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
       },
       "ledgerApps": {
         "title": "Uygulamalar",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Ledger ortaklarına ait tüm uygulamaları tek bir yerden keşfedin"
       },
       "earn": {
         "title": "Kazan",
@@ -839,16 +839,16 @@
       "and": "ve"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "Haydi başlayalım",
+      "subtitle": "Ledger'ınızı kurun ya da şimdi satın alın.",
       "noLedgerLink": "Ledger'ım yok ama almak isterim",
       "setupLedger": {
         "title": "Ledger'ımı kur",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "Kripto ve NFT'lerinizi güvence altına alırken size her adımda rehberlik edeceğiz"
       },
       "buyNano": {
         "title": "Bir Ledger Nano X satın alın",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Web3 anahtarınız — Varlıklarınızı kontrol etmenin özgürlüğüne ulaşın"
       },
       "discoverLedger": {
         "title": "Ledger Live'ı keşfedin",
@@ -894,7 +894,7 @@
         "title": "Nano'nuzu ilk kez mi kullanıyorsunuz?",
         "subTitle": "Yeni bir Nano kurun",
         "desc": "Haydi cihazınızı kurmaya başlayalım!",
-        "label": "30 mins"
+        "label": "30 dk."
       },
       "devicePairing": {
         "title": "Zaten kurtarma ifadeniz var mı?",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "Kapat",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "Tamam, bitirdim!",
         "infoModal": {
           "label": "Nasıl gizleyeceğinizi öğrenin",
           "title": "Kurtarma ifademi nerede saklamalıyım?",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "Varlık ekle",
         "title": "Hemen başla",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "Ortaklarımızdan kripto satın alabilir ya da cüzdanınızı kurabilirsiniz"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "Önerilen"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "Yükselenler (24SA)",
       "seeMarket": "Tümünü gör"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "Al",
     "buy": "Satın al",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "Stake et",
     "sell": "Sat",
     "swap": "Takas et",
     "manage": "Yönet",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "ASA'yı Gizle"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "Varlık bulunamadı",
     "noResultsDesc": "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "Kripto varlık",
       "titleDevice": "Cihazı bağlayın",
       "verifySkipped": "Alıcı adresiniz Ledger cihazınızda onaylanmadı. Güvende kalmak için lütfen {{accountType}} adresinizi doğrulayın.",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "Lütfen Ledger cihazınızda görüntülenen {{currencyName}} adresinin, telefonunuzda görüntülenen adresle tam olarak eşleştiğini doğrulayın.",
       "verified": "Adres onaylandı. Kopyaladıysanız veya taradıysanız yeniden kontrol edin.",
       "verifyAgain": "Tekrar kontrol et",
       "noAccount": "Hesap bulunamadı",
@@ -2030,7 +2030,7 @@
         "desc": "Doğrulanmamış bir adresi görüntülemek üzeresiniz. Güvende kalmak için cihazınızdaki adresleri doğrulayın.",
         "verify": "{{accountType}} hesabının adresi doğrulanmadı. Güvende kalmak için cihazınızdaki adresleri doğrulayın."
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "Kripto varlık bulunamadı",
       "noResultsDesc": "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
     },
     "exchange": {
@@ -2675,7 +2675,7 @@
       "title": "Hesap ekleme iptali",
       "desc": "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
     },
-    "imported": "Hesaplar başarıyla eklendi",
+    "imported": "Varlık başarıyla eklendi",
     "sections": {
       "importable": {
         "title": "Mevcut bir hesabı ekle"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Hesaplarınızı görüntüleyin veya başka hesaplar ekleyin",
-      "secondaryCTA": "Başka hesap ekle",
-      "cta": "Hesaplara Git"
+      "secondaryCTA": "Yeni varlık ekle",
+      "cta": "Varlığını gör"
     },
     "stopScanning": "Taramayı durdur",
     "retryScanning": "Taramayı tekrar dene",
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "{{parrentCurrencyName}} hesabı ekle",
       "erc20": {
         "title": "Token ekle",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}} bir ERC20 Token'ıdır.\nToken'ları doğrudan bir Ethereum hesabına alabilirsiniz.",
         "learnMore": "ERC20 hakkında daha fazla bilgi edinin"
       },
       "trc10": {
         "title": "Token Ekle",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} bir TRC10 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
         "learnMore": "TRC10 hakkında daha fazla bilgi edinin"
       },
       "trc20": {
         "title": "Token Ekle",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} bir TRC20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
         "learnMore": "TRC20 hakkında daha fazla bilgi edinin"
       },
       "bep20": {
         "title": "Token Ekle",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}} bir BEP-20 Token'ıdır.\nToken'ları doğrudan bir BNB hesabına alabilirsiniz.",
+        "learnMore": "BEP-20 hakkında daha fazla bilgi edinin"
       }
     },
     "showMoreChainType": "Daha fazla adres türü",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "Ledger Live uygulamasında kalın ve Nano X'inizi yakınınızda tutun",
     "allowAppPermission": "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken": "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission": "Cihazınızda {{wording}} uygulamasına izin verin",
@@ -2791,12 +2791,12 @@
     "title": "Yeni cihaz eşleme",
     "bluetooth": {
       "title": "Bluetooth ile bağlanın...",
-      "label": "Nano'nuzu otomatik olarak algılayın"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Yeni Ledger Nano X ekle",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun",
-    "usb": "... veya USB kablosunu bağlayın",
-    "usbLabel": "USB kablosunu bağlayın ve cihazınıza PIN Kodunuzu girin",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "Cihazım yanımda değil",
     "withoutDevice": "Cihazım olmadan devam et",
     "steps": {
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "Orijinal cihaz doğrulaması",
       "accept": "Lütfen Nano X'inizi kapatmayın. Cihazda <1>Ledger Yöneticisine</1> izin vermeniz gerekiyor.",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "Bu adım, Nano'nuzun orijinal olduğunu teyit etmek içindir."
     },
     "ScanningHeader": {
       "title": "Cihazlar aranıyor",
@@ -3020,7 +3020,7 @@
         "showAll": "Kaldırılacak uygulamaları göster",
         "description": "Cihazınızdaki {{app}} uygulamasına ihtiyaç duyan uygulamalar da kaldırılacak.",
         "description_one": "Bazı uygulamalar {{app}} uygulaması ile çalışıyor.",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "Bazı uygulamalar {{app}} uygulaması ile çalışıyor. \nCihazınızdaki {{app}} uygulaması ile çalışan uygulamalar da kaldırılacak."
       },
       "continueUninstall": "{{app}} ve diğer uygulamaları kaldır"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "Harici Uygulama",
       "description": "Ledger tarafından yönetilmeyen bir uygulamaya yönlendirilmek üzeresiniz.",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "Bu uygulama Ledger tarafından yönetilmiyor. Ledger, bu tür bir uygulamadan kaynaklanabilecek herhangi bir fon kaybından veya düşük hizmet kalitesinden sorumlu değildir.\n\nCihazınızda görüntülenen bilgileri her zaman dikkatli bir şekilde kontrol ettiğinizden emin olun.",
       "legalAdviceShort": "Ledger hiçbir fon kaybından sorumlu değildir. Cihazınızın ekranında görüntülenen bilgileri daima doğrulayın.",
       "checkbox": "Tekrar hatırlatma.",
       "CTA": "Devam"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "Yalnızca Live Destekli"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "En kazançlılar",
         "market_cap": "Sıralama",
         "market_cap_asc": "Sıralama (Piyasa değ.) en yüks.",
         "market_cap_desc": "Sıralama (Piyasa değ.) en düş."

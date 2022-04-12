@@ -2675,7 +2675,7 @@
       "title": "アカウントの追加を取り消す",
       "desc": "アカウントの追加をキャンセルしますか？"
     },
-    "imported": "アカウントが正常に追加されました。",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "既存のアカウントを追加"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "アカウントを表示、または他のアカウントを追加",
-      "secondaryCTA": "他のアカウントを追加する",
-      "cta": "アカウントに移動"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "スキャン停止",
     "retryScanning": "スキャンの再試行",
@@ -2791,12 +2791,12 @@
     "title": "新しいデバイスのペアリング",
     "bluetooth": {
       "title": "Bluetoothで接続...",
-      "label": "Nanoを自動的に検出"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "新しいLedger Nano Xを追加する",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}}のロックが解除され、Bluetoothが有効になっていることを確認してください。",
-    "usb": "...またはUSBケーブルで接続",
-    "usbLabel": "USBケーブルを接続し、デバイスにPINコードを入力",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "現在、デバイスを持っていません。",
     "withoutDevice": "デバイスを使用せずに続行する",
     "steps": {

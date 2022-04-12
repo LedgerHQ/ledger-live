@@ -187,7 +187,8 @@ function PortfolioScreen({ navigation }: Props) {
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
-          showGraphCard={!areAccountsEmpty}
+          areAccountsEmpty={areAccountsEmpty}
+          showGraphCard={accounts.length > 0}
         />
       </Box>,
       ...(accounts.length > 0

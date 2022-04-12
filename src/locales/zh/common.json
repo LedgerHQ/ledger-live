@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "开始导览",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "探索 Ledger Live 应用，学习如何买入、增长和保护您的资产",
         "cta": "浏览"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "立即买入"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Ledger Nano X 家庭套装",
         "description": "Nano X 三件优惠装，作为礼物或备份设备的完美选择",
-        "cta": "Save now"
+        "cta": "优惠不可错过！"
       },
       "buyCrypto": {
         "title": "购买加密资产",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "这是您的钱。由您一手掌控。",
       "desc": "掌控并解锁您自行管理加密资产的自由。"
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "访问 DeFi 和 NFT",
       "desc": "直接从应用程序安全地与我们信任的 Defi 去中心化金融应用程序交互。"
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "您通往 Web3 的钥匙",
       "desc": "您可以用您的 Ledger 安全地通过我们的合作伙伴买入、卖出和互换主要的加密货币。"
     },
     "3": {
-      "title": "Certified security",
+      "title": "经核证的安全性",
       "desc": "我们的产品是经由国家网络安全机构安全认证的唯一硬件钱包。"
     },
     "title": "获取您的 LEDGER",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "以行业领先的安全性保护您的加密货币和 NFT",
     "cta": "立即购买您的 Ledger",
     "footer": "我已经有一个设备，现在就设置"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "学习",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "了解加密货币、NFT、数字安全和更多"
       },
       "ledgerApps": {
         "title": "应用程序",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "一站式探索 Ledger 的合作伙伴应用"
       },
       "earn": {
         "title": "赚取",
@@ -839,16 +839,16 @@
       "and": "和"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "让我们开始吧",
+      "subtitle": "设置您的 Ledger 或立即购买一个。",
       "noLedgerLink": "我没有 Ledger，且我想购买一个",
       "setupLedger": {
         "title": "设置我的 Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "我们将一步步地引导您来保护您的加密货币和 NFT"
       },
       "buyNano": {
         "title": "购买一个 Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "您通往 Web3 的钥匙 - 解锁掌控您资产的自由"
       },
       "discoverLedger": {
         "title": "探索 Ledger Live",
@@ -894,7 +894,7 @@
         "title": "首次使用此 Nano？",
         "subTitle": "设置一个新 Nano",
         "desc": "让我们开始设置您的设备吧！",
-        "label": "30 mins"
+        "label": "30 分钟"
       },
       "devicePairing": {
         "title": "已经有了恢复短语？",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "关闭",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "好的，我完成了！",
         "infoModal": {
           "label": "了解如何保管您的恢复短语",
           "title": "我应该将恢复短语保存在哪里？",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "添加资产",
         "title": "快速入门",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "推荐"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "市场获利者（24 小时）",
       "seeMarket": "显示全部"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "接收",
     "buy": "买入",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "质押",
     "sell": "卖出",
     "swap": "Swap 互换",
     "manage": "管理",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "隐藏 ASA"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "未找到资产。",
     "noResultsDesc": "请检查拼写后重试。"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "加密资产",
       "titleDevice": "连接设备",
       "verifySkipped": "您的接收地址没有经过您的 Ledger 设备确认。请验证您的 {{accountType}} 地址以确保安全。",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "请核对您设备上显示的 {{currencyName}} 地址，确保其和您手机上显示的地址完全一致。",
       "verified": "地址已确认。如果您进行了复制或扫描，则请再次检查。",
       "verifyAgain": "再次检查",
       "noAccount": "未能找到账户",
@@ -2030,7 +2030,7 @@
         "desc": "您即将查看一个未经验证的地址。请在设备上验证地址，以确保安全。",
         "verify": "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "未找到加密资产",
       "noResultsDesc": "请检查拼写后重试。"
     },
     "exchange": {
@@ -2675,7 +2675,7 @@
       "title": "取消添加账户",
       "desc": "您确定要取消添加账户？"
     },
-    "imported": "账户已成功添加",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "添加现有账户"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "查看您的账户或添加其他账户",
-      "secondaryCTA": "添加其他账户",
-      "cta": "前往账户"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "停止扫描",
     "retryScanning": "重试扫描",
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "添加 {{parrentCurrencyName}} 账户",
       "erc20": {
         "title": "添加代币",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}} 为 ERC20 代币。\n您可以直接通过以太坊账户接收代币。",
         "learnMore": "了解关于 ERC20 的更多详情"
       },
       "trc10": {
         "title": "添加代币",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} 为 TRC10 代币。\n您可以直接通过 Tron 波场账户接收代币。",
         "learnMore": "了解关于 TRC10 的更多详情"
       },
       "trc20": {
         "title": "添加代币",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}} 为 TRC20 代币。\n您可以直接通过 Tron 波场账户接收代币。",
         "learnMore": "了解关于 TRC20 的更多详情"
       },
       "bep20": {
         "title": "添加代币",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}} 为 BEP-20 代币。\n您可以直接通过 BNB 币安账户接收代币。",
+        "learnMore": "了解关于 BEP-20 的更多详情"
       }
     },
     "showMoreChainType": "更多地址类型",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "停留在 Ledger Live 应用中，并将你的 Nano X 保持在附近。",
     "allowAppPermission": "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken": "管理个人 {{token}} 代币",
     "allowManagerPermission": "允许 {{wording}} 在您的设备上运行",
@@ -2791,12 +2791,12 @@
     "title": "配对新设备",
     "bluetooth": {
       "title": "通过蓝牙连接……",
-      "label": "自动检测您的 Nano"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "添加新的 Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "请确保您的 {{productName}} 处于解锁状态并已开启蓝牙",
-    "usb": "……或连接 USB 数据线",
-    "usbLabel": "连接 USB 数据线并在您的设备上输入您的 PIN 识别密码",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "设备不在我身边",
     "withoutDevice": "在不使用我的设备的情况下继续",
     "steps": {
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "设备验证查验",
       "accept": "请勿关闭您的 Nano X。确保允许 <1>Ledger Manager</1>（管理器）运行。",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "此步骤旨在确保您的 Nano 是正版的。"
     },
     "ScanningHeader": {
       "title": "正在寻找设备",
@@ -3020,7 +3020,7 @@
         "showAll": "显示待卸载的应用程序",
         "description": "您设备上需要用到 {{app}} 的应用程序也将被卸载。",
         "description_one": "一些应用依赖于 {{app}} 应用程序。",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "一些应用依赖于 {{app}} 应用。\n您设备上依赖于 {{app}} 应用的应用程序也会被卸载。"
       },
       "continueUninstall": "卸载 {{app}} 以及其他应用程序"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "外部应用程序",
       "description": "您即将被重定向到一个不是由 Ledger 操作的应用程序。",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "此应用程序并不由 Ledger 操作。Ledger 对此类应用所造成的任何资金损失或服务质量不负责任。\n\n始终确保仔细验证您设备上所显示的信息。",
       "legalAdviceShort": "Ledger 不对任何资金损失负责。总是确保验证您设备上显示的信息。",
       "checkbox": "不要再次提醒我。",
       "CTA": "继续"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "仅支持 Live"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "最高获利者",
         "market_cap": "排名",
         "market_cap_asc": "排名（市值）上升",
         "market_cap_desc": "排名（市值）下降"

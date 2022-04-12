@@ -2675,7 +2675,7 @@
       "title": "إلغاء إضافة حساب",
       "desc": "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
     },
-    "imported": "تمت إضافة الحسابات بنجاح",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "إضافة حساب موجود"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "عرض حساباتك أو إضافة حسابات أخرى",
-      "secondaryCTA": "إضافة حسابات أخرى",
-      "cta": "الذهاب إلى الحسابات"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "إيقاف المسح الضوئي",
     "retryScanning": "إعادة محاولة المسح الضوئي",
@@ -2791,12 +2791,12 @@
     "title": "إقران جهاز جديد",
     "bluetooth": {
       "title": "الاتصال عبر البلوتوث...",
-      "label": "اكتشاف جهاز Nano الخاص بك تلقائيًا"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "إضافة جهاز ليدجر Nano X جديد",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية بلوتوث",
-    "usb": "... أو قم بالتوصيل عبر كابل USB",
-    "usbLabel": "قم بتوصيل كابل USB وأدخل رمز الPIN على جهازك",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "جهازي ليس معي",
     "withoutDevice": "المتابعة بدون جهازي",
     "steps": {
