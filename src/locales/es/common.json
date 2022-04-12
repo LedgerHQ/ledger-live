@@ -2791,12 +2791,12 @@
     "title": "Emparejar nuevo dispositivo",
     "bluetooth": {
       "title": "Conectar por Bluetooth...",
-      "label": "Detectar tu Nano automáticamente"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Agregar nuevo Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado",
-    "usb": "... o conecta el cable USB",
-    "usbLabel": "Conecta el cable USB e ingresa el código PIN en el dispositivo",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "No llevo el dispositivo conmigo",
     "withoutDevice": "Continuar sin mi dispositivo",
     "steps": {
