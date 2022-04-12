@@ -59,7 +59,7 @@ jobs:
       - name: Install playwright dependencies
         run: npx playwright install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing -- --filter=ledger-live-desktop
+        run: pnpm turbo run ledger-live-desktop#build:testing
       - name: Run code checkers [Linux]
         if: matrix.os == 'ubuntu-latest'
         run: pnpm desktop test:codecheck
