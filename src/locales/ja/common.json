@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "ツアーを開始",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Ledger Liveアプリをチェックして、暗号資産の購入や運用、安全な保管方法を学びましょう",
         "cta": "チェック"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "今すぐ購入"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Ledger Nano Xファミリーパック",
         "description": "ギフトやバックアップに最適なNano X 3パックをお得に購入",
-        "cta": "Save now"
+        "cta": "お得に購入"
       },
       "buyCrypto": {
         "title": "暗号資産を購入する",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "自分の資産は、自分で管理しましょう。",
       "desc": "自分の暗号資産を管理するために、主導権を握り、自由への一歩を踏み出しましょう。"
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "DeFiとNFTへアクセス",
       "desc": "アプリから直接、信頼できるDeFiアプリケーションで安全に取引。"
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Web3 への鍵",
       "desc": "Ledgerを使用して、パートナーから主要な暗号資産を安全に購入・売却・スワップすることが可能です。"
     },
     "3": {
-      "title": "Certified security",
+      "title": "認証済みのセキュリティ",
       "desc": "当社の商品は、国家サイバーセキュリティ機関によってセキュリティが認定された、唯一のハードウェアウォレットです。"
     },
     "title": "Ledgerをゲットする",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "業界をリードするセキュリティで暗号資産とNFTを保護",
     "cta": "Ledgerを今すぐ購入",
     "footer": "既にデバイスを持っており、セットアップを開始可能"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "学習",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "暗号資産・NFT・デジタルセキュリティについて学ぶ"
       },
       "ledgerApps": {
         "title": "アプリ",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Ledgerパートナーのアプリを一箇所でチェック"
       },
       "earn": {
         "title": "獲得",
@@ -839,16 +839,16 @@
       "and": "and"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "始めましょう！",
+      "subtitle": "Ledgerをセットアップ、または今すぐ購入してください。",
       "noLedgerLink": "Ledgerをまだ持っておらず、購入を検討中",
       "setupLedger": {
         "title": "Ledgerをセットアップ",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "暗号資産とNFTを保護するための手順を解説"
       },
       "buyNano": {
         "title": "Ledger Nano Xを購入する",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Web3への鍵 — 資産を自由にコントロール"
       },
       "discoverLedger": {
         "title": "Ledger Liveを試す",
@@ -894,7 +894,7 @@
         "title": "Nanoの使用は初めてですか？",
         "subTitle": "新しいNanoをセットアップ",
         "desc": "デバイスを起動してセットアップしましょう！",
-        "label": "30 mins"
+        "label": "30分"
       },
       "devicePairing": {
         "title": "リカバリーフレーズをすでにお持ちですか？",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "閉じる",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "完了！",
         "infoModal": {
           "label": "安全に保管する方法",
           "title": "リカバリーフレーズはどこに保管すればいいですか？",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "資産を追加",
         "title": "はじめる",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "パートナーから暗号資産を購入、またはウォレットをセットアップ可能です"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "おすすめ"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "トップ変動(24時間)",
       "seeMarket": "すべて表示"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "受け取る",
     "buy": "購入",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "ステーキング",
     "sell": "売却",
     "swap": "スワップ",
     "manage": "管理",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "ASAを非表示"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "資産が見つかりません",
     "noResultsDesc": "スペルを確認してからもう一度お試しください。"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "暗号資産",
       "titleDevice": "デバイスを接続",
       "verifySkipped": "受け取りアドレスが、Ledgerデバイス上で認証されませんでした。安全のため、{{accountType}}アドレスを認証してください。",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "デバイス上に表示された{{currencyName}}アドレスが、スマートフォン上に表示されたものと完全に一致していることを確認してください。",
       "verified": "アドレスが確認されました。アドレスをコピーまたはスキャンした場合は、もう一度チェックしてください。",
       "verifyAgain": "もう一度確認",
       "noAccount": "アカウントが見つかりません",
@@ -2030,7 +2030,7 @@
         "desc": "認証されていないアドレスを表示しようとしています。安全のため、デバイス上でアドレスを認証してください。",
         "verify": "{{accountType}}のアドレスが認証されませんでした。安全のため、デバイス上でアドレスを認証してください。"
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "暗号資産が見つかりません",
       "noResultsDesc": "スペルを確認してからもう一度お試しください。"
     },
     "exchange": {
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "{{parrentCurrencyName}}アカウントを追加",
       "erc20": {
         "title": "トークンの追加",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}}は,、ERC20トークンです。\nEthereumアカウントで直接トークンを受け取ることができます。",
         "learnMore": "ERC20についての詳細"
       },
       "trc10": {
         "title": "トークンの追加",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}}は、TRC10トークンです。\nTronアカウントで直接トークンを受け取ることができます。",
         "learnMore": "TRC10についての詳細"
       },
       "trc20": {
         "title": "トークンの追加",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}}は、TRC20トークンです。\nTronアカウントで直接トークンを受け取ることができます。",
         "learnMore": "TRC20についての詳細"
       },
       "bep20": {
         "title": "トークンの追加",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}}は、BEP-20トークンです。\nBNBアカウントで直接トークンを受け取ることができます。",
+        "learnMore": "BEP-20についての詳細"
       }
     },
     "showMoreChainType": "その他のアドレスタイプ",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "アプリを開いた状態で、Nano Xを近くに置いてください。",
     "allowAppPermission": "デバイス上で{{wording}}アプリを開く",
     "allowAppPermissionSubtitleToken": "{{token}}トークンを管理",
     "allowManagerPermission": "デバイス上で{{wording}}を許可",
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "デバイス認証チェック",
       "accept": "NanoXの電源をオフにしないでください。また、<1>Ledger Manager</1>を許可してください。",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "これは、Nanoが正規品であることを確認するためのステップです。"
     },
     "ScanningHeader": {
       "title": "デバイスを検出中",
@@ -3020,7 +3020,7 @@
         "showAll": "アンインストールするアプリを表示",
         "description": "{{app}}アプリを必要とする他のアプリも、同時にアンインストールされます。",
         "description_one": "一部のアプリは、{{app}}アプリに属します。",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "一部のアプリは、{{app}}アプリに属してます。\n {{app}}アプリに属するアプリも、アンインストールされます。"
       },
       "continueUninstall": "{{app}}とその他のアプリをアンインストール"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "外部アプリケーション",
       "description": "Ledger外部のアプリケーションにリダイレクトしようとしています。",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "このアプリケーションは、Ledgerによって運営されていません。Ledgerは、そのようなアプリケーションの使用による資金の損失、およびサービスの品質について一切の責任を負いません。\n\n必ず、デバイスに表示される情報を慎重に確認してください。",
       "legalAdviceShort": "Ledgerは資金の損失に対して責任を負いません。必ず、デバイスに表示されている情報を確認してください。",
       "checkbox": "今後、このメッセージを表示しない。",
       "CTA": "続行"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "Live対応のみ"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "トップ上昇",
         "market_cap": "ランク",
         "market_cap_asc": "ランク(マーケットキャップ)高い順",
         "market_cap_desc": "ランク(マーケットキャップ)低い順"
