@@ -3160,7 +3160,7 @@
             "pending": {
               "title": "Diffusion de la transaction..."
             },
-            "broadcastError": "Votre transaction a peut-être échoué. Merci de vérifier dans quelques minutes pour vous assurer que votre transaction n'a pas été traitée avant de réessayer."
+            "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
           }
         }
       }
