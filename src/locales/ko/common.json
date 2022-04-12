@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "둘러보기",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Ledger Live 앱을 탐색하고 자산을 구매, 성장 및 보호하는 방법을 배우세요",
         "cta": "둘러보기"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "지금 구매하기"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Ledger Nano X 패밀리 팩",
         "description": "할인된 Nano X 3팩, 선물 또는 백업용으로 적합",
-        "cta": "Save now"
+        "cta": "지금 저장하세요"
       },
       "buyCrypto": {
         "title": "암호화폐 구매",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "여러분의 돈입니다. 소유하세요.",
       "desc": "스스로 암호화폐를 관리할 수 있는 자유를 누리세요."
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "DeFi 및 NFT에 액세스",
       "desc": "앱에서 직접 신뢰할 수 있는 DeFi 애플리케이션과 안전하게 상호 작용합니다."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Web3로의 키",
       "desc": "Ledger를 사용하여 당사 파트너로부터 주요 암호화폐를 안전하게 구매, 판매 및 스왑할 수 있습니다."
     },
     "3": {
-      "title": "Certified security",
+      "title": "인증된 보안",
       "desc": "당사 제품은 국가 사이버 보안 기관에서 보안에 대해 인증한 유일한 하드웨어 지갑입니다."
     },
     "title": "여러분의 LEDGER를 가져보세요",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "업계 최고의 보안으로 여러분의 암호화폐 및 NFT를 보호하세요",
     "cta": "지금 여러분의 Ledger를 구매하세요",
     "footer": "이미 장치가 있습니다. 지금 설정하세요."
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "배움",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "암호화폐, NFT, 디지털 보안 등에 대해 알아보세요"
       },
       "ledgerApps": {
         "title": "앱",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Ledger의 파트너 앱을 한 곳에서 모두 살펴보세요"
       },
       "earn": {
         "title": "수익",
@@ -839,16 +839,16 @@
       "and": "그리고"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "이제 시작해보세요",
+      "subtitle": "Ledger를 설정하거나 지금 구입하세요.",
       "noLedgerLink": "Ledger가 없는데 하나 사고 싶습니다",
       "setupLedger": {
         "title": "내 Ledger 설정",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "subtitle": "암호화폐 및 NFT를 보호하기 위한 모든 단계를 안내해 드립니다"
       },
       "buyNano": {
         "title": "Ledger Nano X 구매하기",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Web3로의 키 — 자산을 통제할 수 있는 자유를 누리세요"
       },
       "discoverLedger": {
         "title": "Ledger Live 탐색",
@@ -894,7 +894,7 @@
         "title": "Nano를 처음 사용하시나요?",
         "subTitle": "새 Nano 설정",
         "desc": "지금 시작하고 장치를 설정하세요!",
-        "label": "30 mins"
+        "label": "30분"
       },
       "devicePairing": {
         "title": "이미 복구 문구가 있나요?",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "닫기",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "모두 완료했습니다!",
         "infoModal": {
           "label": "숨겨두는 방법 알아보기",
           "title": "복구 문구를 어디에 보관해야 하나요?",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "자산 추가",
         "title": "시작하기",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "당사 파트너로부터 암호화폐를 구매하거나 지갑을 설정할 수 있습니다"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "권장됨"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "최고 상승 목록 (24시간)",
       "seeMarket": "모두 보기"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "수령",
     "buy": "매수",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "스테이킹",
     "sell": "매도",
     "swap": "스왑",
     "manage": "관리",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "ASA 숨기기"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "발견된 자산 없음",
     "noResultsDesc": "철자를 확인하고 재시도하세요"
   },
   "distribution": {
@@ -2011,7 +2011,7 @@
       "headerTitle": "암호화폐",
       "titleDevice": "장치 연결",
       "verifySkipped": "귀하의 수신 주소가 Ledger 장치에서 확인되지 않았습니다. 귀하의 {{accountType}} 주소를 인증하여 보안을 하여 유지하세요.",
-      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
+      "verifyPending": "귀하의 장치에 표시되는 {{currencyName}} 주소가 휴대폰에 표시되는 것과 정확히 일치하는지 확인하세요.",
       "verified": "주소를 승인했습니다. 이를 복사하거나 스캔한 경우 다시 확인하세요.",
       "verifyAgain": "다시 확인하세요",
       "noAccount": "계정이 발견되지 않습니다",
@@ -2030,7 +2030,7 @@
         "desc": "인증되지 않은 주소를 열람하려고 합니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요.",
         "verify": "{{accountType}}의 주소가 확인되지 않았습니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요."
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "발견된 암호화폐 없음",
       "noResultsDesc": "철자를 확인하고 재시도하세요"
     },
     "exchange": {
@@ -2675,7 +2675,7 @@
       "title": "계정 추가 취소",
       "desc": "계정 추가를 취소할까요?"
     },
-    "imported": "계정이 성공적으로 추가되었습니다",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "기존 계정 추가"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "귀하의 계정을 보거나 다른 계정을 추가하세요",
-      "secondaryCTA": "다른 계정 추가",
-      "cta": "계정으로 이동"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "스캔 중단",
     "retryScanning": "스캔 재시도",
@@ -2710,23 +2710,23 @@
       "createParentCurrencyAccount": "{{parrentCurrencyName}} 계정 추가",
       "erc20": {
         "title": "토큰 추가",
-        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
+        "disclaimer": "{{tokenName}}(은)는 ERC20 토큰입니다.\n이더리움 계정으로 곧바로 토큰을 받을 수 있습니다.",
         "learnMore": "ERC20에 대해 자세히 알아보기"
       },
       "trc10": {
         "title": "토큰 추가",
-        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}}(은)는 TRC10 토큰입니다.\n토큰을 트론 계정으로 바로 받을 수 있습니다.",
         "learnMore": "ERC10에 대해 자세히 알아보기"
       },
       "trc20": {
         "title": "토큰 추가",
-        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
+        "disclaimer": "{{tokenName}}(은)는 TRC20 토큰입니다.\n토큰을 트론 계정으로 바로 받을 수 있습니다.",
         "learnMore": "TRC20에 대해 자세히 알아보기"
       },
       "bep20": {
         "title": "토큰 추가",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}}은 BEP-20 토큰입니다.\nBNB 계정에서 직접 토큰을 받을 수 있습니다.",
+        "learnMore": "BEP-20에 대해 자세히 알아보기"
       }
     },
     "showMoreChainType": "더 많은 주소 유형",
@@ -2752,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
+    "stayInTheAppPlz": "앱을 그대로 유지하고 Nano X를 가까운 곳에 위치시켜 주세요",
     "allowAppPermission": "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken": "나의 {{token}} 토큰 관리",
     "allowManagerPermission": "장치에서 {{wording}} 허용",
@@ -2791,12 +2791,12 @@
     "title": "새로운 장치 페어링",
     "bluetooth": {
       "title": "블루투스로 연결...",
-      "label": "Nano를 자동으로 감지합니다"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "새로운 Ledger Nano X를 추가하세요",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}}(이)가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요.",
-    "usb": "...또는 USB 케이블로 연결이 되었는지 확인하세요",
-    "usbLabel": "USB 케이블을 연결하고 장치에 Pin 코드를 입력하세요",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "현재 장치를 가지고 있지 않습니다",
     "withoutDevice": "내 장치 없이 계속합니다",
     "steps": {
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "장치 인증 확인",
       "accept": "Nano X를 끄지 마세요. &lt;1&gt;Ledger 관리자&lt;/1&gt;를 활성화하세요.",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "이 단계는 Nano가 정품인지 확인하기 위한 것입니다."
     },
     "ScanningHeader": {
       "title": "장치 찾기",
@@ -3020,7 +3020,7 @@
         "showAll": "제거할 모든 앱을 보여줍니다",
         "description": "{{app}} 앱을 필요로 하는 앱도 귀하의 장치에서 삭제될 것입니다.",
         "description_one": "일부 앱은 {{app}} 앱에 종속됩니다.",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "일부 앱은 {{app}} 앱에 종속됩니다.\n{{app}} 앱에 종속된 기기의 앱도 제거됩니다."
       },
       "continueUninstall": "{{app}} 앱과 다른 앱을 제거합니다"
     },
@@ -4072,7 +4072,7 @@
     "disclaimer": {
       "title": "외부 애플리케이션",
       "description": "Ledger에서 운영하지 않는 애플리케이션으로 곧 이동합니다.",
-      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdvice": "Ledger에서 운영하지 않는 애플리케이션입니다. Ledger는 해당 애플리케이션으로 인한 자금의 손실이나 서비스 품질에 대한 책임을 지지 않습니다.\n\n언제나 귀하의 장치에 표시된 정보를 신중하게 확인하세요.",
       "legalAdviceShort": "Ledger는 자금 손실에 대해 책임을 지지 않습니다. 항상 장치에 표시된 정보를 확인하십시오.",
       "checkbox": "추가 알림을 보내지 마세요.",
       "CTA": "계속"
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "Live만 지원됨"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "최고 상승 목록",
         "market_cap": "순위",
         "market_cap_asc": "순위(시가총액) 오름차순",
         "market_cap_desc": "순위(시가총액) 내림차순"
