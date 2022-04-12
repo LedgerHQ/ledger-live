@@ -1,0 +1,69 @@
+name: Test Desktop App - Generate Snapshots
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      INSTRUMENT_BUILD: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "2.7.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Bump npm to latest
+        run: npm i -g npm
+      - name: Setup TimeZone for Windows
+        if: runner.os == 'Windows'
+        run: tzutil /s "Eastern Standard Time"
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright install-deps
+      - name: Build dependencies
+        run: pnpm turbo run ledger-live-desktop#build:testing
+      - name: Run playwright tests [Linux => xvfb-run]
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+        shell: bash
+      - name: Run playwright tests
+        if: matrix.os != 'ubuntu-latest'
+        run: pnpm desktop test:playwright:update-snapshots
+        shell: bash
+      - name: Upload playwright specs
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ format('playwright-specs-{0}', matrix.os) }}
+          path: |
+            apps/ledger-live-desktop/tests/specs/**/*.png
