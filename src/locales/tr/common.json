@@ -2675,7 +2675,7 @@
       "title": "Hesap ekleme iptali",
       "desc": "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
     },
-    "imported": "Asset added successfully",
+    "imported": "Varlık başarıyla eklendi",
     "sections": {
       "importable": {
         "title": "Mevcut bir hesabı ekle"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Hesaplarınızı görüntüleyin veya başka hesaplar ekleyin",
-      "secondaryCTA": "Add new asset",
-      "cta": "See your asset"
+      "secondaryCTA": "Yeni varlık ekle",
+      "cta": "Varlığını gör"
     },
     "stopScanning": "Taramayı durdur",
     "retryScanning": "Taramayı tekrar dene",
