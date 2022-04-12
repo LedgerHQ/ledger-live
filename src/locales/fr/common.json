@@ -2791,12 +2791,12 @@
     "title": "Coupler un nouvel appareil",
     "bluetooth": {
       "title": "Connexion via Bluetooth",
-      "label": "Détectez automatiquement votre Nano."
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Ajouter un nouveau Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
-    "usb": "Connexion avec un câble USB",
-    "usbLabel": "Connectez votre câble USB et entrez votre code PIN sur votre appareil.",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "Je n'ai pas mon appareil.",
     "withoutDevice": "Continuer sans mon appareil",
     "steps": {
@@ -3160,7 +3160,7 @@
             "pending": {
               "title": "Diffusion de la transaction..."
             },
-            "broadcastError": "Votre transaction a peut-être échoué. Merci de vérifier dans quelques minutes pour vous assurer que votre transaction n'a pas été traitée avant de réessayer."
+            "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
           }
         }
       }
@@ -3189,7 +3189,7 @@
             "pending": {
               "title": "Diffusion de la transaction..."
             },
-            "broadcastError": "Votre transaction a peut-être échoué. Merci de vérifier dans quelques minutes pour vous assurer que votre transaction n'a pas été traitée avant de réessayer."
+            "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
           }
         }
       }
