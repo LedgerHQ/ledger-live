@@ -19,12 +19,36 @@ type Props = {
   unit?: Unit;
   range?: PortfolioRange;
   style?: any;
+  /** whether to still render something for a 0% variation */
+  show0Delta?: boolean;
+  /** whether to show a placeholder in case the percent value is not valid */
+  fallbackToPercentPlaceholder?: boolean;
 };
 
-function Delta({ valueChange, percent, unit, range, style }: Props) {
+function Delta({
+  valueChange,
+  percent,
+  unit,
+  range,
+  style,
+  show0Delta,
+  fallbackToPercentPlaceholder,
+}: Props) {
   const { t } = useTranslation();
 
-  if (percent && (!valueChange.percentage || valueChange.percentage === 0)) {
+  const percentPlaceholder = fallbackToPercentPlaceholder ? (
+    <Text variant={"body"} color="neutral.c60" fontWeight={"medium"}>
+      -
+    </Text>
+  ) : null;
+
+  if (
+    percent &&
+    ((valueChange.percentage === 0 && !show0Delta) ||
+      valueChange.percentage === null ||
+      valueChange.percentage === undefined)
+  ) {
+    if (fallbackToPercentPlaceholder) return percentPlaceholder;
     return null;
   }
 
@@ -34,6 +58,7 @@ function Delta({ valueChange, percent, unit, range, style }: Props) {
       : valueChange.value;
 
   if (Number.isNaN(delta)) {
+    if (percent && fallbackToPercentPlaceholder) return percentPlaceholder;
     return null;
   }
 
