@@ -793,7 +793,7 @@
       "desc": "앱에서 직접 신뢰할 수 있는 DeFi 애플리케이션과 안전하게 상호 작용합니다."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Web3로의 키",
       "desc": "Ledger를 사용하여 당사 파트너로부터 주요 암호화폐를 안전하게 구매, 판매 및 스왑할 수 있습니다."
     },
     "3": {
@@ -848,7 +848,7 @@
       },
       "buyNano": {
         "title": "Ledger Nano X 구매하기",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "Web3로의 키 — 자산을 통제할 수 있는 자유를 누리세요"
       },
       "discoverLedger": {
         "title": "Ledger Live 탐색",
