@@ -19,8 +19,8 @@ jobs:
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       INSTRUMENT_BUILD: true
-      DEBUG: "pw:browser*"
-      DEBUG_LOGS: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
     strategy:
       fail-fast: false
       matrix:
