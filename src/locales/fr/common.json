@@ -2791,12 +2791,12 @@
     "title": "Coupler un nouvel appareil",
     "bluetooth": {
       "title": "Connexion via Bluetooth",
-      "label": "Automatically detect your Nano"
+      "label": "Détecter automatiquement votre Nano"
     },
-    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
+    "deviceNotFoundPairNewDevice": "Coupler via Bluetooth",
     "headerDescription": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
-    "usb": "... or plug USB cable",
-    "usbLabel": "Plug your cable and enter your PIN Code on your device",
+    "usb": "...ou connecter avec un câble USB",
+    "usbLabel": "Connectez votre câble USB et entrez votre code PIN sur votre appareil.",
     "withoutDeviceHeader": "Je n'ai pas mon appareil.",
     "withoutDevice": "Continuer sans mon appareil",
     "steps": {
