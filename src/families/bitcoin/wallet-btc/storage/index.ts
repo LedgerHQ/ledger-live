@@ -56,8 +56,8 @@ class BitcoinLikeStorage implements IStorage {
     return tx;
   }
 
-  getTx(address: string, hash: string) {
-    const index = `${address}-${hash}`;
+  getTx(address: string, txId: string) {
+    const index = `${address}-${txId}`;
     return this.txs[this.primaryIndex[index]];
   }
 
@@ -72,7 +72,7 @@ class BitcoinLikeStorage implements IStorage {
 
     txs.forEach((tx) => {
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       // we reject already seen tx
       if (this.txs[this.primaryIndex[index]]) {
@@ -142,7 +142,7 @@ class BitcoinLikeStorage implements IStorage {
     this.txs.forEach((tx: TX) => {
       // clean
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
@@ -166,7 +166,7 @@ class BitcoinLikeStorage implements IStorage {
     this.txs.forEach((tx: TX) => {
       // clean
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
