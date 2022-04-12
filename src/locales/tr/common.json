@@ -719,7 +719,7 @@
       },
       "tour": {
         "title": "Tura katılın",
-        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "description": "Ledger Live uygulamasını keşfedin ve varlıklarınızı nasıl satın alacağınızı, artıracağınızı ve güvence altına alacağınızı öğrenin",
         "cta": "Göz At"
       },
       "academy": {
@@ -737,9 +737,9 @@
         "cta": "Şimdi satın al"
       },
       "familyPackX": {
-        "title": "Ledger Nano X Family pack",
+        "title": "Ledger Nano X Aile paketi",
         "description": "İndirimli Nano X 3'lü paketi, hediye etmek veya yedeklemek için mükemmel",
-        "cta": "Save now"
+        "cta": "Şimdi kaydet"
       },
       "buyCrypto": {
         "title": "Kripto Satın Alın",
@@ -785,23 +785,23 @@
   },
   "buyDevice": {
     "0": {
-      "title": "It's your money. Own it.",
+      "title": "Paranıza sahip çıkın.",
       "desc": "Kontrolü ele geçirin ve kriptolarınızı kendi başınıza yönetme özgürlüğünü kazanın."
     },
     "1": {
-      "title": "Access DeFi and NFTs",
+      "title": "DeFi'a ve NFT'lere erişin",
       "desc": "Doğrudan uygulama içinde güvenilir DeFi uygulamalarımızla güvenle etkileşime girin."
     },
     "2": {
-      "title": "Your key to Web3",
+      "title": "Web3 anahtarınız",
       "desc": "Ledger'ınızı kullanarak ortaklarımız aracılığıyla başlıca kripto paraları güvenle satın alabilir, satabilir ve takas edebilirsiniz."
     },
     "3": {
-      "title": "Certified security",
+      "title": "Sertifikalı güvenlik",
       "desc": "Ürünlerimiz, ulusal siber güvenlik ajanslarından güvenlikleri için sertifikalandırılmış tek donanım cüzdanlarıdır."
     },
     "title": "LEDGER'INIZA KAVUŞUN",
-    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "desc": "Kripto ve NFT'lerinizi sektör lideri güvenlikle koruyun",
     "cta": "Ledger'ınızı şimdi satın alın",
     "footer": "Zaten bir cihazım var, şimdi kurmak istiyorum"
   },
@@ -812,11 +812,11 @@
     "sections": {
       "learn": {
         "title": "Öğren",
-        "desc": "Learn about crypto, NFTs, digital security and more"
+        "desc": "Kriptolar, NFT'ler, dijital güvenlik ve daha fazlası hakkında bilgi edinin"
       },
       "ledgerApps": {
         "title": "Uygulamalar",
-        "desc": "Explore Ledger's partner apps all in one place"
+        "desc": "Ledger ortaklarına ait tüm uygulamaları tek bir yerden keşfedin"
       },
       "earn": {
         "title": "Kazan",
@@ -839,8 +839,8 @@
       "and": "ve"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "Haydi başlayalım",
+      "subtitle": "Ledger'ınızı kurun ya da şimdi satın alın.",
       "noLedgerLink": "Ledger'ım yok ama almak isterim",
       "setupLedger": {
         "title": "Ledger'ımı kur",
