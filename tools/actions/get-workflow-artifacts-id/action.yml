@@ -1,0 +1,22 @@
+name: download-workflow-artifacts
+description: get artifacts from previous workflow
+inputs:
+  token:
+    required: true
+    description: access token (usually github.token)
+  isRelease:
+    required: false
+    description: true if this is a release workflow, will also download the hash.zip file
+    default: "false"
+  runId:
+    description: previous workflow run id
+    required: true
+outputs:
+  hash:
+    description: id of hash.zip (can be null is not in production release mode)
+  builds:
+    description: id of builds.zip
+
+runs:
+  using: "node12"
+  main: "build/index.js"
