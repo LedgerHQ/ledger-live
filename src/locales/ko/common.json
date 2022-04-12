@@ -2791,12 +2791,12 @@
     "title": "새로운 장치 페어링",
     "bluetooth": {
       "title": "블루투스로 연결...",
-      "label": "Nano를 자동으로 감지합니다"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "새로운 Ledger Nano X를 추가하세요",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}}(이)가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요.",
-    "usb": "...또는 USB 케이블로 연결이 되었는지 확인하세요",
-    "usbLabel": "USB 케이블을 연결하고 장치에 Pin 코드를 입력하세요",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "현재 장치를 가지고 있지 않습니다",
     "withoutDevice": "내 장치 없이 계속합니다",
     "steps": {
