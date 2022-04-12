@@ -193,7 +193,7 @@ function PortfolioScreen({ navigation }: Props) {
       ...(accounts.length > 0
         ? [
             <Box mt={6}>
-              <FabActions />
+              <FabActions areAccountsEmpty={areAccountsEmpty} />
             </Box>,
           ]
         : []),
