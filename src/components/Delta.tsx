@@ -19,12 +19,26 @@ type Props = {
   unit?: Unit;
   range?: PortfolioRange;
   style?: any;
+  /** whether to still render something for a 0% variation */
+  show0Delta?: boolean;
 };
 
-function Delta({ valueChange, percent, unit, range, style }: Props) {
+function Delta({
+  valueChange,
+  percent,
+  unit,
+  range,
+  style,
+  show0Delta,
+}: Props) {
   const { t } = useTranslation();
 
-  if (percent && (!valueChange.percentage || valueChange.percentage === 0)) {
+  if (
+    percent &&
+    ((valueChange.percentage === 0 && !show0Delta) ||
+      valueChange.percentage === null ||
+      valueChange.percentage === undefined)
+  ) {
     return null;
   }
 

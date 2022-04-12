@@ -96,6 +96,8 @@ export default function GraphCard({
                   <View>
                     <Delta
                       percent
+                      // valueChange={{value: 0, percentage: 0}}
+                      show0Delta
                       valueChange={countervalueChange}
                       range={portfolio.range}
                     />
