@@ -2675,7 +2675,7 @@
       "title": "Cancelar agregar cuenta",
       "desc": "¿Deseas cancelar la agregación de cuentas?"
     },
-    "imported": "Asset added successfully",
+    "imported": "Activo añadido con éxito",
     "sections": {
       "importable": {
         "title": "Agregar cuenta existente"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Visualiza tus cuentas o agrega otras cuentas",
-      "secondaryCTA": "Add new asset",
-      "cta": "See your asset"
+      "secondaryCTA": "Añadir un nuevo activo",
+      "cta": "Ver tu activo"
     },
     "stopScanning": "Detener escaneo",
     "retryScanning": "Volver a intentar el escaneo",
