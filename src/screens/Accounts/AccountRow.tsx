@@ -49,7 +49,7 @@ const AccountRow = ({
   navigationParams,
   hideDelta,
   topLink,
-  bottomLink
+  bottomLink,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -197,7 +197,11 @@ const AccountRow = ({
               <CurrencyUnitValue showCode unit={unit} value={account.balance} />
             </Text>
             {hideDelta ? null : (
-              <Delta percent valueChange={countervalueChange} />
+              <Delta
+                percent
+                show0Delta={account.balance.toNumber() !== 0}
+                valueChange={countervalueChange}
+              />
             )}
           </Flex>
         </Flex>
