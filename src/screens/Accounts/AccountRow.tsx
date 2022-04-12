@@ -200,6 +200,7 @@ const AccountRow = ({
               <Delta
                 percent
                 show0Delta={account.balance.toNumber() !== 0}
+                fallbackToPercentPlaceholder
                 valueChange={countervalueChange}
               />
             )}
