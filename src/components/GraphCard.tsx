@@ -6,10 +6,10 @@ import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
+import styled from "styled-components/native";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import Placeholder from "./Placeholder";
 import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
 
@@ -19,6 +19,21 @@ type Props = {
   useCounterValue?: boolean;
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => ReactNode;
 };
+
+const Placeholder = styled(Flex).attrs({
+  backgroundColor: "neutral.c40",
+  borderRadius: "4px",
+})``;
+const BigPlaceholder = styled(Placeholder).attrs({
+  width: 189,
+  height: 18,
+})``;
+
+const SmallPlaceholder = styled(Placeholder).attrs({
+  width: 109,
+  height: 8,
+  borderRadius: "2px",
+})``;
 
 export default function GraphCard({
   portfolio,
@@ -56,10 +71,9 @@ export default function GraphCard({
             </Text>
             <DiscreetModeButton size={20} />
           </Flex>
-
-          <View>
+          <Flex>
             {!balanceAvailable ? (
-              <Placeholder width={228} containerHeight={27} />
+              <BigPlaceholder mt="8px" />
             ) : renderTitle ? (
               renderTitle({ counterValueUnit: unit, item })
             ) : (
@@ -68,16 +82,11 @@ export default function GraphCard({
               </Text>
             )}
             <TransactionsPendingConfirmationWarning />
-          </View>
+          </Flex>
           <Flex flexDirection={"row"}>
             {!balanceAvailable ? (
               <>
-                <Placeholder
-                  width={50}
-                  containerHeight={19}
-                  style={{ marginRight: 10 }}
-                />
-                <Placeholder width={50} containerHeight={19} />
+                <SmallPlaceholder mt="12px" />
               </>
             ) : (
               <View>
