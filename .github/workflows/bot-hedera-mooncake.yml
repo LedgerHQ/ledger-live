@@ -2,7 +2,7 @@ name: Bot 'Hedera'
 on:
   push:
     branches:
-      - feat/LIVE-1157-hedera-improvements
+      - family/hedera
 
 jobs:
   start-runner:
