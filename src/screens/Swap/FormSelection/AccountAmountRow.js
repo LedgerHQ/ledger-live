@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flexShrink: 0,
-    minWidth: 100,
+    minWidth: "50%",
     alignItems: "flex-end",
     justifyContent: "center",
     height: 32,
