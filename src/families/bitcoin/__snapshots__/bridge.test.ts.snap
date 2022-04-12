@@ -19844,6 +19844,9 @@ Array [
       "type": "OUT",
       "value": "210486",
     },
+  ],
+  Array [],
+  Array [
     Object {
       "accountId": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
       "blockHash": "9a7e5b92df5bcdadc21e15e4bbe57521dfb563ba51f81680834b751c82e307bf",
@@ -19935,6 +19938,7 @@ Array [
       ],
       "standard": undefined,
       "tokenId": undefined,
+      "transactionSequenceNumber": 16777215,
       "type": "IN",
       "value": "3010000",
     },
@@ -20991,6 +20995,8 @@ Array [
       "type": "IN",
       "value": "4565400",
     },
+  ],
+  Array [
     Object {
       "accountId": "js:2:litecoin:Ltub2ZoEDG8AmPfD8oGoFEvfsKWjeyiXh6TiKYjgLnoVxfeECfQteY6sDF1AuH1iW6ekue2PSwdbbvG2NpFPzLqcgNgteHZPNo6zGthjcAmwxT3:segwit",
       "blockHash": "2145991c0bd4599cf6bbba462df12622f919a6e6dbf62932d2ac79fca2c9c01d",
@@ -21038,6 +21044,9 @@ Array [
       "type": "OUT",
       "value": "147582",
     },
+  ],
+  Array [],
+  Array [
     Object {
       "accountId": "js:2:litecoin:Ltub2ZoEDG8AmPfDAyu3yK2WfA9zE8VgL3E3nNjnS5VRYAo7LfrrEmaCUYqWP8tgo6vNWc7dsr3kDykaX7yDpkAN93RWorZG6tekiyNpBNtFJhc:segwit",
       "blockHash": "bf4e8295d05f5decd7ec79cf14c15d73957119cba26f850bbd354f00c9049550",
@@ -21743,6 +21752,103 @@ Array [
       "type": "IN",
       "value": "5000000",
     },
+  ],
+  Array [],
+]
+`;
+
+exports[`peercoin currency bridge scanAccounts peercoin seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "bitcoinResources": Object {},
+    "currencyId": "peercoin",
+    "derivationMode": "",
+    "freshAddress": "PHRKwqt8ZWWNdEiqMRpiU1xhUDYjmV7XiX",
+    "freshAddressPath": "44'/6'/0'/0/1",
+    "freshAddresses": Array [
+      Object {
+        "address": "PD3w1eqRUJGd8K678WSDVqU9qcfijmU7JS",
+        "derivationPath": "44'/6'/0'/0/0",
+      },
+    ],
+    "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:",
+    "index": 0,
+    "name": "Peercoin 1",
+    "nfts": undefined,
+    "operationsCount": 3,
+    "pendingOperations": Array [],
+    "seedIdentifier": "04bf3614e4ebe909f34b3b87cf41e63647dd1266704fcbf28f7037836c129962fdc6ead43b3811ec109d710415f7cb2260e542ee8711776512fe22979e629bea5b",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt",
+  },
+  Object {
+    "balance": "0",
+    "bitcoinResources": Object {},
+    "currencyId": "peercoin",
+    "derivationMode": "",
+    "freshAddress": "PCrC3djBR5XMoob4dxp7TtZcaNwahTnBcd",
+    "freshAddressPath": "44'/6'/1'/0/3",
+    "freshAddresses": Array [
+      Object {
+        "address": "PAnoNsM6qhjaKdvM82eoFnzGKSGVFrhvzH",
+        "derivationPath": "44'/6'/1'/0/0",
+      },
+    ],
+    "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
+    "index": 1,
+    "name": "Peercoin 2",
+    "nfts": undefined,
+    "operationsCount": 5,
+    "pendingOperations": Array [],
+    "seedIdentifier": "04bf3614e4ebe909f34b3b87cf41e63647dd1266704fcbf28f7037836c129962fdc6ead43b3811ec109d710415f7cb2260e542ee8711776512fe22979e629bea5b",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv",
+  },
+  Object {
+    "balance": "0",
+    "bitcoinResources": Object {},
+    "currencyId": "peercoin",
+    "derivationMode": "",
+    "freshAddress": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
+    "freshAddressPath": "44'/6'/2'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
+        "derivationPath": "44'/6'/2'/0/0",
+      },
+    ],
+    "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuRYpvqYJ7Uri474wVJSGfCBycWK88JbhoE31jzYQrxa4re5gRRjdK52fYte1wR6Gjo3KsnMGk1JNqELQoema8GaWRcX4Tp3c:",
+    "index": 2,
+    "name": "Peercoin 3",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "04bf3614e4ebe909f34b3b87cf41e63647dd1266704fcbf28f7037836c129962fdc6ead43b3811ec109d710415f7cb2260e542ee8711776512fe22979e629bea5b",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "r29uBq4dqT4ZLPtkuRYpvqYJ7Uri474wVJSGfCBycWK88JbhoE31jzYQrxa4re5gRRjdK52fYte1wR6Gjo3KsnMGk1JNqELQoema8GaWRcX4Tp3c",
+  },
+]
+`;
+
+exports[`peercoin currency bridge scanAccounts peercoin seed 1 2`] = `
+Array [
+  Array [
     Object {
       "accountId": "js:2:litecoin:Ltub2YRPRjnvZVoBBbfDrEV3jJdGQCTMHgKg1V1mnAZuQbbSY6XPhufcRTpoGB4595dUuW1GSDy6CApUYmCfwA4YjG5JWrAFd4GBR1WRJ8Jm6cM:",
       "blockHash": "9d64a0e3801f7ae5ee7d226314023746bd1024cd7bf06ec19626b4b594e22869",
@@ -21910,6 +22016,8 @@ Array [
       "type": "OUT",
       "value": "2172713",
     },
+  ],
+  Array [
     Object {
       "accountId": "js:2:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:",
       "blockHash": "dc5137eea1380c5aa9daa9c7b984d0603dd055580972af1d15c97933f1ab8cb3",
@@ -22030,6 +22138,103 @@ Array [
       "type": "OUT",
       "value": "3322090",
     },
+  ],
+  Array [],
+]
+`;
+
+exports[`pivx currency bridge scanAccounts pivx seed 1 1`] = `
+Array [
+  Object {
+    "balance": "0",
+    "bitcoinResources": Object {},
+    "currencyId": "pivx",
+    "derivationMode": "",
+    "freshAddress": "DBUbDxkrqF7W4XeTqjt32z2kwc7kCnWWcZ",
+    "freshAddressPath": "44'/77'/0'/0/2",
+    "freshAddresses": Array [
+      Object {
+        "address": "DCr8iLpjZdwNQfcbcSg3uZWTsGdTJVJ8PB",
+        "derivationPath": "44'/77'/0'/0/0",
+      },
+    ],
+    "id": "js:2:pivx:ToEA6kbZp37Q14yj3MBi989NwAtYpRezRAveGjoQtrBNenh5w5D8AAU3pQFHk3bd7YRXgQ86JoXBZHm8voQeCNJX4ETH7WdGGcfD35CsCEgQjih:",
+    "index": 0,
+    "name": "PivX 1",
+    "nfts": undefined,
+    "operationsCount": 7,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0416e1de49a4dd716985e2992bfaad4e7db30a6adbf63dafbd6607e447ce9f782771ef9f6790fafb1bfd15f72c5e8988825660426546152e15b578d160128e6238",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": true,
+    "xpub": "ToEA6kbZp37Q14yj3MBi989NwAtYpRezRAveGjoQtrBNenh5w5D8AAU3pQFHk3bd7YRXgQ86JoXBZHm8voQeCNJX4ETH7WdGGcfD35CsCEgQjih",
+  },
+  Object {
+    "balance": "25947828",
+    "bitcoinResources": Object {},
+    "currencyId": "pivx",
+    "derivationMode": "",
+    "freshAddress": "DG4Zmw1PyrxZrBFhjtHDyfCxWY4PrP5WZq",
+    "freshAddressPath": "44'/77'/1'/0/5",
+    "freshAddresses": Array [
+      Object {
+        "address": "DCtvHdQUvae9DQGvsF1AoaWvtwYJ46iPdj",
+        "derivationPath": "44'/77'/1'/0/0",
+      },
+    ],
+    "id": "js:2:pivx:ToEA6kbZp37Q14yj58Etmammo9PZzJApeRsUnjSqri7fugNHm29Z8XHyhs1qePUKDUkrBD51sAwqD6HjFx3Z81S4djrYPrxKJssLrekhh2j2rpT:",
+    "index": 1,
+    "name": "PivX 2",
+    "nfts": undefined,
+    "operationsCount": 9,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0416e1de49a4dd716985e2992bfaad4e7db30a6adbf63dafbd6607e447ce9f782771ef9f6790fafb1bfd15f72c5e8988825660426546152e15b578d160128e6238",
+    "spendableBalance": "25947828",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": true,
+    "xpub": "ToEA6kbZp37Q14yj58Etmammo9PZzJApeRsUnjSqri7fugNHm29Z8XHyhs1qePUKDUkrBD51sAwqD6HjFx3Z81S4djrYPrxKJssLrekhh2j2rpT",
+  },
+  Object {
+    "balance": "0",
+    "bitcoinResources": Object {},
+    "currencyId": "pivx",
+    "derivationMode": "",
+    "freshAddress": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
+    "freshAddressPath": "44'/77'/2'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
+        "derivationPath": "44'/77'/2'/0/0",
+      },
+    ],
+    "id": "js:2:pivx:ToEA6kbZp37Q14yj8uQJcgxNYNLfh77mCkRc5WYNKnFXz9F7ioREkssDvZtYm6haAQc3xEgMhTLT6TMHKzEVX4HLudaACbipsLTvnthw2KUUhTf:",
+    "index": 2,
+    "name": "PivX 3",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0416e1de49a4dd716985e2992bfaad4e7db30a6adbf63dafbd6607e447ce9f782771ef9f6790fafb1bfd15f72c5e8988825660426546152e15b578d160128e6238",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 8,
+    "used": false,
+    "xpub": "ToEA6kbZp37Q14yj8uQJcgxNYNLfh77mCkRc5WYNKnFXz9F7ioREkssDvZtYm6haAQc3xEgMhTLT6TMHKzEVX4HLudaACbipsLTvnthw2KUUhTf",
+  },
+]
+`;
+
+exports[`pivx currency bridge scanAccounts pivx seed 1 2`] = `
+Array [
+  Array [
     Object {
       "accountId": "js:2:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
       "blockHash": "077ff24aae4d567d1b13ccc9c83c4edd7d65d0adc52bbef2b2c5b120f827d5b2",
@@ -22955,77 +23160,6 @@ Array [
       "type": "IN",
       "value": "1000000",
     },
-  ],
-  Array [],
-]
-`;
-
-exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
-Array [
-  Object {
-    "balance": "83389840",
-    "currencyId": "solana",
-    "derivationMode": "solanaMain",
-    "freshAddress": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "freshAddressPath": "44'/501'",
-    "freshAddresses": Array [
-      Object {
-        "address": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-        "derivationPath": "44'/501'",
-      },
-    ],
-    "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain",
-    "index": 0,
-    "name": "Solana 1",
-    "nfts": undefined,
-    "operationsCount": 2,
-    "pendingOperations": Array [],
-    "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "solanaResources": Object {
-      "stakes": "[]",
-    },
-    "spendableBalance": "83389840",
-    "starred": false,
-    "swapHistory": Array [],
-    "syncHash": undefined,
-    "unitMagnitude": 9,
-    "used": true,
-  },
-  Object {
-    "balance": "0",
-    "currencyId": "solana",
-    "derivationMode": "solanaSub",
-    "freshAddress": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
-    "freshAddressPath": "44'/501'/0'",
-    "freshAddresses": Array [
-      Object {
-        "address": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
-        "derivationPath": "44'/501'/0'",
-      },
-    ],
-    "id": "js:2:solana:6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A:solanaSub",
-    "index": 0,
-    "name": "Solana 1",
-    "nfts": undefined,
-    "operationsCount": 0,
-    "pendingOperations": Array [],
-    "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "solanaResources": Object {
-      "stakes": "[]",
-    },
-    "spendableBalance": "0",
-    "starred": false,
-    "swapHistory": Array [],
-    "syncHash": undefined,
-    "unitMagnitude": 9,
-    "used": false,
-  },
-]
-`;
-
-exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
-Array [
-  Array [
     Object {
       "accountId": "js:2:qtum:xpub6D97ABLAcapXNWjS2pNwYpmUjYYt5f2Tyj4PDSp7pvY2gySb2iAvejKNPm18raeU8WxtXVCpQfZjMN7eEdgtor8T5141ZLH7o2WkL1nyNQb:segwit",
       "blockHash": "eb38de048b4f1a0b52cafb7ee7a6708bd02ccf59c77cadd3b0d078652e785abd",

@@ -100,5 +100,7 @@ export async function getValidators(
     return undefined;
   };
 
+  // FIXME Ordering of validators must be always the same, for this test to be stable:
+  // https://github.com/LedgerHQ/ledger-live-common/blob/develop/src/__tests__/test-helpers/bridge.ts#L171-L188
   return compact(allRawValidators.map(tryFromRawValidator));
 }

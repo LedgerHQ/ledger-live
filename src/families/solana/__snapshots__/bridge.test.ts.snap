@@ -21,6 +21,9 @@ Array [
     "operationsCount": 2,
     "pendingOperations": Array [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "solanaResources": Object {
+      "stakes": "[]",
+    },
     "spendableBalance": "83389840",
     "starred": false,
     "swapHistory": Array [],
@@ -47,6 +50,9 @@ Array [
     "operationsCount": 0,
     "pendingOperations": Array [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+    "solanaResources": Object {
+      "stakes": "[]",
+    },
     "spendableBalance": "0",
     "starred": false,
     "swapHistory": Array [],

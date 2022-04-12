@@ -135,15 +135,15 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
-  API_HEDERA_MIRROR: {
-    def: "https://hedera.coin.ledger.com",
-    parser: stringParser,
-    desc: "mirror node API for Hedera",
-  },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
     def: "http://validators-solana.coin.ledger.com/api/v1/validators/",
     desc: "base url for validators.app validator list",
+  },
+  API_HEDERA_MIRROR: {
+    def: "https://hedera.coin.ledger.com",
+    parser: stringParser,
+    desc: "mirror node API for Hedera",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
