@@ -2791,12 +2791,12 @@
     "title": "إقران جهاز جديد",
     "bluetooth": {
       "title": "الاتصال عبر البلوتوث...",
-      "label": "اكتشاف جهاز Nano الخاص بك تلقائيًا"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "إضافة جهاز ليدجر Nano X جديد",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية بلوتوث",
-    "usb": "... أو قم بالتوصيل عبر كابل USB",
-    "usbLabel": "قم بتوصيل كابل USB وأدخل رمز الPIN على جهازك",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "جهازي ليس معي",
     "withoutDevice": "المتابعة بدون جهازي",
     "steps": {
