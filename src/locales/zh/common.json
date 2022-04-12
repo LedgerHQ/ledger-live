@@ -848,7 +848,7 @@
       },
       "buyNano": {
         "title": "购买一个 Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "您通往 Web3 的钥匙 - 解锁掌控您资产的自由"
       },
       "discoverLedger": {
         "title": "探索 Ledger Live",
@@ -1107,7 +1107,7 @@
           }
         },
         "cta": "关闭",
-        "finalCta": "OK, I’m done!",
+        "finalCta": "好的，我完成了！",
         "infoModal": {
           "label": "了解如何保管您的恢复短语",
           "title": "我应该将恢复短语保存在哪里？",
@@ -1445,7 +1445,7 @@
       "addAccounts": {
         "addAccounts": "添加资产",
         "title": "快速入门",
-        "description": "You can either purchase crypto from our partners or setup your wallet"
+        "description": "您可以通过我们的合作伙伴购买加密货币或设置您的钱包"
       }
     },
     "noOpState": {
@@ -1456,7 +1456,7 @@
       "title": "推荐"
     },
     "topGainers": {
-      "title": "Market gainers (24H)",
+      "title": "市场获利者（24 小时）",
       "seeMarket": "显示全部"
     }
   },
@@ -1645,7 +1645,7 @@
     "receive": "接收",
     "buy": "买入",
     "walletconnect": "WalletConnect",
-    "stake": "Stake",
+    "stake": "质押",
     "sell": "卖出",
     "swap": "Swap 互换",
     "manage": "管理",
@@ -1778,7 +1778,7 @@
         "hideTokens_plural": "隐藏 ASA"
       }
     },
-    "noResultsFound": "No asset found",
+    "noResultsFound": "未找到资产。",
     "noResultsDesc": "请检查拼写后重试。"
   },
   "distribution": {
@@ -2030,7 +2030,7 @@
         "desc": "您即将查看一个未经验证的地址。请在设备上验证地址，以确保安全。",
         "verify": "{{accountType}} 的地址未经验证。请在设备上验证地址，以确保安全。"
       },
-      "noResultsFound": "No crypto asset found",
+      "noResultsFound": "未找到加密资产",
       "noResultsDesc": "请检查拼写后重试。"
     },
     "exchange": {
@@ -2725,8 +2725,8 @@
       },
       "bep20": {
         "title": "添加代币",
-        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
-        "learnMore": "Learn more about BEP-20"
+        "disclaimer": "{{tokenName}} 为 BEP-20 代币。\n您可以直接通过 BNB 币安账户接收代币。",
+        "learnMore": "了解关于 BEP-20 的更多详情"
       }
     },
     "showMoreChainType": "更多地址类型",
@@ -2791,12 +2791,12 @@
     "title": "配对新设备",
     "bluetooth": {
       "title": "通过蓝牙连接……",
-      "label": "自动检测您的 Nano"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "添加新的 Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "请确保您的 {{productName}} 处于解锁状态并已开启蓝牙",
-    "usb": "……或连接 USB 数据线",
-    "usbLabel": "连接 USB 数据线并在您的设备上输入您的 PIN 识别密码",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "设备不在我身边",
     "withoutDevice": "在不使用我的设备的情况下继续",
     "steps": {
@@ -2865,7 +2865,7 @@
     "GenuineCheck": {
       "title": "设备验证查验",
       "accept": "请勿关闭您的 Nano X。确保允许 <1>Ledger Manager</1>（管理器）运行。",
-      "info": "This step is meant to ensure that your Nano is authentic."
+      "info": "此步骤旨在确保您的 Nano 是正版的。"
     },
     "ScanningHeader": {
       "title": "正在寻找设备",
@@ -3020,7 +3020,7 @@
         "showAll": "显示待卸载的应用程序",
         "description": "您设备上需要用到 {{app}} 的应用程序也将被卸载。",
         "description_one": "一些应用依赖于 {{app}} 应用程序。",
-        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
+        "description_two": "一些应用依赖于 {{app}} 应用。\n您设备上依赖于 {{app}} 应用的应用程序也会被卸载。"
       },
       "continueUninstall": "卸载 {{app}} 以及其他应用程序"
     },
@@ -4096,7 +4096,7 @@
         "liveCompatible_label": "仅支持 Live"
       },
       "order": {
-        "topGainers": "Top gainers",
+        "topGainers": "最高获利者",
         "market_cap": "排名",
         "market_cap_asc": "排名（市值）上升",
         "market_cap_desc": "排名（市值）下降"
