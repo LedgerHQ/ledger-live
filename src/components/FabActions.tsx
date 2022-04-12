@@ -256,7 +256,11 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
   return <FabAccountButtonBar {...props} buttons={actions} />;
 };
 
-const FabActions = () => {
+type FabActionsProps = {
+  areAccountsEmpty?: boolean;
+};
+
+const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
@@ -313,6 +317,7 @@ const FabActions = () => {
       ],
       type: "shade",
       outline: true,
+      disabled: areAccountsEmpty,
     };
 
     return [
@@ -324,7 +329,7 @@ const FabActions = () => {
         ? [actionButtonTransferReceive, actionButtonTransferSend]
         : []),
     ];
-  }, [hasAccounts, readOnlyModeEnabled, t]);
+  }, [hasAccounts, readOnlyModeEnabled, t, areAccountsEmpty]);
 
   return <FabAccountButtonBar buttons={actions} />;
 };

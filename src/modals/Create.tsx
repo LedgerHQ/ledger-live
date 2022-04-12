@@ -1,9 +1,10 @@
 /* @flow */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
 import { NavigatorName, ScreenName } from "../const";
 import {
@@ -13,6 +14,7 @@ import {
 import BottomModal, { Props as ModalProps } from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { accountsSelector } from "../reducers/accounts";
 
 export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -21,6 +23,10 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount = useSelector(accountsCountSelector);
   const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
+  const accounts = useSelector(accountsSelector);
+  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
+    accounts,
+  ]);
 
   const onNavigate = useCallback(
     (name: string, options?: { [key: string]: any }) => {
@@ -70,7 +76,11 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
       <BottomModalChoice
         event="TransferSend"
         title={t("transfer.send.title")}
-        onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSendFunds : null}
+        onPress={
+          accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+            ? onSendFunds
+            : null
+        }
         iconName="ArrowFromBottom"
       />
       <BottomModalChoice
