@@ -2791,12 +2791,12 @@
     "title": "Привязка нового устройства",
     "bluetooth": {
       "title": "Подключение по Bluetooth...",
-      "label": "Автоматическое обнаружение Nano"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Добавить новый Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Обязательно разблокируйте {{productName}} и включите Bluetooth",
-    "usb": "...или подключите USB-кабель",
-    "usbLabel": "Подключите USB-кабель и введите PIN-код на устройстве",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "У меня нет с собой устройства",
     "withoutDevice": "Продолжить без устройства",
     "steps": {
