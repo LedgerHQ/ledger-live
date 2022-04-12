@@ -2791,12 +2791,12 @@
     "title": "Yeni cihaz eşleme",
     "bluetooth": {
       "title": "Bluetooth ile bağlanın...",
-      "label": "Nano'nuzu otomatik olarak algılayın"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Yeni Ledger Nano X ekle",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun",
-    "usb": "... veya USB kablosunu bağlayın",
-    "usbLabel": "USB kablosunu bağlayın ve cihazınıza PIN Kodunuzu girin",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "Cihazım yanımda değil",
     "withoutDevice": "Cihazım olmadan devam et",
     "steps": {
