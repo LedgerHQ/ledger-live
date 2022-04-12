@@ -61,9 +61,24 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: pnpm desktop test:playwright:update-snapshots
         shell: bash
-      - name: Upload playwright specs
+      - name: Upload playwright specs [Linux]
+        if: matrix.os = 'ubuntu-latest'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ format('playwright-specs-{0}', matrix.os) }}
           path: |
-            apps/ledger-live-desktop/tests/specs/**/*.png
+            apps/ledger-live-desktop/tests/specs/**/*-linux.png
+      - name: Upload playwright specs [Windows]
+        if: matrix.os = 'windows-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ format('playwright-specs-{0}', matrix.os) }}
+          path: |
+            apps/ledger-live-desktop/tests/specs/**/*-win32.png
+      - name: Upload playwright specs [MacOS]
+        if: matrix.os = 'macos-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ format('playwright-specs-{0}', matrix.os) }}
+          path: |
+            apps/ledger-live-desktop/tests/specs/**/*-darwin.png
