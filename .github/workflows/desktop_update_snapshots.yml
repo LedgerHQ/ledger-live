@@ -44,9 +44,6 @@ jobs:
           bundler-cache: true
       - name: Bump npm to latest
         run: npm i -g npm
-      - name: Setup TimeZone for Windows
-        if: runner.os == 'Windows'
-        run: tzutil /s "Eastern Standard Time"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
