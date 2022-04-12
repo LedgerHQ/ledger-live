@@ -101,7 +101,7 @@ export default function AccountAmountRow({
                 value={swap.from.amount}
                 inputStyle={styles.inputText}
                 hasError={!hideError && !!fromAmountError}
-                dynamicFontRatio={0.5}
+                dynamicFontRatio={0.3}
               />
             ) : (
               <LText semiBold color="grey" style={styles.inputText}>
@@ -203,7 +203,6 @@ const styles = StyleSheet.create({
   },
   inputText: {
     textAlign: "right",
-    lineHeight: 28,
     height: 32,
     padding: 0,
   },

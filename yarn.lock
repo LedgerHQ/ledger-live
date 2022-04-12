@@ -2590,10 +2590,10 @@
     "@ledgerhq/errors" "^5.11.0"
     events "^3.1.0"
 
-"@ledgerhq/icons-ui@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/icons-ui/-/icons-ui-0.2.3.tgz#ec5df778676055cdae56976b5a8ac1677e3b4125"
-  integrity sha512-483MwWQ21bwkw+rBtbnN8c7KvYAKt24ea7suwC39Nq5JfhiBqst0cnb8GM7xYiPOpzzyTM+c2vHX9Ht2tEGVTQ==
+"@ledgerhq/icons-ui@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/icons-ui/-/icons-ui-0.2.4.tgz#4f368ad612f281fbd2ef98cca75687995aaa5d4d"
+  integrity sha512-kbrfLhKNgDEXKcr1JCLRNmFzecTZUFzDsMVNdTHdm7t9I6VEalZb8Jmdt6xNxiZ/se3FARhaeJKbZkbTX02QmQ==
   dependencies:
     "@types/styled-components" "^5.1.14"
     styled-components "^5.2.3"
@@ -2723,12 +2723,12 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.50.0.tgz#29c6419e8379d496ab6d0426eadf3c4d100cd186"
   integrity sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==
 
-"@ledgerhq/native-ui@^0.7.13":
-  version "0.7.13"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.13.tgz#7cae31ac71cb618cd49c65b75beb3d6ff6c41c67"
-  integrity sha512-LE1tLUEPpzcrn7V5CxHIZ6ztz/rSDPcnSYH32L2fwIkSz+eIt9hTdSliWUwUa6PWsKLqWIzhu+dg3Eb5YYwP9Q==
+"@ledgerhq/native-ui@^0.7.14":
+  version "0.7.14"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.14.tgz#5c86f460612d75c655d522164ec34b2f0bc04e0d"
+  integrity sha512-c13cg+0Yr3mDiD7HtzpQjTEFWqtq4GWnA5LC2732PMJwRxPiK+1sqiI4e1bnkVz9yBbrmOIT3T7v/17WEWMDZQ==
   dependencies:
-    "@ledgerhq/icons-ui" "^0.2.3"
+    "@ledgerhq/icons-ui" "^0.2.4"
     "@ledgerhq/ui-shared" "^0.1.6"
     "@types/color" "^3.0.2"
     "@types/react" "^17.0.37"

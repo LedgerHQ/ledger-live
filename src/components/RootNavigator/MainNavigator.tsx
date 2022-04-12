@@ -13,7 +13,6 @@ import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
-import Planet from "../../icons/Planet";
 import DiscoverNavigator from "./DiscoverNavigator";
 
 const Tab = createBottomTabNavigator();
@@ -112,7 +111,11 @@ export default function MainNavigator({
         options={{
           headerShown: false,
           tabBarIcon: (props: any) => (
-            <TabIcon Icon={Planet} i18nKey="tabs.discover" {...props} />
+            <TabIcon
+              Icon={Icons.PlanetMedium}
+              i18nKey="tabs.discover"
+              {...props}
+            />
           ),
         }}
         listeners={({ navigation }) => ({
