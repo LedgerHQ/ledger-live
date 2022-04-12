@@ -14,10 +14,10 @@ import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
 
 type Props = {
+  areAccountsEmpty: boolean;
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  renderTitle?: ({ counterValueUnit: Unit, item: Item }) => ReactNode;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -37,8 +37,8 @@ const SmallPlaceholder = styled(Placeholder).attrs({
 
 export default function GraphCard({
   portfolio,
-  renderTitle,
   counterValueCurrency,
+  areAccountsEmpty,
 }: Props) {
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
@@ -69,48 +69,56 @@ export default function GraphCard({
             >
               <Trans i18nKey={"tabs.portfolio"} />
             </Text>
-            <DiscreetModeButton size={20} />
+            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
           </Flex>
+          {areAccountsEmpty ? (
+            <Text variant={"h1"} color={"neutral.c100"}>
+              <CurrencyUnitValue unit={unit} value={0} />
+            </Text>
+          ) : (
+            <>
+              <Flex>
+                {!balanceAvailable ? (
+                  <BigPlaceholder mt="8px" />
+                ) : (
+                  <Text variant={"h1"} color={"neutral.c100"}>
+                    <CurrencyUnitValue unit={unit} value={item.value} />
+                  </Text>
+                )}
+                <TransactionsPendingConfirmationWarning />
+              </Flex>
+              <Flex flexDirection={"row"}>
+                {!balanceAvailable ? (
+                  <>
+                    <SmallPlaceholder mt="12px" />
+                  </>
+                ) : (
+                  <View>
+                    <Delta
+                      percent
+                      valueChange={countervalueChange}
+                      range={portfolio.range}
+                    />
+                  </View>
+                )}
+              </Flex>
+            </>
+          )}
+        </Flex>
+        {!areAccountsEmpty ? (
           <Flex>
-            {!balanceAvailable ? (
-              <BigPlaceholder mt="8px" />
-            ) : renderTitle ? (
-              renderTitle({ counterValueUnit: unit, item })
-            ) : (
-              <Text variant={"h1"} color={"neutral.c100"}>
-                <CurrencyUnitValue unit={unit} value={item.value} />
-              </Text>
-            )}
-            <TransactionsPendingConfirmationWarning />
+            <TouchableOpacity onPress={onPieChartButtonpress}>
+              <BoxedIcon
+                Icon={PieChartMedium}
+                variant={"circle"}
+                iconSize={20}
+                size={48}
+                badgeSize={30}
+                iconColor={"neutral.c100"}
+              />
+            </TouchableOpacity>
           </Flex>
-          <Flex flexDirection={"row"}>
-            {!balanceAvailable ? (
-              <>
-                <SmallPlaceholder mt="12px" />
-              </>
-            ) : (
-              <View>
-                <Delta
-                  percent
-                  valueChange={countervalueChange}
-                  range={portfolio.range}
-                />
-              </View>
-            )}
-          </Flex>
-        </Flex>
-        <Flex>
-          <TouchableOpacity onPress={onPieChartButtonpress}>
-            <BoxedIcon
-              Icon={PieChartMedium}
-              variant={"circle"}
-              iconSize={20}
-              size={48}
-              badgeSize={30}
-              iconColor={"neutral.c100"}
-            />
-          </TouchableOpacity>
-        </Flex>
+        ) : null}
       </Flex>
     </Flex>
   );
