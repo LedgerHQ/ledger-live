@@ -15,10 +15,7 @@ import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
 import { urls } from "../../config/urls";
-import Markdown from 'react-native-markdown-display';
-
-// TODO: this should be retrieved as the actual changelogs
-const notes = "## What's new in firmware version 2.0.2?\n\nFirmware version 2.0.2 features a faster Bluetooth transfer rate, as well as several user experience improvements, an update to the user interface, and some bug fixes.\n\n**Before you update**\n\n- Make sure you have updated Ledger Live through the notification banner or downloaded [the latest version of Ledger Live](https://www.ledger.com/ledger-live/download)\n\n**Better user experience**\n\n- Increased Bluetooth transfer rate, which will result in faster app installations with Ledger Live mobile version 2.37 or higher.\n- Improved the legibility of the PIN screen with more readable digits.\n\n\n**Updated user interface**\n \n- Updated the boot logo and screensaver to match Ledger's rebranding.\n\n**Fixes**\n\n- Fixed a bug that could cause the device screen to become unresponsive.\n- The Reset pairings option resets the Bluetooth pairing properly.\n- Fixed other miscellaneous bugs.";
+import SafeMarkdown from "../SafeMarkdown";
 
 type Props = {
   device: Device,
@@ -139,22 +136,7 @@ export default function FirmwareUpdate({ device, deviceInfo, onClose, isOpen }: 
                     <Text variant="h2" fontWeight="semiBold">{`firmware version ${firmwareVersion}`}</Text>
                   </Trans>
                 </Text>
-                <Markdown rules={{
-                  heading2: (node, children) =>
-                  (<Text key={node.key} variant="h2" color="neutral.c100">
-                    {children}
-                  </Text>),
-                  paragraph: (node, children) =>
-                  (<Text key={node.key} variant="paragraph" color="neutral.c100">
-                    {children}
-                  </Text>),
-                  list_item: (node, children) =>
-                  (<Text key={node.key} variant="paragraph" color="neutral.c100" pl={4} my={1}>
-                    •  {children}
-                  </Text>),
-                }}>
-                  {notes}
-                </Markdown>
+                <SafeMarkdown markdown={latestFirmware?.osu?.notes} />
               </ScrollView>
                 <Text variant="paragraph" color="neutral.c80" mt={6}>
                   {t("FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions")}
