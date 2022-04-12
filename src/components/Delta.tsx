@@ -33,12 +33,19 @@ function Delta({
 }: Props) {
   const { t } = useTranslation();
 
+  if (
+    percent &&
+    ((valueChange.percentage === 0 && !show0Delta) ||
+      valueChange.percentage === null ||
+      valueChange.percentage === undefined)
+  ) {
+    return null;
+  }
+
   const delta =
     percent && valueChange.percentage
       ? valueChange.percentage * 100
       : valueChange.value;
-
-  if (percent && delta === 0 && !show0Delta) return null;
 
   if (Number.isNaN(delta)) {
     return null;
