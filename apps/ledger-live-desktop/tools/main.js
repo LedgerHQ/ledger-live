@@ -150,11 +150,9 @@ const buildMainConfig = (mode, config, argv, mappedNativeModules) => {
     // In 'dev' mode, treat everything as an external module so we can rely on the node_modules folder.
     // In 'production' mode we exclude the native modules from the bundle.
     externals:
-      mode !== "production"
+      mode !== "production" || !mappedNativeModules
         ? [nodeExternals()]
-        : mappedNativeModules
-        ? buildWebpackExternals(mappedNativeModules)
-        : wpConf.externals,
+        : buildWebpackExternals(mappedNativeModules),
     node: {
       __dirname: false,
       __filename: false,
@@ -199,13 +197,17 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  // Find native modules and copy them to ./dist/node_modules with their dependencies.
-  const mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
-  // Also copy to ./node_modules to be able to run the production build with playwright.
-  copyFolderRecursivelySync(
-    path.join(lldRoot, "dist", "node_modules"),
-    path.join(lldRoot, "node_modules"),
-  );
+  let mappedNativeModules = undefined;
+
+  if (!process.env.TESTING) {
+    // Find native modules and copy them to ./dist/node_modules with their dependencies.
+    const mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
+    // Also copy to ./node_modules to be able to run the production build with playwright.
+    copyFolderRecursivelySync(
+      path.join(lldRoot, "dist", "node_modules"),
+      path.join(lldRoot, "node_modules"),
+    );
+  }
   const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
   const preloaderConfig = buildMainConfig(
     "production",
