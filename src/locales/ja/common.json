@@ -2791,12 +2791,12 @@
     "title": "新しいデバイスのペアリング",
     "bluetooth": {
       "title": "Bluetoothで接続...",
-      "label": "Nanoを自動的に検出"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "新しいLedger Nano Xを追加する",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}}のロックが解除され、Bluetoothが有効になっていることを確認してください。",
-    "usb": "...またはUSBケーブルで接続",
-    "usbLabel": "USBケーブルを接続し、デバイスにPINコードを入力",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "現在、デバイスを持っていません。",
     "withoutDevice": "デバイスを使用せずに続行する",
     "steps": {
