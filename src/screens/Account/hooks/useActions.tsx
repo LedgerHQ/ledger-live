@@ -142,22 +142,6 @@ export default function useActions({ account, parentAccount, colors }: Props) {
           },
         ]
       : []),
-    ...(availableOnCompound
-      ? [
-          {
-            enableActions: "lending",
-            label: (
-              <Trans
-                i18nKey="transfer.lending.actionTitle"
-                values={{ currency: currency?.name }}
-              />
-            ),
-            Icon: Lending,
-            event: "Lend Crypto Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
   ];
 
   return actions;
