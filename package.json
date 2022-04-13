@@ -22,7 +22,7 @@
     "build:desktop:deps": "pnpm run:turbo -- run build --filter=\"ledger-live-desktop^...\"",
     "build:mobile": "pnpm run:turbo -- run build-ci --filter=live-mobile",
     "build:mobile:deps": "pnpm run:turbo -- run build --filter=\"live-mobile^...\"",
-    "test": "pnpm run:turbo -- run test --concurrency=50%",
+    "test": "pnpm run:turbo -- run test --concurrency=100%",
     "lld:dev": "pnpm run:turbo -- run start --filter=ledger-live-desktop",
     "llm:dev": "pnpm run:turbo -- run start --filter=live-mobile",
     "desktop": "pnpm --filter ledger-live-desktop",
