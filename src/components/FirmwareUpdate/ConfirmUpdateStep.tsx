@@ -2,19 +2,23 @@ import { Flex, Text, Log } from "@ledgerhq/native-ui";
 import React, { useEffect } from "react";
 import Animation from "../Animation";
 import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
+import manager from "@ledgerhq/live-common/lib/manager";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import {
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/live-common/lib/types/manager";
 import { useTheme } from "styled-components/native";
 import { track } from "../../analytics";
 
 type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
-  firmwareVersion: string;
+  latestFirmware?: FirmwareUpdateContext | null;
 };
 
-const ConfirmUpdateStep = ({ device, deviceInfo, firmwareVersion }: Props) => {
+const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
@@ -39,6 +43,30 @@ const ConfirmUpdateStep = ({ device, deviceInfo, firmwareVersion }: Props) => {
       <Flex mt={7}>
         <Log>{t("FirmwareUpdate.pleaseConfirmUpdate")}</Log>
       </Flex>
+      {latestFirmware?.osu?.hash && (
+        <Flex mt={7} alignSelf="stretch" alignItems="center">
+          <Text variant="h3">Identifier:</Text>
+          <Flex
+            border={1}
+            py={2}
+            px={3}
+            borderRadius={5}
+            alignItems="center"
+            borderColor="neutral.c80"
+            mt={4}
+          >
+            {manager
+              .formatHashName(
+                latestFirmware.osu.hash,
+                device.modelId,
+                deviceInfo,
+              )
+              .map((hash, i) => (
+                <Text key={`${i}-${hash}`}>{hash}</Text>
+              ))}
+          </Flex>
+        </Flex>
+      )}
       <Flex
         grow={1}
         justifyContent="space-between"
@@ -62,7 +90,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, firmwareVersion }: Props) => {
         <Text variant="subtitle" color="neutral.c80">
           {t("FirmwareUpdate.newVersionNumber")}
         </Text>
-        <Text variant="subtitle">{firmwareVersion}</Text>
+        <Text variant="subtitle">{latestFirmware?.final?.version}</Text>
       </Flex>
     </Flex>
   );

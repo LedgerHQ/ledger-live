@@ -41,14 +41,14 @@ type FwUpdateStep =
 type FwUpdateState = {
   step: FwUpdateStep;
   progress?: number;
-  error?: any;
+  error?: Error;
   installing?: string | null;
 };
 
 // reducer for the firmware update state machine
 const fwUpdateStateReducer = (
   state: FwUpdateState,
-  event: BackgroundEvent | { type: "reset" },
+  event: BackgroundEvent | { type: "reset"; wired: boolean },
 ): FwUpdateState => {
   switch (event.type) {
     case "confirmPin":
@@ -69,9 +69,16 @@ const fwUpdateStateReducer = (
       return { step: "error", error: event.error };
     case "reset":
       return {
-        step: "confirmRecoveryBackup",
-        error: undefined,
+        step: event.wired ? "confirmRecoveryBackup" : "error",
         progress: undefined,
+        error: event.wired
+          ? undefined
+          : {
+              name: "BluetoothNotSupported",
+              message:
+                "Firmware updates are only supported for wired connections",
+            },
+        installing: undefined,
       };
     default:
       return { ...state };
@@ -91,16 +98,21 @@ export default function FirmwareUpdate({
   const { t } = useTranslation();
 
   const [state, dispatchEvent] = useReducer(fwUpdateStateReducer, {
-    step: "confirmRecoveryBackup",
+    step: device.wired ? "confirmRecoveryBackup" : "error",
     progress: undefined,
-    error: undefined,
+    error: device.wired
+      ? undefined
+      : {
+          name: "BluetoothNotSupported",
+          message: "Firmware updates are only supported for wired connections",
+        },
     installing: undefined,
   });
 
   const { step, progress, error, installing } = state;
 
   const onReset = useCallback(() => {
-    dispatchEvent({ type: "reset" });
+    dispatchEvent({ type: "reset", wired: device.wired });
     dispatch(clearBackgroundEvents());
     NativeModules.BackgroundRunner.stop();
   }, [dispatch]);
@@ -167,18 +179,22 @@ export default function FirmwareUpdate({
       {step === "flashingMcu" && (
         <FlashMcuStep progress={progress} installing={installing} />
       )}
-      {step === "firmwareUpdated" && <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />}
+      {step === "firmwareUpdated" && (
+        <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />
+      )}
       {step === "error" && (
         <>
-          <GenericErrorView error={error} />
-          <Button
-            type="main"
-            alignSelf="stretch"
-            mt={5}
-            onPress={onCloseAndReinstall}
-          >
-            {t("FirmwareUpdate.reinstallApps")}
-          </Button>
+          <GenericErrorView error={error as Error} />
+          {error?.name !== "BluetoothNotSupported" && (
+            <Button
+              type="main"
+              alignSelf="stretch"
+              mt={5}
+              onPress={onCloseAndReinstall}
+            >
+              {t("FirmwareUpdate.reinstallApps")}
+            </Button>
+          )}
         </>
       )}
       {step === "confirmPin" && <ConfirmPinStep device={device} />}
@@ -186,7 +202,7 @@ export default function FirmwareUpdate({
         <ConfirmUpdateStep
           device={device}
           deviceInfo={deviceInfo}
-          firmwareVersion={firmwareVersion}
+          latestFirmware={latestFirmware}
         />
       )}
       {step === "downloadingUpdate" && (
