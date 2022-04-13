@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Platform } from "react-native";
-import manager from "@ledgerhq/live-common/lib/manager";
 import { useNavigation } from "@react-navigation/native";
 import {
   DeviceModelInfo,
-  FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -12,21 +10,23 @@ import { ScreenName, NavigatorName } from "../const";
 import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
-
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
+  lastConnectedDeviceSelector,
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
+import { gte as isVersionGreaterOrEqual } from "semver";
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(
     hasCompletedOnboardingSelector,
@@ -46,7 +46,6 @@ const FirmwareUpdateBanner = () => {
     setShowDrawer(false);
   }, [navigation]);
 
-
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showBanner = Boolean(latestFirmware);
   const version = latestFirmware?.final?.name ?? "";
@@ -60,13 +59,18 @@ const FirmwareUpdateBanner = () => {
 
   const usbFwUpdateExperimental = useEnv("USB_FW_UPDATE");
   const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
+  const isUsbFwUpdateFeatureActivated =
+    usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled;
+  const isUsbFwVersionUpdateSupported =
+    latestFirmware?.final?.version &&
+    isVersionGreaterOrEqual(latestFirmware.final.version, "2.0.0");
   const usbFwUpdateActivated =
-    (usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled) &&
-    Platform.OS === "android";
+    isUsbFwUpdateFeatureActivated &&
+    Platform.OS === "android" &&
+    lastConnectedDevice?.wired &&
+    isUsbFwVersionUpdateSupported;
 
-  // TODO: use the correct checks below to display the banner
-  // showBanner && hasCompletedOnboarding && hasConnectedDevice
-  return true ? (
+  return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       <Flex
         mx={6}
@@ -86,7 +90,9 @@ const FirmwareUpdateBanner = () => {
           event="FirmwareUpdateBannerClick"
           type="color"
           title={t("FirmwareUpdate.update")}
-          onPress={usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress}
+          onPress={
+            usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress
+          }
           outline={false}
         />
       </Flex>
