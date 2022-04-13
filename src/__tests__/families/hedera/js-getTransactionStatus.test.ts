@@ -9,7 +9,6 @@ import {
 import BigNumber from "bignumber.js";
 import type { Account } from "../../../types";
 import type { Transaction } from "../../../families/hedera/types";
-import { AccountId } from "@hashgraph/sdk";
 
 let account: Account;
 let transaction: Transaction;
@@ -18,7 +17,7 @@ let data: {
   amount: BigNumber;
   estimatedFees: BigNumber;
   totalSpent: BigNumber;
-  warnings: {};
+  warnings: Record<string, unknown>;
 };
 
 describe("js-getTransactionStatus", () => {

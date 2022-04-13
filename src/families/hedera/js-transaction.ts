@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
-import { calculateAmount } from './utils';
+import { calculateAmount } from "./utils";
 
 /**
  * Creates an empty transaction.

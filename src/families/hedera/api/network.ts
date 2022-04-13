@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import * as hedera from "@hashgraph/sdk";
 import { Account } from "../../../types";
 import { Transaction } from "../types";
-import { calculateAmount } from "../utils";
 import { AccountId } from "@hashgraph/sdk";
 
 export function broadcastTransaction(

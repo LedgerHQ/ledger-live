@@ -74,7 +74,7 @@ describe("js-transaction", () => {
     const patch = {
       amount: new BigNumber(5),
       recipient: "0.0.3",
-      useAllAmount: true
+      useAllAmount: true,
     };
     const data = { ...transaction, ...patch };
     const result = updateTransaction(transaction, patch);
