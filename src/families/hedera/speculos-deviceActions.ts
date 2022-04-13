@@ -7,7 +7,6 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
       title: "Transfer",
-      button: "Rr",
     },
     {
       title: "with Key #0?",
