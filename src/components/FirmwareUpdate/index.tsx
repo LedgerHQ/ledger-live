@@ -167,7 +167,7 @@ export default function FirmwareUpdate({
       {step === "flashingMcu" && (
         <FlashMcuStep progress={progress} installing={installing} />
       )}
-      {step === "firmwareUpdated" && <FirmwareUpdatedStep />}
+      {step === "firmwareUpdated" && <FirmwareUpdatedStep onReinstallApps={onCloseAndReinstall} />}
       {step === "error" && (
         <>
           <GenericErrorView error={error} />

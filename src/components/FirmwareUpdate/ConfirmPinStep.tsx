@@ -1,10 +1,11 @@
 import { Flex, Text, Log, NumberedList } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import Animation from "../Animation";
 import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "styled-components/native";
+import { track } from "../../analytics";
 
 type Props = {
   device: Device;
@@ -13,6 +14,10 @@ type Props = {
 const ConfirmPinStep = ({ device }: Props) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
+
+  useEffect(() => {
+    track("FirmwareUpdateConfirmPin");
+  }, []);
 
   return (
     <Flex alignItems="center">

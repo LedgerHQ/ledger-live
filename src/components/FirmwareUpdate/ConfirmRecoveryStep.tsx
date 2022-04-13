@@ -1,7 +1,8 @@
 import { Flex, Text, Link, Icons, Button, Checkbox } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Linking, ScrollView } from "react-native";
+import { track } from "../../analytics";
 import { urls } from "../../config/urls";
 import SafeMarkdown from "../SafeMarkdown";
 
@@ -25,6 +26,7 @@ const ConfirmRecoveryStep = ({
   ] = useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
+    track("FirmwareUpdateSeedDisclaimerChecked");
     setConfirmRecoveryPhraseBackup(!confirmRecoveryPhraseBackup);
   }, [confirmRecoveryPhraseBackup]);
 
@@ -37,6 +39,10 @@ const ConfirmRecoveryStep = ({
     // by some browser in the mobile
     await Linking.openURL(urls.recoveryPhraseInfo);
   }, [urls.recoveryPhraseInfo]);
+
+  useEffect(() => {
+    track("Page Manager DisclaimerModal");
+  }, []);
 
   return (
     <Flex height="100%">

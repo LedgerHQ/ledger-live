@@ -1,6 +1,7 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { track } from "../../analytics";
 import FirmwareProgress from "../FirmwareProgress";
 
 type Props = {
@@ -9,6 +10,10 @@ type Props = {
 };
 const FlashMcuStep = ({ progress, installing }: Props) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+      track("FlashingMCU");
+  }, []);
 
   return (
     <Flex alignItems="center">

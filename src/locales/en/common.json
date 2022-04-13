@@ -3064,6 +3064,7 @@
     "currentVersionNumber": "Current version",
     "newVersionNumber": "New version",
     "success": "Firmware updated",
+    "update": "Update",
     "Installing": {
       "title": "{{stepName}}...",
       "subtitle": "If requested on your device, please enter your PIN to finish the process."

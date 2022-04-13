@@ -83,9 +83,9 @@ const FirmwareUpdateBanner = () => {
         </Text>
         <Button
           ml={5}
-          iconPosition="left"
+          event="FirmwareUpdateBannerClick"
           type="color"
-          title={"Update"}
+          title={t("FirmwareUpdate.update")}
           onPress={usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress}
           outline={false}
         />

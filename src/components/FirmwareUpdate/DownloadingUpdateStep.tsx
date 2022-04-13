@@ -1,13 +1,18 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FirmwareProgress from "../FirmwareProgress";
+import { track } from "../../analytics";
 
 type Props = {
   progress?: number;
 };
 const DownloadingUpdateStep = ({ progress }: Props) => {
   const { t } = useTranslation();
+  
+  useEffect(() => {
+      track("DownloadingFirmware");
+  }, []);
 
   return (
     <Flex alignItems="center">
