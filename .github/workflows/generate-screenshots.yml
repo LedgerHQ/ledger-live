@@ -1,0 +1,118 @@
+name: Test Desktop App - Generate Screenshots
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: pr number
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-if-fork:
+    runs-on: ubuntu-20.04
+    outputs:
+      forked: ${{ steps.forked.outputs.forked }}
+    steps:
+      - name: check if we are on a forked repo
+        id: forked
+        run: echo "::set-output name=forked::$(${{github.event.issue.pull_request != '' && github.event.issue.pull_request.head.repo.full_name != github.repository || false }})"
+
+  add-reaction:
+    needs: [check-if-fork]
+    name: "[Reaction] 🚀"
+    if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/generate-screenshots') && !needs.check-if-fork.outputs.forked
+    runs-on: ubuntu-latest
+    steps:
+      - name: add reaction to PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            })
+
+            const body = `
+              [Generating new screenshots](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+  generate_screenshots:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      INSTRUMENT_BUILD: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "2.7.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Checkout PR
+        run: gh pr checkout ${{ github.event.issue.number || github.event.inputs.pr }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bump npm to latest
+        run: npm i -g npm
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright install-deps
+      - name: Build dependencies
+        run: pnpm turbo run ledger-live-desktop#build:testing
+      - name: Run playwright tests [Linux => xvfb-run]
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
+        shell: bash
+      - name: Run playwright tests
+        if: matrix.os != 'ubuntu-latest'
+        run: pnpm desktop test:playwright:update-snapshots
+        shell: bash
+      - name: Commit snapshots
+        if: steps.status.outputs.status != 0
+        run: |
+          git pull --rebase
+          git add .
+          git commit -m 'update screenshots (${{ matrix.os }})'
+          git push
