@@ -1,16 +1,11 @@
-// @flow
-
 import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { useTheme } from "@react-navigation/native";
 
+import { Icons } from "@ledgerhq/native-ui";
 import BottomModal from "./BottomModal";
-import Button from "./Button";
-import Circle from "./Circle";
 import ModalBottomAction from "./ModalBottomAction";
-import LanguageIcon from "../icons/Language";
 import {
   languageSelector,
   languageIsSetByUserSelector,
@@ -19,10 +14,10 @@ import { setLanguage } from "../actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "../context/Locale";
 import { Track } from "../analytics";
+import Button from "./wrappedUi/Button";
 
 export default function CheckLanguageAvailability() {
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const [modalOpened, setModalOpened] = useState(true);
   const dispatch = useDispatch();
   const defaultLanguage = getDefaultLanguageLocale();
@@ -35,13 +30,13 @@ export default function CheckLanguageAvailability() {
   }, [setModalOpened]);
 
   const handleDismissPressed = useCallback(() => {
-    answer();
+    if (typeof answer === "function") answer();
     onRequestClose();
   }, [answer, onRequestClose]);
 
   const handleChangeLanguagePressed = useCallback(() => {
     dispatch(setLanguage(defaultLanguage));
-    answer();
+    if (typeof answer === "function") answer();
     onRequestClose();
   }, [dispatch, defaultLanguage, answer, onRequestClose]);
 
@@ -70,11 +65,7 @@ export default function CheckLanguageAvailability() {
       >
         <ModalBottomAction
           title={<Trans i18nKey="systemLanguageAvailable.title" />}
-          icon={
-            <Circle bg={colors.lightLive} size={70}>
-              <LanguageIcon size={40} color={colors.live} />
-            </Circle>
-          }
+          icon={<Icons.LanguageMedium color="primary.c80" size={50} />}
           description={
             <Trans
               i18nKey="systemLanguageAvailable.description.newSupport"
@@ -88,31 +79,30 @@ export default function CheckLanguageAvailability() {
           footer={
             <View>
               <Button
-                type="primary"
+                type="main"
                 event={`Discoverability - Switch - ${defaultLanguage}`}
                 eventProperties={{ language: defaultLanguage }}
-                title={
-                  <>
-                    <Trans
-                      i18nKey="systemLanguageAvailable.switchButton"
-                      values={{
-                        language: t(
-                          `systemLanguageAvailable.languages.${defaultLanguage}`,
-                        ),
-                      }}
-                    />
-                  </>
-                }
                 onPress={handleChangeLanguagePressed}
-              />
+              >
+                <Trans
+                  i18nKey="systemLanguageAvailable.switchButton"
+                  values={{
+                    language: t(
+                      `systemLanguageAvailable.languages.${defaultLanguage}`,
+                    ),
+                  }}
+                />
+              </Button>
               <Button
-                type="secondary"
-                outline={false}
+                type="main"
+                outline
+                mt={4}
                 event={`Discoverability - Denied - ${defaultLanguage}`}
                 eventProperties={{ language: defaultLanguage }}
-                title={<Trans i18nKey="systemLanguageAvailable.no" />}
                 onPress={handleDismissPressed}
-              />
+              >
+                <Trans i18nKey="systemLanguageAvailable.no" />
+              </Button>
             </View>
           }
         />
