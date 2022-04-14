@@ -3,7 +3,6 @@
 import "../shim";
 import "./polyfill";
 import "./live-common-setup";
-import "./implement-react-native-libcore";
 import "../e2e/e2e-bridge-setup";
 import "react-native-gesture-handler";
 import React, {

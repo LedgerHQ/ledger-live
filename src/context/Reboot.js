@@ -3,7 +3,6 @@ import React, { Fragment, useContext, useCallback, useState } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
 import { clearDb } from "../db";
-import clearLibcore from "../helpers/clearLibcore";
 
 type RebootFunc = (resetData?: boolean) => Promise<void>;
 
@@ -27,7 +26,6 @@ export default function RebootProvider({
       setRebootId(id => id + 1);
       if (resetData) {
         wipe();
-        await clearLibcore(clearDb);
       }
       if (onRebootEnd) onRebootEnd();
     },
