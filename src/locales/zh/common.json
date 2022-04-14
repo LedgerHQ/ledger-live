@@ -734,7 +734,7 @@
       "familyPack": {
         "title": "家庭装",
         "description": "Nano S 三件优惠装，作为礼物或备份设备的完美选择",
-        "cta": "立即买入"
+        "cta": "立即购买"
       },
       "familyPackX": {
         "title": "Ledger Nano X 家庭套装",
@@ -811,7 +811,7 @@
     "link": "欲闻其详",
     "sections": {
       "learn": {
-        "title": "学习",
+        "title": "了解",
         "desc": "了解加密货币、NFT、数字安全和更多"
       },
       "ledgerApps": {
@@ -1014,7 +1014,7 @@
           "1": {
             "title": "确认 PIN 识别密码",
             "label": "再次输入您的 PIN 识别密码以确认。",
-            "desc": "再次输入您的 PIN 识别密码以确认。"
+            "desc": "再次输入您的 PIN 识别码以确认。"
           }
         },
         "infoModal": {
@@ -1080,7 +1080,7 @@
             "label": "取出一张空白的恢复表，该表和 Nano 装在一起。如果您拿到的恢复表已经被填写过，请联系 Ledger 客服。"
           },
           "1": {
-            "title": "重复操作以确认所有单词！",
+            "title": "为所有的词重复操作！",
             "label": "在恢复表的位置 1 写下 Nano 上显示的 Word #1 第一个词。然后在您的 Nano 设备上按右键显示 Word #2 第二个词，并将其写在位置 2。",
             "label_1": "重复该操作，确保按正确的顺序和拼写将所有的助记词写下来。按 Nano 上的左键，核对以防出错。"
           },
@@ -2969,7 +2969,7 @@
     },
     "update": {
       "title": "更新",
-      "subtitle": "有可用的更新",
+      "subtitle": "可用更新",
       "updateAll": "更新"
     }
   },

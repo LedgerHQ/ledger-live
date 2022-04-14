@@ -124,7 +124,7 @@
         },
         "android": {
           "nanoS": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
-          "nanoSP": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
+          "nanoSP": "Bitte stelle Sie sicher, dass Ihr {{productName}} entsperrt und durch Kabel verbunden ist.",
           "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         }
       }
@@ -137,7 +137,7 @@
         },
         "android": {
           "nanoS": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
-          "nanoSP": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
+          "nanoSP": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt und durch Kabel verbunden ist.",
           "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         }
       }
@@ -3934,7 +3934,7 @@
       "selectCurrency": "Wählen Sie eine Währung",
       "selectAccount": "Wählen Sie ein Konto",
       "connectDevice": "Verbinden Sie Ihr Gerät",
-      "title": "Krypto über unseren Partner kaufen",
+      "title": "Krypto kaufen über unseren Partner",
       "coinifyTitle": "Krypto über unseren Partner kaufen",
       "description": "Kaufen Sie Krypto-Vermögenswerte über Coinify und erhalten Sie diese direkt auf Ihr Ledger-Konto",
       "CTAButton": "Jetzt kaufen",
@@ -4178,7 +4178,7 @@
   },
   "ApplicationVersion": "v{{version}}",
   "analytics": {
-    "title": "Analyse",
+    "title": "Analysen",
     "allocation": {
       "title": "Aufteilung"
     },

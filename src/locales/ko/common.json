@@ -124,7 +124,7 @@
         },
         "android": {
           "nanoS": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
-          "nanoSP": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
+          "nanoSP": "귀하의 {{productName}} 장치가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
           "nanoX": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 또는 블루투스가 활성화되어 있는지 확인하세요."
         }
       }
@@ -137,7 +137,7 @@
         },
         "android": {
           "nanoS": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
-          "nanoSP": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
+          "nanoSP": "귀하의 {{productName}} 장치가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
           "nanoX": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 또는 블루투스가 활성화되어 있는지 확인하세요."
         }
       }
@@ -370,7 +370,7 @@
       "update": {
         "title": "업데이트를 종료하고 취소하시겠습니까?",
         "description": "종료하면 진행 중인 앱 업데이트가 취소됩니다.",
-        "stay": "계속 업데이트"
+        "stay": "업데이트 계속하기"
       },
       "quit": "관리자 종료"
     },
@@ -720,12 +720,12 @@
       "tour": {
         "title": "둘러보기",
         "description": "Ledger Live 앱을 탐색하고 자산을 구매, 성장 및 보호하는 방법을 배우세요",
-        "cta": "둘러보기"
+        "cta": "검색"
       },
       "academy": {
         "title": "Ledger 아카데미",
         "description": "블록체인에 대해 알아야 할 모든 것",
-        "cta": "둘러보기"
+        "cta": "검색"
       },
       "stakeCosmos": {
         "title": "COSMOS(코스모스) 스테이킹",
@@ -779,7 +779,7 @@
       "market": {
         "title": "암호화폐 시장",
         "description": "앱에서 바로 암호화폐 가격 및 시장 추세 확인",
-        "cta": "둘러보기"
+        "cta": "검색"
       }
     }
   },
@@ -811,7 +811,7 @@
     "link": "더 자세히 알려주세요",
     "sections": {
       "learn": {
-        "title": "배움",
+        "title": "알아보기",
         "desc": "암호화폐, NFT, 디지털 보안 등에 대해 알아보세요"
       },
       "ledgerApps": {
@@ -880,7 +880,7 @@
       }
     },
     "stepSelectDevice": {
-      "title": "귀하의 장치를 선택하세요",
+      "title": "장치 선택",
       "nanoS": "Nano S",
       "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
@@ -984,7 +984,7 @@
             }
           },
           "1": {
-            "title": "둘러보기",
+            "title": "검색",
             "label": "스크린 상의 지시를 읽어보며 다양한 장치 활용 방법을 알아보세요."
           },
           "2": {
@@ -1014,7 +1014,7 @@
           "1": {
             "title": "Pin 코드를 승인해 주세요",
             "label": "Pin 코드를 재입력하여 확인해 주세요.",
-            "desc": "Pin 코드를 재입력하여 확인해 주세요."
+            "desc": "Pin 코드를 재입력하여 확인하세요."
           }
         },
         "infoModal": {
@@ -1080,7 +1080,7 @@
             "label": "Nano 제품에 포함된 빈 복구 시트를 준비합니다. 복구 시트가 비어있는 상태로 배송되지 않았다면 Ledger 지원 부서로 연락하세요."
           },
           "1": {
-            "title": "모든 단어에 반복해 주세요!",
+            "title": "모든 단어를 반복해주세요!",
             "label": "Nano에 표시된 단어 #1을 복구 시트의 1번 위치에 기재하세요. 그런 다음 Nano의 오른쪽을 눌러 단어 #2가 화면에 표시되면 2번 위치에 기록하세요.",
             "label_1": "단어의 순서와 철자에 주의하며 모든 단어에 대해 같은 과정을 반복합니다. Nano의 왼쪽을 눌러 실수가 있는지 확인하세요."
           },
@@ -1438,7 +1438,7 @@
       "noAccountsDesc": "포트폴리오에 계정을 추가하세요.",
       "buttons": {
         "import": "자산 추가",
-        "buy": "매수",
+        "buy": "구매",
         "manager": "앱 설치하기",
         "managerSecondary": "내 장치에 앱을 설치합니다"
       },
@@ -2809,7 +2809,7 @@
       },
       "genuineCheck": {
         "title": "{{productName}}에서 Ledger 관리자를 활성화합니다",
-        "accept": "Nano X를 끄지 마세요. &lt;1&gt;Ledger 관리자&lt;/1&gt;를 활성화하세요."
+        "accept": "Nano X를 종료하지 마세요. <1>Ledger 관리자</1>를 활성화하세요."
       },
       "genuineCheckPending": {
         "title": "장치가 정품인지 확인합니다..."
@@ -2969,7 +2969,7 @@
     },
     "update": {
       "title": "업데이트",
-      "subtitle": "업데이트 이용 가능",
+      "subtitle": "사용 가능한 업데이트",
       "updateAll": "업데이트"
     }
   },
@@ -3934,7 +3934,7 @@
       "selectCurrency": "통화 선택",
       "selectAccount": "계정 선택",
       "connectDevice": "내 장치 연결하기",
-      "title": "파트너를 통해 암호화폐 구매",
+      "title": "당사 파트너를 통해 암호화폐 구매",
       "coinifyTitle": "파트너를 통해 암호화폐 구매",
       "description": "Coinify를 통해 암호화폐를 구매하고 Ledger 계정으로 바로 받아보세요.",
       "CTAButton": "지금 구매하기",
@@ -4178,7 +4178,7 @@
   },
   "ApplicationVersion": "v{{version}}",
   "analytics": {
-    "title": "애널리틱스",
+    "title": "분석",
     "allocation": {
       "title": "할당"
     },

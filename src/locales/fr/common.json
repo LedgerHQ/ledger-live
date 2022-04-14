@@ -720,12 +720,12 @@
       "tour": {
         "title": "Découvrez l'app",
         "description": "Explorez Ledger Live et découvrez comment acheter, faire fructifier et sécuriser vos actifs.",
-        "cta": "Naviguer"
+        "cta": "Parcourir"
       },
       "academy": {
-        "title": "Ledger Academy",
+        "title": "La Ledger Academy",
         "description": "Tout ce qu'il faut absolument savoir sur la blockchain.",
-        "cta": "Naviguer"
+        "cta": "Parcourir"
       },
       "stakeCosmos": {
         "title": "Staking sur Cosmos",
@@ -779,7 +779,7 @@
       "market": {
         "title": "Marché des cryptos",
         "description": "Consultez les cours des cryptos et tendances du marché sans sortir de l'app.",
-        "cta": "Naviguer"
+        "cta": "Parcourir"
       }
     }
   },
@@ -815,7 +815,7 @@
         "desc": "Apprenez-en plus sur les cryptos, NFT, la sécurité numérique et bien plus."
       },
       "ledgerApps": {
-        "title": "Applications",
+        "title": "Apps",
         "desc": "Explorez les applications partenaires de Ledger en un seul endroit."
       },
       "earn": {
@@ -984,7 +984,7 @@
             }
           },
           "1": {
-            "title": "Naviguer",
+            "title": "Parcourir",
             "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. "
           },
           "2": {
@@ -1439,7 +1439,7 @@
       "buttons": {
         "import": "Ajouter un actif",
         "buy": "Acheter",
-        "manager": "Installer les apps",
+        "manager": "Installer des apps",
         "managerSecondary": "Installer des apps sur mon wallet"
       },
       "addAccounts": {
@@ -1997,7 +1997,7 @@
   },
   "transfer": {
     "recipient": {
-      "input": "Entrer l'adresse"
+      "input": "Entrez l'adresse"
     },
     "send": {
       "title": "Envoyer"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Accédez à vos comptes ou ajoutez d'autres comptes.",
-      "secondaryCTA": "Ajouter un nouvel actif",
-      "cta": "Afficher votre actif"
+      "secondaryCTA": "Ajouter d'autres comptes",
+      "cta": "Accéder aux Comptes"
     },
     "stopScanning": "Mettre fin au balayage",
     "retryScanning": "Réessayer le balayage",
@@ -2709,7 +2709,7 @@
       "title": "Token",
       "createParentCurrencyAccount": "Ajouter un compte {{parrentCurrencyName}}",
       "erc20": {
-        "title": "Token",
+        "title": "Ajouter un token",
         "disclaimer": "{{tokenName}} est un token ERC-20.\nVous pouvez recevoir ces tokens directement sur un compte Ethereum.",
         "learnMore": "En savoir plus sur les ERC-20"
       },
@@ -2809,7 +2809,7 @@
       },
       "genuineCheck": {
         "title": "Activer le \"Ledger Manager\" (Gestionnaire Ledger) sur le {{productName}}",
-        "accept": "N'éteignez pas votre Nano X. Assurez-vous d'autoriser le <1>\"Ledger Manager\"</1> (Gestionnaire)."
+        "accept": "N'éteignez pas votre Nano X. Veuillez autoriser le <1>\"Ledger Manager\"</1> (Gestionnaire)."
       },
       "genuineCheckPending": {
         "title": "Vérification de l'authenticité de l'appareil..."

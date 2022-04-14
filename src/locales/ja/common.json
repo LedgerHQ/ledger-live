@@ -124,7 +124,7 @@
         },
         "android": {
           "nanoS": "{{productName}} のロックが解除済みで、USBケーブル接続されていることを確認してください。",
-          "nanoSP": "{{productName}} のロックが解除済みで、USBケーブル接続されていることを確認してください。",
+          "nanoSP": "{{productName}}のロックが解除済みで、USBケーブル接続されていることを確認してください。",
           "nanoX": "{{productName}} のロックが解除済みで、USBケーブルが接続されているかBluetoothが有効であることを確認してください。"
         }
       }
@@ -136,9 +136,9 @@
           "nanoX": "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
         },
         "android": {
-          "nanoS": "{{productName}} のロックが解除済みで、USBケーブル接続されていることを確認してください。",
-          "nanoSP": "{{productName}} のロックが解除済みで、USBケーブル接続されていることを確認してください。",
-          "nanoX": "{{productName}} のロックが解除済みで、USBケーブルが接続されているかBluetoothが有効であることを確認してください。"
+          "nanoS": "{{productName}} のロックが解除済みで、USBケーブルが接続されていることを確認してください。",
+          "nanoSP": "{{productName}}のロックが解除済みで、ケーブル接続されていることを確認してください。",
+          "nanoX": "{{productName}} のロックが解除済みで、USBケーブルが接続されているか、Bluetoothが有効であることを確認してください。"
         }
       }
     },
@@ -720,12 +720,12 @@
       "tour": {
         "title": "ツアーを開始",
         "description": "Ledger Liveアプリをチェックして、暗号資産の購入や運用、安全な保管方法を学びましょう",
-        "cta": "画面をチェックする"
+        "cta": "チェック"
       },
       "academy": {
         "title": "Ledger Academy",
         "description": "ブロックチェーンに関する全ての知識",
-        "cta": "画面をチェックする"
+        "cta": "チェック"
       },
       "stakeCosmos": {
         "title": "COSMOSをステーキング",
@@ -734,7 +734,7 @@
       "familyPack": {
         "title": "ファミリーパック",
         "description": "ギフトやバックアップに最適なNano S 3パックをお得に購入",
-        "cta": "今すぐ購入する"
+        "cta": "今すぐ購入"
       },
       "familyPackX": {
         "title": "Ledger Nano Xファミリーパック",
@@ -779,7 +779,7 @@
       "market": {
         "title": "暗号資産マーケット",
         "description": "暗号資産の価格や市場動向をアプリでチェックする",
-        "cta": "画面をチェックする"
+        "cta": "チェック"
       }
     }
   },
@@ -811,7 +811,7 @@
     "link": "さらに詳しく",
     "sections": {
       "learn": {
-        "title": "学ぶ",
+        "title": "学習",
         "desc": "暗号資産・NFT・デジタルセキュリティについて学ぶ"
       },
       "ledgerApps": {
@@ -880,7 +880,7 @@
       }
     },
     "stepSelectDevice": {
-      "title": "デバイスを選択してください",
+      "title": "デバイスを選択する",
       "nanoS": "Nano S",
       "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
@@ -984,7 +984,7 @@
             }
           },
           "1": {
-            "title": "画面をチェックする",
+            "title": "チェック",
             "label": "デバイスの画面に表示される説明を読み、操作方法を確認する。"
           },
           "2": {
@@ -1014,7 +1014,7 @@
           "1": {
             "title": "PINコードを確認",
             "label": "PINコードをもう一度入力して、確定してください。",
-            "desc": "PINコードをもう一度入力して、確定してください。"
+            "desc": "PINコードをもう一度入力して、確認してください。"
           }
         },
         "infoModal": {
@@ -1787,7 +1787,7 @@
     "assets": "資産",
     "assets_plural": "資産",
     "total": "合計残高：",
-    "listAccount": "資産配分（{{count}}）",
+    "listAccount": "資産配分{{count}}）",
     "title": "資産",
     "moreAssets": "さらに追加"
   },
@@ -2809,7 +2809,7 @@
       },
       "genuineCheck": {
         "title": "{{productName}}でLedgerの管理を有効化",
-        "accept": "NanoXの電源をオフにしないでください。また、<1>Ledger Manager</1>を許可してください。"
+        "accept": "NanoXの電源を切らないでください。また、<1>Ledger Manager</1>を許可してください。"
       },
       "genuineCheckPending": {
         "title": "デバイスが正規品か確認中..."
@@ -2985,7 +2985,7 @@
       "done": {
         "title": "アプリは正常にインストールされました",
         "accounts": "アカウントに移動",
-        "description": "{{app}}アカウントを追加可能です"
+        "description": "{{app}}アカウントを追加できます"
       },
       "dependency": {
         "title": "{{dependency}}アプリが必要です",

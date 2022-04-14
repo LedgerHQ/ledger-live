@@ -720,12 +720,12 @@
       "tour": {
         "title": "Tura katılın",
         "description": "Ledger Live uygulamasını keşfedin ve varlıklarınızı nasıl satın alacağınızı, artıracağınızı ve güvence altına alacağınızı öğrenin",
-        "cta": "Göz Atın"
+        "cta": "Göz At"
       },
       "academy": {
         "title": "Ledger Academy",
         "description": "Blok zinciri hakkında bilmeniz gereken her şey",
-        "cta": "Göz Atın"
+        "cta": "Göz At"
       },
       "stakeCosmos": {
         "title": "COSMOS Stake Edin",
@@ -779,7 +779,7 @@
       "market": {
         "title": "Kripto Piyasaları",
         "description": "Doğrudan uygulama içinde kripto fiyatlarına ve piyasa hareketlerine göz atın",
-        "cta": "Göz Atın"
+        "cta": "Göz At"
       }
     }
   },
@@ -1384,7 +1384,7 @@
         "cta": "Sonraki adım"
       },
       "nextQuestion": "Sonraki soru",
-      "finish": "Sınavı tamamla"
+      "finish": "Testi tamamla"
     },
     "warning": {
       "recoveryPhrase": {
@@ -2809,7 +2809,7 @@
       },
       "genuineCheck": {
         "title": "{{productName}} cihazınızda Ledger Yöneticisini etkinleştirin",
-        "accept": "Lütfen Nano X'inizi kapatmayın. Cihazda <1>Ledger Yöneticisine</1> izin vermeniz gerekiyor."
+        "accept": "Lütfen Nano X'inizi kapatmayın. Cihaz ekranında <1>Ledger Manager</1>'a izin verin."
       },
       "genuineCheckPending": {
         "title": "Cihazın orijinal olup olmadığı kontrol ediliyor..."
@@ -3934,7 +3934,7 @@
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
-      "title": "Ortağımız üzerinden kripto satın alın",
+      "title": "Ortağımız aracılığıyla kripto satın alın",
       "coinifyTitle": "Ortağımız üzerinden kripto satın alın",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın.",
       "CTAButton": "Şimdi satın al",

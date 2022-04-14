@@ -720,12 +720,12 @@
       "tour": {
         "title": "Recorrido introductorio",
         "description": "Explora la aplicación Ledger Live y aprende cómo comprar, hacer crecer y proteger tus activos",
-        "cta": "Navegar"
+        "cta": "Explorar"
       },
       "academy": {
         "title": "Ledger Academy",
         "description": "Todo lo que debes saber acerca de la cadena de bloques",
-        "cta": "Navegar"
+        "cta": "Explorar"
       },
       "stakeCosmos": {
         "title": "Participación con COSMOS",
@@ -779,7 +779,7 @@
       "market": {
         "title": "Mercados cripto",
         "description": "Verifica los precios de las cripto y las tendencias del mercado directamente desde la aplicación",
-        "cta": "Navegar"
+        "cta": "Explorar"
       }
     }
   },
@@ -811,7 +811,7 @@
     "link": "Quiero saber más",
     "sections": {
       "learn": {
-        "title": "Aprender",
+        "title": "Learn",
         "desc": "Aprende sobre cripto, NFTs, seguridad digital y más"
       },
       "ledgerApps": {
@@ -984,7 +984,7 @@
             }
           },
           "1": {
-            "title": "Navegar",
+            "title": "Explorar",
             "label": "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2": {
@@ -1014,7 +1014,7 @@
           "1": {
             "title": "Confirmar código PIN",
             "label": "Ingresa tu código PIN para confirmarlo.",
-            "desc": "Ingresa tu código PIN para confirmarlo."
+            "desc": "Ingresa tu código PIN nuevamente para confirmarlo."
           }
         },
         "infoModal": {
@@ -2809,7 +2809,7 @@
       },
       "genuineCheck": {
         "title": "Habilita Ledger Manager en tu {{productName}}",
-        "accept": "No apagues tu Nano X. Asegúrate de habilitar <1>Ledger Manager</1>."
+        "accept": "No apagues tu Nano X. Asegúrate de permitir (allow) el <1>Ledger Manager</1>."
       },
       "genuineCheckPending": {
         "title": "Comprobando si el dispositivo es auténtico..."
@@ -2968,7 +2968,7 @@
       "installApp": "{{tokenName}} es un token que usa la aplicación {{appName}}. Instala la aplicación {{appName}} para poder administrar tus tokens."
     },
     "update": {
-      "title": "Actualizar",
+      "title": "Actualización",
       "subtitle": "Actualizaciones disponibles",
       "updateAll": "Actualizar"
     }
@@ -3934,7 +3934,7 @@
       "selectCurrency": "Selecciona una divisa",
       "selectAccount": "Selecciona una cuenta",
       "connectDevice": "Conecta tu dispositivo",
-      "title": "Compra cripto por medio de nuestro socio",
+      "title": "Compra cripto a través de nuestro socio",
       "coinifyTitle": "Compra cripto por medio de nuestro socio",
       "description": "Compra activos cripto mediante Coinify y recíbelos directamente en tu cuenta de Ledger.",
       "CTAButton": "Comprar ahora",
@@ -4178,7 +4178,7 @@
   },
   "ApplicationVersion": "v. {{version}}",
   "analytics": {
-    "title": "Análisis",
+    "title": "Analíticas",
     "allocation": {
       "title": "Asignación"
     },
