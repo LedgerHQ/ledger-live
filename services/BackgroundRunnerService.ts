@@ -6,7 +6,6 @@ import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/lib/hw/hasFinalFirmware";
 import {
-  DeviceInfo,
   FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
@@ -21,9 +20,6 @@ import { BackgroundEvent } from "../src/reducers/appstate";
  * even when the device goes to the background. We don't have access to hooks
  * because we are not inside a component but we can read/write the store so we'll
  * use that as the common-ground.
- *
- * Disclaimer: I might have missed some of the cases when
- * backporting the logic from LLD, or the UI might not match in some update paths.
  */
 const TAG = "headlessJS";
 const BackgroundRunnerService = async ({
@@ -49,6 +45,11 @@ const BackgroundRunnerService = async ({
     emitEvent({ type: "error", error });
     NativeModules.BackgroundRunner.stop();
   };
+
+  const onFirmwareUpdated = () => {
+    emitEvent({ type: "firmwareUpdated" });
+    NativeModules.BackgroundRunner.stop();
+  }
 
   const waitForOnlineDevice = (maxWait: number) => {
     return withDevicePolling(deviceId)(
@@ -80,8 +81,6 @@ const BackgroundRunnerService = async ({
         latestFirmware.shouldFlashMCU ||
         hasFinalFirmware(latestFirmware.final)
       ) {
-        // TODO adapt to the case where we enter auto-update here too, until then, the UI
-        // will just show a 100% progress but still not completed if I got it right.
         emitEvent({ type: "flashingMcu" });
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
           next: ({
@@ -101,7 +100,7 @@ const BackgroundRunnerService = async ({
           complete: () => {
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
-              complete: () => emitEvent({ type: "firmwareUpdated" }),
+              complete: onFirmwareUpdated,
             });
           },
         });
@@ -110,7 +109,7 @@ const BackgroundRunnerService = async ({
         // We're waiting forever condition that make getDeviceInfo work
         waitForOnlineDevice(5 * 60 * 1000).subscribe({
           error: onError,
-          complete: () => emitEvent({ type: "firmwareUpdated" }),
+          complete: onFirmwareUpdated,
         });
       }
     },
