@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Text } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../../../../const";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const RestoreRecoveryPhraseScene = () => {
   const { t } = useTranslation();

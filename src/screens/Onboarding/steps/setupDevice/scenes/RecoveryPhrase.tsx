@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Text, Switch } from "@ledgerhq/native-ui";
+import { Text, Switch } from "@ledgerhq/native-ui";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const RecoveryPhraseScene = () => {
   const { t } = useTranslation();
