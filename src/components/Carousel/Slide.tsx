@@ -52,7 +52,7 @@ const Slide = ({
         flexDirection={"row"}
         p={6}
       >
-        <Flex width={"200px"} alignItems="flex-start">
+        <Flex alignItems="flex-start" flex={1}>
           <Text variant={"subtitle"} fontSize={11} color={"neutral.c60"}>
             {t(title)}
           </Text>
@@ -78,7 +78,7 @@ const Slide = ({
               source={image}
             />
           ) : icon ? (
-            <Flex width={"110px"}>{icon}</Flex>
+            <Flex>{icon}</Flex>
           ) : null}
         </Flex>
       </Flex>
