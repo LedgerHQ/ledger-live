@@ -29,6 +29,9 @@ const hedera: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Hedera",
+    // FIXME app v1.1.0 has a known issue, this should be removed when a stable version is released
+    firmware: "2.1.0",
+    appVersion: "1.0.8",
   },
   currency,
   mutations: [
