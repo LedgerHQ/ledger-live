@@ -10,7 +10,7 @@
     "@ledgerhq/hw-transport-web-ble": "^6.7.0",
     "@ledgerhq/hw-transport-webhid": "^6.7.0",
     "@ledgerhq/hw-transport-webusb": "^6.7.0",
-    "@ledgerhq/live-common": "^21.7.0",
+    "@ledgerhq/live-common": "^22.0.0",
     "@material-ui/core": "^4.11.3",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.1",
