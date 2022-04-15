@@ -69,8 +69,8 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: install linux dependencies
-        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
+      # - name: install linux dependencies
+      #   run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
       - name: install and switch to GCC 5.4x
         run: |
           cd apps/ledger-live-desktop
