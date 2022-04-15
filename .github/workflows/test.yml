@@ -55,7 +55,7 @@ jobs:
       - name: Bump npm to latest
         run: npm i -g npm
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/*"
+        run: pnpm i --filter="!./apps"
       - name: Build and Test affected libraries
         run: pnpm test -- --continue --filter="!./apps/*" --since=origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}
         shell: bash
