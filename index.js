@@ -22,15 +22,25 @@ import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
 
-const blacklistErrorName = ["NetworkDown"];
-const blacklistErrorDescription = [/Device .* was disconnected/];
+const blacklistErrorName = [
+  "NetworkDown",
+  "Network Error",
+  "WebsocketConnectionError",
+  "DisconnectedDeviceDuringOperation",
+  "BleError",
+];
+const blacklistErrorDescription = [
+  "Transaction signing request was rejected by the user",
+];
 
 if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,
     environment: Config.SENTRY_ENVIRONMENT,
-    release: `ledger-live-mobile@${pkg.version}`,
-    dist: String(VersionNumber.buildVersion),
+    // NB we do not need to explicitly set the release. we let the native side infers it.
+    // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
+    // dist: String(VersionNumber.buildVersion),
+    sampleRate: 0.05,
     tracesSampleRate: 0.001,
     integrations: [
       new Sentry.ReactNativeTracing({
