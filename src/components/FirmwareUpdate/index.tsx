@@ -146,7 +146,7 @@ export default function FirmwareUpdate({
 
   useEffect(() => {
     if(step === "error") {
-      track("FirmwareUpdateError", error);
+      track("FirmwareUpdateError", error ?? null);
     }
   }, [step]);
 
