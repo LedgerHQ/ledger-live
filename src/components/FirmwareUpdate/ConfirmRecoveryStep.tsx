@@ -1,8 +1,9 @@
 import { Flex, Text, Link, Icons, Button, Checkbox } from "@ledgerhq/native-ui";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Linking, ScrollView } from "react-native";
 import { track } from "../../analytics";
+import Track from "../../analytics/Track";
 import { urls } from "../../config/urls";
 import SafeMarkdown from "../SafeMarkdown";
 
@@ -40,12 +41,9 @@ const ConfirmRecoveryStep = ({
     await Linking.openURL(urls.recoveryPhraseInfo);
   }, [urls.recoveryPhraseInfo]);
 
-  useEffect(() => {
-    track("FirmwareUpdateChangelog");
-  }, []);
-
   return (
     <Flex height="100%">
+      <Track event="FirmwareUpdateChangelog" onMount />
       <ScrollView>
         <Text variant="h2" fontWeight="semiBold" mb={4}>
           <Trans

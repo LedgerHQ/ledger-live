@@ -1,5 +1,5 @@
 import { Flex, Text, Log } from "@ledgerhq/native-ui";
-import React, { useEffect } from "react";
+import React from "react";
 import Animation from "../Animation";
 import getDeviceAnimation from "../DeviceAction/getDeviceAnimation";
 import manager from "@ledgerhq/live-common/lib/manager";
@@ -10,7 +10,7 @@ import {
   FirmwareUpdateContext,
 } from "@ledgerhq/live-common/lib/types/manager";
 import { useTheme } from "styled-components/native";
-import { track } from "../../analytics";
+import Track from "../../analytics/Track";
 
 type Props = {
   device: Device;
@@ -22,12 +22,9 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  useEffect(() => {
-    track("FirmwareUpdateConfirmOnDevice");
-  }, []);
-
   return (
     <Flex alignItems="center">
+      <Track event="FirmwareUpdateConfirmOnDevice" onMount />
       <Animation
         source={getDeviceAnimation({
           device,

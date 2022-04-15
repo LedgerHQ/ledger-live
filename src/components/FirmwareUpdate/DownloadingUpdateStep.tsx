@@ -1,21 +1,18 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import FirmwareProgress from "../FirmwareProgress";
-import { track } from "../../analytics";
+import Track from "../../analytics/Track";
 
 type Props = {
   progress?: number;
 };
 const DownloadingUpdateStep = ({ progress }: Props) => {
   const { t } = useTranslation();
-  
-  useEffect(() => {
-      track("FirmwareUpdateDownloading");
-  }, []);
 
   return (
     <Flex alignItems="center">
+      <Track event="FirmwareUpdateDownloading" onMount />
       <FirmwareProgress progress={progress} />
       <Text variant="h2" mt={8}>
         {progress
