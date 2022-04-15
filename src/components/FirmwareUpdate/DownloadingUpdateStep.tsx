@@ -11,7 +11,7 @@ const DownloadingUpdateStep = ({ progress }: Props) => {
   const { t } = useTranslation();
   
   useEffect(() => {
-      track("DownloadingFirmware");
+      track("FirmwareUpdateDownloading");
   }, []);
 
   return (

@@ -19,6 +19,7 @@ import Animation from "../Animation";
 
 import lottieUsb from "../../screens/Onboarding/assets/nanoS/plugDevice/dark.json";
 import { track } from "../../analytics";
+import { setLastConnectedDevice } from "../../actions/settings";
 
 type Props = {
   onBluetoothDeviceAction?: (device: Device) => void;
@@ -56,6 +57,7 @@ export default function SelectDevice({
         });
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
+        dispatch(setLastConnectedDevice(deviceInfo));
         onSelect(deviceInfo);
       } else {
         NativeModules.BluetoothHelperModule.prompt()

@@ -105,6 +105,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "FwUpdateBluetoothNotSupported": {
+      "title": "Firmware updates are only supported for wired connections"
+    },
     "BtcUnmatchedApp": {
       "title": "That's the wrong app",
       "description": "Please open the {{managerAppName}} app on your device."

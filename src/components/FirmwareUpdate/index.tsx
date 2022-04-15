@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { Button } from "@ledgerhq/native-ui";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import {
   BackgroundEvent,
   nextBackgroundEventSelector,
@@ -22,12 +22,18 @@ import FirmwareUpdatedStep from "./FirmwareUpdatedStep";
 import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
+import { track } from "../../analytics";
 
 type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
   isOpen: boolean;
   onClose: (restoreApps?: boolean) => void;
+};
+
+const BluetoothNotSupportedError: Error = {
+  name: "FwUpdateBluetoothNotSupported",
+  message: "",
 };
 
 type FwUpdateStep =
@@ -71,13 +77,7 @@ const fwUpdateStateReducer = (
       return {
         step: event.wired ? "confirmRecoveryBackup" : "error",
         progress: undefined,
-        error: event.wired
-          ? undefined
-          : {
-              name: "BluetoothNotSupported",
-              message:
-                "Firmware updates are only supported for wired connections",
-            },
+        error: event.wired ? undefined : BluetoothNotSupportedError,
         installing: undefined,
       };
     default:
@@ -100,12 +100,7 @@ export default function FirmwareUpdate({
   const [state, dispatchEvent] = useReducer(fwUpdateStateReducer, {
     step: device.wired ? "confirmRecoveryBackup" : "error",
     progress: undefined,
-    error: device.wired
-      ? undefined
-      : {
-          name: "BluetoothNotSupported",
-          message: "Firmware updates are only supported for wired connections",
-        },
+    error: device.wired ? undefined : BluetoothNotSupportedError,
     installing: undefined,
   });
 
@@ -149,6 +144,12 @@ export default function FirmwareUpdate({
     dispatch(dequeueBackgroundEvent());
   }, [nextBackgroundEvent, dispatch, dispatchEvent]);
 
+  useEffect(() => {
+    if(step === "error") {
+      track("FirmwareUpdateError", error);
+    }
+  }, [step]);
+
   const launchUpdate = useCallback(() => {
     if (latestFirmware) {
       NativeModules.BackgroundRunner.start(
@@ -184,8 +185,14 @@ export default function FirmwareUpdate({
       )}
       {step === "error" && (
         <>
-          <GenericErrorView error={error as Error} />
-          {error?.name !== "BluetoothNotSupported" && (
+          <GenericErrorView
+            error={error as Error}
+            withDescription={false}
+            hasExportLogButton={error !== BluetoothNotSupportedError }
+            Icon={error === BluetoothNotSupportedError ? Icons.UsbMedium : undefined}
+            iconColor="neutral.c100"
+          />
+          {error !== BluetoothNotSupportedError && (
             <Button
               type="main"
               alignSelf="stretch"

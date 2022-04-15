@@ -10,7 +10,7 @@ const FirmwareUpdatedStep = ({ onReinstallApps }: Props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    track("FirmwareUpdated");
+    track("FirmwareUpdateFinished");
   }, []);
 
   return (

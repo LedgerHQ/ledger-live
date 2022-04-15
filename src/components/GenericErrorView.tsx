@@ -6,6 +6,7 @@ import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
 import DownloadFileIcon from "../icons/DownloadFile";
+import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 
 const GenericErrorView = ({
   error,
@@ -13,6 +14,8 @@ const GenericErrorView = ({
   withDescription = true,
   withIcon = true,
   hasExportLogButton = true,
+  Icon = CloseMedium,
+  iconColor = "error.c100"
 }: {
   error: Error;
   // sometimes we want to "hide" the technical error into a category
@@ -22,6 +25,8 @@ const GenericErrorView = ({
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;
+  Icon?: IconOrElementType;
+  iconColor?: string;
 }) => {
   const onExport = useExportLogs();
 
@@ -33,10 +38,10 @@ const GenericErrorView = ({
       {withIcon ? (
         <Box mb={7}>
           <IconBox
-            Icon={CloseMedium}
+            Icon={Icon}
             iconSize={24}
             boxSize={64}
-            color={"error.c100"}
+            color={iconColor}
           />
         </Box>
       ) : null}

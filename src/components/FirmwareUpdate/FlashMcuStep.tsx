@@ -12,7 +12,7 @@ const FlashMcuStep = ({ progress, installing }: Props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-      track("FlashingMCU");
+      track("FirmwareUpdateFlashingMCU");
   }, []);
 
   return (

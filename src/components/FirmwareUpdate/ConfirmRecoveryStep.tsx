@@ -41,7 +41,7 @@ const ConfirmRecoveryStep = ({
   }, [urls.recoveryPhraseInfo]);
 
   useEffect(() => {
-    track("Page Manager DisclaimerModal");
+    track("FirmwareUpdateChangelog");
   }, []);
 
   return (

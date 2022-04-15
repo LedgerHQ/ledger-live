@@ -23,7 +23,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    track("ConfirmFirmwareUpdate");
+    track("FirmwareUpdateConfirmOnDevice");
   }, []);
 
   return (
