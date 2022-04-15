@@ -190,7 +190,7 @@ export default function FirmwareUpdate({
             withDescription={false}
             hasExportLogButton={error !== BluetoothNotSupportedError }
             Icon={error === BluetoothNotSupportedError ? Icons.UsbMedium : undefined}
-            iconColor="neutral.c100"
+            iconColor={error === BluetoothNotSupportedError ? "neutral.c100" : undefined}
           />
           {error !== BluetoothNotSupportedError && (
             <Button

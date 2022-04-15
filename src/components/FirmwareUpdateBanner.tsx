@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import {
-  DeviceModelInfo,
-} from "@ledgerhq/live-common/lib/types/manager";
+import { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
@@ -21,6 +19,12 @@ import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import { gte as isVersionGreaterOrEqual } from "semver";
+import { DeviceModelId } from "@ledgerhq/devices";
+
+const devicesWithFwVersionConstraints: (DeviceModelId | undefined)[] = [
+  DeviceModelId.nanoS,
+  DeviceModelId.nanoX,
+];
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -63,7 +67,8 @@ const FirmwareUpdateBanner = () => {
     usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled;
   const isUsbFwVersionUpdateSupported =
     latestFirmware?.final?.version &&
-    isVersionGreaterOrEqual(latestFirmware.final.version, "2.0.0");
+    (isVersionGreaterOrEqual(latestFirmware.final.version, "2.0.0") ||
+      !devicesWithFwVersionConstraints.includes(lastSeenDevice?.modelId));
   const usbFwUpdateActivated =
     isUsbFwUpdateFeatureActivated &&
     Platform.OS === "android" &&
