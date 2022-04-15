@@ -12,9 +12,7 @@ import com.facebook.react.bridge.ReactMethod
 
 /**
  * This class is in charge of receiving the call from react-native side and in turn calling a
- * headlessJS service that will run our code in the background. We could potentially launch some
- * UI helpers such as notifications from here, and have the headlessJS talk back to us with more
- * exposed methods.
+ * headlessJS service that will run our code in the background.
  */
 class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJavaModule(context) {
     override fun getName(): String {
@@ -22,7 +20,7 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     /**
-     * Refactor this eye-sore into something cleaner someday.
+     * TODO Rewrite the notification life cycle code
      */
     private fun createOrUpdateNotification(progress: Int, message: String) {
         val intent = Intent(context, MainActivity::class.java)
@@ -60,7 +58,7 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
 
         if (!requiresUserInput) {
             // Conditionally make it a progress thing
-            builder = builder.setProgress(100, progress, progress == 0 || requiresUserInput)
+            builder = builder.setProgress(100, progress, progress == 0)
         }
 
         with(NotificationManagerCompat.from(context)) {
