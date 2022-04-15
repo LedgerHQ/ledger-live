@@ -197,11 +197,11 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  let mappedNativeModules = undefined;
+  let mappedNativeModules;
 
   if (!process.env.TESTING) {
     // Find native modules and copy them to ./dist/node_modules with their dependencies.
-    const mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
+    mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
     // Also copy to ./node_modules to be able to run the production build with playwright.
     copyFolderRecursivelySync(
       path.join(lldRoot, "dist", "node_modules"),
