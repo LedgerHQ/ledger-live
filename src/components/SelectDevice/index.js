@@ -148,7 +148,7 @@ export default function SelectDevice({
     <>
       {usbOnly && withArrows ? (
         <UsbPlaceholder />
-      ) : usbOnly ? null : ble.length === 0 ? (
+      ) : ble.length === 0 ? (
         <BluetoothEmpty onPairNewDevice={onPairNewDevice} />
       ) : (
         <View>

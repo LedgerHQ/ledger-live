@@ -150,7 +150,7 @@ export default function SelectDevice({
     <>
       {usbOnly && withArrows && !hideAnimation ? (
         <UsbPlaceholder />
-      ) : ble.length === 0 ? (
+      ) : usbOnly ? null : ble.length === 0 ? (
         <BluetoothEmpty
           hideAnimation={hideAnimation}
           onPairNewDevice={onPairNewDevice}
