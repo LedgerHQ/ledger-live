@@ -28,6 +28,7 @@ import AddAccount from "./AddAccount";
 // import AccountOrder from "./AccountOrder";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
+import Spinning from "../../components/Spinning";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -177,7 +178,9 @@ function Accounts({ navigation, route }: Props) {
         </Flex>
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
-            <RefreshMedium size={20} color={"neutral.c80"} />
+            <Spinning clockwise>
+              <RefreshMedium size={20} color={"neutral.c80"} />
+            </Spinning>
             <Text color={"neutral.c80"} ml={2}>
               {t("portfolio.syncPending")}
             </Text>
