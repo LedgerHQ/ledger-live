@@ -66,6 +66,7 @@ type RouteParams = {
   searchQuery?: string;
   tab?: ManagerTab;
   installApp?: string;
+  firmwareUpdate?: boolean;
 };
 
 type Props = {
@@ -154,7 +155,10 @@ class ChooseDevice extends Component<
   }
 
   render() {
-    const { isFocused } = this.props;
+    const {
+      isFocused,
+      route: { params = {} },
+    } = this.props;
     const { showMenu, device } = this.state;
 
     if (!isFocused) return null;
@@ -169,6 +173,7 @@ class ChooseDevice extends Component<
           <Trans i18nKey="manager.connect" />
         </Text>
         <SelectDevice
+          usbOnly={params?.firmwareUpdate}
           autoSelectOnAdd
           onSelect={this.onSelectDevice}
           onStepEntered={this.onStepEntered}
