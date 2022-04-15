@@ -25,11 +25,12 @@ function getDeviceTransactionConfig({
       label: "Method",
       value: "Transfer",
     });
-    fields.push({
-      type: "amount",
-      label: "Amount",
-    });
   }
+
+  fields.push({
+    type: "amount",
+    label: "Amount",
+  });
 
   if (!estimatedFees.isZero()) {
     fields.push({
