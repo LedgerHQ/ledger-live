@@ -24,6 +24,7 @@ function SearchHeader({ search, refresh }: Props) {
         starred: [],
         liveCompatible: false,
         top100: false,
+        limit: 20,
       });
     }
   }, [debouncedSearch, refresh, search]);

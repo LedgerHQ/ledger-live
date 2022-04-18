@@ -17,12 +17,7 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
-import {
-  FlatList,
-  RefreshControl,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { useRoute } from "@react-navigation/native";
@@ -35,6 +30,18 @@ import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
 import { useProviders } from "../Swap/SwapEntry";
+import Illustration from "../../images/illustration/Illustration";
+import { useNetInfo } from "@react-native-community/netinfo";
+
+const noResultIllustration = {
+  dark: require("../../images/illustration/Dark/_051.png"),
+  light: require("../../images/illustration/Light/_051.png"),
+};
+
+const noNetworkIllustration = {
+  dark: require("../../images/illustration/Dark/_078.png"),
+  light: require("../../images/illustration/Light/_078.png"),
+};
 
 function getAnalyticsProperties(
   requestParams: MarketListRequestParams,
@@ -52,7 +59,7 @@ function getAnalyticsProperties(
 
 const BottomSection = ({ navigation }: { navigation: any }) => {
   const { t } = useTranslation();
-  const { requestParams, refresh, counterCurrency } = useMarketData();
+  const { requestParams, counterCurrency, refresh } = useMarketData();
   const { range, starred = [], orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
@@ -166,6 +173,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "asc",
               orderBy: "market_cap",
               top100: false,
+              limit: 20
             },
             value: "market_cap_asc",
           },
@@ -175,6 +183,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "desc",
               orderBy: "market_cap",
               top100: false,
+              limit: 20
             },
             value: "market_cap_desc",
           },
@@ -241,6 +250,7 @@ export default function Market({ navigation }: { navigation: any }) {
   const { locale } = useLocale();
   const { params }: { params: any } = useRoute();
   const initialTop100 = params?.top100;
+  const { isConnected } = useNetInfo();
 
   useProviders();
 
@@ -253,6 +263,7 @@ export default function Market({ navigation }: { navigation: any }) {
     loading,
     page,
     selectCurrency,
+    error,
   } = useMarketData();
 
   const { limit, search, range, top100 } = requestParams;
@@ -265,9 +276,14 @@ export default function Market({ navigation }: { navigation: any }) {
         starred: [],
         liveCompatible: false,
         top100: false,
+        limit: 20,
       }),
     [refresh],
   );
+
+  useEffect(() => {
+    if (!isConnected) setIsLoading(false); 
+  }, [isConnected]);
 
   useEffect(() => {
     if (initialTop100) {
@@ -319,41 +335,62 @@ export default function Market({ navigation }: { navigation: any }) {
 
   const renderEmptyComponent = useCallback(
     () =>
-      search && !isLoading ? (
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="stretch"
-          p="4"
-          mt={70}
-        >
-          <Image
-            style={{ width: 164, height: 164, alignSelf: "center" }}
-            source={
-              colors.type === "light"
-                ? require("../../images/marketNoResultslight.png")
-                : require("../../images/marketNoResultsdark.png")
-            }
-          />
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("market.warnings.noCryptosFound")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
-            <Trans
-              i18nKey="market.warnings.noSearchResultsFor"
-              values={{ search }}
-            >
-              <Text fontWeight="bold" variant="body" color="neutral.c70">
-                {""}
+        search ? ( // shows up in case of no search results
+          <Flex
+            flex={1}
+            flexDirection="column"
+            alignItems="stretch"
+            p="4"
+            mt={70}
+          >
+              <Flex alignItems="center">
+                <Illustration
+                  size={164}
+                  lightSource={noResultIllustration.light}
+                  darkSource={noResultIllustration.dark}
+                />
+              </Flex>
+              <Text textAlign="center" variant="h4" my={3}>
+                {t("market.warnings.noCryptosFound")}
               </Text>
-            </Trans>
-          </Text>
-          <Button mt={8} onPress={resetSearch} type="main">
-            {t("market.warnings.browseAssets")}
-          </Button>
-        </Flex>
-      ) : null,
-    [colors.type, isLoading, resetSearch, search, t],
+              <Text textAlign="center" variant="body" color="neutral.c70">
+                <Trans
+                  i18nKey="market.warnings.noSearchResultsFor"
+                  values={{ search }}
+                >
+                  <Text fontWeight="bold" variant="body" color="neutral.c70">
+                    {""}
+                  </Text>
+                </Trans>
+              </Text>
+              <Button mt={8} onPress={resetSearch} type="main">
+                {t("market.warnings.browseAssets")}
+              </Button>
+            </Flex>
+          ) : !isConnected ? ( // shows up in case of network down
+            <Flex
+              flex={1}
+              flexDirection="column"
+              alignItems="stretch"
+              p="4"
+              mt={70}
+            >
+              <Flex alignItems="center">
+                <Illustration
+                  size={164}
+                  lightSource={noNetworkIllustration.light}
+                  darkSource={noNetworkIllustration.dark}
+                />
+              </Flex>
+              <Text textAlign="center" variant="h4" my={3}>
+                {t("errors.NetworkDown.title")}
+              </Text>
+              <Text textAlign="center" variant="body" color="neutral.c70">
+                  {t("errors.NetworkDown.description")}
+              </Text>
+          </Flex>
+      ): <InfiniteLoader size={30} />, // shows up in case loading is ongoing
+    [error, isLoading, resetSearch, search, t],
   );
 
   const onEndReached = useCallback(() => {
