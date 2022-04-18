@@ -8,7 +8,7 @@ import {
   Text,
   IconBoxList,
   Icons,
-  Link as UILink,
+  Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
 import { urls } from "../../../../../config/urls";
@@ -23,14 +23,10 @@ const BluetoothConnection = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const handlePress = React.useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
-    const supported = await Linking.canOpenURL(urls.fixConnectionIssues);
-    if (!supported) return;
-
+  const handlePress = React.useCallback(() => {
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
-    await Linking.openURL(urls.fixConnectionIssues);
+    Linking.openURL(urls.fixConnectionIssues);
   }, []);
 
   return (
@@ -41,25 +37,28 @@ const BluetoothConnection = () => {
             {t("onboarding.stepPairNew.infoModal.title_1")}
           </Text>
           <IconBoxList
-            items={bullets.map((item, i) => ({
+            items={bullets.map(item => ({
               title: (
                 <Text variant="body" color="neutral.c80">
                   <Trans i18nKey={item} values={{ Os: Platform.OS }}>
-                    <Text />
-                    <Text uppercase fontWeight="bold" />
+                    <Text>{""}</Text>
+                    <Text uppercase fontWeight="bold">
+                      {""}
+                    </Text>
                   </Trans>
                 </Text>
               ),
               Icon: Icons.ChevronRightMedium,
             }))}
           />
-          <UILink
+          <TextLink
             type="color"
             onPress={handlePress}
             Icon={Icons.ExternalLinkMedium}
+            style={{ justifyContent: "flex-start" }}
           >
             {t("onboarding.stepPairNew.infoModal.bullets.2.link")}
-          </UILink>
+          </TextLink>
         </Flex>
         {Platform.OS === "ios" ? null : (
           <>
@@ -70,8 +69,8 @@ const BluetoothConnection = () => {
               </Text>
               <Text variant="body" color="neutral.c80" mb={6}>
                 <Trans i18nKey="onboarding.stepPairNew.infoModal.desc_1">
-                  <Text />
-                  <Text fontWeight="bold" />
+                  <Text>{""}</Text>
+                  <Text fontWeight="bold">{""}</Text>
                 </Trans>
               </Text>
             </Flex>

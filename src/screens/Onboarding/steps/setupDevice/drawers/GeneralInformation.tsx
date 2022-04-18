@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
@@ -8,7 +8,7 @@ import {
   Text,
   NumberedList,
   Icons,
-  Link,
+  Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
 import { urls } from "../../../../../config/urls";
@@ -23,15 +23,11 @@ const OnboardingGeneralInformation = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const handlePress = React.useCallback(async () => {
-    // Checking if the link is supported for links with custom URL scheme.
-    const supported = await Linking.canOpenURL(urls.recoveryPhraseInfo);
-    if (!supported) return;
-
+  const handlePress = useCallback(() => {
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
-    await Linking.openURL(urls.recoveryPhraseInfo);
-  }, [urls.recoveryPhraseInfo]);
+    Linking.openURL(urls.recoveryPhraseInfo);
+  }, []);
 
   return (
     <Flex flex={1} justifyContent="space-between">
@@ -50,7 +46,7 @@ const OnboardingGeneralInformation = () => {
               "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc_1",
             )}
           </Text>
-          <Link
+          <TextLink
             onPress={handlePress}
             Icon={Icons.ExternalLinkMedium}
             iconPosition="right"
@@ -58,7 +54,7 @@ const OnboardingGeneralInformation = () => {
             style={{ justifyContent: "flex-start" }}
           >
             {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link")}
-          </Link>
+          </TextLink>
           <Flex my={10} borderBottomColor="neutral.c40" borderBottomWidth={1} />
           <Text variant="h1" color="neutral.c100" uppercase mb={6}>
             {t(
@@ -75,4 +71,4 @@ const OnboardingGeneralInformation = () => {
   );
 };
 
-export default OnboardingGeneralInformation;
+export default memo(OnboardingGeneralInformation);
