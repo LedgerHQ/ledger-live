@@ -49,16 +49,15 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
           fetch-depth: 0
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
           cache: pnpm
@@ -85,25 +84,11 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      # - name: make local version pr
-      #   if: github.event_name == 'pull_request'
-      #   env:
-      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
-      #   run: yarn version --new-version="$VERSION"
-      # - name: make local version push
-      #   if: github.event_name == 'push'
-      #   env:
-      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
-      #   run: yarn version --new-version="$VERSION"
       - name: build the app
         env:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:desktop
-      # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
-      #   id: post-version
-      #   with:
-      #     path: ${{ github.workspace }}
+        run: pnpm lld:build
       - name: upload linux app
         uses: actions/upload-artifact@v1
         with:
@@ -116,7 +101,7 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -137,17 +122,7 @@ jobs:
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
-      - uses: actions/setup-node@main
-        with:
-          node-version: 14.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      # - uses: actions/setup-python@v2
-      #   with:
-      #     python-version: 3.x
       - name: bump npm
-        # cd C:\actions-runner\_work\_tool\node\14.18.3\x64\
-        # npm i --g npm@8.3.1 --force
         run: |
           pnpm add -g npm
       - name: set git user
@@ -165,20 +140,12 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      # - name: make local version pr
-      #   id: postversion1
-      #   if: github.event_name == 'pull_request'
-      #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}"
-      # - name: make local version push
-      #   id: postversion2
-      #   if: github.event_name == 'push'
-      #   run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
         env:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
-          pnpm build:desktop
+          pnpm lld:build
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v1
@@ -192,16 +159,15 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          # repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
           fetch-depth: 0
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
           cache: pnpm
@@ -244,7 +210,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           eval "$(rbenv init - bash)"
-          pnpm build:desktop
+          pnpm lld:build
       # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
       #   id: post-version
       #   with:

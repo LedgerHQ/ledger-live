@@ -46,7 +46,7 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -64,7 +64,7 @@ jobs:
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: latest
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
           cache: pnpm
@@ -106,7 +106,7 @@ jobs:
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:mobile
+        run: pnpm llm:build
       # - uses: ledgerhq/actions/get-package-infos@main
       #   id: post-version
       #   with:
