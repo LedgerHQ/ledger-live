@@ -22,13 +22,12 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     /**
      * TODO Rewrite the notification life cycle code
      */
-    private fun createOrUpdateNotification(progress: Int, message: String) {
+    private fun createOrUpdateNotification(progress: Int, message: String, requiresUserInput: Boolean) {
         val intent = Intent(context, MainActivity::class.java)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        val requiresUserInput = message !== "";
         var builder = NotificationCompat.Builder(context, if (requiresUserInput) {
             MainApplication.HI_NOTIFICATION_CHANNEL
         } else {
@@ -39,17 +38,7 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
                 } else {
                     NotificationCompat.PRIORITY_DEFAULT
                 })
-                .setContentText(when {
-                    requiresUserInput -> {
-                        "We require your confirmation on the device"
-                    }
-                    progress == 0 -> {
-                        "Transferring update, we will notify you when we're done"
-                    }
-                    else -> {
-                        "Installing $progress%"
-                    }
-                })
+                .setContentText(message)
                 .setOnlyAlertOnce(!requiresUserInput)
                 .setSmallIcon(R.drawable.ic_stat_group)
                 .setContentIntent(pendingIntent)
@@ -72,8 +61,8 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     @ReactMethod
-    fun start(deviceId: String?, firmwareSerializedJson: String?) {
-        createOrUpdateNotification(0, "");
+    fun start(deviceId: String, firmwareSerializedJson: String, message: String) {
+        createOrUpdateNotification(0, message, false);
         HeadlessJsTaskService.acquireWakeLockNow(context)
         val service = Intent(context, BackgroundService::class.java)
         service.putExtra("deviceId", deviceId)
@@ -83,13 +72,13 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
     }
 
     @ReactMethod
-    fun update(progress: Int) {
-        createOrUpdateNotification(progress, "");
+    fun update(progress: Int, message: String) {
+        createOrUpdateNotification(progress, message, false);
     }
 
     @ReactMethod
     fun requireUserAction(message: String) {
-        createOrUpdateNotification(0, message);
+        createOrUpdateNotification(0, message, true);
     }
 
     @ReactMethod

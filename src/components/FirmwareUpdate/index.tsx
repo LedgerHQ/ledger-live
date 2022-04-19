@@ -51,40 +51,6 @@ type FwUpdateState = {
   installing?: string | null;
 };
 
-// reducer for the firmware update state machine
-const fwUpdateStateReducer = (
-  state: FwUpdateState,
-  event: BackgroundEvent | { type: "reset"; wired: boolean },
-): FwUpdateState => {
-  switch (event.type) {
-    case "confirmPin":
-      return { step: "confirmPin" };
-    case "downloadingUpdate":
-      return { step: "downloadingUpdate", progress: event.progress };
-    case "confirmUpdate":
-      return { step: "confirmUpdate" };
-    case "flashingMcu":
-      return {
-        step: "flashingMcu",
-        progress: event.progress,
-        installing: event.installing,
-      };
-    case "firmwareUpdated":
-      return { step: "firmwareUpdated" };
-    case "error":
-      return { step: "error", error: event.error };
-    case "reset":
-      return {
-        step: event.wired ? "confirmRecoveryBackup" : "error",
-        progress: undefined,
-        error: event.wired ? undefined : BluetoothNotSupportedError,
-        installing: undefined,
-      };
-    default:
-      return { ...state };
-  }
-};
-
 export default function FirmwareUpdate({
   device,
   deviceInfo,
@@ -96,6 +62,54 @@ export default function FirmwareUpdate({
   const latestFirmware = useLatestFirmware(deviceInfo);
 
   const { t } = useTranslation();
+
+  // reducer for the firmware update state machine
+  const fwUpdateStateReducer = useCallback(
+    (
+      state: FwUpdateState,
+      event: BackgroundEvent | { type: "reset"; wired: boolean },
+    ): FwUpdateState => {
+      switch (event.type) {
+        case "confirmPin":
+          return { step: "confirmPin" };
+        case "downloadingUpdate":
+          if (event.progress) {
+            NativeModules.BackgroundRunner.update(
+              Math.round(event.progress * 100),
+              t("FirmwareUpdate.Notifications.installing", {
+                progress: Math.round(event.progress * 100),
+              })
+            );
+          }
+          return { step: "downloadingUpdate", progress: event.progress };
+        case "confirmUpdate":
+          NativeModules.BackgroundRunner.requireUserAction(
+            t("FirmwareUpdate.Notifications.confirmOnDevice")
+          );
+          return { step: "confirmUpdate" };
+        case "flashingMcu":
+          return {
+            step: "flashingMcu",
+            progress: event.progress,
+            installing: event.installing,
+          };
+        case "firmwareUpdated":
+          return { step: "firmwareUpdated" };
+        case "error":
+          return { step: "error", error: event.error };
+        case "reset":
+          return {
+            step: event.wired ? "confirmRecoveryBackup" : "error",
+            progress: undefined,
+            error: event.wired ? undefined : BluetoothNotSupportedError,
+            installing: undefined,
+          };
+        default:
+          return { ...state };
+      }
+    },
+    [t],
+  );
 
   const [state, dispatchEvent] = useReducer(fwUpdateStateReducer, {
     step: device.wired ? "confirmRecoveryBackup" : "error",
@@ -145,7 +159,7 @@ export default function FirmwareUpdate({
   }, [nextBackgroundEvent, dispatch, dispatchEvent]);
 
   useEffect(() => {
-    if(step === "error") {
+    if (step === "error") {
       track("FirmwareUpdateError", error ?? null);
     }
   }, [step]);
@@ -155,6 +169,7 @@ export default function FirmwareUpdate({
       NativeModules.BackgroundRunner.start(
         device.deviceId,
         JSON.stringify(latestFirmware),
+        t("FirmwareUpdate.Notifications.preparingUpdate"),
       );
       dispatchEvent({ type: "downloadingUpdate", progress: 0 });
     }
@@ -188,9 +203,13 @@ export default function FirmwareUpdate({
           <GenericErrorView
             error={error as Error}
             withDescription={false}
-            hasExportLogButton={error !== BluetoothNotSupportedError }
-            Icon={error === BluetoothNotSupportedError ? Icons.UsbMedium : undefined}
-            iconColor={error === BluetoothNotSupportedError ? "neutral.c100" : undefined}
+            hasExportLogButton={error !== BluetoothNotSupportedError}
+            Icon={
+              error === BluetoothNotSupportedError ? Icons.UsbMedium : undefined
+            }
+            iconColor={
+              error === BluetoothNotSupportedError ? "neutral.c100" : undefined
+            }
           />
           {error !== BluetoothNotSupportedError && (
             <Button

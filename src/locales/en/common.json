@@ -3068,6 +3068,11 @@
     "newVersionNumber": "New version",
     "success": "Firmware updated",
     "update": "Update",
+    "Notifications": {
+      "confirmOnDevice": "We require your confirmation on the device",
+      "preparingUpdate": "Transferring update, we will notify you when we're done",
+      "installing": "Installing {{progress}}%"
+    },
     "Installing": {
       "title": "{{stepName}}...",
       "subtitle": "If requested on your device, please enter your PIN to finish the process."

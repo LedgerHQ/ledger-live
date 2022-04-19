@@ -53,7 +53,7 @@ const BackgroundRunnerService = async ({
 
   const waitForOnlineDevice = (maxWait: number) => {
     return withDevicePolling(deviceId)(
-      t => from(getDeviceInfo(t)),
+      transport => from(getDeviceInfo(transport)),
       () => true,
     ).pipe(timeout(maxWait));
   };
@@ -67,10 +67,6 @@ const BackgroundRunnerService = async ({
         emitEvent({ type: "confirmUpdate" });
       } else {
         emitEvent({ type: "downloadingUpdate", progress });
-        if (progress) {
-          // update progress bar on notification
-          NativeModules.BackgroundRunner.update(Math.round(progress * 100));
-        }
       }
     },
     error: onError,
