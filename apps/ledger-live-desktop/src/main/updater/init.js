@@ -22,7 +22,7 @@ const sendStatus = (status: UpdateStatus, payload?: *) => {
 const handleDownload = async info => {
   try {
     sendStatus("checking");
-    if (!__NIGHTLY__) {
+    if (!__PRERELEASE__) {
       const appUpdater = await createElectronAppUpdater({ feedURL: UPDATE_CHECK_FEED, info });
       await appUpdater.verify();
     }
@@ -50,6 +50,9 @@ const init = () => {
   autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.autoDownload = false;
   autoUpdater.checkForUpdates();
+  if (__PRERELEASE__ && __CHANNEL__) {
+    autoUpdater.channel = __CHANNEL__;
+  }
 };
 
 const quitAndInstall = () => {
