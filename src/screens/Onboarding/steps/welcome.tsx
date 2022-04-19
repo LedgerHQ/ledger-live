@@ -54,7 +54,10 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const onPrivacyLink = useCallback(
     () =>
-      Linking.openURL((urls.privacyPolicy as Record<string, string>)[locale]),
+      Linking.openURL(
+        (urls.privacyPolicy as Record<string, string>)[locale] ||
+          urls.privacyPolicy.en,
+      ),
     [locale],
   );
 
