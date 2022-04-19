@@ -44,32 +44,27 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        {
-          title: t("discover.sections.ledgerApps.title"),
-          subTitle: t("discover.sections.ledgerApps.desc"),
-          onPress: () => {
-            if (Platform.OS !== "ios") {
-              // TODO: FIX @react-navigation/native using Typescript
-              // @ts-ignore next-line
-              navigation.navigate(NavigatorName.Discover, {
-                screen: ScreenName.PlatformCatalog,
-              });
-            } else {
-              track("Discover - Apps - OpenUrl", {
-                url: urls.discover.ledgerApps,
-              });
-              Linking.openURL(urls.discover.ledgerApps);
-            }
-          },
-          disabled: false,
-          Image: (
-            <Illustration
-              size={130}
-              darkSource={appsImg}
-              lightSource={appsImg}
-            />
-          ),
-        },
+        ...(Platform.OS !== "ios"
+          ? [
+              {
+                title: t("discover.sections.ledgerApps.title"),
+                subTitle: t("discover.sections.ledgerApps.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={130}
+                    darkSource={appsImg}
+                    lightSource={appsImg}
+                  />
+                ),
+              },
+            ]
+          : []),
         {
           title: t("discover.sections.learn.title"),
           subTitle: t("discover.sections.learn.desc"),
