@@ -61,12 +61,12 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -126,13 +126,13 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
       - name: checkout feature branch for testing
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
       - name: setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -197,12 +197,12 @@ jobs:
     runs-on: ubuntu-20.04
     if: ${{ needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -266,12 +266,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - uses: ledgerhq/actions/packages/has-hash-commit-deps@main
@@ -325,12 +325,12 @@ jobs:
   #   name: "[macOS] UI"
   #   runs-on: [ledger-live, macos]
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   #       with:
   #         ref: ${{ github.event.pull_request.head.sha }}
   #         repository: ${{github.event.pull_request.head.repo.full_name}}
   #         persist-credentials: false
-  #     - uses: actions/setup-node@v2
+  #     - uses: actions/setup-node@v3
   #       with:
   #         node-version: 14.x
   #     - name: install yarn

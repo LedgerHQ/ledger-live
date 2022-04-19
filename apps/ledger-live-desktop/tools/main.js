@@ -13,11 +13,18 @@ const {
   buildWebpackExternals,
 } = require("native-modules-tools");
 const path = require("path");
+const { prerelease } = require("semver");
 
 const lldRoot = path.resolve(__dirname, "..");
 const pkg = require("./../package.json");
 
-const NIGHTLY = pkg.name.includes("nightly") || pkg.version.includes("nightly");
+const parsed = prerelease(pkg.version);
+let PRERELEASE = false;
+let CHANNEL;
+if (parsed) {
+  PRERELEASE = !!(parsed && parsed.length);
+  CHANNEL = parsed[0];
+}
 
 const { SENTRY_URL } = process.env;
 
@@ -57,9 +64,10 @@ const buildMainEnv = (mode, config, argv) => {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
-    __NIGHTLY__: NIGHTLY,
     // See: https://github.com/node-formidable/formidable/issues/337
     "global.GENTLY": false,
+    __PRERELEASE__: JSON.stringify(PRERELEASE),
+    __CHANNEL__: JSON.stringify(CHANNEL),
   };
 
   if (mode === "development") {
@@ -75,7 +83,8 @@ const buildRendererEnv = (mode, config) => {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
-    __NIGHTLY__: NIGHTLY,
+    __PRERELEASE__: JSON.stringify(PRERELEASE),
+    __CHANNEL__: JSON.stringify(CHANNEL),
   };
 
   return env;
