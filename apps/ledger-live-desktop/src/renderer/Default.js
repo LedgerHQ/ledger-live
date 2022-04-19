@@ -88,7 +88,7 @@ const NightlyLayerR = () => {
             transform: "rotate(-45deg)",
           }}
         >
-          NIGHTLY
+          PRERELEASE
           <br />
           {__APP_VERSION__}
         </div>,
@@ -230,7 +230,7 @@ export default function Default() {
                     <ToastOverlay />
                   </Box>
 
-                  {__NIGHTLY__ ? <NightlyLayer /> : null}
+                  {__PRERELEASE__ ? <NightlyLayer /> : null}
 
                   <LibcoreBusyIndicator />
                   <DeviceBusyIndicator />

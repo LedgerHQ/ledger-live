@@ -77,30 +77,22 @@ const buildTasks = args => [
     task: async () => {
       const commands = ["dist:internal", "--"];
       if (args.dir) commands.push("--dir");
-      if (args.publish) {
-        // TODO: let's see how we fix this later,
-        // we do the publishing in CI now, as a separate step after Quorum Sign
-        // probably could be removed
-        // commands.push("--publish", "always");
-      } else {
-        commands.push("-c.afterSign='lodash/noop'");
-        commands.push("--publish", "never");
-      }
       if (args.nightly) {
         commands.push("--config");
         commands.push("electron-builder-nightly.yml");
-        if (args.publish) {
-          commands.push("--publish", "always");
-        }
-      }
-      if (args.ci) {
+      } else if (args.pre) {
+        commands.push("--config");
+        commands.push("electron-builder-pre.yml");
+      } else if (args.ci) {
         commands.push("--config");
         commands.push("electron-builder-ci.yml");
+        commands.push("-c.afterSign='lodash/noop'");
+        commands.push("--publish", "never");
       }
 
       // Using npm here because pnpm will refuse to rebuild cached modules.
       await exec("npm", ["run", ...commands], {
-        env: args.publish
+        env: !args.ci
           ? {
               SENTRY_URL:
                 "https://db8f5b9b021048d4a401f045371701cb@o118392.ingest.sentry.io/274561",
@@ -209,6 +201,10 @@ yargs
         .option("nightly", {
           alias: "n",
           type: "boolean",
+        })
+        .option("pre", {
+          type: "boolean",
+          describe: "make it a prerelease build (doesn't combine with nightly)",
         })
         .option("ci", {
           type: "boolean",

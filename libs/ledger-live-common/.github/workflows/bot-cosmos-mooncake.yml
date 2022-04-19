@@ -31,9 +31,9 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Retrieving coin apps
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.PAT }}
@@ -80,4 +80,3 @@ jobs:
         with:
           name: botreport
           path: botreport/
-
