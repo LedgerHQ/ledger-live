@@ -62,8 +62,5 @@ files:
   - "!node_modules"
 
 publish:
-  - provider: s3
-    bucket: ledger-live-download-sandbox
-    region: eu-west-1
-    acl: public-read
-    path: releases
+  - provider: generic
+    url: https://download.live.ledger.com

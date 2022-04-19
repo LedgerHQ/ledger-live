@@ -24,8 +24,8 @@ jobs:
       lint_outcome: ${{ steps.lint.outcome }}
       typecheck_outcome: ${{ steps.typecheck.outcome }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           cache: yarn
           cache-dependency-path: yarn.lock

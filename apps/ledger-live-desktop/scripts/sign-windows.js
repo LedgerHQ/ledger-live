@@ -29,7 +29,7 @@ async function azureSign(filePath) {
     "-kvs",
     AZURE_SECRET,
     "-kvc",
-    "LL20210603-01",
+    "LL20220419-02",
     "-v",
     "-tr",
     "http://timestamp.digicert.com",

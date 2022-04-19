@@ -76,7 +76,7 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: set git user
@@ -95,7 +95,7 @@ jobs:
         run: gh pr checkout ${{ github.event.issue.number || github.event.inputs.pr }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: install yarn
@@ -142,7 +142,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: set git user
@@ -153,7 +153,7 @@ jobs:
         run: gh pr checkout ${{ github.event.issue.number || github.event.inputs.pr }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: install yarn
@@ -193,7 +193,7 @@ jobs:
   #   name: "[macOS] Screenshots"
   #   runs-on: [ledger-live, macos]
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   #       with:
   #         fetch-depth: 0
   #     - name: set git user
@@ -206,7 +206,7 @@ jobs:
   #       run: gh pr checkout ${{ github.event.issue.number || github.event.inputs.pr }}
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     - uses: actions/setup-node@v2
+  #     - uses: actions/setup-node@v3
   #       with:
   #         node-version: 14.x
   #     - name: install yarn
