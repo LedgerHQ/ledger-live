@@ -32,12 +32,12 @@ jobs:
     name: "[macOS] Build"
     runs-on: [ledger-live, macos]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: install yarn
@@ -132,12 +132,12 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -202,12 +202,12 @@ jobs:
     runs-on: ubuntu-20.04
     if: ${{needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -268,12 +268,12 @@ jobs:
     name: "[Windows] Build"
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - uses: actions/setup-python@v2
