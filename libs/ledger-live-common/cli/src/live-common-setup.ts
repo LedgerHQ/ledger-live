@@ -29,7 +29,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 
 type BluetoothTransport = any;
