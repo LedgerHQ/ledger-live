@@ -9,7 +9,7 @@ export function checkLibs(
     log: typeof log;
     Transport: typeof Transport;
   }>
-) {
+): void {
   check(libs.NotEnoughBalance, NotEnoughBalance, "@ledgerhq/errors");
   check(libs.log, log, "@ledgerhq/logs");
   check(libs.Transport, Transport, "@ledgerhq/hw-transport");
