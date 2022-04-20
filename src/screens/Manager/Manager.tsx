@@ -147,12 +147,8 @@ const Manager = ({
       });
       if(restoreApps) {
         // we renavigate to the manager to force redetection of the apps and restore apps if needed        
-        navigation.replace(ScreenName.ManagerMain, {
-          ...route.params,
-          result: {
-            ...result,
-            installed: []
-          },
+        navigation.replace(ScreenName.Manager, {
+          device,
           appsToRestore: installedApps,
           firmwareUpdate: false
         });

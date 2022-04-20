@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -67,6 +66,8 @@ type RouteParams = {
   tab?: ManagerTab;
   installApp?: string;
   firmwareUpdate?: boolean;
+  device?: Device;
+  appsToRestore?: string[];
 };
 
 type Props = {
@@ -151,7 +152,7 @@ class ChooseDevice extends Component<
   };
 
   componentDidMount() {
-    this.setState(state => ({ ...state, device: undefined }));
+    this.setState(state => ({ ...state, device: this.props.route.params.device }));
   }
 
   render() {
