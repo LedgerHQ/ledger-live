@@ -62,7 +62,6 @@ const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
     value: new BigNumber(utxo.value),
     rbf: utxo.rbf,
     isChange: false, // wallet-btc limitation: doesn't provide it
-    path: "",
   };
 };
 
@@ -95,7 +94,7 @@ const mapTxToOperations = (
   changeAddresses: Set<string>
 ): $Shape<Operation[]> => {
   const operations: Operation[] = [];
-  const hash = tx.hash;
+  const txId = tx.id;
   const fee = new BigNumber(tx.fees);
   const blockHeight = tx.block?.height;
   const blockHash = tx.block?.hash;
@@ -190,8 +189,8 @@ const mapTxToOperations = (
 
     type = "OUT";
     operations.push({
-      id: encodeOperationId(accountId, hash, type),
-      hash,
+      id: encodeOperationId(accountId, txId, type),
+      hash: txId,
       type,
       value,
       fee,
@@ -224,8 +223,8 @@ const mapTxToOperations = (
       value = finalAmount;
       type = "IN";
       operations.push({
-        id: encodeOperationId(accountId, hash, type),
-        hash,
+        id: encodeOperationId(accountId, txId, type),
+        hash: txId,
         type,
         value,
         fee,

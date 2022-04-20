@@ -32,6 +32,7 @@ const appVersionsRequired = {
   Polkadot: ">= 11.9170.0",
   Elrond: ">= 1.0.11",
   Ethereum: ">= 1.9.17",
+  Solana: ">= 1.2.0",
 };
 export function mustUpgrade(
   deviceModel: DeviceModelId,

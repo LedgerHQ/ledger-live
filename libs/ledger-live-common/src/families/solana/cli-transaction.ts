@@ -10,12 +10,31 @@ import type {
 import { Transaction as SolanaTransaction } from "./types";
 import { assertUnreachable } from "./utils";
 
-const modes = ["send", "optIn"] as const;
+const modes = [
+  "send",
+  "optIn",
+  "stake.createAccount",
+  "stake.delegate",
+  "stake.undelegate",
+  "stake.withdraw",
+  "stake.split",
+] as const;
 type Mode = typeof modes[number];
 
-// options already specified in other blockchains like ethereum.
+// some options already specified for other blockchains like ethereum.
 // trying to reuse existing ones like <token>, <mode>, etc.
-const options = [];
+const options = [
+  {
+    name: "solanaValidator",
+    type: String,
+    desc: "validator address to delegate to",
+  },
+  {
+    name: "solanaStakeAccount",
+    type: String,
+    desc: "stake account address to use in the transaction",
+  },
+];
 
 function inferTransactions(
   transactions: Array<{
@@ -99,6 +118,65 @@ function inferTransactions(
         };
         return solanaTx;
       }
+      case "stake.createAccount": {
+        const validator = opts.solanaValidator;
+        return {
+          ...transaction,
+          model: {
+            kind: "stake.createAccount",
+            uiState: {
+              delegate: {
+                voteAccAddress: validator ?? "",
+              },
+            },
+          },
+        };
+      }
+      case "stake.delegate":
+        return {
+          ...transaction,
+          model: {
+            kind: "stake.delegate",
+            uiState: {
+              stakeAccAddr: opts.solanaStakeAccount ?? "",
+              voteAccAddr: opts.solanaValidator ?? "",
+            },
+          },
+        };
+      case "stake.undelegate":
+        return {
+          ...transaction,
+          model: {
+            kind: "stake.undelegate",
+            uiState: {
+              stakeAccAddr: opts.solanaStakeAccount ?? "",
+            },
+          },
+        };
+      case "stake.withdraw":
+        return {
+          ...transaction,
+          model: {
+            kind: "stake.withdraw",
+            uiState: {
+              stakeAccAddr: opts.solanaStakeAccount ?? "",
+            },
+          },
+        };
+      case "stake.split":
+        if (opts.solanaStakeAccount === undefined) {
+          throw new Error("stake account is required");
+        }
+
+        return {
+          ...transaction,
+          model: {
+            kind: "stake.split",
+            uiState: {
+              stakeAccAddr: opts.solanaStakeAccount,
+            },
+          },
+        };
       default:
         return assertUnreachable(mode);
     }
@@ -146,6 +224,12 @@ function inferAccounts(
       return [subAccount];
     }
     case "optIn":
+    case "stake.createAccount":
+    case "stake.delegate":
+    case "stake.undelegate":
+    case "stake.withdraw":
+    case "stake.split":
+      // TODO: infer stake account for stake ops
       return [mainAccount];
     default:
       return assertUnreachable(mode);

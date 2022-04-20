@@ -8,10 +8,10 @@ import type {
 } from "../types";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "../env";
-import { checkAccountSupported, shouldUseJS } from "../account/support";
+import { checkAccountSupported } from "../account/support";
 import jsBridges from "../generated/bridge/js";
 import mockBridges from "../generated/bridge/mock";
-import libcoreBridges from "../generated/bridge/libcore";
+
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = mockBridges[currency.family];
@@ -25,14 +25,8 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   const jsBridge = jsBridges[currency.family];
-  const libcoreBridge = libcoreBridges[currency.family];
-
-  if (jsBridge && (!libcoreBridge || shouldUseJS(currency))) {
+  if (jsBridge) {
     return jsBridge.currencyBridge;
-  }
-
-  if (libcoreBridge) {
-    return libcoreBridge.currencyBridge;
   }
 
   throw new CurrencyNotSupported(
@@ -68,17 +62,11 @@ export const getAccountBridge = (
   }
 
   const jsBridge = jsBridges[family];
-
   if (type === "libcore") {
-    if (jsBridge && shouldUseJS(currency)) {
+    // migrate from libcore via JS
+    if (jsBridge) {
       return jsBridge.accountBridge;
     }
-
-    // TODO at this point, we might want to check if an impl in JS exists
-    // and if it's not flagged as experimental, we make an implicit migration that would happen to change ids and change bridge implementation
-    // FIXME: how will addAccount reconciliate accounts?
-    const libcoreBridge = libcoreBridges[family];
-    if (libcoreBridge) return libcoreBridge.accountBridge;
     throw new CurrencyNotSupported(
       "no libcore implementation available for currency " + currency.id,
       {
