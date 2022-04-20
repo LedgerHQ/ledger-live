@@ -14,10 +14,10 @@
     "lib"
   ],
   "scripts": {
-    "prepare": "./scripts/gen.sh && yarn build",
+    "prebuild": "./scripts/gen.sh",
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
-    "watch": "tsc --watch --project src/tsconfig.json",
+    "start": "tsc --watch --project src/tsconfig.json",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
@@ -25,22 +25,22 @@
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "5.7.0"
+    "@ledgerhq/hw-transport-node-ble": "workspace:^"
   },
   "optionalDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "^6.24.1"
+    "@ledgerhq/hw-transport-node-ble": "workspace:^"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "6.24.1",
-    "@ledgerhq/errors": "6.10.0",
-    "@ledgerhq/hw-app-btc": "6.24.1",
-    "@ledgerhq/hw-transport-http": "6.24.1",
-    "@ledgerhq/hw-transport-mocker": "6.24.1",
-    "@ledgerhq/hw-transport-node-hid": "6.24.1",
-    "@ledgerhq/hw-transport-node-speculos": "6.24.1",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-btc": "workspace:^",
+    "@ledgerhq/hw-transport-http": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-hid": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/ledger-core": "6.14.5",
-    "@ledgerhq/live-common": "^21.34.0",
-    "@ledgerhq/logs": "6.10.0",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.0.1",
@@ -49,6 +49,7 @@
     "command-line-args": "^5.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "lodash": "^4.17.21",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.2.0",
