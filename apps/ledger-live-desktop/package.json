@@ -158,7 +158,6 @@
     "@babel/preset-typescript": "^7.15.0",
     "@mapbox/node-pre-gyp": "^1.0.8",
     "@octokit/rest": "^18.12.0",
-    "@playwright/test": "1.17.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
     "@storybook/addon-actions": "^6.3.12",
     "@storybook/addon-essentials": "^6.3.12",
