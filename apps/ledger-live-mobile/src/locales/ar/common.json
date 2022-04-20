@@ -124,6 +124,7 @@
         },
         "android": {
           "nanoS": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
+          "nanoSP": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
           "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل أو أنه تم تمكين البلوتوث."
         }
       }
@@ -136,6 +137,7 @@
         },
         "android": {
           "nanoS": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
+          "nanoSP": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
           "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل أو أنه تم تمكين البلوتوث."
         }
       }
@@ -350,23 +352,24 @@
     },
     "ManagerNotEnoughSpace": {
       "title": "لم يتبقى مساحة تخزين كافية",
-      "info": "يرجى إلغاء تثبيت بعض التطبيقات لتحرير مساحة لتطبيق {{app}}.",
-      "description": "إلغاء تثبيت التطبيقات ليس له تأثير على الأصول الخاصة بك."
+      "info": "Please uninstall some apps to free up space for the {{app}} app. Your crypto assets stay safe when uninstalling apps.",
+      "description": "إلغاء تثبيت التطبيقات ليس له تأثير على الأصول الخاصة بك.",
+      "continue": "فهمت ذلك!"
     },
     "ManagerQuitPage": {
       "install": {
-        "title": "جاري تثبيت التطبيق",
-        "description": "مغادرة المدير ستنهي التثبيت.",
+        "title": "Quit and cancel installations ?",
+        "description": "Quitting will cancel the app installations in progress.",
         "stay": "متابعة التثبيت"
       },
       "uninstall": {
-        "title": "جاري إلغاء تثبيت التطبيق",
-        "description": "مغادرة المدير ستنهي عملية إلغاء التثبيت.",
+        "title": "Quit and cancel uninstallations ?",
+        "description": "Quitting will cancel the app uninstallations in progress.",
         "stay": "متابعة إلغاء التثبيت"
       },
       "update": {
-        "title": "جاري تحديث التطبيق",
-        "description": "مغادرة المدير ستنهي التحديث.",
+        "title": "Quit and cancel updates ?",
+        "description": "Quitting will cancel the app updates in progress.",
         "stay": "متابعة التحديث"
       },
       "quit": "مغادرة المدير"
@@ -388,7 +391,7 @@
       "description": "يرجى التأكد من وجود أرصدة مالية كافية في الحساب."
     },
     "NotEnoughGas": {
-      "title": "رصيد الحساب الرئيسي غير كاف لرسوم الشبكة",
+      "title": "Insufficient ETH for network fee",
       "description": "يرجى إرسال بعض الETH إلى حسابك لسداد قيمة معاملات رمز ال ERC20."
     },
     "NotEnoughBalanceToDelegate": {
@@ -693,6 +696,7 @@
     }
   },
   "reset": {
+    "title": "Uninstall then reinstall Ledger Live",
     "description": "يرجى إلغاء تثبيت التطبيق ثم إعادة تثبيته على هاتفك لحذف بيانات ليدجر لايف (Ledger Live)، بما في ذلك الحسابات والإعدادات.",
     "button": "إعادة تعيين",
     "warning": "إعادة تعيين Ledger Live سوف يمحو سجل معاملات المبادلة الخاصة بك لجميع حساباتك."
@@ -713,9 +717,15 @@
         "title": "عيد الحب",
         "description": "تخفيض الرسوم على الشراء والبيع"
       },
+      "tour": {
+        "title": "Take a tour",
+        "description": "Explore the Ledger Live app and learn how to buy, grow and secure your assets",
+        "cta": "تصفح"
+      },
       "academy": {
         "title": "أكاديمية ليدجر",
-        "description": "كل ما تحتاج معرفته حول العملات المشفرة"
+        "description": "Everything you need to know about Blockchain",
+        "cta": "تصفح"
       },
       "stakeCosmos": {
         "title": "رهن COSMOS",
@@ -723,15 +733,23 @@
       },
       "familyPack": {
         "title": "حزمة العائلة",
-        "description": "عرّف عائلتك وأصدقائك على التشفير مع ثلاثة Nano S"
+        "description": "Discounted Nano S 3-pack, perfect for gifts or backups",
+        "cta": "اشتري الان"
+      },
+      "familyPackX": {
+        "title": "Ledger Nano X Family pack",
+        "description": "Discounted Nano X 3-pack, perfect for gifts or backups",
+        "cta": "Save now"
       },
       "buyCrypto": {
         "title": "شراء العملات المشفرة",
-        "description": "شراء العملات المشفرة على Ledger Live"
+        "description": "Buy 50+ cryptos with our partners",
+        "cta": "اشتري الان"
       },
       "swap": {
         "title": "مبادلة العملات المشفرة",
-        "description": "استبدل عملة مشفرة\nبأخرى بأمان"
+        "description": "Swap 100+ cryptos with full custody with our partners",
+        "cta": "Swap now"
       },
       "algorand": {
         "title": "Algorand",
@@ -752,8 +770,61 @@
       "blackfriday": {
         "title": "الجمعة السوداء",
         "description": "استمتع بتخفيض 40% مع رمز الخصم BLACKFRIDAY20"
+      },
+      "lido": {
+        "title": "Stake ETH with Lido",
+        "description": "Earn rewards by staking ETH securely with Lido",
+        "cta": "Stake now"
+      },
+      "market": {
+        "title": "Crypto Markets",
+        "description": "Check crypto prices and market trends right in the app",
+        "cta": "تصفح"
       }
     }
+  },
+  "buyDevice": {
+    "0": {
+      "title": "It's your money. Own it.",
+      "desc": "Take charge and unlock the freedom to manage your crypto on your own."
+    },
+    "1": {
+      "title": "Access DeFi and NFTs",
+      "desc": "Securely interact with our trusted DeFi applications directly from the app."
+    },
+    "2": {
+      "title": "Your key to Web3",
+      "desc": "You can buy, sell and swap major cryptocurrencies from our partners safely with your Ledger."
+    },
+    "3": {
+      "title": "Certified security",
+      "desc": "Our products are the only hardware wallets certified for their security by national cyber security agencies."
+    },
+    "title": "GET YOUR LEDGER",
+    "desc": "Protect your crypto & NFTs with industry-leading security",
+    "cta": "Buy your Ledger now",
+    "footer": "I already have a device, set it up now"
+  },
+  "discover": {
+    "title": "Discover",
+    "desc": "Explore the world of web3 included in Ledger Live",
+    "link": "Tell me more",
+    "sections": {
+      "learn": {
+        "title": "تعلم",
+        "desc": "Learn about crypto, NFTs, digital security and more"
+      },
+      "ledgerApps": {
+        "title": "التطبيقات",
+        "desc": "Explore Ledger's partner apps all in one place"
+      },
+      "earn": {
+        "title": "Earn",
+        "desc": "Earn passive income and grow your crypto assets"
+      }
+    },
+    "comingSoon": "Coming soon",
+    "mostPopular": "Most popular"
   },
   "onboarding": {
     "stepWelcome": {
@@ -761,7 +832,43 @@
       "subtitle": "تمتع بإمكانية إدارة عملاتك المشفرة بأمان من هاتفك الذكي.",
       "start": "لنبدأ",
       "noDevice": "ليس لديك جهاز؟",
-      "buy": "اشتري {{fullDeviceName}}"
+      "buy": "اشتري {{fullDeviceName}}",
+      "terms": "By tapping “Get Started” you consent and agree to our",
+      "termsLink": "Terms of Service",
+      "privacyLink": "Privacy Policy",
+      "and": "and"
+    },
+    "postWelcomeStep": {
+      "title": "Let’s get started",
+      "subtitle": "Set up your Ledger or buy one now.",
+      "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
+      "setupLedger": {
+        "title": "Set up my Ledger",
+        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+      },
+      "buyNano": {
+        "title": "شراء جهاز ليدجر Nano X",
+        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+      },
+      "discoverLedger": {
+        "title": "Discover Ledger Live",
+        "subtitle": "Explore the app"
+      }
+    },
+    "discoverLive": {
+      "0": {
+        "title": "One place for all your crypto needs",
+        "desc": "Monitor, buy, sell, swap, grow and manage your assets securely and get the best crypto insights"
+      },
+      "1": {
+        "title": "Not your keys, not your crypto",
+        "desc": "Securing your assets with a Hardware wallet is the best and only way to own and secure your crypto assets"
+      },
+      "2": {
+        "title": "Reclaim power over your money",
+        "desc": "The Ledger Nano X keeps your coins offline and protected. Combine it to Ledger Live app for maximum security and control over your crypto",
+        "cta": "Begin your Journey"
+      }
     },
     "stepLanguage": {
       "title": "اختر لغتك",
@@ -773,20 +880,21 @@
       }
     },
     "stepSelectDevice": {
-      "title": "ما نوع جهازك؟",
+      "title": "اختار جهازك",
       "nanoS": "Nano S",
       "nanoSP": "Nano S Plus",
       "nanoX": "Nano X",
-      "blue": "بلو"
+      "blue": "بلو",
+      "chooseDevice": "Choose your device"
     },
     "stepUseCase": {
       "title": "مرحبًا!",
       "or": "أو",
       "firstUse": {
-        "title": "أول مرة تستخدم الجهاز Nano هذا؟",
-        "label": "اول استخدام",
+        "title": "First time using your Nano?",
         "subTitle": "إعداد جهاز Nano جديد",
-        "desc": "لنبدأ ونقوم بإعداد جهازك!"
+        "desc": "لنبدأ ونقوم بإعداد جهازك!",
+        "label": "30 mins"
       },
       "devicePairing": {
         "title": "لديك بالفعل عبارة استرداد؟",
@@ -804,13 +912,15 @@
         "label": "استعادة الجهاز",
         "subTitle": "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
         "desc": "استخدم عبارة استرداد موجودة لاستعادة مفاتيحك الخاصة على جهاز Nano جديد!"
-      }
+      },
+      "recovery": "لديك بالفعل عبارة استرداد؟"
     },
     "stepNewDevice": {
       "0": {
         "label": "الأساسيات",
         "title": "الوصول إلى أصولك المشفرة",
-        "desc": "يتم تخزين الأصول المشفرة الخاصة بك على البلوك تشين. أنت بحاجة إلى مفتاح خاص للوصول إليها وإدارتها."
+        "desc": "يتم تخزين الأصول المشفرة الخاصة بك على البلوك تشين. أنت بحاجة إلى مفتاح خاص للوصول إليها وإدارتها.",
+        "action": "Don’t have a Nano? Discover the app"
       },
       "1": {
         "label": "الأساسيات",
@@ -820,19 +930,20 @@
       "2": {
         "label": "الأساسيات",
         "title": "البقاء غير متصل",
-        "desc": "يعمل جهاز نانو (Nano) الخاص بك كمحفظة \"للتخزين البارد\". ويعني ذلك أنه لا يكشف مفتاحك الخاص على الإنترنت أبدًا، حتى عند استخدام التطبيق."
+        "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
       },
       "3": {
         "label": "الأساسيات",
         "title": "التحقق من المعاملات",
-        "desc": "يتيح لك ليدجر لايف شراء العملات المشفرة وبيعها وإدارتها وتبادلها وكسبها بينما تظل محميًا. ستتحقق من صحة كل معاملة تشفير باستخدام جهاز نانو (Nano) الخاص بك."
+        "desc": "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
       },
       "4": {
         "label": "الأساسيات",
         "title": "لنعد جهاز Nano الخاص بك!",
         "desc": "سنبدأ بإعداد أمان جهاز Nano الخاص بك."
       },
-      "cta": "هيا بنا!"
+      "cta": "هيا بنا!",
+      "title": "BASICS"
     },
     "stepSetupDevice": {
       "start": {
@@ -848,7 +959,7 @@
             "label": "كن بمفردك، واختار بيئة آمنة وهادئة."
           }
         },
-        "cta": "حسنًا، أنا مستعد!",
+        "cta": "متابعة",
         "warning": {
           "title": "يرجى توخي الحذر",
           "desc": "تأكد من اتباع التعليمات على هذا التطبيق في كل خطوة من العملية.",
@@ -897,11 +1008,13 @@
         "bullets": {
           "0": {
             "title": "اختيار رمز الPIN",
-            "label": "اضغط على الزر الأيسر أو الأيمن لتغيير الأرقام. اضغط على كلا الزرين للتحقق من صحة أحد الأرقام. اختار <1></1> لتأكيد رمز الPIN الخاص بك. اختار <2></2> لمسح أحد الأرقام."
+            "label": "اضغط على الزر الأيسر أو الأيمن لتغيير الأرقام. اضغط على كلا الزرين للتحقق من صحة أحد الأرقام. اختار <1></1> لتأكيد رمز الPIN الخاص بك. اختار <2></2> لمسح أحد الأرقام.",
+            "desc": "Press the left or right button to change digits. Press both buttons to validate a digit. Select <validIcon></validIcon> to confirm your PIN code. Select <cancelIcon></cancelIcon> to erase a digit."
           },
           "1": {
             "title": "تأكيد رمز الPIN",
-            "label": "أدخل رمز الPIN الخاص بك مرة أخرى لتأكيده."
+            "label": "أدخل رمز الPIN الخاص بك مرة أخرى لتأكيده.",
+            "desc": "أدخل رمز الPIN الخاص بك مرة أخرى لتأكيده."
           }
         },
         "infoModal": {
@@ -939,7 +1052,7 @@
         "title": "عبارة الاسترداد",
         "desc": "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تدعم مفاتيحك الخاصة.",
         "desc_1": "يولد جهاز Nano الخاص بك عبارة استرداد فريدة. لا تحتفظ ليدجر بنسخة منها.",
-        "cta": "عبارة الاسترداد",
+        "cta": "الخطوة التالية",
         "checkboxDesc": "أفهم أنني إذا فقدت عبارة الاسترداد هذه فلن أتمكن من الوصول إلى الأصول المشفرة الخاصة بي في حالة أن فقدت الوصول إلى جهاز Nano الخاص بي."
       },
       "recoveryPhraseSetup": {
@@ -967,7 +1080,7 @@
             "label": "احصل على ورقة استرداد فارغة، والتي أتت مرفقة مع جهاز Nano الخاص بك. يرجى التواصل مع دعم ليدجر إذا لم تكن صفحة الاسترداد أتتك فارغة."
           },
           "1": {
-            "title": "اكتب كل الكلمات",
+            "title": "كرر الخطوات لجميع الكلمات!",
             "label": "اكتب الكلمة رقم 1 (Word #1) المعروضة على جهاز Nano الخاص بك في الموضع 1 من ورقة الاسترداد. ثم اضغط يمينًا على جهاز نانو لعرض الكلمة رقم#2 واكتبها في الموضع 2.",
             "label_1": "كرر العملية لجميع الكلمات مع احترام الترتيب والتهجئة بعناية. اضغط على اليسار على جهاز Nano الخاص بك للتحقق من وجود أي أخطاء."
           },
@@ -993,19 +1106,20 @@
             "label": "لا تشارك أبدًا كلماتك الـ24 مع أي شخص، ولا حتى مع Ledger."
           }
         },
-        "cta": "حسنًا، لقد انتهيت!",
+        "cta": "إغلاق",
+        "finalCta": "OK, I’m done!",
         "infoModal": {
           "label": "تعلم كيف تقوم بإخفائها",
           "title": "أين ينبغي أن أحتفظ بعبارة الاسترداد الخاصة بي؟",
           "bullets": {
             "0": {
-              "label": "امتنع <1>نهائيًا</1> عن إدخالها على جهاز كمبيوتر أو هاتف أو أي جهاز آخر. لا تقم بتصويرها."
+              "label": "<bold>NEVER</bold> enter it on a computer, phone or any other device. Don't take a picture of it."
             },
             "1": {
-              "label": "امتنع <1>نهائيًا</1> عن مشاركة كلماتك الـ 24 مع أي شخص."
+              "label": "<bold>NEVER</bold> share your 24 words with anyone."
             },
             "2": {
-              "label": "قم بحفظها <1>دائمًا</1> في مكان آمن بعيدًا عن الأنظار."
+              "label": "<bold>ALWAYS</bold> store it in a secure place, out of sight."
             },
             "3": {
               "label": "لن تطلب Ledger أبدًا عبارة الاسترداد الخاصة بك."
@@ -1268,7 +1382,9 @@
         "failTitle": "ستصبح محترفًا قريبًا...",
         "failText": "لا تقلق، ليدجر هنا لإرشادك خلال رحلتك. ستشعر قريبًا براحة إضافية بشأن أمان أصولك المشفرة. لم يتبقى سوى خطوة واحدة سريعة!",
         "cta": "الخطوة التالية"
-      }
+      },
+      "nextQuestion": "السؤال التالي",
+      "finish": "إنهاء الاختبار"
     },
     "warning": {
       "recoveryPhrase": {
@@ -1286,12 +1402,13 @@
     }
   },
   "tabs": {
-    "portfolio": "الحافظة",
+    "portfolio": "Wallet",
     "accounts": "الحسابات",
     "transfer": "تحويل",
-    "manager": "المدير",
+    "manager": "My Ledger",
     "settings": "إعدادات",
-    "platform": "إكتشف",
+    "platform": "Live Apps",
+    "discover": "Discover",
     "nanoX": "Nano X",
     "market": "السوق",
     "learn": "تعلم"
@@ -1320,24 +1437,47 @@
       "noAccountsTitle": "ليس لديك أي حسابات...",
       "noAccountsDesc": "يرجى إضافة حسابات إلى حافظتك.",
       "buttons": {
-        "import": "إضافة حساب",
+        "import": "Add asset",
+        "buy": "شراء",
         "manager": "تثبيت التطبيقات",
         "managerSecondary": "تثبيت تطبيقات على جهازي"
+      },
+      "addAccounts": {
+        "addAccounts": "Add asset",
+        "title": "لنبدأ",
+        "description": "You can either purchase crypto from our partners or setup your wallet"
       }
     },
     "noOpState": {
       "title": "لا توجد أي عمليات بعد؟",
       "desc": "ببساطة قم بإرسال الأصول المشفرة إلى عنوان الاستلام الخاص بك وانتظر حتى يقوم التطبيق بالمزامنة."
+    },
+    "recommended": {
+      "title": "Recommended"
+    },
+    "topGainers": {
+      "title": "Market gainers (24H)",
+      "seeMarket": "رؤية الكل"
     }
   },
   "addAccountsModal": {
     "ctaAdd": "إضافة حساب",
-    "ctaImport": "استيراد حسابات سطح المكتب"
+    "ctaImport": "استيراد حسابات سطح المكتب",
+    "title": "Add Crypto",
+    "description": "You can choose to add crypto(s) directly with your Ledger, or import them from Ledger Live Desktop.",
+    "add": {
+      "title": "With your Ledger",
+      "description": "Create or import asset(s) with your Ledger"
+    },
+    "import": {
+      "title": "Import from desktop",
+      "description": "Import asset(s) from Ledger Live Desktop"
+    }
   },
   "byteSize": {
     "bytes": "{{size}} بايت",
-    "kbUnit": "{{size}} كيلوبايت",
-    "mbUnit": "{{size}} ميجابايت"
+    "kbUnit": "{{size}} Kb",
+    "mbUnit": "{{size}} Mb"
   },
   "numberCompactNotation": {
     "d": "",
@@ -1505,6 +1645,7 @@
     "receive": "تلقي",
     "buy": "شراء",
     "walletconnect": "WalletConnect",
+    "stake": "Stake",
     "sell": "بيع",
     "swap": "مبادلة",
     "manage": "إدارة",
@@ -1560,12 +1701,12 @@
     },
     "import": {
       "scan": {
-        "title": "إجراء مسح ضوئي لرمز LiveQR",
+        "title": "Import from desktop",
         "descTop": {
-          "line1": "في Ledger Live لسطح المكتب، انتقل إلى",
+          "line1": "In Ledger Live Desktop, go to:",
           "line2": "إعدادات > حسابات > تصدير الحسابات > تصدير"
         },
-        "descBottom": "يرجى وضع رمز LiveQR داخل المربع."
+        "descBottom": "Open Ledger Live Desktop & Scan QR Code"
       },
       "result": {
         "title": "استيراد الحسابات",
@@ -1636,7 +1777,9 @@
         "hideTokens": "إخفاء ASA",
         "hideTokens_plural": "إخفاء ASA"
       }
-    }
+    },
+    "noResultsFound": "No asset found",
+    "noResultsDesc": "من فضلك تأكد من التهجئة وحاول مرة أخرى"
   },
   "distribution": {
     "header": "تخصيص الأصول",
@@ -1644,7 +1787,9 @@
     "assets": "أصل",
     "assets_plural": "أصول",
     "total": "الرصيد الإجمالي:",
-    "listAccount": "تخصيص الحساب ({{count}})"
+    "listAccount": "تخصيص الأصول ({{count}})",
+    "title": "Assets",
+    "moreAssets": "Add more"
   },
   "help": {
     "gettingStarted": {
@@ -1696,7 +1841,8 @@
       "themes": {
         "system": "النظام",
         "dark": "داكن",
-        "light": "فاتح"
+        "light": "فاتح",
+        "dusk": "Dusk"
       },
       "counterValueDesc": "اختر العملة للأرصدة والعمليات.",
       "exchange": "مزود السعر",
@@ -1850,6 +1996,9 @@
     }
   },
   "transfer": {
+    "recipient": {
+      "input": "أدخل العنوان"
+    },
     "send": {
       "title": "إرسال"
     },
@@ -1862,7 +2011,7 @@
       "headerTitle": "أصل مشفر",
       "titleDevice": "توصيل الجهاز",
       "verifySkipped": "لم يتم تأكيد عنوانك للاستلام على جهاز ليدجر الخاص بك. يرجى التحقق من عنوان {{accountType}} لتظل آمنًا.",
-      "verifyPending": "يرجى التحقق من أن عنوان {{currencyName}} المعروض على جهازك يتطابق تمامًا مع العنوان المعروض على هاتفك.",
+      "verifyPending": "Please verify that the {{currencyName}} address displayed on your Ledger device exactly matches the one displayed on your phone.",
       "verified": "تم تأكيد العنوان. تحقق مرة أخرى إذا قمت بنسخه أو إجراء مسح ضوئي له.",
       "verifyAgain": "تحقق مرةً اخرى",
       "noAccount": "لم يتم العثور على حساب",
@@ -1880,7 +2029,9 @@
         "text": "يرجى توخي الحذر",
         "desc": "أنت على وشك أن تشاهد عنوان لم يتم التحقق منه. تحقق من العناوين على جهازك لتظل آمنًا.",
         "verify": "لم يتم التحقق من عنوان {{accountType}}. تحقق من العناوين على جهازك لتظل آمنًا."
-      }
+      },
+      "noResultsFound": "No crypto asset found",
+      "noResultsDesc": "من فضلك تأكد من التهجئة وحاول مرة أخرى"
     },
     "exchange": {
       "title": "شراء / بيع"
@@ -1912,8 +2063,8 @@
           "subtitle": "يتم جمع معلوماتك من قبل LEDGER بالنيابة عن WYRE كما يتم نقل هذه المعلومات إليها لأغراض التحقق من هوية العميل. للتعرف على مزيد من المعلومات، يرجى مراجعة سياسة الخصوصية الخاصة بنا",
           "pending": {
             "cta": "متابعة",
-            "title": "تم إرسال بياناتك لاعتمادها",
-            "subtitle": "عادة ما يستغرق الأمر بضع دقائق فقط قبل أن تتمكن من بدء المبادلة",
+            "title": "KYC submitted for approval",
+            "subtitle": "Your KYC has been submitted and is pending approval.",
             "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
           },
           "approved": {
@@ -1966,9 +2117,9 @@
         "cta": "إغلاق"
       },
       "pendingOperation": {
-        "description": "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. يمكن أن يستغرق الامر مدة تصل إلى ساعة قبل أن تستلم أصولك {{targetCurrency}} التي تمت مبادلتها",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
         "label": "معرّف المبادلة الخاص بك:",
-        "title": "عملية معلقة",
+        "title": "Swap broadcast successfully ",
         "disclaimer": "قم بحفظ معرّف المبادلة الخاص بك في حال كنت بحاجة إلى مساعدة من دعم {{provider}}.",
         "cta": "رؤية التفاصيل"
       },
@@ -2506,7 +2657,8 @@
       "voteFor": "تصويت من أجل",
       "validateVotes": "التحقق من صحة الأصوات",
       "votesRequired": "الأصوات المطلوبة",
-      "allVotesUsed": "تم استخدام كل الأصوات"
+      "allVotesUsed": "تم استخدام كل الأصوات",
+      "removeVotes": "Remove votes"
     },
     "validation": {
       "message": "تحقق دائمًا من أن جهازك يعرض العنوان تمامًا كما تم تقديمه لك في الأصل.",
@@ -2558,18 +2710,23 @@
       "createParentCurrencyAccount": "أضف حساب {{parrentCurrencyName}}",
       "erc20": {
         "title": "إضافة رمز توكن",
-        "disclaimer": "{{tokenName}} هو رمز توكن خاص بـ ERC20.\nيمكنك تلقي رموز التوكن مباشرة في حساب إيثريوم.",
+        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly in an Ethereum account.",
         "learnMore": "معرفة المزيد عن ERC20"
       },
       "trc10": {
         "title": "إضافة رمز توكن",
-        "disclaimer": "{{tokenName}} هو رمز توكن خاص بـ TRC10.\nيمكنك تلقي رموز التوكن مباشرة في حساب ترون.",
+        "disclaimer": "{{tokenName}} is a TRC10 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "معرفة المزيد عن TRC10"
       },
       "trc20": {
         "title": "إضافة رمز توكن",
-        "disclaimer": "{{tokenName}} هو رمز توكن خاص بـ TRC20.\nيمكنك تلقي رموز التوكن مباشرة في حساب ترون.",
+        "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "معرفة المزيد عن TRC20"
+      },
+      "bep20": {
+        "title": "إضافة رمز توكن",
+        "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
+        "learnMore": "Learn more about BEP-20"
       }
     },
     "showMoreChainType": "المزيد من أنواع العناوين",
@@ -2595,7 +2752,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "ابق في التطبيق وحافظ على Nano X بالقرب منك",
+    "stayInTheAppPlz": "Stay in the Ledger Live App and keep your Nano X nearby",
     "allowAppPermission": "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken": "لإدارة رموز توكن {{token}} الخاصة بك",
     "allowManagerPermission": "السماح بــ {{wording}} على جهازك",
@@ -2651,7 +2808,8 @@
         }
       },
       "genuineCheck": {
-        "title": "تمكين Ledger Manager على {{productName}} الخاص بك"
+        "title": "تمكين Ledger Manager على {{productName}} الخاص بك",
+        "accept": "يرجى عدم إيقاف تشغيل Nano X. تأكد من أنك تسمح ب <1>Ledger Manager</1>."
       },
       "genuineCheckPending": {
         "title": "جاري التحقق مما إذا كان الجهاز أصليًا..."
@@ -2700,11 +2858,14 @@
     },
     "Pairing": {
       "step1": "تحقق مما إذا كان الكود المعروض على هاتفك يتطابق تمامًا مع الكود المعروض على {{productName}}.",
-      "step2": "قم بالتحقق على {{productName}} الخاص بك من خلال الضغط على الزرين معًا."
+      "step2": "قم بالتحقق على {{productName}} الخاص بك من خلال الضغط على الزرين معًا.",
+      "title1": "Check matching codes",
+      "title2": "Validate"
     },
     "GenuineCheck": {
       "title": "اختبار توثيق الجهاز",
-      "accept": "يرجى عدم إيقاف تشغيل Nano X. تأكد من أنك تسمح ب <1>Ledger Manager</1>."
+      "accept": "يرجى عدم إيقاف تشغيل Nano X. تأكد من أنك تسمح ب <1>Ledger Manager</1>.",
+      "info": "This step is meant to ensure that your Nano is authentic."
     },
     "ScanningHeader": {
       "title": "البحث عن أجهزة",
@@ -2732,11 +2893,11 @@
     }
   },
   "manager": {
-    "tabTitle": "مدير (Manager) الأجهزة",
-    "title": "المدير",
+    "tabTitle": "My Ledger",
+    "title": "My Ledger",
     "connect": "اختار جهازك",
     "appsCatalog": "كتالوج التطبيقات",
-    "installedApps": "التطبيقات المثبتة",
+    "installedApps": "Apps installed",
     "noAppNeededForToken": "تثبيت تطبيق {{appName}} لـ {{tokenName}}",
     "tokenAppDisclaimer": "{{tokenName}} هو رمز توكن {{tokenType}} باستخدام تطبيق {{appName}}. لإدارة {{tokenName}}، قم <1>بتثبيت تطبيق {{appName}}</1> وأرسل رموز التوكن <3>إلى حسابك على {{appName}}</3>.",
     "tokenAppDisclaimerInstalled": "{{tokenName}} هو رمز توكن {{tokenType}} باستخدام تطبيق {{appName}}. لإدارة {{tokenName}}، <1>افتح تطبيق {{appName}}</1> وأرسل رموز التوكن <3>إلى حسابك على {{appName}}</3>.",
@@ -2760,12 +2921,14 @@
       "noAppsDescription": "الذهاب إلى كتالوج التطبيق لتثبيت التطبيقات",
       "noResultsFound": "لم يتم العثور على نتائج",
       "noResultsDesc": "من فضلك تأكد من التهجئة وحاول مرة أخرى",
-      "versionNew": "(جديد {{newVersion}})"
+      "versionNew": "(جديد {{newVersion}})",
+      "searchApps": "بحث"
     },
     "uninstall": {
-      "title": "إلغاء تثبيت الكل",
-      "subtitle": "إلغاء تثبيت كل التطبيقات؟",
-      "description": "لا يؤثر إلغاء تثبيت التطبيقات على أصولك المشفرة. يمكنك إعادة تثبيت التطبيقات في كتالوج التطبيق."
+      "title": "إلغاء التثبيت",
+      "subtitle": "Uninstall all apps",
+      "description": "لا يؤثر إلغاء تثبيت التطبيقات على أصولك المشفرة. يمكنك إعادة تثبيت التطبيقات في كتالوج التطبيق.",
+      "uninstallAll": "Uninstall all"
     },
     "remove": {
       "title": "إزالة الجهاز",
@@ -2776,27 +2939,39 @@
       "title": "تخزين",
       "used": "مُستَخدم",
       "genuine": "جهازك أصلي",
-      "appsInstalled": "تم تثبيت تطبيق <0>{{number}}</0>",
-      "appsInstalled_plural": "<0>{{number}}</0> من التطبيقات مثبتة",
-      "storageAvailable": "متاح"
+      "appsInstalled": "<0>{{number}}</0> app",
+      "appsInstalled_plural": "<0>{{number}}</0> apps",
+      "storageAvailable": "متاح",
+      "appsToUpdate": "<0>{{number}}</0> update",
+      "appsToUpdate_plural": "<0>{{number}}</0> updates"
     },
     "installSuccess": {
-      "title": "تم تثبيت التطبيق بنجاح، يمكنك الآن إضافة حسابات {{app}} الخاصة بك",
-      "title_plural": "تم تثبيت التطبيقات بنجاح، يمكنك الآن إضافة حساباتك",
+      "title": "App successfully installed",
+      "title_plural": "Apps successfully installed",
       "notSupported": "تم تثبيت التطبيق بنجاح، تعرف على المزيد حول التطبيقات المثبتة على موقعنا الإلكتروني.",
       "manageAccount": "إضافة حساب",
       "learnMore": "معرفة المزيد",
-      "later": "تنفيذ ذلك لاحقًا"
+      "later": "تنفيذ ذلك لاحقًا",
+      "description": "You can now add your {{app}} account"
     },
     "firmware": {
-      "latest": "الإصدار {{version}} من البرنامج الثابت متوفر",
-      "outdated": "إصدار البرنامج الثابت للجهاز قديم للغاية مما يعوق تحديثه. اتصل بدعم ليدجر (Ledger) للحصول على بديل.",
-      "modalTitle": "تحديث البرنامج الثابت متاح فقط على Ledger Live لسطح المكتب",
-      "modalDesc": "يرجى تنزيل تطبيق Ledger Live على جهاز الكمبيوتر الخاص بك لتحديث البرنامج الثابت للجهاز."
+      "latest": "Firmware update is available",
+      "outdated": "Device firmware version is too old to be updated. Please contact Ledger Support for a replacement.",
+      "modalTitle": "Firmware update only available on Desktop",
+      "modalDesc": "يرجى تنزيل تطبيق Ledger Live على جهاز الكمبيوتر الخاص بك لتحديث البرنامج الثابت للجهاز.",
+      "contactUs": "Contact us"
+    },
+    "myApps": "My apps",
+    "token": {
+      "title": "{{appName}} tokens",
+      "noAppNeeded": "{{tokenName}} is a token using the {{appName}} app. There is no app to install.",
+      "installApp": "{{tokenName}} is a token using the {{appName}} app. Install the {{appName}} app to be able to manage your tokens."
+    },
+    "update": {
+      "title": "تحديث",
+      "subtitle": "التحديثات المتاحة",
+      "updateAll": "تحديث"
     }
-  },
-  "ManagerDevice": {
-    "title": "الجهاز"
   },
   "AppAction": {
     "install": {
@@ -2808,12 +2983,13 @@
         "button_plural": "جاري التثبيت... {{progressPercentage}}%"
       },
       "done": {
-        "title": "تم تثبيت {{appName}} بنجاح على {{productName}} الخاص بك",
-        "accounts": "الذهاب إلى الحسابات"
+        "title": "App Successfully installed",
+        "accounts": "الذهاب إلى الحسابات",
+        "description": "You can now add your {{app}} account"
       },
       "dependency": {
-        "title": "مطلوب تطبيق {{dependency}}",
-        "description_one": "سيتم أيضًا تثبيت تطبيق {{dependency}} لأن تطبيق {{app}} يستخدمه.",
+        "title": "{{dependency}} app is required",
+        "description_one": "The {{dependency}} app will also be installed because the {{app}} app needs it.",
         "description_two": "يرجى الضغط على \"متابعة\" لتثبيت تطبيقات {{app}} و {{dependency}} ."
       },
       "continueInstall": "تثبيت التطبيقات"
@@ -2840,14 +3016,16 @@
         "title": "تم بنجاح إلغاء تثبيت {{appName}} على {{productName}} الخاص بك"
       },
       "dependency": {
-        "title": "هل تريد إلغاء تثبيت {{app}} والتطبيقات ذات الصلة؟",
+        "title": "Other apps need the {{app}} app",
         "showAll": "عرض التطبيقات المراد إلغاء تثبيتها",
-        "description": "سيتم أيضًا إلغاء تثبيت التطبيقات الموجودة على جهازك التي تحتاج إلى تطبيق {{app}}."
+        "description": "سيتم أيضًا إلغاء تثبيت التطبيقات الموجودة على جهازك التي تحتاج إلى تطبيق {{app}}.",
+        "description_one": "Some apps are dependent of the {{app}} app.",
+        "description_two": "Some apps are dependent of the {{app}} app.\nApps on your device that are dependent on the {{app}} app will be uninstalled too."
       },
       "continueUninstall": "إلغاء تثبيت {{app}} والتطبيقات الأخرى"
     },
     "filter": {
-      "title": "عرض",
+      "title": "تصفية",
       "all": "الكل",
       "installed": "التطبيقات",
       "not_installed": "غير مثبت",
@@ -2856,11 +3034,13 @@
       "apply": "تطبيق"
     },
     "sort": {
-      "title": "الفرز حسب",
+      "title": "ترتيب",
       "default": "افتراضي",
       "name_asc": "الاسم A-Z",
       "name_desc": "الاسم Z-A",
-      "marketcap_desc": "الحد الأقصى للسوق"
+      "marketcap_desc": "الحد الأقصى للسوق",
+      "marketcap": "Marketcap",
+      "name": "الاسم"
     }
   },
   "AuthenticityRow": {
@@ -2872,7 +3052,7 @@
   },
   "FirmwareVersionRow": {
     "title": "إصدار البرنامج الثابت",
-    "subtitle": "البرنامج الثابت {{version}}"
+    "subtitle": "V {{version}}"
   },
   "FirmwareUpdateRow": {
     "title": "إصدار البرنامج الثابت {{version}} متاح",
@@ -3740,12 +3920,13 @@
     "memo": "الملاحظة"
   },
   "Terms": {
-    "title": "شروط الاستخدام",
+    "title": "TERMS OF USE",
     "read": "قراءة شروط الاستخدام",
     "switchLabel": "لقد قرأت ووافقت على <1>شروط الخدمة</1>",
-    "switchLabelFull": "لقد قرأت وأوافق على شروط الخدمة وسياسة الخصوصية",
+    "switchLabelFull": "I have read and agree with the Privacy Policy.",
     "cta": "دخول تطبيق Ledger",
-    "service": "شروط الخدمة"
+    "service": "شروط الخدمة",
+    "subTitle": "Please take some time to review our Terms of service and Privacy Policy"
   },
   "exchange": {
     "buy": {
@@ -3753,7 +3934,7 @@
       "selectCurrency": "اختار عملة",
       "selectAccount": "اختيار حساب",
       "connectDevice": "توصيل جهازك",
-      "title": "اختر مزود لشراء الأصول المشفرة",
+      "title": "شراء العملات المشفرة عن طريق شريكنا",
       "coinifyTitle": "شراء العملات المشفرة عن طريق شريكنا",
       "description": "قم بشراء الأصول المشفرة من خلال Coinify واستلمها مباشرة في حساب ليدجر (Ledger) الخاص بك.",
       "CTAButton": "اشتري الان",
@@ -3803,6 +3984,7 @@
     }
   },
   "walletconnect": {
+    "scan": "Scan Wallet Connect QR code",
     "disclaimer": "يريد الاتصال بحساب إيثريوم التالي من خلال محفظتك:",
     "reject": "رفض",
     "connect": "اتصال",
@@ -3890,7 +4072,8 @@
     "disclaimer": {
       "title": "تطبيق خارجي",
       "description": "أنت على وشك أن تتم إعادة توجيهك إلى تطبيق لا يتم تشغيله من قِبل Ledger.",
-      "legalAdvice": "لا يتم تشغيل هذا التطبيق من قِبل Ledger. إن Ledger غير مسؤول عن أي خسارة للأموال أو عن جودة الخدمة لمثل هذا التطبيق.\n\nدائمًا تأكد من التحقق بعناية من المعلومات المعروضة على جهازك.",
+      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "legalAdviceShort": "Ledger is not responsible for any loss of funds. Always make sure to verify the information displayed on your device.",
       "checkbox": "لاتذكرني مرة أخرى.",
       "CTA": "متابعة"
     },
@@ -3913,6 +4096,7 @@
         "liveCompatible_label": "مدعوم فقط في Live"
       },
       "order": {
+        "topGainers": "Top gainers",
         "market_cap": "المرتبة",
         "market_cap_asc": "المرتبة (سقف أسعار السوق) تصاعدي",
         "market_cap_desc": "المرتبة (سقف أسعار السوق) تنازلي"
@@ -3929,7 +4113,7 @@
       "last7d": "آخر 7 أيام"
     },
     "detailsPage": {
-      "holding": "مقتنياتك",
+      "holding": "My accounts",
       "priceStatistics": "إحصائيات الأسعار",
       "price": "السعر",
       "tradingVolume": "حجم التداول",
@@ -3981,13 +4165,25 @@
       "properties": "خصائص",
       "description": "الوصف",
       "tokenContract": "عنوان رمز التوكن",
+      "tokenContractCopied": "Token Address copied !",
       "tokenId": "مُعرّف رمز التوكن",
+      "tokenIdCopied": "Token ID copied !",
       "quantity": "الكمية"
     },
     "viewerModal": {
       "viewOn": "مشاهدة على",
       "viewInExplorer": "مشاهدة في المتصفح",
       "txDetails": "تفاصيل المعاملة"
+    }
+  },
+  "ApplicationVersion": "v{{version}}",
+  "analytics": {
+    "title": "التحليلات",
+    "allocation": {
+      "title": "Allocation"
+    },
+    "operations": {
+      "title": "Operations"
     }
   }
 }
