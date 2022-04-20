@@ -18,10 +18,6 @@
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch --project src/tsconfig.json",
-    "test-e2e": "./scripts/tests.sh",
-    "test": "yarn run test-e2e",
-    "testOne": "./scripts/testOne.sh",
-    "createTest": "./scripts/createTest.sh",
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -38,8 +34,7 @@
     "@ledgerhq/hw-transport-mocker": "6.24.1",
     "@ledgerhq/hw-transport-node-hid": "6.24.1",
     "@ledgerhq/hw-transport-node-speculos": "6.24.1",
-    "@ledgerhq/ledger-core": "6.14.5",
-    "@ledgerhq/live-common": "^21.34.0",
+    "@ledgerhq/live-common": "22.0.0",
     "@ledgerhq/logs": "6.10.0",
     "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",

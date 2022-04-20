@@ -1,6 +1,10 @@
 import { map, switchMap } from "rxjs/operators";
-import { accountFormatters } from "@ledgerhq/live-common/lib/account";
-import { metadataCallBatcher } from "@ledgerhq/live-common/lib/nft";
+import {
+  accountFormatters,
+  decodeAccountId,
+} from "@ledgerhq/live-common/lib/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 export default {
@@ -21,23 +25,29 @@ export default {
     }
   ) =>
     scan(opts).pipe(
-      switchMap(async (account) =>
-        account.nfts?.length
+      switchMap(async (account) => {
+        const { currencyId } = decodeAccountId(account.id);
+        const currency = getCryptoCurrencyById(currencyId);
+        const currencyBridge = getCurrencyBridge(currency);
+        const { nftResolvers } = currencyBridge;
+
+        return account.nfts?.length && nftResolvers?.nftMetadata
           ? {
               ...account,
               nfts: await Promise.all(
                 account.nfts.map(async (nft) => {
-                  const { result: metadata } = await metadataCallBatcher.load({
-                    contract: nft.collection.contract,
+                  const { result: metadata } = await nftResolvers?.nftMetadata({
+                    contract: nft.contract,
                     tokenId: nft.tokenId,
+                    currencyId: nft.currencyId,
                   });
 
                   return { ...nft, metadata };
                 })
               ).catch(() => account.nfts),
             }
-          : account
-      ),
+          : account;
+      }),
       map((account) =>
         (accountFormatters[opts.format] || accountFormatters.default)(account)
       )

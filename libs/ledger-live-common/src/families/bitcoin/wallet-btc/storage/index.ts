@@ -216,10 +216,7 @@ class BitcoinLikeStorage implements IStorage {
     this.unspentUtxos = data.unspentUtxos;
     this.addressCache = data.addressCache;
     Base.addressCache = { ...Base.addressCache, ...this.addressCache };
-    if (
-      (!this.accountIndex || isEmpty(this.accountIndex)) &&
-      this.txs.length > 0
-    ) {
+    if (!this.accountIndex || isEmpty(this.accountIndex)) {
       this.accountIndex = {};
       this.createAccountIndex();
     }

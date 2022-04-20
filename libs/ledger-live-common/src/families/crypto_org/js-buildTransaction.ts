@@ -32,7 +32,7 @@ export const buildTransaction = async (
   publicKey: string
 ) => {
   const croSdk = getCroSdk(a.currency.id);
-  const address = a.freshAddresses[0].address;
+  const address = a.freshAddress;
   const { accountNumber, sequence } = await getAccountParams(
     address,
     a.currency.id

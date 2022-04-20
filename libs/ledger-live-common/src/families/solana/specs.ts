@@ -5,16 +5,27 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { pickSiblings } from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
 import { Transaction } from "./types";
-import { acceptTransferTransaction } from "./speculos-deviceActions";
+import {
+  acceptStakeCreateAccountTransaction,
+  acceptStakeDelegateTransaction,
+  acceptStakeUndelegateTransaction,
+  acceptStakeWithdrawTransaction,
+  acceptTransferTransaction,
+} from "./speculos-deviceActions";
 import { assertUnreachable } from "./utils";
+import { getCurrentSolanaPreloadData } from "./js-preload-data";
+import { sample } from "lodash/fp";
+import BigNumber from "bignumber.js";
 
 const solana: AppSpec<Transaction> = {
   name: "Solana",
   appQuery: {
     model: DeviceModelId.nanoS,
     firmware: "2",
+    appVersion: "1.2.0",
     appName: "solana",
   },
+  testTimeout: 2 * 60 * 1000,
   currency: getCryptoCurrencyById("solana"),
   mutations: [
     {
@@ -58,6 +69,400 @@ const solana: AppSpec<Transaction> = {
         expectCorrectMemo(input);
       },
     },
+    {
+      name: "Delegate",
+      maxRun: 1,
+      deviceAction: acceptStakeCreateAccountTransaction,
+      transaction: ({ account, bridge }) => {
+        const { solanaResources } = account;
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+        invariant(
+          solanaResources.stakes.length < 10,
+          "already enough delegations"
+        );
+
+        invariant(account.balance.gte(3000000), "not enough balance");
+
+        const { validators } = getCurrentSolanaPreloadData(account.currency);
+
+        const notUsedValidators = validators.filter((v) =>
+          solanaResources.stakes.every(
+            (s) => s.delegation?.voteAccAddr !== v.voteAccount
+          )
+        );
+
+        const validator = sample(notUsedValidators);
+
+        if (validator === undefined) {
+          throw new Error("no not used validators found");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.createAccount",
+                uiState: {
+                  delegate: { voteAccAddress: validator.voteAccount },
+                },
+              },
+            },
+            {
+              amount: new BigNumber(100000),
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.createAccount") {
+          throw new Error("wrong transaction");
+        }
+
+        const voteAccAddrUsedInTx =
+          transaction.model.uiState.delegate.voteAccAddress;
+
+        const { stakes } = solanaResources;
+        const stake = stakes.find(
+          (s) => s.delegation?.voteAccAddr === voteAccAddrUsedInTx
+        );
+        if (stake === undefined) {
+          throw new Error("expected delegation not found in account resources");
+        }
+
+        expect(transaction.amount.toNumber()).toBe(stake.delegation?.stake);
+      },
+    },
+    {
+      name: "Deactivate Activating Delegation",
+      maxRun: 1,
+      deviceAction: acceptStakeUndelegateTransaction,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(0), "not enough balance");
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        const activatingStakes = solanaResources.stakes.filter(
+          (s) => s.activation.state === "activating"
+        );
+
+        const stake = sample(activatingStakes);
+
+        if (stake === undefined) {
+          throw new Error("no activating stakes found");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.undelegate",
+                uiState: {
+                  stakeAccAddr: stake.stakeAccAddr,
+                },
+              },
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.undelegate") {
+          throw new Error("wrong transaction");
+        }
+
+        const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
+
+        const stake = solanaResources.stakes.find(
+          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
+        );
+
+        if (stake === undefined) {
+          throw new Error("expected stake not found in account resources");
+        }
+
+        expect(stake.activation.state).toBe("inactive");
+      },
+    },
+    {
+      name: "Deactivate Active Delegation",
+      maxRun: 1,
+      deviceAction: acceptStakeUndelegateTransaction,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(0), "not enough balance");
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        const activeStakes = solanaResources.stakes.filter(
+          (s) => s.activation.state === "active"
+        );
+
+        const stake = sample(activeStakes);
+
+        if (stake === undefined) {
+          throw new Error("no active stakes found");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.undelegate",
+                uiState: {
+                  stakeAccAddr: stake.stakeAccAddr,
+                },
+              },
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.undelegate") {
+          throw new Error("wrong transaction");
+        }
+
+        const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
+
+        const stake = solanaResources.stakes.find(
+          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
+        );
+
+        if (stake === undefined) {
+          throw new Error("expected stake not found in account resources");
+        }
+
+        expect(stake.activation.state).toBe("deactivating");
+      },
+    },
+    {
+      name: "Reactivate Deactivating Delegation",
+      maxRun: 1,
+      deviceAction: acceptStakeDelegateTransaction,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(0), "not enough balance");
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        const deactivatingStakes = solanaResources.stakes.filter(
+          (s) => s.activation.state === "deactivating"
+        );
+
+        const stake = sample(deactivatingStakes);
+
+        if (stake === undefined) {
+          throw new Error("no deactivating stakes found");
+        }
+
+        if (stake.delegation === undefined) {
+          throw new Error("unexpected undefined delegation");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.delegate",
+                uiState: {
+                  stakeAccAddr: stake.stakeAccAddr,
+                  voteAccAddr: stake.delegation.voteAccAddr,
+                },
+              },
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.delegate") {
+          throw new Error("wrong transaction");
+        }
+
+        const dataUsedInTx = transaction.model.uiState;
+
+        const stake = solanaResources.stakes.find(
+          (s) =>
+            s.stakeAccAddr === dataUsedInTx.stakeAccAddr &&
+            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr
+        );
+
+        if (stake === undefined) {
+          throw new Error("expected stake not found in account resources");
+        }
+
+        expect(stake.activation.state).toBe("active");
+      },
+    },
+    {
+      name: "Activate Inactive Delegation",
+      maxRun: 1,
+      deviceAction: acceptStakeDelegateTransaction,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(0), "not enough balance");
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        const inactiveStakes = solanaResources.stakes.filter(
+          (s) => s.activation.state === "inactive"
+        );
+
+        const stake = sample(inactiveStakes);
+
+        if (stake === undefined) {
+          throw new Error("no inactive stakes found");
+        }
+
+        if (stake.delegation === undefined) {
+          throw new Error("unexpected undefined delegation");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.delegate",
+                uiState: {
+                  stakeAccAddr: stake.stakeAccAddr,
+                  voteAccAddr: stake.delegation.voteAccAddr,
+                },
+              },
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.delegate") {
+          throw new Error("wrong transaction");
+        }
+
+        const dataUsedInTx = transaction.model.uiState;
+
+        const stake = solanaResources.stakes.find(
+          (s) =>
+            s.stakeAccAddr === dataUsedInTx.stakeAccAddr &&
+            s.delegation?.voteAccAddr === dataUsedInTx.voteAccAddr
+        );
+
+        if (stake === undefined) {
+          throw new Error("expected stake not found in account resources");
+        }
+
+        expect(stake.activation.state).toBe("activating");
+      },
+    },
+    {
+      name: "Withdraw Delegation",
+      maxRun: 1,
+      deviceAction: acceptStakeWithdrawTransaction,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(0), "not enough balance");
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        const withdrawableStakes = solanaResources.stakes.filter(
+          (s) => s.withdrawable > 0
+        );
+
+        const stake = sample(withdrawableStakes);
+
+        if (stake === undefined) {
+          throw new Error("no withdrawable stakes found");
+        }
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [
+            {
+              model: {
+                kind: "stake.withdraw",
+                uiState: {
+                  stakeAccAddr: stake.stakeAccAddr,
+                },
+              },
+            },
+          ],
+        };
+      },
+      test: ({ account, transaction }) => {
+        const { solanaResources } = account;
+
+        if (solanaResources === undefined) {
+          throw new Error("solana resources required");
+        }
+
+        if (transaction.model.kind !== "stake.withdraw") {
+          throw new Error("wrong transaction");
+        }
+
+        const stakeAccAddrUsedInTx = transaction.model.uiState.stakeAccAddr;
+
+        const delegationExists = solanaResources.stakes.some(
+          (s) => s.stakeAccAddr === stakeAccAddrUsedInTx
+        );
+
+        expect(delegationExists).toBe(false);
+      },
+    },
   ],
 };
 
@@ -82,6 +487,11 @@ function expectCorrectMemo(input: TransactionTestInput<Transaction>) {
       expect(operation.extra.memo).toBe(transaction.model.uiState.memo);
       break;
     case "token.createATA":
+    case "stake.createAccount":
+    case "stake.delegate":
+    case "stake.undelegate":
+    case "stake.withdraw":
+    case "stake.split":
       break;
     default:
       return assertUnreachable(transaction.model);
