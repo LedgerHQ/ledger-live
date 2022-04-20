@@ -78,13 +78,13 @@ export default function FirmwareUpdate({
               Math.round(event.progress * 100),
               t("FirmwareUpdate.Notifications.installing", {
                 progress: Math.round(event.progress * 100),
-              })
+              }),
             );
           }
           return { step: "downloadingUpdate", progress: event.progress };
         case "confirmUpdate":
           NativeModules.BackgroundRunner.requireUserAction(
-            t("FirmwareUpdate.Notifications.confirmOnDevice")
+            t("FirmwareUpdate.Notifications.confirmOnDevice"),
           );
           return { step: "confirmUpdate" };
         case "flashingMcu":
@@ -126,19 +126,19 @@ export default function FirmwareUpdate({
     NativeModules.BackgroundRunner.stop();
   }, [dispatch]);
 
+  // only allow closing of the modal when the update is not in an intermediate step
+  const canClose =
+    step === "confirmRecoveryBackup" ||
+    step === "firmwareUpdated" ||
+    step === "error";
+
   const onTryClose = useCallback(
     (restoreApps: boolean) => {
-      // only allow closing of the modal when the update is not in an intermediate step
-      if (
-        step === "confirmRecoveryBackup" ||
-        step === "firmwareUpdated" ||
-        step === "error"
-      ) {
-        // prevent the firmware update modal from opening again without the user explicit clicking on update
+      if (canClose) {
         onClose(restoreApps);
       }
     },
-    [step],
+    [canClose],
   );
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
@@ -180,6 +180,7 @@ export default function FirmwareUpdate({
   return (
     <BottomModal
       id="DeviceActionModal"
+      noCloseButton={!canClose}
       isOpened={isOpen}
       onClose={onCloseSilently}
       onModalHide={onCloseSilently}

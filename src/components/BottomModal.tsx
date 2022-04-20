@@ -14,6 +14,7 @@ export type Props = {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   preventBackdropClick?: boolean;
+  noCloseButton?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 };
 
@@ -25,6 +26,7 @@ const BottomModal = ({
   preventBackdropClick,
   onModalHide,
   containerStyle,
+  noCloseButton,
   ...rest
 }: Props) => {
   const [open, setIsOpen] = useState(false);
@@ -59,7 +61,7 @@ const BottomModal = ({
       preventBackdropClick={modalLock || preventBackdropClick}
       isOpen={open}
       onClose={handleClose}
-      noCloseButton={modalLock}
+      noCloseButton={modalLock || noCloseButton}
       modalStyle={style}
       containerStyle={containerStyle}
       {...rest}
