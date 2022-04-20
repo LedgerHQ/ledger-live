@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-tezos",
-  "version": "6.24.1",
+  "version": "6.27.1",
   "description": "Ledger Hardware Wallet Tezos Application API",
   "keywords": [
     "Ledger",
@@ -27,7 +27,7 @@
   "types": "lib/Tezos.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "^6.24.1",
+    "@ledgerhq/hw-transport": "^6.27.1",
     "blake2b": "^2.1.4",
     "bs58check": "^2.1.2",
     "invariant": "^2.2.4"

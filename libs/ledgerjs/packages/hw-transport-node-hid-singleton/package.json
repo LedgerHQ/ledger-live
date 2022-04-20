@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-singleton",
-  "version": "6.26.0",
+  "version": "6.27.1",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and usb-detection",
   "keywords": [
     "Ledger",
@@ -27,10 +27,10 @@
   "types": "lib/TransportNodeHid.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "^6.24.1",
+    "@ledgerhq/devices": "^6.27.1",
     "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.24.1",
-    "@ledgerhq/hw-transport-node-hid-noevents": "^6.24.1",
+    "@ledgerhq/hw-transport": "^6.27.1",
+    "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.1",
     "@ledgerhq/logs": "^6.10.0",
     "lodash": "^4.17.21",
     "node-hid": "2.1.1",
