@@ -40,7 +40,7 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.2.2",
+    "turbo": "^1.2.4",
     "x-run": "workspace:*"
   },
   "pnpm": {
