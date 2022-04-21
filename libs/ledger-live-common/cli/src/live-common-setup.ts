@@ -29,7 +29,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 

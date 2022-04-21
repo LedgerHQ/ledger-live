@@ -69,6 +69,9 @@ function readPackage(pkg, context) {
       addDependencies("react-native-text-input-mask", {
         tslib: "*",
       }),
+      addDependencies(/^@walletconnect\/.*/, {
+        tslib: "*",
+      }),
       addDependencies("react-native-locale", {
         fbjs: "*",
       }),
@@ -105,10 +108,10 @@ function readPackage(pkg, context) {
       addDependencies(
         "jest-worker",
         {
-          metro: "*"
+          metro: "*",
         },
         {
-          kind: "peerDependencies"
+          kind: "peerDependencies",
         }
       ),
       // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
@@ -121,7 +124,7 @@ function readPackage(pkg, context) {
           "ts-node": "^10.4.0",
           "@types/node": "*",
           "source-map-support": "*",
-          "typescript": "4"
+          typescript: "4",
         },
         {
           kind: "devDependencies",
