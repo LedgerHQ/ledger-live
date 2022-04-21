@@ -48,7 +48,9 @@ export const parseCallRequest: Parser = async (account, payload) => {
         data: payload.params[0],
       };
 
-    case "eth_signTypedData":
+    // @dev: Today, `eth_signTypedData` is versionned. We can't only check `eth_signTypedData`
+    //       This regex matches `eth_signTypedData` and `eth_signTypedData_v[0-9]`
+    case payload.method.match(/eth_signTypedData(_v.)?$/)?.input:
       message = JSON.parse(payload.params[1]);
       hashes = {
         // $FlowFixMe
