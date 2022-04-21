@@ -17,13 +17,10 @@ const main = async () => {
 <strong>${platform}</strong>
 
 | Actual | Diff | Expected |
-|:------:|:----:|:--------:|
-      `;
+|:------:|:----:|:--------:|`;
       current.forEach(({ actual, diff, expected }) => {
-        str += `
-| ${actual.name} | ${diff.name} | ${expected.name} |
-| ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |
-        `;
+        str += `| ${actual.name} | ${diff.name} | ${expected.name} |
+| ![${actual.name}](${actual.link}) | ![${diff.name}](${diff.link}) | ![${expected.name}](${expected.link}) |`;
       });
       str += "\n\n";
     }
