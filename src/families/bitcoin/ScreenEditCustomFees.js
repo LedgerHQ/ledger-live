@@ -43,13 +43,17 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   invariant(transaction.family === "bitcoin", "not bitcoin family");
   invariant(account, "no account found");
 
-  const [ownSatPerByte, setOwnSatPerByte] = useState(null);
+  const [ownSatPerByte, setOwnSatPerByte] = useState(
+    satPerByte ? satPerByte.toString() : "",
+  );
 
   const onChange = text => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
   };
 
   const onValidateText = useCallback(() => {
+    if (BigNumber(ownSatPerByte || 0).isZero()) return;
+
     Keyboard.dismiss();
 
     setSatPerByte(BigNumber(ownSatPerByte || 0));
@@ -78,17 +82,17 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
-        <NavigationScrollView contentContainerStyle={styles.root}>
+        <NavigationScrollView>
           <View style={styles.inputBox}>
             <TextInput
               autoFocus
               style={[styles.textInputAS, { color: colors.darkBlue }]}
-              defaultValue={satPerByte ? satPerByte.toString() : ""}
-              keyboardType="numeric"
+              keyboardType="number-pad"
               returnKeyType="done"
               maxLength={10}
               onChangeText={onChange}
               onSubmitEditing={onValidateText}
+              value={ownSatPerByte}
             />
             <LText style={[styles.currency, { color: colors.grey }]}>
               <Trans i18nKey="common.satPerByte" />
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: 20,
   },
   body: {

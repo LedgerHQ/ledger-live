@@ -191,34 +191,39 @@ export default function SendAmount({ navigation, route }: Props) {
             }
           />
           <View style={styles.summaryRow}>
-            <Trans
-              i18nKey="transfer.lending.enable.enable.summary"
-              values={{
-                contractName: t("transfer.lending.enable.enable.contractName", {
-                  currencyName: currency.ticker,
-                }),
-                accountName: name,
-                amount:
-                  amount && amount.gt(0)
-                    ? t("transfer.lending.enable.enable.limit", {
-                        amount: formattedAmount,
-                      })
-                    : t("transfer.lending.enable.enable.noLimit", {
-                        assetName: currency.name,
-                      }),
-              }}
-            >
-              <LText semiBold style={styles.label} />
-              <LText
-                numberOfLines={1}
-                semiBold
-                style={[
-                  styles.liveLabel,
-                  { backgroundColor: colors.lightLive },
-                ]}
-                color="live"
-              />
-            </Trans>
+            <LText semiBold style={styles.label}>
+              <Trans
+                i18nKey="transfer.lending.enable.enable.summary"
+                values={{
+                  contractName: t(
+                    "transfer.lending.enable.enable.contractName",
+                    {
+                      currencyName: currency.ticker,
+                    },
+                  ),
+                  accountName: name,
+                  amount:
+                    amount && amount.gt(0)
+                      ? t("transfer.lending.enable.enable.limit", {
+                          amount: formattedAmount,
+                        })
+                      : t("transfer.lending.enable.enable.noLimit", {
+                          assetName: currency.name,
+                        }),
+                }}
+              >
+                <LText semiBold style={styles.label} />
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  style={[
+                    styles.liveLabel,
+                    { backgroundColor: colors.lightLive },
+                  ]}
+                  color="live"
+                />
+              </Trans>
+            </LText>
           </View>
         </View>
         <View style={styles.bottomWrapper}>

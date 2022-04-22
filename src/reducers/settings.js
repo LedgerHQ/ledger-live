@@ -1,7 +1,6 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import { Platform } from "react-native";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
@@ -23,6 +22,7 @@ import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/type
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
+import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -83,7 +83,7 @@ export type SettingsState = {
   hasAvailableUpdate: boolean,
   theme: Theme,
   osTheme: ?string,
-  carouselVisibility: number,
+  carouselVisibility: any,
   discreetMode: boolean,
   language: string,
   languageIsSetByUser: boolean,
@@ -107,7 +107,7 @@ export const INITIAL_STATE: SettingsState = {
   analyticsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
-  selectedTimeRange: "month",
+  selectedTimeRange: "day",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,
@@ -120,7 +120,9 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
-  carouselVisibility: 0,
+  carouselVisibility: Object.fromEntries(
+    SLIDES.map(slide => [slide.name, true]),
+  ),
   discreetMode: false,
   language: getDefaultLanguageLocale(),
   languageIsSetByUser: false,
@@ -476,7 +478,7 @@ export const countervalueFirstSelector = (state: State) =>
   state.settings.countervalueFirst;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
-  Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
+  state.settings.readOnlyModeEnabled;
 
 export const blacklistedTokenIdsSelector = (state: State) =>
   state.settings.blacklistedTokenIds;

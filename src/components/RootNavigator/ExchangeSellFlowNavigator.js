@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ExchangeSelectCurrency from "../../screens/Exchange/SelectCurrency";
 import ExchangeSelectAccount from "../../screens/Exchange/SelectAccount";
@@ -23,7 +23,6 @@ export default function ExchangeNavigator() {
       screenOptions={{
         ...stackNavigationConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
-        headerMode: "float",
       }}
     >
       <Stack.Screen

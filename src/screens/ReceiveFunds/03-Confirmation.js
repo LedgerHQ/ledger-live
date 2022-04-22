@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { View, StyleSheet, Platform } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
@@ -31,7 +30,6 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import Alert from "../../components/Alert";
 import BottomModal from "../../components/BottomModal";
-import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
@@ -160,13 +158,11 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   useEffect(() => {
     const device = route.params.device;
 
-    if (device) {
-      setAllowNavigation(false);
+    if (device && !verified) {
       verifyOnDevice(device);
-    } else {
-      setAllowNavigation(true);
     }
-  }, [route.params, account, parentAccount, verifyOnDevice]);
+    setAllowNavigation(true);
+  }, [route.params, verified, verifyOnDevice]);
 
   if (!account) return null;
   const { width } = getWindowDimensions();
@@ -176,10 +172,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="ReceiveFunds"
         name="Confirmation"
@@ -193,10 +186,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <SkipLock />
         </>
       )}
-      <NavigationScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={styles.root}
-      >
+      <NavigationScrollView style={{ flex: 1 }}>
         <View style={styles.container}>
           <Touchable event="QRZoom" onPress={onZoom}>
             {width < 350 ? (
@@ -261,7 +251,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </View>
         <View style={styles.bottomContainer}>
           {unsafe ? (
-            <Alert type="danger">
+            <Alert type="warning">
               <Trans
                 i18nKey={
                   readOnlyModeEnabled
@@ -346,15 +336,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             </View>
           </View>
         ) : null}
-        <Touchable
-          event="ReceiveClose"
-          style={styles.close}
-          onPress={onModalClose}
-        >
-          <Close color={colors.fog} size={20} />
-        </Touchable>
       </BottomModal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -448,7 +431,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    paddingHorizontal: 8,
+    marginVertical: 8,
     alignItems: "flex-end",
     flexGrow: 1,
   },
@@ -458,18 +441,12 @@ const styles = StyleSheet.create({
   },
   bigButton: {
     flexGrow: 2,
-    marginHorizontal: 8,
   },
   footer: {
     flexDirection: "row",
     marginBottom: 16,
     paddingHorizontal: 8,
     paddingTop: 8,
-  },
-  close: {
-    position: "absolute",
-    right: 10,
-    top: 10,
   },
   learnmore: {
     paddingLeft: 8,

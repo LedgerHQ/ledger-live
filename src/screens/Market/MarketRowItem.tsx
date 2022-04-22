@@ -24,7 +24,7 @@ export const IconContainer = styled(Flex).attrs({
 type Props = {
   index: number;
   item: CurrencyData;
-  counterCurrency: string;
+  counterCurrency?: string;
   locale: string;
   t: TFunction;
 };
@@ -47,7 +47,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
       flexDirection="row"
       justifyContent="flex-start"
       alignItems="center"
-      p="16px"
+      py="16px"
       key={index}
     >
       {isLiveSupported && internalCurrency ? (
@@ -132,4 +132,4 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
   );
 }
 
-export default memo<Props>(MarketRowItem);
+export default memo<Props>(MarketRowItem, () => true);

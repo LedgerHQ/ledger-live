@@ -1,14 +1,15 @@
 // @flow
 import React from "react";
 import { Platform } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
+import Learn from "../../screens/Learn";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
-import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
@@ -23,6 +24,8 @@ export default function MainNavigator({
 }) {
   const { colors } = useTheme();
   const { hideTabNavigation } = params || {};
+  const learnFeature = useFeature("learn");
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -52,24 +55,42 @@ export default function MainNavigator({
           ),
         }}
       />
-      <Tab.Screen
-        name={NavigatorName.Accounts}
-        component={AccountsNavigator}
-        listeners={({ route, navigation }) => ({
-          tabPress: () => navigation.navigate(route.name),
-        })}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: (props: any) => (
-            <TabIcon
-              Icon={Icons.WalletMedium}
-              i18nKey="tabs.accounts"
-              {...props}
-            />
-          ),
-          tabBarTestID: "TabBarAccounts",
-        }}
-      />
+      {learnFeature?.enabled ? (
+        <Tab.Screen
+          name={NavigatorName.Learn}
+          component={Learn}
+          options={{
+            unmountOnBlur: true,
+            tabBarIcon: (props: any) => (
+              <TabIcon
+                Icon={Icons.GraduationMedium}
+                i18nKey="tabs.learn"
+                {...props}
+                iconSize={25}
+              />
+            ),
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name={NavigatorName.Accounts}
+          component={AccountsNavigator}
+          listeners={({ route, navigation }) => ({
+            tabPress: () => navigation.navigate(route.name),
+          })}
+          options={{
+            unmountOnBlur: true,
+            tabBarIcon: (props: any) => (
+              <TabIcon
+                Icon={Icons.WalletMedium}
+                i18nKey="tabs.accounts"
+                {...props}
+              />
+            ),
+            tabBarTestID: "TabBarAccounts",
+          }}
+        />
+      )}
       <Tab.Screen
         name={ScreenName.Transfer}
         component={Transfer}
@@ -78,23 +99,6 @@ export default function MainNavigator({
           tabBarIcon: (props: any) => <TransferTabIcon {...props} />,
         }}
       />
-      {Platform.OS === "android" ? (
-        <Tab.Screen
-          name={NavigatorName.Platform}
-          component={PlatformNavigator}
-          options={{
-            headerShown: false,
-            unmountOnBlur: true,
-            tabBarIcon: (props: any) => (
-              <TabIcon
-                Icon={Icons.ManagerMedium}
-                i18nKey="tabs.platform"
-                {...props}
-              />
-            ),
-          }}
-        />
-      ) : null}
       <Tab.Screen
         name={NavigatorName.Market}
         component={MarketNavigator}

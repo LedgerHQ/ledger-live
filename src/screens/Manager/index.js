@@ -133,7 +133,10 @@ class ChooseDevice extends Component<
   onStepEntered = (i: number, meta: Object) => {
     if (i === 2) {
       // we also preload as much info as possible in case of a MCU
-      manager.getLatestFirmwareForDevice(meta.deviceInfo);
+      manager.getLatestFirmwareForDevice(meta.deviceInfo).then(
+        () => {},
+        () => {},
+      );
     }
   };
 

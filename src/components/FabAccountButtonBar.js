@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   dropShadow: {
-    shadowColor: "#6490F1",
+    shadowColor: "#bdb3ff",
     shadowOffset: {
       width: 0,
       height: 1,

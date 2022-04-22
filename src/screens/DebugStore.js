@@ -93,7 +93,7 @@ export default function DebugStore() {
     let override = false;
     const appState = state;
     // eslint-disable-next-line no-console
-    console.log({ state });
+    if (__DEV__) console.log({ state });
     // eslint-disable-next-line no-debugger
     debugger;
     if (__DEV__ && override) {

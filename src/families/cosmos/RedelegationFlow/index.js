@@ -117,7 +117,7 @@ function RedelegationFlow() {
         options={{
           headerLeft: null,
           headerRight: null,
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
         }}
       />

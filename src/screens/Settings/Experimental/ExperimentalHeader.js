@@ -69,13 +69,13 @@ function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
           </>
         )}
 
-        {Config.MOCK && (
+        {Config.MOCK ? (
           <TouchableOpacity onPress={onPressMock}>
             <LText bold style={styles.label}>
               MOCK
             </LText>
           </TouchableOpacity>
-        )}
+        ) : null}
       </Animated.View>
     </Animated.View>
   );

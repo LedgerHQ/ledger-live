@@ -16,7 +16,7 @@ import Button from "../Button";
 import IconClose from "../../icons/Close";
 import Slide from "./Slide";
 
-const SLIDES = [
+export const SLIDES = [
   {
     url: urls.banners.ledgerAcademy,
     name: "LedgerAcademy",

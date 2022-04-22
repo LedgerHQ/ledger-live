@@ -1,6 +1,7 @@
 // @flow
 import React from "react";
 import sample from "lodash/sample";
+import { Alert } from "react-native";
 import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
@@ -33,9 +34,25 @@ export default function GenerateMockAccountsButton({
   return (
     <SettingsRow
       title={title}
-      onPress={async () => {
-        await injectMockAccountsInDB(count);
-        reboot();
+      onPress={() => {
+        Alert.alert(
+          "This will erase existing accounts",
+          "Continue?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Ok",
+              onPress: async () => {
+                await injectMockAccountsInDB(count);
+                reboot();
+              },
+            },
+          ],
+          { cancelable: true },
+        );
       }}
     />
   );

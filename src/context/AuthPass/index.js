@@ -23,6 +23,7 @@ type State = {
   skipLockCount: number,
   setEnabled: (enabled: boolean) => void,
   authModalOpen: boolean,
+  mounted: boolean,
 };
 
 type OwnProps = {
@@ -41,9 +42,10 @@ let wasUnlocked = false;
 
 class AuthPass extends PureComponent<Props, State> {
   setEnabled = (enabled: boolean) => {
-    this.setState(prevState => ({
-      skipLockCount: prevState.skipLockCount + (enabled ? 1 : -1),
-    }));
+    if (this.state.mounted)
+      this.setState(prevState => ({
+        skipLockCount: prevState.skipLockCount + (enabled ? 1 : -1),
+      }));
   };
 
   state = {
@@ -54,6 +56,7 @@ class AuthPass extends PureComponent<Props, State> {
     skipLockCount: 0,
     setEnabled: this.setEnabled,
     authModalOpen: false,
+    mounted: false,
   };
 
   static getDerivedStateFromProps({ privacy }, { isLocked }) {
@@ -64,8 +67,13 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    this.state.mounted = true;
     this.auth();
     AppState.addEventListener("change", this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    this.state.mounted = false;
   }
 
   appInBg: number;
@@ -84,28 +92,36 @@ class AuthPass extends PureComponent<Props, State> {
     ) {
       this.appInBg = Date.now();
     }
-    this.setState({ appState: nextAppState });
+    if (this.state.mounted) this.setState({ appState: nextAppState });
   };
 
   // auth: try to auth with biometrics and fallback on password
   auth = () => {
     const { privacy } = this.props;
     const { isLocked, authModalOpen } = this.state;
-    if (isLocked && privacy && privacy.biometricsEnabled && !authModalOpen) {
+    if (
+      isLocked &&
+      privacy &&
+      privacy.biometricsEnabled &&
+      !authModalOpen &&
+      this.state.mounted
+    ) {
       this.setState({ authModalOpen: true });
     }
   };
 
   onSuccess = () => {
-    this.setState({ authModalOpen: false });
+    if (this.state.mounted) this.setState({ authModalOpen: false });
     this.unlock();
   };
 
   onError = error => {
-    this.setState({ authModalOpen: false });
-    this.setState({
-      biometricsError: error,
-    });
+    if (this.state.mounted) {
+      this.setState({ authModalOpen: false });
+      this.setState({
+        biometricsError: error,
+      });
+    }
   };
 
   // lock the app
@@ -113,22 +129,26 @@ class AuthPass extends PureComponent<Props, State> {
     if (!this.props.privacy || this.state.skipLockCount) return;
 
     wasUnlocked = false;
-    this.setState(
-      {
-        isLocked: true,
-        biometricsError: null,
-      },
-      () => this.auth(),
-    );
+    if (this.state.mounted) {
+      this.setState(
+        {
+          isLocked: true,
+          biometricsError: null,
+        },
+        () => this.auth(),
+      );
+    }
   };
 
   // unlock the app
   unlock = () => {
     wasUnlocked = true;
-    this.setState({
-      isLocked: false,
-      biometricsError: null,
-    });
+    if (this.state.mounted) {
+      this.setState({
+        isLocked: false,
+        biometricsError: null,
+      });
+    }
   };
 
   render() {

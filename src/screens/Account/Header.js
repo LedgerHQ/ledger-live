@@ -7,8 +7,6 @@ import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 
-type Props = {};
-
 const Header = () => {
   const { error } = useGlobalSyncState();
   const networkError = useSelector(networkErrorSelector);

@@ -39,7 +39,7 @@ export default function EditAccountUnits({ navigation, route }: Props) {
   const accountUnits = account.currency.units;
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <View style={styles.body}>
         <FlatList
           data={accountUnits}
@@ -79,5 +79,6 @@ const styles = StyleSheet.create({
   body: {
     flexDirection: "column",
     flex: 1,
+    padding: 16,
   },
 });

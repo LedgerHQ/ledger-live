@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>212042068804-n7rglq1e800k8fo9urt70etkbh2tia8l.apps.googleusercontent.com</string>
+	<string>750497694072-e41g4om5ndmooikbooo0c2r5llh02jaj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.212042068804-n7rglq1e800k8fo9urt70etkbh2tia8l</string>
+	<string>com.googleusercontent.apps.750497694072-e41g4om5ndmooikbooo0c2r5llh02jaj</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDBE3vnLXy4ZFArrIvwGth7ezo55dvCO6Q</string>
+	<string>AIzaSyBimHiR86J9H26h5TAr0nJ3yRcryCZUQ-c</string>
 	<key>GCM_SENDER_ID</key>
-	<string>212042068804</string>
+	<string>750497694072</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>ledgerlivemobile</string>
 	<key>PROJECT_ID</key>
-	<string>ledger-live-production</string>
+	<string>ledger-live-development</string>
 	<key>STORAGE_BUCKET</key>
-	<string>ledger-live-production.appspot.com</string>
+	<string>ledger-live-development.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:212042068804:ios:3f1c7047887efdc2b51d11</string>
+	<string>1:750497694072:ios:0d69ebce321e5f0ebac88d</string>
 </dict>
 </plist>

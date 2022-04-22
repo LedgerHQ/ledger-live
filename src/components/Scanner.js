@@ -13,9 +13,10 @@ type Props = {
   onResult: Function,
   liveQrCode?: boolean,
   progress?: number,
+  instruction?: React$Node | string,
 };
 
-const Scanner = ({ onResult, liveQrCode, progress }: Props) => {
+const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const { width, height } = getWindowDimensions();
   const navigation = useNavigation();
@@ -51,6 +52,7 @@ const Scanner = ({ onResult, liveQrCode, progress }: Props) => {
           progress={progress}
           width={width}
           height={height}
+          instruction={instruction}
         />
       </Camera>
     </View>

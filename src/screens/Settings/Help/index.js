@@ -11,7 +11,7 @@ import NavigationScrollView from "../../../components/NavigationScrollView";
 
 export default function HelpSettings() {
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <TrackScreen category="Settings" name="Help" />
       <LedgerSupportRow />
       <ConfigureDeviceRow />

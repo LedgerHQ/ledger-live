@@ -12,7 +12,7 @@ import {
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
 import type {
@@ -308,7 +308,9 @@ function NominateSelectValidator({ navigation, route }: Props) {
     error instanceof PolkadotValidatorsRequired && !nominations.length; // Do not show error on first nominate
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background.main }]}
+    >
       <NominationDrawer
         isOpen={drawerInfo && drawerInfo.length > 0}
         onClose={onCloseDrawer}
@@ -320,22 +322,24 @@ function NominateSelectValidator({ navigation, route }: Props) {
         }
         data={drawerInfo}
       />
-      {!hasMinBondBalance ? (
-        <Alert type="warning">
-          <Trans
-            i18nKey="polkadot.bondedBalanceBelowMinimum"
-            values={{ minimumBondBalance: minBondBalance }}
-          />
-        </Alert>
-      ) : null}
-      {nonValidators.length ? (
-        <Alert type="warning">
-          <Trans
-            i18nKey="polkadot.nominate.steps.validators.notValidatorsRemoved"
-            values={{ count: nonValidators.length }}
-          />
-        </Alert>
-      ) : null}
+      <View marginHorizontal={16}>
+        {!hasMinBondBalance ? (
+          <Alert type="warning">
+            <Trans
+              i18nKey="polkadot.bondedBalanceBelowMinimum"
+              values={{ minimumBondBalance: minBondBalance }}
+            />
+          </Alert>
+        ) : null}
+        {nonValidators.length ? (
+          <Alert type="warning">
+            <Trans
+              i18nKey="polkadot.nominate.steps.validators.notValidatorsRemoved"
+              values={{ count: nonValidators.length }}
+            />
+          </Alert>
+        ) : null}
+      </View>
       <SelectValidatorSearchBox
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -359,8 +363,8 @@ function NominateSelectValidator({ navigation, route }: Props) {
         stickySectionHeadersEnabled
         renderSectionHeader={({ section: { title } }) => (
           <LText
-            style={[styles.header, { backgroundColor: colors.lightFog }]}
-            color="grey"
+            style={[styles.header, { backgroundColor: colors.neutral.c30 }]}
+            color={colors.neutral.c70}
           >
             {title}
           </LText>
@@ -370,26 +374,33 @@ function NominateSelectValidator({ navigation, route }: Props) {
       <View
         style={[
           styles.footer,
-          { borderTopColor: colors.lightFog, backgroundColor: colors.card },
+          {
+            borderTopColor: colors.neutral.c30,
+            backgroundColor: colors.background.main,
+          },
         ]}
       >
         <View style={styles.paddingBottom}>
           <View style={styles.labelContainer}>
             {!ignoreError && maybeChill ? (
               <TouchableOpacity onPress={onGoToChill}>
-                <LText semiBold style={[styles.footerMessage]} color="live">
+                <LText
+                  semiBold
+                  style={[styles.footerMessage]}
+                  color={colors.primary.c80}
+                >
                   <Trans i18nKey="polkadot.nominate.steps.validators.maybeChill" />
                 </LText>
               </TouchableOpacity>
             ) : (
               <>
-                {maxSelected && <Check size={12} color={colors.success} />}
+                {maxSelected && <Check size={12} color={colors.success.c100} />}
                 <LText
                   style={[
                     styles.footerMessage,
-                    maxSelected && { color: colors.success },
-                    !ignoreError && warning && { color: colors.orange },
-                    !ignoreError && error && { color: colors.alert },
+                    maxSelected && { color: colors.success.c100 },
+                    !ignoreError && warning && { color: colors.warning.c100 },
+                    !ignoreError && error && { color: colors.error.c100 },
                   ]}
                 >
                   {!ignoreError && (error || warning) ? (

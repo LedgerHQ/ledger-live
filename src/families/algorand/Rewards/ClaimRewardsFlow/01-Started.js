@@ -14,16 +14,17 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import { useTheme } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { localeSelector } from "../../../../reducers/settings";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
-import IlluRewards from "../../../../icons/images/Rewards";
 import { TrackScreen } from "../../../../analytics";
 import Alert from "../../../../components/Alert";
 import TranslatedError from "../../../../components/TranslatedError";
+import Illustration from "../../../../images/illustration/Illustration";
 
 type RouteParams = {
   accountId: string,
@@ -88,7 +89,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
         contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="DelegationFlow" name="Started" />
-        <IlluRewards />
+        <Flex alignItems="center" justifyContent="center" mb={6}>
+          <Illustration
+            size={200}
+            lightSource={require("../../../../images/illustration/Light/_003.png")}
+            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+          />
+        </Flex>
         <LText semiBold style={styles.description}>
           <Trans
             secondary
@@ -102,7 +109,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
           </Alert>
         </View>
       </NavigationScrollView>
-      <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
+      <View style={[styles.footer]}>
         {warning && warning instanceof Error ? (
           <View style={styles.warningSection}>
             <LText
@@ -139,7 +146,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 16,
     paddingVertical: 32,
-    alignItems: "center",
   },
   description: {
     fontSize: 16,
@@ -157,6 +163,5 @@ const styles = StyleSheet.create({
   warningSection: { padding: 16, height: 80 },
   footer: {
     padding: 16,
-    borderTopWidth: 1,
   },
 });

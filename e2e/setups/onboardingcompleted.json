@@ -31,7 +31,7 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "carouselVisibility": 0,
+      "carouselVisibility": {},
       "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
       "blacklistedTokenIds": [],

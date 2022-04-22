@@ -155,7 +155,7 @@ class EditDeviceName extends PureComponent<
             </LText>
           </View>
           <View style={styles.footer}>
-            {error ? <FooterError error={error} colors={colors} /> : null}
+            <FooterError error={{ name: "FFFF" }} colors={colors} />
             <Button
               event="EditDeviceNameSubmit"
               type="primary"

@@ -95,17 +95,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="AddAccounts" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
-        <View style={styles.searchContainer}>
-          <FilteredSearchBar
-            keys={SEARCH_KEYS}
-            inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-            list={sortedCryptoCurrencies}
-            renderList={renderList}
-            renderEmptySearch={renderEmptyList}
-          />
-        </View>
-      </KeyboardView>
+      <View style={styles.searchContainer}>
+        <FilteredSearchBar
+          keys={SEARCH_KEYS}
+          inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+          list={sortedCryptoCurrencies}
+          renderList={renderList}
+          renderEmptySearch={renderEmptyList}
+        />
+      </View>
     </SafeAreaView>
   );
 }

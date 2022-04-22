@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -45,14 +45,14 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-export default function OperationRow({
+const OperationRow = ({
   account,
   parentAccount,
   operation,
   isSubOperation,
   multipleAccounts,
   isLast,
-}: Props) {
+}: Props) => {
   const navigation = useNavigation();
   const { colors } = useTheme();
 
@@ -119,7 +119,7 @@ export default function OperationRow({
     if (isNftOperation) {
       return (
         <OperationRowNftName
-          style={[styles.bodyRight, { maxWidth: "50%" }]}
+          style={operationRowNftNameStyles}
           operation={operation}
         />
       );
@@ -219,7 +219,7 @@ export default function OperationRow({
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const OpCounterValue = ({ children }: { children: React$Node }) => (
   <LText semiBold numberOfLines={1} style={styles.bottomRow}>
@@ -288,3 +288,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+const operationRowNftNameStyles = [styles.bodyRight, { maxWidth: "50%" }];
+
+export default memo<Props>(OperationRow);

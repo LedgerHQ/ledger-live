@@ -12,6 +12,7 @@ import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setDeviceMode } from "@ledgerhq/live-common/lib/hw/actions/app";
+import { setSecp256k1Instance } from "@ledgerhq/live-common/lib/families/bitcoin/wallet-btc/crypto/secp256k1";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 
@@ -33,6 +34,7 @@ setSupportedCurrencies([
   "dogecoin",
   "cosmos",
   "crypto_org",
+  "celo",
   "dash",
   "tron",
   "tezos",
@@ -133,3 +135,5 @@ registerTransportModule({
   open: id => BluetoothTransport.open(id),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
+
+setSecp256k1Instance(require("./logic/secp256k1"));

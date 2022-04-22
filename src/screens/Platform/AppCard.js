@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -65,9 +65,14 @@ const AppCard = ({
     [onPress, manifest, isDisabled],
   );
 
-  const { color, badgeColor, borderColor, backgroundColor } = getBranchStyle(
-    manifest.branch,
-    colors,
+  const { color, badgeColor, borderColor, backgroundColor } = useMemo(
+    () => getBranchStyle(manifest.branch, colors),
+    [colors, manifest.branch],
+  );
+
+  const description = useMemo(
+    () => translateContent(manifest.content.shortDescription, locale),
+    [locale, manifest.content.shortDescription],
   );
 
   return (
@@ -94,7 +99,7 @@ const AppCard = ({
         />
         <View style={styles.content}>
           <View style={styles.header}>
-            <LText style={[styles.title, { color }]} numberOfLines={1} semiBold>
+            <LText variant="h3" style={[{ color }]} numberOfLines={1} semiBold>
               {manifest.name}
             </LText>
             {manifest.branch !== "stable" && (
@@ -115,7 +120,7 @@ const AppCard = ({
             style={[styles.description, { color: colors.smoke }]}
             numberOfLines={2}
           >
-            {translateContent(manifest.content.shortDescription, locale)}
+            {description}
           </LText>
         </View>
         {!isDisabled && <IconChevron size={18} color={colors.smoke} />}
@@ -156,7 +161,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   title: {
-    fontSize: 16,
     flexGrow: 0,
     flexShrink: 1,
     overflow: "hidden",
@@ -180,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppCard;
+export default memo(AppCard);

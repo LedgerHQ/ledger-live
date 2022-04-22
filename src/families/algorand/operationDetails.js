@@ -11,9 +11,8 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatC
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
-import * as Animatable from "react-native-animatable";
-import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { Icons } from "@ledgerhq/native-ui";
 import Section from "../../screens/OperationDetails/Section";
 import OperationStatusIcon from "../../icons/OperationStatusIcon";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
@@ -71,54 +70,22 @@ type OperationIconProps = {
   operation: Operation,
 };
 
-const anim = (size, negated) => ({
-  from: {
-    transform: [{ translateX: 0 }],
-  },
-  to: {
-    transform: [{ translateX: (negated ? -size : size) / 4 }],
-  },
-});
-
 const OperationIcon = ({
   type,
   size,
   confirmed,
   operation: { hasFailed, extra },
 }: OperationIconProps) => {
-  const { colors } = useTheme();
   const rewards = extra.rewards && extra.rewards.gt(0) ? extra.rewards : null;
   return rewards ? (
     <View style={styles.operationIconContainer}>
-      <Animatable.View
-        animation={anim(size, true)}
-        duration={1000}
-        useNativeDriver
-        style={[
-          styles.operationMainIcon,
-          { width: size - 2, height: size - 2, backgroundColor: colors.card },
-        ]}
-      >
-        <OperationStatusIcon
-          confirmed={confirmed}
-          type={type}
-          failed={hasFailed}
-          size={size}
-        />
-      </Animatable.View>
-      <Animatable.View
-        animation={anim(size)}
-        duration={1000}
-        useNativeDriver
-        style={styles.operationSecondaryIcon}
-      >
-        <OperationStatusIcon
-          confirmed={confirmed}
-          type={"REWARD"}
-          failed={hasFailed}
-          size={size}
-        />
-      </Animatable.View>
+      <OperationStatusIcon
+        confirmed={confirmed}
+        type={type}
+        Badge={Icons.ClaimRewardsMedium}
+        failed={hasFailed}
+        size={size}
+      />
     </View>
   ) : (
     <OperationStatusIcon

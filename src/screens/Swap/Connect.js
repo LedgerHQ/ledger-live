@@ -44,7 +44,7 @@ const Connect = ({
         onClose={setDevice}
         onModalHide={onModalHide}
         device={result ? null : device}
-        onResult={setLocalResult}
+        onResult={setResult}
         action={action}
         request={null}
         onSelectDeviceLink={() => setDevice()}

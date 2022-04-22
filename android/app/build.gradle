@@ -88,7 +88,11 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    /**
+     * Clean and rebuild if changing
+     * The following env var is not read from ../.env, you need to export this var like this: `export HERMES_ENABLED_ANDROID=true`
+     */
+    enableHermes: true,
     // bundleInDebug: true, // Uncomment this to debug java without having to deal with JS dev server (metro)
 ]
 project.ext.sentryCli = [
@@ -96,6 +100,7 @@ project.ext.sentryCli = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -123,9 +128,9 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc-intl:+'
+// def jscFlavor = 'org.webkit:android-jsc-intl:+'
 
-def useIntlJsc = true
+// def useIntlJsc = true
 
 /**
  * Whether to enable the Hermes VM.
@@ -135,6 +140,11 @@ def useIntlJsc = true
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
 def enableHermes = project.ext.react.get("enableHermes", false);
+
+/**
+ * Architectures to build native code for in debug.
+ */
+def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitectures")
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -147,8 +157,8 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4195723
-        versionName "2.39.1"
+        versionCode 36176141
+        versionName "3.0.8"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -181,6 +191,11 @@ android {
         debug {
             signingConfig signingConfigs.debug
             applicationIdSuffix ".debug"
+            if (nativeArchitectures) {
+                ndk {
+                    abiFilters nativeArchitectures.split(',')
+                }
+            }
         }
         release {
             minifyEnabled enableProguardInReleaseBuilds
@@ -193,12 +208,6 @@ android {
             signingConfig signingConfigs.stagingRelease
             matchingFallbacks = ['release']
         }
-    }
-
-    // As required by https://github.com/react-native-community/jsc-android-buildscripts#for-react-native-version-059
-    packagingOptions {
-        pickFirst '**/libjsc.so'
-        pickFirst '**/libc++_shared.so'
     }
 }
 
@@ -224,14 +233,20 @@ dependencies {
         exclude group:'com.facebook.flipper'
     }
 
-    if (enableHermes) {
-        def hermesPath = "../../node_modules/hermes-engine/android/";
-        debugImplementation files(hermesPath + "hermes-debug.aar")
-        releaseImplementation files(hermesPath + "hermes-release.aar")
-    } else {
-        implementation jscFlavor
-    }
+
+    def hermesPath = "../../node_modules/hermes-engine/android/";
+    debugImplementation files(hermesPath + "hermes-debug.aar")
+    stagingReleaseImplementation files(hermesPath + "hermes-release.aar")
+    releaseImplementation files(hermesPath + "hermes-release.aar")
+
     androidTestImplementation('com.wix:detox:+')
+
+    compile project(':react-native-video')
+    implementation "androidx.appcompat:appcompat:1.0.0"
+
+    // Adjust
+    compile 'com.google.android.gms:play-services-analytics:10.0.1'
+    compile 'com.android.installreferrer:installreferrer:1.0'
 }
 
 // Run this once to be able to run the application with BUCK

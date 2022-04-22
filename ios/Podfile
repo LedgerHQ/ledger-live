@@ -13,7 +13,7 @@ target 'ledgerlivemobile' do
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false
+    :hermes_enabled => true
   )
 
   pod 'djinni_objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
@@ -21,7 +21,7 @@ target 'ledgerlivemobile' do
   pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
 
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
-
+  
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing
@@ -36,5 +36,6 @@ target 'ledgerlivemobile' do
   post_install do |installer|
     react_native_post_install(installer)
     flipper_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

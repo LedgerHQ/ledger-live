@@ -38,14 +38,6 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 const experimentalCurrencies = "";
 
 export const experimentalFeatures: Feature[] = [
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
-    title: "Experimental JS impl",
-    description: "Use experimental JS implementation for Tezos.",
-    valueOn: "tezos",
-    valueOff: "",
-  },
   ...(experimentalCurrencies.length
     ? [
         {
@@ -85,8 +77,8 @@ export const experimentalFeatures: Feature[] = [
     title: "Experimental countervalues API",
     description:
       "This may cause the countervalues displayed for your accounts to become incorrect.",
-    valueOn: "https://countervalues.live.ledger.com",
-    valueOff: "https://countervalues-experimental.live.ledger.com",
+    valueOn: "https://countervalues-experimental.live.ledger.com",
+    valueOff: "https://countervalues.live.ledger.com",
   },
   ...(__DEV__
     ? [
@@ -106,6 +98,12 @@ export const developerFeatures: Feature[] = [
     name: "PLATFORM_EXPERIMENTAL_APPS",
     title: "Allow experimental apps",
     description: "Display and allow opening experimental tagged platform apps.",
+  },
+  {
+    type: "toggle",
+    name: "USE_LEARN_STAGING_URL",
+    title: "Learn staging URL",
+    description: "Use the staging URL for the Learn page.",
   },
 ];
 
