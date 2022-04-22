@@ -1,15 +1,7 @@
 import React, { memo, useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import {
-  Flex,
-  Text,
-  Icons,
-  BottomDrawer,
-  Button,
-  Icon,
-} from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { Flex, Text, BottomDrawer, Icon as IconUI } from "@ledgerhq/native-ui";
 
 export const Badge = styled(Flex).attrs({
   bg: "neutral.c30",
@@ -46,7 +38,7 @@ type Props = {
   label: string;
   valueLabel: string;
   value: any;
-  type?: "sort" | "filter";
+  Icon?: any;
   options: Option[];
   disabled?: boolean;
   onChange: (value: any) => void;
@@ -56,12 +48,11 @@ function SortBadge({
   label,
   valueLabel,
   value,
-  type = "filter",
+  Icon,
   options,
   disabled,
   onChange,
 }: Props) {
-  const { t } = useTranslation();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
@@ -78,12 +69,10 @@ function SortBadge({
           <Text fontWeight="semiBold" variant="body" color="primary.c80">
             {valueLabel}
           </Text>
-          {type === "sort" ? (
-            value === "asc" ? (
-              <Icons.ArrowTopMedium size={12} color="primary.c80" />
-            ) : value === "desc" ? (
-              <Icons.ArrowBottomMedium size={12} color="primary.c80" />
-            ) : null
+          {Icon ? (
+            <Flex ml={2}>
+              <Icon size={14} color="primary.c80" />
+            </Flex>
           ) : null}
         </Badge>
       </TouchableOpacity>
@@ -113,7 +102,11 @@ function SortBadge({
                 </Text>
                 {value === optValue ? (
                   <CheckIconContainer>
-                    <Icon name="CheckAlone" size={12} color="background.main" />
+                    <IconUI
+                      name="CheckAlone"
+                      size={12}
+                      color="background.main"
+                    />
                   </CheckIconContainer>
                 ) : null}
               </Flex>

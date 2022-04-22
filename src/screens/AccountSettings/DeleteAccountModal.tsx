@@ -1,0 +1,55 @@
+import React, { memo } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { Account } from "@ledgerhq/live-common/lib/types";
+import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
+import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
+import Button from "../../components/wrappedUi/Button";
+
+type Props = {
+  onRequestClose: () => void;
+  deleteAccount: () => void;
+  account: Account;
+  isOpen: boolean;
+};
+
+function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
+  const { t } = useTranslation();
+
+  return (
+    <BottomDrawer
+      id="DeleteAccountModal"
+      isOpen={isOpen}
+      onClose={onRequestClose}
+      Icon={InfoMedium}
+      iconColor={"error.c100"}
+      title={t("account.settings.delete.confirmationTitle")}
+    >
+      <Text variant={"paragraph"} color={"neutral.c100"}>
+        {t("account.settings.delete.confirmationDesc")}
+      </Text>
+      <Text variant={"paragraph"} color={"neutral.c100"}>
+        {t("account.settings.delete.confirmationWarn")}
+      </Text>
+      <Flex justifyContent={"space-between"} mt={6} flexShrink={1} flexGrow={1}>
+        <Button
+          event="DeleteAccount"
+          type={"error"}
+          onPress={deleteAccount}
+          mt={4}
+        >
+          <Trans i18nKey="common.delete" />
+        </Button>
+        <Button
+          event="DeleteAccountCancel"
+          type={"default"}
+          onPress={onRequestClose}
+          mt={4}
+        >
+          <Trans i18nKey="common.cancel" />
+        </Button>
+      </Flex>
+    </BottomDrawer>
+  );
+}
+
+export default memo<Props>(DeleteAccountModal);

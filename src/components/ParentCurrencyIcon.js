@@ -13,28 +13,26 @@ type Props = {
 
 function ParentCurrencyIcon({ currency, size }: Props) {
   const { colors } = useTheme();
-  if (currency.type === "TokenCurrency") {
-    return (
-      <View style={{ width: size }}>
-        <View style={styles.parentIconWrapper}>
-          <CurrencyIcon size={size} currency={currency.parentCurrency} />
-        </View>
-        <View
-          style={[
-            styles.tokenIconWrapper,
-            {
-              borderColor: colors.card,
-              backgroundColor: colors.card,
-            },
-          ]}
-        >
-          <CurrencyIcon size={size - 2} currency={currency} />
-        </View>
+  return currency.type === "TokenCurrency" ? (
+    <View style={{ width: size }}>
+      <View style={styles.parentIconWrapper}>
+        <CurrencyIcon size={size} currency={currency.parentCurrency} />
       </View>
-    );
-  }
-
-  return <CurrencyIcon size={size} currency={currency} />;
+      <View
+        style={[
+          styles.tokenIconWrapper,
+          {
+            borderColor: colors.card,
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
+        <CurrencyIcon size={size - 2} currency={currency} />
+      </View>
+    </View>
+  ) : (
+    <CurrencyIcon size={size} currency={currency} />
+  );
 }
 
 export default memo<Props>(ParentCurrencyIcon);

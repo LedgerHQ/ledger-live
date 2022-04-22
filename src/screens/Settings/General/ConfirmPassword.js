@@ -72,7 +72,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
       if (n) n.goBack();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log("could not save credentials");
+      // console.error("could not save credentials");
     }
   }
 

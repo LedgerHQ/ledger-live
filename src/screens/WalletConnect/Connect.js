@@ -67,7 +67,7 @@ export default function Connect({ route, navigation }: Props) {
     if (wcContext.currentCallRequestId) {
       setCurrentCallRequestError(new Error("Aborted"));
     }
-  }, [wcContext.currentCallRequestId]);
+  });
 
   useEffect(() => {
     const opts = {
@@ -91,7 +91,7 @@ export default function Connect({ route, navigation }: Props) {
       navigation.setOptions({
         ...opts,
         title: "Wallet Connect",
-        headerTitle: null,
+        headerTitle: "",
       });
     }
   }, [wcContext, navigation]);

@@ -1219,7 +1219,7 @@
       },
       "nanoSP": {
         "title": "Conecta tu Nano",
-        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "desc": "Esta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
         "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
@@ -2247,7 +2247,7 @@
           "receive": "Importe",
           "receiveFloat": "Importe a recibir antes de aplicar las tarifas de servicios",
           "provider": "Proveedor",
-          "method": "Tarifa",
+          "method": "Tasa",
           "fees": "Tarifas"
         }
       }
@@ -2675,7 +2675,7 @@
       "title": "Cancelar agregar cuenta",
       "desc": "¿Deseas cancelar la agregación de cuentas?"
     },
-    "imported": "Cuentas agregadas correctamente",
+    "imported": "Activo añadido con éxito",
     "sections": {
       "importable": {
         "title": "Agregar cuenta existente"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Visualiza tus cuentas o agrega otras cuentas",
-      "secondaryCTA": "Agregar otras cuentas",
-      "cta": "Ir a Cuentas"
+      "secondaryCTA": "Añadir un nuevo activo",
+      "cta": "Ver tu activo"
     },
     "stopScanning": "Detener escaneo",
     "retryScanning": "Volver a intentar el escaneo",
@@ -2791,12 +2791,12 @@
     "title": "Emparejar nuevo dispositivo",
     "bluetooth": {
       "title": "Conectar por Bluetooth...",
-      "label": "Detectar tu Nano automáticamente"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Agregar nuevo Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado",
-    "usb": "... o conecta el cable USB",
-    "usbLabel": "Conecta el cable USB e ingresa el código PIN en el dispositivo",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "No llevo el dispositivo conmigo",
     "withoutDevice": "Continuar sin mi dispositivo",
     "steps": {
@@ -4123,7 +4123,7 @@
       "allTimeLow": "Mínimo histórico",
       "marketCapRank": "Posición según capitalización de mercado",
       "marketCapDominance": "Dominio de capitalización de mercado",
-      "supply": "Suministro",
+      "supply": "Suministrar",
       "circulatingSupply": "Suministro circulante",
       "totalSupply": "Suministro total",
       "maxSupply": "Suministro máximo",
@@ -4134,7 +4134,7 @@
       "24h": "24H",
       "7d": "7D",
       "30d": "30D",
-      "1y": "1A"
+      "1y": "1 A"
     },
     "warnings": {
       "connectionError": "Error de conexión",

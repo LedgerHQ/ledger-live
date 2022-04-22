@@ -2,7 +2,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 
 import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
@@ -96,7 +95,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
         <FlatList
           style={styles.list}
@@ -105,7 +104,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
           renderItem={renderItem}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

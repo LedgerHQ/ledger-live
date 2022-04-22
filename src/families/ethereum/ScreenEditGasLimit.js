@@ -50,7 +50,7 @@ function EthereumEditGasLimit({ navigation, route }: Props) {
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
-        <NavigationScrollView contentContainerStyle={styles.root}>
+        <NavigationScrollView>
           <TextInput
             autoFocus
             style={[styles.textInputAS, { color: colors.darkBlue }]}

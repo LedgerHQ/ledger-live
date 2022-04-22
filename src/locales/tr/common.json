@@ -186,7 +186,7 @@
       "description": "Lütfen adresi kontrol edin ve tekrar deneyin."
     },
     "CosmosBroadcastCodeInsufficientCoins": {
-      "title": "Yetersiz fon miktarı",
+      "title": "Yetersiz fon",
       "description": "Lütfen hesaptaki fon miktarını arttırın."
     },
     "CosmosBroadcastCodeInvalidCoins": {
@@ -245,7 +245,7 @@
       "description": "Ledger Live ile kullanmaya başlamadan önce cihazınızı kurun."
     },
     "DeviceSocketFail": {
-      "title": "Üzgünüz, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen tekrar deneyin."
     },
     "DeviceSocketNoBulkStatus": {
@@ -253,7 +253,7 @@
       "description": "Lütfen tekrar deneyin."
     },
     "DeviceSocketNoHandler": {
-      "title": "Üzgünüz, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen tekrar deneyin."
     },
     "DisconnectedDevice": {
@@ -977,7 +977,7 @@
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "nanoSP": {
-              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "blue": {
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
@@ -1155,13 +1155,13 @@
               "label": "Cihazınızı açmak için siyah tuşa 1 saniye boyunca basın."
             },
             "nanoS": {
-              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "nanoSP": {
-              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "blue": {
-              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
+              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
             }
           },
           "1": {
@@ -1657,7 +1657,7 @@
       "descToken": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse <3><0>{{currencyTicker}}</0></3> ile <5><0>{{tokenType}}</0> token'larını</5> almaya başlayabilirsiniz",
       "buttons": {
         "receiveFunds": "Al",
-        "buyCrypto": "Satın Al"
+        "buyCrypto": "Satın al"
       }
     },
     "settings": {
@@ -1729,7 +1729,7 @@
     },
     "availableBalance": "Mevcut bakiye",
     "totalSupplied": "Yatırılan tutar",
-    "tronFrozen": "Dondurulan",
+    "tronFrozen": "Donduruldu",
     "bandwidth": "Bant Genişliği",
     "energy": "Enerji",
     "delegatedAssets": "Yetkisi devredilen varlıklar",
@@ -1935,7 +1935,7 @@
       "clearCacheModal": "Emin misiniz?",
       "clearCacheModalDesc": "Ağdaki işlemlerin yeni ve eksiksiz bir taraması yapılacak. Hesap geçmişleri yeniden oluşturulacak ve bakiyeler yeniden hesaplanacaktır.",
       "clearCacheButton": "Temizle",
-      "exportLogs": "Logları kaydedin",
+      "exportLogs": "Logları kaydet",
       "exportLogsDesc": "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
       "hardReset": "Ledger Live'ı sıfırlayın",
       "hardResetDesc": "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
@@ -2037,12 +2037,12 @@
       "title": "Al / Sat"
     },
     "swap": {
-      "title": "Takas",
+      "title": "Takas et",
       "selectDevice": "Cihazınızı seçin",
       "broadcasting": "Takas işlemi yayınlanıyor",
       "loadingFees": "Ağ ücretleri yükleniyor...",
       "landing": {
-        "header": "Takas",
+        "header": "Takas et",
         "title": "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap": "Takas (Swap) nedir?",
         "disclaimer": "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
@@ -2053,7 +2053,7 @@
         "bannerCTA": "KYC'yi sıfırla"
       },
       "main": {
-        "header": "Takas"
+        "header": "Takas et"
       },
       "kyc": {
         "disclaimer": "Konum verilerimin uyumluluk için üçüncü taraflarla paylaşılacağını kabul ediyorum.",
@@ -2184,7 +2184,7 @@
           "receiveFloat": "Hizmet ücretleri hariç alınacak tutar",
           "provider": "Sağlayıcı",
           "method": "Kur",
-          "fees": "Maksimum ücretler",
+          "fees": "Maksimum ücret",
           "disclaimer": {
             "title": "Hüküm ve koşullar",
             "desc": "“Kabul Et” seçeneğine tıklayarak, bu hizmetin tamamen ve sadece <0>{{provider}}</0> Hüküm ve Koşulları tarafından yönetildiğini anlıyor ve kabul ediyorum.",
@@ -2426,7 +2426,7 @@
       },
       "withdraw": {
         "stepperHeader": {
-          "amount": "Çekim",
+          "amount": "Çek",
           "summary": "Özet",
           "selectDevice": "Cihaz Seç",
           "connectDevice": "Cihazı Bağla",
@@ -2480,7 +2480,7 @@
       "selectNft": "NFT"
     },
     "recipient": {
-      "scan": "QR kodunu tarayın",
+      "scan": "QR kodunu tara",
       "enterAddress": "Adresi girin",
       "input": "Adresi girin",
       "verifyAddress": "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
@@ -2675,7 +2675,7 @@
       "title": "Hesap ekleme iptali",
       "desc": "Hesap eklemeyi iptal etmek istediğinizden emin misiniz?"
     },
-    "imported": "Hesaplar başarıyla eklendi",
+    "imported": "Varlık başarıyla eklendi",
     "sections": {
       "importable": {
         "title": "Mevcut bir hesabı ekle"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Hesaplarınızı görüntüleyin veya başka hesaplar ekleyin",
-      "secondaryCTA": "Başka hesap ekle",
-      "cta": "Hesaplara Git"
+      "secondaryCTA": "Yeni varlık ekle",
+      "cta": "Varlığını gör"
     },
     "stopScanning": "Taramayı durdur",
     "retryScanning": "Taramayı tekrar dene",
@@ -2791,12 +2791,12 @@
     "title": "Yeni cihaz eşleme",
     "bluetooth": {
       "title": "Bluetooth ile bağlanın...",
-      "label": "Nano'nuzu otomatik olarak algılayın"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Yeni Ledger Nano X ekle",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun",
-    "usb": "... veya USB kablosunu bağlayın",
-    "usbLabel": "USB kablosunu bağlayın ve cihazınıza PIN Kodunuzu girin",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "Cihazım yanımda değil",
     "withoutDevice": "Cihazım olmadan devam et",
     "steps": {
@@ -3741,7 +3741,7 @@
       },
       "steps": {
         "amount": {
-          "availableLabel": "Çözülmekte olan",
+          "availableLabel": "Çözme",
           "maxLabel": "Maksimum"
         },
         "confirm": {
@@ -3864,9 +3864,9 @@
     "goToAccount": "Hesaplara Git",
     "howDelegationWorks": "Yetki devri nasıl çalışır?",
     "actions": {
-      "redelegate": "Yetkiyi yeniden devret",
+      "redelegate": "Yetkinin yeniden devri",
       "collectRewards": "Ödülleri toplayın",
-      "undelegate": "Yetkiyi iptal et"
+      "undelegate": "Yetki İptali"
     }
   },
   "ValidateOnDevice": {
@@ -4123,7 +4123,7 @@
       "allTimeLow": "Tüm zamanlar min.",
       "marketCapRank": "Piyasa değeri sıralaması",
       "marketCapDominance": "Piyasa değeri hakimiyeti",
-      "supply": "Arz",
+      "supply": "Arz Et",
       "circulatingSupply": "Dolaşımdaki arz",
       "totalSupply": "Toplam arz",
       "maxSupply": "Maksimum arz",

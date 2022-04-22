@@ -29,7 +29,7 @@ function getSettingsScreen(pathname) {
       screen = ScreenName.DeveloperSettings;
       break;
     default:
-      screen = ScreenName.Settings;
+      screen = ScreenName.SettingsScreen;
   }
   return screen;
 }
@@ -105,7 +105,7 @@ export function useDeepLinkHandler() {
           const dapp =
             path && filteredManifests.find(m => path.toLowerCase() === m.id);
 
-          navigate(NavigatorName.Platform, {
+          navigate(NavigatorName.Discover, {
             screen: ScreenName.PlatformCatalog,
             params: dapp
               ? {

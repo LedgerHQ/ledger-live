@@ -36,6 +36,7 @@ public class ReactNativeFlipper {
       client.addPlugin(new SharedPreferencesFlipperPlugin(context));
       client.addPlugin(new RNPerfMonitorPlugin(reactInstanceManager));
       client.addPlugin(CrashReporterPlugin.getInstance());
+      client.addPlugin(new RNPerfMonitorPlugin(reactInstanceManager));
 
       NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
       NetworkingModule.setCustomClientBuilder(

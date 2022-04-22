@@ -8,12 +8,10 @@ import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 // TODO move to component
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import Close from "../../../icons/Close";
 import { rgba } from "../../../colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import BottomModal from "../../../components/BottomModal";
 import Circle from "../../../components/Circle";
-import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import IconHelp from "../../../icons/Info";
@@ -41,7 +39,6 @@ export default function NominationDrawer({
   icon,
   isNominated,
 }: Props) {
-  const { colors } = useTheme();
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
 
@@ -55,16 +52,6 @@ export default function NominationDrawer({
       onClose={onClose}
     >
       <View style={styles.root}>
-        <Touchable
-          event="NominationDetailsModalClose"
-          onPress={onClose}
-          style={styles.closeButton}
-        >
-          <Circle size={iconWidth / 2} bg={colors.lightFog}>
-            <Close />
-          </Circle>
-        </Touchable>
-
         {isNominated ? (
           <DelegatingContainer
             left={
@@ -165,10 +152,6 @@ export const styles = StyleSheet.create({
   },
   root: {
     paddingTop: 8,
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    marginRight: 16,
   },
   iconContainer: {
     flexDirection: "row",

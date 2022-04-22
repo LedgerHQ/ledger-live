@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation, Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import FirmwareUpdateReleaseNotes from "../../screens/FirmwareUpdate/01-ReleaseNotes";
 import FirmwareUpdateCheckId from "../../screens/FirmwareUpdate/02-CheckId";

@@ -11,7 +11,7 @@ import DescriptionRow from "./DescriptionRow";
 
 export default function About() {
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <TrackScreen category="Settings" name="About" />
       <DescriptionRow />
       <AppVersionRow />

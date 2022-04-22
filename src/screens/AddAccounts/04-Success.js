@@ -5,8 +5,8 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
-import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
+import { Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -25,23 +25,26 @@ type RouteParams = {
   deviceId: string,
 };
 
-const IconPlus = () => {
-  const { colors } = useTheme();
-  return <Icon name="plus" color={colors.live} size={16} />;
-};
-
 export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const currency = route.params.currency;
 
   const primaryCTA = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts);
-  }, [navigation]);
+    navigation.replace(NavigatorName.Main, {
+      screen: NavigatorName.Portfolio,
+      params: {
+        screen: NavigatorName.PortfolioAccounts,
+        params: {
+          screen: ScreenName.Accounts,
+          params: { search: currency.name },
+        },
+      },
+    });
+  }, [currency, navigation]);
 
   const secondaryCTA = useCallback(() => {
     navigation.navigate(ScreenName.AddAccountsSelectCrypto);
   }, [navigation]);
-
-  const currency = route.params.currency;
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -54,21 +57,19 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
       </LText>
-      <LText style={styles.desc} color="grey">
-        <Trans i18nKey="addAccounts.success.desc" />
-      </LText>
       <View style={styles.buttonsContainer}>
         <Button
           event="AddAccountsDone"
           containerStyle={styles.button}
           type="primary"
+          outline={false}
           title={<Trans i18nKey="addAccounts.success.cta" />}
           onPress={primaryCTA}
         />
         <Button
           event="AddAccountsAgain"
-          IconLeft={IconPlus}
           onPress={secondaryCTA}
+          IconLeft={Icons.WalletAddMedium}
           type="lightSecondary"
           title={<Trans i18nKey="addAccounts.success.secondaryCTA" />}
         />
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 32,
+    marginBottom: 32,
     fontSize: 18,
   },
   desc: {

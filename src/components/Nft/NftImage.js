@@ -61,6 +61,7 @@ type Props = {
   style?: Object,
   status: string,
   src: string,
+  resizeMode?: string,
   colors: any,
 };
 
@@ -84,7 +85,7 @@ class NftImage extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { style, status, src, colors } = this.props;
+    const { style, status, src, colors, resizeMode = "cover" } = this.props;
     const { loadError } = this.state;
 
     return (
@@ -111,7 +112,7 @@ class NftImage extends React.PureComponent<Props, State> {
                   backgroundColor: colors.white,
                 },
               ]}
-              resizeMode="cover"
+              resizeMode={resizeMode}
               source={{
                 uri: src,
               }}

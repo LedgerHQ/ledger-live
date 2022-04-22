@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { Platform } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
@@ -10,7 +10,6 @@ import Transfer, { TransferTabIcon } from "../../screens/Transfer";
 import Learn from "../../screens/Learn";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
-import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import Tab from "./CustomBlockRouterNavigator";
@@ -100,23 +99,6 @@ export default function MainNavigator({
           tabBarIcon: (props: any) => <TransferTabIcon {...props} />,
         }}
       />
-      {Platform.OS === "android" ? (
-        <Tab.Screen
-          name={NavigatorName.Platform}
-          component={PlatformNavigator}
-          options={{
-            headerShown: false,
-            unmountOnBlur: true,
-            tabBarIcon: (props: any) => (
-              <TabIcon
-                Icon={Icons.ManagerMedium}
-                i18nKey="tabs.platform"
-                {...props}
-              />
-            ),
-          }}
-        />
-      ) : null}
       <Tab.Screen
         name={NavigatorName.Market}
         component={MarketNavigator}

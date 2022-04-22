@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,8 +26,6 @@ import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import SkipSelectDevice from "../SkipSelectDevice";
-
-const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any,
@@ -107,11 +104,9 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <View style={styles.bodyError}>
-          <GenericErrorView error={error} />
-        </View>
-      </SafeAreaView>
+      <View style={styles.bodyError}>
+        <GenericErrorView error={error} />
+      </View>
     );
   }
 
@@ -131,15 +126,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-      forceInset={forceInset}
-    >
+    <>
       <TrackScreen
         category="ReceiveFunds"
         name="ConnectDevice"
@@ -166,7 +153,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow="receive"
       />
-    </SafeAreaView>
+    </>
   );
 }
 

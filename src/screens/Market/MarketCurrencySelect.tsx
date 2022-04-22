@@ -4,10 +4,9 @@ import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity, Image } from "react-native";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
-import { useTheme } from "styled-components/native";
 
 const RenderEmptyList = ({
   theme,
@@ -73,7 +72,7 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
     )
     .map(cur => ({
       value: cur.ticker.toLowerCase(),
-      label: `${cur.name} (${cur.ticker})`,
+      label: cur.name,
     }))
     .sort(a => (a.value === counterCurrency ? -1 : 0));
 
@@ -89,6 +88,7 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
     ({ item, index }) => {
       const isChecked = counterCurrency === item.value;
       const color = isChecked ? "primary.c80" : "neutral.c100";
+      const labelColor = isChecked ? "primary.c80" : "neutral.c80";
       return (
         <TouchableOpacity
           key={index}
@@ -103,10 +103,10 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
             px={4}
           >
             <Flex flexDirection="row" alignItems="center">
-              <Text variant="body" fontWeight="bold" mr={2} color={color}>
+              <Text variant="body" fontWeight="bold" mr={3} color={color}>
                 {item.value.toUpperCase()}
               </Text>
-              <Text variant="small" fontWeight="semiBold" color={color}>
+              <Text variant="small" fontWeight="semiBold" color={labelColor}>
                 {item.label}
               </Text>
             </Flex>

@@ -1,7 +1,7 @@
 // @flow
 import React, { useMemo } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";

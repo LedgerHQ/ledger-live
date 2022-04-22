@@ -57,7 +57,7 @@ class EmptyStateAccount extends PureComponent<{
     const canBeBought = isCurrencySupported(currency, "buy");
 
     return (
-      <View style={[styles.root, { backgroundColor: colors.card }]}>
+      <View style={[styles.root, { backgroundColor: colors.background }]}>
         <View style={styles.body}>
           <View style={styles.illustration}>
             <EmptyStateAccountIllu />

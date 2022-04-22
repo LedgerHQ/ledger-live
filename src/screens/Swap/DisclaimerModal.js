@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/AntDesign";
 import { useTheme } from "@react-navigation/native";
 
+import { Flex } from "@ledgerhq/native-ui";
 import Circle from "../../components/Circle";
 import BottomModal from "../../components/BottomModal";
 import ExternalLink from "../../components/ExternalLink";
@@ -29,9 +30,12 @@ const DisclaimerModal = ({
       onClose={undefined}
       style={styles.root}
     >
-      <Circle bg={colors.pillActiveBackground} size={40}>
-        <Icon name="exclamationcircleo" color={colors.live} size={22} />
-      </Circle>
+      <Flex alignItems="center">
+        <Circle bg={colors.pillActiveBackground} size={40}>
+          <Icon name="exclamationcircleo" color={colors.live} size={22} />
+        </Circle>
+      </Flex>
+
       <LText style={styles.title}>
         <Trans i18nKey={"transfer.swap.form.summary.disclaimer.title"} />
       </LText>
@@ -82,6 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 18,
     lineHeight: 22,
+    textAlign: "center",
   },
   desc: {
     marginBottom: 16,

@@ -2,9 +2,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-import { useTheme } from "@react-navigation/native";
-import Touchable from "./Touchable";
-import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
 import type { Props as BottomModalProps } from "./BottomModal";
 import GenericErrorView from "./GenericErrorView";
@@ -23,7 +20,6 @@ function GenericErrorBottomModal({
   hasExportLogButton,
   ...otherProps
 }: Props) {
-  const { colors } = useTheme();
   return (
     <BottomModal
       {...otherProps}
@@ -39,15 +35,6 @@ function GenericErrorBottomModal({
           />
           {footerButtons ? (
             <View style={styles.buttonsContainer}>{footerButtons}</View>
-          ) : null}
-          {onClose ? (
-            <Touchable
-              event="BottomModalErrorClose"
-              style={styles.close}
-              onPress={onClose}
-            >
-              <Close color={colors.fog} size={20} />
-            </Touchable>
           ) : null}
         </View>
       ) : null}

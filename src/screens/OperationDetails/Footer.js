@@ -19,12 +19,7 @@ function Footer({ url, urlWhatIsThis, account }: Props) {
 
   const currencyId = getAccountCurrency(account).name;
   return (
-    <View
-      style={[
-        styles.footer,
-        { borderColor: colors.lightFog, backgroundColor: colors.background },
-      ]}
-    >
+    <View style={[styles.footer, { backgroundColor: colors.background }]}>
       {urlWhatIsThis ? (
         <Button
           event="WhatIsThisOperation"
@@ -53,7 +48,6 @@ export default memo<Props>(Footer);
 
 const styles = StyleSheet.create({
   footer: {
-    borderTopWidth: 1,
     padding: 16,
   },
 });

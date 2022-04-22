@@ -15,18 +15,19 @@ const { DeviceInfo } = NativeModules;
 type Props = {
   style?: *,
   children: React$Node,
+  behavior?: string,
 };
 
 const KeyboardView = React.memo<Props>(
-  ({ style = { flex: 1 }, children }: *) => {
+  ({ style = { flex: 1 }, children, behavior }: *) => {
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;
 
-    let behavior;
+    let behaviorParam;
     let keyboardVerticalOffset = isExperimental ? ExperimentalHeaderHeight : 0;
     if (Platform.OS === "ios") {
       keyboardVerticalOffset += DeviceInfo.isIPhoneX_deprecated ? 88 : 64;
-      behavior = "height";
+      behaviorParam = behavior || "height";
     }
 
     return (
@@ -35,7 +36,7 @@ const KeyboardView = React.memo<Props>(
         keyboardVerticalOffset={
           headerHeight + StatusBar.currentHeight + keyboardVerticalOffset
         }
-        behavior={behavior}
+        behavior={behaviorParam}
         enabled
       >
         {children}

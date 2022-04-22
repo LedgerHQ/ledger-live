@@ -88,19 +88,21 @@ export default function Settings({ navigation }: Props) {
           icon={<Atom size={16} color={colors.live} />}
           onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         />
-        <SettingsCard
-          title={t("settings.developer.title")}
-          desc={t("settings.developer.desc")}
-          icon={<Wrench size={16} color={colors.live} />}
-          onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
-        />
         {debugVisible || __DEV__ ? (
-          <SettingsCard
-            title="Debug"
-            desc="Use at your own risk – Developer tools"
-            icon={<Icon name="wind" size={16} color={colors.live} />}
-            onClick={() => navigation.navigate(ScreenName.DebugSettings)}
-          />
+          <>
+            <SettingsCard
+              title={t("settings.developer.title")}
+              desc={t("settings.developer.desc")}
+              icon={<Wrench size={16} color={colors.live} />}
+              onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
+            />
+            <SettingsCard
+              title="Debug"
+              desc="Use at your own risk – Developer tools"
+              icon={<Icon name="wind" size={16} color={colors.live} />}
+              onClick={() => navigation.navigate(ScreenName.DebugSettings)}
+            />
+          </>
         ) : null}
         <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
           <View>

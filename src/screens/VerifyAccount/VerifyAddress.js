@@ -20,7 +20,7 @@ function VerifyAddress({
   device: ?Device,
   onResult: (confirmed: boolean, error?: Error) => void,
 }) {
-  const { dark } = useTheme();
+  const { theme } = useTheme();
   const { t } = useTranslation();
 
   const onConfirmAddress = useCallback(async () => {
@@ -49,7 +49,7 @@ function VerifyAddress({
     currencyName: getAccountCurrency(account).name,
     device,
     address: account.freshAddress,
-    theme: dark ? "dark" : "light",
+    theme,
   });
 }
 

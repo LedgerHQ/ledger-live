@@ -53,18 +53,20 @@ function OnboardingStepDeviceSelection({ navigation }: *) {
           style={[styles.deviceButton, { backgroundColor: colors.lightLive }]}
           onPress={() => next(deviceId)}
         >
-          <LText semiBold style={styles.label}>
-            <Trans i18nKey={`onboarding.stepSelectDevice.${deviceId}`} />
-          </LText>
-          <View style={styles.imageContainer}>
-            {deviceIds[deviceId] ? (
-              <Image
-                style={styles.bgImage}
-                resizeMode="contain"
-                source={deviceIds[deviceId][theme]}
-              />
-            ) : null}
-          </View>
+          <>
+            <LText semiBold style={styles.label}>
+              <Trans i18nKey={`onboarding.stepSelectDevice.${deviceId}`} />
+            </LText>
+            <View style={styles.imageContainer}>
+              {deviceIds[deviceId] ? (
+                <Image
+                  style={styles.bgImage}
+                  resizeMode="contain"
+                  source={deviceIds[deviceId][theme]}
+                />
+              ) : null}
+            </View>
+          </>
         </Touchable>
       ))}
     </AnimatedHeaderView>

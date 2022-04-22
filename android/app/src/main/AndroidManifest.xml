@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- react-native-share base64 sharing (swap history/logs export)-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Needed by Flipper 🐬 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Needed by Adjust -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/> <!-- Needed by Adjust -->
     <uses-sdk
         android:targetSdkVersion="27"
         tools:overrideLibrary="com.ledger.reactnative" />

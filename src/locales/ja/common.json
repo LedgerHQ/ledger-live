@@ -1174,7 +1174,7 @@
           },
           "3": {
             "title": "デバイスの手順に従う",
-            "label": "PINコードは、こちらで設定してください。"
+            "label": "PINコードの設定は、次のページをご確認ください。"
           }
         }
       },
@@ -1490,9 +1490,9 @@
   },
   "time": {
     "day": "1日",
-    "week": "1週間",
-    "month": "1ヶ月",
-    "year": "1年間",
+    "week": "1週",
+    "month": "1月",
+    "year": "1年",
     "all": "すべて",
     "since": {
       "day": "過去1日間",
@@ -2137,8 +2137,8 @@
         "validate": "スワップ取引を確定",
         "tab": "取引",
         "button": "続行",
-        "from": "交換元",
-        "to": "交換先",
+        "from": "送付元",
+        "to": "送付先",
         "source": "ソース",
         "target": "ターゲットアカウント",
         "noAccount": "{{currency}}アカウントを持っていません。",
@@ -2175,8 +2175,8 @@
           "close": "閉じる"
         },
         "summary": {
-          "from": "交換元",
-          "to": "交換先",
+          "from": "送付元",
+          "to": "送付先",
           "send": "送る",
           "payoutNetworkFees": "ペイアウト手数料",
           "payoutNetworkFeesTooltip": "これはデバイスには表示されません。",
@@ -2198,9 +2198,9 @@
         "swapId": "スワップID",
         "provider": "プロバイダー",
         "date": "日付",
-        "from": "交換元",
+        "from": "送付元",
         "fromAmount": "送付額",
-        "to": "交換先",
+        "to": "送付先",
         "toAmount": "受取額",
         "statusTooltips": {
           "expired": "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
@@ -2243,7 +2243,7 @@
           "to": "送付先",
           "send": "送る",
           "payoutNetworkFees": "ペイアウト手数料",
-          "payoutNetworkFeesTooltip": "この値はデバイスには表示されません",
+          "payoutNetworkFeesTooltip": "これはデバイスには表示されません。",
           "receive": "数量",
           "receiveFloat": "サービス手数料を含まない受け取り額",
           "provider": "プロバイダー",
@@ -2309,7 +2309,7 @@
         }
       },
       "closedLoans": {
-        "tabTitle": "レンディング終了済み",
+        "tabTitle": "終了済み",
         "description": "引き出したローンと、獲得した利息をすべて表示します。",
         "cta": "資産をレンディング"
       },
@@ -2319,7 +2319,7 @@
         "cta": "資産をレンディング"
       },
       "terms": {
-        "label": "暗号資産をレンディング",
+        "label": "暗号資産のレンディング",
         "title": "コンパウンド・プロトコルで資産を貸し出す",
         "description": "コンパウンド・プロトコルを使用すると、Ethereumネットワーク上で資産の貸し出しや借り入れを行うことができます。Ledgerアカウントから直接、資産の貸し出しや利息を得ることが可能です。",
         "switchLabel": "私は<0><0>利用規約</0></0>を読み、内容に同意しました。"
@@ -2341,7 +2341,7 @@
           "description": "資産と獲得した利息の一部または全部を、Ledgerアカウントから直接いつでも引き出すことができます。",
           "cta": "今すぐレンディング"
         },
-        "title": "暗号資産をレンディング"
+        "title": "暗号資産のレンディング"
       },
       "noTokenAccount": {
         "info": {
@@ -2675,7 +2675,7 @@
       "title": "アカウントの追加を取り消す",
       "desc": "アカウントの追加をキャンセルしますか？"
     },
-    "imported": "アカウントが正常に追加されました。",
+    "imported": "資産が正常に追加されました",
     "sections": {
       "importable": {
         "title": "既存のアカウントを追加"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "アカウントを表示、または他のアカウントを追加",
-      "secondaryCTA": "他のアカウントを追加する",
-      "cta": "アカウントに移動"
+      "secondaryCTA": "新しい資産を追加",
+      "cta": "資産を見る"
     },
     "stopScanning": "スキャン停止",
     "retryScanning": "スキャンの再試行",
@@ -2791,12 +2791,12 @@
     "title": "新しいデバイスのペアリング",
     "bluetooth": {
       "title": "Bluetoothで接続...",
-      "label": "Nanoを自動的に検出"
+      "label": "Nanoを自動検出します"
     },
-    "deviceNotFoundPairNewDevice": "新しいLedger Nano Xを追加する",
+    "deviceNotFoundPairNewDevice": "Bluetoothとペアリングする",
     "headerDescription": "{{productName}}のロックが解除され、Bluetoothが有効になっていることを確認してください。",
     "usb": "...またはUSBケーブルで接続",
-    "usbLabel": "USBケーブルを接続し、デバイスにPINコードを入力",
+    "usbLabel": "USBケーブルを接続して、デバイスにPINコードを入力してください",
     "withoutDeviceHeader": "現在、デバイスを持っていません。",
     "withoutDevice": "デバイスを使用せずに続行する",
     "steps": {
@@ -3250,7 +3250,7 @@
           "starter": {
             "description": "資産を管理しながら、ATOMをデリゲートして報酬を獲得しましょう。",
             "steps": {
-              "0": "資産をデリゲートしても、資産の所有者は変わりません。",
+              "0": "デリゲートしても資産の所有者は変わりません。",
               "1": "デリゲート解除が完了するまで、21日待つ必要があります。",
               "2": "Ledgerデバイスで安全にデリゲートする。"
             },
@@ -3407,7 +3407,7 @@
     "account": {
       "subHeader": {
         "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "詳細",
+        "moreInfo": "詳細はこちら",
         "drawerTitle": "Crypto.orgを統合",
         "title": "Crypto.org (CRO) トークンがLedger Liveでご利用可能になりました",
         "description": "Ledger Liveで、Crypto.org (CRO) トークンを安全に保管しながら管理することができます。",
@@ -3602,7 +3602,7 @@
       "setController": "コントローラーを変更",
       "status": "ステータス",
       "totalStake": "合計ステーキング量",
-      "amount": "ボンド済み数量",
+      "amount": "ボンド済み額",
       "commission": "コミッション",
       "active": "アクティブ",
       "activeInfo": "このバリデータは選出済みで、ボンド済み資産に対する報酬を獲得中です。",
@@ -3785,7 +3785,7 @@
           "description": "ボンドを解除した資産を、利用可能残高に引き出します。"
         },
         "chill": {
-          "title": "ノミネートを解除",
+          "title": "ノミネートを解除する",
           "description": "すべてのノミネートを解除し、報酬の獲得を停止します。",
           "info": "ボンド資産は解除されません。ボンドを解除した場合は、28日後に引き出し可能になります。"
         },
@@ -3964,7 +3964,7 @@
       "description": "Ledgerアカウントから、Coinifyで暗号資産を直接売却し、銀行口座で法定通貨を受け取ることができます。",
       "CTAButton": "今すぐ売却",
       "emptyState": {
-        "title": "{{currency}}アカウントはありません",
+        "title": "{{currency}}アカウントはありません。",
         "description": "{{currency}}を売却するには、アカウントを追加する必要があります。",
         "CTAButton": "アカウントを追加"
       }
@@ -4123,7 +4123,7 @@
       "allTimeLow": "最安値",
       "marketCapRank": "時価総額ランキング",
       "marketCapDominance": "時価総額ドミナンス",
-      "supply": "供給",
+      "supply": "サプライ",
       "circulatingSupply": "循環サプライ",
       "totalSupply": "総供給量",
       "maxSupply": "最大供給量",
@@ -4134,7 +4134,7 @@
       "24h": "24時間",
       "7d": "7日間",
       "30d": "30日間",
-      "1y": "1年間"
+      "1y": "1年"
     },
     "warnings": {
       "connectionError": "接続エラー",

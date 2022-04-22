@@ -9,6 +9,7 @@ import React, {
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
+import { getTimeZone } from "react-native-localize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import {
@@ -17,6 +18,12 @@ import {
   locales,
 } from "../languages";
 import { languageSelector } from "../reducers/settings";
+
+if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
+  /** https://formatjs.io/docs/polyfills/intl-datetimeformat/#default-timezone */
+  // $FlowFixMe
+  Intl.DateTimeFormat.__setDefaultTimeZone(getTimeZone()); // eslint-disable-line no-underscore-dangle
+}
 
 i18next.use(initReactI18next).init({
   fallbackLng: DEFAULT_LANGUAGE_LOCALE,
@@ -34,10 +41,13 @@ export { i18next as i18n };
 type Props = {
   children: React$Node,
 };
+
+export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru";
+
 type LocaleState = {
   i18n: any,
   t: TFunction,
-  locale: string,
+  locale: SupportedLanguages,
 };
 
 function getLocaleState(i18n): LocaleState {

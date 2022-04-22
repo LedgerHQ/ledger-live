@@ -58,22 +58,24 @@ export default function TermsStep({ route: { params } }: Props) {
       onNext={onNext}
     >
       <PreventNativeBack />
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={onTogleAcceptedTerms}>
-          <CheckBox isChecked={hasAcceptedTerms} />
-        </TouchableOpacity>
-
-        <LText style={styles.switchLabel}>
-          <Trans i18nKey="transfer.lending.terms.switchLabel">
-            <LText
-              onPress={onTermsClick}
-              semiBold
-              style={styles.conditionsText}
-              color="live"
-            />
-          </Trans>
-        </LText>
-      </View>
+      <TouchableOpacity onPress={onTogleAcceptedTerms}>
+        <View style={styles.footer}>
+          <CheckBox
+            onChange={onTogleAcceptedTerms}
+            isChecked={hasAcceptedTerms}
+          />
+          <LText style={styles.switchLabel}>
+            <Trans i18nKey="transfer.lending.terms.switchLabel">
+              <LText
+                onPress={onTermsClick}
+                semiBold
+                style={styles.conditionsText}
+                color="live"
+              />
+            </Trans>
+          </LText>
+        </View>
+      </TouchableOpacity>
     </BaseInfoModal>
   );
 }
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 16,
+    marginTop: 16,
   },
   imageContainer: { width: "100%", height: "100%", paddingHorizontal: 24 },
   image: { width: "100%", height: "100%" },

@@ -167,11 +167,34 @@ export const accountsByCryptoCurrencySelector = createSelector(
       : accounts,
 );
 
+// $FlowFixMe
+export const flattenAccountsByCryptoCurrencySelector = createSelector(
+  flattenAccountsSelector,
+  (_, { currencies }) => currencies,
+  (accounts, currencies): AccountLike[] =>
+    currencies && currencies.length
+      ? accounts.filter(a =>
+          currencies.includes(
+            a.type === "TokenAccount" ? a.token.id : a.currency.id,
+          ),
+        )
+      : accounts,
+);
+
 export const accountsByCryptoCurrencyScreenSelector = (
   currency: CryptoCurrency,
 ) => (state: any) => {
   if (!currency) return [];
   return accountsByCryptoCurrencySelector(state, { currencies: [currency.id] });
+};
+
+export const flattenAccountsByCryptoCurrencyScreenSelector = (
+  currency?: CryptoCurrency,
+) => (state: any) => {
+  if (!currency) return [];
+  return flattenAccountsByCryptoCurrencySelector(state, {
+    currencies: [currency.id],
+  });
 };
 
 // $FlowFixMe

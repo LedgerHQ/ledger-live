@@ -977,7 +977,7 @@
               "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen."
             },
             "nanoSP": {
-              "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Smartphones anschließen."
+              "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen."
             },
             "blue": {
               "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen und die Einschalttaste drücken."
@@ -1158,7 +1158,7 @@
               "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen."
             },
             "nanoSP": {
-              "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Smartphones anschließen."
+              "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen."
             },
             "blue": {
               "label": "Schalten Sie Ihr Gerät ein, indem Sie es an den USB-Anschluss Ihres Telefons anschließen und die Einschalttaste drücken."
@@ -1219,7 +1219,7 @@
       },
       "nanoSP": {
         "title": "Verbinden Sie Ihren Nano",
-        "desc": "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Smartphone einrichten. Lassen Sie uns Ihr Gerät schnell koppeln.",
+        "desc": "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell anschließen.",
         "cta": "Schließen wir meinen Nano an"
       },
       "blue": {
@@ -1628,7 +1628,7 @@
       "howTo": "Um Token-Konten hinzuzufügen, müssen Sie <0>Geldmittel</0> mit Ihrer <1>{{currency}}-Adresse</1> empfangen.",
       "algorand": {
         "contractAddress": "Vertragsadresse",
-        "viewInExplorer": "Im Explorer anzeigen",
+        "viewInExplorer": "Ansicht im Explorer",
         "seeMore": "Mehr ASA sehen",
         "seeLess": "Weniger ASA anzeigen",
         "addTokens": "ASA hinzufügen",
@@ -1773,7 +1773,7 @@
       "hideSubAccounts_plural": "Unterkonten ausblenden",
       "algorand": {
         "showTokens": "Zeige {{length}} ASA",
-        "showTokens_plural": "ASA {{Länge}} anzeigen",
+        "showTokens_plural": "Zeige {{length}} ASA",
         "hideTokens": "ASA ausblenden",
         "hideTokens_plural": "ASA ausblenden"
       }
@@ -2037,12 +2037,12 @@
       "title": "Kaufen / Verkaufen"
     },
     "swap": {
-      "title": "Swap",
+      "title": "Tauschen",
       "selectDevice": "Wählen Sie Ihr Gerät",
       "broadcasting": "Übertrage Swap",
       "loadingFees": "Netzwerkgebühren laden ...",
       "landing": {
-        "header": "Swap",
+        "header": "Tauschen",
         "title": "Willkommen bei Swap",
         "whatIsSwap": "Was ist Swap?",
         "disclaimer": "Tauschen Sie Krypto direkt von Ihrem Ledger-Gerät aus. Dieser Service ist in einigen Ländern, einschließlich den USA, nicht verfügbar."
@@ -2121,7 +2121,7 @@
         "label": "Ihre Swap-ID:",
         "title": "Transaktion erfolgreich gesendet ",
         "disclaimer": "Notieren Sie sich Ihre Tausch-ID-Nummer für den Fall, dass Sie Hilfe vom {{provider}} Support benötigen.",
-        "cta": "Details ansehen"
+        "cta": "Siehe Details"
       },
       "tradeMethod": {
         "float": "Variabler Wechselkurs",
@@ -2196,7 +2196,7 @@
       },
       "operationDetails": {
         "swapId": "ID tauschen",
-        "provider": "Provider",
+        "provider": "Anbieter",
         "date": "Datum",
         "from": "Von",
         "fromAmount": "Gesendeter Betrag",
@@ -2221,7 +2221,7 @@
         "button": "Zum Manager gehen"
       },
       "emptyState": {
-        "title": "Kein Konto in {{currency}}",
+        "title": "Kein {{currency}} Konto",
         "description": "Sie müssen ein Konto hinzufügen, bevor Sie {{currency}} tauschen/swapen",
         "CTAButton": "Konto hinzufügen"
       },
@@ -2240,7 +2240,7 @@
       "form": {
         "summary": {
           "from": "Von",
-          "to": "Nach",
+          "to": "An",
           "send": "Senden",
           "payoutNetworkFees": "Auszahlungsgebühren",
           "payoutNetworkFeesTooltip": "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
@@ -2253,7 +2253,7 @@
       }
     },
     "lending": {
-      "title": "Krypto verleihen",
+      "title": "Krypto ausleihen",
       "titleTransferTab": "Leihen",
       "actionTitle": "Leihen",
       "accountActions": {
@@ -2301,7 +2301,7 @@
           "ENABLING": "Genehmigung",
           "INACTIVE": "Inaktiv",
           "SUPPLYING": "Bereitstellen",
-          "approve": "Genehmigen",
+          "approve": "Freigeben",
           "supply": "Bereitstellung",
           "withdraw": "Abheben",
           "amountRedeemed": "Abgehobener Betrag",
@@ -2319,7 +2319,7 @@
         "cta": "Vermögenswert verleihen"
       },
       "terms": {
-        "label": "Krypto leihen",
+        "label": "Krypto ausleihen",
         "title": "Verleihen von Vermögenswerten über das Compound-Protokoll",
         "description": "Das Compound-Protokoll ermöglicht es Ihnen, Vermögenswerte im Ethereum-Netzwerk zu leihen und zu verleihen. Sie können Vermögenswerte verleihen und Zinsen direkt von Ihrem Ledger-Konto erhalten.",
         "switchLabel": "Ich habe die <0><0>Nutzungsbedingungen</0></0> gelesen und bin damit einverstanden."
@@ -2341,7 +2341,7 @@
           "description": "Sie können Ihr Vermögen und die erwirtschafteten Zinsen jederzeit ganz oder teilweise direkt von Ihrem Ledger-Konto abheben.",
           "cta": "Jetzt leihen"
         },
-        "title": "Krypto leihen"
+        "title": "Krypto ausleihen"
       },
       "noTokenAccount": {
         "info": {
@@ -2367,7 +2367,7 @@
           "summary": "Zusammenfassung",
           "selectDevice": "Gerät auswählen",
           "connectDevice": "Gerät verbinden",
-          "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+          "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
         },
         "selectAccount": {
           "enabledAccountsAmount": "Sie haben {{number}} -Konto, das {{amount}} genehmigt hat",
@@ -2391,7 +2391,7 @@
           "noLimit": "Kein Limit"
         },
         "amount": {
-          "totalAvailable": "verfügbare Gesamtsumme"
+          "totalAvailable": "Verfügbare Gesamtsumme"
         },
         "validation": {
           "success": "Aktion erfolgreich durchgeführt",
@@ -2408,7 +2408,7 @@
           "summary": "Zusammenfassung",
           "selectDevice": "Gerät auswählen",
           "connectDevice": "Gerät verbinden",
-          "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+          "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
         },
         "amount": {
           "totalAvailable": "Verfügbares Guthaben",
@@ -2430,7 +2430,7 @@
           "summary": "Zusammenfassung",
           "selectDevice": "Gerät auswählen",
           "connectDevice": "Gerät verbinden",
-          "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+          "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
         },
         "validation": {
           "success": "Abhebung erfolgreich gesendet",
@@ -2488,7 +2488,7 @@
     "amount": {
       "available": "Verfügbare Gesamtsumme",
       "useMax": "Max. verwenden",
-      "loadingNetwork": "Netzwerkgebühren werden geladen...",
+      "loadingNetwork": "Netzwerkgebühren laden ...",
       "noRateProvider": "Nicht verfügbar",
       "quantityAvailable": "Verfügbare Menge"
     },
@@ -2556,7 +2556,7 @@
     "stepperHeader": {
       "selectCrypto": "Krypto auswählen",
       "selectAccount": "Konto auswählen",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "selectAccount": {
       "addAccount": "{{currency}} -Konto hinzufügen"
@@ -2569,7 +2569,7 @@
       "summary": "Zusammenfassung",
       "selectDevice": "Gerät wählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "info": {
       "description": "Sperren Sie TRX, um sicher Prämien zu verdienen und die Kontrolle über Ihr Vermögen zu behalten.",
@@ -2582,7 +2582,7 @@
       "cta": "Weiter"
     },
     "amount": {
-      "available": "Insgesamt verfügbar",
+      "available": "Verfügbare Gesamtsumme",
       "noRateProvider": "Nicht verfügbar",
       "infoLabel": "Bandbreite oder Energie"
     },
@@ -2607,7 +2607,7 @@
       "summary": "Zusammenfassung",
       "selectDevice": "Gerät wählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "amount": {
       "title": "Wählen Sie den Typ der zu entsperrenden Vermögenswerte",
@@ -2627,13 +2627,13 @@
     "stepperHeader": {
       "selectDevice": "Gerät wählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "validation": {
       "success": "Ihre Prämien wurden dem verfügbaren Guthaben hinzugefügt.",
       "button": {
         "done": "Fertig",
-        "cta": "Details ansehen"
+        "cta": "Siehe Details"
       }
     }
   },
@@ -2643,7 +2643,7 @@
       "castVote": "Meine Stimmen",
       "selectDevice": "Gerät wählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "selectValidator": {},
     "castVotes": {
@@ -2675,7 +2675,7 @@
       "title": "Konto hinzufügen abbrechen",
       "desc": "Sind Sie sicher, dass Sie das Hinzufügen von Konten abbrechen möchten?"
     },
-    "imported": "Konten erfolgreich hinzugefügt",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "Vorhandenes Konto hinzufügen"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "Ihre Konten anzeigen oder andere Konten hinzufügen",
-      "secondaryCTA": "Andere Konten hinzufügen",
-      "cta": "Zu Konten gehen"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "Scannen stoppen",
     "retryScanning": "Scanversuch wiederholen",
@@ -2791,12 +2791,12 @@
     "title": "Neues Gerät koppeln",
     "bluetooth": {
       "title": "Über Bluetooth verbinden...",
-      "label": "Ihren Nano automatisch erkennen"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Neuen Ledger Nano X hinzufügen",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist",
-    "usb": "... oder USB-Kabel anschließen",
-    "usbLabel": "Schließen Sie das USB-Kabel an und geben Sie Ihren PIN-Code auf Ihrem Gerät ein",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "Ich habe mein Gerät nicht dabei",
     "withoutDevice": "Weiter ohne mein Gerät",
     "steps": {
@@ -2826,7 +2826,7 @@
         }
       },
       "accountApp": {
-        "title": "Öffnen Sie die App {{managerAppName}} auf Ihrem {{productName}}",
+        "title": "Öffnen Sie die {{managerAppName}} App auf Ihrem Gerät",
         "description": ""
       },
       "receiveVerify": {
@@ -3131,7 +3131,7 @@
         "starter": "Prämien",
         "connectDevice": "Gerät verbinden",
         "verification": "Verifizierung",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3158,7 +3158,7 @@
               "cta": "Zum Konto gehen"
             },
             "pending": {
-              "title": "Übermittlung der Transaktion ..."
+              "title": "Übermittlung der Transaktion..."
             },
             "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte schauen Sie in ein paar Minuten noch einmal nach, um sicherzustellen, dass Ihre Transaktion nicht fehlgeschlagen ist, bevor Sie es erneut versuchen."
           }
@@ -3167,10 +3167,10 @@
     },
     "optIn": {
       "stepperHeader": {
-        "selectToken": "ASA (Vermögenswert) hinzufügen",
+        "selectToken": "ASA hinzufügen (Vermögenswert)",
         "connectDevice": "Gerät verbinden",
         "verification": "Verifizierung",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3187,7 +3187,7 @@
               "cta": "Details anzeigen"
             },
             "pending": {
-              "title": "Übermittlung der Transaktion ..."
+              "title": "Übermittlung der Transaktion..."
             },
             "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte schauen Sie in ein paar Minuten noch einmal nach, um sicherzustellen, dass Ihre Transaktion nicht fehlgeschlagen ist, bevor Sie es erneut versuchen."
           }
@@ -3199,7 +3199,7 @@
     "info": {
       "available": {
         "title": "CELO verfügbar",
-        "description": "Dieser Betrag ist verfügbar."
+        "description": "Dieser Betrag ist frei verfügbar."
       }
     }
   },
@@ -3243,7 +3243,7 @@
         "verification": "Verifizierung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3307,7 +3307,7 @@
         "summary": "Zusammenfassung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3315,7 +3315,7 @@
             "validators": "Validatoren",
             "myDelegations": "Meine Delegierungen",
             "cta": "Weiter",
-            "estYield": "Geschätzter Ertrag: {{amount}}",
+            "estYield": "Geschätzter Ertrag {{amount}}",
             "totalAvailable": "Insgesamt verfügbar: <0>{{amount}}</0>",
             "allAssetsUsed": "Alle verwendeten Vermögenswerte",
             "noResultsFound": "Kein Validator für <0>{{search}}</0> gefunden"
@@ -3330,7 +3330,7 @@
               "cta": "Details anzeigen"
             },
             "pending": {
-              "title": "Broadcasting-Transaktion ..."
+              "title": "Übermittlung der Transaktion..."
             },
             "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
           }
@@ -3343,7 +3343,7 @@
         "summary": "Zusammenfassung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3357,7 +3357,7 @@
               "cta": "Details anzeigen"
             },
             "pending": {
-              "title": "Übermittlung der Transaktion ..."
+              "title": "Übermittlung der Transaktion..."
             },
             "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
           }
@@ -3371,7 +3371,7 @@
         "summary": "Zusammenfassung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "flow": {
         "steps": {
@@ -3407,7 +3407,7 @@
     "account": {
       "subHeader": {
         "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "Mehr erfahren",
+        "moreInfo": "Weitere Infos",
         "drawerTitle": "Crypto.org Integration",
         "title": "Das Crypto.org (CRO) Token ist jetzt auf Ledger Live verfügbar",
         "description": "Sie können jetzt damit beginnen, Ihre Crypto.org (CRO) Token zu verwalten und sie über Ledger Live zu sichern.",
@@ -3421,7 +3421,7 @@
       "subHeader": {
         "cardTitle": "Betrieben von Elrond",
         "drawerTitle": "Elrond Integration",
-        "moreInfo": "Mehr Infos",
+        "moreInfo": "Weitere Infos",
         "title": "Elrond eGold (EGLD) Token ist jetzt auf Ledger Live verfügbar",
         "description": "Sie können jetzt Ihre eGold (EGLD) Token sicher sichern und über Ledger Live verwalten.",
         "description2": "Der Elrond eGold (EGLD) Token ist nativ im Elrond Netzwerk und wird für alle Transaktionen verwendet staken, intelligente Verträge, Governance und Validator-Belohnungen.",
@@ -3487,9 +3487,9 @@
             "title": "Prämien verdienen",
             "description": "Delegieren Sie TRX an einen Drittpartei-Kandidaten um Prämien zu erhalten. Klicken Sie auf Weiter, um Vermögenswerte zu sperren und zu wählen.",
             "bullet": {
-              "delegate": "Übertragene Vermögenswerte bleiben in Ihrem Besitz.",
+              "delegate": "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
               "access": "Sie können 3 Tage nach dem Sperren auf Ihr Vermögen zugreifen.",
-              "ledger": "Übertragen Sie sicher mit Ihrem Ledger-Gerät."
+              "ledger": "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "button": {
               "cta": "Weiter"
@@ -3636,11 +3636,11 @@
     "manage": {
       "title": "Vermögenswerte verwalten",
       "bond": {
-        "title": "Binden",
+        "title": "Verbunden",
         "description": "Um Prämien zu verdienen, binden Sie zunächst einen Betrag. Dann müssen Sie Ihre(n) Validator(en) nominieren."
       },
       "unbond": {
-        "title": "Entbinden",
+        "title": "Ungebunden",
         "description": "Um einen gebundenen Betrag wieder verfügbar zu machen, müssen Sie ihn zunächst entbinden. Sie können ihn nach der 28-tägigen Entbindungsfrist abheben."
       },
       "withdrawUnbonded": {
@@ -3661,7 +3661,7 @@
         "validators": "Zu nominierende Validatoren",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "steps": {
         "validators": {
@@ -3697,7 +3697,7 @@
         "amount": "Betrag für Bindung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "steps": {
         "starter": {
@@ -3737,7 +3737,7 @@
         "amount": "Betrag erneute Bindung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "steps": {
         "amount": {
@@ -3760,7 +3760,7 @@
         "amount": "Betrag zum Aufheben der Bindung",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "steps": {
         "amount": {
@@ -3799,7 +3799,7 @@
         "info": "Informationen",
         "selectDevice": "Gerät wählen",
         "connectDevice": "Gerät verbinden",
-        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+        "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
       },
       "steps": {
         "validation": {
@@ -3995,7 +3995,7 @@
     "warning": "Empfangsadressen von dApp zu teilen ist nicht sicher. Benutzen immer Ledger Live wenn Sie Ihre Adresse teilen, um Geld zu erhalten.",
     "isconnecting": "wird verbunden, bitte warten ...",
     "disconnect": "Trennen",
-    "retry": "Erneut versuchen",
+    "retry": "Wiederholen",
     "close": "Schließen",
     "message": "Nachricht",
     "messageHash": "Nachrichten-Hash",
@@ -4008,7 +4008,7 @@
       "summary": "Zusammenfassung",
       "selectDevice": "Gerät auswählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
     },
     "stepVerification": {
       "action": "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät",
@@ -4123,7 +4123,7 @@
       "allTimeLow": "Allzeittief",
       "marketCapRank": "Rang Marktkapitalisierung",
       "marketCapDominance": "Dominanz Marktkapitalisierung",
-      "supply": "Angebot",
+      "supply": "Bereitstellung",
       "circulatingSupply": "Angebot im Umlauf",
       "totalSupply": "Angebot gesamt",
       "maxSupply": "Max. Angebot",
@@ -4134,7 +4134,7 @@
       "24h": "24h",
       "7d": "7T",
       "30d": "30T",
-      "1y": "1J"
+      "1y": "1 J"
     },
     "warnings": {
       "connectionError": "Verbindungsfehler",
@@ -4172,7 +4172,7 @@
     },
     "viewerModal": {
       "viewOn": "Ansehen auf",
-      "viewInExplorer": "Im Explorer ansehen",
+      "viewInExplorer": "Ansicht im Explorer",
       "txDetails": "Transaktionsdetails"
     }
   },
