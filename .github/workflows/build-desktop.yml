@@ -68,8 +68,6 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      # - name: install linux dependencies
-      #   run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
       - name: install and switch to GCC 5.4x
         run: |
           cd apps/ledger-live-desktop
@@ -105,17 +103,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           # repository: ${{github.event.pull_request.head.repo.full_name}}
-          persist-credentials: false
           fetch-depth: 0
       - name: update path
         run: |
           echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.7 # Not needed with a .ruby-version file
-      #     bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      #   env:
-      #     imageOS: win19
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 2.1.816
@@ -193,16 +184,6 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      # - name: make local version pr
-      #   if: github.event_name == 'pull_request'
-      #   env:
-      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
-      #   run: pnpm version --new-version="$VERSION"
-      # - name: make local version push
-      #   if: github.event_name == 'push'
-      #   env:
-      #     VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
-      #   run: yarn version --new-version="$VERSION"
       - name: build the app
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
@@ -211,10 +192,6 @@ jobs:
         run: |
           eval "$(rbenv init - bash)"
           pnpm build:lld
-      # - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@main
-      #   id: post-version
-      #   with:
-      #     path: ${{ github.workspace }}
       - name: upload macOS app
         uses: actions/upload-artifact@v1
         with:
