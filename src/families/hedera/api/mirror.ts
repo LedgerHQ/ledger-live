@@ -6,6 +6,7 @@ import { Operation, OperationType } from "../../../types";
 import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
 import { getEnv } from "../../../env";
+import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -136,7 +137,7 @@ export async function getOperationsForAccount(
       extra: { consensus_timestamp },
       fee,
       // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
-      hash: raw.transaction_hash.replace(/\//g, "_").replace(/\+/g, "-"),
+      hash: base64ToUrlSafeBase64(raw.transaction_hash),
       recipients,
       senders,
       accountId: ledgerAccountId,

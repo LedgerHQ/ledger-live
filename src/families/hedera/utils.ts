@@ -30,3 +30,11 @@ export async function calculateAmount({
     totalSpent: amount.plus(estimatedFees),
   };
 }
+
+export function base64ToUrlSafeBase64(data: string): string {
+  return Buffer.from(data, "base64").toString("base64url");
+}
+
+export function encodeUrlSafeBase64(data: Uint8Array): string {
+  return Buffer.from(data).toString("base64url");
+}
