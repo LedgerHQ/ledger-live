@@ -119,7 +119,7 @@ export const getKYCStatusFromCheckQuoteStatus = (
 };
 
 // Note: used in UI (LLD / LLM)
-export type WidgetTypes = "login" | "kyc";
+export type WidgetTypes = "login" | "kyc" | "mfa";
 export type FTXProviders = "ftx" | "ftxus";
 export const getFTXURL = ({
   type,
