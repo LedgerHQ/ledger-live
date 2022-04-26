@@ -1,4 +1,4 @@
-# `ui` <br/> [![react storybook](https://img.shields.io/badge/storybook%20📚-react-61DBFB)](https://ledger-live-ui-react.vercel.app) [![native storybook](https://img.shields.io/badge/storybook%20📚-native-9665B7)](https://ledger-live-ui-native.vercel.app)
+# `ui` <br/> [![react storybook](https://img.shields.io/badge/storybook%20📚-react-61DBFB)](https://react-ui-storybook.vercel.app) [![native storybook](https://img.shields.io/badge/storybook%20📚-native-9665B7)](https://native-ui-storybook.vercel.app)
 
 ### Design and interface resources for React and React Native projects.
 
@@ -6,52 +6,49 @@
 
 ## About
 
-**`@leggerhq/ui` is a monorepo comprised of the following packages:**
+**The `ui` umbrella is a comprised of the following packages:**
 
-- [**`@ledgerhq/react-ui`**](https://github.com/LedgerHQ/ui/tree/main/packages/react): [React](https://reactjs.org/) components and styles.
+- [**`@ledgerhq/react-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/react): [React](https://reactjs.org/) components and styles.
 
-- [**`@ledgerhq/native-ui`**](https://github.com/LedgerHQ/ui/tree/main/packages/native): [React Native](https://reactnative.dev/) components and styles
+- [**`@ledgerhq/native-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/native): [React Native](https://reactnative.dev/) components and styles
 
-- [**`@ledgerhq/ui-shared`**](https://github.com/LedgerHQ/ui/tree/main/packages/shared): Shared assets and code shared between react and native modules.
+- [**`@ledgerhq/ui-shared`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/shared): Shared assets and code shared between react and native modules.
 
-- [**`@ledgerhq/icons-ui`**](https://github.com/LedgerHQ/ui/tree/main/packages/icons): Shared SVG icons.
+- [**`@ledgerhq/icons-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/icons): Shared SVG icons.
 
 ## Installation
 
-This repo is setup with [`yarn workspaces`](https://classic.yarnpkg.com/en/docs/workspaces).
+> Reminder: all commands should be run at the root of the monorepository
 
 ```sh
-# Running yarn should install and hoist the dependencies for every package.
-yarn
-# Generate the icons.
-yarn icons build
+pnpm i
 ```
 
 ## Usage
 
-Several aliases to the `yarn workspace` command can be used for convenience.
+Several aliases to the `pnpm --filter` command can be used for convenience.
 
 ```sh
-# yarn workspace @ledgerhq/react-ui
-yarn react
-# yarn workspace @ledgerhq/native-ui
-yarn native
-# yarn workspace @ledgerhq/ui-shared
-yarn shared
-# yarn workspace @ledgerhq/icons-ui
-yarn icons
+# pnpm --filter react-ui
+pnpm ui:react
+# pnpm --filter native-ui
+pnpm ui:native
+# pnpm --filter icons-ui
+pnpm ui:icons
+# pnpm --filter shared-ui
+pnpm ui:shared
 ```
 
 You can use them as prefixes to set the scope and run a command for a given submodule.
 
 ```sh
 # Prefix the command you want to run with an alias like this:
-yarn react add -D package
-yarn native storybook
-yarn shared clean
-yarn icons build
+pnpm ui:react add -D package
+pnpm ui:native storybook
+pnpm ui:shared clean
+pnpm ui:icons build
 ```
 
 ## Examples
 
-The [examples folder](https://github.com/LedgerHQ/ui/tree/main/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.
+The [examples folder](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.
