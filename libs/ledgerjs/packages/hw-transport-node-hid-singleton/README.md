@@ -67,7 +67,7 @@ Returns **Subscription**
 
 convenience wrapper for auto-disconnect logic
 
-Returns **void** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
 
 #### disconnect
 

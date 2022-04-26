@@ -18,14 +18,14 @@ importers:
       create-release-hash: workspace:*
       migrate-branch: workspace:*
       pnpm-utils: workspace:*
-      turbo: ^1.2.4
+      turbo: ^1.2.5
       x-run: workspace:*
     devDependencies:
       '@changesets/cli': 2.21.1
       create-release-hash: link:tools/create-release-hash
       migrate-branch: link:tools/migrate-branch
       pnpm-utils: link:tools/pnpm-utils
-      turbo: 1.2.4
+      turbo: 1.2.5
       x-run: link:tools/x-run
 
   apps/ledger-live-desktop:
@@ -1187,6 +1187,7 @@ importers:
   libs/ledgerjs/packages/cryptoassets:
     specifiers:
       '@types/node': '*'
+      documentation: ^13.2.5
       invariant: '2'
       jest: ^27.4.7
       source-map-support: '*'
@@ -1197,6 +1198,7 @@ importers:
       invariant: 2.2.4
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1208,6 +1210,7 @@ importers:
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       rxjs: '6'
       semver: ^7.3.5
@@ -1222,6 +1225,7 @@ importers:
       semver: 7.3.5
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1231,6 +1235,7 @@ importers:
   libs/ledgerjs/packages/errors:
     specifiers:
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1238,6 +1243,7 @@ importers:
       typescript: '4'
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1251,6 +1257,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
       bip32-path: ^0.4.2
+      documentation: ^13.2.5
       hi-base32: ^0.5.1
       jest: ^27.4.7
       js-sha512: ^0.8.0
@@ -1269,6 +1276,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1287,6 +1295,7 @@ importers:
       bitcoinjs-lib: ^5.2.0
       bs58: ^4.0.1
       bs58check: ^2.1.2
+      documentation: ^13.2.5
       invariant: ^2.2.4
       jest: ^27.4.7
       ripemd160: '2'
@@ -1316,6 +1325,7 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
       '@types/node': 17.0.21
       axios: 0.25.0
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1329,6 +1339,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
       bip32-path: ^0.4.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1341,6 +1352,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1359,6 +1371,7 @@ importers:
       '@types/node': '*'
       axios: ^0.26.1
       bignumber.js: ^9.0.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1376,6 +1389,7 @@ importers:
       bignumber.js: 9.0.2
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1396,6 +1410,7 @@ importers:
       axios: ^0.26.1
       bignumber.js: ^9.0.1
       bip32-path: ^0.4.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1415,6 +1430,7 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
       '@types/node': 17.0.21
       axios: 0.26.1
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1428,6 +1444,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
       bip32-path: ^0.4.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1440,6 +1457,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1456,6 +1474,7 @@ importers:
       '@types/node': '*'
       axios: ^0.26.1
       bip32-path: ^0.4.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1471,6 +1490,7 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
       '@types/node': 17.0.21
       axios: 0.26.1
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1483,6 +1503,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
       base32.js: ^0.1.0
+      documentation: ^13.2.5
       jest: ^27.4.7
       sha.js: ^2.3.6
       source-map-support: '*'
@@ -1498,6 +1519,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1511,6 +1533,7 @@ importers:
       '@types/node': '*'
       blake2b: ^2.1.4
       bs58check: ^2.1.2
+      documentation: ^13.2.5
       invariant: ^2.2.4
       jest: ^27.4.7
       source-map-support: '*'
@@ -1525,6 +1548,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1537,6 +1561,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1548,6 +1573,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1560,6 +1586,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@types/node': '*'
       bip32-path: 0.4.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1571,6 +1598,7 @@ importers:
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1582,6 +1610,7 @@ importers:
       '@ledgerhq/devices': workspace:^
       '@ledgerhq/errors': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       events: ^3.3.0
       jest: ^27.4.7
       source-map-support: '*'
@@ -1594,6 +1623,7 @@ importers:
       events: 3.3.0
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1607,6 +1637,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       axios: ^0.26.1
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1621,6 +1652,7 @@ importers:
       ws: 7.5.7
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1632,6 +1664,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1642,6 +1675,7 @@ importers:
       '@ledgerhq/logs': link:../logs
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1656,6 +1690,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       invariant: ^2.2.4
       jest: ^27.4.7
       rxjs: '6'
@@ -1673,6 +1708,7 @@ importers:
       rxjs: 6.6.7
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1687,6 +1723,7 @@ importers:
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       lodash: ^4.17.21
       node-hid: 2.1.1
@@ -1706,6 +1743,7 @@ importers:
       usb: 1.9.2
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1720,6 +1758,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       '@types/node-hid': ^1.3.1
+      documentation: ^13.2.5
       jest: ^27.4.7
       node-hid: 2.1.1
       source-map-support: '*'
@@ -1735,6 +1774,7 @@ importers:
     devDependencies:
       '@types/node': 17.0.21
       '@types/node-hid': 1.3.1
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1749,6 +1789,7 @@ importers:
       '@ledgerhq/hw-transport-node-hid-noevents': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       lodash: ^4.17.21
       node-hid: 2.1.1
@@ -1768,6 +1809,7 @@ importers:
       usb-detection: 4.13.0
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1780,6 +1822,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       rxjs: '6'
       source-map-support: '*'
@@ -1793,6 +1836,7 @@ importers:
       rxjs: 6.6.7
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1806,6 +1850,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       axios: ^0.26.1
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1818,6 +1863,7 @@ importers:
       axios: 0.26.1
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1832,6 +1878,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       '@types/web-bluetooth': ^0.0.12
+      documentation: ^13.2.5
       jest: ^27.4.7
       rxjs: '6'
       source-map-support: '*'
@@ -1847,6 +1894,7 @@ importers:
     devDependencies:
       '@types/node': 17.0.21
       '@types/web-bluetooth': 0.0.12
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1861,6 +1909,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       '@types/w3c-web-hid': ^1.0.2
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1874,6 +1923,7 @@ importers:
     devDependencies:
       '@types/node': 17.0.21
       '@types/w3c-web-hid': 1.0.3
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1888,6 +1938,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       '@types/w3c-web-usb': ^1.0.5
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1901,6 +1952,7 @@ importers:
     devDependencies:
       '@types/node': 17.0.21
       '@types/w3c-web-usb': 1.0.5
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1910,6 +1962,7 @@ importers:
   libs/ledgerjs/packages/logs:
     specifiers:
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1917,6 +1970,7 @@ importers:
       typescript: '4'
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1931,6 +1985,7 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
       '@types/react-native': ^0.66.12
+      documentation: ^13.2.5
       jest: ^27.4.7
       rxjs: '6'
       source-map-support: '*'
@@ -1947,6 +2002,7 @@ importers:
     devDependencies:
       '@types/node': 17.0.21
       '@types/react-native': 0.66.17
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1961,6 +2017,7 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/logs': workspace:^
       '@types/node': '*'
+      documentation: ^13.2.5
       invariant: ^2.2.4
       jest: ^27.4.7
       react-native-ble-plx: 2.0.3
@@ -1981,6 +2038,7 @@ importers:
       uuid: 3.4.0
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -1990,6 +2048,7 @@ importers:
   libs/ledgerjs/packages/types-cryptoassets:
     specifiers:
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1997,6 +2056,7 @@ importers:
       typescript: '4'
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -2006,6 +2066,7 @@ importers:
   libs/ledgerjs/packages/types-devices:
     specifiers:
       '@types/node': '*'
+      documentation: ^13.2.5
       jest: ^27.4.7
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -2013,6 +2074,7 @@ importers:
       typescript: '4'
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -2024,6 +2086,7 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@types/node': '*'
       bignumber.js: '9'
+      documentation: ^13.2.5
       jest: ^27.4.7
       rxjs: '6'
       source-map-support: '*'
@@ -2036,6 +2099,7 @@ importers:
       rxjs: 6.6.7
     devDependencies:
       '@types/node': 17.0.21
+      documentation: 13.2.5
       jest: 27.5.1_ts-node@10.7.0
       source-map-support: 0.5.21
       ts-jest: 27.1.3_jest@27.5.1+typescript@4.6.2
@@ -2672,17 +2736,17 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.16.7
-      '@babel/generator': 7.12.1
+      '@babel/generator': 7.17.7
       '@babel/helper-module-transforms': 7.17.7
       '@babel/helpers': 7.17.7
-      '@babel/parser': 7.12.3
+      '@babel/parser': 7.17.7
       '@babel/template': 7.16.7
       '@babel/traverse': 7.17.3
       '@babel/types': 7.17.0
       convert-source-map: 1.8.0
-      debug: 4.3.3
+      debug: 4.3.4
       gensync: 1.0.0-beta.2
-      json5: 2.2.0
+      json5: 2.2.1
       lodash: 4.17.21
       resolve: 1.22.0
       semver: 5.7.1
@@ -6942,7 +7006,7 @@ packages:
       chalk: 4.1.2
       emittery: 0.8.1
       exit: 0.1.2
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-changed-files: 27.5.1
       jest-config: 27.5.1_ts-node@10.7.0
       jest-haste-map: 27.5.1
@@ -7133,7 +7197,7 @@ packages:
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
       glob: 7.2.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       istanbul-lib-coverage: 3.2.0
       istanbul-lib-instrument: 5.1.0
       istanbul-lib-report: 3.0.0
@@ -7167,7 +7231,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       callsites: 3.1.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       source-map: 0.6.1
     dev: true
 
@@ -7232,7 +7296,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/test-result': 27.5.1
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-haste-map: 27.5.1
       jest-runtime: 27.5.1
     transitivePeerDependencies:
@@ -19689,6 +19753,7 @@ packages:
       lodash: 4.17.21
       mdast-util-find-and-replace: 1.1.1
       mdast-util-inject: 1.1.0
+      micromark: 2.11.4
       micromatch: 3.1.10
       mime: 2.6.0
       module-deps-sortable: 5.0.3
@@ -23197,7 +23262,7 @@ packages:
     resolution: {integrity: sha1-C3gV/DIBxqaeFNuYzgmMFpNSWes=}
     engines: {node: '>= 0.10'}
     dependencies:
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       through2: 2.0.5
     dev: true
 
@@ -25916,7 +25981,7 @@ packages:
       '@jest/types': 27.5.1
       chalk: 4.1.2
       exit: 0.1.2
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       import-local: 3.1.0
       jest-config: 27.5.1_ts-node@10.7.0
       jest-util: 27.5.1
@@ -26019,7 +26084,7 @@ packages:
       ci-info: 3.3.0
       deepmerge: 4.2.2
       glob: 7.2.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-circus: 27.5.1
       jest-environment-jsdom: 27.5.1
       jest-environment-node: 27.5.1
@@ -26529,7 +26594,7 @@ packages:
     dependencies:
       '@jest/types': 27.5.1
       chalk: 4.1.2
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-haste-map: 27.5.1
       jest-pnp-resolver: 1.2.2_jest-resolve@27.5.1
       jest-util: 27.5.1
@@ -26619,7 +26684,7 @@ packages:
       '@types/node': 17.0.21
       chalk: 4.1.2
       emittery: 0.8.1
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-docblock: 27.5.1
       jest-environment-jsdom: 27.5.1
       jest-environment-node: 27.5.1
@@ -26738,7 +26803,7 @@ packages:
       collect-v8-coverage: 1.0.1
       execa: 5.1.1
       glob: 7.2.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-haste-map: 27.5.1
       jest-message-util: 27.5.1
       jest-mock: 27.5.1
@@ -26832,7 +26897,7 @@ packages:
       babel-preset-current-node-syntax: 1.0.1_@babel+core@7.17.7
       chalk: 4.1.2
       expect: 27.5.1
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       jest-diff: 27.5.1
       jest-get-type: 27.5.1
       jest-haste-map: 27.5.1
@@ -26867,7 +26932,7 @@ packages:
       '@types/node': 17.0.23
       chalk: 4.1.2
       ci-info: 3.3.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       picomatch: 2.3.1
 
   /jest-validate/26.6.2:
@@ -27336,7 +27401,7 @@ packages:
   /jsonfile/4.0.0:
     resolution: {integrity: sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss=}
     optionalDependencies:
-      graceful-fs: 4.2.10
+      graceful-fs: 4.2.9
 
   /jsonfile/6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
@@ -27975,7 +28040,7 @@ packages:
     resolution: {integrity: sha1-L19Fq5HjMhYjT9U62rZo607AmTs=}
     engines: {node: '>=4'}
     dependencies:
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       parse-json: 4.0.0
       pify: 3.0.0
       strip-bom: 3.0.0
@@ -29353,7 +29418,7 @@ packages:
   /micromark/2.11.4:
     resolution: {integrity: sha512-+WoovN/ppKolQOFIAajxi7Lu9kInbPxFuTBVEavFcL8eAfVstoc5MocPmqBeAdBOJV00uaVjegzH4+MA0DN/uA==}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.4
       parse-entities: 2.0.0
     transitivePeerDependencies:
       - supports-color
@@ -37705,119 +37770,119 @@ packages:
     resolution: {integrity: sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg==}
     engines: {node: '>=0.6.11 <=0.7.0 || >=0.7.3'}
 
-  /turbo-darwin-64/1.2.4:
-    resolution: {integrity: sha512-fIseb9faJZdrJ2LXJAMZmSI5hV5MbHiRKIEnwt6pqk9+8HcJnsz3Rfo7uSNH07Qo64moXyoDHa0YFj00PH2Aeg==}
+  /turbo-darwin-64/1.2.5:
+    resolution: {integrity: sha512-AjMEF8hlA9vy1gXLHBruqgO42s0M0rKKZLQPM239wli5lKEprmxd8WMSjd9YmxRflS+/fwrXfjVl0QRhHjDIww==}
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-darwin-arm64/1.2.4:
-    resolution: {integrity: sha512-/iAKexDsoXLHeLpM71+MMHDL7x95++M1GSIVkME1MJyUwG0RMfjlciBG99ZCBlya39rJhc0ifSLhZVWUttTmJA==}
+  /turbo-darwin-arm64/1.2.5:
+    resolution: {integrity: sha512-2kj4+X9XMGF9o398qVo4HDsaoPy2kcl77X+EYlq2bROoQlGXRrR7R+i/qMvLh4tLsSQAm5eOqEbFyvtMkxT/xg==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-64/1.2.4:
-    resolution: {integrity: sha512-YULjq/JW8e2ax/McguL+yHmZxGdLXseKVIVWP1f2dhuF9ztAbGTaagdDnQ8atsqDO0gFsb3WiRo4+4X/NAbgvQ==}
+  /turbo-freebsd-64/1.2.5:
+    resolution: {integrity: sha512-29eQUiS/Fky7O8E0YzGh3EETPvMKmMDkFjJn4XtRGO+iZfkIxlqKnAUpT+8kx3nQ/5dAAoTGHflyf4FNEZaCKA==}
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-freebsd-arm64/1.2.4:
-    resolution: {integrity: sha512-GCi7soURYBOu7TOEeqAcShKzaOxuN0w60+2BejCKWYe2VtzRvM8ACGTNXRcle/r/9JICiyw3LpxvieJpqdSnOw==}
+  /turbo-freebsd-arm64/1.2.5:
+    resolution: {integrity: sha512-WRFmzgXqXurdRntPrEb7hcOM1Zfjse8OC/sH3V8R9QspYE+upZ42m9ePLt2n5N2shc4XLced/9VFdczx9549Tw==}
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-32/1.2.4:
-    resolution: {integrity: sha512-9+Yyig9JWkDgLT7Y4L9LPH4ik0Tlb3E2ac2fJFI4shMp2ETcV1ehyjDXT/LzLTSkf4mGLsww+WYKtzXJNVThRg==}
+  /turbo-linux-32/1.2.5:
+    resolution: {integrity: sha512-YBzKqXJEoORpPq7vwpNf9ovbVru9aQi7HD88fxYW1wvvuPdNx2ZAmjn8sEMZZPkndfOlf9fXgO3aXr0fjqUWMw==}
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-64/1.2.4:
-    resolution: {integrity: sha512-MDnDrfWrtK4BOWh2+a3nrkFacjtEy7sUZnnIhTqUM5FOKD8ISh8VTS3C16hi2BfAjCnZhqIrynbNH/P1YH6j3Q==}
+  /turbo-linux-64/1.2.5:
+    resolution: {integrity: sha512-a85WEfOj4Cw0zd/wo1xoRmqW4kZHAz63nf+vWINyxZOK2H899TCUs+KJpgsacafU0fO36l1rsx2fdUDce/3Dww==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm/1.2.4:
-    resolution: {integrity: sha512-Vx2YIFhNqgz4L3Z7zKauPmhgA4QzEtUsjekN0HeEpkZkhWONbcF2gc2j9LTNzicLbI+RoiKrwJWt9qkydqU6mg==}
+  /turbo-linux-arm/1.2.5:
+    resolution: {integrity: sha512-JlLk5cGmj5yRwBQuPMH36w5ZJg0sBfi+dxBZTkJUV9XM9MRgNUs0MkNnjh9ogGvB4R08HY4ud6XcyRdoKLs9pA==}
     cpu: [arm]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-arm64/1.2.4:
-    resolution: {integrity: sha512-gs3mhARtzNBoEQn6S05mefYrmcKtWJexwnDQiQZ8fXIkAE9IqvIWNk7S+MyixQH/11jwUqFPtRsn1yQWbvZDhQ==}
+  /turbo-linux-arm64/1.2.5:
+    resolution: {integrity: sha512-ZtPQx9yw+iMT+sYPYcrtbCye7a/aj93gA2krir4MI+CDp69LuHLuZOOfc8u4JCxSJTbRLoYcwJrdfB9uBSddIQ==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-mips64le/1.2.4:
-    resolution: {integrity: sha512-99k9FbOJBbIjhoUOE4uOioh65kZI0VHZzf3JlhpYo3j9r+KGhu7aYTbbvd7j1qQ9o5vToic5vc3OkOm2LKgvig==}
+  /turbo-linux-mips64le/1.2.5:
+    resolution: {integrity: sha512-3LLnEwKc5pf7MlUhwvq/ND2cx0f7v3LHK5587CVTQI9nnwgie42n5U168J7BPPPkIE0k0j4S1jeXU18DV3vWbA==}
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-linux-ppc64le/1.2.4:
-    resolution: {integrity: sha512-M+/sBWQ4UXVplSt5/pIvIRBT6NfEOVFvcOpbzWNjAhLE0vE/ZYeU07S/HjRZd6PMiodT61UyC7BwDQOa2pDOQg==}
+  /turbo-linux-ppc64le/1.2.5:
+    resolution: {integrity: sha512-1k4lBCu2jdQNF3KXjPAbOER5/j37AdBqHnuHB6JuiOocm+v3WgEfkctkqLrgow3q1HLeb4me3wGXstV//6dzSg==}
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-32/1.2.4:
-    resolution: {integrity: sha512-Y2R5ZmOHOTgr/pAQAVY39BpRDMRCjyaeLxwIAIkvyNSBpkU/TtnJZXMlt2so42Qv9Jren1mlvxm+g1nb0zAQQg==}
+  /turbo-windows-32/1.2.5:
+    resolution: {integrity: sha512-XT2g/kZopqARjs39MNVP5XysrK2R0P9QVnrRdVY72zgswLvvcvDI6SM5SPX/SWF4iLU5OEUlpCaUz5dJLGMGUw==}
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo-windows-64/1.2.4:
-    resolution: {integrity: sha512-F8tapVNGeWXdNSFJDybOSNWxmi6xF59oZIP7+c043D/IBvkIGTQG449QD9EdUtSq8pe20zM95VKmW9mUjqHYPQ==}
+  /turbo-windows-64/1.2.5:
+    resolution: {integrity: sha512-Ut097JJv9qy/8cpHANB7/BH0uh2IZbUeSSRudTl8tfMX8ZEdla/NpJd+omMV4CwPRrZAO6SyKiTfeHFOt/6NgQ==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /turbo/1.2.4:
-    resolution: {integrity: sha512-3MPu+uvaKvmW5R0JncX8TJRli/5Z5Mz/H260oCfmGlEuVdvdn7Gf6ZefDnYiuDe5ofltq78SL0LTIAqLYbUmiw==}
+  /turbo/1.2.5:
+    resolution: {integrity: sha512-KXk5BGCaiSSXhtorrLUILB3OTqZ/uruIi0ggb0jSp55ZDSS+G/4OANw7y5QuRjizCpjwunb47AAOox/2Zn2nbA==}
     hasBin: true
     requiresBuild: true
     optionalDependencies:
-      turbo-darwin-64: 1.2.4
-      turbo-darwin-arm64: 1.2.4
-      turbo-freebsd-64: 1.2.4
-      turbo-freebsd-arm64: 1.2.4
-      turbo-linux-32: 1.2.4
-      turbo-linux-64: 1.2.4
-      turbo-linux-arm: 1.2.4
-      turbo-linux-arm64: 1.2.4
-      turbo-linux-mips64le: 1.2.4
-      turbo-linux-ppc64le: 1.2.4
-      turbo-windows-32: 1.2.4
-      turbo-windows-64: 1.2.4
+      turbo-darwin-64: 1.2.5
+      turbo-darwin-arm64: 1.2.5
+      turbo-freebsd-64: 1.2.5
+      turbo-freebsd-arm64: 1.2.5
+      turbo-linux-32: 1.2.5
+      turbo-linux-64: 1.2.5
+      turbo-linux-arm: 1.2.5
+      turbo-linux-arm64: 1.2.5
+      turbo-linux-mips64le: 1.2.5
+      turbo-linux-ppc64le: 1.2.5
+      turbo-windows-32: 1.2.5
+      turbo-windows-64: 1.2.5
     dev: true
 
   /turndown/7.0.0:
@@ -39221,7 +39286,7 @@ packages:
     dependencies:
       fs-mkdirp-stream: 1.0.0
       glob-stream: 6.1.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       is-valid-glob: 1.0.0
       lazystream: 1.0.1
       lead: 1.0.0
@@ -39244,7 +39309,7 @@ packages:
     dependencies:
       append-buffer: 1.0.2
       convert-source-map: 1.8.0
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       normalize-path: 2.1.1
       now-and-later: 2.0.1
       remove-bom-buffer: 3.0.0

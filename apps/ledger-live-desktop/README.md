@@ -2,8 +2,8 @@
 
 # Ledger Live (desktop) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/ledger-wallet/localized.svg)](https://crowdin.com/project/ledger-wallet)
 
-- Related: [ledger-live-mobile](https://github.com/ledgerhq/ledger-live-mobile)
-- Backed by: [ledger-live-common](https://github.com/ledgerhq/ledger-live-common)
+- Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-mobile)
+- Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common)
 
 > Ledger Live is a new generation wallet desktop application providing a unique interface to maintain multiple cryptocurrencies for your Ledger Nano S / Blue. Manage your device, create accounts, receive and send cryptoassets, [...and many more](https://www.ledger.com/ledger-launches-ledger-live-the-all-in-one-companion-app-to-your-ledger-device).
 
@@ -15,7 +15,7 @@
 
 ## Architecture
 
-Ledger Live is an hybrid desktop application built with Electron, React, Redux, RxJS,.. and highly optimized with [ledger-core](https://github.com/LedgerHQ/lib-ledger-core) C++ library to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-node-bindings). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live-common).
+Ledger Live is an hybrid desktop application built with Electron, React, Redux, RxJS,.. and highly optimized with [ledger-core](https://github.com/LedgerHQ/lib-ledger-core) C++ library to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-node-bindings). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common).
 
 <p align="center">
  <img src="/docs/architecture.png" width="550"/>
@@ -25,7 +25,7 @@ Ledger Live is an hybrid desktop application built with Electron, React, Redux, 
 
 The latest stable release is available on [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
 
-Previous versions and pre-releases can be downloaded on here from the [Releases](https://github.com/LedgerHQ/ledger-live-desktop/releases) section.
+Previous versions and pre-releases can be downloaded on here from the [Releases](https://github.com/LedgerHQ/ledger-live/releases) section.
 
 ### Compatibility
 
@@ -44,23 +44,25 @@ Ledger Live releases are signed. The automatic update mechanism makes use of the
 ### Requirements
 
 - [NodeJS](https://nodejs.org) `lts/fermium` (Node 14.x)
-- [Yarn 1.x](https://classic.yarnpkg.com/) (Classic)
-- [Python](https://www.python.org/) 2.7 or 3.5+
+- [PnPm](https://pnpm.io)
+- [Python](https://www.python.org/) 3.5+
 - A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))
 - On Linux: `sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev`
 
 ## Install
 
+> Reminder: all commands should be run at the root of the monorepository
+
 ```bash
 # install dependencies
-yarn
+pnpm i
 ```
 
 ## Run
 
 ```bash
-# launch the app
-yarn start
+# launch the app in dev mode
+pnpm dev:lld
 ```
 
 ## Build
@@ -69,14 +71,14 @@ yarn start
 # Build & package the whole app
 # Creates a .dmg for Mac, .exe installer for Windows, or .AppImage for Linux
 # Output files will be created in dist/ folder
-yarn dist
+pnpm desktop dist
 ```
 
 ## Debug
 
 If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, here is a [Launch Configuration](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_launch-configuration) that should allow you to run and debug the main process as well as the render process of the application.
 
-As stated in the [debugging documentation](https://code.visualstudio.com/docs/editor/debugging), this file should be named `launch.json` and located under the `.vscode` folder.
+As stated in the [debugging documentation](https://code.visualstudio.com/docs/editor/debugging), this file should be named `launch.json` and located under the `.vscode` folder at the root of the monorepository.
 
 ```json
 {
@@ -94,8 +96,8 @@ As stated in the [debugging documentation](https://code.visualstudio.com/docs/ed
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "yarn",
-      "args": ["start"],
+      "runtimeExecutable": "pnpm",
+      "args": ["dev:lld"],
       "outputCapture": "std",
       "resolveSourceMapLocations": null,
       "env": {
@@ -134,46 +136,20 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-other envs can be seen in [live-common:src/env.js](https://github.com/LedgerHQ/ledger-live-common/blob/master/src/env.js)
+other envs can be seen in [live-common:src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/libs/ledger-live-common/src/env.ts)
 
 ### Run tests
 
-In a terminal you need to have webpack dev server running
+> Reminder: all commands should be run at the root of the monorepository
 
 ```bash
-yarn start
+pnpm desktop test
 ```
-
-In an other terminal you need to launch the webdriver/electron container. First run will be slow.
-Next ones will be fast unless some changes are made to the container or package.json. You need to kill and re run the command if package.json changed. Make sure you are running Docker.
-
-```bash
-yarn start-electron-webdriver
-```
-
-You can point VNCViewer to `localhost::5900` to check what is happening in the container. `secret` is the password.
-Then you can launch tests.
-
-```bash
-yarn spectron
-```
-
-or
-
-```bash
-node_modules/.bin/jest tests/specs/<FILEREGEX>.spec.js
-```
-
-By default it uses --runInBand jest option otherwise it explodes!
-
-If you need to create an app.json, run a test that set up what you need and run it with the env var `SPECTRON_DUMP_APP_JSON` set. It will create `tests/dump.json` at the end of the spec.
-
-**Please put the image expectations at the end of the it(...) tests so that it does not break the whole flow if a snapshot breaks**
 
 ### Run code quality checks
 
 ```bash
-yarn ci
+pnpm desktop codecheck
 ```
 
 ## File structure
@@ -214,4 +190,5 @@ src
 ```
 
 ## Localization / Translations
+
 Translations from English to other languages are handled internally so it is not possible to directly contribute to them, however if you spot a bug (e.g. a wrong variable name) or any issue in translation files, feel free to report a bug to Ledger's support team and it will be taken care of.

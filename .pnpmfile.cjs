@@ -114,6 +114,7 @@ function readPackage(pkg, context) {
           kind: "peerDependencies",
         }
       ),
+      addDependencies("documentation", { micromark: "*" }),
       // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
       // This is done this way because these packages are not hoisted hence unaccessible otherwise.
       addDependencies(
@@ -125,6 +126,7 @@ function readPackage(pkg, context) {
           "@types/node": "*",
           "source-map-support": "*",
           typescript: "4",
+          documentation: "^13.2.5",
         },
         {
           kind: "devDependencies",
