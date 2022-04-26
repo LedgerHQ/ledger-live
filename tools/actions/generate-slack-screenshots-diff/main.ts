@@ -72,7 +72,7 @@ const main = async () => {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:alert: Screenshots have been updated!\n\n Pull Request: [${context.sha}](https://github.com/${context.repo.owner}/${context.repo.repo})/commit/${context.sha}\n Owner: *${context.actor}*\n :github: run: ${context.serverUrl}/${context.repo.repo}/actions/runs/${context.runId}.`,
+        text: `:alert: Screenshots have been updated!\n\n Pull Request: [${context.sha}](https://github.com/${context.repo.owner}/${context.repo.repo})/commit/${context.sha})\n Owner: *${context.actor}*\n :github: run: ${context.serverUrl}/${context.repo.repo}/actions/runs/${context.runId}.`,
       },
     },
     {
