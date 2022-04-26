@@ -5,28 +5,16 @@ First off, thanks for taking some time to contribute! 🎉👍
 This file will guide you through the local setup and contains the guidelines you will need
 to follow to get your code merged.
 
-## Install
-
-```sh
-# Clone the repo
-git clone https://github.com/LedgerHQ/ui
-# Install dependencies
-yarn
-```
-
 ## Guidelines
 
 ### Requirements
 
 In order to get merged, a pull request must:
 
-- Pass the linter (`yarn lint`)
-- Pass the typechecker (`yarn typecheck`)
+- Pass the linter (`pnpm ui:react lint`)
+- Pass the typechecker (`pnpm ui:react typecheck`)
 
 If you are using VSCode, you can use the `eslint` and `prettier` plugins to auto-format your code on save.
-
-A git pre-commit hook is also active and should prevent commits that do not pass these checks.
-To bypass the hook, add the `--no-verify` option when using git.
 
 ### Code practices
 
@@ -49,22 +37,6 @@ The library is agnostic, it does not make any assumptions on the consumer setup 
 
 To keep the dependencies short and the size small.
 
-## Maintenance
-
-For package maintainers only.
-
-### Release process
-
-- Change the version in the package.json
-- Make a git tag (and commit).
-
-```sh
-# Will build the files in /lib, copy the required files and create a suitable package.json.
-yarn prerelease
-# Will publish the package.
-yarn release
-```
-
 ## Local development
 
 If you need to use the locally installed version of this package, you will need to perform the following steps.
@@ -72,15 +44,14 @@ If you need to use the locally installed version of this package, you will need 
 ```sh
 ## From the root of the monorepo:
 
-# Build the icons. This is only needed once.
-yarn icons build
-# Build the react package. Run this every time you update the code.
-yarn react prerelease
+# Build the react components library and its dependencies.
+pnpm run:turbo -- run build --filter=@ledgerhq/react-ui
 ```
 
 ```sh
 ## From the repository that consumes @ledgerhq/react-ui:
 
 # Replace [path/to/ui] with the relative path to the local ui repo.
-yarn add [path/to/ui]/packages/react/lib
+# You should be able use any package manager instead of pnpm here.
+pnpm add [path/to/ui]/packages/react/lib
 ```
