@@ -18,6 +18,7 @@ import {
   locales,
 } from "../languages";
 import { languageSelector } from "../reducers/settings";
+import { urlsConfig } from "../config/urls";
 
 if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
   /** https://formatjs.io/docs/polyfills/intl-datetimeformat/#default-timezone */
@@ -65,6 +66,7 @@ export default function LocaleProvider({ children }: Props) {
   const language = useSelector(languageSelector);
   useEffect(() => {
     i18next.changeLanguage(language);
+    urlsConfig.changeLocale(language);
   }, [language]);
 
   const value: LocaleState = useMemo(

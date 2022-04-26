@@ -1,3 +1,4 @@
+// Place {locale} inside url to replace it by current locale. Ex: ledger.com/{locale}/ become ledger.com/fr/
 export const urls = {
   faq:
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=faq",
@@ -164,3 +165,41 @@ export const urls = {
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
   },
 };
+
+const regex = /{locale}/g;
+
+class UrlsConfig {
+  public locale = "en";
+
+  changeLocale(locale: string) {
+    this.locale = locale;
+  }
+}
+
+export const urlsConfig = new UrlsConfig();
+
+// Iterate through url strings and substitute them by getter function with regex replacing template {locale} by current locale
+const iterateUrls = (obj: typeof urls) => {
+  Object.keys(obj).forEach(key => {
+    // @ts-ignore
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      // @ts-ignore
+      iterateUrls(obj[key]);
+    }
+
+    // @ts-ignore
+    if (typeof obj[key] === "string") {
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
+      obj["_" + key] = obj[key];
+      Object.defineProperty(obj, key, {
+        get() {
+          // @ts-ignore
+          return obj["_" + key].replace(regex, urlsConfig.locale);
+        },
+      });
+    }
+  });
+};
+
+iterateUrls(urls);
