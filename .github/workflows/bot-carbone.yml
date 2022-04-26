@@ -4,6 +4,9 @@ on:
     branches:
       - bots-staging
 
+concurrency:
+  group: bot-carbone
+
 jobs:
   start-runner:
     name: "start ec2 instance (Linux)"
@@ -31,26 +34,31 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Retrieving coin apps
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
-      - uses: actions/setup-node@master
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-      - name: install yarn
-        run: npm i -g yarn
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: Install dependencies
         run: |
-          cd libs/ledger-live-common
-          yarn global add yalc
-          yarn --frozen-lockfile
-          yarn ci-setup-cli
+          pnpm i --filter="live-cli..." --frozen-lockfile
+      - name: build bot
+        run: |
+          pnpm build:cli
       - name: BOT
         env:
           SEED: ${{ secrets.SEED2 }}
@@ -61,9 +69,8 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
         run: |
-          cd libs/ledger-live-common
-          mkdir botreport
-          COINAPPS=$PWD/coin-apps yarn ci-test-bot
+          mkdir libs/ledger-live-common/botreport
+          COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
         timeout-minutes: 120
       - name: upload logs
         if: failure() || success()
