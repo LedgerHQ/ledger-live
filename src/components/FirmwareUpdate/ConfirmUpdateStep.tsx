@@ -87,7 +87,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
         <Text variant="subtitle" color="neutral.c80">
           {t("FirmwareUpdate.newVersionNumber")}
         </Text>
-        <Text variant="subtitle">{latestFirmware?.final?.version}</Text>
+        <Text variant="subtitle">{latestFirmware?.final?.name}</Text>
       </Flex>
     </Flex>
   );
