@@ -15,7 +15,11 @@
 
 `ledger-live` is a monorepository created to centralize all the javascript code related to the [Leger Live](https://www.ledger.com/ledger-live) applications in one place.
 
-It uses [pnpm workspaces](https://pnpm.io/) and [turborepo](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [remote caching](https://turborepo.org/docs/features/remote-caching).
+### Tools
+
+We use [pnpm workspaces](https://pnpm.io/) and [turborepo](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [remote caching](https://turborepo.org/docs/features/remote-caching).
+
+For changelog generation, releases and package publishing we rely on the [changesets](https://github.com/changesets/changesets) library.
 
 ## Installation
 
