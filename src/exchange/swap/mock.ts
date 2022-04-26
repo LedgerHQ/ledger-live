@@ -8,6 +8,8 @@ import type {
   KYCStatus,
   SwapRequestEvent,
   ValidKYCStatus,
+  PostSwapAccepted,
+  PostSwapCancelled,
 } from "./types";
 import { getAccountUnit } from "../../account";
 import type { Transaction, TokenCurrency, CryptoCurrency } from "../../types";
@@ -253,4 +255,25 @@ export const mockCheckQuote: CheckQuote = async ({
         description: "Something unexpected happened",
       };
   }
+};
+
+export const mockPostSwapAccepted: PostSwapAccepted = async ({
+  provider,
+  swapId,
+  transactionId,
+}) => {
+  //Fake delay to simulate network
+  await new Promise((r) => setTimeout(r, 800));
+
+  return null;
+};
+
+export const mockPostSwapCancelled: PostSwapCancelled = async ({
+  provider,
+  swapId,
+}) => {
+  //Fake delay to simulate network
+  await new Promise((r) => setTimeout(r, 800));
+
+  return null;
 };

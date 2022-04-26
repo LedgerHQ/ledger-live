@@ -7,6 +7,7 @@ import getKYCStatus from "./getKYCStatus";
 import submitKYC from "./submitKYC";
 import initSwap from "./initSwap";
 import checkQuote from "./checkQuote";
+import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import { getEnv } from "../../env";
 import {
   JSONRPCResponseError,
@@ -181,6 +182,8 @@ export {
   getStatus,
   getExchangeRates,
   getCompleteSwapHistory,
+  postSwapAccepted,
+  postSwapCancelled,
   initSwap,
   getKYCStatus,
   submitKYC,

@@ -143,6 +143,31 @@ export type SwapStatus = {
   status: ValidSwapStatus;
 };
 export type GetStatus = (arg0: SwapStatusRequest) => Promise<SwapStatus>;
+
+// -----
+// Related to Swap state API call (accepted or cancelled)
+
+type SwapStateRequest = {
+  provider: string;
+  swapId: string;
+};
+
+export type SwapStateAcceptedRequest = SwapStateRequest & {
+  transactionId: string;
+};
+
+export type SwapStateCancelledRequest = SwapStateRequest;
+
+export type PostSwapAccepted = (
+  arg0: SwapStateAcceptedRequest
+) => Promise<null>;
+
+export type PostSwapCancelled = (
+  arg0: SwapStateCancelledRequest
+) => Promise<null>;
+
+// -----
+
 export type UpdateAccountSwapStatus = (
   arg0: Account
 ) => Promise<Account | null | undefined>;
