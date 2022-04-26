@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import * as fs from "fs/promises";
+import { promises as fs } from "fs";
 
 const generateBlocks = (array) =>
   array.map((e) => [
