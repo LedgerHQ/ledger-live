@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 import { promises as fs } from "fs";
 
 const generateBlocks = (array) =>
@@ -55,8 +56,10 @@ const generateBlocks = (array) =>
   ]);
 
 const main = async () => {
+  const { context } = github;
   const images = core.getInput("images");
   const workspace = core.getInput("workspace");
+  const message = core.getInput("message");
   const imagesObject = await fs.readFile(`${workspace}/${images}`, "utf8");
   const parsed = JSON.parse(imagesObject);
   core.info(JSON.stringify(parsed, null, 2));
@@ -69,7 +72,7 @@ const main = async () => {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: ":alert: Screenshots have been updated!\n\n Pull Request: ${{ github.event.commits[0].message }}\n Owner: *${{ github.actor }}*\n :github: run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.",
+        text: `:alert: Screenshots have been updated!\n\n Pull Request: ${message}\n Owner: *${context.actor}*\n :github: run: ${context.serverUrl}/${context.repo.repo}/actions/runs/${context.runId}.`,
       },
     },
     {
