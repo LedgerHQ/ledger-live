@@ -1,8 +1,7 @@
 # `@ledgerhq/react-ui`
 
-[![build](https://github.com/LedgerHQ/ui/actions/workflows/react.yml/badge.svg)](https://github.com/LedgerHQ/ui/actions/workflows/react.yml)
 [![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui)](https://www.npmjs.com/package/@ledgerhq/react-ui)
-[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-react.vercel.app)
+[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://react-ui-storybook.vercel.app)
 
 ### Design and interface resources for React
 
@@ -10,7 +9,7 @@
 
 ## Reference
 
-**[🔗 Storybook](https://ledger-live-ui-react.vercel.app/)**
+**[🔗 Storybook](https://react-ui-storybook.vercel.app)**
 
 ## Installation
 
@@ -193,4 +192,4 @@ ReactDOM.render(<Root />, document.getElementById("react-root"));
 
 ### Contributing
 
-Check the [contributing guide here](https://github.com/LedgerHQ/ui/blob/main/packages/react/CONTRIBUTING.md).
+Check the [contributing guide here](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/libs/ui/packages/react/CONTRIBUTING.md).
