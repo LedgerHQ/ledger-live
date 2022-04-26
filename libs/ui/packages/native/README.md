@@ -29,8 +29,6 @@ npm i styled-components react-native-reanimated react-native-svg
 
 ### Additional setup
 
-**Skip this step if your project is managed by Expo.**
-
 Follow the installation instructions for:
 
 - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/2.2.0/installation)
@@ -183,7 +181,7 @@ export default function App() {
 
 ```js
 import React from "react";
-import { StyleProvider } from "@ledgerhq/native-ui/styles";
+import { StyleProvider } from "@ledgerhq/native-ui";
 import { Flex, Text, Logos, Switch } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 
