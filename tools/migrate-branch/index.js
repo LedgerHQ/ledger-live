@@ -18,13 +18,13 @@ const argv = yargs(hideBin(process.argv))
       chalk.bold("[migrate-branch] - Git branch migration tool"),
       "",
       "Migrates a git branch from an outdated ledger-live repository.",
+      "",
       chalk.bold.yellow("Important: ") +
-        "if a branch with the same name does not exist it will be created from HEAD.",
+        "if a branch with the same name does not exist it will be created from HEAD. The current commit will be used as a starting point for the imported branch.",
       "",
       chalk.bold("Usage: ") +
-        `pnpm migrate-branch [repository name without the organization prefix] [branch name]`,
-      chalk.bold("Example: ") +
-        `pnpm migrate-branch ledger-live-desktop my-branch`,
+        `migrate-branch [repository name without the organization prefix] [branch name]`,
+      chalk.bold("Example: ") + `migrate-branch ledger-live-desktop my-branch`,
     ].join("\n")
   )
   .version(false)
@@ -38,6 +38,8 @@ if (!remote || !branch) {
   console.error(
     [
       chalk.red.bold("[!] Missing one or more arguments."),
+      "Type " + chalk.bold("migrate-branch --help") + " for more information.",
+      "",
       chalk.bold("Usage: ") + `migrate-branch [remote name] [branch name]`,
       chalk.bold("Example: ") + `migrate-branch ledger-live-desktop develop`,
     ].join("\n")
