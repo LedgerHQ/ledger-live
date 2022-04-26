@@ -19,6 +19,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import useLatestFirmware from "../../hooks/useLatestFirmware";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -66,15 +67,16 @@ const Manager = ({
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
+  const latestFirmware = useLatestFirmware(deviceInfo);
 
   const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
 
   const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
   useEffect(() => {
-    if(firmwareUpdate) {
+    if(latestFirmware && firmwareUpdate) {
       setIsFirmwareUpdateOpen(true);
     }
-  }, [firmwareUpdate]);
+  }, [firmwareUpdate, latestFirmware]);
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
