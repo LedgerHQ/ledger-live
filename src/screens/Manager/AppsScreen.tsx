@@ -29,6 +29,7 @@ import NoResultsFound from "../../icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
+import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 
 type Props = {
   state: State;
@@ -266,8 +267,8 @@ const AppsScreen = ({
               dispatch={dispatch}
               appList={device}
             />
-            <Flex mb={6}>
-              <FirmwareManager state={state} deviceInfo={deviceInfo} />
+            <Flex mt={6}>
+              <FirmwareUpdateBanner />
             </Flex>
             <AppUpdateAll
               state={state}

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Platform } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -20,6 +20,7 @@ import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import { gte as isVersionGreaterOrEqual } from "semver";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 const devicesWithFwVersionConstraints: (DeviceModelId | undefined)[] = [
   DeviceModelId.nanoS,
@@ -36,17 +37,25 @@ const FirmwareUpdateBanner = () => {
     hasCompletedOnboardingSelector,
   );
 
-  const navigation = useNavigation();
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  const route = useRoute();
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
   const onExperimentalFirmwareUpdate = useCallback(() => {
-    navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
-      params: { firmwareUpdate: true },
-    });
+    // if we're already in the manager page, only update the params
+    if (route.name === ScreenName.ManagerMain) {
+      navigation.setParams({ firmwareUpdate: true });
+    } else {
+      navigation.navigate(NavigatorName.Manager, {
+        screen: ScreenName.Manager,
+        params: { firmwareUpdate: true },
+      });
+    }
+
     setShowDrawer(false);
   }, [navigation]);
 
@@ -78,8 +87,6 @@ const FirmwareUpdateBanner = () => {
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       <Flex
-        mx={6}
-        my={4}
         backgroundColor={colors.primary.c20}
         flexDirection="row"
         alignItems="center"

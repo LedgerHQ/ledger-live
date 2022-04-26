@@ -69,7 +69,12 @@ const Manager = ({
 
   const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
 
-  const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(firmwareUpdate ?? false);
+  const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
+  useEffect(() => {
+    if(firmwareUpdate) {
+      setIsFirmwareUpdateOpen(true);
+    }
+  }, [firmwareUpdate]);
   /** general error state */
   const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
