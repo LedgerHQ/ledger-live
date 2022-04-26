@@ -7,6 +7,9 @@ inputs:
   images:
     description: path to images.json
     required: true
+  message:
+    description: message to pass down to slack comment
+    required: true
 
 runs:
   using: "node12"
