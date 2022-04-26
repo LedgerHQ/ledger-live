@@ -130,7 +130,8 @@ export default function FirmwareUpdate({
   const canClose =
     step === "confirmRecoveryBackup" ||
     step === "firmwareUpdated" ||
-    step === "error";
+    step === "error" ||
+    step === "confirmPin";
 
   const onTryClose = useCallback(
     (restoreApps: boolean) => {
@@ -153,7 +154,6 @@ export default function FirmwareUpdate({
 
   useEffect(() => {
     if (!nextBackgroundEvent) return;
-
     dispatchEvent(nextBackgroundEvent);
     dispatch(dequeueBackgroundEvent());
   }, [nextBackgroundEvent, dispatch, dispatchEvent]);
