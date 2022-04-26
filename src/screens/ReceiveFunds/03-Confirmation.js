@@ -45,8 +45,6 @@ import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
 
-const forceInset = { bottom: "always" };
-
 type Props = {
   account: ?(TokenAccount | Account),
   parentAccount: ?Account,

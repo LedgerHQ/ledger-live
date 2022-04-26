@@ -13,7 +13,6 @@ import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 
-import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -49,8 +48,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<?Device>();
-
-  const { colors } = useTheme();
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";

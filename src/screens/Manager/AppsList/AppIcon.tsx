@@ -1,6 +1,6 @@
 // @flow
 import React, { memo, useMemo } from "react";
-import { Image, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import manager from "@ledgerhq/live-common/lib/manager";
 import {
   findCryptoCurrencyById,
@@ -17,7 +17,7 @@ type Props = {
   app?: App,
   icon?: string,
   size: number,
-  radius: number,
+  radius?: number,
 };
 
 const IconContainer = styled(Flex).attrs({

@@ -16,9 +16,11 @@ import { ScreenName } from "../../const";
 import { ManagerTab } from "./Manager";
 import SelectDevice from "../../components/SelectDevice";
 import TrackScreen from "../../analytics/TrackScreen";
+// @FlowFixMe
 import { track } from "../../analytics";
 import Button from "../../components/Button";
-import { DeviceLike } from "../../reducers/ble";
+// @FlowFixMe
+import type { DeviceLike } from "../../reducers/ble";
 import Trash from "../../icons/Trash";
 import BottomModal from "../../components/BottomModal";
 import ModalBottomAction from "../../components/ModalBottomAction";

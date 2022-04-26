@@ -1,4 +1,3 @@
-// @flow
 import { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { screen } from "./segment";
