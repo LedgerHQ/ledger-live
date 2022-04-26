@@ -123,6 +123,10 @@ export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
+export type InitSwapErrorResult = {
+  error: Error;
+  swapId: string;
+};
 type ValidSwapStatus =
   | "pending"
   | "onhold"
@@ -155,6 +159,7 @@ export type SwapRequestEvent =
   | {
       type: "init-swap-error";
       error: Error;
+      swapId: string;
     }
   | {
       type: "init-swap-result";

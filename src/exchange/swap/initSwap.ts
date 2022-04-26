@@ -32,6 +32,7 @@ const withDevicePromise = (deviceId, fn) =>
 // throw if TransactionStatus have errors
 // you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
+  let swapId;
   let { transaction } = input;
   const { exchange, exchangeRate, deviceId, userId } = input;
 
@@ -40,7 +41,6 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
     let unsubscribed = false;
 
     const confirmSwap = async () => {
-      let swapId;
       let ignoreTransportError;
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async (transport) => {
@@ -109,6 +109,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           o.next({
             type: "init-swap-error",
             error: new SwapGenericAPIError(),
+            swapId,
           });
           o.complete();
           return;
@@ -315,6 +316,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         o.next({
           type: "init-swap-error",
           error: e,
+          swapId,
         });
         o.complete();
         unsubscribed = true;
