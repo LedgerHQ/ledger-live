@@ -1,8 +1,7 @@
 # `@ledgerhq/native-ui`
 
-[![build](https://github.com/LedgerHQ/ui/actions/workflows/native.yml/badge.svg)](https://github.com/LedgerHQ/ui/actions/workflows/native.yml)
 [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
-[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-native.vercel.app)
+[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://native-ui-storybook.vercel.app)
 
 ### Design and interface resources for React Native
 
@@ -10,7 +9,7 @@
 
 ## Reference
 
-**[🔗 Storybook](https://ledger-live-ui-native.vercel.app/)**
+**[🔗 Storybook](https://native-ui-storybook.vercel.app)**
 
 ## Installation
 
