@@ -59,10 +59,10 @@ const main = async () => {
   const { context } = github;
   const images = core.getInput("images");
   const workspace = core.getInput("workspace");
-  const message = core.getInput("message");
   const imagesObject = await fs.readFile(`${workspace}/${images}`, "utf8");
   const parsed = JSON.parse(imagesObject);
   core.info(JSON.stringify(parsed, null, 2));
+  core.info(JSON.stringify(context, null, 2));
 
   const windows = generateBlocks(parsed.windows);
   const linux = generateBlocks(parsed.linux);
@@ -72,7 +72,7 @@ const main = async () => {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `:alert: Screenshots have been updated!\n\n Pull Request: ${message}\n Owner: *${context.actor}*\n :github: run: ${context.serverUrl}/${context.repo.repo}/actions/runs/${context.runId}.`,
+        text: `:alert: Screenshots have been updated!\n\n Pull Request: [${context.sha}](https://github.com/${context.repo.owner}/${context.repo.repo})/commit/${context.sha}\n Owner: *${context.actor}*\n :github: run: ${context.serverUrl}/${context.repo.repo}/actions/runs/${context.runId}.`,
       },
     },
     {
