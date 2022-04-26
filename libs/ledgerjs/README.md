@@ -1,6 +1,5 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
 
-
 <img src="https://user-images.githubusercontent.com/3273751/151214602-f5153588-1911-4456-ae65-604d56821b36.png" height="80" /> <img src="https://user-images.githubusercontent.com/211411/52533081-e679d380-2d2e-11e9-9c5e-571e4ad0107b.png" height="80" />
 
 [![Ledger Devs Slack](https://img.shields.io/badge/Slack-LedgerDevs-yellow.svg?style=flat)](https://ledger-dev.slack.com/)
@@ -10,11 +9,11 @@ Welcome to Ledger's JavaScript libraries.
 
 **See also:**
 
-- [Changelog](https://github.com/LedgerHQ/ledgerjs/releases)
+- [Changelog](https://github.com/LedgerHQ/ledger-live/releases)
 - [**LedgerJS examples**](https://github.com/LedgerHQ/ledgerjs-examples)
-- [Ledger Live Desktop](https://github.com/ledgerhq/ledger-live-desktop)
-- [Ledger Live Mobile](https://github.com/ledgerhq/ledger-live-mobile)
-- [live-common](https://github.com/ledgerhq/ledger-live-common)
+- [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-desktop)
+- [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-mobile)
+- [live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common)
 - Deprecated libraries are archived in https://github.com/LedgerHQ/ledgerjs-legacy
 
 ## `@ledgerhq/hw-transport-*`
@@ -23,32 +22,30 @@ Welcome to Ledger's JavaScript libraries.
 
 > The _hw-transport_ libraries implement communication protocol for our [hardware wallet devices](https://www.ledger.com/) (Ledger Nano / Ledger Nano S / Ledger Nano X / Ledger Blue) in many platforms: **Web, Node, Electron, React Native,...** and using many different communication channels: **U2F, HID, WebUSB, Bluetooth,...**
 
-| Channels | U2F/WebAuthn | HID | WebUSB | Bluetooth |
-|----------|--------------|-----|--------|-----------|
+| Channels | U2F/WebAuthn           | HID | WebUSB | Bluetooth |
+| -------- | ---------------------- | --- | ------ | --------- |
 | Blue     | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
 | Nano S   | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
 | Nano X   | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
 
-1. U2F is deprecated. See https://github.com/LedgerHQ/ledgerjs/blob/master/docs/migrate_webusb.md
+1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
 
 Summary of implementations available per platform
 
-
-|    Platforms     |  U2F/WebAuthn    |                HID                |       WebUSB        |           Bluetooth           |
-|------------------|------------------|-----------------------------------|---------------------|-------------------------------|
-| Web              | `@ledgerhq/hw-transport-u2f` | `@ledgerhq/hw-transport-webhid` | `@ledgerhq/hw-transport-webusb` | `@ledgerhq/hw-transport-web-ble`          |
-| Electron/Node.js | NO               | `@ledgerhq/hw-transport-node-hid`<sup>1</sup> | NO                  | `@ledgerhq/hw-transport-node-ble`         |
-| iOS              | NO               | NO                                | NO                  | `@ledgerhq/react-native-hw-transport-ble` |
-| Android          | `@ledgerhq/hw-transport-u2f`<sup>2</sup> | `@ledgerhq/react-native-hid`                  | `@ledgerhq/hw-transport-webusb`<sup>2</sup>    | `@ledgerhq/react-native-hw-transport-ble` |
+| Platforms        | U2F/WebAuthn                             | HID                                           | WebUSB                                      | Bluetooth                                 |
+| ---------------- | ---------------------------------------- | --------------------------------------------- | ------------------------------------------- | ----------------------------------------- |
+| Web              | `@ledgerhq/hw-transport-u2f`             | `@ledgerhq/hw-transport-webhid`               | `@ledgerhq/hw-transport-webusb`             | `@ledgerhq/hw-transport-web-ble`          |
+| Electron/Node.js | NO                                       | `@ledgerhq/hw-transport-node-hid`<sup>1</sup> | NO                                          | `@ledgerhq/hw-transport-node-ble`         |
+| iOS              | NO                                       | NO                                            | NO                                          | `@ledgerhq/react-native-hw-transport-ble` |
+| Android          | `@ledgerhq/hw-transport-u2f`<sup>2</sup> | `@ledgerhq/react-native-hid`                  | `@ledgerhq/hw-transport-webusb`<sup>2</sup> | `@ledgerhq/react-native-hw-transport-ble` |
 
 1. 3 implementations available
 2. via Android Chrome
 
 **Beware the current web support:**
 
-
-| Channels | U2F               | WebHID.         | WebUSB             | WebBluetooth |
-|----------|-------------------|-----------------|--------------------|--------------|
+| Channels | U2F                    | WebHID.         | WebUSB             | WebBluetooth |
+| -------- | ---------------------- | --------------- | ------------------ | ------------ |
 | Windows  | DEPRECATED<sup>1</sup> | YES             | OK BUT<sup>2</sup> | YES          |
 | Mac      | DEPRECATED<sup>1</sup> | YES             | YES                | YES          |
 | Linux    | DEPRECATED<sup>1</sup> | YES             | YES                | YES          |
@@ -57,11 +54,9 @@ Summary of implementations available per platform
 | Firefox  | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
 | IE.      | DEPRECATED<sup>1</sup> | NO              | NO                 | NO           |
 
-
-1. U2F is deprecated. See https://github.com/LedgerHQ/ledgerjs/blob/master/docs/migrate_webusb.md
+1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
 2. instabilities has been reported
 3. WebHID supported under _Chrome experimental flags_
-
 
 **Please find respective documentation for each transport:**
 
@@ -119,12 +114,12 @@ We also provide libraries that help implementing the low level exchanges. These 
 
 ### Published Packages
 
-| Package                                                                  | Version                                                                                                                                       | Description                                                                                                  |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [`create-dapp`](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/create-dapp)                                   | [![npm](https://img.shields.io/npm/v/create-dapp.svg)](https://www.npmjs.com/package/create-dapp)                                             | Ledger DApp Ethereum starter kit                                                                             |
-| [`@ledgerhq/web3-subprovider`](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/web3-subprovider)               | [![npm](https://img.shields.io/npm/v/@ledgerhq/web3-subprovider.svg)](https://www.npmjs.com/package/@ledgerhq/web3-subprovider)               | web3 subprovider implementation for web3-provider-engine                                                     |
-| **Development Tools**                                                    |
-| [`@ledgerhq/hw-transport-mocker`](/packages/hw-transport-mocker)         | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-mocker.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-mocker)         | Tool used for test to record and replay APDU calls.                                                          |
+| Package                                                                                                           | Version                                                                                                                               | Description                                              |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [`create-dapp`](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/create-dapp)                     | [![npm](https://img.shields.io/npm/v/create-dapp.svg)](https://www.npmjs.com/package/create-dapp)                                     | Ledger DApp Ethereum starter kit                         |
+| [`@ledgerhq/web3-subprovider`](https://github.com/LedgerHQ/ledgerjs-legacy/tree/master/packages/web3-subprovider) | [![npm](https://img.shields.io/npm/v/@ledgerhq/web3-subprovider.svg)](https://www.npmjs.com/package/@ledgerhq/web3-subprovider)       | web3 subprovider implementation for web3-provider-engine |
+| **Development Tools**                                                                                             |
+| [`@ledgerhq/hw-transport-mocker`](/packages/hw-transport-mocker)                                                  | [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-mocker.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-mocker) | Tool used for test to record and replay APDU calls.      |
 
 ## Basic gist
 
@@ -139,7 +134,7 @@ const getBtcAddress = async () => {
   const result = await btc.getWalletPublicKey("44'/0'/0'/0/0");
   return result.bitcoinAddress;
 };
-getBtcAddress().then(a => console.log(a));
+getBtcAddress().then((a) => console.log(a));
 ```
 
 ## Contributing
@@ -152,8 +147,10 @@ started.
 
 ### Install dependencies
 
+> Reminder: all commands should be run at the root of the monorepository
+
 ```bash
-yarn
+pnpm i
 ```
 
 ### Build
@@ -161,7 +158,7 @@ yarn
 Build all packages
 
 ```bash
-yarn build
+pnpm build:ljs
 ```
 
 ### Watch
@@ -169,7 +166,7 @@ yarn build
 Watch all packages change. Very useful during development to build only file that changes.
 
 ```bash
-yarn watch
+pnpm watch:ljs
 ```
 
 ### Lint
@@ -177,32 +174,15 @@ yarn watch
 Lint all packages
 
 ```bash
-yarn lint
+pnpm lint --filter="./libs/ledgerjs/**"
 ```
 
 ### Run Tests
 
 First of all, this ensure the libraries are correctly building, and passing lint and flow:
 
-```
-yarn test
-```
-
-**then to test on a real device...**
-
-Plug a device like the Nano S and open Bitcoin app.
-
-Then run the test and accept the commands on the devices for the tests to
-continue.
-
 ```bash
-yarn test-node
-```
-
-You can also test on the web:
-
-```bash
-yarn test-browser
+pnpm test --filter="./libs/ledgerjs/**"
 ```
 
 > make sure to configure your device app with "Browser support" set to "YES".
@@ -212,147 +192,16 @@ yarn test-browser
 Checklist before deploying a new release:
 
 - you have the right in the LedgerHQ org on NPM
-- you have run `npm login` once (check `npm whoami`)
+- you have run `pnpm login` once (check `pnpm whoami`)
 - Go to **master** branch
   - your master point on LedgerHQ repository (check with `git config remote.$(git config branch.master.remote).url` and fix it with `git branch --set-upstream master origin/master`)
   - you are in sync (`git pull`) and there is no changes in `git status`
-- Run `yarn` once, there is still no changes in `git status`
+- Run `pnpm i` once, there is still no changes in `git status`
 
 **deploy a new release**
 
 ```
- yarn run publish
+pnpm clean:ljs && pnpm build:ljs && pnpm doc:ljs && pnpm publish --filter="./libs/ledgerjs/**"
 ```
 
-then, go to [/releases](https://github.com/LedgerHQ/ledgerjs/releases) and create a release with change logs.
-
-**alternatively:**
-
-deploy a canary release (beta, etc)
-
-```
- yarn run publish -c
-```
-
-> NB: if there is a new package, AFAIK you need to manually `npm publish` it once on NPM.
-
-## VSCode settings 
-
-Here is a example config for a workspace file to handle the monorepo setup.  
-Just add `project.code-workspace` to your `.vscode` folder
-
-```json
-{
-  "folders": [
-    {
-      "name": "root",
-      "path": "../"
-    },
-    {
-      "name": "cryptoassets",
-      "path": "../packages/cryptoassets"
-    },
-    {
-      "name": "devices",
-      "path": "../packages/devices"
-    },
-    {
-      "name": "errors",
-      "path": "../packages/errors"
-    },
-    {
-      "name": "hw-app-algorand",
-      "path": "../packages/hw-app-algorand"
-    },
-    {
-      "name": "hw-app-btc",
-      "path": "../packages/hw-app-btc"
-    },
-    {
-      "name": "hw-app-cosmos",
-      "path": "../packages/hw-app-cosmos"
-    },
-    {
-      "name": "hw-app-eth",
-      "path": "../packages/hw-app-eth"
-    },
-    {
-      "name": "hw-app-polkadot",
-      "path": "../packages/hw-app-polkadot"
-    },
-    {
-      "name": "hw-app-str",
-      "path": "../packages/hw-app-str"
-    },
-    {
-      "name": "hw-app-tezos",
-      "path": "../packages/hw-app-tezos"
-    },
-    {
-      "name": "hw-app-trx",
-      "path": "../packages/hw-app-trx"
-    },
-    {
-      "name": "hw-app-xrp",
-      "path": "../packages/hw-app-xrp"
-    },
-    {
-      "name": "hw-transport",
-      "path": "../packages/hw-transport"
-    },
-    {
-      "name": "hw-transport-http",
-      "path": "../packages/hw-transport-http"
-    },
-    {
-      "name": "hw-transport-mocker",
-      "path": "../packages/hw-transport-mocker"
-    },
-    {
-      "name": "hw-transport-node-ble",
-      "path": "../packages/hw-transport-node-ble"
-    },
-    {
-      "name": "hw-transport-node-hid",
-      "path": "../packages/hw-transport-node-hid"
-    },
-    {
-      "name": "hw-transport-node-hid-noevents",
-      "path": "../packages/hw-transport-node-hid-noevents"
-    },
-    {
-      "name": "hw-transport-node-hid-singleton",
-      "path": "../packages/hw-transport-node-hid-singleton"
-    },
-    {
-      "name": "hw-transport-node-speculos",
-      "path": "../packages/hw-transport-node-speculos"
-    },
-    {
-      "name": "hw-transport-web-ble",
-      "path": "../packages/hw-transport-web-ble"
-    },
-    {
-      "name": "hw-transport-webhid",
-      "path": "../packages/hw-transport-webhid"
-    },
-    {
-      "name": "hw-transport-webusb",
-      "path": "../packages/hw-transport-webusb"
-    },
-    {
-      "name": "logs",
-      "path": "../packages/logs"
-    },
-    {
-      "name": "react-native-hid",
-      "path": "../packages/react-native-hid"
-    },
-    {
-      "name": "react-native-hw-transport-ble",
-      "path": "../packages/react-native-hw-transport-ble"
-    }
-  ],
-}
-```
-
+then, go to [/releases](https://github.com/LedgerHQ/ledger-live/releases) and create a release with change logs.
