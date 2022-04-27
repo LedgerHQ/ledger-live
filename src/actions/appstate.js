@@ -28,7 +28,7 @@ export const addBackgroundEvent = (event: *) => (dispatch: *) =>
     event,
   });
 
-  export const dequeueBackgroundEvent = () => (dispatch: *) =>
+export const dequeueBackgroundEvent = () => (dispatch: *) =>
   dispatch({
     type: "DEQUEUE_BACKGROUND_EVENT",
   });
