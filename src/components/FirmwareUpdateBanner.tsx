@@ -5,7 +5,7 @@ import { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
-import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
+import { Alert, BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
@@ -20,7 +20,6 @@ import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
-
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -68,7 +67,10 @@ const FirmwareUpdateBanner = () => {
   const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
-    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
+    isFirmwareUpdateVersionSupported(
+      lastSeenDevice.deviceInfo,
+      lastSeenDevice.modelId,
+    );
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
@@ -77,14 +79,7 @@ const FirmwareUpdateBanner = () => {
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
-      <Flex
-        backgroundColor={colors.primary.c20}
-        flexDirection="row"
-        alignItems="center"
-        p={6}
-        borderRadius={5}
-      >
-        {/* replace flex for Alert component */}
+      <Alert type="info" showIcon={false}>
         <Text flexShrink={1}>
           {t("FirmwareUpdate.newVersion", { version })}
         </Text>
@@ -98,7 +93,7 @@ const FirmwareUpdateBanner = () => {
           }
           outline={false}
         />
-      </Flex>
+      </Alert>
 
       <BottomDrawer
         isOpen={showDrawer}
