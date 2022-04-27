@@ -22,10 +22,11 @@ import { gte as isVersionGreaterOrEqual } from "semver";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-const devicesWithFwVersionConstraints: (DeviceModelId | undefined)[] = [
-  DeviceModelId.nanoS,
-  DeviceModelId.nanoX,
-];
+const deviceMinimumVersionsForUpdate: { [key in DeviceModelId]?: string } = {
+  nanoS: "1.6.1",
+  nanoX: "1.2.4-6",
+  nanoSP: "1.0.0",
+};
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -75,9 +76,12 @@ const FirmwareUpdateBanner = () => {
   const isUsbFwUpdateFeatureActivated =
     usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled;
   const isUsbFwVersionUpdateSupported =
-    latestFirmware?.final?.version &&
-    (isVersionGreaterOrEqual(latestFirmware.final.version, "2.0.0") ||
-      !devicesWithFwVersionConstraints.includes(lastSeenDevice?.modelId));
+    lastSeenDevice &&
+    deviceMinimumVersionsForUpdate[lastSeenDevice.modelId] &&
+    isVersionGreaterOrEqual(
+      lastSeenDevice.deviceInfo.version,
+      deviceMinimumVersionsForUpdate[lastSeenDevice.modelId] as string,
+    );
   const usbFwUpdateActivated =
     isUsbFwUpdateFeatureActivated &&
     Platform.OS === "android" &&
