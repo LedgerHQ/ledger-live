@@ -187,7 +187,6 @@ export default function FirmwareUpdate({
     >
       {step === "confirmRecoveryBackup" && (
         <ConfirmRecoveryStep
-          onCancel={onCloseSilently}
           onContinue={launchUpdate}
           firmwareVersion={firmwareVersion}
           firmwareNotes={latestFirmware?.osu?.notes}

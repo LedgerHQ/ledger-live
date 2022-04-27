@@ -1,4 +1,12 @@
-import { Flex, Text, Link, Icons, Button, Checkbox } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  Text,
+  Link,
+  Icons,
+  Button,
+  Checkbox,
+  Alert,
+} from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Linking, ScrollView } from "react-native";
@@ -11,14 +19,12 @@ type Props = {
   firmwareVersion: string;
   firmwareNotes?: string | null;
   onContinue: () => void;
-  onCancel: () => void;
 };
 
 const ConfirmRecoveryStep = ({
   firmwareVersion,
   firmwareNotes,
-  onContinue,
-  onCancel,
+  onContinue
 }: Props) => {
   const { t } = useTranslation();
   const [
@@ -44,7 +50,8 @@ const ConfirmRecoveryStep = ({
   return (
     <Flex height="100%">
       <Track event="FirmwareUpdateChangelog" onMount />
-      <ScrollView>
+      <ScrollView persistentScrollbar>
+        <Flex px={3}>
         <Text variant="h2" fontWeight="semiBold" mb={4}>
           <Trans
             i18nKey="FirmwareUpdateReleaseNotes.introTitle"
@@ -57,25 +64,30 @@ const ConfirmRecoveryStep = ({
             >{`firmware version ${firmwareVersion}`}</Text>
           </Trans>
         </Text>
+        <Alert
+          type="info"
+          title={t(
+            "FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions",
+          )}
+        />
+        <Flex mt={6}>
+          <Link
+            onPress={openRecoveryPhraseInfo}
+            Icon={Icons.ExternalLinkMedium}
+            iconPosition="right"
+            type="color"
+            style={{ justifyContent: "flex-start" }}
+          >
+            {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link")}
+          </Link>
+        </Flex>
         <SafeMarkdown markdown={firmwareNotes} />
+        </Flex>
       </ScrollView>
-      <Text variant="paragraph" color="neutral.c80" mt={6}>
-        {t("FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions")}
-      </Text>
-      <Flex mt={6}>
-        <Link
-          onPress={openRecoveryPhraseInfo}
-          Icon={Icons.ExternalLinkMedium}
-          iconPosition="right"
-          type="color"
-          style={{ justifyContent: "flex-start" }}
-        >
-          {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link")}
-        </Link>
-      </Flex>
-      <Flex height={1} mt={7} backgroundColor="neutral.c40" />
+
+      <Flex height={1} backgroundColor="neutral.c40" />
       {/** TODO: replace by divider component when we have one */}
-      <Flex backgroundColor="neutral.c30" p={7} mt={8} borderRadius={5}>
+      <Flex backgroundColor="neutral.c30" p={5} mt={5} borderRadius={5}>
         <Checkbox
           checked={confirmRecoveryPhraseBackup}
           onChange={toggleConfirmRecoveryPhraseBackup}
@@ -85,13 +97,10 @@ const ConfirmRecoveryStep = ({
       <Button
         onPress={onContinue}
         type="main"
-        mt={8}
+        mt={6}
         disabled={!confirmRecoveryPhraseBackup}
       >
         {t("common.continue")}
-      </Button>
-      <Button onPress={() => onCancel()} mt={6}>
-        {t("common.cancel")}
       </Button>
     </Flex>
   );
