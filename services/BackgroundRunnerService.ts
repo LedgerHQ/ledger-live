@@ -83,7 +83,7 @@ const BackgroundRunnerService = async ({
             progress,
             installing,
           }) => {            
-            if (progress === 1) {
+            if (progress === 1 && installing === "flash-mcu") {
               // this is the point where we lose communication with the device until the update
               // is finished and the user has entered their PIN. Therefore the message here should 
               // be generic about waiting for the firmware to finish and then entering the pin
@@ -94,6 +94,7 @@ const BackgroundRunnerService = async ({
           },          
           error: onError,
           complete: () => {
+            emitEvent({ type: "confirmPin"});
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
               complete: onFirmwareUpdated,
