@@ -20,6 +20,7 @@ import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import useLatestFirmware from "../../hooks/useLatestFirmware";
+import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -73,7 +74,7 @@ const Manager = ({
 
   const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
   useEffect(() => {
-    if(latestFirmware && firmwareUpdate) {
+    if(latestFirmware && firmwareUpdate && isFirmwareUpdateVersionSupported(deviceInfo, device.modelId)) {
       setIsFirmwareUpdateOpen(true);
     }
   }, [firmwareUpdate, latestFirmware]);

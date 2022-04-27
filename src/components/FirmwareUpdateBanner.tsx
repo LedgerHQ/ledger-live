@@ -18,15 +18,9 @@ import Button from "./Button";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
-import { gte as isVersionGreaterOrEqual } from "semver";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { isFirmwareUpdateVersionSupported } from "../logic/firmwareUpdate";
 
-const deviceMinimumVersionsForUpdate: { [key in DeviceModelId]?: string } = {
-  nanoS: "1.6.1",
-  nanoX: "1.2.4-6",
-  nanoSP: "1.0.0",
-};
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
@@ -77,11 +71,7 @@ const FirmwareUpdateBanner = () => {
     usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled;
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
-    deviceMinimumVersionsForUpdate[lastSeenDevice.modelId] &&
-    isVersionGreaterOrEqual(
-      lastSeenDevice.deviceInfo.version,
-      deviceMinimumVersionsForUpdate[lastSeenDevice.modelId] as string,
-    );
+    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
   const usbFwUpdateActivated =
     isUsbFwUpdateFeatureActivated &&
     Platform.OS === "android" &&
