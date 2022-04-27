@@ -3068,6 +3068,7 @@
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please re-install the apps on your device.",
     "pleaseConfirmUpdate": "Please confirm the update on your device",
+    "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
     "pleaseWaitUpdate": "Please wait for the update to finish",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",

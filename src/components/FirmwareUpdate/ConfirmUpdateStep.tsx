@@ -42,7 +42,7 @@ const ConfirmUpdateStep = ({ device, deviceInfo, latestFirmware }: Props) => {
       </Flex>
       {latestFirmware?.osu?.hash ? (
         <Flex mt={7} alignSelf="stretch" alignItems="center">
-          <Text variant="h3">Identifier:</Text>
+          <Text variant="h3">{t("FirmwareUpdate.identifierTitle")}</Text>
           <Flex
             border={1}
             py={2}
