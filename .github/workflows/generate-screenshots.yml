@@ -67,10 +67,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -93,6 +89,10 @@ jobs:
         run: gh pr checkout ${{ github.event.issue.number || github.event.inputs.pr }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
       - name: Bump npm to latest
         run: npm i -g npm
       - name: Install dependencies
