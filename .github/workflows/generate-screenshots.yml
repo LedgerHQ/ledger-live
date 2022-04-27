@@ -115,7 +115,7 @@ jobs:
       - name: Commit snapshots
         if: steps.status.outputs.status != 0
         run: |
-          git pull --rebase
           git add .
           git commit -m 'update screenshots (${{ matrix.os }})'
+          git pull --rebase
           git push
