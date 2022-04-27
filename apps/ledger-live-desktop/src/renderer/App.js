@@ -34,6 +34,8 @@ import { themeSelector } from "./actions/general";
 // $FlowFixMe
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 
+console.log("Blah");
+
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api.reloadRenderer();
