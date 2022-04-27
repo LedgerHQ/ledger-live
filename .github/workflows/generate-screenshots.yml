@@ -109,6 +109,9 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: pnpm desktop test:playwright:update-snapshots
         shell: bash
+      - name: status
+        id: status
+        run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
       - name: Commit snapshots
         if: steps.status.outputs.status != 0
         run: |
