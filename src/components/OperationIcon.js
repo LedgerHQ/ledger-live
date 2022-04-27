@@ -9,6 +9,7 @@ import type {
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { isConfirmedOperation } from "@ledgerhq/live-common/lib/operation";
 import OperationStatusIcon from "../icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 
@@ -73,18 +74,20 @@ class OperationIcon extends PureComponent<Props> {
 }
 
 const m: React$ComponentType<OwnProps> = connect((state, props) => {
-  const {
-    account,
-    parentAccount,
-    operation: { blockHeight, type },
-  } = props;
+  const { account, parentAccount, operation } = props;
+  const { type } = operation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const confirmations = blockHeight ? mainAccount.blockHeight - blockHeight : 0;
+  const currencySettings = currencySettingsForAccountSelector(state, props);
+
+  const isConfirmed = isConfirmedOperation(
+    operation,
+    mainAccount,
+    currencySettings.confirmationsNb,
+  );
+
   return {
     type,
-    confirmed:
-      confirmations >=
-      currencySettingsForAccountSelector(state, props).confirmationsNb,
+    confirmed: isConfirmed,
   };
 })(OperationIcon);
 

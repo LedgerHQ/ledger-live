@@ -1,133 +1,126 @@
 import React, { ReactNode, useCallback } from "react";
 import { TouchableOpacity, View } from "react-native";
-import { Currency, Unit } from "@ledgerhq/live-common/lib/types";
-import {
-  Portfolio,
-  ValueChange,
-} from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
+import styled from "styled-components/native";
 import Delta from "./Delta";
-import { Item } from "./Graph/types";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import Placeholder from "./Placeholder";
 import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
 
 type Props = {
+  areAccountsEmpty: boolean;
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  renderTitle?: ({ counterValueUnit: Unit, item: Item }) => ReactNode;
 };
+
+const Placeholder = styled(Flex).attrs({
+  backgroundColor: "neutral.c40",
+  borderRadius: "4px",
+})``;
+const BigPlaceholder = styled(Placeholder).attrs({
+  width: 189,
+  height: 18,
+})``;
+
+const SmallPlaceholder = styled(Placeholder).attrs({
+  width: 109,
+  height: 8,
+  borderRadius: "2px",
+})``;
 
 export default function GraphCard({
   portfolio,
-  renderTitle,
   counterValueCurrency,
+  areAccountsEmpty,
 }: Props) {
-  const { countervalueChange } = portfolio;
+  const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
-  const isAvailable = portfolio.balanceAvailable;
-  const balanceHistory = portfolio.balanceHistory;
-
-  return (
-    <Flex bg={"neutral.c30"} p={6} borderRadius={2}>
-      <GraphCardHeader
-        valueChange={countervalueChange}
-        isLoading={!isAvailable}
-        to={balanceHistory[balanceHistory.length - 1]}
-        unit={counterValueCurrency.units[0]}
-        renderTitle={renderTitle}
-      />
-    </Flex>
-  );
-}
-
-function GraphCardHeader({
-  unit,
-  valueChange,
-  renderTitle,
-  isLoading,
-  to,
-}: {
-  isLoading: boolean;
-  valueChange: ValueChange;
-  unit: Unit;
-  to: Item;
-  renderTitle?: ({ counterValueUnit: Unit, item: Item }) => ReactNode;
-}) {
-  const item = to;
+  const item = balanceHistory[balanceHistory.length - 1];
   const navigation = useNavigation();
 
   const onPieChartButtonpress = useCallback(() => {
     navigation.navigate(NavigatorName.Analytics);
   }, [navigation]);
 
-  return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-    >
-      <Flex>
-        <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
-          <Text
-            variant={"small"}
-            fontWeight={"semiBold"}
-            color={"neutral.c70"}
-            textTransform={"uppercase"}
-            mr={2}
-          >
-            <Trans i18nKey={"tabs.portfolio"} />
-          </Text>
-          <DiscreetModeButton size={20} />
-        </Flex>
+  const unit = counterValueCurrency.units[0];
 
-        <View>
-          {isLoading ? (
-            <Placeholder width={228} containerHeight={27} />
-          ) : renderTitle ? (
-            renderTitle({ counterValueUnit: unit, item })
-          ) : (
-            <Text variant={"h1"} color={"neutral.c100"}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
+  return (
+    <Flex bg={"neutral.c30"} p={6} borderRadius={2}>
+      <Flex
+        flexDirection={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <Flex>
+          <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
+            <Text
+              variant={"small"}
+              fontWeight={"semiBold"}
+              color={"neutral.c70"}
+              textTransform={"uppercase"}
+              mr={2}
+            >
+              <Trans i18nKey={"tabs.portfolio"} />
             </Text>
-          )}
-          <TransactionsPendingConfirmationWarning />
-        </View>
-        <Flex flexDirection={"row"}>
-          {isLoading ? (
-            <>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </>
+            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
+          </Flex>
+          {areAccountsEmpty ? (
+            <Text variant={"h1"} color={"neutral.c100"}>
+              <CurrencyUnitValue unit={unit} value={0} />
+            </Text>
           ) : (
-            <View>
-              <Delta percent valueChange={valueChange} />
-              <Delta valueChange={valueChange} unit={unit} />
-            </View>
+            <>
+              <Flex>
+                {!balanceAvailable ? (
+                  <BigPlaceholder mt="8px" />
+                ) : (
+                  <Text variant={"h1"} color={"neutral.c100"}>
+                    <CurrencyUnitValue unit={unit} value={item.value} />
+                  </Text>
+                )}
+                <TransactionsPendingConfirmationWarning />
+              </Flex>
+              <Flex flexDirection={"row"}>
+                {!balanceAvailable ? (
+                  <>
+                    <SmallPlaceholder mt="12px" />
+                  </>
+                ) : (
+                  <View>
+                    <Delta
+                      percent
+                      show0Delta
+                      fallbackToPercentPlaceholder
+                      valueChange={countervalueChange}
+                      range={portfolio.range}
+                    />
+                  </View>
+                )}
+              </Flex>
+            </>
           )}
         </Flex>
-      </Flex>
-      <Flex>
-        <TouchableOpacity onPress={onPieChartButtonpress}>
-          <BoxedIcon
-            Icon={PieChartMedium}
-            variant={"circle"}
-            iconSize={20}
-            size={48}
-            badgeSize={30}
-            iconColor={"neutral.c100"}
-          />
-        </TouchableOpacity>
+        {!areAccountsEmpty ? (
+          <Flex>
+            <TouchableOpacity onPress={onPieChartButtonpress}>
+              <BoxedIcon
+                Icon={PieChartMedium}
+                variant={"circle"}
+                iconSize={20}
+                size={48}
+                badgeSize={30}
+                iconColor={"neutral.c100"}
+              />
+            </TouchableOpacity>
+          </Flex>
+        ) : null}
       </Flex>
     </Flex>
   );

@@ -1,9 +1,9 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Platform } from "react-native";
 import { urls } from "../../config/urls";
 import Slide from "./Slide";
 import Illustration from "../../images/illustration/Illustration";
-import { Platform } from "react-native";
+import { width } from "../../helpers/normalizeSize";
 
 const illustrations = {
   dark: {
@@ -26,12 +26,13 @@ const illustrations = {
   },
 };
 
+/*
 const AcademySlide = {
   url: urls.banners.ledgerAcademy,
   name: "takeTour",
-  title: <Trans i18nKey={`carousel.banners.tour.title`} />,
-  description: <Trans i18nKey={`carousel.banners.tour.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.tour.cta`} />,
+  title: "carousel.banners.tour.title",
+  description: "carousel.banners.tour.description",
+  cta: "carousel.banners.tour.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.academy}
@@ -46,13 +47,14 @@ const AcademySlide = {
     height: 93,
   },
 };
+*/
 
 const BuySlide = {
   url: "ledgerlive://buy",
   name: "buyCrypto",
-  title: <Trans i18nKey={`carousel.banners.buyCrypto.title`} />,
-  description: <Trans i18nKey={`carousel.banners.buyCrypto.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.buyCrypto.cta`} />,
+  title: "carousel.banners.buyCrypto.title",
+  description: "carousel.banners.buyCrypto.description",
+  cta: "carousel.banners.buyCrypto.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.buy}
@@ -71,9 +73,9 @@ const BuySlide = {
 const SwapSlide = {
   url: "ledgerlive://swap",
   name: "Swap",
-  title: <Trans i18nKey={`carousel.banners.swap.title`} />,
-  description: <Trans i18nKey={`carousel.banners.swap.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.swap.cta`} />,
+  title: "carousel.banners.swap.title",
+  description: "carousel.banners.swap.description",
+  cta: "carousel.banners.swap.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.swap}
@@ -92,9 +94,9 @@ const SwapSlide = {
 const LidoSlide = {
   url: "ledgerlive://discover/lido",
   name: "Lido",
-  title: <Trans i18nKey={`carousel.banners.lido.title`} />,
-  description: <Trans i18nKey={`carousel.banners.lido.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.lido.cta`} />,
+  title: "carousel.banners.lido.title",
+  description: "carousel.banners.lido.description",
+  cta: "carousel.banners.lido.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.lido}
@@ -113,9 +115,9 @@ const LidoSlide = {
 const MarketSlide = {
   url: "ledgerlive://market",
   name: "Market",
-  title: <Trans i18nKey={`carousel.banners.market.title`} />,
-  description: <Trans i18nKey={`carousel.banners.market.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.market.cta`} />,
+  title: "carousel.banners.market.title",
+  description: "carousel.banners.market.description",
+  cta: "carousel.banners.market.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.market}
@@ -135,9 +137,9 @@ const MarketSlide = {
 const FamilyPackSlide = {
   url: urls.banners.familyPack,
   name: "FamilyPack",
-  title: <Trans i18nKey={`carousel.banners.familyPack.title`} />,
-  description: <Trans i18nKey={`carousel.banners.familyPack.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.familyPack.cta`} />,
+  title: "carousel.banners.familyPack.title",
+  description: "carousel.banners.familyPack.description",
+  cta: "carousel.banners.familyPack.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.familyPack}
@@ -157,9 +159,9 @@ const FamilyPackSlide = {
 const FamilyPackXSlide = {
   url: urls.banners.familyPackX,
   name: "FamilyPack",
-  title: <Trans i18nKey={`carousel.banners.familyPackX.title`} />,
-  description: <Trans i18nKey={`carousel.banners.familyPackX.description`} />,
-  cta: <Trans i18nKey={`carousel.banners.familyPackX.cta`} />,
+  title: "carousel.banners.familyPackX.title",
+  description: "carousel.banners.familyPackX.description",
+  cta: "carousel.banners.familyPackX.cta",
   icon: (
     <Illustration
       lightSource={illustrations.light.familyPackX}
@@ -177,15 +179,10 @@ const FamilyPackXSlide = {
 
 export const SLIDES =
   Platform.OS === "ios"
-    ? [SwapSlide, BuySlide, MarketSlide, FamilyPackXSlide, AcademySlide]
-    : [
-        SwapSlide,
-        LidoSlide,
-        BuySlide,
-        MarketSlide,
-        FamilyPackXSlide,
-        AcademySlide,
-      ];
+    ? [SwapSlide, BuySlide, MarketSlide, FamilyPackXSlide]
+    : [SwapSlide, LidoSlide, BuySlide, MarketSlide, FamilyPackXSlide];
+
+export const WIDTH = width * 0.8;
 
 export const getDefaultSlides = () =>
   SLIDES.map((slide: any) => ({
@@ -200,6 +197,7 @@ export const getDefaultSlides = () =>
         image={slide.image}
         icon={slide.icon}
         position={slide.position}
+        width={WIDTH}
       />
     ),
   }));

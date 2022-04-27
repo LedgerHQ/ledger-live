@@ -42,6 +42,7 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
+import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -166,6 +167,13 @@ export default function SettingsNavigator() {
         component={DebugMocks}
         options={{
           title: "Mock & Test",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugMockGenerateAccounts}
+        component={GenerateMockAccountSelectScreen}
+        options={{
+          title: "Generate mock accounts",
         }}
       />
       <Stack.Screen

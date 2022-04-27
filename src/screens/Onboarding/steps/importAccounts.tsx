@@ -8,7 +8,7 @@ import { DeviceNames } from "../types";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
 import { TrackScreen } from "../../../analytics";
 
-import { completeOnboarding } from "../../../actions/settings";
+import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
 
 const images = {
@@ -57,6 +57,7 @@ function OnboardingStepPairNew() {
 
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
+    dispatch(setReadOnlyMode(false));
     resetCurrentStep();
 
     const parentNav = navigation.getParent();

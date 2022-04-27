@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
   },
   filteredSearchInputWrapperStyle: {
     marginHorizontal: 16,
+    marginBottom: 8,
   },
   emptySearch: {
     paddingHorizontal: 16,

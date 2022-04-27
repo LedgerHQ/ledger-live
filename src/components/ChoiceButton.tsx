@@ -11,6 +11,7 @@ type ChoiceButtonProps = {
   event: string;
   eventProperties: any;
   navigationParams?: any[];
+  linkUrl?: string;
   enableActions?: string;
 };
 
@@ -22,10 +23,11 @@ const ChoiceButton = ({
   Icon,
   onSelect,
   navigationParams,
+  linkUrl,
   enableActions,
 }: ChoiceButtonProps) => (
   <Button
-    onPress={() => onSelect({ navigationParams, enableActions })}
+    onPress={() => onSelect({ navigationParams, enableActions, linkUrl })}
     type={"shade"}
     outline
     size={"small"}

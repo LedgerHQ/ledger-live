@@ -26,6 +26,7 @@ import CounterValue from "./CounterValue";
 import OperationIcon from "./OperationIcon";
 import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
+import OperationRowNftName from "./OperationRowNftName";
 
 import perFamilyOperationDetails from "../generated/operationDetails";
 
@@ -60,13 +61,13 @@ const BodyLeftContainer = styled(Flex).attrs({
   flex: 1,
 })``;
 
-const BodyRightContainer = styled(Flex).attrs({
+const BodyRightContainer = styled(Flex).attrs(p => ({
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "flex-end",
-  flexShrink: 0,
+  flexShrink: p.flexShrink ?? 0,
   pl: 4,
-})``;
+}))``;
 
 type Props = {
   operation: Operation;
@@ -108,6 +109,11 @@ export default function OperationRow({
     if (isSubOperation) navigation.push(...params);
     else navigation.navigate(...params);
   }, 300);
+
+  const isNftOperation =
+    ["NFT_IN", "NFT_OUT"].includes(operation.type) &&
+    operation.contract &&
+    operation.tokenId;
 
   const renderAmountCellExtra = useCallback(() => {
     const mainAccount = getMainAccount(account, parentAccount);
@@ -201,7 +207,11 @@ export default function OperationRow({
 
         <BodyRightContainer>{renderAmountCellExtra()}</BodyRightContainer>
 
-        {amount.isZero() ? null : (
+        {isNftOperation ? (
+          <BodyRightContainer flexShrink={1} maxWidth="70%">
+            <OperationRowNftName operation={operation} />
+          </BodyRightContainer>
+        ) : amount.isZero() ? null : (
           <BodyRightContainer>
             <Text
               numberOfLines={1}

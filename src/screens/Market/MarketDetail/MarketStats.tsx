@@ -5,7 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { CurrencyData } from "@ledgerhq/live-common/lib/market/types";
 import { useLocale } from "../../../context/Locale";
-import { counterValueFormatter, getDateFormatter } from "../utils";
+import { counterValueFormatter } from "../utils";
 import DeltaVariation from "../DeltaVariation";
 
 const StatRowContainer = styled(Flex).attrs({
@@ -93,9 +93,15 @@ export default function MarketStats({
   const athDate = _athDate ? new Date(_athDate) : null;
   const atlDate = _atlDate ? new Date(_atlDate) : null;
 
-  const dateFormatter = useMemo(() => getDateFormatter(locale, "hourly"), [
-    locale,
-  ]);
+  const dateFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+    [locale],
+  );
 
   return (
     <Flex bg="neutral.c30" m={16} px={16} py={24} borderRadius={8}>

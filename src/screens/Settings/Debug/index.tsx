@@ -1,9 +1,7 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import SelectDevice from "../../../components/SelectDevice";
@@ -26,10 +24,10 @@ import AddMockAnnouncementButton from "./GenerateAnnouncementMockData";
 import ToggleMockServiceStatusButton from "./ToggleMockStatusIncident";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import MockModeRow from "../General/MockModeRow";
+import GenerateMockAccount from "./GenerateMockAccountsSelect";
+import OpenDebugEnv from "./OpenDebugEnv";
 
 export function DebugMocks() {
-  const accounts = useSelector(accountsSelector);
-
   return (
     <SettingsNavigationScrollView>
       {config.BRIDGESTREAM_DATA ? (
@@ -39,12 +37,15 @@ export function DebugMocks() {
           dataStr={config.BRIDGESTREAM_DATA}
         />
       ) : null}
-      {accounts.length === 0 ? (
-        <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
-      ) : null}
+      <GenerateMockAccounts
+        title="Generate 10 random mock Accounts"
+        count={10}
+      />
+      <GenerateMockAccount />
       <OpenDebugLogs />
       <OpenDebugCrash />
       <OpenDebugStore />
+      <OpenDebugEnv />
       <OpenDebugIcons />
       <OpenLottie />
       <OpenDebugPlayground />

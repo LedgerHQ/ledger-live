@@ -3,7 +3,10 @@ import { StyleSheet, View, Platform, NativeModules } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useNavigation,
+  useTheme as useNavTheme,
+} from "@react-navigation/native";
 import { discoverDevices, TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Button } from "@ledgerhq/native-ui";
@@ -16,10 +19,11 @@ import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
-
-import lottieUsb from "../../screens/Onboarding/assets/nanoS/plugDevice/dark.json";
 import { track } from "../../analytics";
 import { setLastConnectedDevice } from "../../actions/settings";
+
+import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
+import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 type Props = {
   onBluetoothDeviceAction?: (device: Device) => void;
@@ -225,11 +229,14 @@ const WithoutDeviceHeader = () => (
 );
 
 // Fixme Use the illustration instead of the png
-const UsbPlaceholder = () => (
-  <View style={styles.imageContainer}>
-    <Animation style={styles.image} source={lottieUsb} />
-  </View>
-);
+const UsbPlaceholder = () => {
+  const { dark } = useNavTheme();
+  return (
+    <View style={styles.imageContainer}>
+      <Animation style={styles.image} source={dark ? PairDark : PairLight} />
+    </View>
+  );
+};
 
 function getAll({ knownDevices }, { devices }): Device[] {
   return [

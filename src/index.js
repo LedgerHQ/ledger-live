@@ -13,7 +13,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
-
+import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   View,
@@ -120,6 +120,8 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string,
 };
+
+export const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -428,6 +430,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
         ref={navigationRef}
         onReady={() => {
           isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
+          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
         {children}
@@ -451,9 +455,7 @@ export default class Root extends Component<
     throw e;
   }
 
-  onInitFinished = () => {
-    this.initTimeout = setTimeout(() => SplashScreen.hide(), 300);
-  };
+  onInitFinished = () => {};
 
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
@@ -481,8 +483,8 @@ export default class Root extends Component<
                   >
                     <FirebaseRemoteConfigProvider>
                       <FirebaseFeatureFlagsProvider>
-                        <DeepLinkingNavigator>
-                          <SafeAreaProvider>
+                        <SafeAreaProvider>
+                          <DeepLinkingNavigator>
                             <StyledStatusBar />
                             <NavBarColorHandler />
                             <AuthPass>
@@ -515,8 +517,8 @@ export default class Root extends Component<
                                 </LocaleProvider>
                               </I18nextProvider>
                             </AuthPass>
-                          </SafeAreaProvider>
-                        </DeepLinkingNavigator>
+                          </DeepLinkingNavigator>
+                        </SafeAreaProvider>
                       </FirebaseFeatureFlagsProvider>
                     </FirebaseRemoteConfigProvider>
                   </PlatformAppProvider>

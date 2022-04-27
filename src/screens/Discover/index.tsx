@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useMemo } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
@@ -10,80 +10,82 @@ import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
+// @ts-ignore issue with exports
+import { TrackScreen, track } from "../../analytics";
 
-const discoverImg = {
-  dark: require("../../images/illustration/Dark/_030.png"),
-  light: require("../../images/illustration/Light/_030.png"),
-};
+const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
-const learnImg = {
-  dark: require("../../images/illustration/Dark/_Learn.png"),
-  light: require("../../images/illustration/Light/_Learn.png"),
-};
+const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
-const appsImg = {
-  dark: require("../../images/illustration/Dark/_Apps.png"),
-  light: require("../../images/illustration/Light/_Apps.png"),
-};
+const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
-const earnImg = {
-  dark: require("../../images/illustration/Dark/_Earn.png"),
-  light: require("../../images/illustration/Light/_Earn.png"),
-};
-
-const StyledSafeAreaView = styled(SafeAreaView)`
+const StyledSafeAreaView = styled(SafeAreaView).attrs({
+  edges: ["top", "left", "right"], // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+})`
   flex: 1;
-  backgroundcolor: ${({ theme }) => theme.colors.background.main};
+  background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
 function Discover() {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const onTellMeMore = useCallback(() => {
-    Linking.openURL(urls.discover.academy);
-  }, []);
-
   const learn = useFeature("learn");
 
-  const featuresList = useMemo(
+  const featuresList: {
+    title: string;
+    titleProps?: any;
+    subTitle?: string;
+    subTitleProps?: any;
+    labelBadge?: string;
+    Image: React.ReactNode;
+    onPress: () => void;
+    disabled?: boolean;
+  }[] = useMemo(
     () =>
       [
+        ...(Platform.OS !== "ios"
+          ? [
+              {
+                title: t("discover.sections.ledgerApps.title"),
+                subTitle: t("discover.sections.ledgerApps.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={130}
+                    darkSource={appsImg}
+                    lightSource={appsImg}
+                  />
+                ),
+              },
+            ]
+          : []),
         {
           title: t("discover.sections.learn.title"),
           subTitle: t("discover.sections.learn.desc"),
           onPress: () => {
-            // TODO: FIX @react-navigation/native using Typescript
-            // @ts-ignore next-line
-            navigation.navigate(ScreenName.Learn);
-          },
-          disabled: !learn?.enabled,
-          labelBadge: !learn?.enabled ? t("discover.comingSoon") : undefined,
-          Image: (
-            <Illustration
-              size={130}
-              darkSource={learnImg.dark}
-              lightSource={learnImg.light}
-            />
-          ),
-        },
-        {
-          title: t("discover.sections.ledgerApps.title"),
-          subTitle: t("discover.sections.ledgerApps.desc"),
-          onPress: () => {
-            if (Platform.OS !== "ios") {
+            if (!learn?.enabled) {
+              track("Discover - Learn - OpenUrl", {
+                url: urls.discover.academy,
+              });
+              Linking.openURL(urls.discover.academy);
+            } else {
               // TODO: FIX @react-navigation/native using Typescript
               // @ts-ignore next-line
-              navigation.navigate(NavigatorName.Discover, {
-                screen: ScreenName.PlatformCatalog,
-              });
-            } else Linking.openURL(urls.discover.ledgerApps);
+              navigation.navigate(ScreenName.Learn);
+            }
           },
+          disabled: false,
           Image: (
             <Illustration
               size={130}
-              darkSource={appsImg.dark}
-              lightSource={appsImg.light}
+              darkSource={learnImg}
+              lightSource={learnImg}
             />
           ),
         },
@@ -91,14 +93,15 @@ function Discover() {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
           onPress: () => {
+            track("Discover - Earn - OpenUrl", { url: urls.discover.earn });
             Linking.openURL(urls.discover.earn);
           },
-          labelBadge: t("discover.mostPopular"),
+          disabled: false,
           Image: (
             <Illustration
               size={130}
-              darkSource={earnImg.dark}
-              lightSource={earnImg.light}
+              darkSource={earnImg}
+              lightSource={earnImg}
             />
           ),
         },
@@ -108,24 +111,16 @@ function Discover() {
 
   return (
     <StyledSafeAreaView>
+      <TrackScreen category="Discover" />
       <ScrollView>
         <Flex p={8} mt={8} flexDirection="row">
           <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
             <Text variant="h1">{t("discover.title")}</Text>
-            <Text variant="body" mb={6} mt={4} color="neutral.c90">
+            <Text variant="body" mb={4} mt={4} color="neutral.c70">
               {t("discover.desc")}
             </Text>
-            <TextLink type="color" onPress={onTellMeMore}>
-              {t("discover.link")}
-            </TextLink>
           </Flex>
-          <Flex flex={1} justifyContent="flex-end" alignItems="flex-end">
-            <Illustration
-              size={130}
-              darkSource={discoverImg.dark}
-              lightSource={discoverImg.light}
-            />
-          </Flex>
+          <Flex flex={1} />
         </Flex>
         {featuresList.map(
           ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Text } from "@ledgerhq/native-ui";
+import { Text } from "@ledgerhq/native-ui";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const PairNewScene = ({ deviceModelId }: { deviceModelId: string }) => {
   const { t } = useTranslation();

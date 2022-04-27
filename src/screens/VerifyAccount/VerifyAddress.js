@@ -49,7 +49,7 @@ function VerifyAddress({
     currencyName: getAccountCurrency(account).name,
     device,
     address: account.freshAddress,
-    theme: dark ? "dark" : "light",
+    theme,
   });
 }
 

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, memo } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -28,6 +28,7 @@ import AddAccount from "./AddAccount";
 // import AccountOrder from "./AccountOrder";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
+import Spinning from "../../components/Spinning";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -83,7 +84,7 @@ function Accounts({ navigation, route }: Props) {
   }, [params, accounts, navigation]);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Account; index: number }) => (
+    ({ item, index }: { item: Account | TokenAccount; index: number }) => (
       <AccountRow
         navigation={navigation}
         account={item}
@@ -93,6 +94,8 @@ function Accounts({ navigation, route }: Props) {
         portfolioValue={
           portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
         }
+        topLink={item.type === "TokenAccount"}
+        bottomLink={flattenedAccounts[index + 1]?.type === "TokenAccount"}
       />
     ),
     [navigation, accounts.length, portfolio.balanceHistory],
@@ -141,7 +144,10 @@ function Accounts({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{ flex: 1 }}
+      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+    >
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
         <Flex p={6} flexDirection="row" alignItems="center">
@@ -172,7 +178,9 @@ function Accounts({ navigation, route }: Props) {
         </Flex>
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
-            <RefreshMedium size={20} color={"neutral.c80"} />
+            <Spinning clockwise>
+              <RefreshMedium size={20} color={"neutral.c80"} />
+            </Spinning>
             <Text color={"neutral.c80"} ml={2}>
               {t("portfolio.syncPending")}
             </Text>

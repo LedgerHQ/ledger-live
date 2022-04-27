@@ -403,16 +403,18 @@ PODS:
     - react-native-flipper-performance-plugin/FBDefines (= 0.2.0)
   - react-native-flipper-performance-plugin/FBDefines (0.2.0):
     - React-Core
-  - react-native-locale (0.0.19):
-    - React
   - react-native-netinfo (6.2.1):
     - React-Core
   - react-native-performance (2.1.0):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
-  - react-native-safe-area-context (3.3.2):
-    - React-Core
+  - react-native-safe-area-context (4.2.4):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - ReactCommon/turbomodule/core
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-text-input-mask (3.1.4):
@@ -525,6 +527,8 @@ PODS:
   - RNLibLedgerCore (4.19.1):
     - ledger-core-objc
     - React
+  - RNLocalize (2.2.1):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNReanimated (2.4.1):
@@ -558,9 +562,9 @@ PODS:
   - RNScreens (3.12.0):
     - React-Core
     - React-RCTImage
-  - RNSentry (3.2.13):
+  - RNSentry (3.4.0):
     - React-Core
-    - Sentry (= 7.9.0)
+    - Sentry (= 7.11.0)
   - RNShare (6.5.0):
     - React-Core
   - RNSVG (12.1.1):
@@ -573,9 +577,9 @@ PODS:
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry (7.9.0):
-    - Sentry/Core (= 7.9.0)
-  - Sentry/Core (7.9.0)
+  - Sentry (7.11.0):
+    - Sentry/Core (= 7.11.0)
+  - Sentry/Core (7.11.0)
   - TcpSockets (4.0.0):
     - React
   - Yoga (1.14.0)
@@ -654,7 +658,6 @@ DEPENDENCIES:
   - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-flipper-performance-plugin (from `../node_modules/react-native-flipper-performance-plugin`)
-  - react-native-locale (from `../node_modules/react-native-locale`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-performance (from `../node_modules/react-native-performance/ios`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
@@ -688,6 +691,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -816,8 +820,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fingerprint-scanner"
   react-native-flipper-performance-plugin:
     :path: "../node_modules/react-native-flipper-performance-plugin"
-  react-native-locale:
-    :path: "../node_modules/react-native-locale"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-performance:
@@ -884,6 +886,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNLibLedgerCore:
     :path: "../node_modules/@ledgerhq/react-native-ledger-core"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNReanimated:
@@ -973,11 +977,10 @@ SPEC CHECKSUMS:
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-flipper-performance-plugin: fccda3ebbcee11cda4e5dee85b335835e9c7e714
-  react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
-  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
+  react-native-safe-area-context: f98b0b16d1546d208fc293b4661e3f81a895afd9
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: f0fbf5386c45af5523dc143a86afe2cbf29f764e
@@ -1007,21 +1010,22 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
+  RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 32c91e28f5780937b8efc07ddde1bab8d373fe0b
   RNScreens: 2559f98b0835103cbef3b26ba77fa61d4bb37ae7
-  RNSentry: 0aa1567f66c20390f3834637fc4f73380dcd0774
+  RNSentry: ec3c033c13bcb65c79f19d54ca54c514d1832bb5
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
-  Sentry: 2f7e91f247cfb05b05bd01e0b5d0692557a7687b
+  Sentry: 0c5cd63d714187b4a39c331c1f0eb04ba7868341
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   Yoga: 90dcd029e45d8a7c1ff059e8b3c6612ff409061a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: c09c7e3d7b5d366d20e032f4d54708fe37de1e94
+PODFILE CHECKSUM: 46b645b965d32ccb1c1a230762f88cb783bf4771
 
 COCOAPODS: 1.11.2

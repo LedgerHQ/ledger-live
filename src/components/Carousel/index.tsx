@@ -1,12 +1,12 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import { TouchableOpacity, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
-import { Box } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { track } from "../../analytics";
-import { getDefaultSlides, SLIDES } from "./shared";
+import { getDefaultSlides, SLIDES, WIDTH } from "./shared";
 
 const DismissCarousel = styled(TouchableOpacity)`
   position: absolute;
@@ -35,12 +35,12 @@ type CarouselCardProps = {
 };
 
 const CarouselCard = ({ id, children, onHide, index }: CarouselCardProps) => (
-  <Box key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0}>
+  <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0}>
     {children}
     <DismissCarousel hitSlop={hitSlop} onPress={() => onHide(id)}>
       <CloseMedium size={16} color="neutral.c70" />
     </DismissCarousel>
-  </Box>
+  </Flex>
 );
 
 // TODO : make it generic in the ui
@@ -123,6 +123,7 @@ const Carousel = ({ cardsVisibility }: Props) => {
       onMomentumScrollEnd={onScrollEnd}
       onContentSizeChange={onScrollViewContentChange}
       showsHorizontalScrollIndicator={false}
+      snapToInterval={WIDTH + 16}
     >
       {slides.map(({ id, Component }, index) => (
         <CarouselCardContainer

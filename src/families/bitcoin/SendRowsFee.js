@@ -1,6 +1,6 @@
 /* @flow */
 import invariant from "invariant";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Trans } from "react-i18next";
 
@@ -31,20 +31,24 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  let strategies = useFeesStrategy(account, transaction);
+  const defaultStrategies = useFeesStrategy(account, transaction);
   const [satPerByte, setSatPerByte] = useState(null);
 
-  if (satPerByte) {
-    strategies = [
-      ...strategies,
-      {
-        label: "custom",
-        forceValueLabel: null,
-        amount: satPerByte,
-        unit: strategies[0].unit,
-      },
-    ];
-  }
+  const strategies = useMemo(
+    () =>
+      transaction.feesStrategy === "custom"
+        ? [
+            ...defaultStrategies,
+            {
+              label: transaction.feesStrategy,
+              forceValueLabel: null,
+              amount: transaction.feePerByte,
+              unit: defaultStrategies[0].unit,
+            },
+          ]
+        : defaultStrategies,
+    [defaultStrategies, transaction],
+  );
 
   const onFeesSelected = useCallback(
     ({ amount, label }) => {

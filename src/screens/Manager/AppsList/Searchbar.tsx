@@ -40,7 +40,6 @@ export default ({ searchQuery, onQueryUpdate }: Props) => {
         returnKeyType="search"
         maxLength={50}
         onChangeText={onQueryUpdate}
-        clearButtonMode="always"
         placeholder={t("manager.appList.searchApps")}
         placeholderTextColor={colors.neutral.c70}
         onInputCleared={clear}

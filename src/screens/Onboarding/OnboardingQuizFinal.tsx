@@ -54,6 +54,7 @@ function OnboardingStepQuizFinal() {
           />
         ),
         drawer: null,
+        success,
       },
     ],
     [success],
@@ -75,6 +76,7 @@ function OnboardingStepQuizFinal() {
         steps={scenes}
         metadata={metadata}
         deviceModelId={deviceModelId}
+        params={{ success }}
       />
     </>
   );

@@ -109,7 +109,7 @@ const UninstallDependenciesModal = ({
                   values={{ app: name }}
                 />
               </ModalText>
-              <ModalText color="neutral.c70" fontWeight="medium" variant="body">
+              <ModalText color="neutral.c70" fontWeight="medium" variant="bodyLineHeight">
                 <Trans
                   i18nKey="AppAction.uninstall.dependency.description_two"
                   values={{ app: name }}

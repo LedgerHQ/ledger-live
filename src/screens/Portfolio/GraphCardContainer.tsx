@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -15,10 +14,12 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 const GraphCardContainer = ({
   portfolio,
   showGraphCard,
+  areAccountsEmpty,
   counterValueCurrency,
 }: {
   portfolio: Portfolio;
   showGraphCard: boolean;
+  areAccountsEmpty: boolean;
   counterValueCurrency: Currency;
 }) => {
   const currencies: Array<CryptoCurrency | TokenCurrency> = useSelector(
@@ -31,6 +32,7 @@ const GraphCardContainer = ({
 
       {showGraphCard && (
         <GraphCard
+          areAccountsEmpty={areAccountsEmpty}
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
         />

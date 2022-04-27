@@ -9,12 +9,12 @@ import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
 import Button from "../../../components/Button";
-import { useLocale } from "../../../context/Locale";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
+import useIsAppInBackground from "../../../components/useIsAppInBackground";
 
 const source = require("../../../../assets/videos/onboarding.mp4");
 
@@ -40,7 +40,9 @@ function OnboardingStepWelcome({ navigation }: any) {
     [navigation],
   );
 
-  const { locale } = useLocale();
+  const {
+    i18n: { language: locale },
+  } = useTranslation();
 
   const onTermsLink = useCallback(
     () =>
@@ -51,7 +53,11 @@ function OnboardingStepWelcome({ navigation }: any) {
   );
 
   const onPrivacyLink = useCallback(
-    () => Linking.openURL(urls.privacyPolicy[locale]),
+    () =>
+      Linking.openURL(
+        (urls.privacyPolicy as Record<string, string>)[locale] ||
+          urls.privacyPolicy.en,
+      ),
     [locale],
   );
 
@@ -65,16 +71,21 @@ function OnboardingStepWelcome({ navigation }: any) {
     navigation.navigate({ name: ScreenName.OnboardingPostWelcomeSelection });
   }, [setAccepted, dispatch, navigation]);
 
+  const videoMounted = !useIsAppInBackground();
+
   return (
-    <Flex flex={1} position="relative" bg="constant.black">
+    <Flex flex={1} position="relative" bg="constant.purple">
       <StyledStatusBar barStyle="light-content" />
-      <Video
-        source={source}
-        style={absoluteStyle}
-        muted
-        repeat
-        resizeMode={"cover"}
-      />
+      {videoMounted && (
+        <Video
+          disableFocus
+          source={source}
+          style={absoluteStyle}
+          muted
+          repeat
+          resizeMode={"cover"}
+        />
+      )}
       <Svg
         style={absoluteStyle}
         width="100%"

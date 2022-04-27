@@ -1,5 +1,4 @@
-import React, { ComponentType, memo, useMemo } from "react";
-import { View } from "react-native";
+import React, { ComponentType, memo } from "react";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,
@@ -79,8 +78,8 @@ const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
 
   if (circle) {
     return (
-      <CircleWrapper size={size} color={overrideColor} bg={bg}>
-        <IconComponent size={size} color={colors.constant.white} />
+      <CircleWrapper size={size} color={bg || colors.background.main}>
+        <IconComponent size={size} color={overrideColor} />
       </CircleWrapper>
     );
   }

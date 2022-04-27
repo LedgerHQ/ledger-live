@@ -21,7 +21,7 @@ target 'ledgerlivemobile' do
   pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
 
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
-
+  
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing

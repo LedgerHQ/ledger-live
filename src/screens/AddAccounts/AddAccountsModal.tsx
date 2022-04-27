@@ -50,7 +50,7 @@ export default function AddAccountsModal({
       testId="AddAccountsModal"
       isOpen={isOpened}
       onClose={onClose}
-      title={t("portfolio.emptyState.addAccounts.title")}
+      title={t("portfolio.emptyState.addAccounts.addAccounts")}
     >
       {!readOnlyModeEnabled && (
         <ChoiceCard

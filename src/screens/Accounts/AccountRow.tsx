@@ -37,6 +37,8 @@ type Props = {
   portfolioValue: number;
   navigationParams?: any[];
   hideDelta?: boolean;
+  topLink?: boolean;
+  bottomLink?: boolean;
 };
 
 const AccountRow = ({
@@ -46,10 +48,12 @@ const AccountRow = ({
   portfolioValue,
   navigationParams,
   hideDelta,
+  topLink,
+  bottomLink,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
 
   const currency = getAccountCurrency(account);
   const name = getAccountName(account);
@@ -119,8 +123,17 @@ const AccountRow = ({
 
   return (
     <TouchableOpacity onPress={onAccountPress}>
-      <Flex flexDirection="row" py={5}>
-        <Flex mr={6}>
+      {topLink && (
+        <Flex
+          width="1px"
+          height={space[4]}
+          marginLeft="21px"
+          backgroundColor={colors.neutral.c40}
+          mb={2}
+        />
+      )}
+      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
+        <Flex pr={4}>
           <ProgressLoader
             strokeWidth={2}
             mainColor={color}
@@ -144,8 +157,8 @@ const AccountRow = ({
             </Flex>
           </ProgressLoader>
         </Flex>
-        <Flex flex={1}>
-          <Flex flexDirection="row" justifyContent="space-between">
+        <Flex flex={1} justifyContent="center">
+          <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex
               flexGrow={1}
               flexShrink={1}
@@ -184,11 +197,25 @@ const AccountRow = ({
               <CurrencyUnitValue showCode unit={unit} value={account.balance} />
             </Text>
             {hideDelta ? null : (
-              <Delta percent valueChange={countervalueChange} />
+              <Delta
+                percent
+                show0Delta={account.balance.toNumber() !== 0}
+                fallbackToPercentPlaceholder
+                valueChange={countervalueChange}
+              />
             )}
           </Flex>
         </Flex>
       </Flex>
+      {bottomLink && (
+        <Flex
+          width="1px"
+          height={space[4]}
+          marginLeft="21px"
+          backgroundColor={colors.neutral.c40}
+          mt={2}
+        />
+      )}
     </TouchableOpacity>
   );
 };

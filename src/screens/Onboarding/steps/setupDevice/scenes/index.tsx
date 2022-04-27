@@ -1,6 +1,3 @@
-import React from "react";
-import { Flex } from "@ledgerhq/native-ui";
-
 export { default as Intro } from "./Intro";
 export { default as Instructions } from "./Instructions";
 export { default as PinCode } from "./PinCode";

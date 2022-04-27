@@ -1,5 +1,5 @@
 import React, { useCallback, memo } from "react";
-import { Dimensions, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -8,10 +8,11 @@ import { useDistribution } from "../../actions/general";
 import DistributionCard, { DistributionItem } from "./DistributionCard";
 import { TrackScreen } from "../../analytics";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { normalize } from "../../helpers/normalizeSize";
 
 const Container = styled(Flex).attrs({
-  paddingHorizontal: 16,
   paddingVertical: 20,
+  flex: 1,
 })``;
 
 const AssetWrapperContainer = styled(Flex).attrs({
@@ -24,7 +25,7 @@ const AssetWrapperContainer = styled(Flex).attrs({
   alignItems: "center",
 })``;
 
-const size = Dimensions.get("window").width * (1 / 2);
+const size = normalize(150);
 
 function Allocation() {
   const distribution = useDistribution();
@@ -40,7 +41,7 @@ function Allocation() {
 
   return (
     <Container alignItems="center">
-      <Flex>
+      <Flex px={6}>
         <Flex>
           <RingChart size={size} data={distribution.list} colors={colors} />
         </Flex>
@@ -58,6 +59,7 @@ function Allocation() {
         renderItem={renderItem}
         keyExtractor={item => item.currency.id}
         style={{ width: "100%" }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       />
       <TrackScreen category="Analytics" name="Allocation" />
     </Container>

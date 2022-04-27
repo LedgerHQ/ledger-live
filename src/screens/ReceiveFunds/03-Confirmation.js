@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { View, StyleSheet, Platform } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
@@ -45,8 +44,6 @@ import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
-
-const forceInset = { bottom: "always" };
 
 type Props = {
   account: ?(TokenAccount | Account),
@@ -160,11 +157,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     const device = route.params.device;
 
     if (device && !verified) {
-      setAllowNavigation(false);
       verifyOnDevice(device);
-    } else {
-      setAllowNavigation(true);
     }
+    setAllowNavigation(true);
   }, [route.params, verified, verifyOnDevice]);
 
   if (!account) return null;
@@ -175,10 +170,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="ReceiveFunds"
         name="Confirmation"
@@ -257,7 +249,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </View>
         <View style={styles.bottomContainer}>
           {unsafe ? (
-            <Alert type="danger">
+            <Alert type="warning">
               <Trans
                 i18nKey={
                   readOnlyModeEnabled
@@ -343,7 +335,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           </View>
         ) : null}
       </BottomModal>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -437,7 +429,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    paddingHorizontal: 8,
+    marginVertical: 8,
     alignItems: "flex-end",
     flexGrow: 1,
   },
@@ -447,7 +439,6 @@ const styles = StyleSheet.create({
   },
   bigButton: {
     flexGrow: 2,
-    marginHorizontal: 8,
   },
   footer: {
     flexDirection: "row",

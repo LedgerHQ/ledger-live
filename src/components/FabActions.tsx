@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 
 import { useTheme } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
@@ -48,6 +48,7 @@ export const FabAccountActionsComponent = ({
   parentAccount,
 }: FabAccountActionsProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
   const swapSelectableCurrencies = useSelector(
@@ -70,12 +71,7 @@ export const FabAccountActionsComponent = ({
         },
       },
     ],
-    label: (
-      <Trans
-        i18nKey="transfer.swap.main.header"
-        values={{ currency: currency.name }}
-      />
-    ),
+    label: t("transfer.swap.main.header", { currency: currency.name }),
     Icon: iconSwap,
     event: "Swap Crypto Account Button",
     eventProperties: { currencyName: currency.name },
@@ -93,7 +89,7 @@ export const FabAccountActionsComponent = ({
         },
       },
     ],
-    label: <Trans i18nKey="account.buy" />,
+    label: t("account.buy"),
     Icon: iconBuy,
     event: "Buy Crypto Account Button",
     eventProperties: {
@@ -140,6 +136,7 @@ export const FabAccountActionsComponent = ({
 };
 
 const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
+  const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
 
@@ -161,7 +158,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
         ? [
             {
               event: "TransferExchange",
-              label: <Trans i18nKey="exchange.buy.tabTitle" />,
+              label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
               navigationParams: [
                 NavigatorName.Exchange,
@@ -179,7 +176,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
               ? [
                   {
                     event: "TransferSwap",
-                    label: <Trans i18nKey="transfer.swap.title" />,
+                    label: t("transfer.swap.title"),
                     Icon: iconSwap,
                     navigationParams: [
                       NavigatorName.Swap,
@@ -194,7 +191,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
               : []),
             {
               event: "TransferReceive",
-              label: <Trans i18nKey="transfer.receive.title" />,
+              label: t("transfer.receive.title"),
               Icon: iconReceive,
               navigationParams: [
                 NavigatorName.ReceiveFunds,
@@ -208,7 +205,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
             },
             {
               event: "TransferSend",
-              label: <Trans i18nKey="transfer.send.title" />,
+              label: t("transfer.send.title"),
               Icon: iconSend,
               navigationParams: [
                 NavigatorName.SendFunds,
@@ -227,7 +224,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
               ? [
                   {
                     event: "TransferAddAccount",
-                    label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
+                    label: t("addAccountsModal.ctaAdd"),
                     Icon: iconAddAccount,
                     navigationParams: [
                       NavigatorName.AddAccounts,
@@ -252,13 +249,19 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
       defaultAccount,
       hasAccounts,
       readOnlyModeEnabled,
+      t,
     ],
   );
 
   return <FabAccountButtonBar {...props} buttons={actions} />;
 };
 
-const FabActions = () => {
+type FabActionsProps = {
+  areAccountsEmpty?: boolean;
+};
+
+const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
+  const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
   const hasAccounts = accountsCount > 0;
@@ -266,7 +269,7 @@ const FabActions = () => {
   const actions: ActionButton[] = useMemo(() => {
     const actionButtonBuy: ActionButton = {
       event: "TransferExchange",
-      label: <Trans i18nKey="exchange.buy.tabTitle" />,
+      label: t("exchange.buy.tabTitle"),
       Icon: iconBuy,
       navigationParams: [
         NavigatorName.Exchange,
@@ -278,7 +281,7 @@ const FabActions = () => {
 
     const actionButtonTransferSwap: ActionButton = {
       event: "TransferSwap",
-      label: <Trans i18nKey="transfer.swap.title" />,
+      label: t("transfer.swap.title"),
       Icon: iconSwap,
       navigationParams: [
         NavigatorName.Swap,
@@ -290,7 +293,7 @@ const FabActions = () => {
 
     const actionButtonTransferReceive: ActionButton = {
       event: "TransferReceive",
-      label: <Trans i18nKey="transfer.receive.title" />,
+      label: t("transfer.receive.title"),
       Icon: iconReceive,
       navigationParams: [
         NavigatorName.ReceiveFunds,
@@ -304,7 +307,7 @@ const FabActions = () => {
 
     const actionButtonTransferSend: ActionButton = {
       event: "TransferSend",
-      label: <Trans i18nKey="transfer.send.title" />,
+      label: t("transfer.send.title"),
       Icon: iconSend,
       navigationParams: [
         NavigatorName.SendFunds,
@@ -314,35 +317,19 @@ const FabActions = () => {
       ],
       type: "shade",
       outline: true,
+      disabled: areAccountsEmpty,
     };
 
-    const actionButtonTransferAddAccount: ActionButton = {
-      event: "TransferAddAccount",
-      label: <Trans i18nKey="addAccountsModal.ctaAdd" />,
-      Icon: iconAddAccount,
-      navigationParams: [
-        NavigatorName.AddAccounts,
-        {
-          screen: ScreenName.AddAccountsSelectCrypto,
-        },
-      ],
-      type: "shade",
-      outline: true,
-    };
     return [
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferSwap]
         : []),
       actionButtonBuy,
       ...(hasAccounts && !readOnlyModeEnabled
-        ? [
-            actionButtonTransferReceive,
-            actionButtonTransferSend,
-            actionButtonTransferAddAccount,
-          ]
-        : [actionButtonTransferAddAccount]),
+        ? [actionButtonTransferReceive, actionButtonTransferSend]
+        : []),
     ];
-  }, [hasAccounts, readOnlyModeEnabled]);
+  }, [hasAccounts, readOnlyModeEnabled, t, areAccountsEmpty]);
 
   return <FabAccountButtonBar buttons={actions} />;
 };

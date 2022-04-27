@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Platform } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -32,7 +33,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const walletConnectAvailable = currency.id === "ethereum";
+  const isEthereum = currency.id === "ethereum";
 
   const accountId = account.id;
 
@@ -111,7 +112,18 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
     ...baseActions,
-    ...(walletConnectAvailable
+    ...(isEthereum && Platform.OS !== "ios"
+      ? [
+          {
+            linkUrl: "ledgerlive://discover/lido",
+            label: <Trans i18nKey="account.stake" />,
+            Icon: Icons.ClaimRewardsMedium,
+            event: "Stake Ethereum Account Button",
+            eventProperties: { currencyName: currency?.name },
+          },
+        ]
+      : []),
+    ...(isEthereum
       ? [
           {
             navigationParams: [
@@ -126,22 +138,6 @@ export default function useActions({ account, parentAccount, colors }: Props) {
             label: <Trans i18nKey="account.walletconnect" />,
             Icon: WalletConnect,
             event: "WalletConnect Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
-    ...(availableOnCompound
-      ? [
-          {
-            enableActions: "lending",
-            label: (
-              <Trans
-                i18nKey="transfer.lending.actionTitle"
-                values={{ currency: currency?.name }}
-              />
-            ),
-            Icon: Lending,
-            event: "Lend Crypto Account Button",
             eventProperties: { currencyName: currency?.name },
           },
         ]
