@@ -75,13 +75,6 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "USB_FW_UPDATE",
-    title: "USB Firmware Update",
-    description: "Enable the update for your device's firmware over USB connection.",
-    rolloutFeatureFlag: "llmUsbFirmwareUpdate"
-  },
-  {
-    type: "toggle",
     name: "LEDGER_COUNTERVALUES_API",
     title: "Experimental countervalues API",
     description:

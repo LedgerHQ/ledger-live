@@ -65,15 +65,12 @@ const FirmwareUpdateBanner = () => {
     setShowDrawer(false);
   };
 
-  const usbFwUpdateExperimental = useEnv("USB_FW_UPDATE");
   const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
-  const isUsbFwUpdateFeatureActivated =
-    usbFwUpdateExperimental || usbFwUpdateFeatureFlag?.enabled;
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
   const usbFwUpdateActivated =
-    isUsbFwUpdateFeatureActivated &&
+    usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
     lastConnectedDevice?.wired &&
     isUsbFwVersionUpdateSupported;
