@@ -67,7 +67,8 @@ export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
       return acc;
     }, {});
 
-  return Object.values(nftsMap);
+  // We reverse the array to make it from latest to oldest again
+  return Object.values(nftsMap).reverse();
 };
 
 /**
