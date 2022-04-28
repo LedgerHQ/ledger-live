@@ -41,7 +41,7 @@ Depending on the purpose every git branch should be prefixed.
 
 #### Changelogs
 
-We use [**changesets**](https://github.com/changesets/changesets) to handle the versioning of our libraries and apps. Please refer to our wiki on [**Changesets**](https://github.com/LedgerHQ/ledger-live/wiki/Changesets)
+We use [**changesets**](https://github.com/changesets/changesets) to handle the versioning of our libraries and apps. A detailed guide is available on the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki/Changesets).
 
 #### Commit message
 
