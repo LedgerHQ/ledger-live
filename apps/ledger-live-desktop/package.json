@@ -16,7 +16,8 @@
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
     "build": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
-    "lint": "eslint src tools static --ext .js,.json,.ts,.tsx",
+    "lint": "pnpm prettier:check && eslint src tools static --ext .js,.json,.ts,.tsx",
+    "lint:fix": "eslint src tools static --ext .js,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools}/**/*.{js,json}\"",
     "prettier:check": "prettier -c \"{src,tools}/**/*.{js,json}\"",
     "flow-typed": "pnpm install-flow-typed",
@@ -32,14 +33,15 @@
     "pre-build": "node ./tools/dist --pre -v",
     "release": "node ./tools/dist -v",
     "build-ci": "cross-env STAGING=1 node ./tools/dist --ci -v",
-    "test": "pnpm test:jest && pnpm test:codecheck && pnpm test:playwright",
+    "test": "pnpm test:jest && pnpm test:playwright",
     "test:codecheck": "node ./tools/ci.js",
     "test:jest": "jest src --silent --ci --coverage --json --testLocationInResults --outputFile=report.json",
     "pretest:playwright": "playwright install",
     "test:playwright": "nyc playwright test --config=tests/playwright.config.ts",
     "test:playwright:update-snapshots": "pnpm test:playwright -- --update-snapshots",
     "pretest:playwright:recorder": "playwright install",
-    "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts"
+    "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
+    "typecheck": "pnpm flow"
   },
   "dependencies": {
     "@electron/remote": "^1.2.1",

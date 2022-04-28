@@ -51,9 +51,11 @@
     "mock-android": "pnpm android:mock && pnpm android:install",
     "staging-android": "pnpm android:staging && pnpm android:install",
     "prettier": "prettier --write \"src/**/*.js\"",
-    "lint": "eslint src --fix --ext .js,.json",
+    "lint": "eslint src --ext .js,.json",
+    "lint:fix": "pnpm lint -- --fix",
     "flow": "flow",
-    "test": "pnpm flow",
+    "typecheck": "flow",
+    "test": "",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html"
