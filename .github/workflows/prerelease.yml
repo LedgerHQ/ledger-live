@@ -1,0 +1,113 @@
+name: Prerelease
+on:
+  push:
+    branches:
+      - "release"
+      - "hotfix"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch to prerelease from
+        required: true
+  workflow_run:
+    workflows:
+      - "Create release"
+    types:
+      - "completed"
+
+jobs:
+  prerelease:
+    name: Prerelease
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event.push != '' }}
+      - uses: actions/checkout@v3
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        with:
+          ref: ${{ github.event.inputs.ref || "release" }}
+
+      - name: set ref
+        id: ref
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        run: |
+          echo "::set-output name=ref::${{ github.event.inputs.ref || "release" }}"
+
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.8 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: install dependencies
+        run: pnpm i -F "ledger-live" -F "{libs}..." --frozen-lockfile
+      - name: build libs
+        run: pnpm run build:libs
+      - name: versioning
+        run: pnpm changeset version
+
+      - name: commit (from release branch)
+        if: ${{ github.ref_name == "release" }}
+        run: |
+          git add .
+          git commit -m ":rocket: prerelease"
+      - name: commit (from hotfix branch)
+        if: ${{ github.ref_name == "hotfix" }}
+        run: |
+          git add .
+          git commit -m ":fire: hotfix prerelease"
+      - name: commit (from ${{ steps.ref.outputs.ref }} branch)
+        if: ${{ github.ref_name != "release" || github.ref_name != "hotfix" }}
+        run: |
+          git add .
+          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease"
+
+      - name: publish prerelease
+        run: pnpm changeset publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: push changes (push event)
+        if: ${{ github.event.push != '' }}
+        run: |
+          git push origin ${{ github.ref_name }} --follow-tags
+      - name: push changes (other events)
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        run: |
+          git push origin ${{ steps.ref.outputs.ref }} --follow-tags
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: post-desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: actions/github-script@v6
+        name: trigger prerelease build for desktop
+        if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "pre-desktop-mono.yml",
+              inputs: {
+                ref: "${{ github.event.push != '' ? github.ref_name : steps.ref.outputs.ref }}"
+              }
+            });
