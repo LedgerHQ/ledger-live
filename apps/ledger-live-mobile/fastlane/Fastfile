@@ -41,9 +41,9 @@ def infer_build_number(version)
   build_number |= [v.patch.to_i, 255].min << 8
 
   if !v.special.empty?
-    # If there is a special suffix (like -beta.1 or -nightly.10)
+    # If there is a special suffix (like -next.1 or -nightly.10)
     special_name, special_number = v.special.split "."
-    if(special_name === "beta")
+    if(special_name === "next" || special_name === "hotfix")
       # The lower 8 bits for a beta build should be higher than any nightly build.
       build_number |= [126 + special_number.to_i, 254].min
     else
