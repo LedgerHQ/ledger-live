@@ -18,9 +18,6 @@ const events = Snoopy.stream(emitter);
 // Keep commented when you commit.
 // Feel free to add more usecases.
 
-// Debug libcore exchanges
-// filter(o => o.module && o.module.startsWith("Core"), true)(events).subscribe();
-
 // see all new views
 // filter({ method: "createView" }, true)(events).subscribe();
 

@@ -27,7 +27,7 @@ genTarget () {
   t=$1
   echo '// @flow'
   for family in $families; do
-    if [ -f "$family/$t".js ]; then
+    if [[ -f "$family/$t".js || -f "$family/$t".tsx ]]; then
       echo -n 'import '$family' from "'
       OIFS=$IFS
       IFS="/"
@@ -42,7 +42,7 @@ genTarget () {
   echo
   echo 'export default {'
   for family in $families; do
-    if [ -f "$family/$t".js ]; then
+    if [[ -f "$family/$t".js || -f "$family/$t".tsx ]]; then
       echo '  '$family','
     fi
   done

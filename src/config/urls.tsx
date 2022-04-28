@@ -28,9 +28,9 @@ export const urls = {
   applestore:
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
   feesMoreInfo:
-    "https://support.ledgerwallet.com/hc/en-us/articles/360006535873?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=fees",
+    "https://support.ledger.com/hc/en-us/articles/360021039173-Choose-network-fees?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=fees",
   feesEthereum:
-    "https://support.ledger.com/hc/en-us/articles/115005197845?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=eth_fees",
+    "https://support.ledger.com/hc/en-us/articles/4406211657233-Send-a-custom-Ethereum-transaction-in-Ledger-Live?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=eth_fees",
   feesPolkadot:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=dot_fees",
   verifyTransactionDetails:
@@ -52,22 +52,24 @@ export const urls = {
   delegation:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=delegation_tezos",
   appSupport:
-    "https://support.ledger.com/hc/en-us/categories/115000811829-Apps?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
+    "https://support.ledger.com/hc/en-us/articles/360011454079-What-are-apps-and-accounts-?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
   goToManager:
-    "https://support.ledger.com/hc/en-us/articles/360020436654?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
+    "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
   addAccount:
-    "https://support.ledger.com/hc/en-us/articles/360020435654?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=add_account",
+    "https://support.ledger.com/hc/en-us/articles/4404389482641?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=add_account",
   tronStaking:
     "https://www.ledger.com/staking-tron?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tron",
   supportLinkByTokenType: {
     erc20:
-      "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
+      "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
     trc10:
       "https://support.ledger.com/hc/en-us/articles/360013062159?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_trc10",
     trc20:
       "https://support.ledger.com/hc/en-us/articles/360013062159?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_trc20",
     asa:
       "https://support.ledger.com/hc/en-us/articles/360015896040?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
+    bep20:
+      "https://support.ledger.com/hc/en-us/articles/4412962166289-Manage-BEP20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_bep20",
   },
   cosmosStaking:
     "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=cosmos",
@@ -76,8 +78,7 @@ export const urls = {
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
-    "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
-
+    "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
   swap: {
     info:
       "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
@@ -119,9 +120,9 @@ export const urls = {
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:
-    "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
+    "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   fixConnectionIssues:
-    "https://support.ledger.com/hc/en-us/articles/360025864773",
+    "https://support.ledger.com/hc/en-us/articles/360025864773?support=true&utm_medium=self_referral&utm_content=onboarding",
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
   ledgerStatus: "https://status.ledger.com/",
@@ -156,7 +157,7 @@ export const urls = {
     ledgerApps:
       "https://support.ledger.com/hc/en-us/articles/4404599625233-Discover-Live-Apps?docs=true&utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     earn:
-      "https://www.ledger.com/grow-your-assets?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
+      "https://www.ledger.com/staking?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     academy:
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:

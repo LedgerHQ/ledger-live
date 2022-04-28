@@ -14,6 +14,7 @@ import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
+import type { TFunction } from "react-i18next";
 import type { Privacy } from "../../reducers/settings";
 import { withReboot } from "../Reboot";
 import LText from "../../components/LText";
@@ -48,7 +49,7 @@ type OwnProps = {
 type Props = {
   ...OwnProps,
   reboot: (?boolean) => *,
-  t: T,
+  t: TFunction,
   colors: *,
 };
 

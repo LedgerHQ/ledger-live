@@ -16,12 +16,8 @@ target 'ledgerlivemobile' do
     :hermes_enabled => true
   )
 
-  pod 'djinni_objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
-  pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
-  pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
-
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
-
+  
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing

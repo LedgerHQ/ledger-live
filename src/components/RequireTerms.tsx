@@ -118,7 +118,7 @@ const RequireTermsModal = () => {
             onPress={onSwitch}
             style={styles.switchRow}
           >
-            <CheckBox isChecked={toggle} />
+            <CheckBox onChange={onSwitch} isChecked={toggle} />
             <LText semiBold style={styles.switchLabel}>
               <Trans i18nKey="Terms.switchLabel" />
             </LText>

@@ -4,7 +4,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import NftImage from "./NftImage";
 
-import PanAndZoomView from "../PanAndZoomView";
+// import PanAndZoomView from "../PanAndZoomView";
 
 type Props = {
   route: {
@@ -23,15 +23,13 @@ const NftViewer = ({ route }: Props) => {
 
   return (
     <View style={styles.imageContainer}>
-      <PanAndZoomView>
-        <NftImage
-          src={params?.media}
-          status={params?.status}
-          style={styles.image}
-          hackWidth={10000}
-          resizeMode="contain"
-        />
-      </PanAndZoomView>
+      <NftImage
+        src={params?.media}
+        status={params?.status}
+        style={styles.image}
+        hackWidth={10000}
+        resizeMode="contain"
+      />
     </View>
   );
 };

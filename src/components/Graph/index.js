@@ -3,7 +3,7 @@
 // TODO
 // - render something else for non countervalues available case
 
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import * as d3shape from "d3-shape";
 import * as d3scale from "d3-scale";
 import maxBy from "lodash/maxBy";
@@ -24,6 +24,7 @@ type Props = {
   mapValue: Item => number,
   shape?: string,
   verticalRangeRatio?: number,
+  showMinMax?: boolean,
 };
 
 const STROKE_WIDTH = 2;
@@ -97,6 +98,7 @@ function Graph({
 
       {grads.map(h => (
         <Path
+          key={`${h}`}
           d={`M0,${h} H${width}`}
           stroke={colors.constant.overlay}
           strokeDasharray="1 5"

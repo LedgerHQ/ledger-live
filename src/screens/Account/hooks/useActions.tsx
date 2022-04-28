@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Platform } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -111,7 +112,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
     ...baseActions,
-    ...(isEthereum
+    ...(isEthereum && Platform.OS !== "ios"
       ? [
           {
             linkUrl: "ledgerlive://discover/lido",
@@ -120,6 +121,10 @@ export default function useActions({ account, parentAccount, colors }: Props) {
             event: "Stake Ethereum Account Button",
             eventProperties: { currencyName: currency?.name },
           },
+        ]
+      : []),
+    ...(isEthereum
+      ? [
           {
             navigationParams: [
               NavigatorName.Base,
@@ -133,22 +138,6 @@ export default function useActions({ account, parentAccount, colors }: Props) {
             label: <Trans i18nKey="account.walletconnect" />,
             Icon: WalletConnect,
             event: "WalletConnect Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
-    ...(availableOnCompound
-      ? [
-          {
-            enableActions: "lending",
-            label: (
-              <Trans
-                i18nKey="transfer.lending.actionTitle"
-                values={{ currency: currency?.name }}
-              />
-            ),
-            Icon: Lending,
-            event: "Lend Crypto Account Button",
             eventProperties: { currencyName: currency?.name },
           },
         ]

@@ -49,7 +49,7 @@ const AccountRow = ({
   navigationParams,
   hideDelta,
   topLink,
-  bottomLink
+  bottomLink,
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
@@ -133,7 +133,7 @@ const AccountRow = ({
         />
       )}
       <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
-        <Flex mr={6}>
+        <Flex pr={4}>
           <ProgressLoader
             strokeWidth={2}
             mainColor={color}
@@ -157,8 +157,8 @@ const AccountRow = ({
             </Flex>
           </ProgressLoader>
         </Flex>
-        <Flex flex={1}>
-          <Flex flexDirection="row" justifyContent="space-between">
+        <Flex flex={1} justifyContent="center">
+          <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex
               flexGrow={1}
               flexShrink={1}
@@ -197,7 +197,12 @@ const AccountRow = ({
               <CurrencyUnitValue showCode unit={unit} value={account.balance} />
             </Text>
             {hideDelta ? null : (
-              <Delta percent valueChange={countervalueChange} />
+              <Delta
+                percent
+                show0Delta={account.balance.toNumber() !== 0}
+                fallbackToPercentPlaceholder
+                valueChange={countervalueChange}
+              />
             )}
           </Flex>
         </Flex>

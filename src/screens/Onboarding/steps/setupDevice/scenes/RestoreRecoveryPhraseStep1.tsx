@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, NumberedList } from "@ledgerhq/native-ui";
+import { NumberedList } from "@ledgerhq/native-ui";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const RestoreRecoveryPhraseStep1Scene = ({
   deviceModelId,

@@ -27,8 +27,9 @@ import { scrollToTop } from "../../navigation/utils";
 import LiveLogo from "../../icons/LiveLogo";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Placeholder from "../../components/Placeholder";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
-export default function PortfolioHeader({
+function PortfolioHeader({
   currentPositionY,
   graphCardEndPosition,
   portfolio,
@@ -194,3 +195,5 @@ export default function PortfolioHeader({
     </Animated.View>
   );
 }
+
+export default withDiscreetMode(PortfolioHeader);

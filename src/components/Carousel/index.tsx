@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import { TouchableOpacity, ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
-import { Box } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import { setCarouselVisibility } from "../../actions/settings";
@@ -35,12 +35,12 @@ type CarouselCardProps = {
 };
 
 const CarouselCard = ({ id, children, onHide, index }: CarouselCardProps) => (
-  <Box key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0}>
+  <Flex key={`container_${id}`} mr={6} ml={index === 0 ? 6 : 0}>
     {children}
     <DismissCarousel hitSlop={hitSlop} onPress={() => onHide(id)}>
       <CloseMedium size={16} color="neutral.c70" />
     </DismissCarousel>
-  </Box>
+  </Flex>
 );
 
 // TODO : make it generic in the ui

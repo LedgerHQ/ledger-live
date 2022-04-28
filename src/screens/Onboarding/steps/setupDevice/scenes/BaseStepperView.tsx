@@ -5,17 +5,16 @@ import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation
 import {
   Flex,
   FlowStepper,
-  Button,
   Icons,
   Transitions,
   SlideIndicator,
   ScrollListContainer,
-  Text,
 } from "@ledgerhq/native-ui";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { DeviceNames } from "../../../types";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
 

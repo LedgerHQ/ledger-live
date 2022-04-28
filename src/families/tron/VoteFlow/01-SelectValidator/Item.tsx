@@ -74,7 +74,11 @@ function Item({
         </Text>
       </View>
       <View>
-        <CheckBox isChecked={selected} disabled={disabled} />
+        <CheckBox
+          onChange={onSelect}
+          isChecked={selected}
+          disabled={disabled}
+        />
       </View>
     </TouchableOpacity>
   );

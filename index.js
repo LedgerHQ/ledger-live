@@ -15,19 +15,38 @@ import "text-encoding-polyfill";
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
+import VersionNumber from "react-native-version-number";
 
-import App from "./src";
+import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
 
-if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
-  const blacklistErrorName = ["NetworkDown"];
-  const blacklistErrorDescription = [/Device .* was disconnected/];
+const blacklistErrorName = [
+  "NetworkDown",
+  "Network Error",
+  "WebsocketConnectionError",
+  "DisconnectedDeviceDuringOperation",
+  "BleError",
+];
+const blacklistErrorDescription = [
+  "Transaction signing request was rejected by the user",
+];
 
+if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
   Sentry.init({
-    dns: Config.SENTRY_DSN,
-    release: `ledger-live-mobile@${pkg.version}`,
+    dsn: Config.SENTRY_DSN,
+    environment: Config.SENTRY_ENVIRONMENT,
+    // NB we do not need to explicitly set the release. we let the native side infers it.
+    // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
+    // dist: String(VersionNumber.buildVersion),
+    sampleRate: 0.05,
+    tracesSampleRate: 0.001,
+    integrations: [
+      new Sentry.ReactNativeTracing({
+        routingInstrumentation,
+      }),
+    ],
     beforeSend(event: any) {
       if (!getEnabled()) return null;
       // If the error matches blacklistErrorName or blacklistErrorDescription,
@@ -70,4 +89,6 @@ if (Config.DISABLE_YELLOW_BOX) {
 
 logReport.logReportInit();
 
-AppRegistry.registerComponent("ledgerlivemobile", () => App);
+const AppWithSentry = Sentry.wrap(App);
+
+AppRegistry.registerComponent("ledgerlivemobile", () => AppWithSentry);

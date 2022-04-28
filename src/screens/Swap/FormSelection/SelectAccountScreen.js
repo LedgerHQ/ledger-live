@@ -185,7 +185,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}
-            inputWrapperStyle={[ styles.card, styles.searchBarContainer ]}
+            inputWrapperStyle={[styles.card, styles.searchBarContainer]}
             list={elligibleAccountsForSelectedCurrency}
             renderList={renderList}
             renderEmptySearch={() => (

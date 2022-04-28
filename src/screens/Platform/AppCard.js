@@ -48,13 +48,12 @@ function getBranchStyle(branch, colors) {
   }
 }
 
-const AppCard = ({
-  manifest,
-  onPress,
-}: {
+type Props = {
   manifest: AppManifest,
   onPress: (manifest: AppManifest) => void,
-}) => {
+};
+
+const AppCard = ({ manifest, onPress }: Props) => {
   const { colors } = useTheme();
   const { locale } = useLocale();
   const { t } = useTranslation();
@@ -184,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppCard);
+export default memo<Props>(AppCard);

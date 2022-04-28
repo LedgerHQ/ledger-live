@@ -11,11 +11,9 @@ import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import LoadingView from "./LoadingScreen";
 import NoConnectionErrorScreen from "./NoConnectionErrorScreen";
 import { Track } from "../../analytics";
-import { lightTheme, darkTheme } from "../../colors";
 
 const learnProdURL = "https://www.ledger.com/ledger-live-learn";
-const learnStagingURL =
-  "https://ecommerce-website.aws.stg.ldg-tech.com/ledger-live-learn";
+const learnStagingURL = "https://www-ppr.ledger.com/ledger-live-learn";
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
@@ -41,10 +39,6 @@ function Learn() {
   const params = new URLSearchParams({
     theme: themeType,
     lang: i18n.languages[0],
-    pagePaddingLeft: "16px",
-    pagePaddingRight: "16px",
-    darkBackgroundColor: `${darkTheme.colors.background}`, // TODO: update in v3
-    lightBackgroundColor: `${lightTheme.colors.background}`, // TODO: update in v3
   });
 
   const uri = `${

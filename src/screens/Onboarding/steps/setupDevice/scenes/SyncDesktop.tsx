@@ -1,6 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Text, Button, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const items = [
   {

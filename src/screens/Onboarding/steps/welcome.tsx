@@ -54,7 +54,10 @@ function OnboardingStepWelcome({ navigation }: any) {
 
   const onPrivacyLink = useCallback(
     () =>
-      Linking.openURL((urls.privacyPolicy as Record<string, string>)[locale]),
+      Linking.openURL(
+        (urls.privacyPolicy as Record<string, string>)[locale] ||
+          urls.privacyPolicy.en,
+      ),
     [locale],
   );
 
@@ -71,7 +74,7 @@ function OnboardingStepWelcome({ navigation }: any) {
   const videoMounted = !useIsAppInBackground();
 
   return (
-    <Flex flex={1} position="relative" bg="constant.black">
+    <Flex flex={1} position="relative" bg="constant.purple">
       <StyledStatusBar barStyle="light-content" />
       {videoMounted && (
         <Video

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Flex, Button } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
@@ -7,6 +7,7 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";
 import { TrackScreen } from "../../../../../analytics";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
   installAppFirstTime,

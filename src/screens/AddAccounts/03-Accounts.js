@@ -69,7 +69,7 @@ type RouteParams = {
   device: Device,
   inline?: boolean,
   returnToSwap?: boolean,
-  onSuccess?: () => void,
+  onSuccess?: (params?: any) => void,
 };
 
 type OwnProps = {};

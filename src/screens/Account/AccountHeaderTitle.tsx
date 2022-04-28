@@ -21,7 +21,7 @@ export default function AccountHeaderTitle() {
       <View style={styles.headerContainer}>
         <View style={styles.iconContainer}>
           <ParentCurrencyIcon
-            size={18}
+            size={32}
             currency={getAccountCurrency(account)}
           />
         </View>

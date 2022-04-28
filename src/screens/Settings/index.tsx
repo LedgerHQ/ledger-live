@@ -2,14 +2,7 @@ import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
-import {
-  MobileMedium,
-  WalletMedium,
-  BracketsMedium,
-  LifeRingMedium,
-  ChartNetworkMedium,
-  ToolsMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { Icons } from "@ledgerhq/native-ui";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
@@ -56,7 +49,7 @@ export default function Settings({ navigation }: Props) {
       <SettingsCard
         title={t("settings.display.title")}
         desc={t("settings.display.desc")}
-        Icon={MobileMedium}
+        Icon={Icons.MobileMedium}
         onClick={() => navigation.navigate(ScreenName.GeneralSettings)}
         arrowRight
       />
@@ -64,7 +57,7 @@ export default function Settings({ navigation }: Props) {
         <SettingsCard
           title={t("settings.accounts.title")}
           desc={t("settings.accounts.desc")}
-          Icon={WalletMedium}
+          Icon={Icons.WalletMedium}
           onClick={() => navigation.navigate(ScreenName.AccountsSettings)}
           arrowRight
         />
@@ -72,29 +65,35 @@ export default function Settings({ navigation }: Props) {
       <SettingsCard
         title={t("settings.about.title")}
         desc={t("settings.about.desc")}
-        Icon={BracketsMedium}
+        Icon={Icons.BracketsMedium}
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
-        Icon={LifeRingMedium}
+        Icon={Icons.LifeRingMedium}
         onClick={() => navigation.navigate(ScreenName.HelpSettings)}
         arrowRight
       />
       <SettingsCard
         title={t("settings.experimental.title")}
         desc={t("settings.experimental.desc")}
-        Icon={ChartNetworkMedium}
+        Icon={Icons.ChartNetworkMedium}
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
+      />
+      <SettingsCard
+        title={t("settings.developer.title")}
+        desc={t("settings.developer.desc")}
+        Icon={Icons.ToolMedium}
+        onClick={() => navigation.navigate(ScreenName.DeveloperSettings)}
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard
           title="Debug"
           desc="Use at your own risk – Developer tools"
-          Icon={ToolsMedium}
+          Icon={Icons.ToolsMedium}
           onClick={() => navigation.navigate(ScreenName.DebugSettings)}
           arrowRight
         />

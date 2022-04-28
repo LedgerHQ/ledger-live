@@ -1,8 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, Button, IconBoxList, Icons } from "@ledgerhq/native-ui";
+import { Text, IconBoxList, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../../../../const";
+import Button from "../../../../../components/PreventDoubleClickButton";
 
 const items = [
   {
