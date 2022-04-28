@@ -23,17 +23,13 @@ import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import { track } from "../../analytics";
+import { BluetoothNotSupportedError } from "@ledgerhq/live-common/lib/errors";
 
 type Props = {
   device: Device;
   deviceInfo: DeviceInfo;
   isOpen: boolean;
   onClose: (restoreApps?: boolean) => void;
-};
-
-const BluetoothNotSupportedError: Error = {
-  name: "FwUpdateBluetoothNotSupported",
-  message: "",
 };
 
 type FwUpdateStep =
@@ -101,7 +97,7 @@ export default function FirmwareUpdate({
           return {
             step: event.wired ? "confirmRecoveryBackup" : "error",
             progress: undefined,
-            error: event.wired ? undefined : BluetoothNotSupportedError,
+            error: event.wired ? undefined : new (BluetoothNotSupportedError as ErrorConstructor)(),
             installing: undefined,
           };
         default:
@@ -114,7 +110,7 @@ export default function FirmwareUpdate({
   const [state, dispatchEvent] = useReducer(fwUpdateStateReducer, {
     step: device.wired ? "confirmRecoveryBackup" : "error",
     progress: undefined,
-    error: device.wired ? undefined : BluetoothNotSupportedError,
+    error: device.wired ? undefined : new (BluetoothNotSupportedError as ErrorConstructor)(),
     installing: undefined,
   });
 
@@ -203,15 +199,19 @@ export default function FirmwareUpdate({
           <GenericErrorView
             error={error as Error}
             withDescription={false}
-            hasExportLogButton={error !== BluetoothNotSupportedError}
+            hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
             Icon={
-              error === BluetoothNotSupportedError ? Icons.UsbMedium : undefined
+              error instanceof BluetoothNotSupportedError
+                ? Icons.UsbMedium
+                : undefined
             }
             iconColor={
-              error === BluetoothNotSupportedError ? "neutral.c100" : undefined
+              error instanceof BluetoothNotSupportedError
+                ? "neutral.c100"
+                : undefined
             }
           />
-          {error !== BluetoothNotSupportedError && (
+          {!(error instanceof BluetoothNotSupportedError) && (
             <Button
               type="main"
               alignSelf="stretch"
