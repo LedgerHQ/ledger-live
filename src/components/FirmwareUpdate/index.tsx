@@ -96,6 +96,8 @@ export default function FirmwareUpdate({
           if(event.error.message  === "Invalid channel") {
             // this error comes from an uncaught exception on @ledgerhq/react-native-hid
             // in this specific context, it almost always means the device was disconnected
+            // TODO: we should probably move this mapping to @ledgerhq/react-native-hid itself
+            // if this does mean a disconnected device in all contexts
             event.error = new (DisconnectedDevice as ErrorConstructor)();
           }
           return { step: "error", error: event.error };
