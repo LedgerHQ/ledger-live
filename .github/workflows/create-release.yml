@@ -43,6 +43,6 @@ jobs:
       - name: push
         run: |
           git push origin release
-          gh pr create --title ":rocket: release ${{ steps.date.outputs.date }}" --body "Release ${{ steps.date.outputs.date }}" --base master --head release
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" --body "Release ${{ steps.date.outputs.date }}" --base master --head release
         env:
           GITHUB_TOKEN: ${{ github.token }}
