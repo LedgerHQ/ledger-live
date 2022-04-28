@@ -1,17 +1,20 @@
 import React, { memo, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native";
-import { BottomDrawer, Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import WebView from "react-native-webview";
+import WebView, { WebViewMessageEvent } from "react-native-webview";
 import styled from "styled-components/native";
-import { useTranslation } from "react-i18next";
 
-import TextInput from "../../components/TextInput";
 import Button from "../../components/wrappedUi/Button";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
-import { urls } from "../../config/urls";
+import logger from "../../logger";
+import DebugURLDrawer from "./DebugURLDrawer";
+import { PurchaseMessage } from "./types";
+import DebugMessageDrawer from "./DebugMessageDrawer";
 
-const defaultURL = urls.buyNanoX;
+// const defaultURL = urls.buyNanoX;
+const defaultURL =
+  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=16af786e8c3e41d054096a00e8e3aa4f148f45007b0dd8ea43181ea9fcefcc69&preview_theme_id=129096581308&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
 
 const SafeContainer = styled(SafeAreaView)`
   flex: 1;
@@ -24,27 +27,29 @@ const StyledWebview = styled(WebView)`
 `;
 
 const PurchaseDevice = () => {
-  const { t } = useTranslation();
   const navigation = useNavigation();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
+  const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);
   const [url, setUrl] = useState(defaultURL);
-  const [urlInputValue, setUrlInputValue] = useState(url);
+  const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const handleOpenDrawer = useCallback(() => {
-    setDrawerOpen(true);
-  }, [setDrawerOpen]);
+    setURLDrawerOpen(true);
+  }, [setURLDrawerOpen]);
 
-  const handleCloseDrawer = useCallback(() => {
-    setDrawerOpen(false);
-    setUrlInputValue(url);
-  }, [setDrawerOpen, setUrlInputValue, url]);
-
-  const handleSaveUrl = useCallback(() => {
-    setDrawerOpen(false);
-    setUrl(urlInputValue);
-  }, [setDrawerOpen, setUrl, urlInputValue]);
+  const handleMessage = useCallback((event: WebViewMessageEvent) => {
+    if (event?.nativeEvent?.data) {
+      try {
+        const data: PurchaseMessage = JSON.parse(event.nativeEvent.data);
+        setMessage(data);
+        setMessageDrawerOpen(true);
+      } catch (error) {
+        logger.critical(error as Error);
+      }
+    }
+  }, []);
 
   return (
     <SafeContainer>
@@ -60,24 +65,19 @@ const PurchaseDevice = () => {
         <Button Icon={Icons.FiltersMedium} onPress={handleOpenDrawer} />
       </Flex>
       <Flex flex={1}>
-        <StyledWebview source={{ uri: url }} />
+        <StyledWebview source={{ uri: url }} onMessage={handleMessage} />
       </Flex>
-      <BottomDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
-        title={t("buyDevice.debugDrawer.title")}
-        subtitle={t("buyDevice.debugDrawer.subtitle")}
-      >
-        <TextInput
-          value={urlInputValue}
-          onChangeText={setUrlInputValue}
-          numberOfLines={1}
-          placeholder="https://www.ledger.com/buy"
-        />
-        <Button type="main" mt={4} onPress={handleSaveUrl}>
-          {t("buyDevice.debugDrawer.cta")}
-        </Button>
-      </BottomDrawer>
+      <DebugMessageDrawer
+        isOpen={isMessageDrawerOpen}
+        message={message}
+        onClose={() => setMessageDrawerOpen(false)}
+      />
+      <DebugURLDrawer
+        isOpen={isURLDrawerOpen}
+        value={url}
+        onClose={() => setURLDrawerOpen(false)}
+        onChange={setUrl}
+      />
     </SafeContainer>
   );
 };

@@ -804,10 +804,22 @@
     "desc": "Protect your cryptocurrencies with industry-leading security",
     "cta": "Buy your Ledger now",
     "footer": "I already have a device, set it up now",
-    "debugDrawer": {
-      "title": "Update iframe URL",
-      "subtitle": "Debug Settings",
-      "cta": "Save"
+    "debugDrawers": {
+      "url": {
+        "title": "Update iframe URL",
+        "subtitle": "Debug Settings",
+        "cta": "Save"
+      },
+      "message": {
+        "successTitle": "Transaction complete",
+        "errorTitle": "Transaction error",
+        "subtitle": "Message received",
+        "type": "Type: {{type}}",
+        "deviceId": "Device ID: {{deviceId}}",
+        "price": "Price: {{price}}",
+        "currency": "Currency: {{currency}}",
+        "value": "Value: {{value}}"
+      }
     }
   },
   "discover": {
