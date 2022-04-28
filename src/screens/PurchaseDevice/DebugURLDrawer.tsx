@@ -29,8 +29,8 @@ const DebugURLDrawer = ({ isOpen, value, onClose, onChange }: Props) => {
     <BottomDrawer
       isOpen={isOpen}
       onClose={handleClose}
-      title={t("buyDevice.debugDrawers.url.title")}
-      subtitle={t("buyDevice.debugDrawers.url.subtitle")}
+      title={t("purchaseDevice.debugDrawers.url.title")}
+      subtitle={t("purchaseDevice.debugDrawers.url.subtitle")}
     >
       <TextInput
         value={inputValue}
@@ -39,7 +39,7 @@ const DebugURLDrawer = ({ isOpen, value, onClose, onChange }: Props) => {
         placeholder="https://www.ledger.com/buy"
       />
       <Button type="main" mt={4} onPress={handleSave}>
-        {t("buyDevice.debugDrawers.url.cta")}
+        {t("purchaseDevice.debugDrawers.url.cta")}
       </Button>
     </BottomDrawer>
   );

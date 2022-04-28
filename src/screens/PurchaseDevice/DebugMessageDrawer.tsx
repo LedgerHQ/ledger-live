@@ -22,38 +22,38 @@ const DebugMessageDrawer = ({ isOpen, message, onClose }: Props) => {
       isOpen={isOpen}
       onClose={handleClose}
       title={t(
-        `buyDevice.debugDrawers.message.${
+        `purchaseDevice.debugDrawers.message.${
           message?.type === "ledgerLiveOrderFail"
             ? "errorTitle"
             : "successTitle"
         }`,
       )}
-      subtitle={t("buyDevice.debugDrawers.message.subtitle")}
+      subtitle={t("purchaseDevice.debugDrawers.message.subtitle")}
     >
       <Text>
-        {t("buyDevice.debugDrawers.message.type", { type: message?.type })}
+        {t("purchaseDevice.debugDrawers.message.type", { type: message?.type })}
       </Text>
       {message?.value ? (
         <Flex>
           <Text>
-            {t("buyDevice.debugDrawers.message.deviceId", {
+            {t("purchaseDevice.debugDrawers.message.deviceId", {
               deviceId: message?.value.deviceId,
             })}
           </Text>
           <Text>
-            {t("buyDevice.debugDrawers.message.price", {
+            {t("purchaseDevice.debugDrawers.message.price", {
               price: message?.value.price,
             })}
           </Text>
           <Text>
-            {t("buyDevice.debugDrawers.message.currency", {
+            {t("purchaseDevice.debugDrawers.message.currency", {
               currency: message?.value.currency,
             })}
           </Text>
         </Flex>
       ) : (
         <Text>
-          {t("buyDevice.debugDrawers.message.value", {
+          {t("purchaseDevice.debugDrawers.message.value", {
             value: message?.value,
           })}
         </Text>

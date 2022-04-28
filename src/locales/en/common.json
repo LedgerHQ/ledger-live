@@ -634,6 +634,12 @@
     "locationRequiredMessage": "On Android location permission is required to list Bluetooth LE devices.",
     "checkEnabled": "Please enable Bluetooth in your phone settings."
   },
+  "webview": {
+    "noConnectionError": {
+      "title": "No connection",
+      "description": "It seems you don't have access to the Internet. Please check your connection and try again."
+    }
+  },
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
@@ -803,7 +809,10 @@
     "title": "GET YOUR LEDGER",
     "desc": "Protect your crypto & NFTs with industry-leading security",
     "cta": "Buy your Ledger now",
-    "footer": "I already have a device, set it up now",
+    "footer": "I already have a device, set it up now"
+  },
+  "purchaseDevice": {
+    "pageTitle": "Purchase Device",
     "debugDrawers": {
       "url": {
         "title": "Update iframe URL",
@@ -1432,8 +1441,6 @@
   },
   "learn": {
     "pageTitle": "learn",
-    "noConnection": "No connection",
-    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again.",
     "sectionShows": "Shows",
     "sectionVideo": "Video",
     "sectionPodcast": "Podcast",

@@ -1,7 +1,6 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
 
 const Container = styled(Flex)`
   height: 100%;
@@ -17,21 +16,25 @@ const InnerContainer = styled(Flex).attrs({
   mx: "24px",
 })``;
 
-const ErrorScreen = ({
+export type Props = {
+  screenName: string;
+  Illustration?: ReactNode;
+  title: string;
+  description: string;
+};
+
+const WebViewError = ({
+  screenName,
   Illustration,
   title,
   description,
-}: {
-  Illustration?: React.ReactNode;
-  title: string;
-  description: string;
-}) => {
-  const { t } = useTranslation();
+}: Props) => {
   const { colors } = useTheme();
+
   return (
     <Container style={{ backgroundColor: colors.background.main }}>
       <Text mt="14px" variant="h3">
-        {t("learn.pageTitle")}
+        {screenName}
       </Text>
       <InnerContainer>
         {Illustration && Illustration}
@@ -52,4 +55,4 @@ const ErrorScreen = ({
   );
 };
 
-export default ErrorScreen;
+export default WebViewError;
