@@ -21,7 +21,7 @@ Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are o
 4. Make your changes.
 5. If you’ve fixed a bug or added code that should be tested, add tests!
 6. Cleanup your branch. (make atomic commits, squash tiny commits, prevent unnecessary merge commits…)
-7. Make sure that the code passes linter and type checks (`pnpm lint` and `pnpm codecheck`).
+7. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
 8. Make sure the code passes unit and end to end tests (`pnpm test`).
 9. Add an entry to the changelog. (`pnpm changelog`)
 10. Profit!
