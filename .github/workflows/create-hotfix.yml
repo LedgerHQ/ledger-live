@@ -17,7 +17,7 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: create release branch
+      - name: create hotfix branch
         run: |
           git checkout -b hotfix
       - uses: pnpm/action-setup@v2.1.0
@@ -42,7 +42,7 @@ jobs:
           echo "::set-output name=date::$(date +%F)"
       - name: push
         run: |
-          git push origin release
-          gh pr create --title ":fire: hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base master --head hotifx
+          git push origin hotfix
+          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base master --head hotfix
         env:
           GITHUB_TOKEN: ${{ github.token }}
