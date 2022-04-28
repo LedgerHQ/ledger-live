@@ -3068,6 +3068,7 @@
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please re-install the apps on your device.",
     "pleaseConfirmUpdate": "Please confirm the update on your device",
+    "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
     "pleaseWaitUpdate": "Please wait for the update to finish",
@@ -3095,14 +3096,14 @@
       "preparing": "Preparing update",
       "firmware": "Downloading update"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
     }
   },
   "FirmwareUpdateReleaseNotes": {
-    "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
+    "introTitle": "Update {{deviceName}} to version {{version}}",
     "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
     "confirmRecoveryPhrase": "I have my recovery phrase",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",

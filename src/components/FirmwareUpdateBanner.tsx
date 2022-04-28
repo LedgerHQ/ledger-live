@@ -5,8 +5,7 @@ import { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
-import { Alert, BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components";
+import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   lastSeenDeviceSelector,
@@ -15,7 +14,6 @@ import {
 } from "../reducers/settings";
 import { hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import useLatestFirmware from "../hooks/useLatestFirmware";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -33,7 +31,6 @@ const FirmwareUpdateBanner = () => {
 
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
 
-  const { colors } = useTheme();
   const { t } = useTranslation();
 
   const route = useRoute();
@@ -81,7 +78,10 @@ const FirmwareUpdateBanner = () => {
     <>
       <Alert type="info" showIcon={false}>
         <Text flexShrink={1}>
-          {t("FirmwareUpdate.newVersion", { version })}
+          {t("FirmwareUpdate.newVersion", {
+            version,
+            deviceName: lastConnectedDevice?.deviceName,
+          })}
         </Text>
         <Button
           ml={5}

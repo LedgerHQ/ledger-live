@@ -192,6 +192,7 @@ export default function FirmwareUpdate({
           onContinue={launchUpdate}
           firmwareVersion={firmwareVersion}
           firmwareNotes={latestFirmware?.osu?.notes}
+          device={device}
         />
       )}
       {step === "flashingMcu" && (

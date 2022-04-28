@@ -31,7 +31,9 @@ const ConfirmPinStep = ({ device }: Props) => {
         </Text>
       </Flex>
       <Flex mt={7}>
-        <Log>{t("FirmwareUpdate.pleaseConfirmUpdate")}</Log>
+        <Log>
+          {t("FirmwareUpdate.finishUpdate", { deviceName: device.deviceName })}
+        </Log>
       </Flex>
       <Flex
         border={1}
