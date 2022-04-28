@@ -2,7 +2,7 @@ import { Account, Operation, SignedOperation } from "../../types";
 import * as hedera from "@hashgraph/sdk";
 import { broadcastTransaction } from "./api/network";
 import { patchOperationWithHash } from "../../operation";
-import { encodeUrlSafeBase64 } from "./utils";
+import { base64ToUrlSafeBase64 } from './utils';
 
 export default async function broadcast({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,8 +21,11 @@ export default async function broadcast({
 
   const response = await broadcastTransaction(hederaTransaction);
 
+  const base64Hash = Buffer.from(response.transactionHash).toString("base64");
+  const base64HashUrlSafe = base64ToUrlSafeBase64(base64Hash);
+
   return patchOperationWithHash(
     operation,
-    encodeUrlSafeBase64(response.transactionHash)
+    base64HashUrlSafe
   );
 }

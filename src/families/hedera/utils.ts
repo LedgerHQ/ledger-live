@@ -31,10 +31,11 @@ export async function calculateAmount({
   };
 }
 
-export function base64ToUrlSafeBase64(data: string): string {
-  return Buffer.from(data, "base64").toString("base64url");
-}
+// NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
+export function base64ToUrlSafeBase64(data: string) {
+  // Might be nice to use this alternative if .nvmrc changes to >= Node v14.18.0
+  // base64url encoding option isn't supported until then
+  // Buffer.from(data, "base64").toString("base64url");
 
-export function encodeUrlSafeBase64(data: Uint8Array): string {
-  return Buffer.from(data).toString("base64url");
+  return data.replace(/\//g, "_").replace(/\+/g, "-");
 }

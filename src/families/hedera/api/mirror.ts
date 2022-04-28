@@ -127,6 +127,8 @@ export async function getOperationsForAccount(
     recipients.reverse();
     senders.reverse();
 
+    const hash = base64ToUrlSafeBase64(raw.transaction_hash);
+
     operations.push({
       value,
       date: timestamp,
@@ -136,12 +138,11 @@ export async function getOperationsForAccount(
       blockHash: null,
       extra: { consensus_timestamp },
       fee,
-      // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
-      hash: base64ToUrlSafeBase64(raw.transaction_hash),
+      hash,
       recipients,
       senders,
       accountId: ledgerAccountId,
-      id: encodeOperationId(address, raw.transaction_hash, type),
+      id: encodeOperationId(ledgerAccountId, hash, type),
       type,
     });
   }
