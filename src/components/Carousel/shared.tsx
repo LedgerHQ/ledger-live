@@ -96,6 +96,7 @@ const LidoSlide: SlideProps = {
   onPress: navigate => {
     navigate(ScreenName.PlatformApp, {
       platform: "lido",
+      name: "Lido",
     });
   },
   name: "Lido",
