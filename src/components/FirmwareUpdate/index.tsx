@@ -24,6 +24,7 @@ import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import { track } from "../../analytics";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/lib/errors";
+import { DisconnectedDevice } from "@ledgerhq/errors";
 
 type Props = {
   device: Device;
@@ -92,6 +93,11 @@ export default function FirmwareUpdate({
         case "firmwareUpdated":
           return { step: "firmwareUpdated" };
         case "error":
+          if(event.error.message  === "Invalid channel") {
+            // this error comes from an uncaught exception on @ledgerhq/react-native-hid
+            // in this specific context, it almost always means the device was disconnected
+            event.error = new (DisconnectedDevice as ErrorConstructor)();
+          }
           return { step: "error", error: event.error };
         case "reset":
           return {
