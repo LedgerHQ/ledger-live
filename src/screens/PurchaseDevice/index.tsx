@@ -3,6 +3,7 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
+import { Adjust, AdjustEvent } from "react-native-adjust";
 
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
@@ -29,17 +30,33 @@ const PurchaseDevice = () => {
     setURLDrawerOpen(true);
   }, [setURLDrawerOpen]);
 
-  const handleMessage = useCallback((event: WebViewMessageEvent) => {
-    if (event?.nativeEvent?.data) {
-      try {
-        const data: PurchaseMessage = JSON.parse(event.nativeEvent.data);
-        setMessage(data);
-        setMessageDrawerOpen(true);
-      } catch (error) {
-        logger.critical(error as Error);
-      }
+  const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
+    const event = new AdjustEvent(`${data.type}-${data.value?.deviceId}`);
+    if (
+      data.type === "ledgerLiveOrderSuccess" &&
+      data.value?.price &&
+      data.value?.currency
+    ) {
+      event.setRevenue(data.value.price, data.value.currency);
     }
+    Adjust.trackEvent(event);
   }, []);
+
+  const handleMessage = useCallback(
+    (event: WebViewMessageEvent) => {
+      if (event?.nativeEvent?.data) {
+        try {
+          const data: PurchaseMessage = JSON.parse(event.nativeEvent.data);
+          setMessage(data);
+          setMessageDrawerOpen(true);
+          handleAdjustTracking(data);
+        } catch (error) {
+          logger.critical(error as Error);
+        }
+      }
+    },
+    [handleAdjustTracking],
+  );
 
   return (
     <>
