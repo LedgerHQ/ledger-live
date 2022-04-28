@@ -183,6 +183,7 @@ In the meantime here are some important highlights:
 ## Nightly Releases
 
 Every night a github action merges the `develop` branch into the `nightly` branch.
+For more information on the nightly releases, checkout out our [wiki](https://github.com/LedgerHQ/ledger-live/wiki/Release-Process#nightlies)
 
 ### Ledger Live Desktop
 
