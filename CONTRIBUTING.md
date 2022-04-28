@@ -39,6 +39,10 @@ Depending on the purpose every git branch should be prefixed.
 - `support/` for any other changes (refactor, tests, improvements, CI…)
 - `hotfix/` is reserved when making a critical fix outside of the traditional release flow
 
+#### Changelogs
+
+We use [**changesets**](https://github.com/changesets/changesets) to handle the versioning of our libraries and apps. Please refer to our wiki on [**Changesets**](https://github.com/LedgerHQ/ledger-live/wiki/Changesets)
+
 #### Commit message
 
 _No specific rules at this point in time (this may change in the future though), use common sense and well known good practices._
