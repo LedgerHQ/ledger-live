@@ -13,13 +13,13 @@
 
 ## About
 
-`ledger-live` is a monorepository created to centralize all the javascript code related to the [Leger Live](https://www.ledger.com/ledger-live) applications in one place.
+`ledger-live` is a **monorepository** created to centralize all the javascript code related to the [Leger Live](https://www.ledger.com/ledger-live) applications in one place.
 
 ### Tools
 
-We use [pnpm workspaces](https://pnpm.io/) and [turborepo](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [remote caching](https://turborepo.org/docs/features/remote-caching).
+We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [remote caching](https://turborepo.org/docs/features/remote-caching).
 
-For changelog generation, releases and package publishing we rely on the [changesets](https://github.com/changesets/changesets) library.
+For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
 
 ## Installation
 
@@ -53,19 +53,40 @@ _Running `pnpm lld:build` will build all the local dependencies before attemptin
 
 ### Aliases
 
-To run nested scripts which are not covered at the root, you should not have to change your working directory.
-Every package has an alias defined (see table below or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file) that you can use as a prefix when running the script from the root.
+To run nested scripts which are not covered at the root, you should **not** change your working directory.
+Every package has an **alias** defined (see application or library tables or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file) that you can use as a prefix when running the script from the root.
 
 _Running `pnpm desktop test` will run the `test` script defined in the `./apps/ledger-live-desktop/package.json` file._
 
 **Note that when using these kind of scripts you will have to make sure that the dependencies are built beforehand.**
+
+### Scoping
+
+You can scope any pnpm or turborepo based script by using the `--filter` flag.
+
+**This is a very powerful feature that you should look into if you are a frequent contributor.**
+
+Please check out the [pnpm](https://pnpm.io/filtering) or [turborepo](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit pnpm being a bit more powerful).
+
+Here are some examples:
+
+_TIP: You can pass additional flags by adding the `--` separator before passing the arguments._
+
+```sh
+# Install all the dependencies needed for the packages under ./libs
+pnpm i -F "{libs}..."
+# Run lint only on packages that have been changed compared to origin/develop
+pnpm lint -- --filter=[origin/develop]
+# Test every package that has been changed since the last commit excluding the applications
+pnpm test -- --continue --filter="!./apps/*" --filter="...[HEAD~1]"
+```
 
 ## Documentation
 
 Each project folder has a `README.md` file which contains basic documentation.
 It includes background info about the project and how to setup, run and build it.
 
-Please check the [wiki](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
+Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
 
 ## Structure
 
