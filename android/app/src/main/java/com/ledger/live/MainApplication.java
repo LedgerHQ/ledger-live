@@ -31,15 +31,6 @@ public class MainApplication extends Application implements ReactApplication {
   public static int FW_UPDATE_NOTIFICATION_PROGRESS = 1;
   public static int FW_UPDATE_NOTIFICATION_USER = 2;
 
-  static {
-    try {
-      System.loadLibrary("ledger-core");
-    } catch (UnsatisfiedLinkError e) {
-      System.err.println("ledger-core native library failed to load: " + e);
-      System.exit(1);
-    }
-  }
-
   private void createNotificationChannel() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       String description = "Notification channel for background running tasks";
@@ -53,7 +44,6 @@ public class MainApplication extends Application implements ReactApplication {
       notificationManager.createNotificationChannel(hiChannel);
     }
   }
-
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHostWrapper(this, new ReactNativeHost(this) {

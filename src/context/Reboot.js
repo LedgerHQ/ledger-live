@@ -26,6 +26,7 @@ export default function RebootProvider({
       setRebootId(id => id + 1);
       if (resetData) {
         wipe();
+        await clearDb();
       }
       if (onRebootEnd) onRebootEnd();
     },
