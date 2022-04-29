@@ -92,7 +92,9 @@ type ValidCheckQuoteErrorCodes =
   | "KYC_FAILED"
   | "KYC_UPGRADE_REQUIRED"
   | "OVER_TRADE_LIMIT"
-  | "UNKNOWN_ERROR";
+  | "UNKNOWN_ERROR"
+  | "WITHDRAWALS_BLOCKED"
+  | "MFA_REQUIRED";
 
 type CheckQuoteErrorStatus = {
   codeName: ValidCheckQuoteErrorCodes;
