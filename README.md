@@ -22,6 +22,7 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
 
 - Node LTS version
 - Yarn 1.10.1 or above
+- [Full React Native environment setup instructions here](https://reactnative.dev/docs/environment-setup)
 
 ### iOS
 
@@ -30,6 +31,10 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
 ### Android
 
 - Android Studio
+- JDK 11
+- Required SDK tools: (go to Android Studio > Tools > SDK Manager > SDK Tools > check "Show Package Details" at the bottom right)
+  - Android NDK 21.4.7075529 (in case this doc is outdated, check the version specified as `ndkVersion` in `android/build.gradle`)
+  - CMake 3.10.2
 
 ## Scripts
 
