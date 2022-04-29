@@ -5,7 +5,7 @@
   <br/>
   <h3 align="center">The Ledger Live JavaScript ecosystem</h3>
   <h4 align="center">
-    <a href="https://jobs.lever.co/ledger/?department=Engineering">
+    <a href="https://jobs.lever.co/ledger/?department=Consumer%20-%20Engineering&team=Live">
       We are hiring, join us! 👨‍💻👩‍💻
     </a>
   </h4>
