@@ -2,7 +2,6 @@ import { Account } from "../../types";
 import { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { simulate } from "./api/Cosmos";
-import { encodePubkey } from "@cosmjs/proto-signing";
 import { getEnv } from "../../env";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
@@ -50,10 +49,13 @@ const getEstimatedFees = async (
 
   // be sure payload is complete
   if (unsignedPayload) {
-    const pubkey = encodePubkey({
-      type: "tendermint/PubKeySecp256k1",
-      value: Buffer.from(account.seedIdentifier, "hex").toString("base64"),
-    });
+    const pubkey = {
+      typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+      value: new Uint8Array([
+        ...new Uint8Array([10, 33]),
+        ...new Uint8Array(Buffer.from(account.seedIdentifier, "hex")),
+      ]),
+    };
 
     const tx_bytes = await postBuildTransaction(
       account,
