@@ -26,13 +26,6 @@ const mapDispatchToProps = {
   blacklistToken,
 };
 
-const hitSlop = {
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-};
-
 type OwnProps = {
   isOpened: boolean,
   onClose: () => void,
