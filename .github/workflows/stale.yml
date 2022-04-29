@@ -1,7 +1,7 @@
 name: Tag Stale PRs and Issues
 on:
   schedule:
-    - cron: "30 2 * * *"
+    - cron: "20 4 * * *"
 
 jobs:
   stale:
