@@ -185,7 +185,7 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
-  const ratings = useFeature("learn"); // TODO : replace learn with ratings
+  const ratings = useFeature("ratings");
 
   return (
     <View style={styles.root}>
@@ -196,9 +196,7 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
-      {ratings?.enabled ? (
-        <RatingsModal />
-      ) : null}
+      {ratings?.enabled ? <RatingsModal /> : null}
     </View>
   );
 }

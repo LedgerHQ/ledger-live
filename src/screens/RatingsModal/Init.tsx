@@ -7,8 +7,12 @@ import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { setRatingsDataOfUserInStorage } from "../../logic/ratings";
-import { ratingsDataOfUserSelector } from "../../reducers/ratings";
+import {
+  ratingsDataOfUserSelector,
+  ratingsHappyMomentSelector,
+} from "../../reducers/ratings";
 import { setRatingsDataOfUser } from "../../actions/ratings";
+import { track } from "../../analytics";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -22,52 +26,21 @@ type Props = {
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
-  const ratings = {
-    enabled: true,
-    happy_moments: [
-      {
-        route_name: "ReceiveConfirmation",
-        timer: 2000,
-        type: "on_leave",
-      },
-      {
-        route_name: "ClaimRewardsValidationSuccess",
-        timer: 2000,
-        type: "on_enter",
-      },
-      {
-        route_name: "SendValidationSuccess",
-        timer: 2000,
-        type: "on_enter",
-      },
-      {
-        route_name: "MarketDetail",
-        timer: 3000,
-        type: "on_enter",
-      },
-    ],
-    conditions: {
-      not_now_delay: { days: 15 },
-      disappointed_delay: { days: 90 },
-      minimum_accounts_number: 0,
-      minimum_app_starts_number: 3,
-      minimum_duration_since_app_first_start: {
-        days: 0,
-      },
-      minimum_number_of_app_starts_since_last_crash: 2,
-    },
-  }; // useFeature("learn"); // TODO : replace learn with ratings
+  const ratings = useFeature("ratings");
   const dispatch = useDispatch();
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
+  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
-  }, [setStep]);
+    track("Satisfied", { source: ratingsHappyMoment.route_name });
+  }, [ratingsHappyMoment.route_name, setStep]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
-    if (ratings?.conditions?.disappointed_delay) {
+    track("Disappointed", { source: ratingsHappyMoment.route_name });
+    if (ratings?.params?.conditions?.disappointed_delay) {
       const dateOfNextAllowedRequest: any = add(
         Date.now(),
-        ratings?.conditions?.disappointed_delay,
+        ratings?.params?.conditions?.disappointed_delay,
       );
       const ratingsDataOfUserUpdated = {
         ...ratingsDataOfUser,
@@ -78,16 +51,18 @@ const Init = ({ closeModal, setStep }: Props) => {
     }
   }, [
     dispatch,
-    ratings?.conditions?.disappointed_delay,
+    ratings?.params?.conditions?.disappointed_delay,
     ratingsDataOfUser,
+    ratingsHappyMoment.route_name,
     setStep,
   ]);
   const onNotNow = useCallback(() => {
     closeModal();
-    if (ratings?.conditions?.not_now_delay) {
+    track("NotNow", { source: ratingsHappyMoment.route_name });
+    if (ratings?.params?.conditions?.not_now_delay) {
       const dateOfNextAllowedRequest: any = add(
         Date.now(),
-        ratings?.conditions?.not_now_delay,
+        ratings?.params?.conditions?.not_now_delay,
       );
       const ratingsDataOfUserUpdated = {
         ...ratingsDataOfUser,
@@ -99,8 +74,9 @@ const Init = ({ closeModal, setStep }: Props) => {
   }, [
     closeModal,
     dispatch,
-    ratings?.conditions?.not_now_delay,
+    ratings?.params?.conditions?.not_now_delay,
     ratingsDataOfUser,
+    ratingsHappyMoment.route_name,
   ]);
 
   return (

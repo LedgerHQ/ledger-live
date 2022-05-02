@@ -1,9 +1,12 @@
 import React, { useCallback } from "react";
+import { useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import NoResultsFound from "../../icons/NoResultsFound";
+import { ratingsHappyMomentSelector } from "../../reducers/ratings";
+import { track } from "../../analytics";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -17,9 +20,15 @@ type Props = {
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {
+  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const goToDisappointedForm = useCallback(() => {
+    track("Sendfeedback", { source: ratingsHappyMoment.route_name });
     setStep("disappointedForm");
-  }, [setStep]);
+  }, [ratingsHappyMoment.route_name, setStep]);
+  const onNotNow = useCallback(() => {
+    track("NotNow", { source: ratingsHappyMoment.route_name });
+    closeModal();
+  }, [closeModal, ratingsHappyMoment.route_name]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
@@ -46,7 +55,7 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         <Button onPress={goToDisappointedForm} event="AddDevice" type="main">
           <Trans i18nKey="ratings.disappointed.cta.sendFeedback" />
         </Button>
-        <NotNowButton onPress={closeModal} event="AddDevice">
+        <NotNowButton onPress={onNotNow} event="AddDevice">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="ratings.disappointed.cta.notNow" />
           </Text>

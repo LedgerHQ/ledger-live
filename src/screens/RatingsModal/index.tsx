@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { ScrollView } from "react-native";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import useRatings, {
@@ -12,9 +12,15 @@ import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
 import { setRatingsDataOfUser } from "../../actions/ratings";
+import { ratingsDataOfUserSelector } from "../../reducers/ratings";
 
 const RatingsModal = () => {
+  const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const dispatch = useDispatch();
+  const initStep = useMemo(
+    () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
+    [ratingsDataOfUser?.alreadyClosedFromEnjoyStep],
+  );
 
   useEffect(() => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
@@ -33,31 +39,28 @@ const RatingsModal = () => {
 
   const [isRatingsModalOpen, setRatingsModalOpen] = useRatings();
 
-  const [step, setStep] = useState("init");
+  const [step, setStep] = useState(initStep);
 
   const closeModal = useCallback(() => {
-    // console.log(a);
     setRatingsModalOpen(false);
-    setStep("init");
-  }, [setRatingsModalOpen]);
+    setStep(initStep);
+  }, [initStep, setRatingsModalOpen]);
+
+  const component = useMemo(() => {
+    const components = {
+      init: <Init closeModal={closeModal} setStep={setStep} />,
+      enjoy: <Enjoy closeModal={closeModal} />,
+      disappointed: <Disappointed closeModal={closeModal} setStep={setStep} />,
+      disappointedForm: <DisappointedForm setStep={setStep} />,
+      disappointedDone: <DisappointedDone closeModal={closeModal} />,
+    };
+
+    return components[step];
+  }, [closeModal, setStep, step]);
 
   return (
     <BottomDrawer isOpen={isRatingsModalOpen} onClose={closeModal}>
-      <ScrollView>
-        {step === "init" ? (
-          <Init closeModal={closeModal} setStep={setStep} />
-        ) : null}
-        {step === "enjoy" ? <Enjoy closeModal={closeModal} /> : null}
-        {step === "disappointed" ? (
-          <Disappointed closeModal={closeModal} setStep={setStep} />
-        ) : null}
-        {step === "disappointedForm" ? (
-          <DisappointedForm setStep={setStep} />
-        ) : null}
-        {step === "disappointedDone" ? (
-          <DisappointedDone closeModal={closeModal} />
-        ) : null}
-      </ScrollView>
+      <ScrollView>{component}</ScrollView>
     </BottomDrawer>
   );
 };

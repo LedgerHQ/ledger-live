@@ -6,14 +6,14 @@ import type { State } from ".";
 export type RatingsState = {
   isRatingsModalOpen: boolean,
   currentRoute?: string,
-  happyMomentTimer?: any,
+  happyMoment?: any,
   dataOfUser?: any,
 };
 
 const initialState: RatingsState = {
   isRatingsModalOpen: false,
   currentRoute: null,
-  happyMomentTimer: null,
+  happyMoment: null,
   dataOfUser: null,
 };
 
@@ -32,12 +32,12 @@ const handlers: Object = {
     ...state,
     currentRoute,
   }),
-  RATINGS_SET_HAPPY_MOMENT_TIMER: (
+  RATINGS_SET_HAPPY_MOMENT: (
     state: RatingsState,
-    { happyMomentTimer }: { happyMomentTimer?: any },
+    { happyMoment }: { happyMoment?: any },
   ) => ({
     ...state,
-    happyMomentTimer,
+    happyMoment,
   }),
   RATINGS_SET_DATA_OF_USER: (
     state: RatingsState,
@@ -54,8 +54,7 @@ export const ratingsModalOpenSelector = (s: State) =>
 
 export const ratingsCurrentRouteSelector = (s: State) => s.ratings.currentRoute;
 
-export const ratingsHappyMomentTimerSelector = (s: State) =>
-  s.ratings.happyMomentTimer;
+export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
 
 export const ratingsDataOfUserSelector = (s: State) => s.ratings.dataOfUser;
 

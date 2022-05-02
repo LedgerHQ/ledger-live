@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
@@ -14,12 +14,15 @@ import TrackScreen from "../../analytics/TrackScreen";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
+import { track } from "../../analytics";
+import { setRatingsHappyMoment } from "../../actions/ratings";
 
 type Props = {
   navigation: any;
 };
 
 export default function Settings({ navigation }: Props) {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const [, setRatingsModalOpen] = useRatings();
@@ -37,6 +40,16 @@ export default function Settings({ navigation }: Props) {
       count.current = 0;
     }, 1000);
   }
+
+  const onRateApp = useCallback(() => {
+    dispatch(
+      setRatingsHappyMoment({
+        route_name: "Settings",
+      }),
+    );
+    track("ReviewPromptStarted", { source: "Settings" });
+    setRatingsModalOpen(true);
+  }, [dispatch, setRatingsModalOpen]);
 
   const onDebugHiddenPress = useCallback(() => {
     if (debugTimeout) debugTimeout.current();
@@ -94,7 +107,7 @@ export default function Settings({ navigation }: Props) {
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={Icons.StarMedium}
-          onClick={() => setRatingsModalOpen(true)}
+          onClick={onRateApp}
         />
       ) : null}
       <SettingsCard

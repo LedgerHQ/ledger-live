@@ -2,22 +2,23 @@
 import { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { add, isBefore, formatISO } from "date-fns";
+import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { accountsCountSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsCurrentRouteSelector,
-  ratingsHappyMomentTimerSelector,
+  ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
 } from "../reducers/ratings";
 import {
   setRatingsModalOpen,
   setRatingsCurrentRoute,
-  setRatingsHappyMomentTimer,
+  setRatingsHappyMoment,
 } from "../actions/ratings";
 import { languageSelector } from "../reducers/settings";
+import { track } from "../analytics";
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
@@ -50,45 +51,11 @@ export async function setRatingsDataOfUserInStorage(ratingsDataOfUser) {
 }
 
 const useRatings = () => {
-  const ratings = {
-    enabled: true,
-    happy_moments: [
-      {
-        route_name: "ReceiveConfirmation",
-        timer: 2000,
-        type: "on_leave",
-      },
-      {
-        route_name: "ClaimRewardsValidationSuccess",
-        timer: 2000,
-        type: "on_enter",
-      },
-      {
-        route_name: "SendValidationSuccess",
-        timer: 2000,
-        type: "on_enter",
-      },
-      {
-        route_name: "MarketDetail",
-        timer: 3000,
-        type: "on_enter",
-      },
-    ],
-    conditions: {
-      minimum_accounts_number: 0,
-      minimum_app_starts_number: 3,
-      minimum_duration_since_app_first_start: {
-        days: 0,
-      },
-      minimum_number_of_app_starts_since_last_crash: 2,
-    },
-  }; // useFeature("learn"); // TODO : replace learn with ratings
-  // TODO : factorize modal components display
-  // TODO : analytics
+  const ratings = useFeature("ratings");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
   const ratingsOldRoute = useSelector(ratingsCurrentRouteSelector);
-  const ratingsHappyMomentTimer = useSelector(ratingsHappyMomentTimerSelector);
+  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
   const currAppLanguage = useSelector(languageSelector);
@@ -110,33 +77,37 @@ const useRatings = () => {
     if (!ratingsDataOfUser) return false;
 
     // criterias depending on last answer to the ratings flow
-    if (ratingsDataOfUser.alreadyRated) {
-      // return false; // TODO : remettre
-    }
+    if (ratingsDataOfUser.doNotAskAgain) return false;
+
     if (
       ratingsDataOfUser.dateOfNextAllowedRequest &&
-      isBefore(Date.now(), ratingsDataOfUser.dateOfNextAllowedRequest)
+      isBefore(
+        Date.now(),
+        typeof ratingsDataOfUser.dateOfNextAllowedRequest === "string"
+          ? parseISO(ratingsDataOfUser.dateOfNextAllowedRequest)
+          : ratingsDataOfUser.dateOfNextAllowedRequest,
+      )
     ) {
       return false;
     }
 
     // minimum accounts number criteria
     const minimumAccountsNumber: number =
-      ratings?.conditions?.minimum_accounts_number;
+      ratings?.params?.conditions?.minimum_accounts_number;
     if (minimumAccountsNumber && accountsCount < minimumAccountsNumber) {
       return false;
     }
 
     // minimum app start number criteria
     const minimumAppStartsNumber: number =
-      ratings?.conditions?.minimum_app_starts_number;
+      ratings?.params?.conditions?.minimum_app_starts_number;
     if (ratingsDataOfUser.numberOfAppStarts < minimumAppStartsNumber) {
       return false;
     }
 
     // duration since first app start long enough criteria
     const minimumDurationSinceAppFirstStart: any =
-      ratings?.conditions?.minimum_duration_since_app_first_start;
+      ratings?.params?.conditions?.minimum_duration_since_app_first_start;
     const dateAllowedAfterAppFirstStart = add(
       ratingsDataOfUser?.appFirstStartDate,
       minimumDurationSinceAppFirstStart,
@@ -150,7 +121,7 @@ const useRatings = () => {
 
     // No crash in last session criteria
     const minimumNumberOfAppStartsSinceLastCrash: number =
-      ratings?.conditions?.minimum_number_of_app_starts_since_last_crash;
+      ratings?.params?.conditions?.minimum_number_of_app_starts_since_last_crash;
     if (
       ratingsDataOfUser.numberOfAppStartsSinceLastCrash <
       minimumNumberOfAppStartsSinceLastCrash
@@ -163,10 +134,10 @@ const useRatings = () => {
     currAppLanguage,
     ratingsDataOfUser,
     accountsCount,
-    ratings?.conditions?.minimum_accounts_number,
-    ratings?.conditions?.minimum_app_starts_number,
-    ratings?.conditions?.minimum_duration_since_app_first_start,
-    ratings?.conditions?.minimum_number_of_app_starts_since_last_crash,
+    ratings?.params?.conditions?.minimum_accounts_number,
+    ratings?.params?.conditions?.minimum_app_starts_number,
+    ratings?.params?.conditions?.minimum_duration_since_app_first_start,
+    ratings?.params?.conditions?.minimum_number_of_app_starts_since_last_crash,
   ]);
 
   const isHappyMomentTriggered = useCallback(
@@ -183,25 +154,31 @@ const useRatings = () => {
       if (!areRatingsConditionsMet()) return;
       console.log("CONDITIONS MET");
 
-      if (ratingsHappyMomentTimer) {
-        clearTimeout(ratingsHappyMomentTimer);
+      if (ratingsHappyMoment?.timeout) {
+        clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      for (const happyMoment of ratings?.happy_moments) {
+      for (const happyMoment of ratings?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
-          const timer = setTimeout(() => {
+          const timeout = setTimeout(() => {
+            track("ReviewPromptStarted", { source: happyMoment.route_name });
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
-          dispatch(setRatingsHappyMomentTimer(timer));
+          dispatch(
+            setRatingsHappyMoment({
+              ...happyMoment,
+              timeout,
+            }),
+          );
         }
       }
       dispatch(setRatingsCurrentRoute(ratingsNewRoute));
     },
     [
       areRatingsConditionsMet,
-      ratingsHappyMomentTimer,
+      ratingsHappyMoment,
       dispatch,
-      ratings?.happy_moments,
+      ratings?.params?.happy_moments,
       isHappyMomentTriggered,
       setRatingsModalOpenCallback,
     ],

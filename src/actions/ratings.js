@@ -10,9 +10,9 @@ export const setRatingsCurrentRoute = (currentRoute?: string) => ({
   currentRoute,
 });
 
-export const setRatingsHappyMomentTimer = (happyMomentTimer?: any) => ({
-  type: "RATINGS_SET_HAPPY_MOMENT_TIMER",
-  happyMomentTimer,
+export const setRatingsHappyMoment = (happyMoment?: any) => ({
+  type: "RATINGS_SET_HAPPY_MOMENT",
+  happyMoment,
 });
 
 export const setRatingsDataOfUser = (dataOfUser?: any) => ({

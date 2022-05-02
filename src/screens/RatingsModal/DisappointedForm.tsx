@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
+import { useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView } from "react-native-webview";
 import styled from "styled-components/native";
+import { track } from "../../analytics";
+import { ratingsHappyMomentSelector } from "../../reducers/ratings";
 
 const injectedJavascript = `
 setTimeout(function() {
@@ -23,13 +26,18 @@ type Props = {
 };
 
 const DisappointedForm = ({ setStep }: Props) => {
-  const onMessage = useCallback(event => {
-    const { data } = event.nativeEvent;
+  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
+  const onMessage = useCallback(
+    event => {
+      const { data } = event.nativeEvent;
 
-    if (data === "form-submit") {
-      setStep("disappointedDone");
-    }
-  }, []);
+      if (data === "form-submit") {
+        track("FeedbackReceived", { source: ratingsHappyMoment.route_name });
+        setStep("disappointedDone");
+      }
+    },
+    [ratingsHappyMoment.route_name, setStep],
+  );
 
   return (
     <Flex flex={1} height={400}>
