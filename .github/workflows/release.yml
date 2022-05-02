@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.8
+          ruby-version: 2.7
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs}..." --frozen-lockfile
