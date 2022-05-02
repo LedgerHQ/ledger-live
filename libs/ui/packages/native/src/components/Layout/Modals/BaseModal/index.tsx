@@ -138,6 +138,7 @@ export default function BaseModal({
     <ReactNativeModal
       {...rest}
       {...backDropProps}
+      // @ts-expect-error TODO: Binding issues?
       isVisible={isOpen}
       deviceWidth={width}
       deviceHeight={height}
