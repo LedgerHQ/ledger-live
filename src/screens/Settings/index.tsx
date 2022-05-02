@@ -3,14 +3,17 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
+import { languageSelector } from "../../reducers/settings";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import TrackScreen from "../../analytics/TrackScreen";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
+import useRatings from "../../logic/ratings";
 
 type Props = {
   navigation: any;
@@ -19,6 +22,9 @@ type Props = {
 export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
+  const [, setRatingsModalOpen] = useRatings();
+  const ratings = useFeature("learn"); // TODO : replace learn with ratings
+  const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
     Config.FORCE_DEBUG_VISIBLE || false,
@@ -83,6 +89,14 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
+      {currAppLanguage === "en" && ratings?.enabled ? (
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={Icons.StarMedium}
+          onClick={() => setRatingsModalOpen(true)}
+        />
+      ) : null}
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

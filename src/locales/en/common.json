@@ -783,6 +783,40 @@
       }
     }
   },
+  "ratings": {
+    "init": {
+      "title": "Enjoying Ledger Live?",
+      "description": "Wether you like it or feel we could be doing better. We really value your feedback.",
+      "cta": {
+        "enjoy": "It's great",
+        "disappointed": "I am disappointed",
+        "notNow": "Not now"
+      }
+    },
+    "enjoy": {
+      "title": "You're great too",
+      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "cta": {
+        "rate": "Give us 5 stars",
+        "notNow": "Not now"
+      }
+    },
+    "disappointed": {
+      "title": "Help us build a better product for you",
+      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "cta": {
+        "sendFeedback": "Send feedback",
+        "notNow": "Not now"
+      }
+    },
+    "disappointedDone": {
+      "title": "Thank you for your feedback",
+      "description": "If you'd like to give us more feedback or require assistance please email us at ",
+      "cta": {
+        "done": "Done"
+      }
+    }
+  },
   "buyDevice": {
     "0": {
       "title": "It's your money. Own it.",
@@ -1917,7 +1951,8 @@
       "privacyPolicy": "Privacy policy",
       "privacyPolicyDesc": "See what personal data are collected, why and how they are used.",
       "liveReview": {
-        "title": "Rate the app!",
+        "title": "Feedback",
+        "desc": "Give us your feedback on the app",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
       }

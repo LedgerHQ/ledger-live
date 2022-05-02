@@ -30,6 +30,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
@@ -76,6 +77,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
+import RatingsModal from "./screens/RatingsModal";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -183,6 +185,7 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
+  const ratings = useFeature("learn"); // TODO : replace learn with ratings
 
   return (
     <View style={styles.root}>
@@ -193,6 +196,9 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
+      {ratings?.enabled ? (
+        <RatingsModal />
+      ) : null}
     </View>
   );
 }
