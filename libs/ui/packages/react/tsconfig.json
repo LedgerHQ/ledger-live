@@ -6,7 +6,10 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react",
-    "lib": ["es2016", "dom"],
+    "lib": [
+      "es2019",
+      "dom"
+    ],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
@@ -17,7 +20,9 @@
     "outDir": "./lib",
     "preserveSymlinks": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "babel.config.js",
