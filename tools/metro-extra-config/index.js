@@ -98,7 +98,7 @@ module.exports = function (options = {}, config = {}) {
             );
             if (earlyResolution) return earlyResolution;
           }
-          // pnpm hoists a wrong versions when using the --frozen-lockfile argument.
+          // pnpm hoists wrong versions when using the --frozen-lockfile argument.
           // So we forcefully use the right ones here from the LLM subfolder.
           try {
             const forcedResolution = forceDependency(

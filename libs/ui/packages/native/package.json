@@ -34,7 +34,7 @@
     "eject": "expo eject",
     "ios": "expo start --ios",
     "lint": "eslint src storybook --ext .ts,.tsx,.js,.jsx --cache",
-    "lint:fix": "pnpm lint -- --fix",
+    "lint:fix": "pnpm lint --fix",
     "release": "yarn publish ./lib --access public",
     "expo": "expo start",
     "storybook": "start-storybook -p 6006",

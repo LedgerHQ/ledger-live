@@ -40,7 +40,7 @@
     "watch": "tsc --watch",
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
-    "lint:fix": "pnpm lint -- --fix",
+    "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui test:react"
   },
