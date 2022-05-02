@@ -53,7 +53,7 @@ jobs:
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
@@ -94,7 +94,7 @@ jobs:
         run: |
           git push origin ${{ steps.ref.outputs.ref }} --follow-tags
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop

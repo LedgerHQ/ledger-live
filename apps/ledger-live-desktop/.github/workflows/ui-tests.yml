@@ -168,7 +168,7 @@ jobs:
         run: xvfb-run --auto-servernum -- yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
         id: imgur
         with:
           path: tests/artifacts/test-results
@@ -238,7 +238,7 @@ jobs:
         run: xvfb-run --auto-servernum -- yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
         id: imgur
         with:
           path: tests/artifacts/test-results
@@ -298,7 +298,7 @@ jobs:
         run: yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
         id: imgur
         with:
           path: tests/artifacts/test-results

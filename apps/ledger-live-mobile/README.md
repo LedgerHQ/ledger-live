@@ -2,7 +2,7 @@
 
 # ledger-live-mobile
 
-- Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-desktop)
+- Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop)
 
 > Ledger Live is a mobile companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live mobile is available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.ledger.live).
 
@@ -11,8 +11,8 @@
 ## Architecture
 
 Ledger Live is a native mobile application built with React Native, React, Redux, RxJS, etc. and some native libraries.
-The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-desktop) and also uses our C++ library, [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core), to deal with blockchains (sync, broadcast...) via [ledger-core-react-native-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings).
-It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth (or USB for using the Ledger Nano S on Android) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common).
+The architecture is analog to the [desktop application](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop) and also uses our C++ library, [lib-ledger-core](https://github.com/LedgerHQ/lib-ledger-core), to deal with blockchains (sync, broadcast...) via [ledger-core-react-native-bindings](https://github.com/LedgerHQ/lib-ledger-core-react-native-bindings).
+It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth (or USB for using the Ledger Nano S on Android) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
 ![](https://user-images.githubusercontent.com/211411/51758555-43865000-20c6-11e9-8ac9-06787ebb49eb.png)
 
@@ -78,7 +78,7 @@ easy data setting for development.
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
 
-[A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/libs/ledger-live-common/src/env.ts).
+[A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/env.ts).
 
 - `DEVICE_PROXY_URL=http://localhost:8435` Use the ledger device over HTTP. Useful for debugging on an emulator. More info about this in the section [Connection via HTTP bridge](#connection-via-http-bridge).
 - `BRIDGESTREAM_DATA=...` Come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning.

@@ -89,7 +89,7 @@ jobs:
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
         id: imgur
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -159,7 +159,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
       - name: edit comment
