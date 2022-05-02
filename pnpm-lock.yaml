@@ -2658,7 +2658,7 @@ importers:
       '@vercel/ncc': 0.33.3
       isomorphic-unfetch: 3.1.0
 
-  tools/actions/prepare-comment-body:
+  tools/actions/prepare-comment-screenshots:
     specifiers:
       '@actions/core': ^1.6.0
       '@actions/github': ^5.0.0

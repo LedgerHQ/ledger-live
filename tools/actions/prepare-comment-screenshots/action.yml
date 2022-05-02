@@ -1,5 +1,5 @@
-name:  prepare-comment-body
-description: gets a list of images and return a formatted markdown body for comment
+name: prepare-comment-screenshots
+description: returns a formatted comment to be added to the PR
 author: valpinkman
 outputs:
   body:
@@ -8,6 +8,10 @@ inputs:
   images:
     description: array of images to include in body of comment
     required: true
+  actor:
+    description: creator of the pull request
+    required: false
+    default: ${{ github.actor }}
 runs:
   using: node12
   main: build/index.js
