@@ -75,7 +75,7 @@ jobs:
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: botreport
           path: botreport/
