@@ -85,7 +85,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
               <>
                 <Button
                   event="PortfolioEmptyToImport"
-                  type="main"
+                  type={"main"}
                   outline={false}
                   title={
                     <Trans i18nKey="portfolio.emptyState.buttons.import" />
@@ -95,7 +95,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
                 />
                 <Button
                   event="PortfolioEmptyToManager"
-                  type="main"
+                  type={"main"}
                   title={
                     <Trans i18nKey="portfolio.emptyState.buttons.managerSecondary" />
                   }
@@ -105,7 +105,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
             ) : (
               <Button
                 event="PortfolioEmptyToManager"
-                type="main"
+                type={"main"}
                 title={<Trans i18nKey="portfolio.emptyState.buttons.manager" />}
                 onPress={navigateToManager}
               />

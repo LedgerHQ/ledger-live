@@ -112,10 +112,19 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
     ...baseActions,
-    ...(isEthereum && Platform.OS !== "ios"
+    ...(isEthereum
       ? [
           {
-            linkUrl: "ledgerlive://discover/lido",
+            navigationParams: [
+              NavigatorName.Base,
+              {
+                screen: ScreenName.PlatformApp,
+                params: {
+                  platform: "lido",
+                  name: "Lido",
+                },
+              },
+            ],
             label: <Trans i18nKey="account.stake" />,
             Icon: Icons.ClaimRewardsMedium,
             event: "Stake Ethereum Account Button",

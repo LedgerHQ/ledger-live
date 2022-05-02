@@ -3,27 +3,31 @@ import { Linking, Image } from "react-native";
 import { Flex, Text, Link as TextLink, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
+import { useNavigation } from "@react-navigation/native";
 import Touchable from "../Touchable";
 import { track } from "../../analytics";
+import { SlideProps } from "./shared";
 
 const StyledTouchable = styled(Touchable)`
   flex: 1;
 `;
 
-type SlideProps = {
+export type SlideProps = {
   url: string;
+  onPress?: (navigate: (...args: any) => void) => void;
   name: string;
   title: string;
   description: any;
   cta: any;
-  image: any;
-  icon: any;
-  position: any;
-  width: number;
+  image?: any;
+  width?: number;
+  icon?: any;
+  position?: any;
 };
 
 const Slide = ({
   url,
+  onPress,
   name,
   title,
   description,
@@ -34,12 +38,17 @@ const Slide = ({
   width,
 }: SlideProps) => {
   const { t } = useTranslation();
+  const { navigate } = useNavigation();
   const onClick = useCallback(() => {
     track("Portfolio Recommended OpenUrl", {
       url,
     });
-    Linking.openURL(url);
-  }, [url]);
+    if (onPress) {
+      onPress(navigate);
+    } else {
+      Linking.openURL(url);
+    }
+  }, [onPress, navigate, url]);
   return (
     <StyledTouchable event={`${name} Carousel`} onPress={onClick}>
       <Flex
