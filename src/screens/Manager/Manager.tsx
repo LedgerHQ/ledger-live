@@ -214,7 +214,13 @@ const Manager = ({
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
       />
-      <FirmwareUpdateScreen device={device} deviceInfo={deviceInfo} isOpen={isFirmwareUpdateOpen} onClose={onCloseFirmwareUpdate} />
+      <FirmwareUpdateScreen
+        device={device}
+        deviceInfo={deviceInfo}
+        isOpen={isFirmwareUpdateOpen}
+        onClose={onCloseFirmwareUpdate}
+        hasAppsToRestore={Boolean(appsToRestore?.length)}
+      />
     </>
   );
 };

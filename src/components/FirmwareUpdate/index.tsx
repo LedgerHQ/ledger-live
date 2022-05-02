@@ -31,6 +31,7 @@ type Props = {
   deviceInfo: DeviceInfo;
   isOpen: boolean;
   onClose: (restoreApps?: boolean) => void;
+  hasAppsToRestore: boolean;
 };
 
 type FwUpdateStep =
@@ -53,6 +54,7 @@ export default function FirmwareUpdate({
   deviceInfo,
   onClose,
   isOpen,
+  hasAppsToRestore,
 }: Props) {
   const nextBackgroundEvent = useSelector(nextBackgroundEventSelector);
   const dispatch = useDispatch();
@@ -227,16 +229,17 @@ export default function FirmwareUpdate({
           {!(
             error instanceof BluetoothNotSupportedError ||
             error instanceof WebsocketConnectionError
-          ) && (
-            <Button
-              type="main"
-              alignSelf="stretch"
-              mt={5}
-              onPress={onCloseAndReinstall}
-            >
-              {t("FirmwareUpdate.reinstallApps")}
-            </Button>
-          )}
+          ) &&
+            hasAppsToRestore && (
+              <Button
+                type="main"
+                alignSelf="stretch"
+                mt={5}
+                onPress={onCloseAndReinstall}
+              >
+                {t("FirmwareUpdate.reinstallApps")}
+              </Button>
+            )}
         </>
       )}
       {step === "confirmPin" && <ConfirmPinStep device={device} />}
