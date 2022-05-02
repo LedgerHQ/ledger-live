@@ -17,7 +17,7 @@ const isActual = (str): boolean => str.includes("actual");
 
 const uploadImage = async () => {
   const p = core.getInput("path");
-  const os = core.getInput("os");
+  const os = core.getInput("os").replace("-latest", "");
   const workspace = core.getInput("workspace");
   const fullPath = path.resolve(p);
 

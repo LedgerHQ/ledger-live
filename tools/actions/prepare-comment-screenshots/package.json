@@ -1,7 +1,7 @@
 {
-  "name": "@actions/prepare-comment-body",
+  "name": "@actions/prepare-comment-screenshots",
   "version": "1.0.0",
-  "description": "gets a list of images and return a formatted markdown body for comment",
+  "description": "returns a formatted comment to be added to the PR",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",
   "private": true,

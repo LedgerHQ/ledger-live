@@ -116,3 +116,29 @@ jobs:
         with:
           name: ${{ steps.version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm
