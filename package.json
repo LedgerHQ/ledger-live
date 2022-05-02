@@ -44,6 +44,7 @@
     "@celo/contractkit": "^1.5.2",
     "@celo/wallet-base": "^1.5.2",
     "@celo/wallet-ledger": "^1.5.2",
+    "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
