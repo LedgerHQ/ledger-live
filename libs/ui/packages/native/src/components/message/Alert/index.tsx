@@ -55,9 +55,11 @@ const StyledIconContainer = styled.View`
   align-items: center;
 `;
 
-const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>((p) => ({
-  backgroundColor: alertColors[p.type || "info"].backgroundColor,
-}))<Partial<AlertProps>>`
+const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>(
+  (p: Partial<AlertProps>) => ({
+    backgroundColor: alertColors[p.type || "info"].backgroundColor,
+  }),
+)<Partial<AlertProps>>`
   width: 100%;
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
