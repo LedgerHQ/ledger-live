@@ -208,6 +208,7 @@
     "@types/jest": "^27.0.2",
     "@types/react": "^17.0.30",
     "@types/react-native": "^0.65.21",
+    "@types/react-native-video": "^5.0.13",
     "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.1.0",
