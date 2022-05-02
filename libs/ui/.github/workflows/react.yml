@@ -56,7 +56,7 @@ jobs:
         id: test
         run: yarn test:react
       - name: (On Failure) Upload test data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: test-run-data

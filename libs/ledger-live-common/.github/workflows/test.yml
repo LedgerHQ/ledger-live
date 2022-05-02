@@ -59,13 +59,13 @@ jobs:
         timeout-minutes: 60
       - name: upload snapshots
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: snapshots-src-linux
           path: src/
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests_output-linux.txt
           path: tests_output.txt
@@ -107,13 +107,13 @@ jobs:
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload snapshots
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: snapshots-src-${{ runner.os }}
           path: src/
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests_output-${{ runner.os }}.txt
           path: tests_output.txt
