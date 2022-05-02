@@ -54,9 +54,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           persist-credentials: false
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.1.0
         with:
-          version: latest
+          version: 6.32.9
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
@@ -88,7 +88,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: pnpm build:lld
       - name: upload linux app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-linux-x86_64.AppImage
@@ -110,9 +110,9 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 2.1.816
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.1.0
         with:
-          version: latest
+          version: 6.32.9
       - name: bump npm
         run: |
           pnpm add -g npm
@@ -139,7 +139,7 @@ jobs:
           pnpm build:lld
         shell: bash
       - name: upload windows
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.version.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
@@ -155,9 +155,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           persist-credentials: false
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v2.1.0
         with:
-          version: latest
+          version: 6.32.9
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
@@ -193,17 +193,7 @@ jobs:
           eval "$(rbenv init - bash)"
           pnpm build:lld
       - name: upload macOS app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.version.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
-
-  clean-macos-runner:
-    runs-on: [ledger-live, macos]
-    needs: [bundle-macos]
-    steps:
-      - name: Clean working directory
-        run: |
-          cd $RUNNER_WORKSPACE
-          cd ..
-          rm -r *
