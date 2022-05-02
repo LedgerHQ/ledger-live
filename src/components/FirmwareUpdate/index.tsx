@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules } from "react-native";
+import { NativeModules, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
@@ -24,7 +24,7 @@ import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import { track } from "../../analytics";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/lib/errors";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice, WebsocketConnectionError } from "@ledgerhq/errors";
 
 type Props = {
   device: Device;
@@ -93,7 +93,7 @@ export default function FirmwareUpdate({
         case "firmwareUpdated":
           return { step: "firmwareUpdated" };
         case "error":
-          if(event.error.message  === "Invalid channel") {
+          if (event.error.message === "Invalid channel") {
             // this error comes from an uncaught exception on @ledgerhq/react-native-hid
             // in this specific context, it almost always means the device was disconnected
             // TODO: we should probably move this mapping to @ledgerhq/react-native-hid itself
@@ -105,7 +105,9 @@ export default function FirmwareUpdate({
           return {
             step: event.wired ? "confirmRecoveryBackup" : "error",
             progress: undefined,
-            error: event.wired ? undefined : new (BluetoothNotSupportedError as ErrorConstructor)(),
+            error: event.wired
+              ? undefined
+              : new (BluetoothNotSupportedError as ErrorConstructor)(),
             installing: undefined,
           };
         default:
@@ -118,7 +120,9 @@ export default function FirmwareUpdate({
   const [state, dispatchEvent] = useReducer(fwUpdateStateReducer, {
     step: device.wired ? "confirmRecoveryBackup" : "error",
     progress: undefined,
-    error: device.wired ? undefined : new (BluetoothNotSupportedError as ErrorConstructor)(),
+    error: device.wired
+      ? undefined
+      : new (BluetoothNotSupportedError as ErrorConstructor)(),
     installing: undefined,
   });
 
@@ -220,7 +224,10 @@ export default function FirmwareUpdate({
                 : undefined
             }
           />
-          {!(error instanceof BluetoothNotSupportedError) && (
+          {!(
+            error instanceof BluetoothNotSupportedError ||
+            error instanceof WebsocketConnectionError
+          ) && (
             <Button
               type="main"
               alignSelf="stretch"
