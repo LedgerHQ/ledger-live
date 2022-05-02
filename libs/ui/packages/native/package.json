@@ -100,6 +100,8 @@
     "@svgr/plugin-jsx": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
     "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/node": "^17.0.31",
+    "@types/prop-types": "^15.7.5",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "babel-loader": "^8.2.2",
