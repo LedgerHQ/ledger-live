@@ -45,7 +45,7 @@ If you need to use the locally installed version of this package, you will need 
 ## From the root of the monorepo:
 
 # Build the react components library and its dependencies.
-pnpm run:turbo -- run build --filter=@ledgerhq/react-ui
+pnpm run:turbo run build --filter=@ledgerhq/react-ui
 ```
 
 ```sh
