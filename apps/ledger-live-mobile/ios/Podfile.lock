@@ -34,18 +34,18 @@ PODS:
   - Firebase/RemoteConfig (8.12.1):
     - Firebase/CoreOnly
     - FirebaseRemoteConfig (~> 8.12.0)
-  - FirebaseABTesting (8.12.0):
+  - FirebaseABTesting (8.15.0):
     - FirebaseCore (~> 8.0)
   - FirebaseCore (8.12.1):
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
-  - FirebaseCoreDiagnostics (8.12.0):
+  - FirebaseCoreDiagnostics (8.15.0):
     - GoogleDataTransport (~> 9.1)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
-  - FirebaseInstallations (8.12.0):
+  - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
@@ -154,7 +154,7 @@ PODS:
   - OpenSSL-Universal (1.1.180)
   - PasscodeAuth (2.1.0):
     - React
-  - PromisesObjC (2.0.0)
+  - PromisesObjC (2.1.0)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -604,7 +604,7 @@ DEPENDENCIES:
   - "glog (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "lottie-ios (from `../../../node_modules/.pnpm/lottie-ios@3.2.3/node_modules/lottie-ios`)"
-  - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@4.1.3_4699fcb3ecfc3d0b917c5c54f314e71f/node_modules/lottie-react-native`)"
+  - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@4.1.3_i2m7zm7m7q6qxel4lrkpgfhhd4/node_modules/lottie-react-native`)"
   - OpenSSL-Universal (= 1.1.180)
   - "PasscodeAuth (from `../../../node_modules/.pnpm/@ledgerhq+react-native-passcode-auth@2.1.0/node_modules/@ledgerhq/react-native-passcode-auth`)"
   - "RCT-Folly (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)"
@@ -627,12 +627,12 @@ DEPENDENCIES:
   - "react-native-locale (from `../../../node_modules/.pnpm/react-native-locale@0.0.19/node_modules/react-native-locale`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.67.3/node_modules/@react-native-community/netinfo`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
-  - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@3.4.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-safe-area-context`)"
+  - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@3.4.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-safe-area-context`)"
   - "react-native-splash-screen (from `../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.67.3/node_modules/react-native-splash-screen`)"
   - "react-native-text-input-mask (from `../../../node_modules/.pnpm/react-native-text-input-mask@3.1.4_react-native@0.67.3/node_modules/react-native-text-input-mask`)"
   - "react-native-udp (from `../../../node_modules/.pnpm/react-native-udp@4.1.4/node_modules/react-native-udp`)"
   - "react-native-version-number (from `../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number`)"
-  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.17.2_react-native@0.67.3+react@17.0.2/node_modules/react-native-webview`)"
+  - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@11.17.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-webview`)"
   - "React-perflogger (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon/reactperflogger`)"
   - "React-RCTActionSheet (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/Libraries/ActionSheetIOS`)"
   - "React-RCTAnimation (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/Libraries/NativeAnimation`)"
@@ -645,23 +645,23 @@ DEPENDENCIES:
   - "React-RCTVibration (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/Libraries/Vibration`)"
   - "React-runtimeexecutor (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon/runtimeexecutor`)"
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon`)"
-  - "ReactNativeART (from `../../../node_modules/.pnpm/@react-native-community+art@1.2.0_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/art`)"
+  - "ReactNativeART (from `../../../node_modules/.pnpm/@react-native-community+art@1.2.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/art`)"
   - "RNAnalytics (from `../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.2/node_modules/@segment/analytics-react-native`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.2_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/clipboard`)"
-  - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/masked-view`)"
-  - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.67.3+react@17.0.2/node_modules/react-native-fast-image`)"
-  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@14.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-firebase/app`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.5.1_cda592d830dbd04192f58fe42d969508/node_modules/@react-native-firebase/remote-config`)"
+  - "RNCClipboard (from `../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/clipboard`)"
+  - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/masked-view`)"
+  - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-fast-image`)"
+  - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@14.5.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-firebase/app`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.5.1_zwszfwbq3piedexvr7sc3fuvba/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@1.10.3/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLibLedgerCore (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.4.1_c221edd547b249cf4d9d6cb6c36fa250/node_modules/react-native-reanimated`)"
-  - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-screens`)"
-  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.3.2_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.4.1_yiq63vkhwje46tm5ns3mg35cka/node_modules/react-native-reanimated`)"
+  - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-screens`)"
+  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.3.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
-  - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_react-native@0.67.3+react@17.0.2/node_modules/react-native-svg`)"
+  - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
   - "TcpSockets (from `../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.67.3/node_modules/react-native-tcp`)"
   - "Yoga (from `../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon/yoga`)"
@@ -731,7 +731,7 @@ EXTERNAL SOURCES:
   lottie-ios:
     :path: "../../../node_modules/.pnpm/lottie-ios@3.2.3/node_modules/lottie-ios"
   lottie-react-native:
-    :path: "../../../node_modules/.pnpm/lottie-react-native@4.1.3_4699fcb3ecfc3d0b917c5c54f314e71f/node_modules/lottie-react-native"
+    :path: "../../../node_modules/.pnpm/lottie-react-native@4.1.3_i2m7zm7m7q6qxel4lrkpgfhhd4/node_modules/lottie-react-native"
   PasscodeAuth:
     :path: "../../../node_modules/.pnpm/@ledgerhq+react-native-passcode-auth@2.1.0/node_modules/@ledgerhq/react-native-passcode-auth"
   RCT-Folly:
@@ -771,7 +771,7 @@ EXTERNAL SOURCES:
   react-native-randombytes:
     :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
   react-native-safe-area-context:
-    :path: "../../../node_modules/.pnpm/react-native-safe-area-context@3.4.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-safe-area-context"
+    :path: "../../../node_modules/.pnpm/react-native-safe-area-context@3.4.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-safe-area-context"
   react-native-splash-screen:
     :path: "../../../node_modules/.pnpm/react-native-splash-screen@3.2.0_react-native@0.67.3/node_modules/react-native-splash-screen"
   react-native-text-input-mask:
@@ -781,7 +781,7 @@ EXTERNAL SOURCES:
   react-native-version-number:
     :path: "../../../node_modules/.pnpm/react-native-version-number@0.3.6/node_modules/react-native-version-number"
   react-native-webview:
-    :path: "../../../node_modules/.pnpm/react-native-webview@11.17.2_react-native@0.67.3+react@17.0.2/node_modules/react-native-webview"
+    :path: "../../../node_modules/.pnpm/react-native-webview@11.17.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-webview"
   React-perflogger:
     :path: "../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -807,21 +807,21 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../../../node_modules/.pnpm/react-native@0.67.3_react@17.0.2/node_modules/react-native/ReactCommon"
   ReactNativeART:
-    :path: "../../../node_modules/.pnpm/@react-native-community+art@1.2.0_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/art"
+    :path: "../../../node_modules/.pnpm/@react-native-community+art@1.2.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/art"
   RNAnalytics:
     :path: "../../../node_modules/.pnpm/@segment+analytics-react-native@1.5.2/node_modules/@segment/analytics-react-native"
   RNCAsyncStorage:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@1.16.2_react-native@0.67.3/node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
-    :path: "../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/clipboard"
+    :path: "../../../node_modules/.pnpm/@react-native-community+clipboard@1.5.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/clipboard"
   RNCMaskedView:
-    :path: "../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_react-native@0.67.3+react@17.0.2/node_modules/@react-native-community/masked-view"
+    :path: "../../../node_modules/.pnpm/@react-native-community+masked-view@0.1.11_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-community/masked-view"
   RNFastImage:
-    :path: "../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.67.3+react@17.0.2/node_modules/react-native-fast-image"
+    :path: "../../../node_modules/.pnpm/react-native-fast-image@8.5.11_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.5.1_react-native@0.67.3+react@17.0.2/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.5.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-firebase/app"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.5.1_cda592d830dbd04192f58fe42d969508/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.5.1_zwszfwbq3piedexvr7sc3fuvba/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@1.10.3/node_modules/react-native-gesture-handler"
   RNKeychain:
@@ -831,15 +831,15 @@ EXTERNAL SOURCES:
   RNOS:
     :path: "../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.4.1_c221edd547b249cf4d9d6cb6c36fa250/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.4.1_yiq63vkhwje46tm5ns3mg35cka/node_modules/react-native-reanimated"
   RNScreens:
-    :path: "../../../node_modules/.pnpm/react-native-screens@3.13.1_react-native@0.67.3+react@17.0.2/node_modules/react-native-screens"
+    :path: "../../../node_modules/.pnpm/react-native-screens@3.13.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-screens"
   RNSentry:
-    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.3.2_react-native@0.67.3+react@17.0.2/node_modules/@sentry/react-native"
+    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.3.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native"
   RNShare:
     :path: "../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share"
   RNSVG:
-    :path: "../../../node_modules/.pnpm/react-native-svg@12.3.0_react-native@0.67.3+react@17.0.2/node_modules/react-native-svg"
+    :path: "../../../node_modules/.pnpm/react-native-svg@12.3.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons"
   TcpSockets:
@@ -861,10 +861,10 @@ SPEC CHECKSUMS:
   FBLazyVector: 808f741ddb0896a20e5b98cc665f5b3413b072e2
   FBReactNativeSpec: 94473205b8741b61402e8c51716dea34aa3f5b2f
   Firebase: 580d09e8edafc3073ebf09c03fd42e4d80d35fe9
-  FirebaseABTesting: 1b05c92327b3f0a9545cea3bab4d93e82550e29b
+  FirebaseABTesting: 10cbce8db9985ae2e3847ea44e9947dd18f94e10
   FirebaseCore: 8138de860a90ca7eec5e324da5788fb0ebf1d93c
-  FirebaseCoreDiagnostics: 3b40dfadef5b90433a60ae01f01e90fe87aa76aa
-  FirebaseInstallations: 25764cf322e77f99449395870a65b2bef88e1545
+  FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseRemoteConfig: f174a7091ac8e69bf6d0de2bae2212edb922a0ab
   Flipper: 30e8eeeed6abdc98edaf32af0cda2f198be4b733
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
@@ -889,7 +889,7 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
-  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
   RCTRequired: 3c77b683474faf23920fbefc71c4e13af21470c0
   RCTTypeSafety: 720b1841260dac692444c2822b27403178da8b28

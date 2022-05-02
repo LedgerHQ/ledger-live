@@ -52,7 +52,7 @@ Runs your app in development mode.
 Sometimes you may need to reset or clear the React Native packager's cache. To do so, you can pass the `--reset-cache` flag to the start script:
 
 ```
-pnpm dev:llm -- -- --reset-cache
+pnpm dev:llm -- --reset-cache
 ```
 
 ### `pnpm mobile test`

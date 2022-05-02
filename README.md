@@ -26,7 +26,7 @@ For changelog generation releases and package publishing we rely on the [**chang
 In order to interact with any package contained in this repository you will need to install the following:
 
 - [Node.js](https://nodejs.org/)
-- [PnPm](https://pnpm.io/)
+- [PnPm@7](https://pnpm.io/)
 
 **This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
 
@@ -76,9 +76,9 @@ _TIP: You can pass additional flags by adding the `--` separator before passing 
 # Install all the dependencies needed for the packages under ./libs
 pnpm i -F "{libs}..."
 # Run lint only on packages that have been changed compared to origin/develop
-pnpm lint -- --filter=[origin/develop]
+pnpm lint --filter=[origin/develop]
 # Test every package that has been changed since the last commit excluding the applications
-pnpm test -- --continue --filter="!./apps/*" --filter="...[HEAD~1]"
+pnpm run test --continue --filter="!./apps/*" --filter="...[HEAD~1]"
 ```
 
 ## Documentation
