@@ -135,12 +135,7 @@ const Chart = ({
         <VictoryAxis dependentAxis crossAxis tickFormat={yAxisFormatter} style={yAxisStyle} />
 
         {/* x-axis */}
-        <VictoryAxis
-          crossAxis={false}
-          // @ts-expect-error disable this error for the sake of the monorepo
-          tickFormat={(timestamp) => new Intl.DateTimeFormat(locale, timeFormat).format(timestamp)}
-          style={xAxisStyle}
-        />
+        <VictoryAxis crossAxis={false} tickFormat={xAxisFormatter} style={xAxisStyle} />
 
         {/* gradient area */}
         <Defs>

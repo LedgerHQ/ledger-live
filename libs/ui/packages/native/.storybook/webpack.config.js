@@ -1,5 +1,6 @@
-const { resolve } = require("path");
+const path = require("path");
 const { withUnimodules } = require("@expo/webpack-config/addons");
+const { resolve } = path;
 
 module.exports = ({ config }) => {
   config.resolve.extensions = [".ts", ".tsx", ".js", ".json"];
@@ -9,7 +10,8 @@ module.exports = ({ config }) => {
   );
 
   // Some dependencies need to be explicitely transpiled.
-  if (babelRule) babelRule.exclude = /node_modules[\\\/](?!(@ledgerhq\/ui-shared|victory-native)[\\\/]).*/;
+  if (babelRule)
+    babelRule.exclude = /node_modules[\\\/](?!(@ledgerhq\/ui-shared|victory-native)[\\\/]).*/;
 
   config = withUnimodules(config, {
     projectRoot: resolve(__dirname, "../"),
@@ -17,6 +19,7 @@ module.exports = ({ config }) => {
 
   config.resolve.symlinks = true;
   config.resolve.alias["victory-native"] = "victory";
+  config.resolve.modules = [path.resolve(__dirname, "..", "node_modules"), "node_modules"];
 
-  return config
+  return config;
 };
