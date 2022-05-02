@@ -28,7 +28,7 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   }, [state]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: number;
 
     if (queue.length > 1) {
       const [, ...rest] = queue;
