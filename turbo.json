@@ -3,15 +3,8 @@
   "baseBranch": "origin/develop",
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        "lib/**",
-        "lib-es/**",
-        "build/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
     "lint": {
       "outputs": []
@@ -21,56 +14,38 @@
     },
     "typecheck": {
       "outputs": [],
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": [
-        "lint",
-        "typecheck",
-        "build"
-      ],
+      "dependsOn": ["lint", "typecheck", "build"],
       "outputs": []
     },
     "start": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "build-ci": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "nightly": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": [],
       "cache": false
     },
     "pre-build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": [],
       "cache": false
     },
     "release": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": [],
       "cache": false
     },
     "watch": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "clean": {
       "cache": false
@@ -79,35 +54,33 @@
       "cache": false
     },
     "@ledgerhq/icons-ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": ["react/**", "native/**", "index.js"]
+    },
+    "@ledgerhq/live-common#build": {
+      "dependsOn": ["^build"],
       "outputs": [
-        "react/**",
-        "native/**",
-        "index.js"
+        "lib/**",
+        "src/generated/**",
+        "src/data/flags/react",
+        "src/data/flags/reactNative"
       ]
     },
     "live-mobile#lint": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "ledger-live-desktop#lint": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "ledger-live-desktop#test": {
-      "dependsOn": [
-        "ledger-live-desktop#build:testing"
-      ],
+      "dependsOn": ["ledger-live-desktop#build:testing"],
       "outputs": []
     },
     "ledger-live-desktop#build:testing": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     }
   }
 }
