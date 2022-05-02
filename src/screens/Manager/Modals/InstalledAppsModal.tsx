@@ -212,7 +212,7 @@ const InstalledAppsModal = ({
           showsVerticalScrollIndicator={false}
         />
       </Flex>
-      <Button mt={6} size="large" type="error" onPress={onUninstallAll}>
+      <Button mt={6} mb={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />
       </Button>
     </BaseModal>

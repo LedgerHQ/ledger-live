@@ -16,7 +16,7 @@ type Props = {
 function Footer({ url, urlWhatIsThis, account }: Props) {
   const currencyId = getAccountCurrency(account).name;
   return (
-    <Flex bg={"background.main"} px={6}>
+    <Flex bg={"background.main"} px={6} my={6}>
       {urlWhatIsThis ? (
         <Button
           event="WhatIsThisOperation"
@@ -24,7 +24,6 @@ function Footer({ url, urlWhatIsThis, account }: Props) {
           Icon={ExternalLink}
           onPress={() => Linking.openURL(urlWhatIsThis)}
           outline
-          mt={4}
         >
           <Trans i18nKey="operationDetails.whatIsThis" />
         </Button>
