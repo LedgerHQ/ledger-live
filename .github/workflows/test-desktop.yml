@@ -112,6 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
     steps:
+      - uses: actions/checkout@v3
       - name: check if comment already exists exists
         uses: actions/github-script@v6
         id: exists
@@ -119,9 +120,9 @@ jobs:
           result-encoding: string
           script: |
             const comments = await github.rest.issues.listComments({
-              owner: context.actor,
+              owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: github.issue.number,
+              issue_number: context.issue.number,
             });
 
             const exists = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
@@ -162,7 +163,7 @@ jobs:
         with:
           script: |
             await github.rest.issues.updateComment({
-              owner: context.actor,
+              owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.exists.outputs.result }},
               body: ${{ steps.comment.outputs.body }}
