@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@types/styled-components": "^5.1.14",
-    "styled-components": "^5.2.3"
+    "styled-components": "^5.2.3",
+    "styled-system": "^5.1.5"
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",

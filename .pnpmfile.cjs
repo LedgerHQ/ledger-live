@@ -61,6 +61,7 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
+        "fs-extra": "*",
       }),
       addDependencies("@sentry/react-native", {
         tslib: "*",
@@ -116,6 +117,14 @@ function readPackage(pkg, context) {
       ),
       addDependencies("documentation", { micromark: "*" }),
       addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
+      addDependencies("expo-cli", { "@expo/metro-config": "*" }),
+      addDependencies("@expo/metro-config", { glob: "*" }),
+      addDependencies("@expo/dev-tools", { "@expo/spawn-async": "*" }),
+      addDependencies("@expo/dev-server", {
+        "@expo/config": "*",
+        "@expo/spawn-async": "*",
+        glob: "*",
+      }),
       // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
       // This is done this way because these packages are not hoisted hence unaccessible otherwise.
       addDependencies(
