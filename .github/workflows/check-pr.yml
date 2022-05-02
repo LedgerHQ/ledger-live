@@ -1,12 +1,59 @@
-name: "PR | Checklist"
+name: "Check Pull Request"
 on:
   pull_request:
     branches:
       - develop
+      - release
+      - master
+      - "feat/**"
     types: [opened, reopened]
 
 jobs:
+  check-branch-naming:
+    runs-on: ubuntu-latest
+    outputs:
+      valid: ${{ steps.valid.outputs.valid }}
+    steps:
+      - name: checkout
+        run: |
+          gh pr checkout ${{ github.event.number}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/github-script@v5
+        id: valid
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref
+            const isValid = /^(feat|support|bugfix)\/.+/.test(branch) || ["release", "hotfix"].includes(branch)
+            console.log(`::set-output name=valid::${isValid}`)
+            if (!isValid) {
+              const body = `
+            Unfortunately this branch does not follow the [CONTRIBUTING.MD](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md) conventions and will be closed automatically.
+            Feel free to reopen this PR once you have browsed through the guidelines.
+              `
+
+              github.rest.issues.createComment({
+                owner: "LedgerHQ",
+                repo: "ledger-live",
+                issue_number: "${{ github.event.pull_request.number }}",
+                body,
+              });
+            }
+
+  close-pr:
+    needs: [check-branch-naming]
+    if: ${{ needs.check-branch-naming.outputs.valid == 'false' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: close PR
+        run: |
+          gh pr close ${{ github.event.number}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   comment-on-pr:
+    needs: [check-branch-naming]
+    if: ${{ needs.check-branch-naming.outputs.valid == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
