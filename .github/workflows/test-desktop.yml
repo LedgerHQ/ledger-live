@@ -119,9 +119,9 @@ jobs:
           result-encoding: string
           script: |
             const comments = await github.rest.issues.listComments({
-              owner: github.actor,
-              repo: github.repo.repo,
-              issue_number: github.event.number,
+              owner: context.actor,
+              repo: context.repo.repo,
+              issue_number: github.issue.number,
             });
 
             const exists = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
@@ -162,8 +162,8 @@ jobs:
         with:
           script: |
             await github.rest.issues.updateComment({
-              owner: github.actor,
-              repo: github.repo.repo,
+              owner: context.actor,
+              repo: context.repo.repo,
               comment_id: ${{ steps.exists.outputs.result }},
               body: ${{ steps.comment.outputs.body }}
             });
