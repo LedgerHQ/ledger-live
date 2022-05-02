@@ -134,6 +134,7 @@ function readPackage(pkg, context) {
           "ts-jest": "^27.1.2",
           "ts-node": "^10.4.0",
           "@types/node": "*",
+          "@types/jest": "*",
           "source-map-support": "*",
           typescript: "4",
           documentation: "^13.2.5",
