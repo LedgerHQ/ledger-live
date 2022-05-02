@@ -50,7 +50,7 @@
     "staging-android": "pnpm android:staging && pnpm android:install",
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src --ext .js,.json",
-    "lint:fix": "pnpm lint -- --fix",
+    "lint:fix": "pnpm lint --fix",
     "flow": "flow",
     "typecheck": "flow",
     "test": "",
