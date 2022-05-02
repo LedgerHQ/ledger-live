@@ -8,6 +8,7 @@ export type TextVariants =
   | "h2"
   | "h3"
   | "h4"
+  | "h5"
   | "large"
   | "body"
   | "bodyLineHeight"
@@ -35,7 +36,8 @@ export const fontSizes = [10, 11, 12, 13, 14, 16, 18, 24, 28] as ThemeScale<numb
 ] = fontSizes;
 fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
-fontSizes.h4 = fontSizes.h3;
+fontSizes.h4 = fontSizes.h2;
+fontSizes.h5 = fontSizes.h3;
 
 export const radii = [0, 4, 8];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
