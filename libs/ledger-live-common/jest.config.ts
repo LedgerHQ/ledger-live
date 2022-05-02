@@ -27,7 +27,7 @@ export default {
   moduleNameMapper: {
     "^@polkadot/wasm-crypto$": "@polkadot/wasm-crypto/index.cjs",
     "^@polkadot/wasm-crypto-asmjs$": "@polkadot/wasm-crypto-asmjs/empty.cjs",
-    "^@polkadot/wasm-crypto-wasm$": "@polkadot/wasm-crypto-wasm/data.cjs",
+    // "^@polkadot/wasm-crypto-wasm$": "@polkadot/wasm-crypto-wasm/data.cjs",
     "^@polkadot/([^.]+)$": [
       "@polkadot/$1/index.cjs",
       "@polkadot/$1/node.cjs",
