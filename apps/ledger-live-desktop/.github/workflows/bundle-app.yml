@@ -87,20 +87,10 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload macOS app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-mac.dmg
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-mac.dmg
-
-  clean-macos-runner:
-    runs-on: [ledger-live, macos]
-    needs: [bundle-macos]
-    steps:
-      - name: Clean working directory
-        run: |
-          cd $RUNNER_WORKSPACE
-          cd ..
-          rm -r *
 
   start-runner:
     name: "[Runner] start ec2 instance"
@@ -191,7 +181,7 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload linux app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
@@ -259,7 +249,7 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload linux app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
@@ -316,7 +306,7 @@ jobs:
       - name: build the app
         run: yarn build-ci
       - name: upload windows
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.postversion1.outputs.content }}${{ steps.postversion2.outputs.content }}-win-x64.exe
           path: dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
