@@ -10,6 +10,7 @@ module.exports = ({ config }) => {
   // };
 
   config.resolve.extensions = [".ts", ".tsx", ".js", ".json"];
+  config.resolve.modules = [path.resolve(__dirname, "..", "node_modules"), "node_modules"];
 
   return config;
 };
