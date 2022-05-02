@@ -200,6 +200,7 @@ module.exports = {
     ],
   },
   resolve: {
+    modules: [path.resolve(__dirname, "node_modules"), "node_modules"],
     alias: {
       "~": path.resolve(__dirname, "src"),
       // See: https://github.com/facebook/react/issues/20235
