@@ -39,7 +39,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build && cp build/index.html build/200.html && cp build/index.html build/404.html",
-    "test": "react-app-rewired test --env=jsdom",
+    "_test": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject"
   },
   "browserslist": [
