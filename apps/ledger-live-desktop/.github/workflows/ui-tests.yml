@@ -112,7 +112,7 @@ jobs:
       #     echo ${{ github.event.number }} > ./pr/NR
       - name: upload tests data
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests-reports
           path: |
@@ -176,13 +176,13 @@ jobs:
           os: linux
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-linux.json
           path: images-linux.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-linux
           path: |
@@ -246,13 +246,13 @@ jobs:
           os: linux
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-linux.json
           path: images-linux.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-linux
           path: |
@@ -306,13 +306,13 @@ jobs:
           os: windows-latest
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-windows-latest.json
           path: images-windows-latest.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-windows-latest
           path: |
@@ -357,13 +357,13 @@ jobs:
   #         os: macos
   #     - name: upload images
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: images-macos.json
   #         path: images-macos.json
   #     - name: upload ci suggested screenshots
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: playwright-results-macos
   #         path: |
