@@ -87,7 +87,7 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
         id: imgur
         with:
-          path: apps/ledger-live-dekstop/tests/artifacts/test-results
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
       - name: upload ci suggested screenshots
