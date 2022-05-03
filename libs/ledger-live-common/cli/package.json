@@ -19,7 +19,7 @@
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "start": "tsc --watch --project src/tsconfig.json",
     "test-e2e": "./scripts/tests.sh",
-    "test": "yarn run test-e2e",
+    "test": "pnpm run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh",
     "type-check": "tsc --noEmit"
