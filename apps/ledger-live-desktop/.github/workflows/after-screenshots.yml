@@ -89,13 +89,13 @@ jobs:
   #         os: linux
   #     - name: upload images
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: images-linux.json
   #         path: images-linux.json
   #     - name: upload ci suggested screenshots
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: playwright-results-linux
   #         path: |
@@ -143,13 +143,13 @@ jobs:
   #         os: ${{ matrix.os }}
   #     - name: upload images
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: images-${{ matrix.os }}.json
   #         path: images-${{ matrix.os }}.json
   #     - name: upload ci suggested screenshots
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: playwright-results-${{ matrix.os }}
   #         path: |

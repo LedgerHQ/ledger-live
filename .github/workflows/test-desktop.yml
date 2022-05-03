@@ -1,0 +1,176 @@
+name: Test Desktop App
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      INSTRUMENT_BUILD: true
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # - macos-latest
+          - windows-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if ("${{ matrix.os }}" === "ubuntu-latest") {
+              return "linux"
+            } else if ("${{ matrix.os }}" === "macos-latest") {
+              return "macos"
+            } else if ("${{ matrix.os }}" === "windows-latest") {
+              return "windows"
+            }
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 6.32.9
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - name: Bump npm to latest
+        run: npm i -g npm
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Install playwright dependencies
+        run: npx playwright install-deps
+      - name: Build dependencies
+        run: pnpm turbo run ledger-live-desktop#build:testing
+      - name: Run code checkers [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: pnpm desktop test:codecheck
+      - name: Run unit tests [Linux]
+        if: matrix.os == 'ubuntu-latest'
+        run: pnpm desktop test:jest
+      - name: Run playwright tests [Linux => xvfb-run]
+        if: matrix.os == 'ubuntu-latest'
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+        shell: bash
+      - name: Run playwright tests
+        if: matrix.os != 'ubuntu-latest'
+        run: pnpm desktop test:playwright
+        shell: bash
+      - name: upload diffs to imgur
+        if: always() && !cancelled()
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        id: imgur
+        with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
+          os: ${{ steps.os.outputs.result }}
+      - name: upload ci suggested screenshots
+        if: always() && !cancelled()
+        uses: actions/upload-artifact@v3
+        with:
+          name: images
+          path: images-${{steps.os.outputs.result}}.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', matrix.os) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+
+  report:
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: check if comment already exists exists
+        uses: actions/github-script@v6
+        id: exists
+        with:
+          result-encoding: string
+          script: |
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const exists = comments.data.find(comment => comment.user.login === 'github-actions[bot]');
+
+            return exists?.id ?? 'false';
+      - name: download images artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: images
+      - name: parse images
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+
+            const files = ["images-linux", "images-windows"];
+
+            let result = {};
+            for (const file of files) {
+              try {
+                const raw = JSON.parse(fs.readFileSync("${{github.workspace}}/" + file + ".json"));
+                const key = file.replace("images-", "").replace("-latest", "").trim()
+                result[key] = raw;
+              } catch (err) {
+                console.log(err);
+              }
+            }
+
+            fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
+      - name: prepare comment with screenshots
+        id: comment
+        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@feat/more-ci-reporting
+        with:
+          images: images.json
+      - name: edit comment
+        uses: actions/github-script@v6
+        if: ${{ steps.exists.outputs.result != 'false' }}
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ steps.exists.outputs.result }},
+              body: `${{ steps.comment.outputs.body }}`
+            });
+      - name: create comment
+        if: ${{ steps.exists.outputs.result == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.number }} --body "${{ steps.comment.outputs.body }}"
