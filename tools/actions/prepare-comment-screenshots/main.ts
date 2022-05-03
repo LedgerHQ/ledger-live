@@ -36,7 +36,7 @@ const main = async () => {
 ${
   imgDiffFailed
     ? `It seems this PR contains screenshots that are different from the base branch.
-If you are sure all those changes are correct, you can comment on this PR with \`/generate-screenshots\` to update those screenshots.
+If you are sure all those changes are correct, you can comment on this PR with **/generate-screenshots** to update those screenshots.
 > Make sure all the changes are correct before running the command, as it will commit and push the new result to the PR.
 
 ${str}`
