@@ -3,6 +3,12 @@ import BigNumber from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
 
+// NOTE: Hedera declares stable fees in USD
+//       If we can get the current USD/HBAR price here..
+//       > transfer fee is 0.0001 USD
+export const estimatedFees = new BigNumber("83300"); // 0.000833 ℏ (as of 2021-09-20)
+export const estimatedFeeSafetyRate = 2;
+
 export async function calculateAmount({
   account,
   transaction,
@@ -11,23 +17,28 @@ export async function calculateAmount({
   transaction: Transaction;
 }): Promise<{
   amount: BigNumber;
-  estimatedFees: BigNumber;
   totalSpent: BigNumber;
 }> {
-  // NOTE: Hedera declares stable fees in USD
-  //       If we can get the current USD/HBAR price here..
-  //       > transfer fee is 0.0001 USD
-  const estimatedFees = new BigNumber("83300"); // 0.000833 ℏ (as of 2021-09-20)
+  let amount;
 
-  const amount =
-    transaction.useAllAmount == true
-      ? await estimateMaxSpendable({ account })
-      : transaction.amount;
+  if (transaction.useAllAmount === true) {
+    amount = await estimateMaxSpendable({ account });
+  } else {
+    const txAmount = transaction.amount.plus(estimatedFees);
+
+    if (txAmount.isGreaterThan(account.balance)) {
+      // NOTE: work-around for 'NotEnoughBalance' edge case
+      // since the addition of estimated fees overflows account balance,
+      // set amount w/o the added estimated fees.
+      amount = transaction.amount;
+    } else {
+      amount = transaction.amount.plus(estimatedFees);
+    }
+  }
 
   return {
-    estimatedFees,
     amount,
-    totalSpent: amount.plus(estimatedFees),
+    totalSpent: amount,
   };
 }
 

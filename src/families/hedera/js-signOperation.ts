@@ -4,7 +4,7 @@ import { Account, DeviceId, Operation, SignOperationEvent } from "../../types";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
-import { calculateAmount } from "./utils";
+import { estimatedFees } from "./utils";
 import Hedera from "./hw-app-hedera";
 
 const signOperation = ({
@@ -74,10 +74,6 @@ async function buildOptimisticOperation({
   account: Account;
   transaction: Transaction;
 }): Promise<Operation> {
-  const { estimatedFees } = await calculateAmount({
-    account,
-    transaction,
-  });
 
   const operation: Operation = {
     id: `${account.id}--OUT`,

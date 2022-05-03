@@ -8,7 +8,7 @@ import {
 import { AccountId } from "@hashgraph/sdk";
 import type { Transaction } from "./types";
 import type { Account, TransactionStatus } from "../../types";
-import { calculateAmount } from "./utils";
+import { calculateAmount, estimatedFees } from "./utils";
 
 export default async function getTransactionStatus(
   account: Account,
@@ -30,7 +30,7 @@ export default async function getTransactionStatus(
     }
   }
 
-  const { amount, estimatedFees, totalSpent } = await calculateAmount({
+  const { amount, totalSpent } = await calculateAmount({
     transaction,
     account,
   });
