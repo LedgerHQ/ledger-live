@@ -69,6 +69,10 @@
         "src/data/flags/reactNative"
       ]
     },
+    "@ledgerhq/live-common#typecheck": {
+      "dependsOn": ["build"],
+      "outputs": []
+    },
     "live-mobile#lint": {
       "dependsOn": ["^build"],
       "outputs": []
