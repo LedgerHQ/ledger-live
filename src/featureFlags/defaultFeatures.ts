@@ -30,7 +30,7 @@ export const defaultFeatures: DefaultFeatures = {
           route_name: "MarketDetail",
           timer: 3000,
           type: "on_enter",
-        }
+        },
       ],
       conditions: {
         not_now_delay: {
