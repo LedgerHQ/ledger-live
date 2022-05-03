@@ -63,8 +63,8 @@
       "outputs": [
         "lib/**",
         "src/generated/**",
-        "src/data/flags/react",
-        "src/data/flags/reactNative"
+        "src/data/flags/react/**",
+        "src/data/flags/reactNative/**"
       ]
     },
     "@ledgerhq/live-common#typecheck": {
