@@ -115,7 +115,7 @@ jobs:
           version: 6.32.9
       - name: bump npm
         run: |
-          pnpm add -g npm
+          npm i -g npm
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
