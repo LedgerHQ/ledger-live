@@ -6,6 +6,7 @@ import Text from "../../Text";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
 import { Flex } from "../../Layout";
 import { space } from "styled-system";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
 
 type Props = {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
@@ -84,9 +85,12 @@ export default function Notification({
         {linkText && onLinkPress && (
           <Flex mt={3}>
             <TouchableOpacity onPress={onLinkPress}>
-              <Text variant={"body"} fontWeight={"semiBold"} color={textColor}>
-                {linkText}
-              </Text>
+              <Flex flexDirection={"row"} alignItems={"center"}>
+                <Text variant={"body"} fontWeight={"semiBold"} color={textColor} mr={3}>
+                  {linkText}
+                </Text>
+                <ExternalLinkMedium size={16} color={textColor} />
+              </Flex>
             </TouchableOpacity>
           </Flex>
         )}
