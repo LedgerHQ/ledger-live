@@ -154,7 +154,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@feat/more-ci-reporting
+        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@monorepo-setup
         with:
           images: images.json
       - name: edit comment
