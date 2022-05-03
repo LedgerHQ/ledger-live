@@ -141,7 +141,9 @@ describe("OpenSea lazy minting bs", () => {
     // -2 off-chain & -3 on-chain -> 0 on-chain (3 off-chain)
     // +1 on-chain -> 1 on-chain (and 3 off-chain)
 
+    const prevOperations = ops.slice(0);
     const nfts = nftsFromOperations(ops);
+    expect(prevOperations).toEqual(ops); // ensure preserved order of operations
     expect(nfts[0].amount.toNumber()).toBe(1);
   });
 });

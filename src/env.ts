@@ -137,7 +137,7 @@ const envDefinitions = {
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
-    def: "http://validators-solana.coin.ledger.com/api/v1/validators/",
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
     desc: "base url for validators.app validator list",
   },
   API_HEDERA_MIRROR: {

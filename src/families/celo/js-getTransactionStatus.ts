@@ -29,9 +29,11 @@ const getTransactionStatus = async (
 
   const estimatedFees = transaction.fees || new BigNumber(0);
 
-  const amount = useAllAmount
+  let amount = useAllAmount
     ? account.spendableBalance.minus(estimatedFees)
     : new BigNumber(transaction.amount);
+
+  if (amount.lt(0)) amount = new BigNumber(0);
 
   if (amount.lte(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();

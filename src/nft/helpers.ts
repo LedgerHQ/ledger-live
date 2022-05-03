@@ -16,6 +16,7 @@ import { API, apiForCurrency } from "../api/Ethereum";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
   const nftsMap = ops
+    .slice(0)
     // make sure we have the operation in chronological order (older first)
     .sort((a, b) => a.date.getTime() - b.date.getTime())
     // if ops are Operations get the prop nftOperations, else ops are considered nftOperations already
@@ -67,7 +68,8 @@ export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
       return acc;
     }, {});
 
-  return Object.values(nftsMap);
+  // We reverse the array to make it from latest to oldest again
+  return Object.values(nftsMap).reverse();
 };
 
 /**

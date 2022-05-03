@@ -84,32 +84,6 @@
       "categories": []
     },
     {
-      "appId": "Card",
-      "type": "LIVE_APP",
-      "tags": [
-        "card"
-      ],
-      "categories": [
-        "spend"
-      ],
-      "platform": "all",
-      "branch": "stable",
-      "currencies": "*"
-    },
-    {
-      "appId": "cl-card",
-      "type": "LIVE_APP",
-      "tags": [
-        "card"
-      ],
-      "categories": [
-        "spend"
-      ],
-      "platform": "all",
-      "branch": "stable",
-      "currencies": "*"
-    },
-    {
       "appId": "moonpay",
       "type": "LIVE_APP",
       "tags": [
