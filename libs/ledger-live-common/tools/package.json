@@ -6,7 +6,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/hw-transport-u2f": "^5.36.0-deprecated",
+    "@ledgerhq/hw-transport-u2f": "5.36.0-deprecated",
     "@ledgerhq/hw-transport-web-ble": "workspace:^",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport-webusb": "workspace:^",
