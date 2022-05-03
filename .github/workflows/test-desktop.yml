@@ -166,7 +166,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: ${{ steps.exists.outputs.result }},
-              body: ${{ steps.comment.outputs.body }}
+              body: "${{ steps.comment.outputs.body }}"
             });
       - name: create comment
         if: ${{ steps.exists.outputs.result == 'false' }}
