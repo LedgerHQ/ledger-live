@@ -25,8 +25,8 @@ For changelog generation releases and package publishing we rely on the [**chang
 
 In order to interact with any package contained in this repository you will need to install the following:
 
-- [Node.js](https://nodejs.org/)
-- [PnPm@7](https://pnpm.io/)
+- [**Node.js@14.x.x**](https://nodejs.org/)
+- [**PnPm@7.x.x**](https://pnpm.io/)
 
 **This is only a minimal setup. You will need to perform additional installation steps depending on the package you want to work on, please refer to its nested readme file.**
 
@@ -49,14 +49,24 @@ pnpm i
 
 The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file will use `turborepo` under the hood and automatically perform needed tasks before running the action.
 
-_Running `pnpm lld:build` will build all the local dependencies before attempting to build the `Ledger Live Desktop` app._
+```sh
+# This command will first build all the local dependencies needed in the right order.
+# Only then it will attempt to build the `Ledger Live Desktop` app.
+pnpm lld:build
+```
 
 ### Aliases
 
 To run nested scripts which are not covered at the root, you should **not** change your working directory.
 Every package has an **alias** defined (see application or library tables or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file) that you can use as a prefix when running the script from the root.
 
-_Running `pnpm desktop test` will run the `test` script defined in the `./apps/ledger-live-desktop/package.json` file._
+```sh
+# `pnpm desktop` is one of the shorthands written to to avoid changing the working directory.
+
+# The following command will run the nested `test` script.
+# `test` is defined inside the `./apps/ledger-live-desktop/package.json` file.
+pnpm desktop test
+```
 
 **Note that when using these kind of scripts you will have to make sure that the dependencies are built beforehand.**
 
@@ -69,8 +79,6 @@ You can scope any pnpm or turborepo based script by using the `--filter` flag.
 Please check out the [pnpm](https://pnpm.io/filtering) or [turborepo](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit pnpm being a bit more powerful).
 
 Here are some examples:
-
-_TIP: You can pass additional flags by adding the `--` separator before passing the arguments._
 
 ```sh
 # Install all the dependencies needed for the packages under ./libs
