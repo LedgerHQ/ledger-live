@@ -73,7 +73,6 @@ const useRatings = () => {
   const areRatingsConditionsMet = useCallback(() => {
     if (currAppLanguage !== "en") return false;
 
-    console.log("RATINGS DATA", ratingsDataOfUser);
     if (!ratingsDataOfUser) return false;
 
     // criterias depending on last answer to the ratings flow
