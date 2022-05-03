@@ -43,9 +43,9 @@ Ledger Live releases are signed. The automatic update mechanism makes use of the
 
 ### Requirements
 
-- [NodeJS](https://nodejs.org) `lts/fermium` (Node 14.x)
-- [PnPm@7](https://pnpm.io)
-- [Python](https://www.python.org/) 3.5+
+- [NodeJS](https://nodejs.org) `lts/fermium` (v14.x)
+- [PnPm](https://pnpm.io) (v7.x)
+- [Python](https://www.python.org/) (v3.5+)
 - A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))
 - On Linux: `sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev`
 
