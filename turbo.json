@@ -1,7 +1,9 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "baseBranch": "origin/develop",
-  "globalDependencies": ["turbo.json" ],
+  "globalDependencies": [
+    "turbo.json" 
+  ],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
@@ -63,6 +65,8 @@
       "outputs": [
         "lib/**",
         "src/generated/**",
+        "src/data/icons/react/**",
+        "src/data/icons/reactNative/**",
         "src/data/flags/react/**",
         "src/data/flags/reactNative/**"
       ]
