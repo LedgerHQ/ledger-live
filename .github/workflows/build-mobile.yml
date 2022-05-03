@@ -117,7 +117,7 @@ jobs:
           name: ${{ steps.version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
-  ios:
+  iOS:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
