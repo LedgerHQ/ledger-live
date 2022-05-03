@@ -14,5 +14,9 @@ module.exports = function override(webpackConfig) {
     type: "javascript/auto",
   });
 
+  // Disable terser because it uses too much memory and makes our vercel deployment crash…
+  // TODO: use a better minimizer
+  webpackConfig.optimization.minimizer.shift();
+
   return webpackConfig;
 };
