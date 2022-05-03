@@ -8989,7 +8989,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
       '@types/yargs': 15.0.14
       chalk: 4.1.2
 
@@ -9081,7 +9081,7 @@ packages:
     resolution: {integrity: sha512-qgpPwZzM8UMHYMC5+9xYV2O+8kgkDAl9+38w9JiBksaGmUFqcS4najsB1nj6AWf2rGEuXdKMb2WEYRskVypJrA==}
     dependencies:
       '@ledgerhq/errors': 5.50.0
-      '@ledgerhq/hw-transport': 5.11.0
+      '@ledgerhq/hw-transport': 5.51.1
     dev: false
 
   /@ledgerhq/hw-transport-u2f/5.36.0-deprecated:
@@ -14611,7 +14611,7 @@ packages:
       '@ledgerhq/hw-transport': 5.51.1
       '@stablelib/blake2b': 1.0.1
       '@taquito/taquito': 11.1.0-stablelib.0
-      '@taquito/utils': 11.1.0-stablelib.0
+      '@taquito/utils': 11.2.0
       '@types/jest': 26.0.24
       buffer: 6.0.3
     dev: false
@@ -14649,7 +14649,7 @@ packages:
       '@taquito/michel-codec': 11.2.0
       '@taquito/michelson-encoder': 11.2.0
       '@taquito/rpc': 11.2.0
-      '@taquito/utils': 11.1.0-stablelib.0
+      '@taquito/utils': 11.2.0
       bignumber.js: 9.0.2
       rxjs: 6.6.7
     dev: false
@@ -14784,7 +14784,7 @@ packages:
   /@types/bn.js/5.1.0:
     resolution: {integrity: sha512-QSSVYj7pYFN49kW77o2s9xTCwZ8F2xLbjLLSEVh8D2F4JUhZtPAGOFLTD+ffqksBx/u4cE/KImFjyhqCjn/LIA==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/bs58/4.0.1:
@@ -14836,7 +14836,7 @@ packages:
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/country-data/0.0.0:
@@ -14879,7 +14879,7 @@ packages:
     resolution: {integrity: sha512-qwQgQqXXTRv2h2AlJef+tMEszLFkCB9dWnrJYIdAwqjubERXEc/geB+S3apRw0yQyTVnsBf8r6BhlrE8vx+3WQ==}
     dependencies:
       '@types/bn.js': 5.1.0
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/eventsource/1.1.8:
@@ -14889,7 +14889,7 @@ packages:
   /@types/express-serve-static-core/4.17.28:
     resolution: {integrity: sha512-P1BJAEAW3E2DJUlkgq4tOL3RyMunoWXqbSCygWo5ZIWTjUgN1YnaXWW4VWl/oc8vs/XoYibEGBKP0uZyF4AHig==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
     dev: false
@@ -15116,7 +15116,7 @@ packages:
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/plist/3.0.2:
@@ -15147,7 +15147,7 @@ packages:
   /@types/randombytes/2.0.0:
     resolution: {integrity: sha512-bz8PhAVlwN72vqefzxa14DKNT8jK/mV66CSjwdVQM/k3Th3EPKfUtdMniwZgMedQTFuywAsfjnZsg+pEnltaMA==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/range-parser/1.2.4:
@@ -15290,7 +15290,7 @@ packages:
   /@types/secp256k1/4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/semver/6.2.3:
@@ -15396,7 +15396,7 @@ packages:
   /@types/ws/7.4.7:
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
     dependencies:
-      '@types/node': 16.11.12
+      '@types/node': 17.0.31
     dev: false
 
   /@types/yargs-parser/21.0.0:
@@ -17702,7 +17702,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.14.9_debug@4.3.4
+      follow-redirects: 1.14.9
     transitivePeerDependencies:
       - debug
 
@@ -19309,6 +19309,7 @@ packages:
     dependencies:
       base64-js: 1.5.1
       ieee754: 1.2.1
+    dev: false
 
   /buffer/5.7.1:
     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
@@ -19945,7 +19946,7 @@ packages:
     engines: {node: '>=4.0.0', npm: '>=3.0.0'}
     deprecated: This module has been superseded by the multiformats module
     dependencies:
-      buffer: 5.6.1
+      buffer: 5.7.1
       class-is: 1.1.0
       multibase: 0.6.1
       multicodec: 1.0.4
@@ -20982,7 +20983,7 @@ packages:
   /crc/3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
     dependencies:
-      buffer: 5.6.1
+      buffer: 5.7.1
 
   /create-ecdh/4.0.4:
     resolution: {integrity: sha512-mf+TCx8wWc9VpuxfP2ht0iSISLZnt0JgWlrOKZiNqyUZWnjIaCIVNQArMHnCZKfEYRg6IM7A+NeJoN8gf/Ws0A==}
@@ -21655,7 +21656,7 @@ packages:
     resolution: {integrity: sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==}
     deprecated: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
     dependencies:
-      ms: 2.1.1
+      ms: 2.1.3
     dev: false
 
   /debug/3.2.7:
@@ -22672,7 +22673,7 @@ packages:
       bn.js: 2.0.4
       brorand: 1.1.0
       hash.js: 1.1.7
-      inherits: 2.0.1
+      inherits: 2.0.4
     dev: false
 
   /elliptic/6.5.4:
@@ -25775,7 +25776,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4_supports-color@6.1.0
+      debug: 4.3.4
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
@@ -26508,7 +26509,7 @@ packages:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
     dev: false
@@ -33636,7 +33637,7 @@ packages:
     deprecated: This module has been superseded by the multiformats module
     dependencies:
       base-x: 3.0.9
-      buffer: 5.6.1
+      buffer: 5.7.1
     dev: false
 
   /multibase/0.7.0:
@@ -33644,7 +33645,7 @@ packages:
     deprecated: This module has been superseded by the multiformats module
     dependencies:
       base-x: 3.0.9
-      buffer: 5.6.1
+      buffer: 5.7.1
     dev: false
 
   /multicast-dns-service-types/1.1.0:
@@ -33668,14 +33669,14 @@ packages:
     resolution: {integrity: sha512-NDd7FeS3QamVtbgfvu5h7fd1IlbaC4EQ0/pgU4zqE2vdHCmBGsUa0TiM8/TdSeG6BMPC92OOCf8F1ocE/Wkrrg==}
     deprecated: This module has been superseded by the multiformats module
     dependencies:
-      buffer: 5.6.1
+      buffer: 5.7.1
       varint: 5.0.2
     dev: false
 
   /multihashes/0.4.21:
     resolution: {integrity: sha512-uVSvmeCWf36pU2nB4/1kzYZjsXD9vofZKpgudqkceYY5g2aZZXJ5r9lxuzoRLl1OAp28XljXsEJ/X/85ZsKmKw==}
     dependencies:
-      buffer: 5.6.1
+      buffer: 5.7.1
       multibase: 0.7.0
       varint: 5.0.2
     dev: false
@@ -41209,7 +41210,7 @@ packages:
     resolution: {integrity: sha512-yqiOCEoA4/IShXkY3WKwP5PvZhmoOOD8clsKA7EEcRILMkTEYHCQ21HDCAcVpmIxZq4LyZvWeRJ6quIyHk1caA==}
     dependencies:
       bluebird: 3.7.2
-      buffer: 5.6.1
+      buffer: 5.7.1
       eth-lib: 0.1.29
       fs-extra: 4.0.3
       got: 7.1.0
