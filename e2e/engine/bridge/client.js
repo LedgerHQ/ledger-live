@@ -3,12 +3,12 @@ import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs/Subject";
 import type { AccountRaw } from "@ledgerhq/live-common/lib/types";
-import { store } from "../../src/context/LedgerStore";
-import { importSettings } from "../../src/actions/settings";
-import { setAccounts } from "../../src/actions/accounts";
-import { acceptTerms } from "../../src/logic/terms";
-import accountModel from "../../src/logic/accountModel";
-import { navigate } from "../../src/rootnavigation";
+import { store } from "../../../src/context/LedgerStore";
+import { importSettings } from "../../../src/actions/settings";
+import { setAccounts } from "../../../src/actions/accounts";
+import { acceptTerms } from "../../../src/logic/terms";
+import accountModel from "../../../src/logic/accountModel";
+import { navigate } from "../../../src/rootnavigation";
 
 let ws: WebSocket;
 

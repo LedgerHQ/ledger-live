@@ -22,7 +22,7 @@ type Props = {
   event?: string,
   eventProperties?: { [key: string]: any },
   style?: *,
-  touchableTestID?: string,
+  testID?: string,
 };
 
 export default class Touchable extends Component<
@@ -67,7 +67,7 @@ export default class Touchable extends Component<
       children,
       event,
       eventProperties,
-      touchableTestID,
+      testID,
       ...rest
     } = this.props;
     const { pending } = this.state;
@@ -79,7 +79,7 @@ export default class Touchable extends Component<
         onPress={this.onPress}
         disabled={disabled}
         hitSlop={defaultHitSlop}
-        testID={touchableTestID ?? event}
+        testID={testID ?? event}
         {...rest}
       >
         {children}

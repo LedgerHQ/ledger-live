@@ -188,7 +188,7 @@ function PortfolioHeader({
         </Box>
       )}
       <Box>
-        <Touchable onPress={onSettingsButtonPress} testID="settings-icon">
+        <Touchable onPress={onSettingsButtonPress}>
           <SettingsMedium size={24} color={"neutral.c100"} />
         </Touchable>
       </Box>

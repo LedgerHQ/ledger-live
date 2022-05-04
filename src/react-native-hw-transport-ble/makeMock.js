@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import { take, first, filter } from "rxjs/operators";
 import type { ApduMock } from "../logic/createAPDUMock";
 import { hookRejections } from "../logic/debugReject";
-import { e2eBridgeSubject } from "../../e2e/bridge/client";
+import { e2eBridgeSubject } from "../../e2e/engine/bridge/client";
 
 export type DeviceMock = {
   id: string,

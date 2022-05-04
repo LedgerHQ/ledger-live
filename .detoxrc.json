@@ -24,7 +24,7 @@
       "build": "cd android && ENVFILE=.env.mock ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Nexus_6_API_30"
+        "avdName": "Nexus_5X_API_29_x86"
       }
     },
     "android.staging": {
@@ -33,16 +33,7 @@
       "build": "cd android && ENVFILE=.env.mock ./gradlew assembleStagingRelease assembleAndroidTest -DtestBuildType=stagingRelease && cd ..",
       "type": "android.emulator",
       "device": {
-        "avdName": "Nexus_6_API_30"
-      }
-    },
-    "android.staging-ci": {
-      "binaryPath": "android/app/build/outputs/apk/stagingRelease/app-x86-stagingRelease.apk",
-      "testBinaryPath": "android/app/build/outputs/apk/androidTest/stagingRelease/app-stagingRelease-androidTest.apk",
-      "build": "cd android && ENVFILE=.env.mock ./gradlew assembleStagingRelease assembleAndroidTest -DtestBuildType=stagingRelease -PwithTestButler --warning-mode all && cd ..",
-      "type": "android.emulator",
-      "device": {
-        "avdName": "Nexus_6_API_30"
+        "avdName": "Nexus_5X_API_29_x86"
       }
     }
   }

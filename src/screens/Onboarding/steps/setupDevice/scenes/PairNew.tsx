@@ -30,12 +30,7 @@ const Next = ({
   const { t } = useTranslation();
 
   return (
-    <Button
-      type="main"
-      size="large"
-      onPress={onNext}
-      testID="Onboarding - Pair New Nano"
-    >
+    <Button type="main" size="large" onPress={onNext}>
       {t(`onboarding.stepPairNew.${deviceModelId}.cta`)}
     </Button>
   );

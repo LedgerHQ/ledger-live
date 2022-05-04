@@ -1,11 +1,9 @@
 {
-  "globalSetup": "./global-setup.js",
-  "globalTeardown": "./global-teardown.js",
-  "setupFilesAfterEnv": ["./setup.js"],
   "testEnvironment": "./environment",
   "testRunner": "jest-circus/runner",
-  "testTimeout": 300000,
+  "testTimeout": 120000,
   "testRegex": "\\.spec\\.js$",
   "reporters": ["detox/runners/jest/streamlineReporter"],
-  "verbose": true
+  "verbose": true,
+  "setupFilesAfterEnv": ["./init.js"]
 }
