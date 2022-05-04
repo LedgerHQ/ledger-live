@@ -11,7 +11,7 @@ export type RatingsState = {
   currentRouteName?: string,
   /** The happy moment that triggered the oppening of the ratings modal */
   happyMoment?: RatingsHappyMoment,
-  /**  */
+  /** Data related to the user's app usage. We use this data to prompt the rating flow on certain conditions only */
   dataOfUser?: RatingsDataOfUser,
 };
 
