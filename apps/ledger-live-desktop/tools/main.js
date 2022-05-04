@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const Electron = require("./utils/Electron");
 const WebpackWorker = require("./utils/WebpackWorker");
+const processReleaseNotes = require("./utils/processReleaseNotes");
 const WebpackBar = require("webpackbar");
 const webpack = require("webpack");
 const yargs = require("yargs");
@@ -190,6 +191,12 @@ const startDev = async argv => {
   );
   const electron = new Electron("./.webpack/main.bundle.js");
 
+  try {
+    await processReleaseNotes();
+  } catch (error) {
+    console.log(error);
+  }
+
   await Promise.all([
     mainWorker.watch(() => {
       electron.reload();
@@ -236,6 +243,12 @@ const build = async argv => {
   const rendererWorker = new WebpackWorker("renderer", rendererConfig);
   const preloaderWorker = new WebpackWorker("preloader", preloaderConfig);
   const webviewPreloaderWorker = new WebpackWorker("preloader", webviewPreloaderConfig);
+
+  try {
+    await processReleaseNotes();
+  } catch (error) {
+    console.log(error);
+  }
 
   await Promise.all([
     mainWorker.bundle(),

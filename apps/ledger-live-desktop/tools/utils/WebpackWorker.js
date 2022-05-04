@@ -21,7 +21,7 @@ class WebpackWorker {
     });
   }
 
-  bundle() {
+  bundle(cb) {
     return new Promise((resolve, reject) => {
       this.compiler.run((err, stats) => {
         if (err) {
