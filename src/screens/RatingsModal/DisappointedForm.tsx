@@ -23,7 +23,7 @@ const StyledWebview = styled(WebView)`
 `;
 
 type Props = {
-  setStep: any;
+  setStep: Function;
 };
 
 const DisappointedForm = ({ setStep }: Props) => {

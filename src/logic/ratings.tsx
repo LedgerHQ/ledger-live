@@ -21,10 +21,20 @@ import {
 import { languageSelector } from "../reducers/settings";
 import { track } from "../analytics";
 
-export type HappyMoment = {
+export type RatingsHappyMoment = {
     route_name: string, // Name of the route that will trigger the rating flow
     timer: number, // In milliseconds, delay before triggering the rating flow
     type: "on_enter" | "on_leave", // Wether the rating flow is triggered when entering or leaving the screen
+};
+
+export type RatingsDataOfUser = {
+    dateOfNextAllowedRequest?: Date,
+    alreadyClosedFromEnjoyStep?: boolean,
+    alreadyRated?: boolean,
+    doNotAskAgain?: boolean,
+    appFirstStartDate?: Date,
+    numberOfAppStarts?: number,
+    numberOfAppStartsSinceLastCrash?: number,
 };
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
@@ -147,7 +157,7 @@ const useRatings = () => {
   ]);
 
   const isHappyMomentTriggered = useCallback(
-    (happyMoment: HappyMoment, ratingsNewRoute?: string) =>
+    (happyMoment: RatingsHappyMoment, ratingsNewRoute?: string) =>
       (happyMoment.type === "on_enter" &&
         happyMoment.route_name === ratingsNewRoute) ||
       (happyMoment.type === "on_leave" &&

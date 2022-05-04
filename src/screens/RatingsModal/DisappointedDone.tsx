@@ -5,7 +5,7 @@ import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 
 type Props = {
-  closeModal: any;
+  closeModal: Function;
 };
 
 const DisappointedDone = ({ closeModal }: Props) => {

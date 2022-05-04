@@ -22,7 +22,7 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
+  closeModal: Function;
 };
 
 const Enjoy = ({ closeModal }: Props) => {
@@ -56,7 +56,7 @@ const Enjoy = ({ closeModal }: Props) => {
       dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
       setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
     } else if (ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay) {
-      const dateOfNextAllowedRequest: any = add(
+      const dateOfNextAllowedRequest: Date = add(
         Date.now(),
         ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
       );

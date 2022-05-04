@@ -21,8 +21,8 @@ const NotNowButton = styled(TouchableOpacity)`
 `;
 
 type Props = {
-  closeModal: any;
-  setStep: any;
+  closeModal: Function;
+  setStep: Function;
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
@@ -38,7 +38,7 @@ const Init = ({ closeModal, setStep }: Props) => {
     setStep("disappointed");
     track("Disappointed", { source: ratingsHappyMoment.route_name });
     if (ratingsFeature?.params?.conditions?.disappointed_delay) {
-      const dateOfNextAllowedRequest: any = add(
+      const dateOfNextAllowedRequest: Date = add(
         Date.now(),
         ratingsFeature?.params?.conditions?.disappointed_delay,
       );
@@ -60,7 +60,7 @@ const Init = ({ closeModal, setStep }: Props) => {
     closeModal();
     track("NotNow", { source: ratingsHappyMoment.route_name });
     if (ratingsFeature?.params?.conditions?.not_now_delay) {
-      const dateOfNextAllowedRequest: any = add(
+      const dateOfNextAllowedRequest: Date = add(
         Date.now(),
         ratingsFeature?.params?.conditions?.not_now_delay,
       );

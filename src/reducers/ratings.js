@@ -2,7 +2,7 @@
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import type { State } from ".";
-import type { HappyMoment } from "../logic/ratings";
+import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 
 export type RatingsState = {
   /** Boolean indicating wether the ratings flow modal is opened or closed */
@@ -10,9 +10,9 @@ export type RatingsState = {
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string,
   /** The happy moment that triggered the oppening of the ratings modal */
-  happyMoment?: HappyMoment,
+  happyMoment?: RatingsHappyMoment,
   /**  */
-  dataOfUser?: any,
+  dataOfUser?: RatingsDataOfUser,
 };
 
 const initialState: RatingsState = {
@@ -39,14 +39,14 @@ const handlers: Object = {
   }),
   RATINGS_SET_HAPPY_MOMENT: (
     state: RatingsState,
-    { happyMoment }: { happyMoment?: HappyMoment },
+    { happyMoment }: { happyMoment?: RatingsHappyMoment },
   ) => ({
     ...state,
     happyMoment,
   }),
   RATINGS_SET_DATA_OF_USER: (
     state: RatingsState,
-    { dataOfUser }: { dataOfUser?: any },
+    { dataOfUser }: { dataOfUser?: RatingsDataOfUser },
   ) => ({
     ...state,
     dataOfUser,
