@@ -1,10 +1,9 @@
-import jwtDecode from "jwt-decode";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
-import { makeEmptyTokenAccount } from "../../../account";
+import jwtDecode from "jwt-decode";
+import { getProviderConfig } from "../";
+import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { Account, SubAccount, TokenAccount } from "../../../types";
 import type { CheckQuoteStatus, ExchangeRate } from "../types";
-import { getAccountCurrency } from "../../../account";
-import { getProviderNameAndSignature } from "../";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {
@@ -160,7 +159,7 @@ export const shouldShowLoginBanner = ({
     return false;
   }
 
-  const providerConfig = getProviderNameAndSignature(provider);
+  const providerConfig = getProviderConfig(provider);
 
   if (!providerConfig.needsBearerToken) {
     return false;
@@ -181,7 +180,7 @@ export const shouldShowKYCBanner = ({
     return false;
   }
 
-  const providerConfig = getProviderNameAndSignature(provider);
+  const providerConfig = getProviderConfig(provider);
 
   if (!providerConfig.needsKYC) {
     return false;

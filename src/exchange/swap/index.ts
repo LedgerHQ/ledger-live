@@ -1,29 +1,29 @@
 import type { SwapProviderConfig } from "../";
-import getExchangeRates from "./getExchangeRates";
-import getStatus from "./getStatus";
-import getProviders from "./getProviders";
-import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import getKYCStatus from "./getKYCStatus";
-import submitKYC from "./submitKYC";
-import initSwap from "./initSwap";
-import checkQuote from "./checkQuote";
-import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import { getEnv } from "../../env";
 import {
-  JSONRPCResponseError,
-  JSONDecodeError,
-  NoIPHeaderError,
-  CurrencyNotSupportedError,
-  CurrencyDisabledError,
+  AccessDeniedError,
   CurrencyDisabledAsInputError,
   CurrencyDisabledAsOutputError,
+  CurrencyDisabledError,
   CurrencyNotSupportedByProviderError,
+  CurrencyNotSupportedError,
+  JSONDecodeError,
+  JSONRPCResponseError,
+  NoIPHeaderError,
+  NotImplementedError,
   TradeMethodNotSupportedError,
   UnexpectedError,
-  NotImplementedError,
   ValidationError,
-  AccessDeniedError,
 } from "../../errors";
+import checkQuote from "./checkQuote";
+import getCompleteSwapHistory from "./getCompleteSwapHistory";
+import getExchangeRates from "./getExchangeRates";
+import getKYCStatus from "./getKYCStatus";
+import getProviders from "./getProviders";
+import getStatus from "./getStatus";
+import initSwap from "./initSwap";
+import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
+import submitKYC from "./submitKYC";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -82,10 +82,7 @@ const swapProviders: Record<string, SwapProviderConfig> = {
   ftxus: ftx,
 };
 
-// FIXME: rename to getProviderConfig
-const getProviderNameAndSignature = (
-  providerName: string
-): SwapProviderConfig => {
+const getProviderConfig = (providerName: string): SwapProviderConfig => {
   const res = swapProviders[providerName.toLowerCase()];
 
   if (!res) {
@@ -177,7 +174,7 @@ export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
 
 export {
   getSwapAPIBaseURL,
-  getProviderNameAndSignature,
+  getProviderConfig,
   getProviders,
   getStatus,
   getExchangeRates,

@@ -1,29 +1,30 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { log } from "@ledgerhq/logs";
-import { from } from "rxjs";
-import secp256k1 from "secp256k1";
-import invariant from "invariant";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
-import { delay } from "../../promise";
-import Exchange from "../hw-app-exchange/Exchange";
-import { mockInitSwap } from "./mock";
-import perFamily from "../../generated/exchange";
+import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { from, Observable } from "rxjs";
+import secp256k1 from "secp256k1";
+import { getCurrencyExchangeConfig } from "../";
 import {
   getAccountCurrency,
-  getMainAccount,
   getAccountUnit,
+  getMainAccount,
 } from "../../account";
-import network from "../../network";
 import { getAccountBridge } from "../../bridge";
-import { BigNumber } from "bignumber.js";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
-import type { SwapRequestEvent, InitSwapInput } from "./types";
-import { Observable } from "rxjs";
-import { withDevice } from "../../hw/deviceAccess";
-import { getProviderNameAndSignature, getSwapAPIBaseURL } from "./";
-import { getCurrencyExchangeConfig } from "../";
 import { getEnv } from "../../env";
-import { RateTypes, ExchangeTypes } from "../hw-app-exchange/Exchange";
+import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
+import perFamily from "../../generated/exchange";
+import { withDevice } from "../../hw/deviceAccess";
+import network from "../../network";
+import { delay } from "../../promise";
+import Exchange, {
+  ExchangeTypes,
+  RateTypes,
+} from "../hw-app-exchange/Exchange";
+import { getProviderConfig, getSwapAPIBaseURL } from "./";
+import { mockInitSwap } from "./mock";
+import type { InitSwapInput, SwapRequestEvent } from "./types";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
@@ -71,7 +72,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getProviderNameAndSignature(provider);
+        const swapProviderConfig = getProviderConfig(provider);
 
         const { needsBearerToken } = swapProviderConfig;
 
