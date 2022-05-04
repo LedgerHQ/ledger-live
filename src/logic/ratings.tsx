@@ -151,7 +151,6 @@ const useRatings = () => {
   const triggerRouteChange = useCallback(
     ratingsNewRoute => {
       if (!areRatingsConditionsMet()) return;
-      console.log("CONDITIONS MET");
 
       if (ratingsHappyMoment?.timeout) {
         clearTimeout(ratingsHappyMoment?.timeout);
