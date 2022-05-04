@@ -147,7 +147,7 @@ export const getFTXURL = ({
   return `https://${domain}/${type}?hideFrame=true&ledgerLive=true`;
 };
 
-// Node: used in UI (LLD / LLM)
+// Note: used in UI (LLD / LLM)
 export const shouldShowLoginBanner = ({
   provider,
   token,
@@ -168,7 +168,7 @@ export const shouldShowLoginBanner = ({
   return !token || isJwtExpired(token);
 };
 
-// Node: used in UI (LLD / LLM)
+// Note: used in UI (LLD / LLM)
 export const shouldShowKYCBanner = ({
   provider,
   kycStatus,
