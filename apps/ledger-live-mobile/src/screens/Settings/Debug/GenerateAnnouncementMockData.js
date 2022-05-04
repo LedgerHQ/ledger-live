@@ -101,60 +101,51 @@ export default function AddMockAnnouncementButton({
       <SettingsRow title={title} onPress={onOpen} />
       <BottomModal isOpened={open} onClose={onClose} style={styles.root}>
         <TextInput
-          style={styles.textInput}
           placeholder="platform separated by ','"
           value={notifPlatform}
           onChangeText={setNotifPlatform}
         />
         <TextInput
-          style={styles.textInput}
           placeholder="currencies separated by ','"
           value={notifCurrencies}
           onChangeText={setNotifCurrencies}
         />
         <TextInput
-          style={styles.textInput}
           placeholder="deviceVersion separated by ','"
           value={notifDeviceVersion}
           onChangeText={setNotifDeviceVersion}
         />
         <TextInput
-          style={styles.textInput}
           placeholder="deviceModelId separated by ','"
           value={notifDeviceModelId}
           onChangeText={setNotifDeviceModelId}
         />
 
         <TextInput
-          style={styles.textInput}
           placeholder="deviceApps separated by ','"
           value={notifDeviceApps}
           onChangeText={setNotifDeviceApps}
         />
 
         <TextInput
-          style={styles.textInput}
           placeholder="languages separated by ','"
           value={notifLanguages}
           onChangeText={setNotifLanguages}
         />
 
         <TextInput
-          style={styles.textInput}
           placeholder="app versions separated by ','"
           value={notifAppVersions}
           onChangeText={setNotifAppVersions}
         />
 
         <TextInput
-          style={styles.textInput}
           placeholder="live-common versions separated by ','"
           value={notifLiveCommonVersions}
           onChangeText={setNotifLiveCommonVersions}
         />
 
         <TextInput
-          style={styles.textInput}
           placeholder="link"
           value={announcementLink}
           onChangeText={setAnnouncementLink}
@@ -172,12 +163,6 @@ export default function AddMockAnnouncementButton({
 
 const styles = StyleSheet.create({
   root: {},
-  textInput: {
-    margin: 16,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    borderRadius: 4,
-    paddingHorizontal: 16,
-  },
   cta: {
     height: 40,
     margin: 16,

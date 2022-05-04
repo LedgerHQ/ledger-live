@@ -238,6 +238,7 @@ function SwapForm({
   }, [fromAccount, fromParentAccount, transaction]);
 
   useEffect(() => {
+    // update tx after a form navigation from fees edit to main screen
     if (route.params?.transaction) {
       setTransaction(route.params.transaction);
     }

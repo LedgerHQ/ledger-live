@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 import Touchable from "./Touchable";
 import ExternalLink from "../icons/ExternalLink";
@@ -29,7 +29,7 @@ const Link = ({
   fontSize = 12,
 }: Props) => {
   const { colors } = useTheme();
-  const c = color || colors.live;
+  const c = color || colors.primary.c80;
   return (
     <Touchable
       event={event}

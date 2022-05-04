@@ -77,10 +77,12 @@ function OnboardingStepTerms({ navigation }: *) {
             onPress={onSwitch}
             style={styles.switchRow}
           >
-            <CheckBox style={styles.checkbox} isChecked={toggle} />
-            <LText semiBold style={styles.switchLabel}>
-              <Trans i18nKey="Terms.switchLabelFull" />
-            </LText>
+            <>
+              <CheckBox style={styles.checkbox} isChecked={toggle} />
+              <LText semiBold style={styles.switchLabel}>
+                <Trans i18nKey="Terms.switchLabelFull" />
+              </LText>
+            </>
           </Touchable>
           <Button
             event="Onboarding - ToU accepted"

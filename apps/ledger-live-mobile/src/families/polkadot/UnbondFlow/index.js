@@ -77,7 +77,7 @@ function UnbondFlow() {
         name={ScreenName.PolkadotUnbondValidationSuccess}
         component={ValidationSuccess}
         options={{
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
           headerLeft: null,
           headerRight: null,

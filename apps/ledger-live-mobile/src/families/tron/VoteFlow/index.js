@@ -115,13 +115,13 @@ function VoteFlow() {
       <Stack.Screen
         name={ScreenName.VoteValidationError}
         component={VoteValidationError}
-        options={{ headerTitle: null }}
+        options={{ headerTitle: "" }}
       />
       <Stack.Screen
         name={ScreenName.VoteValidationSuccess}
         component={VoteValidationSuccess}
         options={{
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
           headerLeft: null,
           headerRight: null,

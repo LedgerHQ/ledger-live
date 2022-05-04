@@ -104,7 +104,6 @@ const BottomModal = ({
           </View>
         </View>
       </ReactNativeModal>
-    </ButtonUseTouchable.Provider>
   );
 };
 

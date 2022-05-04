@@ -40,7 +40,9 @@ export const InstallProgress = ({
             i18nKey={
               updating
                 ? "AppAction.update.loading"
-                : "AppAction.install.loading.button"
+                : installing
+                ? "AppAction.install.loading.button"
+                : "AppAction.install.loading.queued"
             }
           />
         </LText>

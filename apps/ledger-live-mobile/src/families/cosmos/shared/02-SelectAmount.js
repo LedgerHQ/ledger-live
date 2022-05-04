@@ -2,7 +2,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Keyboard, TouchableOpacity } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
@@ -16,7 +15,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";
 import Button from "../../../components/Button";
@@ -126,7 +125,7 @@ function DelegationAmount({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <KeyboardView>
         <View style={styles.main}>
           <CurrencyInput
@@ -135,7 +134,6 @@ function DelegationAmount({ navigation, route }: Props) {
             onChange={setValue}
             inputStyle={styles.inputStyle}
             hasError={error}
-            autoFocus
           />
           <View style={styles.ratioButtonContainer}>
             {ratioButtons.map(({ label, value: v }) => (
@@ -145,10 +143,9 @@ function DelegationAmount({ navigation, route }: Props) {
                   styles.ratioButton,
                   value.eq(v)
                     ? {
-                        borderColor: colors.live,
-                        backgroundColor: colors.live,
+                        backgroundColor: colors.primary.c80,
                       }
-                    : { borderColor: colors.grey },
+                    : { borderColor: colors.neutral.c60 },
                 ]}
                 onPress={() => {
                   Keyboard.dismiss();
@@ -157,7 +154,7 @@ function DelegationAmount({ navigation, route }: Props) {
               >
                 <LText
                   style={[styles.ratioLabel]}
-                  color={value.eq(v) ? "white" : "grey"}
+                  color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
                 >
                   {label}
                 </LText>
@@ -166,11 +163,13 @@ function DelegationAmount({ navigation, route }: Props) {
           </View>
         </View>
 
-        <View style={[styles.footer, { backgroundColor: colors.background }]}>
+        <View
+          style={[styles.footer, { backgroundColor: colors.background.main }]}
+        >
           {error && !value.eq(0) && (
             <View style={styles.labelContainer}>
-              <Warning size={16} color={colors.alert} />
-              <LText style={[styles.assetsRemaining]} color="alert">
+              <Warning size={16} color={colors.error.c100} />
+              <LText style={[styles.assetsRemaining]} color={colors.error.c100}>
                 <Trans
                   i18nKey={
                     value.lt(min)
@@ -197,8 +196,11 @@ function DelegationAmount({ navigation, route }: Props) {
           )}
           {max.isZero() && (
             <View style={styles.labelContainer}>
-              <Check size={16} color={colors.success} />
-              <LText style={[styles.assetsRemaining]} color="success">
+              <Check size={16} color={colors.success.c100} />
+              <LText
+                style={[styles.assetsRemaining]}
+                color={colors.success.c100}
+              >
                 <Trans
                   i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
                 />
@@ -253,7 +255,7 @@ function DelegationAmount({ navigation, route }: Props) {
           />
         </View>
       </KeyboardView>
-    </SafeAreaView>
+    </View>
   );
 }
 

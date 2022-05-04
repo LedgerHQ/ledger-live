@@ -11,7 +11,6 @@ import Checkbox from "../../components/CheckBox";
 import Button from "../../components/Button";
 import LiveIcon from "../../icons/LiveLogo";
 import LText from "../../components/LText";
-import CloseIcon from "../../icons/Close";
 import InfoIcon from "../../icons/Info";
 import { rgba } from "../../colors";
 import AppIcon from "./AppIcon";
@@ -58,10 +57,6 @@ const DAppDisclaimer = ({
       isOpened={isOpened}
       onClose={onClose}
     >
-      <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
-        <CloseIcon size={18} />
-      </TouchableOpacity>
-
       <View style={[styles.flowRow, styles.head]}>
         <View style={[styles.headElements, styles.roundLogoContainer]}>
           <LiveIcon size={31} color="blue" />
@@ -140,12 +135,6 @@ const styles = StyleSheet.create({
   },
   textCenter: {
     textAlign: "center",
-  },
-  closeIcon: {
-    position: "absolute",
-    top: 8,
-    right: 16,
-    opacity: 0.5,
   },
   flowRow: {
     display: "flex",

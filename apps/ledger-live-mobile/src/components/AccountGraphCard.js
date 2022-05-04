@@ -218,9 +218,6 @@ const styles = StyleSheet.create({
     }),
   },
   warningWrapper: {
-    borderWidth: 1,
-    borderColor: "red",
-    borderStyle: "solid",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",

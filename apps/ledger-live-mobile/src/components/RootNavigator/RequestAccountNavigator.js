@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import RequestAccountSelectCrypto from "../../screens/RequestAccount/01-SelectCrypto";
 import RequestAccountSelectAccount from "../../screens/RequestAccount/02-SelectAccount";
@@ -23,7 +23,6 @@ export default function RequestAccountNavigator() {
     <Stack.Navigator
       screenOptions={{
         ...stackNavConfig,
-        headerMode: "float",
       }}
     >
       <Stack.Screen

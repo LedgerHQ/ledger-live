@@ -92,10 +92,7 @@ class EditAccountName extends PureComponent<Props, State> {
         forceInset={forceInset}
       >
         <KeyboardView style={styles.body}>
-          <NavigationScrollView
-            contentContainerStyle={styles.root}
-            keyboardShouldPersistTaps="handled"
-          >
+          <NavigationScrollView keyboardShouldPersistTaps="handled">
             <TextInput
               autoFocus
               style={[styles.textInputAS, { color: colors.darkBlue }]}

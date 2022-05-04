@@ -11,7 +11,6 @@ import type { TranslatableString } from "@ledgerhq/live-common/lib/platform/type
 import { languageSelector } from "../../reducers/settings";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import AppIcon from "../../screens/Platform/AppIcon";
-import CloseIcon from "../../icons/Close";
 import BottomModal from "../BottomModal";
 import LText from "../LText";
 
@@ -52,9 +51,6 @@ const InfoPanel = ({
       isOpened={isOpened}
       onClose={onClose}
     >
-      <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
-        <CloseIcon size={18} />
-      </TouchableOpacity>
       <View style={{ ...styles.flexRow, ...styles.titleContainer }}>
         {icon ? (
           <View style={styles.appIcon}>
@@ -146,12 +142,6 @@ const styles = StyleSheet.create({
   },
   externalLinkIcon: {
     paddingLeft: 6,
-  },
-  closeIcon: {
-    position: "absolute",
-    top: 8,
-    right: 16,
-    opacity: 0.5,
   },
 });
 

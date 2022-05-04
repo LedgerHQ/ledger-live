@@ -4,7 +4,8 @@
         <item name="android:layoutDirection">ltr</item>
         <!-- Customize your theme here. -->
         <item name="android:textColor">#000000</item>
-        <item name="colorAccent">#6490F1</item>
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <item name="colorAccent">#bdb3ff</item>
         <item name="backgroundColor">@color/background_light</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="android:statusBarColor">@color/primary_dark</item>

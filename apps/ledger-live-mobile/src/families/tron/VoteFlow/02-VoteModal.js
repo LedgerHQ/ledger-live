@@ -17,7 +17,6 @@ import Switch from "../../../components/Switch";
 import BottomModal from "../../../components/BottomModal";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
-import Close from "../../../icons/Close";
 import Trash from "../../../icons/Trash";
 import Check from "../../../icons/Check";
 
@@ -120,10 +119,6 @@ const VoteModal = ({
                 {name || address}
               </LText>
             </View>
-
-            <TouchableOpacity style={styles.topButton} onPress={onClose}>
-              <Close size={16} color={colors.grey} />
-            </TouchableOpacity>
           </View>
           <View style={styles.wrapper}>
             <TextInput

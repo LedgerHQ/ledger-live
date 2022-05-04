@@ -11,21 +11,22 @@ import {
 } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useNftMetadata, decodeNftId } from "@ledgerhq/live-common/lib/nft";
 
 import type { NFT, CollectionWithNFT } from "@ledgerhq/live-common/lib/nft";
+import Clipboard from "@react-native-community/clipboard";
+
+import { Button, Icons } from "@ledgerhq/native-ui";
 
 import { accountSelector } from "../../reducers/accounts";
 import NftLinksPanel from "./NftLinksPanel";
 import { ScreenName, NavigatorName } from "../../const";
-import SendIcon from "../../icons/Send";
 import { rgba } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
-import Button from "../Button";
 import LText from "../LText";
 
 type Props = {
@@ -44,19 +45,59 @@ const Section = ({
   value,
   style,
   children,
+  copyAvailable,
+  copiedString,
 }: {
   title: string,
   value?: any,
   style?: Object,
   children?: React$Node,
-}) => (
-  <View style={style}>
-    <LText style={styles.sectionTitle} semiBold>
-      {title}
-    </LText>
-    {value ? <LText>{value}</LText> : children}
-  </View>
-);
+  copyAvailable?: boolean,
+  copiedString?: string,
+}) => {
+  const [copied, setCopied] = useState(false);
+  const [timeoutFunction, setTimeoutFunction] = useState(null);
+  const copy = useCallback(() => {
+    Clipboard.setString(value);
+    setCopied(true);
+    setTimeoutFunction(
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000),
+    );
+    return clearTimeout(timeoutFunction);
+  }, [value, timeoutFunction]);
+
+  return (
+    <View style={style}>
+      <View
+        flexDirection="row"
+        alignItems="center"
+        style={{ marginBottom: 10 }}
+      >
+        <LText style={styles.sectionTitle} semiBold>
+          {title}
+        </LText>
+        {copyAvailable ? (
+          <View flexDirection="row" alignItems="center">
+            <TouchableOpacity onPress={copy} style={{ marginLeft: 10 }}>
+              <Icons.CopyMedium
+                size={16}
+                color={copied ? "neutral.c80" : "primary.c80"}
+              />
+            </TouchableOpacity>
+            {copied ? (
+              <LText color="neutral.c80" marginLeft={3}>
+                {copiedString}
+              </LText>
+            ) : null}
+          </View>
+        ) : null}
+      </View>
+      {value ? <LText>{value}</LText> : children}
+    </View>
+  );
+};
 
 const NftViewer = ({ route }: Props) => {
   const { params } = route;
@@ -171,6 +212,15 @@ const NftViewer = ({ route }: Props) => {
     return null;
   }, [isLoading, metadata]);
 
+  const nftImage = (
+    <NftImage
+      resizeMode="contain"
+      style={styles.image}
+      src={metadata?.media}
+      status={status}
+    />
+  );
+
   return (
     <View>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -192,29 +242,39 @@ const NftViewer = ({ route }: Props) => {
           </Skeleton>
 
           <View style={styles.imageContainer}>
-            <NftImage
-              style={styles.image}
-              src={metadata?.media}
-              status={status}
-              hackWidth={300}
-            />
+            {metadata?.media ? (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(NavigatorName.NftNavigator, {
+                    screen: ScreenName.NftImageViewer,
+                    params: {
+                      media: metadata.media,
+                    },
+                  })
+                }
+              >
+                {nftImage}
+              </TouchableOpacity>
+            ) : (
+              nftImage
+            )}
           </View>
 
           <View style={styles.buttons}>
             <View style={styles.sendButtonContainer}>
               <Button
-                type="primary"
-                IconLeft={SendIcon}
-                containerStyle={styles.sendButton}
-                title={t("account.send")}
+                type="main"
+                Icon={Icons.ArrowFromBottomMedium}
+                iconPosition="left"
                 onPress={goToRecipientSelection}
-              />
+              >
+                <Trans i18nKey="account.send" />
+              </Button>
             </View>
             <View style={styles.ellipsisButtonContainer}>
               <Button
-                type="primary"
-                containerStyle={styles.ellipsisButton}
-                title="•••"
+                type="main"
+                Icon={Icons.OthersMedium}
                 onPress={() => setBottomModalOpen(true)}
               />
             </View>
@@ -247,11 +307,18 @@ const NftViewer = ({ route }: Props) => {
           <Section
             title={t("nft.viewer.tokenContract")}
             value={collection.contract}
+            copyAvailable
+            copiedString={t("nft.viewer.tokenContractCopied")}
           />
 
           <View style={styles.hr} />
 
-          <Section title={t("nft.viewer.tokenId")} value={nft.tokenId} />
+          <Section
+            title={t("nft.viewer.tokenId")}
+            value={nft.tokenId}
+            copyAvailable
+            copiedString={t("nft.viewer.tokenIdCopied")}
+          />
 
           {collection.standard === "ERC1155" && (
             <>
@@ -410,7 +477,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    marginBottom: 6,
     color: "grey",
   },
   partDescriptionSkeleton: {

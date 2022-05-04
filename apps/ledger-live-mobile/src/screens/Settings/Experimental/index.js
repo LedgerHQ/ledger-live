@@ -19,7 +19,7 @@ export default function ExperimentalSettings() {
   return (
     <>
       <KeyboardView>
-        <NavigationScrollView contentContainerStyle={styles.root}>
+        <NavigationScrollView>
           <TrackScreen category="Settings" name="Experimental" />
           <View style={[styles.container, { backgroundColor: colors.card }]}>
             <View style={styles.disclaimerContainer}>

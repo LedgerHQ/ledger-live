@@ -73,7 +73,7 @@ class ExportAccounts extends PureComponent<Props, State> {
     if (!this.chunks) return null;
 
     return (
-      <NavigationScrollView contentContainerStyle={styles.root}>
+      <NavigationScrollView>
         <View style={styles.qrContainer}>
           <QRCode size={size} value={this.chunks[frame]} />
         </View>

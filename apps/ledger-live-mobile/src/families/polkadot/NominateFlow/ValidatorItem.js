@@ -6,7 +6,7 @@ import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/i
 
 import type { PolkadotValidator } from "@ledgerhq/live-common/lib/families/polkadot/types";
 
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import CheckBox from "../../../components/CheckBox";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
@@ -30,11 +30,9 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
     isElected,
   } = item;
 
-  const onPress = useCallback(() => onSelect(item, selected), [
-    onSelect,
-    item,
-    selected,
-  ]);
+  const onPress = useCallback(() => {
+    onSelect(item, selected);
+  }, [onSelect, item, selected]);
 
   const isDisabled = disabled && !selected;
 
@@ -46,7 +44,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
     <View
       style={[
         styles.wrapper,
-        isDisabled ? { backgroundColor: colors.lightGrey } : {},
+        isDisabled ? { backgroundColor: colors.neutral.c40 } : {},
       ]}
     >
       <Touchable
@@ -55,7 +53,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         event="PolkadotNominateSelectValidatorsOpenExplorer"
       >
         <PolkadotIdenticon
-          style={isDisabled ? { backgroundColor: colors.lightGrey } : {}}
+          style={isDisabled ? { backgroundColor: colors.neutral.c40 } : {}}
           address={address}
           size={32}
         />
@@ -69,7 +67,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
           <LText
             semiBold
             style={[styles.nameText]}
-            color={isDisabled ? "grey" : "live"}
+            color={isDisabled ? colors.neutral.c70 : colors.primary.c90}
             numberOfLines={1}
           >
             {identity || address || ""}
@@ -79,7 +77,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         {isElected ? (
           <LText
             style={[styles.valueLabel]}
-            color={isOversubscribed ? "orange" : "grey"}
+            color={isOversubscribed ? colors.warning.c100 : colors.neutral.c70}
           >
             {isOversubscribed ? (
               <Trans
@@ -94,25 +92,23 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
             )}
           </LText>
         ) : (
-          <LText style={styles.valueLabel} color="grey">
+          <LText style={styles.valueLabel} color={colors.neutral.c70}>
             <Trans i18nKey="polkadot.nomination.waiting" />
           </LText>
         )}
       </View>
 
       <View style={styles.valueWrapper}>
-        <LText semiBold style={styles.valueText}>
+        <LText semiBold style={styles.valueText} color={colors.neutral.c100}>
           {formattedCommission}
         </LText>
 
-        <LText style={styles.valueLabel} color="grey">
+        <LText style={styles.valueLabel} color={colors.neutral.c70}>
           <Trans i18nKey="polkadot.nomination.commission" />
         </LText>
       </View>
 
-      <TouchableOpacity onPress={onPress} disabled={isDisabled}>
-        <CheckBox isChecked={selected} disabled={disabled} />
-      </TouchableOpacity>
+      <CheckBox onChange={onPress} isChecked={selected} disabled={isDisabled} />
     </View>
   );
 }
