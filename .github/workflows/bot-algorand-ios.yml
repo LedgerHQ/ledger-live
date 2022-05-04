@@ -81,7 +81,10 @@ jobs:
           node ./bin/index botLogProxy -p 8331 &
 
       - name: Install dependencies of BOT
-        run: yarn ci-setup-rn
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1
+          yarn ci-setup-rn
       - name: Rebuild detox
         working-directory: bot-react-native
         if: steps.cache.outputs.cache-hit == 'true'
