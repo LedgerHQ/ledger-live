@@ -5,7 +5,9 @@ import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
 import bot from "./commands/bot";
+import botLogProxy from "./commands/botLogProxy";
 import botPortfolio from "./commands/botPortfolio";
+import botSpeculosProxy from "./commands/botSpeculosProxy";
 import botTransfer from "./commands/botTransfer";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
@@ -55,7 +57,9 @@ export default {
   appsUpdateTestAll,
   balanceHistory,
   bot,
+  botLogProxy,
   botPortfolio,
+  botSpeculosProxy,
   botTransfer,
   broadcast,
   cleanSpeculos,

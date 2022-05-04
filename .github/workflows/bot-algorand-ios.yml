@@ -1,0 +1,70 @@
+name: Bot ios 'algorand on POC-BOT-RN'
+on:
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.x
+      - name: install yarn
+        run: npm i -g yarn
+      - name: kill apt-get
+        run: sudo killall -w apt-get apt || echo OK
+      - name: env
+        working-directory: bot-react-native
+        run: |
+          echo GITHUB_SHA=${GITHUB_SHA} >> .ci.env
+          echo GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} >> .ci.env
+          echo GITHUB_RUN_ID=${{ github.run_id }} >> .ci.env
+          echo GITHUB_WORKFLOW=${{ github.workflow }} >> .ci.env
+          echo SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }} >> .ci.env
+          echo SLACK_CHANNEL=live-bot-mobile >> .ci.env
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1
+          yarn ci-setup-cli
+      - name: LOGGER
+        env:
+          BOT_LOG_PROXY_FILE: ../botreport/logs.txt
+        run: |
+          mkdir botreport
+          cd cli
+          node ./bin/index botLogProxy -p 8331 &
+      - name: Install dependencies of BOT
+        working-directory: bot-react-native
+        run: yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1
+      - name: Rebuild detox
+        working-directory: bot-react-native
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: yarn detox clean-framework-cache && yarn detox build-framework-cache
+        timeout-minutes: 120
+      - name: Cache Pods
+        uses: actions/cache@v3
+        id: podcache
+        with:
+          path: bot-react-native/ios/Pods
+          key: pods-${{ hashFiles('bot-react-native/**/Podfile.lock') }}
+      - name: Update Pods
+        working-directory: bot-react-native
+        run: |
+          gem update cocoapods xcodeproj
+          cd ios && pod install && cd ..
+      - run: brew tap wix/brew
+      - run: brew install applesimutils
+      - name: build bot
+        working-directory: bot-react-native
+        run: yarn detox build e2e --configuration ios
+      - name: run test bot
+        working-directory: bot-react-native
+        run: yarn detox test e2e --configuration ios --cleanup --debug-synchronization 200
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: botreport/

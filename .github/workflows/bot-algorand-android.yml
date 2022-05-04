@@ -1,0 +1,121 @@
+name: Bot android 'algorand on POC-BOT-RN'
+on:
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: macos-latest
+    steps:
+      - name: Use specific Java version for sdkmanager to work
+        uses: joschi/setup-jdk@v1
+        with:
+          java-version: 'openjdk8'
+          architecture: 'x64'
+        env:
+          # https://github.com/actions/toolkit/issues/641#issuecomment-728963957
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+      # Set path variables needed for caches
+      - name: Set workflow variables
+        id: workflow-variables
+        run: |
+          echo "::set-output name=metro-cache::$HOME/.metro"
+          echo "::set-output name=yarn-cache-dir::$(yarn cache dir)"
+          echo "::set-output name=tempdir::$TMPDIR"
+
+      - uses: actions/cache@v2
+        name: Gradle Cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-v1-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: ${{ runner.os }}-gradle-v1
+
+      - name: Download Android Emulator Image
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-30;google_apis;x86_64' -g google_apis
+          $ANDROID_HOME/emulator/emulator -list-avds
+      - name: Start Android Emulator
+        id: emu1
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          echo "Starting emulator"
+          nohup $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-snapshot -no-window &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          $ANDROID_HOME/platform-tools/adb devices
+          echo "Emulator started"
+
+      - name: Metro Bundler Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.workflow-variables.outputs.metro-cache }}
+          key: ${{ runner.os }}-metro-v1-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-metro-v1
+
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.x
+      - name: install yarn
+        run: npm i -g yarn
+      - name: kill apt-get
+        run: sudo killall -w apt-get apt || echo OK
+
+    
+      - name: env
+        working-directory: bot-react-native
+        run: |
+          echo GITHUB_SHA=${GITHUB_SHA} >> .ci.env
+          echo GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} >> .ci.env
+          echo GITHUB_RUN_ID=${{ github.run_id }} >> .ci.env
+          echo GITHUB_WORKFLOW=${{ github.workflow }} >> .ci.env
+          echo SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }} >> .ci.env
+          echo SLACK_CHANNEL=live-bot-mobile >> .ci.env
+          echo BOT_FILTER_FAMILY=algorand >> .ci.env
+
+    
+      - uses: actions/cache@v2
+        name: Yarn Cache
+        id: yarn-cache
+        with:
+          path: ${{ steps.workflow-variables.outputs.yarn-cache-dir }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/bot-react-native/package.json') }}
+          restore-keys: ${{ runner.os }}-yarn-v1
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1 --no-audit --prefer-offline
+          yarn ci-setup-cli
+      - name: LOGGER
+        env:
+          BOT_LOG_PROXY_FILE: ../botreport/logs.txt
+        run: |
+          mkdir botreport
+          cd cli
+          node ./bin/index botLogProxy -p 8331 &
+      - name: Install dependencies of BOT
+        working-directory: bot-react-native
+        run: yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1 --no-audit --prefer-offline
+
+      - name: build bot
+        working-directory: bot-react-native
+        run: yarn detox build e2e --configuration android
+
+      - name: Detox Test
+        # Detox uses Espresso to choreograph steps in reaction to UI events, so we need to send a stream of taps.
+        working-directory: bot-react-native
+        timeout-minutes: 40
+        run: |
+          $ANDROID_HOME/platform-tools/adb devices
+          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
+          yarn detox test e2e --configuration android --cleanup --debug-synchronization 500 --detectOpenHandles --runInBand
+        shell: bash
+
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: botreport/

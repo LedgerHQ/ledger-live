@@ -1,0 +1,32 @@
+#!/bin/bash
+
+cd $(dirname $0)/..
+
+# ./scripts/sync-families-dispatch.sh
+
+# patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+
+# rm -f 'third-party/glog-0.3.5/test-driver'
+
+# Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
+# Why would anyone bundle an external lib available on CocoaPods anyway?
+# It's been fixed in https://github.com/tradle/react-native-udp/pull/112 but as of today it's not part of any release
+rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
+
+
+rn-nodeify --hack
+
+# issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
+# manually shim
+sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
+
+## hack to remove module not found
+sed -i -- "s/require('module').builtinModules,//g" node_modules/stack-utils/index.js
+
+
+# Create the dev .env file with APP_NAME if it doesn't exist
+# if ! [ -f .env ]; then
+#   echo 'APP_NAME="LL [DEV]"' >.env
+# fi
+
+git apply --stat --apply patches/detox.patch

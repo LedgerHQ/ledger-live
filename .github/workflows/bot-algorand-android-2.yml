@@ -1,0 +1,158 @@
+name: Bot android 'algorand on POC-BOT-RN' v2
+
+on:
+  push:
+    branches:
+      - poc-speculos-mobile-bot
+
+jobs:
+  android:
+    name: Android
+    runs-on: macos-11
+    timeout-minutes: 70
+    env:
+      EMULATOR_COMMAND: "-avd emu -avd emu -no-audio -no-snapshot -no-window"
+      EMULATOR_EXECUTABLE: qemu-system-x86_64-headless
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          all_but_latest: true
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+
+      # Set up tool versions
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+
+      - name: Use specific Java version for sdkmanager to work
+        uses: joschi/setup-jdk@v1
+        with:
+          java-version: 'openjdk8'
+          architecture: 'x64'
+        env:
+          # https://github.com/actions/toolkit/issues/641#issuecomment-728963957
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
+
+      # Set path variables needed for caches
+      - name: Set workflow variables
+        id: workflow-variables
+        run: |
+          echo "::set-output name=metro-cache::$HOME/.metro"
+          echo "::set-output name=yarn-cache-dir::$(yarn cache dir)"
+          echo "::set-output name=tempdir::$TMPDIR"
+
+      - name: env
+        working-directory: bot-react-native
+        run: |
+          echo GITHUB_SHA=${GITHUB_SHA} >> .ci.env
+          echo GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} >> .ci.env
+          echo GITHUB_RUN_ID=${{ github.run_id }} >> .ci.env
+          echo GITHUB_WORKFLOW=${{ github.workflow }} >> .ci.env
+          echo SLACK_API_TOKEN=${{ secrets.SLACK_API_TOKEN }} >> .ci.env
+          echo SLACK_CHANNEL=live-bot-mobile >> .ci.env
+          echo BOT_FILTER_FAMILY=algorand >> .ci.env
+
+
+      - uses: actions/cache@v2
+        name: Yarn Cache
+        id: yarn-cache
+        with:
+          path: ${{ steps.workflow-variables.outputs.yarn-cache-dir }}
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/package.json') }}
+          restore-keys: ${{ runner.os }}-yarn-v1
+
+      - name: Install dependencies of BOT
+        working-directory: bot-react-native
+        run: yarn --frozen-lockfile --network-timeout 100000 --network-concurrency 1 --no-audit --prefer-offline
+
+      - uses: actions/cache@v2
+        name: Gradle Cache
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-v1-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: ${{ runner.os }}-gradle-v1
+
+      - name: Build Android App
+        working-directory: bot-react-native
+        run: |
+          yarn detox build e2e --configuration android
+
+      - name: Metro Bundler Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.workflow-variables.outputs.metro-cache }}
+          key: ${{ runner.os }}-metro-v1-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-metro-v1
+
+      - name: Download Emulator Image
+        # This can fail on network request, wrap with retry
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          retry_wait_seconds: 60
+          max_attempts: 3
+          command: echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+
+      - name: Create Emulator
+        run: echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-30;google_apis;x86_64' -g google_apis
+
+      # These Emulator start steps are the current best practice to do retries on multi-line commands with persistent (nohup) processes
+      - name: Start Android Emulator
+        id: emu1
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          echo "Starting emulator"
+          nohup $ANDROID_HOME/emulator/emulator $EMULATOR_COMMAND &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done'
+
+      - name: Start Android Emulator Retry 1
+        id: emu2
+        if: steps.emu1.outcome=='failure'
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          echo "Starting emulator, second attempt"
+          $ANDROID_HOME/platform-tools/adb devices
+          sudo killall -9 $EMULATOR_EXECUTABLE || true
+          sleep 2
+          nohup $ANDROID_HOME/emulator/emulator $EMULATOR_COMMAND &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done'
+
+      - name: Start Android Emulator Retry 2
+        id: emu3
+        if: steps.emu2.outcome=='failure'
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          echo "Starting emulator, third attempt"
+          $ANDROID_HOME/platform-tools/adb devices
+          sudo killall -9 $EMULATOR_EXECUTABLE || true
+          sleep 2
+          nohup $ANDROID_HOME/emulator/emulator $EMULATOR_COMMAND &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done'
+
+      - name: Emulator Status
+        if: always()
+        run: |
+          if ${{ steps.emu1.outcome=='success' || steps.emu2.outcome=='success' || steps.emu3.outcome=='success' }}; then
+             echo "Emulator Started"
+          else
+             exit 1
+          fi
+
+      - name: Detox Test
+        # Detox uses Espresso to choreograph steps in reaction to UI events, so we need to send a stream of taps.
+        timeout-minutes: 40
+        working-directory: bot-react-native
+        run: |
+          $ANDROID_HOME/platform-tools/adb devices
+          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
+          nohup sh -c "until false; do $ANDROID_HOME/platform-tools/adb shell input tap 100 800; sleep 0.2; done" &
+          yarn detox test e2e --configuration android --debug-synchronization 200
+        shell: bash

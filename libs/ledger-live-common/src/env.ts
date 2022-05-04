@@ -160,6 +160,7 @@ const envDefinitions = {
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
   },
+<<<<<<< HEAD:libs/ledger-live-common/src/env.ts
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -169,6 +170,12 @@ const envDefinitions = {
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
+=======
+  BOT_LOG_PROXY_FILE: {
+    def: "",
+    parser: stringParser,
+    desc: "Bot log proxy path to save log file",
+>>>>>>> 9404a9600 (IOS Bot on CI):src/env.ts
   },
   COINAPPS: {
     def: "",
@@ -454,6 +461,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "(dev feature) seed to be used by speculos (device simulator)",
   },
+  SPECULOS_SERVICE_WS: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) Websocket url to speculos as a service",
+  },
+  SPECULOS_SERVICE_HTTP: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) Rest API to create a speculos by HTTP",
+  },
   SHOW_LEGACY_NEW_ACCOUNT: {
     def: false,
     parser: boolParser,
@@ -599,6 +616,46 @@ const envDefinitions = {
     parser: boolParser,
     desc: "use the staging URL for the learn page",
   },
+  GITHUB_SHA: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  GITHUB_TOKEN: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  GITHUB_RUN_ID: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  GITHUB_WORKFLOW: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  SLACK_API_TOKEN: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  SLACK_CHANNEL: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  BOT_REPORT_FOLDER: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",
+  },
+  BOT_SPECULOS_PROXY_TOKEN: {
+    def: "",
+    parser: stringParser,
+    desc: "CI Bot Spec",    
+  }
 };
 
 const getDefinition = (name: string): EnvDef<any> | null | undefined =>

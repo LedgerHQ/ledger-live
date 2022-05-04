@@ -1,60 +1,57 @@
+import { log } from "@ledgerhq/logs";
 import expect from "expect";
 import invariant from "invariant";
-import now from "performance-now";
 import sample from "lodash/sample";
-import { throwError, of, Observable } from "rxjs";
+import now from "performance-now";
+import { Observable, of, throwError } from "rxjs";
 import {
-  first,
   filter,
+  first,
   map,
+  mergeMap,
   reduce,
   tap,
-  mergeMap,
   timeoutWith,
 } from "rxjs/operators";
-import { log } from "@ledgerhq/logs";
-import type {
-  TransactionStatus,
-  Transaction,
-  Account,
-  Operation,
-  SignOperationEvent,
-  CryptoCurrency,
-} from "../types";
-import { getCurrencyBridge, getAccountBridge } from "../bridge";
-import { promiseAllBatched } from "../promise";
-import { isAccountEmpty, formatAccount } from "../account";
-import { getOperationConfirmationNumber } from "../operation";
+import { formatAccount, isAccountEmpty } from "../account";
+import { getAccountBridge, getCurrencyBridge } from "../bridge";
+import { makeBridgeCacheSystem } from "../bridge/cache";
+import { accountDataToAccount, accountToAccountData } from "../cross";
 import { getEnv } from "../env";
-import { delay } from "../promise";
-import {
-  listAppCandidates,
-  createSpeculosDevice,
-  releaseSpeculosDevice,
-  findAppCandidate,
-} from "../load/speculos";
 import deviceActions from "../generated/speculos-deviceActions";
 import type { AppCandidate } from "../load/speculos";
+import { getOperationConfirmationNumber } from "../operation";
+import { delay, promiseAllBatched } from "../promise";
+import type {
+  Account,
+  CryptoCurrency,
+  Operation,
+  SignOperationEvent,
+  Transaction,
+  TransactionStatus,
+} from "../types";
 import {
-  formatReportForConsole,
-  formatTime,
+  createEngineTransport,
+  getAppCandidate,
+  releaseEngineTransport,
+} from "./engineTransport";
+import {
   formatAppCandidate,
   formatError,
+  formatReportForConsole,
+  formatTime,
 } from "./formatters";
 import type {
   AppSpec,
+  DeviceAction,
+  MutationReport,
   MutationSpec,
   SpecReport,
-  MutationReport,
-  DeviceAction,
-  TransactionTestInput,
   TransactionArg,
   TransactionRes,
+  TransactionTestInput,
 } from "./types";
-import { makeBridgeCacheSystem } from "../bridge/cache";
-import { accountDataToAccount, accountToAccountData } from "../cross";
 
-let appCandidates;
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -81,26 +78,13 @@ export async function runWithAppSpec<T extends Transaction>(
 ): Promise<SpecReport<T>> {
   log("engine", `spec ${spec.name}`);
   const seed = getEnv("SEED");
-  invariant(seed, "SEED is not set");
   const coinapps = getEnv("COINAPPS");
-  invariant(coinapps, "COINAPPS is not set");
-
-  if (!appCandidates) {
-    appCandidates = await listAppCandidates(coinapps);
-  }
 
   const mutationReports: MutationReport<T>[] = [];
-  const { appQuery, currency, dependency } = spec;
-  const appCandidate = findAppCandidate(appCandidates, appQuery);
-  if (!appCandidate) {
-    console.warn("no app found for " + spec.name, { appQuery, appCandidates });
-  }
-  invariant(
-    appCandidate,
-    "%s: no app found. Are you sure your COINAPPS is up to date?",
-    spec.name,
-    coinapps
-  );
+  const { appQuery, currency, dependency, name } = spec;
+
+  const appCandidate = await getAppCandidate(appQuery, name);
+
   log(
     "engine",
     `spec ${spec.name} will use ${formatAppCandidate(
@@ -120,7 +104,7 @@ export async function runWithAppSpec<T extends Transaction>(
   };
 
   try {
-    device = await createSpeculosDevice(deviceParams);
+    device = await createEngineTransport(deviceParams);
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
@@ -247,8 +231,8 @@ export async function runWithAppSpec<T extends Transaction>(
             "engine",
             `spec ${spec.name} is recreating the device because deviceAction didn't finished`
           );
-          await releaseSpeculosDevice(device.id);
-          device = await createSpeculosDevice(deviceParams);
+          await releaseEngineTransport(device.id);
+          device = await createEngineTransport(deviceParams);
         }
       }
       mutationsCount = {};
@@ -267,7 +251,7 @@ export async function runWithAppSpec<T extends Transaction>(
     log("engine", `spec ${spec.name} failed with ${String(e)}`);
   } finally {
     log("engine", `spec ${spec.name} finished`);
-    if (device) await releaseSpeculosDevice(device.id);
+    if (device) await releaseEngineTransport(device.id);
   }
 
   return appReport;
