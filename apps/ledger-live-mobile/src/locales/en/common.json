@@ -828,8 +828,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Welcome to Ledger",
-      "subtitle": "Safely manage your cryptos from your smartphone.",
+      "title": "The most secure cryptocurrency & NFT wallet",
+      "subtitle": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
@@ -1877,7 +1877,7 @@
         "bullet2": "Ledger Live version, OS region, language and region"
       },
       "hideEmptyTokenAccounts": "Hide empty token accounts",
-      "hideEmptyTokenAccountsDesc": "Hide empty token accounts on the Accounts page."
+      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden."
     },
     "currencies": {
       "header": "Currencies",
@@ -2675,7 +2675,7 @@
       "title": "Cancel add account",
       "desc": "Are you sure you want to cancel adding accounts?"
     },
-    "imported": "Accounts added successfully",
+    "imported": "Asset added successfully",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "View your accounts or add other accounts",
-      "secondaryCTA": "Add other accounts",
-      "cta": "Go to Accounts"
+      "secondaryCTA": "Add new asset",
+      "cta": "See your asset"
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
@@ -2791,12 +2791,12 @@
     "title": "Pair new device",
     "bluetooth": {
       "title": "Connect via Bluetooth...",
-      "label": "Detect your Nano automatically"
+      "label": "Automatically detect your Nano"
     },
-    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
-    "usb": "... or connect USB cable",
-    "usbLabel": "Connect USB cable and enter your PIN Code on your device",
+    "usb": "... or plug USB cable",
+    "usbLabel": "Plug your cable and enter your PIN Code on your device",
     "withoutDeviceHeader": "I don't have my device with me",
     "withoutDevice": "Continue without my device",
     "steps": {

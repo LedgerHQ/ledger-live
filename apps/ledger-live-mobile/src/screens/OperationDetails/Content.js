@@ -234,15 +234,17 @@ export default function Content({
             if (!opAccount) return null;
 
             return (
-              <OperationRow
-                isSubOperation
-                key={op.id}
-                operation={op}
-                parentAccount={account}
-                account={opAccount}
-                multipleAccounts
-                isLast={subOperations.length - 1 === i}
-              />
+              <View style={{ marginHorizontal: 16 }}>
+                <OperationRow
+                  isSubOperation
+                  key={op.id}
+                  operation={op}
+                  parentAccount={account}
+                  account={opAccount}
+                  multipleAccounts
+                  isLast={subOperations.length - 1 === i}
+                />
+              </View>
             );
           })}
         </>

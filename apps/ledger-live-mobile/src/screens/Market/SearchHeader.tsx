@@ -1,78 +1,40 @@
 import { SearchInput } from "@ledgerhq/native-ui";
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
+import React, { memo, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { track } from "../../analytics";
-
-const { width } = getWindowDimensions();
 
 type Props = {
   search?: string;
   refresh: (params: any) => void;
-  onClose: () => void;
-  isOpen?: boolean;
 };
 
-function SearchHeader({ search, refresh, isOpen, onClose }: Props) {
+function SearchHeader({ search, refresh }: Props) {
   const [inputSearch, setInputSearch] = useState(search);
-  const animValue = useSharedValue(isOpen ? 1 : 0);
-  const ref = useRef();
+  const debouncedSearch = useDebounce(inputSearch, 300);
+  const { t } = useTranslation();
 
-  const onSubmit = useCallback(() => {
-    if (inputSearch !== search) {
+  useEffect(() => {
+    if (debouncedSearch !== search) {
       track("Page Market Query", {
-        currencyName: inputSearch,
+        currencyName: debouncedSearch,
       });
       refresh({
-        search: inputSearch ? inputSearch.trim() : "",
+        search: debouncedSearch ? debouncedSearch.trim() : "",
         starred: [],
         liveCompatible: false,
+        top100: false,
+        limit: 20,
       });
     }
-    onClose();
-  }, [inputSearch, search, refresh, onClose]);
-
-  useEffect(() => {
-    animValue.value = isOpen ? 1 : 0;
-    if (isOpen && ref?.current?.focus) ref.current.focus();
-  }, [animValue, isOpen]);
-
-  useEffect(() => {
-    setInputSearch(search);
-  }, [search]);
-
-  const searchInputStyle = useAnimatedStyle(() => {
-    const w = width - 32;
-    /** offset horizontaly given the scale transformation and potential top left header section */
-    const translateX = withTiming(-(animValue.value * (w + 16)), {
-      duration: 300,
-    });
-
-    const opacity = withTiming(animValue.value, { duration: 300 });
-
-    return {
-      position: "absolute",
-      right: -w,
-      transform: [{ translateX }],
-      opacity,
-      width: w,
-    };
-  }, [animValue]);
+  }, [debouncedSearch, refresh, search]);
 
   return (
-    <Animated.View style={searchInputStyle}>
-      <SearchInput
-        ref={ref}
-        value={inputSearch}
-        onChange={setInputSearch}
-        onSubmitEditing={onSubmit}
-        onEndEditing={onSubmit}
-      />
-    </Animated.View>
+    <SearchInput
+      value={inputSearch}
+      onChange={setInputSearch}
+      placeholder={t("common.search")}
+    />
   );
 }
 

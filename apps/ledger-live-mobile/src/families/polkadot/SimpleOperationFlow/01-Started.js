@@ -1,7 +1,7 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
@@ -11,12 +11,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 
+import { Button, Alert, Text, Log } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import Alert from "../../../components/Alert";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
 
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
@@ -94,7 +92,7 @@ export default function PolkadotSimpleOperationStarted({
 
   return (
     <>
-      <SafeAreaView
+      <View
         style={[
           styles.root,
           {
@@ -105,19 +103,17 @@ export default function PolkadotSimpleOperationStarted({
         <View style={styles.container}>
           <TrackScreen category="SimpleOperationFlow" name="Started" />
           <View style={styles.content}>
-            <LText secondary style={styles.description}>
+            <Log>
               <Trans
                 i18nKey={`polkadot.simpleOperation.modes.${mode}.description`}
               />
-            </LText>
-            {infoTranslated ? (
-              <Alert type="primary">{infoTranslated}</Alert>
-            ) : null}
+            </Log>
           </View>
         </View>
         <View style={styles.footer}>
+          {infoTranslated ? <Alert type="info" title={infoTranslated} /> : null}
           {(error || warning) && (
-            <LText
+            <Text
               style={[
                 styles.footerMessage,
                 warning && { color: colors.orange },
@@ -125,7 +121,7 @@ export default function PolkadotSimpleOperationStarted({
               ]}
             >
               <TranslatedError error={error || warning} />
-            </LText>
+            </Text>
           )}
           <SendRowsFee
             account={account}
@@ -134,21 +130,20 @@ export default function PolkadotSimpleOperationStarted({
           />
           <Button
             event="PolkadotSimpleOperationContinue"
-            type="primary"
-            title={
-              <Trans
-                i18nKey={
-                  !bridgePending
-                    ? "common.continue"
-                    : "send.amount.loadingNetwork"
-                }
-              />
-            }
+            type="main"
             onPress={onContinue}
             disabled={!!error || bridgePending}
-          />
+          >
+            <Trans
+              i18nKey={
+                !bridgePending
+                  ? "common.continue"
+                  : "send.amount.loadingNetwork"
+              }
+            />
+          </Button>
         </View>
-      </SafeAreaView>
+      </View>
 
       <FlowErrorBottomModal
         navigation={navigation}
@@ -182,13 +177,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 33,
     paddingVertical: 16,
-  },
-  description: {
-    fontSize: 14,
-    lineHeight: 21,
-    textAlign: "center",
-    marginVertical: 16,
-    paddingHorizontal: 32,
   },
   info: {
     flexShrink: 0,

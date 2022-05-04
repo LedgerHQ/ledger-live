@@ -6,7 +6,7 @@ type Props = {
   size?: number,
   color?: string,
 };
-export default function USB({ size = 16, color = "#6490F1" }: Props) {
+export default function USB({ size = 16, color = "#bdb3ff" }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 16 14" fill="none">
       <Path

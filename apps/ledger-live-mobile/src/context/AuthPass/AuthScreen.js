@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback,
   View,
   StyleSheet,
-  Image,
   Vibration,
   Platform,
   SafeAreaView,
@@ -13,7 +12,9 @@ import {
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { compose } from "redux";
-import type { T } from "../../types/common";
+import { Flex, Logos } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
+import type { TFunction } from "react-i18next";
 import type { Privacy } from "../../reducers/settings";
 import { withReboot } from "../Reboot";
 import LText from "../../components/LText";
@@ -48,27 +49,29 @@ type OwnProps = {
 type Props = {
   ...OwnProps,
   reboot: (?boolean) => *,
-  t: T,
+  t: TFunction,
   colors: *,
 };
 
-class NormalHeader extends PureComponent<{}> {
-  render() {
-    return (
-      <View>
-        <Image
-          style={styles.logo}
-          source={require("../../images/logo_small.png")}
-        />
-        <LText semiBold secondary style={styles.title}>
-          <Trans i18nKey="auth.unlock.title" />
-        </LText>
-        <LText style={styles.description} color="grey">
-          <Trans i18nKey="auth.unlock.desc" />
-        </LText>
-      </View>
-    );
-  }
+function NormalHeader() {
+  const { colors } = useTheme();
+
+  return (
+    <Flex alignItems="center" justifyContent="center">
+      <Logos.LedgerLiveAltRegular
+        color={colors.neutral.c100}
+        style={styles.logo}
+        width={50}
+        height={50}
+      />
+      <LText semiBold secondary style={styles.title}>
+        <Trans i18nKey="auth.unlock.title" />
+      </LText>
+      <LText style={styles.description} color="grey">
+        <Trans i18nKey="auth.unlock.desc" />
+      </LText>
+    </Flex>
+  );
 }
 
 class FormFooter extends PureComponent<*> {

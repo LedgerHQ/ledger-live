@@ -81,10 +81,7 @@ function RippleEditTag({ route, navigation }: Props) {
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
-        <NavigationScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <NavigationScrollView keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

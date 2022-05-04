@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
   howAsaWorks: {
     width: "100%",
     paddingVertical: 16,
-
+    alignItems: "center",
+    justifyContent: "center",
     flexDirection: "row",
   },
   howAsaWorksText: {

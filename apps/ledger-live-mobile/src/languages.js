@@ -1,5 +1,5 @@
 // @flow
-import Locale from "react-native-locale";
+import RNLocalize from "react-native-localize";
 import Config from "react-native-config";
 import allLocales from "./locales";
 
@@ -57,17 +57,9 @@ export const DEFAULT_LANGUAGE_LOCALE = "en";
  */
 export const getDefaultLanguageLocale = (
   fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE,
-) => {
-  const { localeIdentifier, preferredLanguages } = Locale.constants();
-  const locale =
-    (preferredLanguages && preferredLanguages[0]) || localeIdentifier;
-  const matches = locale.match(/([a-z]{2,4}[-_]([A-Z]{2,4}|[0-9]{3}))/);
-  const lang = (matches && matches[1].replace("_", "-")) || "en-US";
-  return (
-    fullySupportedLocales.find(locale => lang.startsWith(locale)) ||
-    fallbackLocale
-  );
-};
+) =>
+  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag ||
+  fallbackLocale;
 
 const languageLocaleToDefaultLocaleMap = {
   de: "de-DE",

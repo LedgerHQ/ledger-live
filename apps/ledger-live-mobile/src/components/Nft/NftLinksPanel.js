@@ -10,7 +10,6 @@ import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";
 import RaribleIcon from "../../icons/Rarible";
 import GlobeIcon from "../../icons/Globe";
-import CloseIcon from "../../icons/Close";
 import BottomModal from "../BottomModal";
 import { rgba } from "../../colors";
 import LText from "../LText";
@@ -66,10 +65,6 @@ const NftLinksPanel = ({ links, isOpen, onClose }: Props) => {
       isOpened={isOpen}
       onClose={onClose}
     >
-      <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
-        <CloseIcon size={18} />
-      </TouchableOpacity>
-
       {!links.opensea ? null : (
         <NftLink
           style={styles.sectionMargin}
@@ -116,11 +111,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 64,
     paddingBottom: 60,
-  },
-  closeIcon: {
-    position: "absolute",
-    top: 24,
-    right: 24,
   },
   section: {
     flexDirection: "row",

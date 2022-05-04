@@ -69,7 +69,7 @@ type RouteParams = {
   device: Device,
   inline?: boolean,
   returnToSwap?: boolean,
-  onSuccess?: () => void,
+  onSuccess?: (params?: any) => void,
 };
 
 type OwnProps = {};
@@ -267,7 +267,7 @@ function AddAccountsAccounts({
       navigation.goBack();
     } else if (navigation.replace) {
       const { onSuccess } = route.params;
-      if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess({ scannedAccounts });
       else
         navigation.replace(ScreenName.AddAccountsSuccess, {
           ...route.params,

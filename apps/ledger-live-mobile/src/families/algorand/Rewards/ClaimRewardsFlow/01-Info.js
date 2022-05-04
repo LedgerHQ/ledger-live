@@ -4,6 +4,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
@@ -13,9 +14,9 @@ import BulletList, {
   BulletGreenCheck,
 } from "../../../../components/BulletList";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
-import IlluRewards from "../../../../icons/images/Rewards";
 import { urls } from "../../../../config/urls";
 import { TrackScreen } from "../../../../analytics";
+import Illustration from "../../../../images/illustration/Illustration";
 
 const forceInset = { bottom: "always" };
 
@@ -52,7 +53,13 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="ClaimRewardsFlow" name="Started" />
-        <IlluRewards />
+        <Flex alignItems="center" justifyContent="center" mb={6}>
+          <Illustration
+            size={200}
+            lightSource={require("../../../../images/illustration/Light/_003.png")}
+            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+          />
+        </Flex>
         <LText semiBold style={styles.description}>
           <Trans i18nKey="algorand.claimRewards.flow.steps.info.description" />
         </LText>
@@ -83,7 +90,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           />
         </View>
       </NavigationScrollView>
-      <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
+      <View style={[styles.footer]}>
         <Button
           event="ClaimRewardsStartedBtn"
           onPress={onNext}
@@ -139,6 +146,5 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
-    borderTopWidth: 1,
   },
 });

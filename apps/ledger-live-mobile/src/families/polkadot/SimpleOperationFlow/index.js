@@ -71,7 +71,7 @@ function SimpleOperationFlow() {
         name={ScreenName.PolkadotSimpleOperationValidationSuccess}
         component={ValidationSuccess}
         options={{
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
           headerLeft: null,
           headerRight: null,

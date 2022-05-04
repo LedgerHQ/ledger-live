@@ -18,7 +18,7 @@ import Animated from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
 import Styles from "../navigation/styles";
 import LText from "./LText";
-import { normalize, width } from "../helpers/normalizeSize";
+import { width } from "../helpers/normalizeSize";
 import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
 
@@ -169,7 +169,12 @@ export default function AnimatedHeaderView({
           ]}
           onLayout={onLayoutText}
         >
-          <LText bold style={[styles.title, titleStyle]} numberOfLines={4}>
+          <LText
+            variant="h1"
+            bold
+            style={[styles.title, titleStyle]}
+            numberOfLines={4}
+          >
             {title}
           </LText>
         </Animated.View>
@@ -195,7 +200,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  topHeader: { flexDirection: "row", alignContent: "center", height: 50 },
+  topHeader: { flexDirection: "row", alignContent: "center", height: 55 },
   spacer: { flex: 1 },
   header: {
     ...Styles.headerNoShadow,
@@ -212,7 +217,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontSize: normalize(34),
     lineHeight: 45,
   },
   buttons: {

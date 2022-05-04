@@ -2,7 +2,7 @@
   "common": {
     "cancel": "Annuler",
     "apply": "Appliquer",
-    "seeAll": "Tout",
+    "seeAll": "Tout afficher",
     "back": "Retour",
     "delete": "Effacer",
     "paste": "Coller",
@@ -677,7 +677,7 @@
     "unlock": {
       "biometricsTitle": "Authentifiez-vous avec l'app Ledger Live.",
       "title": "Bienvenue",
-      "desc": "Entrez votre mot de passe pour continuer.",
+      "desc": "Insérez votre mot de passe pour continuer",
       "inputPlaceholder": "Saisissez votre mot de passe",
       "login": "Se connecter",
       "forgotPassword": "Mot de passe oublié"
@@ -961,7 +961,7 @@
         },
         "cta": "Continuer",
         "warning": {
-          "title": "Prenez votre temps",
+          "title": "Restez vigilant(e)",
           "desc": "Suivez attentivement les instructions de l'application à chaque étape.",
           "ctaText": "Compris"
         }
@@ -1170,7 +1170,7 @@
           },
           "2": {
             "title": "Choisir \"Restore from recovery phrase\"",
-            "label": "Sélectionnez \"Restore from recovery phrase\" (Restaurer à partir d'une phrase de récupération). Appuyez simultanément sur les deux boutons pour valider."
+            "label": "Sélectionnez \"Set up as new device\" (Configurer un nouvel appareil). Appuyez simultanément sur les deux boutons pour valider."
           },
           "3": {
             "title": "Suivre les instructions",
@@ -1218,8 +1218,8 @@
         "cta": "Connecter mon Nano"
       },
       "nanoSP": {
-        "title": "Connectez votre Nano",
-        "desc": "C'est la première fois que vous configurez votre Nano sur ce téléphone. Appairons rapidement votre appareil.",
+        "title": "Connecter le Nano",
+        "desc": "C'est la première fois que vous configurez votre Nano sur ce téléphone. Connectons rapidement votre appareil.",
         "cta": "Connecter mon Nano"
       },
       "blue": {
@@ -1493,7 +1493,7 @@
     "week": "1S",
     "month": "1M",
     "year": "1A",
-    "all": "TOUT",
+    "all": "Toutes",
     "since": {
       "day": "hier",
       "week": "semaine dernière",
@@ -1775,7 +1775,7 @@
         "showTokens": "Afficher {{length}} ASA",
         "showTokens_plural": "Afficher {{length}} ASA",
         "hideTokens": "Cacher l'ASA",
-        "hideTokens_plural": "Cacher les ASA"
+        "hideTokens_plural": "Cacher l'ASA"
       }
     },
     "noResultsFound": "Aucun actif trouvé",
@@ -2037,12 +2037,12 @@
       "title": "Acheter / Vendre"
     },
     "swap": {
-      "title": "Swap",
-      "selectDevice": "Sélectionnez votre appareil.",
+      "title": "Échanger",
+      "selectDevice": "Sélectionnez votre appareil",
       "broadcasting": "Swap en cours",
       "loadingFees": "Chargement des frais de réseau…",
       "landing": {
-        "header": "Swap",
+        "header": "Échanger",
         "title": "Bienvenue dans le Swap",
         "whatIsSwap": "Qu'est-ce que le Swap ?",
         "disclaimer": "Échangez des cryptos directement à partir de votre appareil Ledger. Ce service n'est pas disponible dans certains pays, y compris aux États-Unis."
@@ -2053,7 +2053,7 @@
         "bannerCTA": "Réinitialiser la vérification"
       },
       "main": {
-        "header": "Swap"
+        "header": "Échanger"
       },
       "kyc": {
         "disclaimer": "J'accepte que mes données de localisation soient partagées avec des tiers à des fins de conformité.",
@@ -2253,7 +2253,7 @@
       }
     },
     "lending": {
-      "title": "Prêter",
+      "title": "Prêter des cryptos",
       "titleTransferTab": "Prêter",
       "actionTitle": "Prêter",
       "accountActions": {
@@ -2302,7 +2302,7 @@
           "INACTIVE": "Inactif",
           "SUPPLYING": "Dépôt en cours",
           "approve": "Approuver",
-          "supply": "Verser",
+          "supply": "Déposer",
           "withdraw": "Retirer",
           "amountRedeemed": "Montant retiré",
           "endDate": "Échéance"
@@ -2482,13 +2482,13 @@
     "recipient": {
       "scan": "Scanner le code QR",
       "enterAddress": "Entrer l'adresse",
-      "input": "Entrez l'adresse.",
+      "input": "Entrer l'adresse",
       "verifyAddress": "Vérifiez que l'adresse est identique à celle partagée par le bénéficiaire."
     },
     "amount": {
       "available": "Total disponible",
       "useMax": "Choisir le maximum",
-      "loadingNetwork": "Chargement des frais de réseau...",
+      "loadingNetwork": "Chargement des frais de réseau…",
       "noRateProvider": "Indisponible",
       "quantityAvailable": "Quantité disponible"
     },
@@ -2555,7 +2555,7 @@
   "requestAccount": {
     "stepperHeader": {
       "selectCrypto": "Sélectionner une crypto",
-      "selectAccount": "Sélectionner un compte",
+      "selectAccount": "Sélectionnez un compte",
       "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "selectAccount": {
@@ -2675,7 +2675,7 @@
       "title": "Annuler l'ajout de compte",
       "desc": "Voulez-vous vraiment annuler l'ajout de comptes ?"
     },
-    "imported": "Comptes bien ajoutés",
+    "imported": "Actif bien ajouté",
     "sections": {
       "importable": {
         "title": "Ajouter un compte existant"
@@ -2706,7 +2706,7 @@
     "noAccountToCreate": "Impossible de créer le compte <1><0>{{currencyName}}</></>. Merci de recommencer et synchroniser vos comptes.",
     "cantCreateAccount": "Impossible d'ajouter un nouveau compte avant de recevoir des actifs sur votre compte <1><0>{{accountName}}</></>.",
     "tokens": {
-      "title": "Ajouter un token",
+      "title": "Token",
       "createParentCurrencyAccount": "Ajouter un compte {{parrentCurrencyName}}",
       "erc20": {
         "title": "Ajouter un token",
@@ -2791,11 +2791,11 @@
     "title": "Coupler un nouvel appareil",
     "bluetooth": {
       "title": "Connexion via Bluetooth",
-      "label": "Détectez automatiquement votre Nano."
+      "label": "Détecter automatiquement votre Nano"
     },
-    "deviceNotFoundPairNewDevice": "Ajouter un nouveau Nano X",
+    "deviceNotFoundPairNewDevice": "Coupler via Bluetooth",
     "headerDescription": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
-    "usb": "Connexion avec un câble USB",
+    "usb": "...ou connecter avec un câble USB",
     "usbLabel": "Connectez votre câble USB et entrez votre code PIN sur votre appareil.",
     "withoutDeviceHeader": "Je n'ai pas mon appareil.",
     "withoutDevice": "Continuer sans mon appareil",
@@ -3167,7 +3167,7 @@
     },
     "optIn": {
       "stepperHeader": {
-        "selectToken": "Ajouter des ASA (Actif)",
+        "selectToken": "Ajouter des ASA (actif)",
         "connectDevice": "Connecter l'appareil",
         "verification": "Vérification",
         "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
@@ -3189,7 +3189,7 @@
             "pending": {
               "title": "Diffusion de la transaction..."
             },
-            "broadcastError": "Votre transaction a peut-être échoué. Merci de vérifier dans quelques minutes pour vous assurer que votre transaction n'a pas été traitée avant de réessayer."
+            "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
           }
         }
       }
@@ -3295,7 +3295,7 @@
         "active": "Actif",
         "inactive": "Inactif",
         "completionDate": "Date de réalisation",
-        "redelegatedFrom": "Redélégué de"
+        "redelegatedFrom": "Redéléguée de"
       }
     },
     "redelegation": {
@@ -3371,7 +3371,7 @@
         "summary": "Récapitulatif",
         "selectDevice": "Sélectionner l'appareil",
         "connectDevice": "Connecter l'appareil",
-        "stepRange": "Étape {{currentStep}} de {{totalSteps}}"
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
       },
       "flow": {
         "steps": {
@@ -3636,11 +3636,11 @@
     "manage": {
       "title": "Gérer les actifs",
       "bond": {
-        "title": "Lier",
+        "title": "Lié",
         "description": "Pour gagner des récompenses, vous devez d'abord lier un montant. Vous devez ensuite nommer vos validateurs."
       },
       "unbond": {
-        "title": "Délier",
+        "title": "Délié",
         "description": "Pour libérer un montant lié, vous devez d'abord le délier. Vous pourrez le retirer après la période de fin de liaison de 28 jours."
       },
       "withdrawUnbonded": {
@@ -3843,7 +3843,7 @@
     "durationDays_plural": "{{count}} jours",
     "selectValidatorTitle": "Sélectionner un validateur",
     "started": {
-      "title": "Gagnez des récompenses",
+      "title": "Gagner des récompenses",
       "description": "Déléguez votre compte Tezos à un validateur tiers pour gagner des récompenses en toute sécurité tout en gardant le contrôle de vos actifs.",
       "steps": {
         "0": "Vous conservez la propriété de vos comptes délégués.",
@@ -3916,7 +3916,7 @@
     "gas": "Gaz",
     "validatorAddress": "Adresse du validateur",
     "rewardAmount": "Montant de la récompense",
-    "undelegatedAmount": "Montant de la délégation interrompue",
+    "undelegatedAmount": "Montant de délégation interrompue",
     "memo": "Mémo"
   },
   "Terms": {
@@ -3959,7 +3959,7 @@
       "tabTitle": "Vendre",
       "selectCurrency": "Sélectionner une devise",
       "selectAccount": "Sélectionner un compte",
-      "connectDevice": "Connecter votre appareil",
+      "connectDevice": "Connecter l'appareil",
       "title": "Vendre des cryptos via notre partenaire",
       "description": "Vendez des crypto-actifs directement depuis votre compte Ledger Live via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton": "Vendre maintenant",
@@ -4101,7 +4101,7 @@
         "market_cap_asc": "Rang (capitalisation) asc.",
         "market_cap_desc": "Rang (capitalisation) desc."
       },
-      "currency": "Monnaie",
+      "currency": "Devise",
       "time": "Période",
       "apply": "Appliquer"
     },
@@ -4123,7 +4123,7 @@
       "allTimeLow": "Bas (historique)",
       "marketCapRank": "Rang",
       "marketCapDominance": "Position dominante",
-      "supply": "Offre",
+      "supply": "Déposer",
       "circulatingSupply": "Offre en circulation",
       "totalSupply": "Offre totale",
       "maxSupply": "Offre maximale",
@@ -4172,7 +4172,7 @@
     },
     "viewerModal": {
       "viewOn": "Voir sur",
-      "viewInExplorer": "Afficher dans l'explorateur",
+      "viewInExplorer": "Dans l'explorateur",
       "txDetails": "Détails de la transaction"
     }
   },

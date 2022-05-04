@@ -13,6 +13,7 @@ import {
   flattenAccounts,
 } from "@ledgerhq/live-common/lib/account/helpers";
 import { useTheme } from "@react-navigation/native";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -22,8 +23,6 @@ import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import InfoIcon from "../../icons/Info";
-import PlusIcon from "../../icons/Plus";
-import Button from "../../components/Button";
 import { NavigatorName, ScreenName } from "../../const";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
@@ -120,32 +119,26 @@ export default function SelectAccount({ navigation, route }: Props) {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={
             <Button
-              containerStyle={styles.addButton}
               event="ExchangeStartBuyFlow"
-              type="tertiary"
-              outline={false}
-              IconLeft={PlusIcon}
-              title={t("exchange.buy.emptyState.CTAButton")}
+              type="main"
+              Icon={Icons.PlusMedium}
+              iconPosition="left"
               onPress={() =>
                 navigation.navigate(NavigatorName.AddAccounts, {
                   currency,
                   analyticsPropertyFlow,
                 })
               }
-            />
+              mt={3}
+            >
+              <Trans i18nKey="exchange.buy.emptyState.CTAButton" />
+            </Button>
           }
           keyboardDismissMode="on-drag"
         />
       );
     },
-    [
-      renderItem,
-      navigation,
-      currency,
-      t,
-      enhancedAccounts,
-      analyticsPropertyFlow,
-    ],
+    [renderItem, navigation, currency, enhancedAccounts, analyticsPropertyFlow],
   );
 
   // empty state if no accounts available for this currency
@@ -167,10 +160,8 @@ export default function SelectAccount({ navigation, route }: Props) {
         </LText>
         <View style={styles.buttonContainer}>
           <Button
-            containerStyle={styles.button}
             event="ExchangeStartBuyFlow"
-            type="primary"
-            title={t("exchange.buy.emptyState.CTAButton")}
+            type="main"
             onPress={() =>
               navigation.navigate(NavigatorName.AddAccounts, {
                 ...(currency.type === "TokenCurrency"
@@ -179,7 +170,9 @@ export default function SelectAccount({ navigation, route }: Props) {
                 analyticsPropertyFlow,
               })
             }
-          />
+          >
+            <Trans i18nKey="exchange.buy.emptyState.CTAButton" />
+          </Button>
         </View>
       </View>
     );
@@ -225,11 +218,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
   },
   card: {
-    paddingHorizontal: 16,
     backgroundColor: "transparent",
   },
   searchContainer: {
-    paddingTop: 18,
+    padding: 16,
     flex: 1,
   },
   list: {
