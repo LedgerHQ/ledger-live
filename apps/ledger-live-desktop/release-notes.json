@@ -1,0 +1,14 @@
+[
+  {
+    "tag_name": "v2.41.3",
+    "body": "## 🚀 Features\n- Solana staking\n- Polygon NFTs\n- Filtering of spam NFT collections\n- Tezos (XTZ) new implementation\n- Cosmos (ATOM) new implementation\n- Goerli testnet for ETH 2.0 staking\n\n## 🐛 Fixes\n- Issue when adding BCH accounts\n- WalletConnect transaction flow improvement\n- Performance improvements and minor issues\n      "
+  },
+  {
+    "tag_name": "v2.40.4",
+    "body": "## 🐛 Fixes\n- Fix nano disconnection issues\n      "
+  },
+  {
+    "tag_name": "v2.40.2",
+    "body": "## 🐛 Fixes\n- Fix nano disconnection issue\n\n## 🔧 Support :\n- Add missing translations\n      "
+  }
+]
