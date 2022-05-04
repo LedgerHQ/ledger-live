@@ -1,6 +1,7 @@
-name: Bot ios 'algorand on POC-BOT-RN'
+name: Bot IOS
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "0 8-16/2 * * 1-5"
 
 jobs:
   run-bot:

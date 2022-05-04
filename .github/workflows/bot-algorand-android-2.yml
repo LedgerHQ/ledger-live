@@ -1,4 +1,6 @@
 name: Bot android 'algorand on POC-BOT-RN' v2
+on:
+  workflow_dispatch:
 
 on:
   push:
