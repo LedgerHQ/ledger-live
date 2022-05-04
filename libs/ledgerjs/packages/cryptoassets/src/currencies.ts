@@ -1,5 +1,4 @@
 /*
- *
  * ~~ fields ~~
  *
  * id: use by convention lowercased coin name with _ instead of space. if a coin get later rename, we NEVER rename the id for backward compatibility.
@@ -2501,6 +2500,35 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://stellar.expert/explorer/public/tx/$hash",
+      },
+    ],
+  },
+  osmosis: {
+    type: "CryptoCurrency",
+    id: "osmo",
+    coinType: 118,
+    name: "Osmosis",
+    managerAppName: "Cosmos",
+    ticker: "OSMO",
+    scheme: "osmo",
+    color: "#493c9b",
+    family: "osmosis",
+    units: [
+      {
+        name: "Osmosis",
+        code: "OSMO",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-OSMO",
+        code: "uosmo",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/osmosis/txs/$hash",
+        address: "https://www.mintscan.io/osmosis/account/$address",
       },
     ],
   },
