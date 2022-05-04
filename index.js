@@ -21,10 +21,6 @@ import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
-import {
-  getRatingsDataOfUserFromStorage,
-  setRatingsDataOfUserInStorage,
-} from "./src/logic/ratings";
 
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [

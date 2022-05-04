@@ -15,8 +15,8 @@ const DisappointedDone = ({ closeModal }: Props) => {
   }, [closeModal]);
 
   const onEmailClick = useCallback(() => {
-    Linking.openURL(`mailto:${ratings?.support_email}`);
-  }, [ratings?.support_email]);
+    Linking.openURL(`mailto:${ratings?.params?.support_email}`);
+  }, [ratings?.params?.support_email]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
@@ -38,7 +38,7 @@ const DisappointedDone = ({ closeModal }: Props) => {
         <Trans i18nKey="ratings.disappointedDone.description" />
       </Text>
       <Link type="main" event="TronManageVotes" onPress={onEmailClick} mb={6}>
-        {ratings?.support_email}
+        {ratings?.params?.support_email}
       </Link>
       <Flex alignSelf="stretch" py={6}>
         <Button onPress={goToMainNavigator} event="AddDevice" type="shade">
