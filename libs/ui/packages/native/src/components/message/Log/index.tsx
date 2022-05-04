@@ -6,7 +6,7 @@ import { Platform } from "react-native";
 
 export type Props = React.PropsWithChildren<
   FlexBoxProps & {
-    extraTextProps?: TextProps;
+    extraTextProps?: Omit<TextProps, "children">;
   }
 >;
 

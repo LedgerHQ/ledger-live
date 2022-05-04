@@ -8,6 +8,7 @@ const bracketSizes: Record<TextVariants, number> = {
   h2: 28,
   h3: 20,
   h4: 18,
+  h5: 18,
   large: 20,
   body: 20,
   bodyLineHeight: 20,
@@ -52,7 +53,9 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     h4: {
       fontFamily: "Inter",
-      textTransform: "uppercase",
+    },
+    h5: {
+      fontFamily: "Inter",
     },
     large: {
       fontFamily: "Inter",
