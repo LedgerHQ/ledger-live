@@ -1,4 +1,14 @@
 import { BigNumber } from "bignumber.js";
+import { Observable, of } from "rxjs";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+import { getEnv } from "../../env";
+import {
+  SwapExchangeRateAmountTooHigh,
+  SwapExchangeRateAmountTooLow,
+} from "../../errors";
+import type { CryptoCurrency, TokenCurrency, Transaction } from "../../types";
+import { getSwapAPIBaseURL } from "./";
 import type {
   CheckQuote,
   Exchange,
@@ -6,21 +16,11 @@ import type {
   GetMultipleStatus,
   GetProviders,
   KYCStatus,
-  SwapRequestEvent,
-  ValidKYCStatus,
   PostSwapAccepted,
   PostSwapCancelled,
+  SwapRequestEvent,
+  ValidKYCStatus,
 } from "./types";
-import { getAccountUnit } from "../../account";
-import type { Transaction, TokenCurrency, CryptoCurrency } from "../../types";
-import { formatCurrencyUnit } from "../../currencies";
-import {
-  SwapExchangeRateAmountTooLow,
-  SwapExchangeRateAmountTooHigh,
-} from "../../errors";
-import { Observable, of } from "rxjs";
-import { getSwapAPIBaseURL } from "./";
-import { getEnv } from "../../env";
 
 export const getMockExchangeRate = ({
   provider = "ftx",
@@ -234,6 +234,13 @@ export const mockCheckQuote: CheckQuote = async ({
         description: "Need to upgrade KYC level",
       };
 
+    case "MFA_REQUIRED":
+      return {
+        codeName: mockedCheckQuoteStatusCode,
+        error: "MFA requierd",
+        description: "Need to enable MFA",
+      };
+
     case "OVER_TRADE_LIMIT":
       return {
         codeName: mockedCheckQuoteStatusCode,
@@ -258,9 +265,11 @@ export const mockCheckQuote: CheckQuote = async ({
 };
 
 export const mockPostSwapAccepted: PostSwapAccepted = async ({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   provider,
   swapId,
   transactionId,
+  /* eslint-enable */
 }) => {
   //Fake delay to simulate network
   await new Promise((r) => setTimeout(r, 800));
@@ -269,8 +278,10 @@ export const mockPostSwapAccepted: PostSwapAccepted = async ({
 };
 
 export const mockPostSwapCancelled: PostSwapCancelled = async ({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   provider,
   swapId,
+  /* eslint-enable */
 }) => {
   //Fake delay to simulate network
   await new Promise((r) => setTimeout(r, 800));

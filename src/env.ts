@@ -1,7 +1,7 @@
-import { $ElementType } from "utility-types";
+import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
-import mapValues from "lodash/mapValues";
+import { $ElementType } from "utility-types";
 type EnvDef<V> = {
   desc: string;
   def: V;
@@ -376,9 +376,9 @@ const envDefinitions = {
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
   MOCK_SWAP_CHECK_QUOTE: {
-    def: "OK",
+    def: "RATE_VALID",
     parser: stringParser,
-    desc: "mock the server response for the exchange check quote, options are 'OK', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
+    desc: "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
   },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
