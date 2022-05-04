@@ -26,6 +26,7 @@ import {
   renderConfirmSwap,
   renderConfirmSell,
   LoadingAppInstall,
+  AutoRepair,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -72,6 +73,9 @@ export default function DeviceAction<R, H, P>({
     requiresAppInstallation,
     inWrongDeviceForAccount,
     onRetry,
+    repairModalOpened,
+    onAutoRepair,
+    closeRepairModal,
     deviceSignatureRequested,
     deviceStreamingProgress,
     displayUpgradeWarning,
@@ -109,6 +113,19 @@ export default function DeviceAction<R, H, P>({
       colors,
       theme,
     });
+  }
+
+  if (repairModalOpened && repairModalOpened.auto) {
+    return (
+      <AutoRepair
+        t={t}
+        onDone={closeRepairModal}
+        device={device}
+        navigation={navigation}
+        colors={colors}
+        theme={theme}
+      />
+    );
   }
 
   if (requestQuitApp) {
@@ -252,7 +269,7 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({ t, colors, theme });
+    return renderBootloaderStep({ onAutoRepair, t });
   }
 
   if (request && device && deviceSignatureRequested) {

@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
+import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
 import {
   InfiniteLoader,
   Text,
@@ -18,6 +19,7 @@ import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten } from "../../colors";
 import Button from "../Button";
+import FirmwareProgress from "../FirmwareProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
 import getDeviceAnimation from "./getDeviceAnimation";
@@ -543,11 +545,76 @@ export function renderWarningOutdated({
   );
 }
 
-export function renderBootloaderStep({ t, colors, theme }: RawProps) {
-  return renderError({
-    t,
-    error: new UnexpectedBootloader(),
-    colors,
-    theme,
-  });
-}
+export const renderBootloaderStep = ({
+  onAutoRepair,
+  t,
+}: RawProps & { onAutoRepair: () => void }) => (
+  <Wrapper>
+    <TitleText>{t("DeviceAction.deviceInBootloader.title")}</TitleText>
+    <DescriptionText>
+      {t("DeviceAction.deviceInBootloader.description")}
+    </DescriptionText>
+    <Button
+      mt={4}
+      type="color"
+      outline={false}
+      event="DeviceInBootloaderContinue"
+      onPress={onAutoRepair}
+    >
+      {t("common.continue")}
+    </Button>
+  </Wrapper>
+);
+
+export const AutoRepair = ({
+  onDone,
+  t,
+  device,
+  navigation,
+  colors,
+  theme,
+}: RawProps & {
+  onDone: () => void;
+  device: Device;
+  navigation: StackNavigationProp<any>;
+}) => {
+  const [error, setError] = useState<Error | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+
+  useEffect(() => {
+    const sub = firmwareUpdateRepair(device.deviceId, undefined).subscribe({
+      next: ({ progress }) => {
+        setProgress(progress);
+      },
+      error: err => {
+        setError(err);
+      },
+      complete: () => {
+        onDone();
+        navigation.replace(ScreenName.Manager, {});
+        // we re-navigate to the manager to reset the selected device for the action
+        // if we don't do that, we get an "Invalid Channel" error once the device is back online
+        // since the manager still thinks it's connected to a bootloader device and not a normal one
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, [onDone, setProgress, device, navigation]);
+
+  if (error) {
+    return renderError({
+      t,
+      error,
+      colors,
+      theme,
+    });
+  }
+
+  return (
+    <Wrapper>
+      <TitleText>{t("FirmwareUpdate.preparingDevice")}</TitleText>
+      <FirmwareProgress progress={progress} />
+      <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
+    </Wrapper>
+  );
+};

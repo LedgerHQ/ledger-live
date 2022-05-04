@@ -2769,6 +2769,10 @@
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
+    "deviceInBootloader": {
+      "title": "Device in Bootloader mode.",
+      "description": "Click on \"Continue\" to update it."
+    },
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -3071,6 +3075,7 @@
     "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
+    "preparingDevice": "Preparing your device",
     "pleaseWaitUpdate": "Please wait for the update to finish",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "unlockDeviceWithPin": "Unlock your device with your PIN",
