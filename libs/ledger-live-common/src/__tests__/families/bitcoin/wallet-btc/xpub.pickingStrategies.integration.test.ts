@@ -60,7 +60,7 @@ describe("testing xpub legacy transactions", () => {
     // Initialize the xpub with 2 txs. So that it has 2 utxo
     dataset.xpub.storage.appendTxs([
       {
-        hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+        id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
         outputs: [
           {
@@ -93,7 +93,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T13:34:17Z",
       },
       {
-        hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+        id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
         inputs: [
           {
             output_hash:
@@ -188,7 +188,7 @@ describe("testing xpub legacy transactions", () => {
     // Add 3 txs for the xpub. So that it has 5 utxo
     dataset.xpub.storage.appendTxs([
       {
-        hash: "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
+        id: "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
         inputs: [
           {
             output_hash:
@@ -230,7 +230,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T14:46:51Z",
       },
       {
-        hash: "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
+        id: "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
         inputs: [
           {
             output_hash:
@@ -272,7 +272,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T14:46:51Z",
       },
       {
-        hash: "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
+        id: "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
         inputs: [
           {
             output_hash:

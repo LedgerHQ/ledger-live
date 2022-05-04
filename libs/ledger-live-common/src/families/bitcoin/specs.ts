@@ -10,7 +10,11 @@ import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
-import { getMinRelayFee, getUTXOStatus } from "./logic";
+import {
+  getMinRelayFee,
+  getUTXOStatus,
+  bchToCashaddrAddressWithoutPrefix,
+} from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -81,7 +85,11 @@ const genericTest = ({
         : txInputs.map((t) => t.address).filter(Boolean),
       recipients: txOutputs
         .filter((o) => o.address && !o.isChange)
-        .map((o) => o.address)
+        .map((o) =>
+          account.currency.id === "bitcoin_cash"
+            ? bchToCashaddrAddressWithoutPrefix(o.address)
+            : o.address
+        )
         .filter(Boolean),
     })
   );
@@ -307,9 +315,6 @@ const bitcoinGold: AppSpec<Transaction> = {
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
-
-const bchToCashaddrAddressWithoutPrefix = (recipient) =>
-  bchaddrjs.toCashAddress(recipient).split(":")[1];
 
 const bitcoinCash: AppSpec<Transaction> = {
   name: "Bitcoin Cash",
