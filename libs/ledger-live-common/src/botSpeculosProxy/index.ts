@@ -24,13 +24,13 @@ type MessageProxySpeculos =
 
 const canAccess = (serverToken: string, receivedToken: string) => {
   if (serverToken === "" || !serverToken || receivedToken === serverToken) {
-    return true
+    return true;
   }
 
   return false;
-}
+};
 
-export const botSpeculosProxy = ({token, port = 4377, wsPort = 8435}) => {
+export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
   const app = express();
   // app.use(morgan("tiny"));
   app.use(json());
@@ -58,7 +58,7 @@ export const botSpeculosProxy = ({token, port = 4377, wsPort = 8435}) => {
     clientList[deviceId]?.close();
     delete clientList[deviceId];
     await releaseSpeculosDevice(deviceId);
-  }
+  };
 
   websocketServer.on("connection", (client, req) => {
     sendToClient(client, JSON.stringify({ message: "connected" }));
@@ -89,7 +89,7 @@ export const botSpeculosProxy = ({token, port = 4377, wsPort = 8435}) => {
                 client,
                 JSON.stringify({ type: "error", error: "not authorized" })
               );
-              client.close()
+              client.close();
             }
             sendToClient(client, JSON.stringify({ type: "opened" }));
             break;

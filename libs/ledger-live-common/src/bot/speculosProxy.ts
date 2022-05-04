@@ -39,7 +39,7 @@ export const findAppCandidate = async (appQuery: any): Promise<any> => {
     await network({
       method: "POST",
       url: `${getSpeculosHttp()}/app-candidate`,
-      data: { ...appQuery, token: getEnv("BOT_SPECULOS_PROXY_TOKEN")},
+      data: { ...appQuery, token: getEnv("BOT_SPECULOS_PROXY_TOKEN") },
     })
   ).data;
 };
@@ -49,7 +49,7 @@ export const createSpeculosDevice = async (deviceParams: any): Promise<any> => {
     await network({
       method: "POST",
       url: `${getSpeculosHttp()}/`,
-      data: {...deviceParams, token: getEnv("BOT_SPECULOS_PROXY_TOKEN")},
+      data: { ...deviceParams, token: getEnv("BOT_SPECULOS_PROXY_TOKEN") },
     })
   ).data;
 
@@ -60,7 +60,7 @@ export const releaseSpeculosDevice = async (id: string): Promise<any> => {
   await network({
     method: "DELETE",
     url: `${getSpeculosHttp()}/${id}`,
-    body: {token: getEnv("BOT_SPECULOS_PROXY_TOKEN") }
+    body: { token: getEnv("BOT_SPECULOS_PROXY_TOKEN") },
   });
 
   const obj = data[id];
@@ -69,7 +69,6 @@ export const releaseSpeculosDevice = async (id: string): Promise<any> => {
     await obj.destroy();
   }
 };
-
 
 registerTransportModule({
   id: "speculos",
