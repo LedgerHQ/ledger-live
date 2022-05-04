@@ -1,5 +1,5 @@
 // @flow
-import React, { PureComponent, useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import releaseNotes from "../../../../release-notes.json";
