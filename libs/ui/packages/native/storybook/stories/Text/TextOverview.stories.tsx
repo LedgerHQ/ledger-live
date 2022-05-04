@@ -6,7 +6,7 @@ import Text from "../../../src/components/Text";
 import { TextVariants } from "../../../src/styles/theme";
 import { storiesOf } from "../storiesOf";
 
-const headerVariants: TextVariants[] = ["h1", "h2", "h3", "h4"];
+const headerVariants: TextVariants[] = ["h1", "h2", "h3", "h4", "h5"];
 
 const mainVariants: TextVariants[] = [
   "large",
