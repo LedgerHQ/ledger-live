@@ -1,11 +1,6 @@
 name: Bot IOS
 on:
-  schedule:
-    - cron: "0 8-16/2 * * 1-5"
-  push:
-    branches:
-      - poc-speculos-mobile-bot
-      - support/bot-rn-speculos
+  workflow_dispatch:
 
 jobs:
   run-bot:

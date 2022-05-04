@@ -3,6 +3,12 @@
   "runnerConfig": "e2e/config.json",
   "skipLegacyWorkersInjection": true,
   "apps": {
+    "ios.debug": {
+      "name": "LiveBotRN",
+      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/LiveBotRN.app",
+      "build": "ENVFILE=.ci.env xcodebuild -configuration Debug -workspace ios/LiveBotRN.xcworkspace -scheme LiveBotRN -sdk iphonesimulator -derivedDataPath ios/build",
+      "type": "ios.app"
+    },
     "ios.release": {
       "name": "LiveBotRN",
       "type": "ios.app",
@@ -34,6 +40,10 @@
     "ios": {
       "device": "simulator",
       "app": "ios.release"
+    },
+    "ios.debug": {
+      "device": "simulator",
+      "app": "ios.debug"
     },
     "android": {
       "device": "emulator",
