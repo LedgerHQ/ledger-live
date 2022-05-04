@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView } from "react-native-webview";
 import styled from "styled-components/native";
@@ -26,6 +27,7 @@ type Props = {
 };
 
 const DisappointedForm = ({ setStep }: Props) => {
+  const ratingsFeature = useFeature("ratings");
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const onMessage = useCallback(
     event => {
@@ -42,10 +44,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   return (
     <Flex flex={1} height={400}>
       <StyledWebview
-        source={{
-          uri:
-            "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
-        }}
+        source={{ uri: ratingsFeature?.params?.typeform_url }}
         originWhitelist={["*"]}
         javaScriptEnabledAndroid={true}
         injectedJavaScript={injectedJavascript}

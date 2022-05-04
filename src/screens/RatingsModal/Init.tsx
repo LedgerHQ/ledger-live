@@ -26,7 +26,7 @@ type Props = {
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
-  const ratings = useFeature("ratings");
+  const ratingsFeature = useFeature("ratings");
   const dispatch = useDispatch();
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
@@ -37,10 +37,10 @@ const Init = ({ closeModal, setStep }: Props) => {
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
     track("Disappointed", { source: ratingsHappyMoment.route_name });
-    if (ratings?.params?.conditions?.disappointed_delay) {
+    if (ratingsFeature?.params?.conditions?.disappointed_delay) {
       const dateOfNextAllowedRequest: any = add(
         Date.now(),
-        ratings?.params?.conditions?.disappointed_delay,
+        ratingsFeature?.params?.conditions?.disappointed_delay,
       );
       const ratingsDataOfUserUpdated = {
         ...ratingsDataOfUser,
@@ -51,7 +51,7 @@ const Init = ({ closeModal, setStep }: Props) => {
     }
   }, [
     dispatch,
-    ratings?.params?.conditions?.disappointed_delay,
+    ratingsFeature?.params?.conditions?.disappointed_delay,
     ratingsDataOfUser,
     ratingsHappyMoment.route_name,
     setStep,
@@ -59,10 +59,10 @@ const Init = ({ closeModal, setStep }: Props) => {
   const onNotNow = useCallback(() => {
     closeModal();
     track("NotNow", { source: ratingsHappyMoment.route_name });
-    if (ratings?.params?.conditions?.not_now_delay) {
+    if (ratingsFeature?.params?.conditions?.not_now_delay) {
       const dateOfNextAllowedRequest: any = add(
         Date.now(),
-        ratings?.params?.conditions?.not_now_delay,
+        ratingsFeature?.params?.conditions?.not_now_delay,
       );
       const ratingsDataOfUserUpdated = {
         ...ratingsDataOfUser,
@@ -74,7 +74,7 @@ const Init = ({ closeModal, setStep }: Props) => {
   }, [
     closeModal,
     dispatch,
-    ratings?.params?.conditions?.not_now_delay,
+    ratingsFeature?.params?.conditions?.not_now_delay,
     ratingsDataOfUser,
     ratingsHappyMoment.route_name,
   ]);

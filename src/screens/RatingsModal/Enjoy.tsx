@@ -26,7 +26,7 @@ type Props = {
 };
 
 const Enjoy = ({ closeModal }: Props) => {
-  const ratings = useFeature("ratings");
+  const ratingsFeature = useFeature("ratings");
 
   const dispatch = useDispatch();
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
@@ -55,10 +55,10 @@ const Enjoy = ({ closeModal }: Props) => {
       };
       dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
       setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    } else if (ratings?.params?.conditions?.satisfied_then_not_now_delay) {
+    } else if (ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay) {
       const dateOfNextAllowedRequest: any = add(
         Date.now(),
-        ratings?.params?.conditions?.satisfied_then_not_now_delay,
+        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
       );
       const ratingsDataOfUserUpdated = {
         ...ratingsDataOfUser,
@@ -71,7 +71,7 @@ const Enjoy = ({ closeModal }: Props) => {
   }, [
     closeModal,
     dispatch,
-    ratings?.params?.conditions?.satisfied_then_not_now_delay,
+    ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
     ratingsDataOfUser,
     ratingsHappyMoment.route_name,
   ]);

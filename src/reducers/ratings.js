@@ -2,17 +2,22 @@
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
 import type { State } from ".";
+import type { HappyMoment } from "../logic/ratings";
 
 export type RatingsState = {
+  /** Boolean indicating wether the ratings flow modal is opened or closed */
   isRatingsModalOpen: boolean,
-  currentRoute?: string,
-  happyMoment?: any,
+  /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
+  currentRouteName?: string,
+  /** The happy moment that triggered the oppening of the ratings modal */
+  happyMoment?: HappyMoment,
+  /**  */
   dataOfUser?: any,
 };
 
 const initialState: RatingsState = {
   isRatingsModalOpen: false,
-  currentRoute: null,
+  currentRouteName: null,
   happyMoment: null,
   dataOfUser: null,
 };
@@ -27,14 +32,14 @@ const handlers: Object = {
   }),
   RATINGS_SET_CURRENT_ROUTE: (
     state: RatingsState,
-    { currentRoute }: { currentRoute?: string },
+    { currentRouteName }: { currentRouteName?: string },
   ) => ({
     ...state,
-    currentRoute,
+    currentRouteName,
   }),
   RATINGS_SET_HAPPY_MOMENT: (
     state: RatingsState,
-    { happyMoment }: { happyMoment?: any },
+    { happyMoment }: { happyMoment?: HappyMoment },
   ) => ({
     ...state,
     happyMoment,
@@ -52,7 +57,8 @@ const handlers: Object = {
 export const ratingsModalOpenSelector = (s: State) =>
   s.ratings.isRatingsModalOpen;
 
-export const ratingsCurrentRouteSelector = (s: State) => s.ratings.currentRoute;
+export const ratingsCurrentRouteNameSelector = (s: State) =>
+  s.ratings.currentRouteName;
 
 export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
 

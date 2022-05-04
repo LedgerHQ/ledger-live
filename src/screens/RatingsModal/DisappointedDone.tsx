@@ -9,14 +9,14 @@ type Props = {
 };
 
 const DisappointedDone = ({ closeModal }: Props) => {
-  const ratings = useFeature("ratings");
+  const ratingsFeature = useFeature("ratings");
   const goToMainNavigator = useCallback(() => {
     closeModal();
   }, [closeModal]);
 
   const onEmailClick = useCallback(() => {
-    Linking.openURL(`mailto:${ratings?.params?.support_email}`);
-  }, [ratings?.params?.support_email]);
+    Linking.openURL(`mailto:${ratingsFeature?.params?.support_email}`);
+  }, [ratingsFeature?.params?.support_email]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
@@ -38,7 +38,7 @@ const DisappointedDone = ({ closeModal }: Props) => {
         <Trans i18nKey="ratings.disappointedDone.description" />
       </Text>
       <Link type="main" event="TronManageVotes" onPress={onEmailClick} mb={6}>
-        {ratings?.params?.support_email}
+        {ratingsFeature?.params?.support_email}
       </Link>
       <Flex alignSelf="stretch" py={6}>
         <Button onPress={goToMainNavigator} event="AddDevice" type="shade">

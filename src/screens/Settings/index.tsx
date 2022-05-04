@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
@@ -26,7 +26,6 @@ export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const [, setRatingsModalOpen] = useRatings();
-  const ratings = useFeature("ratings");
   const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
@@ -102,13 +101,15 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      {currAppLanguage === "en" && ratings?.enabled ? (
-        <SettingsCard
-          title={t("settings.about.liveReview.title")}
-          desc={t("settings.about.liveReview.desc")}
-          Icon={Icons.StarMedium}
-          onClick={onRateApp}
-        />
+      {currAppLanguage === "en" ? (
+        <FeatureToggle feature="ratings">
+          <SettingsCard
+            title={t("settings.about.liveReview.title")}
+            desc={t("settings.about.liveReview.desc")}
+            Icon={Icons.StarMedium}
+            onClick={onRateApp}
+          />
+        </FeatureToggle>
       ) : null}
       <SettingsCard
         title={t("settings.developer.title")}

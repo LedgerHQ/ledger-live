@@ -1,16 +1,18 @@
 // @flow
 
+import type { HappyMoment  } from "../logic/ratings";
+
 export const setRatingsModalOpen = (isRatingsModalOpen: boolean) => ({
   type: "RATINGS_SET_MODAL_OPEN",
   isRatingsModalOpen,
 });
 
-export const setRatingsCurrentRoute = (currentRoute?: string) => ({
-  type: "RATINGS_SET_CURRENT_ROUTE",
-  currentRoute,
+export const setRatingsCurrentRouteName = (currentRouteName?: string) => ({
+  type: "RATINGS_SET_CURRENT_ROUTE_NAME",
+  currentRouteName,
 });
 
-export const setRatingsHappyMoment = (happyMoment?: any) => ({
+export const setRatingsHappyMoment = (happyMoment?: HappyMoment) => ({
   type: "RATINGS_SET_HAPPY_MOMENT",
   happyMoment,
 });
