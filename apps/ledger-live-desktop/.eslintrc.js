@@ -59,7 +59,7 @@ module.exports = {
       ],
       parser: "@typescript-eslint/parser",
       parserOptions: {
-        project: "./tsconfig.json",
+        project: "./src/tsconfig.json",
       },
       rules: {
         "space-before-function-paren": 0,
