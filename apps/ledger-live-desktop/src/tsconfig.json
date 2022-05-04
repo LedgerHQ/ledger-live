@@ -19,19 +19,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "tests/tests-out",
-    "rootDir": "./src"
+    "rootDir": "."
   },
-  "include": ["tests", "src/**/*"],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "./scripts",
-    "./lib"
-  ],
-  "references": [
-    // this is how we declare a dependency from
-    { "path": "../" } // this project to the one at the root dir`
-  ]
+  "include": ["./**/*"],
+  "references": [{ "path": "../" }]
 }
