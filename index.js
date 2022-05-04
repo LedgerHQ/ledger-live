@@ -48,10 +48,10 @@ const excludedErrorDescription = [
   "Transaction signing request was rejected by the user",
 ];
 
-if (true || (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK)) {
+if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
   Sentry.init({
-    dsn: "https://c97c794257cf4bdca28b703c233a7b07@o118392.ingest.sentry.io/6323440", // Config.SENTRY_DSN,
-    environment: "staging", // Config.SENTRY_ENVIRONMENT,
+    dsn: Config.SENTRY_DSN,
+    environment: Config.SENTRY_ENVIRONMENT,
     // NB we do not need to explicitly set the release. we let the native side infers it.
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
@@ -63,14 +63,6 @@ if (true || (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK)) {
       }),
     ],
     beforeSend(event: any) {
-      // TODO : Rating feature : catch crash here ?
-      getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
-        setRatingsDataOfUserInStorage({
-          ...ratingsDataOfUser,
-          numberOfAppStartsSinceLastCrash: 0,
-        });
-      });
-      return null;
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,
       // we will not send it to Sentry.
