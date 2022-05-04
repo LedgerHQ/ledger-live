@@ -30,7 +30,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
@@ -185,7 +185,6 @@ function App({ importDataString }: AppProps) {
     getChangesStats: (a, b) => a.ble !== b.ble,
     lense: bleSelector,
   });
-  const ratings = useFeature("ratings");
 
   return (
     <View style={styles.root}>
@@ -196,7 +195,9 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
-      {ratings?.enabled ? <RatingsModal /> : null}
+      <FeatureToggle feature="ratings">
+        <RatingsModal />
+      </FeatureToggle>
     </View>
   );
 }
