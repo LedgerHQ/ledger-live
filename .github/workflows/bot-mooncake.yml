@@ -46,7 +46,7 @@ jobs:
       - name: install yarn
         run: npm i -g yarn
       - name: pull docker image
-        run: docker pull ghcr.io/ledgerhq/speculos
+        run: docker pull ghcr.io/ledgerhq/speculos:sha-5a8e49b
       - name: kill apt-get
         run: sudo killall -w apt-get apt || echo OK
       - name: Install linux deps
