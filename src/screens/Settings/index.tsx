@@ -26,7 +26,7 @@ export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
   const [, setRatingsModalOpen] = useRatings();
-  const ratings = useFeature("learn"); // TODO : replace learn with ratings
+  const ratings = useFeature("ratings");
   const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
