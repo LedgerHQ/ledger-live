@@ -22,7 +22,12 @@ async function main() {
     const clean = getCleanVersion(line);
     if (isVersionLine) {
       currentVersion = clean;
-      if (!semver.satisfies(clean, `>= ${parsed.major}.${parsed.minor}`)) {
+      if (
+        !semver.satisfies(
+          clean,
+          `< ${parsed.major}.${parsed.minor + 1} >= ${parsed.major}.${parsed.minor}`,
+        )
+      ) {
         currentVersion = null;
       }
     } else {
