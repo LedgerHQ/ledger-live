@@ -29,6 +29,7 @@ import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
 import { FabMarketActions } from "../../../components/FabActions";
 import { NavigatorName, ScreenName } from "../../../const";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -270,4 +271,4 @@ function MarketDetail({
   );
 }
 
-export default memo(MarketDetail);
+export default memo(withDiscreetMode(MarketDetail));
