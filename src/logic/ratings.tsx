@@ -24,17 +24,17 @@ import { track } from "../analytics";
 export type RatingsHappyMoment = {
     route_name: string, // Name of the route that will trigger the rating flow
     timer: number, // In milliseconds, delay before triggering the rating flow
-    type: "on_enter" | "on_leave", // Wether the rating flow is triggered when entering or leaving the screen
+    type: "on_enter" | "on_leave", // Wether the rating flow is triggered when entering or when leaving the screen
 };
 
 export type RatingsDataOfUser = {
-    dateOfNextAllowedRequest?: Date,
-    alreadyClosedFromEnjoyStep?: boolean,
-    alreadyRated?: boolean,
-    doNotAskAgain?: boolean,
-    appFirstStartDate?: Date,
-    numberOfAppStarts?: number,
-    numberOfAppStartsSinceLastCrash?: number,
+    appFirstStartDate?: Date, // Date of the first time the user oppened the app
+    numberOfAppStarts?: number, // Number of times the user oppened the application
+    numberOfAppStartsSinceLastCrash?: number, // Number of times the user oppened the application since the last time his app crashed
+    dateOfNextAllowedRequest?: Date, // If set, we will not prompt the rating flow again before this date unless the user triggers it manually from the settings
+    alreadyClosedFromEnjoyStep?: boolean, // Wether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow
+    alreadyRated?: boolean, // Wether or not the user already rated the app
+    doNotAskAgain?: boolean, // If true, we will not prompt the rating flow again unless the user triggers it manually from the settings
 };
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
