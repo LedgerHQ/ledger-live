@@ -2644,6 +2644,14 @@ importers:
       tiny-glob: 0.2.9
       typescript: 4.6.4
 
+  tools/actions:
+    specifiers:
+      '@types/node': ^17.0.31
+      typescript: ^4.6.4
+    devDependencies:
+      '@types/node': 17.0.31
+      typescript: 4.6.4
+
   tools/actions/change-product-name:
     specifiers:
       '@actions/core': ^1.6.0
@@ -9278,6 +9286,7 @@ packages:
   /@mapbox/node-pre-gyp/1.0.9:
     resolution: {integrity: sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==}
     hasBin: true
+    requiresBuild: true
     dependencies:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
@@ -25990,7 +25999,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4_supports-color@6.1.0
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
@@ -34237,6 +34246,7 @@ packages:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
     hasBin: true
+    requiresBuild: true
     dependencies:
       abbrev: 1.1.1
 
