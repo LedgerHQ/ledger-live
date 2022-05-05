@@ -388,7 +388,7 @@
     },
     "NotEnoughBalance": {
       "title": "죄송하지만 자금이 부족합니다",
-      "description": "계정에 자금이 충분한지 확인하세요."
+      "description": "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughGas": {
       "title": "네트워크 수수료에 대한 ETH 부족",
@@ -517,11 +517,11 @@
       "description": "귀하가 이 장치 사용을 거부했습니다."
     },
     "WebsocketConnectionError": {
-      "title": "죄송하지만, 연결에 실패했습니다",
+      "title": "죄송합니다, 연결에 실패했습니다",
       "description": "네트워크 연결이 더 좋은 곳에서 다시 시도하세요(WebSocket 오류)."
     },
     "WebsocketConnectionFailed": {
-      "title": "죄송하지만, 연결에 실패했습니다",
+      "title": "죄송합니다, 연결에 실패했습니다",
       "description": "네트워크 연결이 더 좋은 곳에서 다시 시도하세요(WebSocket 실패)"
     },
     "WrongDeviceForAccount": {
@@ -616,7 +616,7 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "문제가 발생했습니다. 다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+      "description": "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
     "SolanaAccountNotFunded": {
       "title": "자금이 입금되지 않은 계정"
@@ -828,8 +828,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Ledger에 오신 것을 환영합니다",
-      "subtitle": "스마트폰으로 암호화폐를 안전하게 관리하세요.",
+      "title": "The most secure cryptocurrency & NFT wallet",
+      "subtitle": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
       "start": "시작하기",
       "noDevice": "장치가 없나요?",
       "buy": "{{fullDeviceName}} 구매",
@@ -961,7 +961,7 @@
         },
         "cta": "계속",
         "warning": {
-          "title": "조심하세요",
+          "title": "조심해 주세요",
           "desc": "과정의 모든 단계에서 반드시 앱의 지침을 따라주세요.",
           "ctaText": "알겠습니다!"
         }
@@ -1170,7 +1170,7 @@
           },
           "2": {
             "title": "'복구 문구로 복원'을 선택하세요",
-            "label": "두 버튼을 동시에 눌러 선택한 항목을 승인해주세요."
+            "label": "두 버튼을 동시에 눌러 선택을 확인하세요."
           },
           "3": {
             "title": "지시를 따라주세요",
@@ -1218,9 +1218,9 @@
         "cta": "Nano를 연결하세요"
       },
       "nanoSP": {
-        "title": "Nano를 연결하세요",
+        "title": "Nano 장치를 연결하세요",
         "desc": "이 휴대폰에서 Nano를 처음 설정합니다. 장치를 빠르게 페어링 해보세요.",
-        "cta": "Nano를 연결하세요"
+        "cta": "Nano를 연결합니다"
       },
       "blue": {
         "title": "Blue를 연결하세요",
@@ -1834,7 +1834,7 @@
       "region": "지역",
       "regionDesc": "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password": "패스워드 잠금",
-      "passwordDesc": "휴대폰에서 Ledger Live 데이터를 보호하시려면 비밀번호를 설정하세요.",
+      "passwordDesc": "핸드폰에서 Ledger Live 데이터를 보호하려면 비밀번호를 설정하세요.",
       "counterValue": "선호 통화",
       "theme": "테마",
       "themeDesc": "앱 UI 테마 설정",
@@ -1877,7 +1877,7 @@
         "bullet2": "Ledger Live 버전, OS 지역, 언어, 지역"
       },
       "hideEmptyTokenAccounts": "빈 토큰 계정 숨기기",
-      "hideEmptyTokenAccountsDesc": "계정 페이지에서 빈 토큰 계정을 숨기세요."
+      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden."
     },
     "currencies": {
       "header": "통화",
@@ -1966,7 +1966,7 @@
       "currency": "1 {{currency}} 계정을 업데이트해야 합니다.",
       "currency_plural": "{{currency}} 계정 {{count}}개를 업데이트해야 합니다",
       "start": "업데이트 시작",
-      "continue": "계속 업데이트"
+      "continue": "업데이트 계속"
     },
     "progress": {
       "headerTitle": "계정 업데이트 중",
@@ -2006,7 +2006,7 @@
       "title": "수수료 편집"
     },
     "receive": {
-      "title": "수령",
+      "title": "수신",
       "titleReadOnly": "미인증 주소",
       "headerTitle": "암호화폐",
       "titleDevice": "장치 연결",
@@ -2025,7 +2025,7 @@
         "desc": "이는 트랜잭션의 양이 많거나 인터넷 연결이 느린 경우 시간이 걸릴 수 있습니다."
       },
       "readOnly": {
-        "title": "수령",
+        "title": "수신",
         "text": "조심하세요",
         "desc": "인증되지 않은 주소를 열람하려고 합니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요.",
         "verify": "{{accountType}}의 주소가 확인되지 않았습니다. 귀하의 장치 보안 유지를 위해 주소를 인증하세요."
@@ -2038,7 +2038,7 @@
     },
     "swap": {
       "title": "스왑",
-      "selectDevice": "귀하의 장치를 선택하세요",
+      "selectDevice": "장치 선택",
       "broadcasting": "스왑 브로드캐스팅",
       "loadingFees": "네트워크 수수료 로딩...",
       "landing": {
@@ -2160,7 +2160,7 @@
           "title": "{{appName}} 앱이 설치되지 않았습니다",
           "desc": "관리자로 이동하여 {{appName}} 앱을 설치하세요.",
           "cta": "관리자로 이동",
-          "close": "닫기"
+          "close": "종료"
         },
         "noAccounts": {
           "title": "스왑할 {{ticker}} 없음",
@@ -2184,7 +2184,7 @@
           "receiveFloat": "서비스 수수료 부과 전 받을 금액",
           "provider": "공급자",
           "method": "요율",
-          "fees": "최대 비용",
+          "fees": "최대 수수료",
           "disclaimer": {
             "title": "이용약관",
             "desc": "\"수락\"을 클릭하여, <0>{{provider}}</0>의 이용 약관에 따라 독점 관리되는 서비스임을 확인하고 수락합니다.",
@@ -2239,13 +2239,13 @@
     "swapv2": {
       "form": {
         "summary": {
-          "from": "수신",
-          "to": "발신",
+          "from": "From",
+          "to": "To",
           "send": "보내기",
           "payoutNetworkFees": "지불금 비용",
           "payoutNetworkFeesTooltip": "이 금액은 장치에 표시되지 않습니다",
           "receive": "금액",
-          "receiveFloat": "서비스 수수료 부과 전 받을 금액",
+          "receiveFloat": "서비스 수수료 부과 전 수령 금액",
           "provider": "공급자",
           "method": "요율",
           "fees": "수수료"
@@ -2488,7 +2488,7 @@
     "amount": {
       "available": "총 이용 가능",
       "useMax": "최대치 사용",
-      "loadingNetwork": "네트워크 수수료 로딩...",
+      "loadingNetwork": "네트워크 수수료 로딩 중...",
       "noRateProvider": "이용할 수 없습니다",
       "quantityAvailable": "이용 가능한 수량"
     },
@@ -2675,7 +2675,7 @@
       "title": "계정 추가 취소",
       "desc": "계정 추가를 취소할까요?"
     },
-    "imported": "Asset added successfully",
+    "imported": "자산이 성공적으로 추가되었습니다",
     "sections": {
       "importable": {
         "title": "기존 계정 추가"
@@ -2692,8 +2692,8 @@
     },
     "success": {
       "desc": "귀하의 계정을 보거나 다른 계정을 추가하세요",
-      "secondaryCTA": "Add new asset",
-      "cta": "See your asset"
+      "secondaryCTA": "새 자산 추가",
+      "cta": "자산 보기"
     },
     "stopScanning": "스캔 중단",
     "retryScanning": "스캔 재시도",
@@ -2791,12 +2791,12 @@
     "title": "새로운 장치 페어링",
     "bluetooth": {
       "title": "블루투스로 연결...",
-      "label": "Automatically detect your Nano"
+      "label": "자동으로 귀하의 Nano 장치 감지"
     },
-    "deviceNotFoundPairNewDevice": "Pair with bluetooth",
+    "deviceNotFoundPairNewDevice": "블루투스와 페어링",
     "headerDescription": "{{productName}}(이)가 잠금 해제 상태이며 블루투스 기능이 켜져 있는지 확인하세요.",
-    "usb": "... or plug USB cable",
-    "usbLabel": "Plug your cable and enter your PIN Code on your device",
+    "usb": "... 또는 USB 케이블 연결",
+    "usbLabel": "케이블을 연결하고 장치에 PIN 코드를 입력하십시오",
     "withoutDeviceHeader": "현재 장치를 가지고 있지 않습니다",
     "withoutDevice": "내 장치 없이 계속합니다",
     "steps": {
@@ -3002,7 +3002,7 @@
       "progress": "모두 업데이트 중...",
       "button": "모두 업데이트",
       "version": "새 {{version}}",
-      "buttonAction": "업데이트 가능",
+      "buttonAction": "업데이트 이용 가능",
       "buttonModal": "모든 앱 업데이트",
       "loading": "업데이트 중...",
       "titleModal": "업데이트 이용 가능"
@@ -3199,7 +3199,7 @@
     "info": {
       "available": {
         "title": "CELO 이용 가능",
-        "description": "처분 가능 금액입니다."
+        "description": "가처분 금액입니다."
       }
     }
   },
@@ -3210,7 +3210,7 @@
         "description": "처분 가능 금액입니다."
       },
       "delegated": {
-        "title": "위임 자산",
+        "title": "위임된 자산",
         "description": "위임된 자산이 Cosmos(코스모스) 투표에 사용됩니다. 사용차의 총 투표 수입니다."
       },
       "undelegating": {
@@ -3250,7 +3250,7 @@
           "starter": {
             "description": "ATOM을 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
             "steps": {
-              "0": "위임된 자산은 귀하의 소유입니다.",
+              "0": "위임된 자산은 여전히 귀하의 소유입니다.",
               "1": "위임 해제가 완료되려면 21일을 기다려야 합니다.",
               "2": "Ledger 장치로 안전하게 위임하세요."
             },
@@ -3279,7 +3279,7 @@
           "verification": {
             "success": {
               "title": "자산을 성공적으로 위임했습니다",
-              "text": "네트워크가 트랜잭션을 확인하면 계정 잔액이 업데이트됩니다.",
+              "text": "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
               "cta": "세부사항 보기"
             },
             "pending": {
@@ -3315,7 +3315,7 @@
             "validators": "검증인",
             "myDelegations": "내 위임",
             "cta": "계속",
-            "estYield": "추산 수익: {{amount}}",
+            "estYield": "추정 수익: {{amount}}",
             "totalAvailable": "총 이용 가능 금액: <0>{{amount}}</0>",
             "allAssetsUsed": "사용된 모든 자산",
             "noResultsFound": "<0>{{search}}</0>에 대한 검증인이 없습니다"
@@ -3487,7 +3487,7 @@
             "title": "보상 받기",
             "description": "TRX를 타사 후보자에게 위임하여 보상을 받아보세요. 계속을 클릭하여 자산을 동결하고 투표를 해보세요.",
             "bullet": {
-              "delegate": "위임된 자산은 귀하의 소유입니다.",
+              "delegate": "위임된 자산은 여전히 귀하의 소유입니다.",
               "access": "동결한 지 3일이 지나면 자산을 이용할 수 있습니다.",
               "ledger": "Ledger 장치로 안전하게 위임하세요."
             },
@@ -3957,8 +3957,8 @@
     },
     "sell": {
       "tabTitle": "매도",
-      "selectCurrency": "통화 선택",
-      "selectAccount": "계정 선택",
+      "selectCurrency": "통화를 선택하세요",
+      "selectAccount": "계정을 선택하세요",
       "connectDevice": "내 장치 연결하기",
       "title": "파트너를 통해 암호화폐 판매",
       "description": "Coinify를 통해 귀하의 Ledger 계좌에서 암호와 자산을 바로 매도하고 은행 계좌로 명목 화폐를 받아보세요.",
