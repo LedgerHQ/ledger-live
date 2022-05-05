@@ -19,26 +19,15 @@ export async function calculateAmount({
   amount: BigNumber;
   totalSpent: BigNumber;
 }> {
-  let amount;
 
-  if (transaction.useAllAmount === true) {
-    amount = await estimateMaxSpendable({ account });
-  } else {
-    const txAmount = transaction.amount.plus(estimatedFees);
-
-    if (txAmount.isGreaterThan(account.balance)) {
-      // NOTE: work-around for 'NotEnoughBalance' edge case
-      // since the addition of estimated fees overflows account balance,
-      // set amount w/o the added estimated fees.
-      amount = transaction.amount;
-    } else {
-      amount = transaction.amount.plus(estimatedFees);
-    }
-  }
+  const amount =
+    transaction.useAllAmount === true ?
+      await estimateMaxSpendable({ account }) :
+      transaction.amount;
 
   return {
     amount,
-    totalSpent: amount,
+    totalSpent: amount.plus(estimatedFees),
   };
 }
 
