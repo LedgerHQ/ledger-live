@@ -27,7 +27,7 @@ jobs:
   stop-runner:
     name: "stop ec2 instance"
     if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, build-android]
+    needs: [start-runner, build-mobile-app-android]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -35,8 +35,8 @@ jobs:
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
-  build-android:
-    name: Android
+  build-mobile-app-android:
+    name: "Build Ledger Live Mobile (Android)"
     needs: start-runner
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
@@ -117,8 +117,9 @@ jobs:
           name: ${{ steps.version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
-  iOS:
+  build-mobile-app-ios:
     runs-on: macos-latest
+    name: "Build Ledger Live Mobile (Mac OS X)"
     steps:
       - uses: actions/checkout@v3
         with:

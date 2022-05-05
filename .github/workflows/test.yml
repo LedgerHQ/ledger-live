@@ -18,7 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  test-libraries:
+    name: "Test Libraries"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}

@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  test-desktop-app:
+    name: "Ledger Live Desktop Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
@@ -108,7 +109,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
 
   report:
-    needs: [test]
+    needs: [test-desktop-app]
     runs-on: ubuntu-latest
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
     steps:
