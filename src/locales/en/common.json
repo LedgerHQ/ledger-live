@@ -620,9 +620,6 @@
     "StellarMemoRecommended": {
       "title": "A memo may be needed when sending to this recipient"
     },
-    "StellarInvalidAddress": {
-      "title": "This is not a valid Stellar address"
-    },
     "StellarAssetNotAccepted": {
       "title": "This recipient doesn't have a trustline to {{assetCode}} yet"
     },
@@ -645,6 +642,12 @@
     "StellarNotEnoughNativeBalanceToAddTrustline": {
       "title": "Sorry, insufficient funds",
       "description": "Please make sure the account has enough funds to cover the new trustline"
+    },
+    "StellarMuxedAccountNotExist": {
+      "title": "Stellar account does not exist"
+    },
+    "StellarSourceHasMultiSign": {
+      "title": "Please disable multisign to make Stellar transactions"
     }
   },
   "bluetooth": {
