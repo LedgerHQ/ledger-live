@@ -16,7 +16,6 @@ const RatingsModal = () => {
     isRatingsModalOpen,
     setRatingsModalOpen,
   } = useRatings();
-  console.log("RATINGS MODAL");
 
   useEffect(() => {
     initRatings();
