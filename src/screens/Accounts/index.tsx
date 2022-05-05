@@ -58,7 +58,9 @@ function Accounts({ navigation, route }: Props) {
 
   const [account, setAccount] = useState(undefined);
 
-  const flattenedAccounts = flattenAccounts(accounts);
+  const flattenedAccounts = flattenAccounts(accounts, {
+    enforceHideEmptySubAccounts: true,
+  });
 
   // Deep linking params redirect
   useEffect(() => {

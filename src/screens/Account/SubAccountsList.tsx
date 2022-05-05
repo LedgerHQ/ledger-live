@@ -238,11 +238,13 @@ export default function SubAccountsList({
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
       />
-      <TokenContextualModal
-        onClose={() => setAccount()}
-        isOpened={!!account}
-        account={account}
-      />
+      {account && (
+        <TokenContextualModal
+          onClose={() => setAccount(undefined)}
+          isOpened={!!account}
+          account={account}
+        />
+      )}
     </>
   );
 }

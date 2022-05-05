@@ -10,7 +10,7 @@ import Touchable from "./Touchable";
 
 const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
   background-color: ${p => p.theme.colors.palette.background.main};
-  padding: ${p => p.theme.space[p.compact ? 6 : 7]}px 0;
+  padding: ${p => p.theme.space[p.compact ? 6 : 7]}px ${p => p.theme.space[6]}px;
   flex-direction: row;
   align-items: center;
   border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};

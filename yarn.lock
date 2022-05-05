@@ -2708,10 +2708,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.50.0.tgz#29c6419e8379d496ab6d0426eadf3c4d100cd186"
   integrity sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==
 
-"@ledgerhq/native-ui@^0.7.14":
-  version "0.7.14"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.14.tgz#5c86f460612d75c655d522164ec34b2f0bc04e0d"
-  integrity sha512-c13cg+0Yr3mDiD7HtzpQjTEFWqtq4GWnA5LC2732PMJwRxPiK+1sqiI4e1bnkVz9yBbrmOIT3T7v/17WEWMDZQ==
+"@ledgerhq/native-ui@^0.7.16":
+  version "0.7.16"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.16.tgz#ed3a5240a5a94c8db5fea533cd58f9351cb99ca3"
+  integrity sha512-4MIo1h5w14fq49uAWocTtJfWZ7dkhNvupcatmjyfkYGfJMn0MSDoZBQS+HZpJGJVG68QEZSsjcUD2e8pK3/K9Q==
   dependencies:
     "@ledgerhq/icons-ui" "^0.2.4"
     "@ledgerhq/ui-shared" "^0.1.6"
@@ -3481,10 +3481,10 @@
     "@sentry/types" "6.19.2"
     tslib "^1.9.3"
 
-"@sentry/react-native@^3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-3.4.0.tgz#6887b1f86c06368da63004de4bd5d7a5e1f2d870"
-  integrity sha512-2cABpCxu3vE0Khr3qiOUUAosRmYC1Q6K9VQIXs0g0bsiCptPzb0zVhnaYrUVDxPWlMgoGTTDxhvxTyk3IjJITA==
+"@sentry/react-native@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-3.4.1.tgz#640f8c19cbcb6505afbf215576cd5f7a03174d34"
+  integrity sha512-2eV0XEIpV3uNTLTqDNW7gPkf5SDcUKX9D1R2W00Lh0vLpfvxw8qCVxK+Ls31S2cJ8CFjgcOqRLNfU3CRuLM7eQ==
   dependencies:
     "@sentry/browser" "6.19.2"
     "@sentry/cli" "^1.74.2"
@@ -4215,7 +4215,29 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-native@^0.65", "@types/react-native@^0.65.21", "@types/react-native@^0.65.9":
+"@types/react-native-video@^5.0.13":
+  version "5.0.13"
+  resolved "https://registry.yarnpkg.com/@types/react-native-video/-/react-native-video-5.0.13.tgz#4a6df3156c5d9ad4e3a37edb320199eaeb22ea20"
+  integrity sha512-pXdF+uM5Kqmsx90eQzOArkz06QOzKQi8uekdcqD+KeNXuQfwJ6hiuGTiC46VcgxGdQVCKAa1AYMg6oUMPaygew==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-native" "*"
+
+"@types/react-native@*":
+  version "0.67.6"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.67.6.tgz#9a7de5feba6065aec9f44f9a1e8f6e55ee5d015c"
+  integrity sha512-NM6atxrefIXMLE/PyQ1bIQjQ/lWLdls3uVxItzKvNUUVZlGqgn/uGN4MarM9quSf90uSqJYPIAeAgTtBTUjhgg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-native@^0.65", "@types/react-native@^0.65.9":
+  version "0.65.17"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.65.17.tgz#6bdb4cb7e60bbc7eda880120e2a78a080373dd97"
+  integrity sha512-a1yykkqrnrTQJAteu0lt8gqv0PubdNzQvHH1kUOOl3y6JsK5AuqyvBaDmuw6xAYOL3vSXa43Wt+n47VTZRJd7w==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-native@^0.65.21":
   version "0.65.21"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.65.21.tgz#f731b172765f17e4866473de41e1d3a4890ae536"
   integrity sha512-6TmhHLEBH7xMOBG+MIExOILOEI+nq/VHmlAJZ7SynJ+/ezG318EFrrxDPge46WPqWT25ZbnhSR6uxzBn7TDRbQ==
@@ -5083,7 +5105,7 @@ axios@0.25.0:
   dependencies:
     follow-redirects "^1.14.7"
 
-axios@0.26.1, axios@^0.26.0, axios@^0.26.1:
+axios@0.26.1, axios@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
   integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
@@ -5096,6 +5118,13 @@ axios@^0.21.1, axios@^0.21.2:
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
   dependencies:
     follow-redirects "^1.14.0"
+
+axios@^0.26.0:
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.0.tgz#9a318f1c69ec108f8cd5f3c3d390366635e13928"
+  integrity sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==
+  dependencies:
+    follow-redirects "^1.14.8"
 
 axobject-query@^0.1.0:
   version "0.1.0"

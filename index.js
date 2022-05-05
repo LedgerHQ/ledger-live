@@ -22,14 +22,29 @@ import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
 
-const blacklistErrorName = [
-  "NetworkDown",
+// we exclude errors related to user's environment, not fixable by us
+const excludedErrorName = [
+  // networking conditions
+  "DisconnectedError",
   "Network Error",
+  "NetworkDown",
+  "NotConnectedError",
+  "TimeoutError",
   "WebsocketConnectionError",
-  "DisconnectedDeviceDuringOperation",
+  // bad usage of device
   "BleError",
+  "EthAppPleaseEnableContractData",
+  "CantOpenDevice",
+  "DisconnectedDeviceDuringOperation",
+  "PairingFailed",
 ];
-const blacklistErrorDescription = [
+const excludedErrorDescription = [
+  // networking
+  /timeout of .* exceeded/,
+  // base usage of device
+  /Device .* was disconnected/,
+  "Invalid channel",
+  // others
   "Transaction signing request was rejected by the user",
 ];
 
@@ -40,8 +55,8 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
     // NB we do not need to explicitly set the release. we let the native side infers it.
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
-    sampleRate: 0.05,
-    tracesSampleRate: 0.001,
+    sampleRate: 0.2,
+    tracesSampleRate: 0.02,
     integrations: [
       new Sentry.ReactNativeTracing({
         routingInstrumentation,
@@ -49,7 +64,7 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
     ],
     beforeSend(event: any) {
       if (!getEnabled()) return null;
-      // If the error matches blacklistErrorName or blacklistErrorDescription,
+      // If the error matches excludedErrorName or excludedErrorDescription,
       // we will not send it to Sentry.
       if (event && typeof event === "object") {
         const { exception } = event;
@@ -59,13 +74,13 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
           Array.isArray(exception.values)
         ) {
           const { values } = exception;
-          const shouldBlacklist = values.some(item => {
+          const shouldExclude = values.some(item => {
             if (item && typeof item === "object") {
               const { type, value } = item;
               return (typeof type === "string" &&
-                blacklistErrorName.some(pattern => type.match(pattern))) ||
+                excludedErrorName.some(pattern => type.match(pattern))) ||
                 (typeof value === "string" &&
-                  blacklistErrorDescription.some(pattern =>
+                  excludedErrorDescription.some(pattern =>
                     value.match(pattern),
                   ))
                 ? event
@@ -73,7 +88,7 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
             }
             return null;
           });
-          if (shouldBlacklist) return null;
+          if (shouldExclude) return null;
         }
       }
 

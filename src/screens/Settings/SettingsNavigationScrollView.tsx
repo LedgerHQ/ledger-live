@@ -8,8 +8,6 @@ const styles = StyleSheet.create({
 
 export const SettingsNavigationScrollView = styled(NavigationScrollView).attrs({
   contentContainerStyle: styles.root,
-})`
-  padding: 0 ${p => p.theme.space[6]}px;
-`;
+})``;
 
 export default SettingsNavigationScrollView;
