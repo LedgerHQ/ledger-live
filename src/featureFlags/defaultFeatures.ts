@@ -49,7 +49,8 @@ export const defaultFeatures: DefaultFeatures = {
         },
         minimum_number_of_app_starts_since_last_crash: 2,
       },
-      typeform_url: "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
+      typeform_url:
+        "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
       support_email: "support@ledger.com",
     },
   },
