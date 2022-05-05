@@ -30,7 +30,7 @@ jobs:
   stop-runner:
     name: "stop ec2 instance"
     if: ${{ always() && needs.start-runner.result == 'success' }}
-    needs: [start-runner, build-linux]
+    needs: [start-runner, build-desktop-app-linux]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -38,8 +38,8 @@ jobs:
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
-  build-linux:
-    name: "Linux"
+  build-desktop-app-linux:
+    name: "Build Ledger Live Desktop (Linux)"
     needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
@@ -93,8 +93,8 @@ jobs:
           name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-linux-x86_64.AppImage
 
-  build-windows:
-    name: "Windows"
+  build-desktop-app-windows:
+    name: "Build Ledger Live Desktop (Windows)"
     runs-on: [ledger-live, windows]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -144,8 +144,8 @@ jobs:
           name: ${{ steps.version.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
 
-  bundle-macos:
-    name: "macOS"
+  build-desktop-app-macos:
+    name: "name: "Build Ledger Live Desktop (Mac OS X)""
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
