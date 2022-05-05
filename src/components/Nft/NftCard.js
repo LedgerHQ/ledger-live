@@ -6,7 +6,7 @@ import { View, StyleSheet, Platform } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import type { CollectionWithNFT, NFT } from "@ledgerhq/live-common/lib/nft";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 import LText from "../LText";
@@ -45,12 +45,9 @@ const NftCardView = ({
           },
         ]}
         onPress={() => {
-          navigation.navigate(NavigatorName.NftNavigator, {
-            screen: ScreenName.NftViewer,
-            params: {
-              nft,
-              collection,
-            },
+          navigation.navigate(ScreenName.NftViewer, {
+            nft,
+            collection,
           });
         }}
       >

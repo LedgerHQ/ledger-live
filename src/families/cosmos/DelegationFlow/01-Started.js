@@ -1,22 +1,20 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { Alert, Button, Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
-import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import { TrackScreen } from "../../../analytics";
-import Alert from "../../../components/Alert";
-
-const forceInset = { bottom: "always" };
+import Illustration from "../../../images/illustration/Illustration";
+import EarnLight from "../../../images/illustration/Light/_003.png";
+import EarnDark from "../../../images/illustration/Dark/_003.png";
 
 type RouteParams = {
   accountId: string,
@@ -39,21 +37,20 @@ export default function DelegationStarted({ navigation, route }: Props) {
     Linking.openURL(urls.cosmosStakingRewards);
   }, []);
 
-  const onCancel = useCallback(() => {
-    navigation.getParent().pop();
-  }, [navigation]);
-
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="DelegationFlow" name="Started" />
-        <IlluRewards style={styles.rewards} />
+        <Flex alignItems="center" mb={6}>
+          <Illustration
+            lightSource={EarnLight}
+            darkSource={EarnDark}
+            size={150}
+          />
+        </Flex>
         <LText semiBold style={styles.description}>
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.description" />
         </LText>
@@ -82,28 +79,26 @@ export default function DelegationStarted({ navigation, route }: Props) {
             }}
           />
         </View>
-        <View style={styles.warning}>
-          <Alert type="help">
-            <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
-          </Alert>
-        </View>
       </NavigationScrollView>
       <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
+        <View style={styles.warning}>
+          <Alert
+            type="info"
+            title={
+              <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
+            }
+          />
+        </View>
         <Button
           event="DelegationStartedBtn"
           onPress={onNext}
-          title={<Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />}
-          type="primary"
-        />
-        <Button
-          event="DelegationStartedCancel"
-          onPress={onCancel}
-          title={<Trans i18nKey="common.cancel" />}
-          type="darkSecondary"
-          outline={false}
-        />
+          type="main"
+          mt={6}
+        >
+          <Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />
+        </Button>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -144,10 +139,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
 
     flexDirection: "row",
-  },
-  warning: {
-    width: "100%",
-    marginTop: 16,
   },
   learnMoreBtn: {
     alignSelf: "flex-start",

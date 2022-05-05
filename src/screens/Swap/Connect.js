@@ -20,7 +20,7 @@ const Connect = ({
   provider?: string,
 }) => {
   const [device, setDevice] = useState(null);
-  const [result, setLocalResult] = useState();
+  const [result] = useState();
 
   const onModalHide = useCallback(() => {
     if (result) {
@@ -44,7 +44,7 @@ const Connect = ({
         onClose={setDevice}
         onModalHide={onModalHide}
         device={result ? null : device}
-        onResult={setLocalResult}
+        onResult={setResult}
         action={action}
         request={null}
         onSelectDeviceLink={() => setDevice()}

@@ -21,7 +21,6 @@ import {
   orderAccountsSelector,
 } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
-import clearLibcore from "../helpers/clearLibcore";
 import { flushAll } from "../components/DBSave";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<
@@ -105,7 +104,6 @@ export function useCleanCache() {
     dispatch({ type: "CLEAN_CACHE" });
     dispatch({ type: "LEDGER_CV:WIPE" });
     await clearBridgeCache();
-    await clearLibcore();
     wipe();
     flushAll();
   }, [dispatch, wipe]);

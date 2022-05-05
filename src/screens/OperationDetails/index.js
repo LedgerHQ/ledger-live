@@ -46,6 +46,8 @@ export const BackButton = ({ navigation }: { navigation: * }) => {
   );
 };
 
+// TODO: this button is generic and is used in places unrelated to operation details
+// move it to a generic place
 export const CloseButton = ({ navigation }: { navigation: * }) => {
   const { colors } = useTheme();
 

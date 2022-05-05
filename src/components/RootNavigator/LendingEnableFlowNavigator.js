@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import LendingEnableSelectAccount from "../../screens/Lending/EnableFlow/01-SelectAccount";
 import LendingEnableAmount from "../../screens/Lending/EnableFlow/02-Amount";

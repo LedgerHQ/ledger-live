@@ -77,7 +77,7 @@ function RebondFlow() {
         name={ScreenName.PolkadotRebondValidationSuccess}
         component={ValidationSuccess}
         options={{
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
           headerLeft: null,
           headerRight: null,

@@ -222,7 +222,10 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               >
                 <CurrencyUnitValue unit={unit} value={unfreezeBandwidth} />
               </LText>
-              <CheckBox isChecked={resource === "BANDWIDTH"} />
+              <CheckBox
+                onChange={() => onChangeResource("BANDWIDTH")}
+                isChecked={resource === "BANDWIDTH"}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.selectCard, { backgroundColor: colors.card }]}
@@ -261,7 +264,10 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               >
                 <CurrencyUnitValue unit={unit} value={unfreezeEnergy} />
               </LText>
-              <CheckBox isChecked={resource === "ENERGY"} />
+              <CheckBox
+                onChange={() => onChangeResource("ENERGY")}
+                isChecked={resource === "ENERGY"}
+              />
             </TouchableOpacity>
 
             <View

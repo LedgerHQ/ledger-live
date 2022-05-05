@@ -12,7 +12,7 @@ export default class NoLocationImage extends PureComponent<*> {
             d="M73.94 11.043A22.503 22.503 0 0 0 73 17.5C73 29.926 83.074 40 95.5 40c2.43 0 4.77-.385 6.962-1.098A53.315 53.315 0 0 1 107 60.5c0 29.547-23.953 53.5-53.5 53.5S0 90.047 0 60.5 23.953 7 53.5 7a53.34 53.34 0 0 1 20.44 4.043z"
           />
           <Path
-            stroke="#6490F1"
+            stroke="#bdb3ff"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}

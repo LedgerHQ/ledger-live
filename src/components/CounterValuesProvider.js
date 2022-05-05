@@ -46,10 +46,10 @@ function usePollingManager() {
       appState.current = nextAppState;
     }
 
-    AppState.addEventListener("change", handleChange);
+    const sub = AppState.addEventListener("change", handleChange);
 
     return () => {
-      AppState.removeEventListener("change", handleChange);
+      sub.remove();
     };
   }, []);
 

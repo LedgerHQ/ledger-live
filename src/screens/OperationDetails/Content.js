@@ -84,9 +84,6 @@ export default function Content({
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
-      initial: false,
-      // Set to false so it still adds `Accounts` as the previous route in the stack history
-      // even if you're targeting another navigation stack from your current one
       params: {
         accountId: account.id,
         parentId: parentAccount?.id,
@@ -234,15 +231,17 @@ export default function Content({
             if (!opAccount) return null;
 
             return (
-              <OperationRow
-                isSubOperation
-                key={op.id}
-                operation={op}
-                parentAccount={account}
-                account={opAccount}
-                multipleAccounts
-                isLast={subOperations.length - 1 === i}
-              />
+              <View style={{ marginHorizontal: 16 }}>
+                <OperationRow
+                  isSubOperation
+                  key={op.id}
+                  operation={op}
+                  parentAccount={account}
+                  account={opAccount}
+                  multipleAccounts
+                  isLast={subOperations.length - 1 === i}
+                />
+              </View>
             );
           })}
         </>

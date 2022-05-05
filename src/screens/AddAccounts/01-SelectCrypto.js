@@ -17,7 +17,6 @@ import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
@@ -95,17 +94,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="AddAccounts" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
-        <View style={styles.searchContainer}>
-          <FilteredSearchBar
-            keys={SEARCH_KEYS}
-            inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
-            list={sortedCryptoCurrencies}
-            renderList={renderList}
-            renderEmptySearch={renderEmptyList}
-          />
-        </View>
-      </KeyboardView>
+      <View style={styles.searchContainer}>
+        <FilteredSearchBar
+          keys={SEARCH_KEYS}
+          inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
+          list={sortedCryptoCurrencies}
+          renderList={renderList}
+          renderEmptySearch={renderEmptyList}
+        />
+      </View>
     </SafeAreaView>
   );
 }

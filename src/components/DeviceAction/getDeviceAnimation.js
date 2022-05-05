@@ -84,8 +84,8 @@ const animations = {
     },
     bluetooth: {
       plugAndPinCode: {
-        light: null,
-        dark: null,
+        light: require("../../animations/nanoX/bluetooth/1PlugAndPinCode/light.json"),
+        dark: require("../../animations/nanoX/bluetooth/1PlugAndPinCode/dark.json"),
       },
       enterPinCode: {
         light: require("../../animations/nanoX/bluetooth/3EnterPinCode/light.json"),
@@ -112,21 +112,27 @@ const animations = {
   blue: {
     plugAndPinCode: {
       light: require("../../animations/blue/1PlugAndPinCode/data.json"),
+      dark: require("../../animations/blue/1PlugAndPinCode/data.json"),
     },
     enterPinCode: {
       light: require("../../animations/blue/3EnterPinCode/data.json"),
+      dark: require("../../animations/blue/3EnterPinCode/data.json"),
     },
     quitApp: {
       light: require("../../animations/blue/4QuitApp/data.json"),
+      dark: require("../../animations/blue/4QuitApp/data.json"),
     },
     allowManager: {
       light: require("../../animations/blue/5AllowManager/data.json"),
+      dark: require("../../animations/blue/5AllowManager/data.json"),
     },
     openApp: {
       light: require("../../animations/blue/6OpenApp/data.json"),
+      dark: require("../../animations/blue/6OpenApp/data.json"),
     },
     validate: {
       light: require("../../animations/blue/7Validate/data.json"),
+      dark: require("../../animations/blue/7Validate/data.json"),
     },
   },
 };

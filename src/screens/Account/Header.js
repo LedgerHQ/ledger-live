@@ -1,13 +1,11 @@
 // @flow
 
-import React from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
-
-type Props = {};
 
 const Header = () => {
   const { error } = useGlobalSyncState();
@@ -19,7 +17,7 @@ const Header = () => {
   ) : null;
 };
 
-export default React.memo<Props>(Header);
+export default memo<{}>(Header);
 
 const styles = StyleSheet.create({
   root: {

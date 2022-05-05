@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import MigrateAccountsOverview from "../../screens/MigrateAccounts/01-Overview";
 import MigrateAccountsConnectDevice from "../../screens/MigrateAccounts/02-ConnectDevice";

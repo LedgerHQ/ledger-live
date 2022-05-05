@@ -12,7 +12,6 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
@@ -29,7 +28,6 @@ type Props = {
 type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
-  const { colors } = useTheme();
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
@@ -64,12 +62,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={[
-        styles.root,
-        {
-          borderTopColor: colors.lightFog,
-        },
-      ]}
+      style={[styles.root]}
+      contentContainerStyle={{ paddingHorizontal: 16 }}
     >
       <InfoModal
         isOpened={!!infoName}
@@ -121,8 +115,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: "row",
-    borderTopWidth: 1,
-    paddingTop: 16,
     overflow: "visible",
   },
 });

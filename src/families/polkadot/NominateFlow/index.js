@@ -77,7 +77,7 @@ function NominateFlow() {
         name={ScreenName.PolkadotNominateValidationSuccess}
         component={ValidationSuccess}
         options={{
-          headerTitle: null,
+          headerTitle: "",
           gestureEnabled: false,
           headerLeft: null,
           headerRight: null,
