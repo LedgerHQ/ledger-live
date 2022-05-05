@@ -2726,7 +2726,7 @@
     "@ledgerhq/hw-transport" "^6.27.1"
     "@ledgerhq/logs" "^6.10.0"
     rxjs "6"
-    
+
 "@ledgerhq/hw-transport@6.27.1", "@ledgerhq/hw-transport@^6.27.1":
   version "6.27.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-6.27.1.tgz#88072278f69c279cb6569352acd4ae2fec33ace3"
