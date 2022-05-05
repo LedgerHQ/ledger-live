@@ -1,11 +1,9 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
 import { WebView } from "react-native-webview";
 import styled from "styled-components/native";
 import { track } from "../../analytics";
-import { ratingsHappyMomentSelector } from "../../reducers/ratings";
+import useRatings from "../../logic/ratings";
 
 const injectedJavascript = `
 setTimeout(function() {
@@ -27,8 +25,7 @@ type Props = {
 };
 
 const DisappointedForm = ({ setStep }: Props) => {
-  const ratingsFeature = useFeature("ratings");
-  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
+  const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
   const onMessage = useCallback(
     event => {
       const { data } = event.nativeEvent;
@@ -44,7 +41,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   return (
     <Flex flex={1} height={400}>
       <StyledWebview
-        source={{ uri: ratingsFeature?.params?.typeform_url }}
+        source={{ uri: ratingsFeatureParams?.typeform_url }}
         originWhitelist={["*"]}
         javaScriptEnabledAndroid={true}
         injectedJavaScript={injectedJavascript}

@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
-import { useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import NoResultsFound from "../../icons/NoResultsFound";
-import { ratingsHappyMomentSelector } from "../../reducers/ratings";
 import { track } from "../../analytics";
+import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -20,7 +19,7 @@ type Props = {
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {
-  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
+  const { ratingsHappyMoment } = useRatings();
   const goToDisappointedForm = useCallback(() => {
     track("Sendfeedback", { source: ratingsHappyMoment.route_name });
     setStep("disappointedForm");

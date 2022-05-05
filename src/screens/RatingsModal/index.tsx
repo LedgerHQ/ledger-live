@@ -1,50 +1,37 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { ScrollView } from "react-native";
 import { BottomDrawer } from "@ledgerhq/native-ui";
-import useRatings, {
-  getRatingsDataOfUserFromStorage,
-  setRatingsDataOfUserInStorage,
-} from "../../logic/ratings";
+import useRatings from "../../logic/ratings";
 import Init from "./Init";
 import Enjoy from "./Enjoy";
 import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
-import { setRatingsDataOfUser } from "../../actions/ratings";
-import { ratingsDataOfUserSelector } from "../../reducers/ratings";
 
 const RatingsModal = () => {
-  const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const dispatch = useDispatch();
-  const initStep = useMemo(
-    () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
-    [ratingsDataOfUser?.alreadyClosedFromEnjoyStep],
-  );
+  const {
+    initRatings,
+    cleanRatings,
+    ratingsInitStep,
+    isRatingsModalOpen,
+    setRatingsModalOpen,
+  } = useRatings();
+  console.log("RATINGS MODAL");
 
   useEffect(() => {
-    getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
-      const ratingsDataOfUserUpdated = {
-        ...ratingsDataOfUser,
-        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate || Date.now(),
-        numberOfAppStarts: (ratingsDataOfUser?.numberOfAppStarts ?? 0) + 1,
-        numberOfAppStartsSinceLastCrash:
-          (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
-      };
+    initRatings();
 
-      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    });
-  }, [dispatch]);
+    return () => {
+      cleanRatings();
+    };
+  }, []);
 
-  const [isRatingsModalOpen, setRatingsModalOpen] = useRatings();
-
-  const [step, setStep] = useState(initStep);
+  const [step, setStep] = useState(ratingsInitStep);
 
   const closeModal = useCallback(() => {
     setRatingsModalOpen(false);
-    setStep(initStep);
-  }, [initStep, setRatingsModalOpen]);
+    setStep(ratingsInitStep);
+  }, [ratingsInitStep, setRatingsModalOpen]);
 
   const component = useMemo(() => {
     const components = {

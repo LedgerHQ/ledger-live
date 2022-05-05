@@ -1,18 +1,10 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { add } from "date-fns";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
-import { setRatingsDataOfUserInStorage } from "../../logic/ratings";
-import {
-  ratingsDataOfUserSelector,
-  ratingsHappyMomentSelector,
-} from "../../reducers/ratings";
-import { setRatingsDataOfUser } from "../../actions/ratings";
 import { track } from "../../analytics";
+import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -26,10 +18,11 @@ type Props = {
 };
 
 const Init = ({ closeModal, setStep }: Props) => {
-  const ratingsFeature = useFeature("ratings");
-  const dispatch = useDispatch();
-  const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
+  const {
+    ratingsHappyMoment,
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsFeatureParams,
+  } = useRatings();
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
     track("Satisfied", { source: ratingsHappyMoment.route_name });
@@ -37,46 +30,26 @@ const Init = ({ closeModal, setStep }: Props) => {
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
     track("Disappointed", { source: ratingsHappyMoment.route_name });
-    if (ratingsFeature?.params?.conditions?.disappointed_delay) {
-      const dateOfNextAllowedRequest: Date = add(
-        Date.now(),
-        ratingsFeature?.params?.conditions?.disappointed_delay,
-      );
-      const ratingsDataOfUserUpdated = {
-        ...ratingsDataOfUser,
-        dateOfNextAllowedRequest,
-      };
-      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    }
+    handleRatingsSetDateOfNextAllowedRequest(
+      ratingsFeatureParams?.conditions?.disappointed_delay,
+    );
   }, [
-    dispatch,
-    ratingsFeature?.params?.conditions?.disappointed_delay,
-    ratingsDataOfUser,
-    ratingsHappyMoment.route_name,
     setStep,
+    ratingsHappyMoment.route_name,
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsFeatureParams?.conditions?.disappointed_delay,
   ]);
   const onNotNow = useCallback(() => {
     closeModal();
     track("NotNow", { source: ratingsHappyMoment.route_name });
-    if (ratingsFeature?.params?.conditions?.not_now_delay) {
-      const dateOfNextAllowedRequest: Date = add(
-        Date.now(),
-        ratingsFeature?.params?.conditions?.not_now_delay,
-      );
-      const ratingsDataOfUserUpdated = {
-        ...ratingsDataOfUser,
-        dateOfNextAllowedRequest,
-      };
-      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    }
+    handleRatingsSetDateOfNextAllowedRequest(
+      ratingsFeatureParams?.conditions?.not_now_delay,
+    );
   }, [
     closeModal,
-    dispatch,
-    ratingsFeature?.params?.conditions?.not_now_delay,
-    ratingsDataOfUser,
     ratingsHappyMoment.route_name,
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsFeatureParams?.conditions?.not_now_delay,
   ]);
 
   return (

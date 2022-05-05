@@ -1,19 +1,11 @@
 import React, { useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Linking, Platform, TouchableOpacity } from "react-native";
-import { add } from "date-fns";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { urls } from "../../config/urls";
-import { setRatingsDataOfUserInStorage } from "../../logic/ratings";
-import {
-  ratingsDataOfUserSelector,
-  ratingsHappyMomentSelector,
-} from "../../reducers/ratings";
-import { setRatingsDataOfUser } from "../../actions/ratings";
 import { track } from "../../analytics";
+import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -26,55 +18,24 @@ type Props = {
 };
 
 const Enjoy = ({ closeModal }: Props) => {
-  const ratingsFeature = useFeature("ratings");
-
-  const dispatch = useDispatch();
-  const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
+  const {
+    ratingsHappyMoment,
+    handleEnjoyNotNow,
+    handleGoToStore,
+  } = useRatings();
   const goToStore = useCallback(() => {
     track("RedirectedToStore", { source: ratingsHappyMoment.route_name });
     Linking.openURL(
       Platform.OS === "ios" ? urls.applestoreRate : urls.playstore,
     );
     closeModal();
-    const ratingsDataOfUserUpdated = {
-      ...ratingsDataOfUser,
-      alreadyRated: true,
-      doNotAskAgain: true,
-    };
-    dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-    setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-  }, [closeModal, dispatch, ratingsDataOfUser, ratingsHappyMoment.route_name]);
+    handleGoToStore();
+  }, [handleGoToStore, closeModal, ratingsHappyMoment.route_name]);
   const onNotNow = useCallback(() => {
     track("NotNow", { source: ratingsHappyMoment.route_name });
     closeModal();
-    if (ratingsDataOfUser.alreadyClosedFromEnjoyStep) {
-      const ratingsDataOfUserUpdated = {
-        ...ratingsDataOfUser,
-        doNotAskAgain: true,
-      };
-      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    } else if (ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay) {
-      const dateOfNextAllowedRequest: Date = add(
-        Date.now(),
-        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
-      );
-      const ratingsDataOfUserUpdated = {
-        ...ratingsDataOfUser,
-        dateOfNextAllowedRequest,
-        alreadyClosedFromEnjoyStep: true,
-      };
-      dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
-      setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
-    }
-  }, [
-    closeModal,
-    dispatch,
-    ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
-    ratingsDataOfUser,
-    ratingsHappyMoment.route_name,
-  ]);
+    handleEnjoyNotNow();
+  }, [ratingsHappyMoment.route_name, closeModal, handleEnjoyNotNow]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">

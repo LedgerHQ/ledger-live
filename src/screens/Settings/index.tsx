@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
@@ -15,17 +15,15 @@ import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
 import { track } from "../../analytics";
-import { setRatingsHappyMoment } from "../../actions/ratings";
 
 type Props = {
   navigation: any;
 };
 
 export default function Settings({ navigation }: Props) {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
-  const [, setRatingsModalOpen] = useRatings();
+  const { handleSettingsRateApp } = useRatings();
   const currAppLanguage = useSelector(languageSelector);
 
   const [debugVisible, setDebugVisible] = useState(
@@ -41,14 +39,9 @@ export default function Settings({ navigation }: Props) {
   }
 
   const onRateApp = useCallback(() => {
-    dispatch(
-      setRatingsHappyMoment({
-        route_name: "Settings",
-      }),
-    );
     track("ReviewPromptStarted", { source: "Settings" });
-    setRatingsModalOpen(true);
-  }, [dispatch, setRatingsModalOpen]);
+    handleSettingsRateApp();
+  }, [handleSettingsRateApp]);
 
   const onDebugHiddenPress = useCallback(() => {
     if (debugTimeout) debugTimeout.current();

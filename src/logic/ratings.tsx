@@ -1,5 +1,5 @@
 // @flow
-import { useEffect, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
@@ -17,6 +17,7 @@ import {
   setRatingsModalOpen,
   setRatingsCurrentRouteName,
   setRatingsHappyMoment,
+  setRatingsDataOfUser,
 } from "../actions/ratings";
 import { languageSelector } from "../reducers/settings";
 import { track } from "../analytics";
@@ -62,7 +63,7 @@ const getCurrentRouteName = (
   return state.routes[state.index].name;
 };
 
-export async function getRatingsDataOfUserFromStorage() {
+async function getRatingsDataOfUserFromStorage() {
   const ratingsDataOfUser = await AsyncStorage.getItem(
     ratingsDataOfUserAsyncStorageKey,
   );
@@ -70,7 +71,7 @@ export async function getRatingsDataOfUserFromStorage() {
   return JSON.parse(ratingsDataOfUser);
 }
 
-export async function setRatingsDataOfUserInStorage(ratingsDataOfUser) {
+async function setRatingsDataOfUserInStorage(ratingsDataOfUser) {
   await AsyncStorage.setItem(
     ratingsDataOfUserAsyncStorageKey,
     JSON.stringify(ratingsDataOfUser),
@@ -209,7 +210,12 @@ const useRatings = () => {
     ],
   );
 
-  useEffect(() => {
+  const updateRatingsDataOfUserInStateAndStore = useCallback(ratingsDataOfUserUpdated => {
+    dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
+    setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
+  }, [dispatch]);
+
+  const initRatings = useCallback(() => {
     if (!ratingsFeature?.enabled) return;
 
     navigation.addListener("state", e => {
@@ -220,12 +226,91 @@ const useRatings = () => {
       }
     });
 
-    return () => {
-      navigation.removeListener("state");
-    };
-  }, [navigation, ratingsFeature?.enabled, triggerRouteChange]);
+    getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
+      updateRatingsDataOfUserInStateAndStore({
+        ...ratingsDataOfUser,
+        appFirstStartDate: ratingsDataOfUser?.appFirstStartDate || Date.now(),
+        numberOfAppStarts: (ratingsDataOfUser?.numberOfAppStarts ?? 0) + 1,
+        numberOfAppStartsSinceLastCrash:
+          (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
+      });
+    });
+  }, [navigation, ratingsFeature?.enabled, triggerRouteChange, updateRatingsDataOfUserInStateAndStore]);
 
-  return [isRatingsModalOpen, setRatingsModalOpenCallback];
+  const cleanRatings = useCallback(() => {
+    navigation.removeListener("state");
+  }, [navigation]);
+
+  const ratingsInitStep = useMemo(
+    () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
+    [ratingsDataOfUser?.alreadyClosedFromEnjoyStep],
+  );
+
+  const handleSettingsRateApp = useCallback(() => {
+    dispatch(
+      setRatingsHappyMoment({
+        route_name: "Settings",
+      }),
+    );
+    setRatingsModalOpenCallback(true);
+  }, [dispatch, setRatingsModalOpenCallback]);
+
+  const handleRatingsSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
+    if (delay !== null && delay !== undefined) {
+      const dateOfNextAllowedRequest: Date = add(
+        Date.now(),
+        delay
+      );
+      updateRatingsDataOfUserInStateAndStore({
+        ...ratingsDataOfUser,
+        dateOfNextAllowedRequest,
+        ...additionalParams,
+      });
+    }
+  }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
+
+  const handleEnjoyNotNow = useCallback(() => {
+    if (ratingsDataOfUser?.alreadyClosedFromEnjoyStep) {
+      updateRatingsDataOfUserInStateAndStore({
+        ...ratingsDataOfUser,
+        doNotAskAgain: true,
+      });
+    } else {
+      handleRatingsSetDateOfNextAllowedRequest(
+        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+        {
+          alreadyClosedFromEnjoyStep: true,
+        },
+      );
+    }
+  }, [
+    handleRatingsSetDateOfNextAllowedRequest,
+    ratingsDataOfUser,
+    ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+    updateRatingsDataOfUserInStateAndStore,
+  ]);
+
+  const handleGoToStore = useCallback(() => {
+    updateRatingsDataOfUserInStateAndStore({
+      ...ratingsDataOfUser,
+      alreadyRated: true,
+      doNotAskAgain: true,
+    });
+  }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
+
+  return {
+    initRatings,
+    cleanRatings,
+    handleSettingsRateApp,
+    handleRatingsSetDateOfNextAllowedRequest,
+    handleEnjoyNotNow,
+    handleGoToStore,
+    ratingsFeatureParams: ratingsFeature?.params,
+    ratingsInitStep,
+    isRatingsModalOpen,
+    ratingsHappyMoment,
+    setRatingsModalOpen: setRatingsModalOpenCallback,
+  };
 };
 
 export default useRatings;
