@@ -31,6 +31,7 @@ const ConnectNanoScene = ({
     device => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
+      dispatch(setReadOnlyMode(false));
     },
     [dispatch],
   );
