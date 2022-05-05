@@ -162,6 +162,7 @@ export function testBridge<T extends Transaction>(
         scanAccounts,
         FIXME_ignoreAccountFields,
         FIXME_ignoreOperationFields,
+        FIXME_ignorePreloadFields,
       } = currencyData;
       test("functions are defined", () => {
         expect(typeof bridge.scanAccounts).toBe("function");
@@ -170,18 +171,21 @@ export function testBridge<T extends Transaction>(
       });
       test("preload and rehydrate", async () => {
         const data1 = await bridge.preload(currency);
-        bridge.hydrate(data1, currency);
+        const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
 
-        if (data1) {
-          const serialized1 = JSON.parse(JSON.stringify(data1));
+        bridge.hydrate(data1filtered, currency);
+
+        if (data1filtered) {
+          const serialized1 = JSON.parse(JSON.stringify(data1filtered));
           bridge.hydrate(serialized1, currency);
           expect(serialized1).toBeDefined();
           const data2 = await bridge.preload(currency);
+          const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
 
-          if (data2) {
-            bridge.hydrate(data2, currency);
-            expect(data1).toMatchObject(data2);
-            const serialized2 = JSON.parse(JSON.stringify(data2));
+          if (data2filtered) {
+            bridge.hydrate(data2filtered, currency);
+            expect(data1filtered).toMatchObject(data2filtered);
+            const serialized2 = JSON.parse(JSON.stringify(data2filtered));
             expect(serialized1).toMatchObject(serialized2);
             bridge.hydrate(serialized2, currency);
           }

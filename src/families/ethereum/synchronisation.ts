@@ -59,20 +59,23 @@ export const getAccountShape: GetAccountShape = async (
   const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
   const currentBlockP = fetchCurrentBlock(currency);
   const balanceP = api.getAccountBalance(address);
-  const [txs, currentBlock] = await Promise.all([txsP, currentBlockP]);
+  const [txs, currentBlock, balance] = await Promise.all([
+    txsP,
+    currentBlockP,
+    balanceP,
+  ]);
   const blockHeight = currentBlock.height.toNumber();
 
   if (!pullFromBlockHash && txs.length === 0) {
     log("ethereum", "no ops on " + address);
     return {
       id: accountId,
-      balance: new BigNumber(0),
+      balance,
       subAccounts: [],
       blockHeight,
     };
   }
 
-  const balance = await balanceP;
   // transform transactions into operations
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
   // extracting out the sub operations by token account
@@ -333,7 +336,7 @@ const txToOps =
             const receiver = safeEncodeEIP55(event.receiver);
             const contract = safeEncodeEIP55(event.contract);
             const tokenId = event.token_id;
-            const nftId = encodeNftId(id, event.contract, tokenId);
+            const nftId = encodeNftId(id, event.contract, tokenId, currency.id);
             const sending = addr === sender;
             const receiving = addr === receiver;
 
@@ -411,7 +414,12 @@ const txToOps =
             event.transfers.forEach((transfer, j) => {
               const tokenId = transfer.id;
               const value = new BigNumber(transfer.value);
-              const nftId = encodeNftId(id, event.contract, tokenId);
+              const nftId = encodeNftId(
+                id,
+                event.contract,
+                tokenId,
+                currency.id
+              );
 
               if (sending) {
                 const type = "NFT_OUT";

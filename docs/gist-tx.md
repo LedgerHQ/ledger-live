@@ -7,10 +7,9 @@ yarn add @ledgerhq/live-common
 yarn add rxjs   # for Observable
 ```
 
-Now we need a concrete implementation of libcore and a Transport to use the ledger device with. _In our example we're going to do a Node.js script that works with USB_, so we're just going to install these:
+Now we need an actual implementation of a Transport to use the ledger device with. _In our example we're going to do a Node.js script that works with USB_, so we're just going to install these:
 
 ```bash
-yarn add @ledgerhq/ledger-core
 yarn add @ledgerhq/hw-transport-node-hid-noevents
 ```
 
@@ -46,20 +45,12 @@ const deviceId = ""; // in HID case
 const { registerTransportModule } = require("@ledgerhq/live-common/lib/hw");
 const TransportNodeHid = require("@ledgerhq/hw-transport-node-hid-noevents")
   .default;
-const implementLibcore = require("@ledgerhq/live-common/lib/libcore/platforms/nodejs")
-  .default;
 const {
   setSupportedCurrencies,
 } = require("@ledgerhq/live-common/lib/currencies");
 
 // configure which coins to enable
 setSupportedCurrencies([currencyId]);
-
-// provide a libcore implementation
-implementLibcore({
-  lib: () => require("@ledgerhq/ledger-core"),
-  dbPath: "./dbdata",
-});
 
 // configure which transport are available
 registerTransportModule({

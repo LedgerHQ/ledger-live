@@ -26,6 +26,8 @@ function expectRevealed(account) {
 
 const tezosUnit = getCryptoCurrencyById("tezos").units[0];
 
+const safeMinimumForDestinationNotCreated = parseCurrencyUnit(tezosUnit, "0.6");
+
 const tezos: AppSpec<Transaction> = {
   name: "Tezos",
   currency: getCryptoCurrencyById("tezos"),
@@ -51,7 +53,7 @@ const tezos: AppSpec<Transaction> = {
         const amount = maxSpendable.div(2).integerValue();
         if (
           sibling.balance.eq(0) &&
-          amount.lt(parseCurrencyUnit(tezosUnit, "0.3"))
+          amount.lt(safeMinimumForDestinationNotCreated)
         ) {
           throw new Error("need more funds to send to new address");
         }
@@ -71,7 +73,7 @@ const tezos: AppSpec<Transaction> = {
         const amount = maxSpendable.div(2).integerValue();
         if (
           sibling.balance.eq(0) &&
-          amount.lt(parseCurrencyUnit(tezosUnit, "0.3"))
+          amount.lt(safeMinimumForDestinationNotCreated)
         ) {
           throw new Error("need more funds to send to new address");
         }
@@ -93,7 +95,7 @@ const tezos: AppSpec<Transaction> = {
         const recipient = sibling.freshAddress;
         if (
           sibling.balance.eq(0) &&
-          maxSpendable.lt(parseCurrencyUnit(tezosUnit, "0.3"))
+          maxSpendable.lt(safeMinimumForDestinationNotCreated)
         ) {
           throw new Error("need more funds to send to new address");
         }

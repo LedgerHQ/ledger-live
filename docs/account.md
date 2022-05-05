@@ -61,7 +61,7 @@ type Account = {
 ```
 
 - `id` is a unique account identifier that we build up with many pieces of information. It's generally composed of 5 parts split by a `:` with:
-  - `implementation` the implementation that the account is using (typically `js` or `libcore`). It directly maps the account to use the corresponding [AccountBridge](./AccountBridge.md).
+  - `implementation` the implementation that the account is using (typically `js`). It directly maps the account to use the corresponding [AccountBridge](./AccountBridge.md).
   - `version` a version number required to allow a migration system (changing it usually will force a recalculation of operations).
   - `currencyId` tracks the unique id of currency.
   - `xpubOrAddress` is the "restore key" which is either an xpub or an address. Basically a way (combined with some other fields) to restore the account information.

@@ -4,6 +4,9 @@ on:
     branches:
       - bitcoin-js
       - bitcoin-js-*
+      - feat/bitcoin-js-*
+      - bugfix/bitcoin-js-*
+      - support/bitcoin-js-*
 
 jobs:
   start-runner:
@@ -60,7 +63,8 @@ jobs:
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           DEBUG_HTTP_RESPONSE: "1"
           SEED: ${{ secrets.SEED4 }}
-          VERBOSE_FILE: bot-tests.txt
+          BOT_REPORT_FOLDER: botreport
+          VERBOSE_FILE: botreport/logs.txt
           GITHUB_SHA: ${GITHUB_SHA}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_RUN_ID: ${{ github.run_id }}
@@ -70,7 +74,7 @@ jobs:
           BOT_FILTER_FAMILY: bitcoin
           EXPERIMENTAL_EXPLORERS: true
           EXPERIMENTAL_CURRENCIES_JS_BRIDGE: algorand,bitcoin,bitcoin_cash,bsc,litecoin,dash,qtum,zcash,bitcoin_gold,stratis,dogecoin,digibyte,komodo,pivx,zencash,vertcoin,peercoin,viacoin,stakenet,stealthcoin,decred,bitcoin_testnet,tezosæ
-        run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
       - name: Run coverage
         if: failure() || success()
@@ -79,5 +83,5 @@ jobs:
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
-          name: bot-tests.txt
-          path: bot-tests.txt
+          name: botreport
+          path: botreport/

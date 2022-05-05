@@ -6,13 +6,13 @@ export interface ICrypto {
     xpub: string,
     account: number,
     index: number
-  ): string;
+  ): Promise<string>;
   customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string;
+  ): Promise<string>;
 
   getDerivationMode(address: string): string;
 

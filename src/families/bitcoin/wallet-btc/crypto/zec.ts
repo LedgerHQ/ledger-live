@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import zec from "zcash-bitcore-lib";
 import bs58check from "bs58check";
 import * as bjs from "bitcoinjs-lib";
 import { InvalidAddress } from "@ledgerhq/errors";
@@ -30,21 +27,21 @@ class ZCash extends Base {
   }
 
   // eslint-disable-next-line
-  getLegacyAddress(xpub: string, account: number, index: number): string {
-    const pk = bjs.crypto.hash160(this.getPubkeyAt(xpub, account, index));
+  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+    const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
     pk.copy(payload, 2);
     return bs58check.encode(payload);
   }
 
-  customGetAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
-    return this.getLegacyAddress(xpub, account, index);
+  ): Promise<string> {
+    return await this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -74,7 +71,21 @@ class ZCash extends Base {
 
   // eslint-disable-next-line class-methods-use-this
   validateAddress(address: string): boolean {
-    return zec.Address.isValid(address, "livenet");
+    try {
+      const version = Number(
+        "0x" + bs58check.decode(address).slice(0, 2).toString("hex")
+      );
+      // refer to https://github.com/zcash-hackworks/bitcore-lib-zcash/blob/master/lib%2Faddress.js for the address validation
+      if (
+        version === this.network.pubKeyHash ||
+        version === this.network.scriptHash
+      ) {
+        return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
   }
 }
 

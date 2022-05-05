@@ -7,6 +7,7 @@ import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "../../../errors";
+import varuint from "varuint-bitcoin";
 
 export function parseHexString(str: any) {
   const result: Array<number> = [];
@@ -138,7 +139,7 @@ function outputWeight(derivationMode: string): number {
 export function outputSize(currency: ICrypto, addr: string): number {
   const scriptLen = currency.toOutputScript(addr).length;
   let size = 1 + 8 + scriptLen;
-  // More bytes for decred, refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L478
+  // More bytes for decred
   if (currency.network.name === "Decred") {
     size += 8;
   }
@@ -260,4 +261,11 @@ export function isTaprootAddress(address: string, currency?: Currency) {
   } else {
     return false;
   }
+}
+
+export function writeVarInt(buffer: Buffer, i: number, offset: number) {
+  // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
+  varuint.encode(i, buffer, offset);
+  offset += varuint.encode.bytes;
+  return offset;
 }
