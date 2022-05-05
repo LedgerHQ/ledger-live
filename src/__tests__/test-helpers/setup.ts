@@ -58,4 +58,5 @@ setSupportedCurrencies([
   "filecoin",
   "solana",
   "celo",
+  "hedera",
 ]);
