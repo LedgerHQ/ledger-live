@@ -1,5 +1,4 @@
-/* @flow */
-import React from "react";
+import React, { memo } from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { useRoute, useTheme } from "@react-navigation/native";
 import { scrollToTop } from "../../../navigation/utils";
@@ -40,4 +39,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftGalleryHeaderTitle;
+export default memo(NftGalleryHeaderTitle);

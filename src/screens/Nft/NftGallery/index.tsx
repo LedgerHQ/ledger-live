@@ -1,39 +1,38 @@
 // @flow
 
-import React, { useState, useMemo, useCallback, useRef } from "react";
-
-import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-import Animated, { Value, event } from "react-native-reanimated";
-import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
-import type { CollectionWithNFT } from "@ledgerhq/live-common/lib/nft";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import React, { useState, useMemo, useCallback, useRef, memo } from "react";
 import {
   View,
   FlatList,
   SafeAreaView,
   StyleSheet,
   Platform,
+  ListRenderItemInfo,
 } from "react-native";
-
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import Animated, { Value, event } from "react-native-reanimated";
+import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";
 import NftCollectionWithName from "./NftCollectionWithName";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
 
 const CollectionsList = Animated.createAnimatedComponent(FlatList);
 
-const renderItem = ({ item: collection }) => (
+const renderItem = ({ item: collection }: ListRenderItemInfo<ProtoNFT[]>) => (
   <View style={styles.collectionContainer}>
     <NftCollectionWithName
-      key={collection.contract}
-      collectionWithNfts={collection}
+      key={collection?.[0]?.contract}
+      collection={collection}
     />
   </View>
 );
@@ -65,8 +64,8 @@ const NftGallery = () => {
   const collections = useMemo(() => nftsByCollections(account.nfts), [
     account.nfts,
   ]);
-  const collectionsSlice = useMemo(
-    () => collections.slice(0, collectionsCount),
+  const collectionsSlice: Array<ProtoNFT[]> = useMemo(
+    () => Object.values(collections).slice(0, collectionsCount),
     [collections, collectionsCount],
   );
 
@@ -81,7 +80,6 @@ const NftGallery = () => {
       screen: ScreenName.SendCollection,
       params: {
         account,
-        collections,
       },
     });
 
@@ -98,7 +96,6 @@ const NftGallery = () => {
       <CollectionsList
         data={collectionsSlice}
         contentContainerStyle={styles.collectionsList}
-        keyExtractor={(collection: CollectionWithNFT) => collection.contract}
         renderItem={renderItem}
         onEndReached={onEndReached}
         onScroll={onScroll}
@@ -154,4 +151,4 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
 });
-export default withDiscreetMode(NftGallery);
+export default memo(withDiscreetMode(NftGallery));

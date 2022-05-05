@@ -1,41 +1,30 @@
-// @flow
-
 import React, { useState } from "react";
-
-import FastImage from "react-native-fast-image";
-import { Image, View, StyleSheet, Animated } from "react-native";
+import FastImage, {
+  OnLoadEvent,
+  FastImageProps,
+} from "react-native-fast-image";
+import { View, StyleSheet, Animated } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
 import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
 const ImageComponent = ({
-  style,
-  source,
-  resizeMode,
-  onLoadEnd,
-  onLoad,
+  ...props
 }: {
-  style: Object,
-  source: { [string]: string },
-  resizeMode: string,
-  onLoadEnd: () => *,
-  onLoad: () => *,
-}) => (
-  <FastImage
-    style={style}
-    resizeMode={FastImage.resizeMode[resizeMode]}
-    source={source}
-    onLoad={onLoad}
-    onLoadEnd={onLoadEnd}
-  />
-);
+  style: Object;
+} & FastImageProps) =>
+  typeof props?.source === "object" && props?.source?.uri ? (
+    <FastImage {...props} />
+  ) : (
+    <></>
+  );
 
 const NotFound = ({
   colors,
   onLayout,
 }: {
-  colors: Object,
-  onLayout: () => *,
+  colors: Object;
+  onLayout: () => void;
 }) => {
   const [iconWidth, setIconWidth] = useState(40);
 
@@ -58,20 +47,22 @@ const NotFound = ({
 };
 
 type Props = {
-  style?: Object,
-  status: string,
-  src: string,
-  resizeMode?: string,
-  colors: any,
+  style?: Object;
+  status: string;
+  src: string;
+  resizeMode?: string;
+  colors: any;
 };
 
 type State = {
-  loadError: boolean,
+  loadError: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
   state = {
+    beforeLoadDone: false,
     loadError: false,
+    contentType: null,
   };
 
   opacityAnim = new Animated.Value(0);
@@ -84,9 +75,23 @@ class NftImage extends React.PureComponent<Props, State> {
     }).start();
   };
 
+  onLoad = ({ nativeEvent }: OnLoadEvent) => {
+    if (!nativeEvent) {
+      this.setState({ loadError: true });
+    }
+  };
+
+  onError = () => {
+    this.setState({ loadError: true });
+  };
+
   render() {
     const { style, status, src, colors, resizeMode = "cover" } = this.props;
     const { loadError } = this.state;
+
+    const noData = status === "nodata";
+    const metadataError = status === "error";
+    const noSource = status === "loaded" && !src;
 
     return (
       <View style={[style, styles.root]}>
@@ -99,10 +104,7 @@ class NftImage extends React.PureComponent<Props, State> {
             },
           ]}
         >
-          {status === "nodata" ||
-          status === "error" ||
-          (status === "loaded" && !src) ||
-          loadError ? (
+          {noData || metadataError || noSource || loadError ? (
             <NotFound colors={colors} onLayout={this.startAnimation} />
           ) : (
             <ImageComponent
@@ -116,13 +118,9 @@ class NftImage extends React.PureComponent<Props, State> {
               source={{
                 uri: src,
               }}
-              onLoad={({ nativeEvent }: Image.ImageLoadEvent) => {
-                if (!nativeEvent) {
-                  this.setState({ loadError: true });
-                }
-              }}
+              onLoad={this.onLoad}
               onLoadEnd={this.startAnimation}
-              onError={() => this.setState({ loadError: true })}
+              onError={this.onError}
             />
           )}
         </Animated.View>

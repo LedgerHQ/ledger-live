@@ -1,6 +1,4 @@
-// @flow
-
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo, memo } from "react";
 
 import {
   View,
@@ -15,11 +13,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import Animated, { Value, event } from "react-native-reanimated";
-
-import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import type { CollectionWithNFT, NFT } from "@ledgerhq/live-common/lib/nft";
-import type { Operation } from "@ledgerhq/live-common/lib/types";
-
+import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import { Operation, ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -35,15 +30,15 @@ const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
 
 type Props = {
-  navigation: any,
-  route: RouteParams,
+  navigation: any;
+  route: RouteParams;
 };
 
 type RouteParams = {
   params: {
-    accountId: string,
-    collection: CollectionWithNFT,
-  },
+    accountId: string;
+    collection: ProtoNFT[];
+  };
 };
 
 const NftList = Animated.createAnimatedComponent(FlatList);
@@ -57,7 +52,10 @@ const NftCollection = ({ route }: Props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { params } = route;
+  const {
+    params: { collection },
+  } = route;
+  const nft = collection[0];
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const scrollY = useRef(new Value(0)).current;
   const onScroll = () =>
@@ -74,16 +72,16 @@ const NftCollection = ({ route }: Props) => {
 
   // nfts' list related -----
   const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
-  const nfts = useMemo(() => params.collection.nfts.slice(0, nftCount), [
+  const nfts = useMemo(() => collection?.slice(0, nftCount), [
     nftCount,
-    params.collection,
+    collection,
   ]);
   const sendToken = () => {
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendNft,
       params: {
         account,
-        collection: params.collection,
+        collection,
       },
     });
   };
@@ -93,7 +91,6 @@ const NftCollection = ({ route }: Props) => {
       <NftCard
         key={item.id}
         nft={item}
-        collection={params.collection}
         style={{
           maxWidth: "50%",
           paddingLeft: index % 2 !== 0 ? 8 : 0,
@@ -101,12 +98,12 @@ const NftCollection = ({ route }: Props) => {
         }}
       />
     ),
-    [params.collection],
+    [],
   );
 
   const renderNftListFooter = useCallback(
-    () => (params.collection.nfts.length > nftCount ? <LoadingFooter /> : null),
-    [params.collection.nfts.length, nftCount],
+    () => (collection?.length > nftCount ? <LoadingFooter /> : null),
+    [collection?.length, nftCount],
   );
 
   const onNftsEndReached = useCallback(() => {
@@ -115,12 +112,10 @@ const NftCollection = ({ route }: Props) => {
 
   // operations' list related -----
   const [opCount, setOpCount] = useState(100);
-  const { sections, completed } = groupAccountOperationsByDay(account, {
+  const { sections, completed } = groupAccountOperationsByDay(account!, {
     count: opCount,
     filterOperation: op =>
-      op?.nftOperations?.find(
-        op => op?.contract === params?.collection?.contract,
-      ),
+      !!op?.nftOperations?.find(op => op?.contract === nft?.contract),
   });
 
   const renderOperationItem = useCallback(
@@ -129,9 +124,9 @@ const NftCollection = ({ route }: Props) => {
       index,
       section,
     }: {
-      item: Operation,
-      index: number,
-      section: SectionBase<any>,
+      item: Operation;
+      index: number;
+      section: SectionBase<any>;
     }) => {
       if (!account) return null;
 
@@ -165,7 +160,7 @@ const NftCollection = ({ route }: Props) => {
       <NftList
         data={nfts}
         numColumns={2}
-        keyExtractor={(nft: NFT) => nft.id}
+        keyExtractor={(n: ProtoNFT) => n.id}
         renderItem={renderNftItem}
         onEndReached={onNftsEndReached}
         onScroll={onScroll}
@@ -249,4 +244,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withDiscreetMode(NftCollection);
+export default memo(withDiscreetMode(NftCollection));

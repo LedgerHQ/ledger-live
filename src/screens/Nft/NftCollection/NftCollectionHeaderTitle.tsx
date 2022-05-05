@@ -1,18 +1,30 @@
-/* @flow */
-import React from "react";
+import React, { memo } from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
-import { useRoute, useTheme } from "@react-navigation/native";
+import {
+  useNftMetadata,
+  useNftCollectionMetadata,
+} from "@ledgerhq/live-common/lib/nft";
+import { useRoute, useTheme, RouteProp } from "@react-navigation/native";
+import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { scrollToTop } from "../../../navigation/utils";
 import NftImage from "../../../components/Nft/NftImage";
 import LText from "../../../components/LText";
 
+type RouteParams = RouteProp<{ params: { collection: ProtoNFT[] } }, "params">;
+
 const NftCollectionHeaderTitle = () => {
-  const { params } = useRoute();
+  const { params } = useRoute<RouteParams>();
   const { colors } = useTheme();
-  const { status, metadata } = useNftMetadata(
-    params.collection.contract,
-    params.collection.nfts[0].tokenId,
+  const { collection } = params;
+  const nft = collection?.[0];
+  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
+    nft?.contract,
+    nft?.tokenId,
+    nft?.currencyId,
+  );
+  const { metadata: collectionMetadata } = useNftCollectionMetadata(
+    nft?.contract,
+    nft?.currencyId,
   );
 
   return (
@@ -26,20 +38,18 @@ const NftCollectionHeaderTitle = () => {
         ]}
       >
         <NftImage
-          height={24}
-          width={24}
           style={styles.headerImage}
-          src={metadata?.media}
-          status={status}
+          src={nftMetadata?.media}
+          status={nftStatus}
         />
         <LText
-          ellipsizeMode={metadata?.tokenName ? "tail" : "middle"}
+          ellipsizeMode={collectionMetadata?.tokenName ? "tail" : "middle"}
           semiBold
           secondary
           numberOfLines={1}
           style={styles.title}
         >
-          {metadata?.tokenName || params.collection.contract}
+          {collectionMetadata?.tokenName || nft?.contract}
         </LText>
       </View>
     </TouchableWithoutFeedback>
@@ -59,8 +69,11 @@ const styles = StyleSheet.create({
   },
   headerImage: {
     borderRadius: 4,
+    overflow: "hidden",
     marginRight: 12,
+    width: 24,
+    height: 24,
   },
 });
 
-export default NftCollectionHeaderTitle;
+export default memo(NftCollectionHeaderTitle);

@@ -1,5 +1,4 @@
-// @flow
-import React, { useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 
 import {
   View,
@@ -37,7 +36,7 @@ type Props = {
   },
 };
 
-export default function SendAmountNFT({ route }: Props) {
+const SendAmountNFT = ({ route }: Props) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -71,22 +70,18 @@ export default function SendAmountNFT({ route }: Props) {
     },
     [bridge, setTransaction, transaction],
   );
-  // Set the quantity as null as a start to allow the placeholder to appear
-  useEffect(() => {
-    setTransaction(
-      bridge.updateTransaction(transaction, {
-        quantities: [null],
-      }),
-    );
-  }, []);
   const quantity = useMemo(() => transaction.quantities?.[0]?.toNumber(), [
     transaction.quantities,
   ]);
 
-  const nft = account?.nfts?.find(
-    nft =>
-      nft.collection.contract === transaction?.collection &&
-      nft.tokenId === transaction?.tokenIds[0],
+  const nft = useMemo(
+    () =>
+      account?.nfts?.find(
+        nft =>
+          nft?.contract === transaction?.collection &&
+          nft?.tokenId === transaction?.tokenIds[0],
+      ),
+    [account?.nfts, transaction?.collection, transaction?.tokenIds],
   );
 
   const onContinue = useCallback(() => {
@@ -98,8 +93,8 @@ export default function SendAmountNFT({ route }: Props) {
   }, [account, parentAccount, navigation, transaction]);
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
-  const error = (() => {
-    if (status?.warnings?.amount) {
+  const error = useMemo(() => {
+    if (typeof quantity !== "undefined" && status?.warnings?.amount) {
       return (
         <LText style={styles.error} color={"orange"} numberOfLines={2}>
           <TranslatedError error={status?.warnings?.amount} />
@@ -107,7 +102,7 @@ export default function SendAmountNFT({ route }: Props) {
       );
     }
 
-    if (status?.errors?.amount) {
+    if (typeof quantity !== "undefined" && status?.errors?.amount) {
       return (
         <LText style={styles.error} color={"alert"} numberOfLines={2}>
           <TranslatedError error={status?.errors?.amount} />
@@ -116,7 +111,7 @@ export default function SendAmountNFT({ route }: Props) {
     }
 
     return <LText style={styles.error} numberOfLines={2} />;
-  })();
+  }, [status?.errors?.amount, status?.warnings?.amount]);
 
   return (
     <>
@@ -219,3 +214,5 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 });
+
+export default memo(SendAmountNFT)

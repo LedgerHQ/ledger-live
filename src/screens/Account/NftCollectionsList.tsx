@@ -4,11 +4,9 @@ import take from "lodash/take";
 import { Trans, useTranslation } from "react-i18next";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View, FlatList } from "react-native";
-
-import { Account } from "@ledgerhq/live-common/lib/types";
-
+import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { Box, Text } from "@ledgerhq/native-ui";
 import {
   ArrowBottomMedium,
@@ -16,12 +14,10 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
 import { NavigatorName, ScreenName } from "../../const";
-import Link from "../../components/wrappedUi/Link";
 import Button from "../../components/wrappedUi/Button";
+import Link from "../../components/wrappedUi/Link";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
-
-const collectionKeyExtractor = (o: any) => o.contract;
 
 type Props = {
   account: Account;
@@ -31,11 +27,15 @@ export default function NftCollectionsList({ account }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const navigation = useNavigation();
   const { nfts } = account;
-  const nftCollections = useMemo(() => nftsByCollections(nfts), [nfts]);
-  const data = take(nftCollections, MAX_COLLECTIONS_TO_SHOW);
+  const nftCollections = useMemo(() => nftsByCollections(nfts), [
+    nfts,
+  ]) as Record<string, ProtoNFT[]>;
+  const data = useMemo(
+    () => take(Object.values(nftCollections), MAX_COLLECTIONS_TO_SHOW),
+    [nftCollections],
+  );
 
   const navigateToReceive = useCallback(
     () =>
@@ -48,28 +48,19 @@ export default function NftCollectionsList({ account }: Props) {
     [account.id, navigation],
   );
 
-  // Forced to use useCallback here to avoid a non sensical warning...
   const navigateToCollection = useCallback(
     collection =>
-      navigation.navigate(NavigatorName.PortfolioAccounts, {
-        screen: ScreenName.NftCollection,
-        params: {
-          collection,
-          accountId: account.id,
-        },
-        initial: false,
+      navigation.navigate(ScreenName.NftCollection, {
+        collection,
+        accountId: account.id,
       }),
     [account.id, navigation],
   );
 
   const navigateToGallery = useCallback(() => {
-    navigation.navigate(NavigatorName.PortfolioAccounts, {
-      screen: ScreenName.NftGallery,
-      params: {
-        title: t("nft.gallery.allNft"),
-        accountId: account.id,
-      },
-      initial: false,
+    navigation.navigate(ScreenName.NftGallery, {
+      title: t("nft.gallery.allNft"),
+      accountId: account.id,
     });
   }, [account.id, navigation, t]);
 
@@ -104,11 +95,11 @@ export default function NftCollectionsList({ account }: Props) {
         <Trans i18nKey="nft.account.seeAllNfts" />
       </Button>
     ),
-    [colors, navigateToGallery, nftCollections.length],
+    [navigateToGallery],
   );
 
   const renderItem = useCallback(
-    ({ item, index }) => (
+    ({ item, index }: { item: ProtoNFT[]; index: number }) => (
       <Box
         borderBottomWidth={data.length - 1 !== index ? "1px" : 0}
         borderBottomColor={"neutral.c40"}
@@ -122,20 +113,13 @@ export default function NftCollectionsList({ account }: Props) {
     [data.length, navigateToCollection],
   );
 
-  const listFooterComponent = useMemo(
-    () =>
-      nftCollections.length > MAX_COLLECTIONS_TO_SHOW ? renderFooter : null,
-    [nftCollections.length, renderFooter],
-  );
-
   return (
     <View style={styles.collectionList}>
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={collectionKeyExtractor}
         ListHeaderComponent={renderHeader}
-        ListFooterComponent={listFooterComponent}
+        ListFooterComponent={renderFooter}
       />
     </View>
   );

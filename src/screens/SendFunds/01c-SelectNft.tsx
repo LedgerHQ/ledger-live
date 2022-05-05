@@ -1,9 +1,12 @@
-// @flow
 import React, { useCallback, useMemo, useState, memo } from "react";
 
+import {
+  useNftMetadata,
+  getNftCapabilities,
+} from "@ledgerhq/live-common/lib/nft";
 import { BigNumber } from "bignumber.js";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   View,
@@ -13,10 +16,6 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { NFT, CollectionWithNFT } from "@ledgerhq/live-common/lib/nft";
-
 import LoadingFooter from "../../components/LoadingFooter";
 import NftImage from "../../components/Nft/NftImage";
 import Skeleton from "../../components/Skeleton";
@@ -26,93 +25,87 @@ import { ScreenName } from "../../const";
 const MAX_NFTS_FIRST_RENDER = 8;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 8;
 
-const NftRow = memo(
-  ({
-    account,
-    collection,
-    nft,
-  }: {
-    account: Account,
-    collection: CollectionWithNFT,
-    nft: NFT,
-  }) => {
-    const navigation = useNavigation();
-    const { colors } = useTheme();
-    const { status, metadata } = useNftMetadata(
-      collection.contract,
-      nft.tokenId,
-    );
+const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
+  const navigation = useNavigation();
+  const { colors } = useTheme();
+  const { status, metadata } = useNftMetadata(
+    nft?.contract,
+    nft?.tokenId,
+    nft?.currencyId,
+  );
 
-    const goToRecipientSelection = useCallback(() => {
-      const bridge = getAccountBridge(account);
+  const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
-      let transaction = bridge.createTransaction(account);
-      transaction = bridge.updateTransaction(transaction, {
-        tokenIds: [nft.tokenId],
-        quantities: [BigNumber(1)],
-        collection: collection.contract,
-        mode: `${collection.standard?.toLowerCase()}.transfer`,
-      });
+  const goToRecipientSelection = useCallback(() => {
+    const bridge = getAccountBridge(account);
 
-      navigation.navigate(ScreenName.SendSelectRecipient, {
-        accountId: account.id,
-        parentId: account.parentId,
-        transaction,
-      });
-    }, [account, nft, collection, navigation]);
+    let transaction = bridge.createTransaction(account);
+    transaction = bridge.updateTransaction(transaction, {
+      tokenIds: [nft?.tokenId],
+      // Quantity is set to null first to allow the user to change it on the amount page
+      quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
+      collection: nft?.contract,
+      mode: `${nft?.standard?.toLowerCase()}.transfer`,
+    });
 
-    return (
-      <TouchableOpacity style={styles.nftRow} onPress={goToRecipientSelection}>
-        <View style={styles.nftImageContainer}>
-          <NftImage
-            style={styles.nftImage}
-            src={metadata?.media}
-            status={status}
-          />
-        </View>
-        <View style={styles.nftNameContainer}>
-          <Skeleton
-            style={[styles.nftNameSkeleton, styles.nftName]}
-            loading={status === "loading"}
-          >
-            <LText
-              style={styles.nftName}
-              semiBold
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {metadata?.nftName || "-"}
-            </LText>
-          </Skeleton>
+    navigation.navigate(ScreenName.SendSelectRecipient, {
+      accountId: account.id,
+      parentId: account.parentId,
+      transaction,
+    });
+  }, [account, nft, nftCapabilities.hasQuantity, navigation]);
+
+  return (
+    <TouchableOpacity style={styles.nftRow} onPress={goToRecipientSelection}>
+      <View style={styles.nftImageContainer}>
+        <NftImage
+          style={styles.nftImage}
+          src={metadata?.media}
+          status={status}
+        />
+      </View>
+      <View style={styles.nftNameContainer}>
+        <Skeleton
+          style={[styles.nftNameSkeleton, styles.nftName]}
+          loading={status === "loading"}
+        >
           <LText
+            style={styles.nftName}
+            semiBold
             numberOfLines={1}
-            ellipsizeMode="middle"
-            style={[styles.tokenId, { color: colors.grey }]}
+            ellipsizeMode="tail"
           >
-            ID {nft.tokenId}
+            {metadata?.nftName || "-"}
+          </LText>
+        </Skeleton>
+        <LText
+          numberOfLines={1}
+          ellipsizeMode="middle"
+          style={[styles.tokenId, { color: colors.grey }]}
+        >
+          ID {nft?.tokenId}
+        </LText>
+      </View>
+      {nft?.standard === "ERC1155" ? (
+        <View style={styles.amount}>
+          <LText numberOfLines={1} style={{ color: colors.grey }}>
+            x{nft?.amount?.toFixed()}
           </LText>
         </View>
-        {collection?.standard === "ERC1155" ? (
-          <View style={styles.amount}>
-            <LText numberOfLines={1} style={{ color: colors.grey }}>
-              x{nft.amount.toFixed()}
-            </LText>
-          </View>
-        ) : null}
-      </TouchableOpacity>
-    );
-  },
-);
+      ) : null}
+    </TouchableOpacity>
+  );
+});
 
-const keyExtractor = (nft: NFT) => nft?.tokenId;
+const keyExtractor = (nft: ProtoNFT) => nft?.tokenId;
 
 type Props = {
   route: {
     params: {
-      account: Account,
-      collection: CollectionWithNFT,
-    },
-  },
+      account: Account;
+      collection: ProtoNFT[];
+    };
+  };
 };
 
 const SendFundsSelectNft = ({ route }: Props) => {
@@ -121,8 +114,8 @@ const SendFundsSelectNft = ({ route }: Props) => {
   const { colors } = useTheme();
 
   const [nftCount, setNftCount] = useState(MAX_NFTS_FIRST_RENDER);
-  const nftsSlice = useMemo(() => collection?.nfts?.slice(0, nftCount) || [], [
-    collection.nfts,
+  const nftsSlice = useMemo(() => collection?.slice(0, nftCount) || [], [
+    collection,
     nftCount,
   ]);
   const onEndReached = useCallback(
@@ -131,7 +124,7 @@ const SendFundsSelectNft = ({ route }: Props) => {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: NFT }) => (
+    ({ item }: { item: ProtoNFT }) => (
       <NftRow account={account} collection={collection} nft={item} />
     ),
     [account, collection],
@@ -149,7 +142,7 @@ const SendFundsSelectNft = ({ route }: Props) => {
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
         ListFooterComponent={
-          nftCount < collection.nfts?.length ? <LoadingFooter /> : null
+          nftCount < collection?.length ? <LoadingFooter /> : null
         }
       />
     </SafeAreaView>
@@ -217,4 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SendFundsSelectNft;
+export default memo(SendFundsSelectNft);

@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useMemo, useState, useCallback } from "react";
 
 import {
@@ -9,21 +7,22 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
+import {
+  useNftMetadata,
+  decodeNftId,
+  getNftCapabilities,
+  useNftCollectionMetadata,
+} from "@ledgerhq/live-common/lib/nft";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
+import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useNftMetadata, decodeNftId } from "@ledgerhq/live-common/lib/nft";
-
-import type { NFT, CollectionWithNFT } from "@ledgerhq/live-common/lib/nft";
-import Clipboard from "@react-native-community/clipboard";
-
-import { Button, Icons } from "@ledgerhq/native-ui";
-
 import { accountSelector } from "../../reducers/accounts";
-import NftLinksPanel from "./NftLinksPanel";
 import { ScreenName, NavigatorName } from "../../const";
+import NftLinksPanel from "./NftLinksPanel";
 import { rgba } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
@@ -31,13 +30,12 @@ import LText from "../LText";
 
 type Props = {
   route: {
-    params: RouteParams,
-  },
+    params: RouteParams;
+  };
 };
 
 type RouteParams = {
-  nft: NFT,
-  collection: CollectionWithNFT,
+  nft: ProtoNFT;
 };
 
 const Section = ({
@@ -48,12 +46,12 @@ const Section = ({
   copyAvailable,
   copiedString,
 }: {
-  title: string,
-  value?: any,
-  style?: Object,
-  children?: React$Node,
-  copyAvailable?: boolean,
-  copiedString?: string,
+  title: string;
+  value?: any;
+  style?: Object;
+  children?: React$Node;
+  copyAvailable?: boolean;
+  copiedString?: string;
 }) => {
   const [copied, setCopied] = useState(false);
   const [timeoutFunction, setTimeoutFunction] = useState(null);
@@ -101,23 +99,27 @@ const Section = ({
 
 const NftViewer = ({ route }: Props) => {
   const { params } = route;
-  const { nft, collection } = params;
-  const { status, metadata } = useNftMetadata(collection.contract, nft.tokenId);
+  const { nft } = params;
+  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
+    nft?.contract,
+    nft?.tokenId,
+    nft?.currencyId,
+  );
+  const {
+    status: collectionStatus,
+    metadata: collectionMetadata,
+  } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  const { accountId } = decodeNftId(nft.id);
+  const { accountId } = decodeNftId(nft?.id);
   const account = useSelector(state => accountSelector(state, { accountId }));
 
   const [bottomModalOpen, setBottomModalOpen] = useState(false);
-  const isLoading = status === "loading";
+  const isLoading = nftStatus === "loading" || collectionStatus === "loading";
 
-  const defaultLinks = {
-    opensea: `https://opensea.io/assets/${collection.contract}/${nft.tokenId}`,
-    rarible: `https://rarible.com/token/${collection.contract}:${nft.tokenId}`,
-    etherscan: `https://etherscan.io/token/${collection.contract}?a=${nft.tokenId}`,
-  };
+  const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
   const closeModal = () => {
     setBottomModalOpen(false);
@@ -128,10 +130,11 @@ const NftViewer = ({ route }: Props) => {
 
     let transaction = bridge.createTransaction(account);
     transaction = bridge.updateTransaction(transaction, {
-      tokenIds: [nft.tokenId],
-      quantities: [BigNumber(1)],
-      collection: collection.contract,
-      mode: `${collection.standard?.toLowerCase()}.transfer`,
+      tokenIds: [nft?.tokenId],
+      // Quantity is set to null first to allow the user to change it on the amount page
+      quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
+      collection: nft?.contract,
+      mode: `${nft?.standard?.toLowerCase()}.transfer`,
     });
 
     navigation.navigate(NavigatorName.SendFunds, {
@@ -142,7 +145,7 @@ const NftViewer = ({ route }: Props) => {
         transaction,
       },
     });
-  }, [account, nft, collection, navigation]);
+  }, [account, nft, nftCapabilities.hasQuantity, navigation]);
 
   const properties = useMemo(() => {
     if (isLoading) {
@@ -164,14 +167,14 @@ const NftViewer = ({ route }: Props) => {
       );
     }
 
-    if (metadata?.properties?.length) {
+    if (nftMetadata?.properties?.length) {
       return (
         <ScrollView
           showsHorizontalScrollIndicator={false}
           horizontal={true}
           contentContainerStyle={styles.properties}
         >
-          {metadata?.properties?.map?.((prop, i) => (
+          {nftMetadata?.properties?.map?.((prop, i) => (
             <View
               style={[
                 styles.property,
@@ -192,7 +195,7 @@ const NftViewer = ({ route }: Props) => {
     }
 
     return null;
-  }, [colors, isLoading, metadata]);
+  }, [colors, isLoading, nftMetadata]);
 
   const description = useMemo(() => {
     if (isLoading) {
@@ -205,19 +208,19 @@ const NftViewer = ({ route }: Props) => {
       );
     }
 
-    if (metadata?.description) {
-      return <LText>{metadata.description}</LText>;
+    if (nftMetadata?.description) {
+      return <LText>{nftMetadata.description}</LText>;
     }
 
     return null;
-  }, [isLoading, metadata]);
+  }, [isLoading, nftMetadata]);
 
   const nftImage = (
     <NftImage
       resizeMode="contain"
       style={styles.image}
-      src={metadata?.media}
-      status={status}
+      src={nftMetadata?.media}
+      status={nftStatus}
     />
   );
 
@@ -229,7 +232,9 @@ const NftViewer = ({ route }: Props) => {
             style={[styles.tokenName, styles.tokenNameSkeleton]}
             loading={isLoading}
           >
-            <LText style={styles.tokenName}>{metadata?.tokenName || "-"}</LText>
+            <LText style={styles.tokenName}>
+              {collectionMetadata?.tokenName || "-"}
+            </LText>
           </Skeleton>
 
           <Skeleton
@@ -237,18 +242,18 @@ const NftViewer = ({ route }: Props) => {
             loading={isLoading}
           >
             <LText style={styles.nftName} numberOfLines={3} semiBold>
-              {metadata?.nftName || "-"}
+              {nftMetadata?.nftName || "-"}
             </LText>
           </Skeleton>
 
           <View style={styles.imageContainer}>
-            {metadata?.media ? (
+            {nftMetadata?.media ? (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(NavigatorName.NftNavigator, {
                     screen: ScreenName.NftImageViewer,
                     params: {
-                      media: metadata.media,
+                      media: nftMetadata.media,
                     },
                   })
                 }
@@ -271,13 +276,15 @@ const NftViewer = ({ route }: Props) => {
                 <Trans i18nKey="account.send" />
               </Button>
             </View>
-            <View style={styles.ellipsisButtonContainer}>
-              <Button
-                type="main"
-                Icon={Icons.OthersMedium}
-                onPress={() => setBottomModalOpen(true)}
-              />
-            </View>
+            {nftMetadata?.links && (
+              <View style={styles.ellipsisButtonContainer}>
+                <Button
+                  type="main"
+                  Icon={Icons.OthersMedium}
+                  onPress={() => setBottomModalOpen(true)}
+                />
+              </View>
+            )}
           </View>
         </View>
 
@@ -306,7 +313,7 @@ const NftViewer = ({ route }: Props) => {
 
           <Section
             title={t("nft.viewer.tokenContract")}
-            value={collection.contract}
+            value={nft?.contract}
             copyAvailable
             copiedString={t("nft.viewer.tokenContractCopied")}
           />
@@ -315,18 +322,18 @@ const NftViewer = ({ route }: Props) => {
 
           <Section
             title={t("nft.viewer.tokenId")}
-            value={nft.tokenId}
+            value={nft?.tokenId}
             copyAvailable
             copiedString={t("nft.viewer.tokenIdCopied")}
           />
 
-          {collection.standard === "ERC1155" && (
+          {nft?.standard === "ERC1155" && (
             <>
               <View style={styles.hr} />
               <TouchableOpacity onPress={closeModal}>
                 <Section
                   title={t("nft.viewer.quantity")}
-                  value={nft.amount.toFixed()}
+                  value={nft?.amount?.toFixed()}
                 />
               </TouchableOpacity>
             </>
@@ -334,11 +341,7 @@ const NftViewer = ({ route }: Props) => {
         </View>
       </ScrollView>
       <NftLinksPanel
-        links={
-          metadata && Object.keys(metadata?.links)?.length
-            ? metadata.links
-            : defaultLinks
-        }
+        links={nftMetadata?.links}
         isOpen={bottomModalOpen}
         onClose={closeModal}
       />

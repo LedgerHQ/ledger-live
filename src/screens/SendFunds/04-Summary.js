@@ -10,6 +10,7 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
+import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -79,9 +80,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     parentAccount,
   }));
 
-  const isNFTSend = ["erc721.transfer", "erc1155.transfer"].includes(
-    transaction.mode,
-  );
+  const isNFTSend = isNftTransaction(transaction);
 
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
@@ -220,7 +219,10 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         />
         <SectionSeparator lineColor={colors.lightFog} />
         {isNFTSend ? (
-          <SummaryNft transaction={transaction} />
+          <SummaryNft
+            transaction={transaction}
+            currencyId={account.currency.id}
+          />
         ) : (
           <SummaryAmountSection
             account={account}

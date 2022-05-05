@@ -1,6 +1,4 @@
-// @flow
-
-import React from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import NftImage from "./NftImage";
 
@@ -8,13 +6,13 @@ import NftImage from "./NftImage";
 
 type Props = {
   route: {
-    params?: RouteParams,
-  },
+    params?: RouteParams;
+  };
 };
 
 type RouteParams = {
-  media: string,
-  status: string,
+  media: string;
+  status: string;
 };
 
 const NftViewer = ({ route }: Props) => {
@@ -47,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NftViewer;
+export default memo(NftViewer);
