@@ -7,6 +7,7 @@ import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "../../../errors";
+import varuint from "varuint-bitcoin";
 
 export function parseHexString(str: any) {
   const result: Array<number> = [];
@@ -260,4 +261,11 @@ export function isTaprootAddress(address: string, currency?: Currency) {
   } else {
     return false;
   }
+}
+
+export function writeVarInt(buffer: Buffer, i: number, offset: number) {
+  // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/1f44f722d30cd14a1861c8546e6b455f73862c1e/src/bufferutils.js#L78
+  varuint.encode(i, buffer, offset);
+  offset += varuint.encode.bytes;
+  return offset;
 }

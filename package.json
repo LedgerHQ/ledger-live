@@ -133,6 +133,7 @@
     "stellar-sdk": "^10.0.1",
     "superstruct": "^0.14.2",
     "triple-beam": "^1.3.0",
+    "varuint-bitcoin": "1.1.2",
     "winston": "^3.4.0",
     "xstate": "^4.28.1"
   },
