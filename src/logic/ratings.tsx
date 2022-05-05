@@ -241,7 +241,7 @@ const useRatings = () => {
     navigation.removeListener("state");
   }, [navigation]);
 
-  const ratingsInitStep = useMemo(
+  const ratingsInitialStep = useMemo(
     () => (ratingsDataOfUser?.alreadyClosedFromEnjoyStep ? "enjoy" : "init"),
     [ratingsDataOfUser?.alreadyClosedFromEnjoyStep],
   );
@@ -306,7 +306,7 @@ const useRatings = () => {
     handleEnjoyNotNow,
     handleGoToStore,
     ratingsFeatureParams: ratingsFeature?.params,
-    ratingsInitStep,
+    ratingsInitialStep,
     isRatingsModalOpen,
     ratingsHappyMoment,
     setRatingsModalOpen: setRatingsModalOpenCallback,

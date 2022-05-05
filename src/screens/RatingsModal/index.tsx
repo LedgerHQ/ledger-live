@@ -12,7 +12,7 @@ const RatingsModal = () => {
   const {
     initRatings,
     cleanRatings,
-    ratingsInitStep,
+    ratingsInitialStep,
     isRatingsModalOpen,
     setRatingsModalOpen,
   } = useRatings();
@@ -25,12 +25,12 @@ const RatingsModal = () => {
     };
   }, []);
 
-  const [step, setStep] = useState(ratingsInitStep);
+  const [step, setStep] = useState(ratingsInitialStep);
 
   const closeModal = useCallback(() => {
     setRatingsModalOpen(false);
-    setStep(ratingsInitStep);
-  }, [ratingsInitStep, setRatingsModalOpen]);
+    setStep(ratingsInitialStep);
+  }, [ratingsInitialStep, setRatingsModalOpen]);
 
   const component = useMemo(() => {
     const components = {
