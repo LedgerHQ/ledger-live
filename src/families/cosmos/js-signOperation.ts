@@ -8,13 +8,12 @@ import type { Transaction } from "./types";
 import { getAccount, getChainId } from "./api/Cosmos";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
-import { encodePubkey } from "@cosmjs/proto-signing";
 import { encodeOperationId } from "../../operation";
-import { LedgerSigner } from "@cosmjs/ledger-amino";
+import Cosmos from "@ledgerhq/hw-app-cosmos";
 import { AminoTypes } from "@cosmjs/stargate";
-import { stringToPath } from "@cosmjs/crypto";
 import { buildTransaction, postBuildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
+import { Secp256k1Signature } from "@cosmjs/crypto";
 
 const aminoTypes = new AminoTypes({ prefix: "cosmos" });
 
@@ -32,44 +31,39 @@ const signOperation = ({
       let cancelled;
 
       async function main() {
+        const hwApp = new Cosmos(transport);
+
         const { accountNumber, sequence } = await getAccount(
           account.freshAddress
         );
 
         const chainId = await getChainId();
 
-        const hdPaths: any = stringToPath("m/" + account.freshAddressPath);
-
-        const ledgerSigner = new LedgerSigner(transport, {
-          hdPaths: [hdPaths],
-        });
-
         o.next({ type: "device-signature-requested" });
 
-        const accounts = await ledgerSigner.getAccounts();
+        const { publicKey } = await hwApp.getAddress(
+          account.freshAddressPath,
+          "cosmos",
+          false
+        );
 
-        let pubkey;
-
-        accounts.forEach((a) => {
-          if (a.address == account.freshAddress) {
-            pubkey = encodePubkey({
-              type: "tendermint/PubKeySecp256k1",
-              value: Buffer.from(a.pubkey).toString("base64"),
-            });
-          }
-        });
+        const pubkey = {
+          typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+          value: new Uint8Array([
+            ...new Uint8Array([10, 33]),
+            ...new Uint8Array(Buffer.from(publicKey, "hex")),
+          ]),
+        };
 
         const unsignedPayload = await buildTransaction(account, transaction);
 
         const msgs = unsignedPayload.map((msg) => aminoTypes.toAmino(msg));
 
         // Note:
-        // We don't use Cosmos App,
-        // Cosmos App support legacy StdTx and required to be ordered in a strict way,
-        // Cosmos API expects a different sorting, resulting in a separate signature.
-        // https://github.com/LedgerHQ/app-cosmos/blob/6c194daa28936e273f9548eabca9e72ba04bb632/app/src/tx_parser.c#L52
+        // Cosmos Nano App sign data in Amino way only, not Protobuf.
+        // This is a legacy outdated standard and a long-term blocking point.
 
-        const signed = await ledgerSigner.signAmino(account.freshAddress, {
+        const message = {
           chain_id: chainId,
           account_number: accountNumber.toString(),
           sequence: sequence.toString(),
@@ -84,17 +78,30 @@ const signOperation = ({
           },
           msgs: msgs,
           memo: transaction.memo || "",
-        });
+        };
+
+        const { signature } = await hwApp.sign(
+          account.freshAddressPath,
+          JSON.stringify(sortedObject(message))
+        );
+
+        if (!signature) {
+          throw new Error("Cosmos: no Signature Found");
+        }
+
+        const secp256k1Signature = Secp256k1Signature.fromDer(
+          new Uint8Array(signature)
+        ).toFixedLength();
 
         const tx_bytes = await postBuildTransaction(
           account,
           transaction,
           pubkey,
           unsignedPayload,
-          new Uint8Array(Buffer.from(signed.signature.signature, "base64"))
+          secp256k1Signature
         );
 
-        const signature = Buffer.from(tx_bytes).toString("hex");
+        const signed = Buffer.from(tx_bytes).toString("hex");
 
         if (cancelled) {
           return;
@@ -161,7 +168,7 @@ const signOperation = ({
           type: "signed",
           signedOperation: {
             operation,
-            signature,
+            signature: signed,
             expirationDate: null,
           },
         });
@@ -177,5 +184,24 @@ const signOperation = ({
       };
     })
   );
+
+const sortedObject = (obj) => {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(sortedObject);
+  }
+
+  const sortedKeys = Object.keys(obj).sort();
+  const result = {};
+
+  sortedKeys.forEach((key) => {
+    result[key] = sortedObject(obj[key]);
+  });
+
+  return result;
+};
 
 export default signOperation;

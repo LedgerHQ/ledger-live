@@ -13,13 +13,11 @@ import type { CryptoCurrency, CryptoCurrencyIds } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
 import type { GetAddressOptions, Result } from "./hw/getAddress/types";
-type LibcoreConfig = Record<string, unknown>;
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
   startsAt?: number;
   overridesDerivation?: string;
-  libcoreConfig?: LibcoreConfig;
   isSegwit?: boolean;
   isNativeSegwit?: boolean;
   isTaproot?: boolean;
@@ -36,31 +34,7 @@ export type ModeSpec = {
   addressFormat?: string;
 };
 export type DerivationMode = keyof typeof modes;
-const extraConfigPerCurrency: Record<string, LibcoreConfig> = {
-  tezos: {
-    BLOCKCHAIN_EXPLORER_ENGINE: "TZSTATS_API",
-    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
-      getEnv("API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
-    TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON",
-    TEZOS_NODE: () => getEnv("API_TEZOS_NODE"),
-  },
-  cosmos: {
-    BLOCKCHAIN_EXPLORER_ENGINE: () => getEnv("API_COSMOS_NODE"),
-    BLOCKCHAIN_OBSERVER_ENGINE: () => getEnv("API_COSMOS_NODE"),
-    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
-      getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
-  },
-  cosmos_testnet: {
-    BLOCKCHAIN_EXPLORER_ENGINE: () => getEnv("API_COSMOS_TESTNET_NODE"),
-    BLOCKCHAIN_OBSERVER_ENGINE: () => getEnv("API_COSMOS_TESTNET_NODE"),
-    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
-      getEnv("API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
-  },
-  algorand: {
-    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
-      getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
-  },
-};
+
 const modes = Object.freeze({
   // this is "default" by convention
   "": {},
@@ -83,9 +57,6 @@ const modes = Object.freeze({
     isInvalid: true,
     isSegwit: true,
     purpose: 49,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH",
-    },
     addressFormat: "p2sh",
   },
   // many users have wrongly sent BTC on BCH paths
@@ -103,9 +74,6 @@ const modes = Object.freeze({
     overridesCoinType: 128,
     isSegwit: true,
     purpose: 49,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH",
-    },
     addressFormat: "p2sh",
   },
   // MEW legacy derivation for eth
@@ -120,32 +88,20 @@ const modes = Object.freeze({
   // default derivation of tezbox offerred to users
   tezbox: {
     overridesDerivation: "44'/1729'/<account>'/0'",
-    libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519",
-    },
   },
   tezosbip44h: {
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
-    libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519",
-    },
   },
   galleonL: {
     tag: "legacy",
     startsAt: 1,
     overridesDerivation: "44'/1729'/0'/0'/<account>'",
-    libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519",
-    },
   },
   tezboxL: {
     tag: "legacy",
     startsAt: 1,
     overridesDerivation: "44'/1729'/0'/<account>'",
-    libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519",
-    },
   },
   taproot: {
     purpose: 86,
@@ -156,9 +112,6 @@ const modes = Object.freeze({
   },
   native_segwit: {
     purpose: 84,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP173_P2WPKH",
-    },
     addressFormat: "bech32",
     tag: "native segwit",
     isSegwit: true,
@@ -167,41 +120,26 @@ const modes = Object.freeze({
   segwit: {
     isSegwit: true,
     purpose: 49,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH",
-    },
     tag: "segwit",
     addressFormat: "p2sh",
   },
   segwit_on_legacy: {
     isSegwit: true,
     purpose: 44,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH",
-    },
     addressFormat: "p2sh",
     isInvalid: true,
   },
   legacy_on_segwit: {
     purpose: 49,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP32_P2PKH",
-    },
     isInvalid: true,
   },
   legacy_on_native_segwit: {
     purpose: 84,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP32_P2PKH",
-    },
     isInvalid: true,
   },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
-    libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH",
-    },
     addressFormat: "p2sh",
     isUnsplit: true,
     tag: "segwit unsplit",
@@ -279,29 +217,7 @@ export const isTaprootDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>
   (modes[derivationMode] as { isTaproot: boolean }).isTaproot || false;
-export const getLibcoreConfig = (
-  currency: CryptoCurrency,
-  derivationMode: DerivationMode
-): Record<string, unknown> => {
-  const obj = {};
-  const extra = {
-    ...extraConfigPerCurrency[currency.id],
-    ...(modes[derivationMode] as { libcoreConfig: LibcoreConfig })
-      .libcoreConfig,
-  };
 
-  for (const k in extra) {
-    const v = extra[k];
-
-    if (typeof v === "function") {
-      obj[k] = v();
-    } else {
-      obj[k] = v;
-    }
-  }
-
-  return obj;
-};
 export const isUnsplitDerivationMode = (
   derivationMode: DerivationMode
 ): boolean =>

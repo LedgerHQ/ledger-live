@@ -1,17 +1,25 @@
-import type { AccountLike, Account } from "../../types";
+import BigNumber from "bignumber.js";
+import { formatCurrencyUnit } from "../../currencies";
+import type { DeviceTransactionField } from "../../transaction";
+import type { Account, AccountLike } from "../../types";
 import type {
+  CommandDescriptor,
+  StakeCreateAccountCommand,
+  StakeDelegateCommand,
+  StakeSplitCommand,
+  StakeUndelegateCommand,
+  StakeWithdrawCommand,
   TokenCreateATACommand,
   TokenTransferCommand,
   Transaction,
   TransferCommand,
-  ValidCommandDescriptor,
 } from "./types";
-import type { DeviceTransactionField } from "../../transaction";
 import { assertUnreachable } from "./utils";
 
 // do not show fields like 'To', 'Recipient', etc., as per Ledger policy
 
 function getDeviceTransactionConfig({
+  account,
   transaction,
 }: {
   account: AccountLike;
@@ -22,19 +30,18 @@ function getDeviceTransactionConfig({
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  switch (commandDescriptor.status) {
-    case "valid":
-      return fieldsForCommand(commandDescriptor);
-    case "invalid":
-      throw new Error("unexpected invalid command");
-    default:
-      return assertUnreachable(commandDescriptor);
+  if (Object.keys(commandDescriptor.errors).length > 0) {
+    throw new Error("unexpected invalid command");
   }
+
+  return fieldsForCommand(commandDescriptor, account);
 }
 
 export default getDeviceTransactionConfig;
+
 function fieldsForCommand(
-  commandDescriptor: ValidCommandDescriptor
+  commandDescriptor: CommandDescriptor,
+  account: AccountLike
 ): DeviceTransactionField[] {
   const { command } = commandDescriptor;
   switch (command.kind) {
@@ -44,29 +51,29 @@ function fieldsForCommand(
       return fieldsForTokenTransfer(command);
     case "token.createATA":
       return fieldsForCreateATA(command);
+    case "stake.createAccount":
+      return fieldsForStakeCreateAccount(command, account);
+    case "stake.delegate":
+      return fieldsForStakeDelegate(command);
+    case "stake.undelegate":
+      return fieldsForStakeUndelegate(command);
+    case "stake.withdraw":
+      return fieldsForStakeWithdraw(command);
+    case "stake.split":
+      return fieldsForStakeSplit(command);
     default:
       return assertUnreachable(command);
   }
 }
 
-function fieldsForTransfer(command: TransferCommand): DeviceTransactionField[] {
+function fieldsForTransfer(
+  _command: TransferCommand
+): DeviceTransactionField[] {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
     type: "amount",
     label: "Transfer",
-  });
-
-  fields.push({
-    type: "address",
-    address: command.sender,
-    label: "Sender",
-  });
-
-  fields.push({
-    type: "text",
-    label: "Fee payer",
-    value: "Sender",
   });
 
   return fields;
@@ -154,6 +161,155 @@ function fieldsForCreateATA(
     type: "address",
     label: "Fee payer",
     address: command.owner,
+  });
+
+  return fields;
+}
+function fieldsForStakeCreateAccount(
+  command: StakeCreateAccountCommand,
+  account: AccountLike
+): DeviceTransactionField[] {
+  if (account.type !== "Account") {
+    throw new Error("unsupported account type");
+  }
+
+  const unit = account.currency.units[0];
+
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Delegate from",
+    address: command.stakeAccAddress,
+  });
+
+  // not using 'amount' field here because the field should
+  // show sum of amount and rent exempt amount
+  fields.push({
+    type: "text",
+    label: "Deposit",
+    value: formatCurrencyUnit(
+      unit,
+      new BigNumber(command.amount + command.stakeAccRentExemptAmount),
+      {
+        disableRounding: true,
+        showCode: true,
+      }
+    ),
+  });
+
+  fields.push({
+    type: "address",
+    label: "New authority",
+    address: command.fromAccAddress,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Vote account",
+    address: command.delegate.voteAccAddress,
+  });
+
+  return fields;
+}
+
+function fieldsForStakeDelegate(
+  command: StakeDelegateCommand
+): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Delegate from",
+    address: command.stakeAccAddr,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Vote account",
+    address: command.voteAccAddr,
+  });
+
+  return fields;
+}
+
+function fieldsForStakeUndelegate(
+  command: StakeUndelegateCommand
+): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Deactivate stake",
+    address: command.stakeAccAddr,
+  });
+
+  return fields;
+}
+
+function fieldsForStakeWithdraw(
+  command: StakeWithdrawCommand
+): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "amount",
+    label: "Stake withdraw",
+  });
+
+  fields.push({
+    type: "address",
+    label: "From",
+    address: command.stakeAccAddr,
+  });
+
+  return fields;
+}
+
+function fieldsForStakeSplit(
+  command: StakeSplitCommand
+): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "amount",
+    label: "Split stake",
+  });
+
+  fields.push({
+    type: "address",
+    label: "From",
+    address: command.stakeAccAddr,
+  });
+
+  fields.push({
+    type: "address",
+    label: "To",
+    address: command.splitStakeAccAddr,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Base",
+    address: command.authorizedAccAddr,
+  });
+
+  fields.push({
+    type: "text",
+    label: "Seed",
+    value: command.seed,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Authorized by",
+    address: command.authorizedAccAddr,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Fee payer",
+    address: command.authorizedAccAddr,
   });
 
   return fields;

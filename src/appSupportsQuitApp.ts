@@ -43,6 +43,7 @@ export const minAppVersion = {
   Eos: "1.3.1",
   "Eth Recovery": "0.0.0",
   "Eth Ropsten": "1.6.0",
+  "Eth Goerli": "1.9.11",
   "Ether-1": "1.4.0",
   EtherGem: "1.4.0",
   Ethereum: "1.4.0",

@@ -31,15 +31,8 @@ checkLibs({
   Transport,
   connect,
 });
-import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 
 type BluetoothTransport = any;
-
-implementLibcore({
-  lib: () => require("@ledgerhq/ledger-core"),
-  // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
-});
 
 let idCounter = 0;
 const mockTransports = {};

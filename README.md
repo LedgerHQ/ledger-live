@@ -51,18 +51,16 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
 - [Countervalues logic](./docs/countervalues.md)
 - Coin integration specifics
   - [Introduction](./docs/ci-intro.md)
-  - Bridge implementations, where to start? (JS, Libcore, Mock)
+  - Bridge implementations, where to start? (JS, Mock)
   - Implementing the hardware wallet logic of a new coin
   - [The account derivation (BIP44 and exceptions)](./docs/derivation.md)
 - Advanced
   - [api/socket `createDeviceSocket` and script runner](./docs/socket.md)
   - env.js: live-common configuration system
   - Serialization and reconciliation
-  - libcore typing and wrapping
   - cross.js and "LiveQR" protocol
   - cache.js helpers
   - Tokens management and ERC20
-  - [Developing with lib-ledger-core bindings](./docs/adding-libcore-bindings.md)
 
 ### Developing with Ledger Live Common
 

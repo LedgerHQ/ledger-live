@@ -14,8 +14,8 @@ yarn upgrade-interactive -i --latest
 |@celo/contractkit       | Celo coin integration          | monthly                          |
 |@celo/wallet-base       | Celo coin integration          | monthly                          |
 |@celo/wallet-ledger     | Celo coin integration          | monthly                          |
+|@cosmjs/amino           | Cosmos coin integration        | monthly                          |
 |@cosmjs/crypto          | Cosmos coin integration        | monthly                          |
-|@cosmjs/ledger-amino    | Cosmos coin integration        | monthly                          |
 |@cosmjs/proto-signing   | Cosmos coin integration        | monthly                          |
 |@cosmjs/stargate        | Cosmos coin integration        | monthly                          |
 |@crypto-com/chain-jslib | Crypto.com coin integration    | monthly                          |
@@ -37,12 +37,12 @@ yarn upgrade-interactive -i --latest
 |@ledgerhq/hw-app-xrp    | XRP coin integration           | weekly                           |
 |@ledgerhq/hw-transport  | device communication           | weekly                           |
 |@ledgerhq/hw-transport-mocker| used by tests             | weekly                           |
-|@ledgerhq/hw-transport-node-speculos| used by bot tests  | weekly                               |
+|@ledgerhq/hw-transport-node-speculos| used by bot tests  | weekly                           |
 |@ledgerhq/json-bignumber| workaround for Ledger explorers who don't give String in some API | stable                               |
 |@ledgerhq/live-app-sdk  | utils for live apps feature    | ???                              |
 |@ledgerhq/logs          | logs                           | weekly                           |
-|@polkadot/types         | Polkadot coin integration      | **BLOCKED BY LLM (ticket missing)**                               |
-|@polkadot/types-known   | Polkadot coin integration      | **BLOCKED BY LLM (ticket missing)**                               |
+|@polkadot/types         | Polkadot coin integration      | monthly                          |
+|@polkadot/types-known   | Polkadot coin integration      | monthly                          |
 |@solana/spl-token       | Solana coin integration        | monthly                          |
 |@solana/web3.js         | Solana coin integration        | monthly                          |
 |@taquito/ledger-signer  | Tezos coin integration         | **BLOCKED BY LLM (ticket missing)**                               |
@@ -105,3 +105,4 @@ yarn upgrade-interactive -i --latest
 |winston                 | logs                           | monthly                          |
 |xstate                  | generic helper for React       | **TBD why it's needed.**         |
 |zcash-bitcore-lib       | Bitcoin coin integration       | monthly                          |
+|varuint-bitcoin         | Bitcoin coin integration       | monthly                          |

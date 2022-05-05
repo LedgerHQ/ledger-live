@@ -1,5 +1,5 @@
 export interface TX {
-  hash: string;
+  id: string;
   account: number;
   index: number;
   received_at: string;
@@ -50,7 +50,7 @@ export interface IStorage {
     confirmed?: boolean;
   }): TX | undefined;
   getLastUnconfirmedTx(): TX | undefined;
-  getTx(address: string, hash: string): TX | undefined;
+  getTx(address: string, txId: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;
     index?: number;

@@ -135,6 +135,11 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
+  SOLANA_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    desc: "base url for validators.app validator list",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
@@ -235,11 +240,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
   },
-  EXPERIMENTAL_CURRENCIES_JS_BRIDGE: {
-    def: "",
-    parser: stringParser,
-    desc: "enable JS integration of currencies (comma separated)",
-  },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,
@@ -254,11 +254,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "enable experimental languages",
-  },
-  EXPERIMENTAL_LIBCORE: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental libcore implementation of a currency (affects scan accounts)",
   },
   EXPERIMENTAL_MANAGER: {
     def: false,
@@ -289,6 +284,11 @@ const envDefinitions = {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
+  },
+  EXPLORER_STAGING: {
+    def: "https://explorers.api-01.live.ledger-stg.com",
+    parser: stringParser,
+    desc: "Ledger staging explorer API",
   },
   EXPLORER_BETA: {
     def: "https://explorers.api.live.ledger.com",
@@ -345,17 +345,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIBCORE_BALANCE_HISTORY_NOGO: {
-    def: "ripple,ethereum,tezos,stellar",
-    // LLC-475
-    parser: stringParser,
-    desc: "comma-separated list of currencies which does not properly support balance history libcore implementation",
-  },
-  LIBCORE_PASSWORD: {
-    def: "",
-    parser: stringParser,
-    desc: "libcore encryption password",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
@@ -396,7 +385,7 @@ const envDefinitions = {
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
   NFT_CURRENCIES: {
-    def: "ethereum",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -413,7 +402,7 @@ const envDefinitions = {
   OPERATION_OPTIMISTIC_RETENTION: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API",
+    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from the coin implementation or the API",
   },
   OPERATION_PAGE_SIZE_INITIAL: {
     def: 100,

@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { setSupportedCurrencies } from "../../currencies";
 import { setPlatformVersion } from "../../platform/version";
 
-jest.setTimeout(180000);
+jest.setTimeout(240000);
 
 expect.extend({
   toBeBigNumber(value) {
@@ -51,6 +51,7 @@ setSupportedCurrencies([
   "polkadot",
   "bitcoin_testnet",
   "ethereum_ropsten",
+  "ethereum_goerli",
   "cosmos_testnet",
   "crypto_org_croeseid",
   "crypto_org",
