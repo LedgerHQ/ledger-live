@@ -40,8 +40,6 @@ target 'ledgerlivemobile' do
     :hermes_enabled => true
   )
 
-  pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
-  pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
   pod 'React-RCTText', :path => rct_text, :modular_headers => true
 
   target 'ledgerlivemobileTests' do
@@ -59,5 +57,16 @@ target 'ledgerlivemobile' do
     react_native_post_install(installer)
     flipper_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+    # Workaround build error for classic quoted imports
+    # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if ['RNAnalytics', 'react-native-fast-crypto'].include? target.name
+          puts target.name
+          config.build_settings["USE_HEADERMAP"] = "NO"
+        end
+      end
+    end
   end
 end

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "styled-components";
+import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 
 import AnalyticsAllocation from "../../screens/Analytics/Allocation";
