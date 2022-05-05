@@ -115,6 +115,8 @@ const getActions = ({
           </LText>
         </View>
       ),
+      type: "main",
+      outline: false,
     },
     {
       disabled: !canVote,
@@ -128,6 +130,8 @@ const getActions = ({
       label: <Trans i18nKey="tron.manage.vote.title" />,
       description: <Trans i18nKey="tron.manage.vote.description" />,
       Icon: VoteIcon,
+      type: "main",
+      outline: false,
     },
   ];
 };

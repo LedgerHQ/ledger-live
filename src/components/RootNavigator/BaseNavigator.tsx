@@ -467,7 +467,7 @@ export default function BaseNavigator() {
         name={ScreenName.PortfolioOperationHistory}
         component={PortfolioHistory}
         options={{
-          headerTitle: t("tabs.portfolio"),
+          headerTitle: t("analytics.operations.title"),
           headerRight: null,
         }}
       />

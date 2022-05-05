@@ -1,17 +1,22 @@
-import React, { ReactNode, useCallback } from "react";
-import { TouchableOpacity, View } from "react-native";
+import React, { useCallback, useState, memo } from "react";
+import { TouchableOpacity } from "react-native";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 import { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
+import { BoxedIcon, Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
 import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
+
+import { useTimeRange } from "../actions/settings";
+import getWindowDimensions from "../logic/getWindowDimensions";
+import Graph from "./Graph";
+import FormatDate from "./FormatDate";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -35,11 +40,12 @@ const SmallPlaceholder = styled(Placeholder).attrs({
   borderRadius: "2px",
 })``;
 
-export default function GraphCard({
+function GraphCard({
   portfolio,
   counterValueCurrency,
   areAccountsEmpty,
 }: Props) {
+  const { t } = useTranslation();
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
   const item = balanceHistory[balanceHistory.length - 1];
@@ -51,12 +57,33 @@ export default function GraphCard({
 
   const unit = counterValueCurrency.units[0];
 
+  const [hoveredItem, setHoverItem] = useState();
+  const [, setTimeRange, timeRangeItems] = useTimeRange();
+  const { colors } = useTheme();
+
+  const updateTimeRange = useCallback(
+    index => {
+      setTimeRange(timeRangeItems[index]);
+    },
+    [setTimeRange, timeRangeItems],
+  );
+
+  const mapGraphValue = useCallback(d => d.value || 0, []);
+
+  const range = portfolio.range;
+  const isAvailable = portfolio.balanceAvailable;
+
+  const rangesLabels = timeRangeItems.map(({ label }) => label);
+
+  const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
+
   return (
-    <Flex bg={"neutral.c30"} p={6} borderRadius={2}>
+    <Flex bg={"neutral.c30"} borderRadius={2}>
       <Flex
         flexDirection={"row"}
         justifyContent={"space-between"}
-        alignItems={"center"}
+        alignItems={"flex-start"}
+        p={6}
       >
         <Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
@@ -67,12 +94,12 @@ export default function GraphCard({
               textTransform={"uppercase"}
               mr={2}
             >
-              <Trans i18nKey={"tabs.portfolio"} />
+              {t("tabs.portfolio")}
             </Text>
             {!areAccountsEmpty && <DiscreetModeButton size={20} />}
           </Flex>
           {areAccountsEmpty ? (
-            <Text variant={"h1"} color={"neutral.c100"}>
+            <Text variant={"h3"} color={"neutral.c100"}>
               <CurrencyUnitValue unit={unit} value={0} />
             </Text>
           ) : (
@@ -81,8 +108,21 @@ export default function GraphCard({
                 {!balanceAvailable ? (
                   <BigPlaceholder mt="8px" />
                 ) : (
-                  <Text variant={"h1"} color={"neutral.c100"}>
-                    <CurrencyUnitValue unit={unit} value={item.value} />
+                  <Text
+                    fontFamily="Inter"
+                    fontWeight="semiBold"
+                    fontSize="30px"
+                    color={"neutral.c100"}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    <CurrencyUnitValue
+                      unit={unit}
+                      value={
+                        hoveredItem?.value ? hoveredItem.value : item.value
+                      }
+                      joinFragmentsSeparator=" "
+                    />
                   </Text>
                 )}
                 <TransactionsPendingConfirmationWarning />
@@ -93,15 +133,22 @@ export default function GraphCard({
                     <SmallPlaceholder mt="12px" />
                   </>
                 ) : (
-                  <View>
+                  <Flex flexDirection="row" alignItems="center">
                     <Delta
                       percent
                       show0Delta
-                      fallbackToPercentPlaceholder
                       valueChange={countervalueChange}
-                      range={portfolio.range}
+                      // range={portfolio.range}
                     />
-                  </View>
+                    <Flex ml={2}>
+                      <Delta unit={unit} valueChange={countervalueChange} />
+                    </Flex>
+                    {hoveredItem && hoveredItem.date ? (
+                      <Text ml={6} variant={"body"} fontWeight={"medium"}>
+                        <FormatDate date={hoveredItem.date} />
+                      </Text>
+                    ) : null}
+                  </Flex>
                 )}
               </Flex>
             </>
@@ -122,6 +169,27 @@ export default function GraphCard({
           </Flex>
         ) : null}
       </Flex>
+
+      <Graph
+        isInteractive={isAvailable}
+        isLoading={!isAvailable}
+        height={100}
+        width={getWindowDimensions().width - 32}
+        color={colors.primary.c80}
+        data={balanceHistory}
+        onItemHover={setHoverItem}
+        mapValue={mapGraphValue}
+      />
+      <Flex mt={25} px={6} pb={6}>
+        <GraphTabs
+          activeIndex={activeRangeIndex}
+          activeBg="background.main"
+          onChange={updateTimeRange}
+          labels={rangesLabels}
+        />
+      </Flex>
     </Flex>
   );
 }
+
+export default memo<Props>(GraphCard);

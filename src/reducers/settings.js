@@ -77,6 +77,7 @@ export type SettingsState = {
   readOnlyModeEnabled: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
+  graphCountervalueFirst: boolean,
   hideEmptyTokenAccounts: boolean,
   blacklistedTokenIds: string[],
   dismissedBanners: string[],
@@ -113,7 +114,8 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledAnyApp: true,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
-  countervalueFirst: false,
+  countervalueFirst: true,
+  graphCountervalueFirst: true,
   hideEmptyTokenAccounts: false,
   blacklistedTokenIds: [],
   dismissedBanners: [],
@@ -263,7 +265,7 @@ const handlers: Object = {
 
   SETTINGS_SWITCH_COUNTERVALUE_FIRST: state => ({
     ...state,
-    countervalueFirst: !state.countervalueFirst,
+    graphCountervalueFirst: !state.graphCountervalueFirst,
   }),
 
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
@@ -476,7 +478,7 @@ export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
 
 export const countervalueFirstSelector = (state: State) =>
-  state.settings.countervalueFirst;
+  state.settings.graphCountervalueFirst;
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   state.settings.readOnlyModeEnabled;

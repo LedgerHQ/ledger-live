@@ -8,7 +8,7 @@ import * as d3shape from "d3-shape";
 import * as d3scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
-import Svg, { Path, Defs, Text } from "react-native-svg";
+import Svg, { Path, Defs } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
@@ -24,7 +24,6 @@ type Props = {
   mapValue: Item => number,
   shape?: string,
   verticalRangeRatio?: number,
-  showMinMax?: boolean,
 };
 
 const STROKE_WIDTH = 2;
@@ -40,18 +39,13 @@ function Graph({
   mapValue,
   onItemHover,
   verticalRangeRatio = 2,
-  showMinMax = false,
 }: Props) {
   const { colors } = useTheme();
 
   const color = initialColor || colors.primary.c80;
 
   const maxY = mapValue(maxBy(data, mapValue));
-  const roundedMaxY =
-    Math.round((maxY + Number.EPSILON) * 100000000) / 100000000;
   const minY = mapValue(minBy(data, mapValue));
-  const roundedMinY =
-    Math.round((minY + Number.EPSILON) * 100000000) / 100000000;
   const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
 
   const yExtractor = d => y(mapValue(d));
@@ -80,10 +74,6 @@ function Graph({
     .y(yExtractor)
     .curve(curve)(data);
 
-  const grads = Array(5)
-    .fill(true)
-    .map((_, i) => (height / 4) * i);
-
   const content = (
     <Svg
       height={height}
@@ -95,28 +85,7 @@ function Graph({
         <DefGraph height={height} color={color} />
       </Defs>
       <Path d={area} fill="url(#grad)" />
-
-      {grads.map(h => (
-        <Path
-          key={`${h}`}
-          d={`M0,${h} H${width}`}
-          stroke={colors.constant.overlay}
-          strokeDasharray="1 5"
-          strokeWidth={1}
-          fill="none"
-        />
-      ))}
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
-      {showMinMax ? (
-        <>
-          <Text x={16} y={0} fontSize="10px" fill={colors.neutral.c60}>
-            max: {roundedMaxY}
-          </Text>
-          <Text x={16} y={height} fontSize="10px" fill={colors.neutral.c60}>
-            min: {roundedMinY}
-          </Text>
-        </>
-      ) : null}
     </Svg>
   );
 

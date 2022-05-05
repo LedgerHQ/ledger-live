@@ -1,6 +1,6 @@
 // @flow
 import React, { memo, useState, useCallback } from "react";
-import { SectionList, StyleSheet, View } from "react-native";
+import { SectionList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -32,7 +32,7 @@ type Props = {
 
 export function PortfolioHistoryList({
   onEndReached,
-  opCount = 10,
+  opCount = 5,
   navigation,
 }: {
   onEndReached?: () => void,
@@ -51,14 +51,6 @@ export function PortfolioHistoryList({
   });
 
   function ListEmptyComponent() {
-    if (accounts.length === 0) {
-      return <EmptyStatePortfolio navigation={navigation} />;
-    }
-
-    if (accounts.every(isAccountEmpty)) {
-      return <NoOpStatePortfolio />;
-    }
-
     return null;
   }
 
@@ -73,7 +65,7 @@ export function PortfolioHistoryList({
   }: {
     item: Operation,
     index: number,
-    section: SectionBase<*>,
+    section: SectionBase<any>,
   }) {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
@@ -106,8 +98,7 @@ export function PortfolioHistoryList({
     <SectionList
       // $FlowFixMe
       sections={sections}
-      style={styles.list}
-      contentContainerStyle={styles.contentContainer}
+      style={{ flex: 1, paddingHorizontal: 16 }}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
       // $FlowFixMe
@@ -117,21 +108,20 @@ export function PortfolioHistoryList({
       ListFooterComponent={
         !completed ? (
           !onEndReached ? (
-            <View style={styles.seeMoreBtn}>
               <Button
                 event="View Transactions"
-                type="lightPrimary"
+                type="main"
+                mt={6}
                 title={<Trans i18nKey="common.seeAll" />}
                 onPress={onTransactionButtonPress}
               />
-            </View>
           ) : (
             <LoadingFooter />
           )
         ) : accounts.every(isAccountEmpty) ? null : sections.length ? (
           <NoMoreOperationFooter />
         ) : (
-          <NoOperationFooter />
+          null
         )
       }
       ListEmptyComponent={ListEmptyComponent}
@@ -154,19 +144,5 @@ function PortfolioHistory({ navigation }: Props) {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingTop: 16,
-    paddingBottom: 64,
-  },
-  seeMoreBtn: {
-    margin: 16,
-  },
-});
 
 export default memo<Props>(PortfolioHistory);
