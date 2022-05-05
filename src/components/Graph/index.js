@@ -8,8 +8,8 @@ import * as d3shape from "d3-shape";
 import * as d3scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
-import Svg, { Path, Defs } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import Svg, { Path, Defs, Text } from "react-native-svg";
+import { useTheme } from "styled-components/native";
 import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
@@ -23,6 +23,8 @@ type Props = {
   onItemHover?: (?Item) => void,
   mapValue: Item => number,
   shape?: string,
+  verticalRangeRatio?: number,
+  showMinMax?: boolean,
 };
 
 const STROKE_WIDTH = 2;
@@ -34,17 +36,23 @@ function Graph({
   data = [],
   color: initialColor,
   isInteractive = false,
-  shape = "curveLinear",
+  shape = "curveMonotoneX",
   mapValue,
   onItemHover,
+  verticalRangeRatio = 2,
+  showMinMax = false,
 }: Props) {
   const { colors } = useTheme();
 
-  const color = initialColor || colors.live;
+  const color = initialColor || colors.primary.c80;
 
   const maxY = mapValue(maxBy(data, mapValue));
+  const roundedMaxY =
+    Math.round((maxY + Number.EPSILON) * 100000000) / 100000000;
   const minY = mapValue(minBy(data, mapValue));
-  const paddedMinY = minY - (maxY - minY) / 2;
+  const roundedMinY =
+    Math.round((minY + Number.EPSILON) * 100000000) / 100000000;
+  const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
 
   const yExtractor = d => y(mapValue(d));
 
@@ -63,7 +71,7 @@ function Graph({
     .area()
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
-    .y1(d => yExtractor(d) + Math.max((maxY - minY) / 2, 200))
+    .y1(d => yExtractor(d) + Math.max((maxY - minY) / verticalRangeRatio, 200))
     .curve(curve)(data);
 
   const line = d3shape
@@ -72,13 +80,43 @@ function Graph({
     .y(yExtractor)
     .curve(curve)(data);
 
+  const grads = Array(5)
+    .fill(true)
+    .map((_, i) => (height / 4) * i);
+
   const content = (
-    <Svg height={height} width={width}>
+    <Svg
+      height={height}
+      width={width}
+      viewBox={`0 -10 ${width} ${height + 20}`}
+      preserveAspectRatio="none"
+    >
       <Defs>
         <DefGraph height={height} color={color} />
       </Defs>
       <Path d={area} fill="url(#grad)" />
+
+      {grads.map(h => (
+        <Path
+          key={`${h}`}
+          d={`M0,${h} H${width}`}
+          stroke={colors.constant.overlay}
+          strokeDasharray="1 5"
+          strokeWidth={1}
+          fill="none"
+        />
+      ))}
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
+      {showMinMax ? (
+        <>
+          <Text x={16} y={0} fontSize="10px" fill={colors.neutral.c60}>
+            max: {roundedMaxY}
+          </Text>
+          <Text x={16} y={height} fontSize="10px" fill={colors.neutral.c60}>
+            min: {roundedMinY}
+          </Text>
+        </>
+      ) : null}
     </Svg>
   );
 

@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
+
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import type {
   Transaction,
@@ -14,7 +15,7 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../reducers/accounts";
 import DeviceAction from "../components/DeviceAction";
 import { renderLoading } from "../components/DeviceAction/rendering";
@@ -37,12 +38,19 @@ type RouteParams = {
   transaction: Transaction,
   status: TransactionStatus,
   appName?: string,
+  selectDeviceLink?: boolean,
   onSuccess?: (payload: *) => void,
   onError?: (error: *) => void,
   analyticsPropertyFlow?: string,
 };
 
-export default function ConnectDevice({ route }: Props) {
+export const navigateToSelectDevice = (navigation: any, route: any) =>
+  navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
+    ...route.params,
+    forceSelectDevice: true,
+  });
+
+export default function ConnectDevice({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -86,7 +94,7 @@ export default function ConnectDevice({ route }: Props) {
     () =>
       transaction ? (
         <SafeAreaView
-          style={[styles.root, { backgroundColor: colors.background }]}
+          style={[styles.root, { backgroundColor: colors.background.main }]}
         >
           <TrackScreen
             category={route.name.replace("ConnectDevice", "")}
@@ -103,6 +111,7 @@ export default function ConnectDevice({ route }: Props) {
               tokenCurrency,
             }}
             device={route.params.device}
+            onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
             {...extraProps}
             analyticsPropertyFlow={analyticsPropertyFlow}
           />
@@ -110,7 +119,7 @@ export default function ConnectDevice({ route }: Props) {
       ) : null,
     // prevent rerendering caused by optimistic update (i.e. exclude account related deps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [status, transaction, tokenCurrency],
+    [status, transaction, tokenCurrency, route.params.device],
   );
 }
 

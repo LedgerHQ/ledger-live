@@ -1,8 +1,0 @@
-175c175
-<     public void offset(ReadableMap currentInstance, long from, Promise promise) {
----
->     public void offset(ReadableMap currentInstance, int from, Promise promise) {
-203c203
-<     public void limit(ReadableMap currentInstance, long count, Promise promise) {
----
->     public void limit(ReadableMap currentInstance, int count, Promise promise) {

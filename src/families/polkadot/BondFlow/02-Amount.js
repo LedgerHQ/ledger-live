@@ -248,7 +248,6 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                       {unit.code}
                     </LText>
                   }
-                  autoFocus
                   style={styles.inputContainer}
                   inputStyle={[
                     styles.inputStyle,

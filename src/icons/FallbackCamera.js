@@ -9,7 +9,7 @@ export default function FallbackCamera() {
         <G transform="translate(-108.000000, -123.000000)">
           <G transform="translate(16.000000, 127.000000)">
             <G transform="translate(92.000000, 0.000000)">
-              <G transform="translate(0.000000, 8.000000)" fill="#6490F1">
+              <G transform="translate(0.000000, 8.000000)" fill="#bdb3ff">
                 <Rect
                   opacity="0.100000001"
                   x="0"

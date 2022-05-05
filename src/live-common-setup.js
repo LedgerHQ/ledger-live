@@ -12,6 +12,10 @@ import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setDeviceMode } from "@ledgerhq/live-common/lib/hw/actions/app";
+import VersionNumber from "react-native-version-number";
+import { Platform } from "react-native";
+import axios from "axios";
+import { setSecp256k1Instance } from "@ledgerhq/live-common/lib/families/bitcoin/wallet-btc/crypto/secp256k1";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 
@@ -24,6 +28,7 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polkadot",
+  "solana",
   "ripple",
   "litecoin",
   "polygon",
@@ -31,6 +36,8 @@ setSupportedCurrencies([
   "stellar",
   "dogecoin",
   "cosmos",
+  "crypto_org",
+  "celo",
   "dash",
   "tron",
   "tezos",
@@ -50,6 +57,7 @@ setSupportedCurrencies([
   "stakenet",
   "bitcoin_testnet",
   "ethereum_ropsten",
+  "ethereum_goerli",
   "cosmos_testnet",
   "elrond",
 ]);
@@ -131,3 +139,12 @@ registerTransportModule({
   open: id => BluetoothTransport.open(id),
   disconnect: id => BluetoothTransport.disconnect(id),
 });
+
+if (process.env.NODE_ENV === "production") {
+  axios.defaults.headers.common["User-Agent"] =
+    Platform.OS === "ios"
+      ? `Live-IOS/${VersionNumber.appVersion}`
+      : `Live-Android/${VersionNumber.appVersion}`;
+}
+
+setSecp256k1Instance(require("./logic/secp256k1"));

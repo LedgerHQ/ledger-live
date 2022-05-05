@@ -22,6 +22,7 @@ import { counterValueCurrencySelector } from "../../reducers/settings";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { useDistribution } from "../../actions/general";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -68,7 +69,7 @@ export const DistributionList = ({
   );
 };
 
-export default function Distribution() {
+function Distribution() {
   const { colors } = useTheme();
   const distribution = useDistribution();
 
@@ -102,6 +103,8 @@ export default function Distribution() {
     </SafeAreaView>
   );
 }
+
+export default withDiscreetMode(Distribution);
 
 export function Header({
   distribution,

@@ -4,35 +4,42 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+#import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
 
-/* #ifdef FB_SONARKIT_ENABLED */
-/* #import <FlipperKit/FlipperClient.h> */
-/* #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h> */
-/* #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h> */
-/* #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h> */
-/* #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h> */
-/* #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h> */
+#import <Firebase.h>
 
-/* static void InitializeFlipper(UIApplication *application) { */
-/*   FlipperClient *client = [FlipperClient sharedClient]; */
-/*   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults]; */
-/*   [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]]; */
-/*   [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]]; */
-/*   [client addPlugin:[FlipperKitReactPlugin new]]; */
-/*   [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]]; */
-/*   [client start]; */
-/* } */
-/* #endif */
+#if DEBUG
+#ifdef FB_SONARKIT_ENABLED
+#import <FlipperKit/FlipperClient.h>
+#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
+#import <FlipperKitLayoutPlugin/SKDescriptorMapper.h>
+#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
+#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
+#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
+#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
+#endif
+#endif
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-/* #ifdef FB_SONARKIT_ENABLED */
-/*   InitializeFlipper(application); */
-/* #endif */
+  [self initializeFlipper:application];
 
+  // Retrieve the correct GoogleService-Info.plist file name for a given environment
+  NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
+  NSString *googleServiceInfoName = googleServiceInfoEnvName;
+
+  if ([googleServiceInfoName length] == 0) {
+    googleServiceInfoName = @"GoogleService-Info";
+  }
+
+  // Initialize Firebase with the correct GoogleService-Info.plist file
+  NSString *filePath = [[NSBundle mainBundle] pathForResource:googleServiceInfoName ofType:@"plist"];
+  FIROptions *options = [[FIROptions alloc] initWithContentsOfFile:filePath];
+  [FIRApp configureWithOptions:options];
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"ledgerlivemobile"
@@ -52,6 +59,20 @@
   [super application:application didFinishLaunchingWithOptions:launchOptions];
 
   return YES;
+}
+
+- (void) initializeFlipper:(UIApplication *)application {
+  #if DEBUG
+  #ifdef FB_SONARKIT_ENABLED
+    FlipperClient *client = [FlipperClient sharedClient];
+    SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
+    [client addPlugin: [[FlipperKitLayoutPlugin alloc] initWithRootNode: application withDescriptorMapper: layoutDescriptorMapper]];
+    [client addPlugin: [[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
+    [client addPlugin: [FlipperKitReactPlugin new]];
+    [client addPlugin: [[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
+    [client start];
+  #endif
+  #endif
 }
 
 - (void) showOverlay{

@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import Accounts from "../../screens/Accounts";
 import AccountSettingsMain from "../../screens/AccountSettings";
@@ -20,10 +20,6 @@ export default function AccountSettingsNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
-  const closableNavconfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -31,7 +27,7 @@ export default function AccountSettingsNavigator() {
         component={AccountSettingsMain}
         options={{
           title: t("account.settings.header"),
-          headerRight: closableNavconfig.headerRight,
+          headerRight: null,
         }}
       />
       <Stack.Screen

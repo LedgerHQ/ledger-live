@@ -10,7 +10,7 @@ const sizes = ["bytes", "kbUnit", "mbUnit"];
 const ByteSize = ({
   value,
   deviceModel,
-  decimals = 0,
+  decimals = 2,
   firmwareVersion,
   formatFunction,
 }: {
@@ -26,9 +26,9 @@ const ByteSize = ({
 
   // FIXME it should be on live-common side
   const bytes = Math.ceil(value / blockSize) * blockSize;
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const i = Math.floor(Math.log(bytes) / Math.log(k)) || 1; // Nb no more bytes
   const rawSize = parseFloat(bytes / k ** i);
-  const dm = i > 1 ? Math.max(0, decimals) : 0;
+  const dm = rawSize < 1 ? 1 : i > 1 ? Math.max(0, decimals) : 0;
 
   const divider = 10 ** dm;
   const toFormat = rawSize * divider;

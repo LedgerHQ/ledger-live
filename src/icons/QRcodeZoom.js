@@ -22,7 +22,7 @@ export default class QRcodeZoom extends PureComponent<Props> {
             <Circle stroke="#D8D8D8" fill="#FFF" cx={20} cy={20} r={19.5} />
             <Path
               d="M16 10a1 1 0 0 1 0 2h-3a1 1 0 0 0-1 1v3a1 1 0 0 1-2 0v-3a3 3 0 0 1 3-3h3zm14 6a1 1 0 0 1-2 0v-3a1 1 0 0 0-1-1h-3a1 1 0 0 1 0-2h3a3 3 0 0 1 3 3v3zm-6 14a1 1 0 0 1 0-2h3a1 1 0 0 0 1-1v-3a1 1 0 0 1 2 0v3a3 3 0 0 1-3 3h-3zm-14-6a1 1 0 0 1 2 0v3a1 1 0 0 0 1 1h3a1 1 0 0 1 0 2h-3a3 3 0 0 1-3-3v-3zm6.2-9h7.6a1.2 1.2 0 0 1 1.2 1.2v7.6a1.2 1.2 0 0 1-1.2 1.2h-7.6a1.2 1.2 0 0 1-1.2-1.2v-7.6a1.2 1.2 0 0 1 1.2-1.2z"
-              fill="#6490F1"
+              fill="#bdb3ff"
               fillRule="nonzero"
             />
           </G>

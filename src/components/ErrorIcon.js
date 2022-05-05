@@ -8,11 +8,15 @@ import {
   PairingFailed,
   UserRefusedAllowManager,
 } from "@ledgerhq/errors";
-import { SwapGenericAPIError } from "@ledgerhq/live-common/lib/errors";
+import {
+  SwapGenericAPIError,
+  DeviceNotOnboarded,
+} from "@ledgerhq/live-common/lib/errors";
 import { useTheme } from "@react-navigation/native";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";
 import Close from "../icons/Close";
+import Info from "../icons/Info";
 import ErrorBadge from "./ErrorBadge";
 import Circle from "./Circle";
 import { rgba } from "../colors";
@@ -65,6 +69,14 @@ export default function ErrorIcon({ error }: Props) {
           name="clockcircleo"
           color={rgba(colors.darkBlue, 0.5)}
         />
+      </Circle>
+    );
+  }
+
+  if (error instanceof DeviceNotOnboarded) {
+    return (
+      <Circle size={80} bg={rgba(colors.live, 0.15)}>
+        <Info size={40} color={colors.live} />
       </Circle>
     );
   }

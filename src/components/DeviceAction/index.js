@@ -5,6 +5,8 @@ import type {
   Action,
   Device,
 } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
@@ -35,6 +37,7 @@ type Props<R, H, P> = {
   action: Action<R, H, P>,
   request?: R,
   device: Device,
+  onSelectDeviceLink?: () => void,
   analyticsPropertyFlow?: string,
 };
 
@@ -45,6 +48,7 @@ export default function DeviceAction<R, H, P>({
   onResult,
   onError,
   renderOnResult,
+  onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
@@ -202,6 +206,24 @@ export default function DeviceAction<R, H, P>({
 
   if (!isLoading && error) {
     onError && onError(error);
+
+    // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
+    // into another handled case.
+    if (
+      error instanceof DeviceNotOnboarded ||
+      (error instanceof TransportStatusError &&
+        error.message.includes("0x6d06"))
+    ) {
+      return renderError({
+        t,
+        navigation,
+        error: new DeviceNotOnboarded(),
+        withOnboardingCTA: true,
+        colors,
+        theme,
+      });
+    }
+
     return renderError({
       t,
       navigation,
@@ -221,6 +243,7 @@ export default function DeviceAction<R, H, P>({
       unresponsive,
       colors,
       theme,
+      onSelectDeviceLink,
     });
   }
 

@@ -3,34 +3,27 @@ import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
 import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
-import Icon from "react-native-vector-icons/dist/Feather";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { Trans, useTranslation } from "react-i18next";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
 import {
   getAccountContractExplorer,
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/lib/explorers";
 import { createStructuredSelector } from "reselect";
-import { useTheme } from "@react-navigation/native";
-import BottomModal from "../../../components/BottomModal";
+import { BottomDrawer } from "@ledgerhq/native-ui";
 import LText from "../../../components/LText";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import BanIcon from "../../../icons/Ban";
-import Touchable from "../../../components/Touchable";
 import { blacklistToken } from "../../../actions/settings";
 import TokenContractAddress from "../../Account/TokenContractAddress";
 import Button from "../../../components/Button";
 import { parentAccountSelector } from "../../../reducers/accounts";
+import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
+import BottomModalChoice from "../../../components/BottomModalChoice";
 
 const mapDispatchToProps = {
   blacklistToken,
-};
-
-const hitSlop = {
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
 };
 
 type OwnProps = {
@@ -52,7 +45,7 @@ const TokenContextualModal = ({
   parentAccount,
   blacklistToken,
 }: Props) => {
-  const { colors } = useTheme();
+  const { t } = useTranslation();
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContract, setShowContract] = useState(false);
@@ -81,20 +74,22 @@ const TokenContextualModal = ({
     : null;
 
   return (
-    <BottomModal
+    <BottomDrawer
       id="ContractAddress"
-      isOpened={isOpened}
+      isOpen={isOpened}
       preventBackdropClick={false}
+      Icon={
+        showingContextMenu && (
+          <ParentCurrencyIcon
+            size={48}
+            currency={getAccountCurrency(account)}
+          />
+        )
+      }
+      title={showingContextMenu && account.token.name}
       onClose={onCloseModal}
     >
-      {showingContextMenu ? (
-        <View style={[styles.header, { borderColor: colors.fog }]}>
-          <View style={{ marginRight: 12 }}>
-            <CurrencyIcon currency={account.token} size={24} />
-          </View>
-          <LText>{account.token.name}</LText>
-        </View>
-      ) : showConfirmation ? (
+      {!showingContextMenu && showConfirmation ? (
         <LText secondary semiBold style={styles.confirmationHeader}>
           <Trans i18nKey="settings.accounts.blacklistedTokensModal.title" />
         </LText>
@@ -140,37 +135,21 @@ const TokenContextualModal = ({
         </View>
       ) : (
         <>
-          <Touchable
-            hitSlop={hitSlop}
+          <BottomModalChoice
+            title={t("settings.accounts.hideTokenCTA")}
             onPress={() => setShowConfirmation(true)}
-            style={styles.item}
-            event="blacklistToken"
-          >
-            <View style={{ marginRight: 8 }}>
-              <BanIcon size={18} color={colors.smoke} />
-            </View>
-            <LText semiBold>
-              <Trans i18nKey="settings.accounts.hideTokenCTA" />
-            </LText>
-          </Touchable>
+            iconName="EyeNone"
+          />
           {url && (
-            <Touchable
-              hitSlop={hitSlop}
+            <BottomModalChoice
+              title={t("settings.accounts.showContractCTA")}
               onPress={() => setShowContract(true)}
-              style={styles.item}
-              event="blacklistToken"
-            >
-              <View style={{ marginRight: 8 }}>
-                <Icon name="file-text" size={18} color={colors.smoke} />
-              </View>
-              <LText semiBold>
-                <Trans i18nKey="settings.accounts.showContractCTA" />
-              </LText>
-            </Touchable>
+              iconName="News"
+            />
           )}
         </>
       )}
-    </BottomModal>
+    </BottomDrawer>
   );
 };
 
@@ -230,6 +209,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   body: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
 });

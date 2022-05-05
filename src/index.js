@@ -1,8 +1,8 @@
+/* eslint-disable import/no-unresolved */
 // @flow
 import "../shim";
 import "./polyfill";
 import "./live-common-setup";
-import "./implement-react-native-libcore";
 import "../e2e/e2e-bridge-setup";
 import "react-native-gesture-handler";
 import React, {
@@ -13,7 +13,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
-
+import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   View,
@@ -76,15 +76,23 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
-import { lightTheme, duskTheme, darkTheme } from "./colors";
+import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
-import { setOsTheme, setTheme } from "./actions/settings";
+import { setOsTheme } from "./actions/settings";
+// $FlowFixMe
+import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
+// $FlowFixMe
+import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
+// $FlowFixMe
+import StyleProvider from "./StyleProvider";
+// $FlowFixMe
+import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
+import AdjustProvider from "./components/AdjustProvider";
 
 const themes = {
   light: lightTheme,
-  dusk: duskTheme,
   dark: darkTheme,
 };
 
@@ -112,6 +120,8 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string,
 };
+
+export const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -231,17 +241,31 @@ const linkingOptions = {
               /**
                * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
                */
-              [ScreenName.Portfolio]: "portfolio",
-              [NavigatorName.Accounts]: {
+              [NavigatorName.Portfolio]: {
                 screens: {
-                  /**
-                   * @params ?currency: string
-                   * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
-                   */
-                  [ScreenName.Accounts]: "account",
+                  [ScreenName.Portfolio]: "portfolio",
+                  [NavigatorName.PortfolioAccounts]: {
+                    screens: {
+                      /**
+                       * @params ?currency: string
+                       * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
+                       */
+                      [ScreenName.Accounts]: "account",
+                    },
+                  },
                 },
               },
-              [NavigatorName.Platform]: {
+              [NavigatorName.Market]: {
+                screens: {
+                  /**
+                   * @params ?platform: string
+                   * ie: "ledgerlive://discover" will open the catalog
+                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                   */
+                  [ScreenName.MarketList]: "market",
+                },
+              },
+              [NavigatorName.Discover]: {
                 screens: {
                   /**
                    * @params ?platform: string
@@ -306,18 +330,24 @@ const linkingOptions = {
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
-          [NavigatorName.Exchange]: "buy",
+          [NavigatorName.Exchange]: {
+            initialRouteName: "buy",
+            screens: {
+              [ScreenName.ExchangeBuy]: "buy",
+              [ScreenName.Coinify]: "buy/coinify",
+            },
+          },
           /**
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
            */
           [NavigatorName.Swap]: "swap",
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.Settings],
+            initialRouteName: [ScreenName.SettingsScreen],
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
                */
-              [ScreenName.Settings]: "settings",
+              [ScreenName.SettingsScreen]: "settings",
               [ScreenName.GeneralSettings]: "settings/general",
               [ScreenName.AccountsSettings]: "settings/accounts",
               [ScreenName.AboutSettings]: "settings/about",
@@ -370,37 +400,43 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const compareOsTheme = useCallback(() => {
     const currentOsTheme = Appearance.getColorScheme();
     if (currentOsTheme && osTheme !== currentOsTheme) {
-      const isDark = themes[theme].dark;
-      const newTheme =
-        currentOsTheme === "dark" ? (isDark ? theme : "dusk") : "light";
-      dispatch(setTheme(newTheme));
       dispatch(setOsTheme(currentOsTheme));
     }
-  }, [dispatch, osTheme, theme]);
+  }, [dispatch, osTheme]);
 
   useEffect(() => {
     compareOsTheme();
     const osThemeChangeHandler = nextAppState =>
       nextAppState === "active" && compareOsTheme();
-    AppState.addEventListener("change", osThemeChangeHandler);
-    return () => AppState.removeEventListener("change", osThemeChangeHandler);
+    const sub = AppState.addEventListener("change", osThemeChangeHandler);
+    return () => sub.remove();
   }, [compareOsTheme]);
+
+  const resolvedTheme = useMemo(
+    () =>
+      ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
+    [theme, osTheme],
+  );
 
   if (!isReady) {
     return null;
   }
 
   return (
-    <NavigationContainer
-      theme={themes[theme]}
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        isReadyRef.current = true;
-      }}
-    >
-      {children}
-    </NavigationContainer>
+    <StyleProvider selectedPalette={resolvedTheme}>
+      <NavigationContainer
+        theme={themes[resolvedTheme]}
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
+          routingInstrumentation.registerNavigationContainer(navigationRef);
+        }}
+      >
+        {children}
+      </NavigationContainer>
+    </StyleProvider>
   );
 };
 
@@ -419,9 +455,7 @@ export default class Root extends Component<
     throw e;
   }
 
-  onInitFinished = () => {
-    this.initTimeout = setTimeout(() => SplashScreen.hide(), 300);
-  };
+  onInitFinished = () => {};
 
   onRebootStart = () => {
     clearTimeout(this.initTimeout);
@@ -439,45 +473,54 @@ export default class Root extends Component<
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
+                <AdjustProvider />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
                   <PlatformAppProvider
-                    platformAppsServerURL={getProvider("production").url}
+                    platformAppsServerURL={
+                      getProvider(__DEV__ ? "staging" : "production").url
+                    }
                   >
-                    <DeepLinkingNavigator>
-                      <SafeAreaProvider>
-                        <StyledStatusBar />
-                        <NavBarColorHandler />
-                        <AuthPass>
-                          <I18nextProvider i18n={i18n}>
-                            <LocaleProvider>
-                              <BridgeSyncProvider>
-                                <CounterValuesProvider
-                                  initialState={initialCountervalues}
-                                >
-                                  <ButtonUseTouchable.Provider value={true}>
-                                    <OnboardingContextProvider>
-                                      <ToastProvider>
-                                        <NotificationsProvider>
-                                          <SnackbarContainer />
-                                          <NftMetadataProvider>
-                                            <App
-                                              importDataString={
-                                                importDataString
-                                              }
-                                            />
-                                          </NftMetadataProvider>
-                                        </NotificationsProvider>
-                                      </ToastProvider>
-                                    </OnboardingContextProvider>
-                                  </ButtonUseTouchable.Provider>
-                                </CounterValuesProvider>
-                              </BridgeSyncProvider>
-                            </LocaleProvider>
-                          </I18nextProvider>
-                        </AuthPass>
-                      </SafeAreaProvider>
-                    </DeepLinkingNavigator>
+                    <FirebaseRemoteConfigProvider>
+                      <FirebaseFeatureFlagsProvider>
+                        <SafeAreaProvider>
+                          <DeepLinkingNavigator>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <I18nextProvider i18n={i18n}>
+                                <LocaleProvider>
+                                  <BridgeSyncProvider>
+                                    <CounterValuesProvider
+                                      initialState={initialCountervalues}
+                                    >
+                                      <ButtonUseTouchable.Provider value={true}>
+                                        <OnboardingContextProvider>
+                                          <ToastProvider>
+                                            <NotificationsProvider>
+                                              <SnackbarContainer />
+                                              <NftMetadataProvider>
+                                                <MarketDataProvider>
+                                                  <App
+                                                    importDataString={
+                                                      importDataString
+                                                    }
+                                                  />
+                                                </MarketDataProvider>
+                                              </NftMetadataProvider>
+                                            </NotificationsProvider>
+                                          </ToastProvider>
+                                        </OnboardingContextProvider>
+                                      </ButtonUseTouchable.Provider>
+                                    </CounterValuesProvider>
+                                  </BridgeSyncProvider>
+                                </LocaleProvider>
+                              </I18nextProvider>
+                            </AuthPass>
+                          </DeepLinkingNavigator>
+                        </SafeAreaProvider>
+                      </FirebaseFeatureFlagsProvider>
+                    </FirebaseRemoteConfigProvider>
                   </PlatformAppProvider>
                 </WalletConnectProvider>
               </>

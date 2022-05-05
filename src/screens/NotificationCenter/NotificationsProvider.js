@@ -9,6 +9,7 @@ import type { Announcement } from "@ledgerhq/live-common/lib/notifications/Annou
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import VersionNumber from "react-native-version-number";
 import Config from "react-native-config";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getNotifications, saveNotifications } from "../../db";
 import { useLocale } from "../../context/Locale";
 import { cryptoCurrenciesSelector } from "../../reducers/accounts";
@@ -20,7 +21,7 @@ import networkApi from "../Settings/Debug/__mocks__/serviceStatus";
 let notificationsApi;
 let serviceStatusApi;
 
-if (Config.MOCK) {
+if (Config.MOCK || getEnv("MOCK")) {
   notificationsApi = fetchApi;
   serviceStatusApi = networkApi;
 }

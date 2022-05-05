@@ -2,9 +2,8 @@
 
 import React, { PureComponent } from "react";
 import { StyleSheet, Share } from "react-native";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import Touchable from "./Touchable";
-import LText from "./LText";
 import { withTheme } from "../colors";
 
 type Props = {
@@ -22,7 +21,7 @@ class ShareLink extends PureComponent<Props> {
   };
 
   render() {
-    const { children, colors } = this.props;
+    const { children } = this.props;
 
     return (
       <Touchable
@@ -30,10 +29,10 @@ class ShareLink extends PureComponent<Props> {
         style={styles.linkContainer}
         onPress={this.onPress}
       >
-        <Icon name="share" size={16} color={colors.live} />
-        <LText style={[styles.linkText]} color="live" semiBold>
+        <Icons.ShareMedium size={16} color="primary.c80" />
+        <Text variant="body" fontWeight="semiBold" color="primary.c80" ml={3}>
           {children}
-        </LText>
+        </Text>
       </Touchable>
     );
   }
@@ -46,8 +45,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-  },
-  linkText: {
-    marginLeft: 6,
   },
 });

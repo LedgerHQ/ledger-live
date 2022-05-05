@@ -1,6 +1,12 @@
 // @flow
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
@@ -12,7 +18,7 @@ import Animated from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
 import Styles from "../navigation/styles";
 import LText from "./LText";
-import { normalize, width } from "../helpers/normalizeSize";
+import { width } from "../helpers/normalizeSize";
 import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
 
@@ -74,6 +80,8 @@ type Props = {
   style?: *,
   titleStyle?: *,
 };
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 export default function AnimatedHeaderView({
   title,
@@ -161,21 +169,26 @@ export default function AnimatedHeaderView({
           ]}
           onLayout={onLayoutText}
         >
-          <LText bold style={[styles.title, titleStyle]} numberOfLines={4}>
+          <LText
+            variant="h1"
+            bold
+            style={[styles.title, titleStyle]}
+            numberOfLines={4}
+          >
             {title}
           </LText>
         </Animated.View>
       </Animated.View>
       {children && isReady && (
         <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-          <Animated.ScrollView
+          <AnimatedFlatList
             onScroll={event}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
             testID={isFocused ? "ScrollView" : undefined}
-          >
-            {children}
-          </Animated.ScrollView>
+            data={[children]}
+            renderItem={({ item, index }) => <View key={index}>{item}</View>}
+          />
         </AnimatedView>
       )}
       {footer}
@@ -187,7 +200,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  topHeader: { flexDirection: "row", alignContent: "center", height: 50 },
+  topHeader: { flexDirection: "row", alignContent: "center", height: 55 },
   spacer: { flex: 1 },
   header: {
     ...Styles.headerNoShadow,
@@ -204,7 +217,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontSize: normalize(34),
     lineHeight: 45,
   },
   buttons: {
@@ -213,8 +225,6 @@ const styles = StyleSheet.create({
   scrollArea: {
     paddingHorizontal: 24,
     paddingTop: 50,
-    paddingBottom: 24,
+    paddingBottom: 116,
   },
-  spacerTop: { marginTop: 60 },
-  spacerBottom: { marginTop: 24 },
 });

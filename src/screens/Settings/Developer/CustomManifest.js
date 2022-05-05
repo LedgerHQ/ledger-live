@@ -38,7 +38,7 @@ export default function CustomManifest({
   }, [manifest, addLocalManifest, navigation]);
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <TextInput
         style={[
           styles.input,

@@ -3,9 +3,8 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
-import Icon from "react-native-vector-icons/dist/Feather";
+import { Icons, Text } from "@ledgerhq/native-ui";
 import Touchable from "./Touchable";
-import LText from "./LText";
 import { withTheme } from "../colors";
 
 type Props = {
@@ -40,7 +39,7 @@ class CopyLink extends PureComponent<Props, State> {
   };
 
   render() {
-    const { style, children, replacement, colors } = this.props;
+    const { style, children, replacement } = this.props;
     const { copied } = this.state;
     return (
       <Touchable
@@ -48,18 +47,18 @@ class CopyLink extends PureComponent<Props, State> {
         style={[styles.linkContainer, style]}
         onPress={this.onPress}
       >
-        <Icon
-          name="copy"
+        <Icons.CopyMedium
           size={16}
-          color={copied ? colors.grey : colors.live}
+          color={copied ? "neutral.c70" : "primary.c80"}
         />
-        <LText
-          style={[styles.linkText]}
-          color={copied ? "grey" : "live"}
-          semiBold
+        <Text
+          variant="body"
+          fontWeight="semiBold"
+          color={copied ? "neutral.c70" : "primary.c80"}
+          ml={3}
         >
           {copied && replacement ? replacement : children}
-        </LText>
+        </Text>
       </Touchable>
     );
   }

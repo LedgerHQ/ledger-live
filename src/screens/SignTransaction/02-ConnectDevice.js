@@ -18,6 +18,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
 import { useSignedTxHandlerWithoutBroadcast } from "../../logic/screenTransactionHooks";
+import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
 
@@ -39,7 +40,7 @@ type RouteParams = {
   onError: (error: Error) => void,
 };
 
-function ConnectDevice({ route }: Props) {
+function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -60,6 +61,9 @@ function ConnectDevice({ route }: Props) {
     onSuccess,
   });
 
+  // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
+  const dependencies = [mainAccount];
+
   return transaction ? (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
@@ -75,9 +79,12 @@ function ConnectDevice({ route }: Props) {
           transaction,
           status,
           tokenCurrency,
+          dependencies,
+          requireLatestFirmware: true,
         }}
         device={route.params.device}
         onResult={handleTx}
+        onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
       />
     </SafeAreaView>
   ) : null;

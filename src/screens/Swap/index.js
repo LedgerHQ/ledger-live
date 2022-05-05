@@ -238,6 +238,7 @@ function SwapForm({
   }, [fromAccount, fromParentAccount, transaction]);
 
   useEffect(() => {
+    // update tx after a form navigation from fees edit to main screen
     if (route.params?.transaction) {
       setTransaction(route.params.transaction);
     }
@@ -441,8 +442,8 @@ export default function SwapFormEntry(props: Props) {
       confirmButtonText={<Trans i18nKey="carousel.banners.buyCrypto.title" />}
       onConfirm={onNavigateToBuyCrypto}
       Icon={Info}
+      iconMarginBottom={16}
       iconColor={colors.orange}
-      hideRejectButton
     />
   );
 }

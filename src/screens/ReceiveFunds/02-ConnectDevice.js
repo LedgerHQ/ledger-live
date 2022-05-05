@@ -1,7 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,7 +13,6 @@ import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 
-import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -26,8 +24,7 @@ import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
-
-const forceInset = { bottom: "always" };
+import SkipSelectDevice from "../SkipSelectDevice";
 
 type Props = {
   navigation: any,
@@ -51,8 +48,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<?Device>();
-
-  const { colors } = useTheme();
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -106,11 +101,9 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <View style={styles.bodyError}>
-          <GenericErrorView error={error} />
-        </View>
-      </SafeAreaView>
+      <View style={styles.bodyError}>
+        <GenericErrorView error={error} />
+      </View>
     );
   }
 
@@ -130,15 +123,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-      forceInset={forceInset}
-    >
+    <>
       <TrackScreen
         category="ReceiveFunds"
         name="ConnectDevice"
@@ -148,6 +133,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
+        <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
           onWithoutDevice={onSkipDevice}
@@ -161,9 +147,10 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
         appName={route.params.appName}
+        onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow="receive"
       />
-    </SafeAreaView>
+    </>
   );
 }
 

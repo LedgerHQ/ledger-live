@@ -33,10 +33,7 @@ import Plus from "../../../../icons/Plus";
 import ArrowRight from "../../../../icons/ArrowRight";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import LendingWarnings from "../../shared/LendingWarnings";
-import {
-  discreetModeSelector,
-  localeSelector,
-} from "../../../../reducers/settings";
+import { localeSelector } from "../../../../reducers/settings";
 
 type Props = {
   navigation: any,
@@ -53,7 +50,6 @@ type RouteParams = {
 export default function SendAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const { currency, transaction: tx } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -102,7 +98,6 @@ export default function SendAmount({ navigation, route }: Props) {
       showAllDigits: false,
       disableRounding: false,
       showCode: true,
-      discreet,
       locale,
     });
 
@@ -196,34 +191,39 @@ export default function SendAmount({ navigation, route }: Props) {
             }
           />
           <View style={styles.summaryRow}>
-            <Trans
-              i18nKey="transfer.lending.enable.enable.summary"
-              values={{
-                contractName: t("transfer.lending.enable.enable.contractName", {
-                  currencyName: currency.ticker,
-                }),
-                accountName: name,
-                amount:
-                  amount && amount.gt(0)
-                    ? t("transfer.lending.enable.enable.limit", {
-                        amount: formattedAmount,
-                      })
-                    : t("transfer.lending.enable.enable.noLimit", {
-                        assetName: currency.name,
-                      }),
-              }}
-            >
-              <LText semiBold style={styles.label} />
-              <LText
-                numberOfLines={1}
-                semiBold
-                style={[
-                  styles.liveLabel,
-                  { backgroundColor: colors.lightLive },
-                ]}
-                color="live"
-              />
-            </Trans>
+            <LText semiBold style={styles.label}>
+              <Trans
+                i18nKey="transfer.lending.enable.enable.summary"
+                values={{
+                  contractName: t(
+                    "transfer.lending.enable.enable.contractName",
+                    {
+                      currencyName: currency.ticker,
+                    },
+                  ),
+                  accountName: name,
+                  amount:
+                    amount && amount.gt(0)
+                      ? t("transfer.lending.enable.enable.limit", {
+                          amount: formattedAmount,
+                        })
+                      : t("transfer.lending.enable.enable.noLimit", {
+                          assetName: currency.name,
+                        }),
+                }}
+              >
+                <LText semiBold style={styles.label} />
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  style={[
+                    styles.liveLabel,
+                    { backgroundColor: colors.lightLive },
+                  ]}
+                  color="live"
+                />
+              </Trans>
+            </LText>
           </View>
         </View>
         <View style={styles.bottomWrapper}>

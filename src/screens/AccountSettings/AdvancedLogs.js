@@ -44,7 +44,7 @@ export default function AdvancedLogs({ route }: Props) {
   });
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView>
       <View style={styles.body}>
         <LText semiBold style={styles.sync}>
           {t("common.sync.ago", { time: readableDate })}
@@ -58,14 +58,11 @@ export default function AdvancedLogs({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 16,
-    paddingBottom: 64,
-  },
   body: {
     flexDirection: "column",
     flex: 1,
+    padding: 16,
+    paddingBottom: 64,
   },
   sync: {
     marginBottom: 16,

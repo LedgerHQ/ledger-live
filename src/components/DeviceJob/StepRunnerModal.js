@@ -1,12 +1,9 @@
 // @flow
 
 import React from "react";
-import { StyleSheet } from "react-native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import BottomModal from "../BottomModal";
-import Close from "../../icons/Close";
-import Touchable from "../Touchable";
 import type { Step } from "./types";
 import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
@@ -52,17 +49,6 @@ export default function SelectDeviceConnectModal({
           colors={colors}
         />
       ) : null}
-      <Touchable event="DeviceJobClose" style={styles.close} onPress={onClose}>
-        <Close color={colors.fog} size={20} />
-      </Touchable>
     </BottomModal>
   );
 }
-
-const styles = StyleSheet.create({
-  close: {
-    position: "absolute",
-    right: 16,
-    top: 16,
-  },
-});

@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
@@ -47,7 +47,6 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
       screenOptions={{
         ...stackNavConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
-        headerMode: "float",
       }}
     >
       <Stack.Screen

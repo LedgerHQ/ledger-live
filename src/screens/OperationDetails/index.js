@@ -18,6 +18,7 @@ import Footer from "./Footer";
 import Content from "./Content";
 import Close from "../../icons/Close";
 import ArrowLeft from "../../icons/ArrowLeft";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 const forceInset = { bottom: "always" };
 
@@ -45,6 +46,8 @@ export const BackButton = ({ navigation }: { navigation: * }) => {
   );
 };
 
+// TODO: this button is generic and is used in places unrelated to operation details
+// move it to a generic place
 export const CloseButton = ({ navigation }: { navigation: * }) => {
   const { colors } = useTheme();
 
@@ -59,7 +62,7 @@ export const CloseButton = ({ navigation }: { navigation: * }) => {
   );
 };
 
-export default function OperationDetails({ route }: Props) {
+function OperationDetails({ route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   if (!account) return null;
@@ -95,6 +98,8 @@ export default function OperationDetails({ route }: Props) {
     </SafeAreaView>
   );
 }
+
+export default withDiscreetMode(OperationDetails);
 
 const styles = StyleSheet.create({
   container: {

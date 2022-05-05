@@ -108,6 +108,7 @@ export default function SelectFeesStrategy({
       >
         <View style={styles.leftBox}>
           <CheckBox
+            onChange={() => onPressStrategySelect(item)}
             style={styles.checkbox}
             isChecked={feesStrategy === item.label}
           />

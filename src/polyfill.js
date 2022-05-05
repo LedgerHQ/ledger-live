@@ -1,5 +1,42 @@
 /* eslint-disable no-console */
 
+import "@formatjs/intl-getcanonicallocales/polyfill";
+import "@formatjs/intl-locale/polyfill";
+import "@formatjs/intl-pluralrules/polyfill";
+import "@formatjs/intl-pluralrules/locale-data/en";
+import "@formatjs/intl-pluralrules/locale-data/fr";
+import "@formatjs/intl-pluralrules/locale-data/es";
+import "@formatjs/intl-pluralrules/locale-data/ru";
+import "@formatjs/intl-pluralrules/locale-data/zh";
+import "@formatjs/intl-pluralrules/locale-data/de";
+import "@formatjs/intl-pluralrules/locale-data/tr";
+import "@formatjs/intl-pluralrules/locale-data/ja";
+import "@formatjs/intl-pluralrules/locale-data/ko";
+import "@formatjs/intl-numberformat/polyfill";
+import "@formatjs/intl-numberformat/locale-data/en";
+import "@formatjs/intl-numberformat/locale-data/fr";
+import "@formatjs/intl-numberformat/locale-data/es";
+import "@formatjs/intl-numberformat/locale-data/ru";
+import "@formatjs/intl-numberformat/locale-data/zh";
+import "@formatjs/intl-numberformat/locale-data/de";
+import "@formatjs/intl-numberformat/locale-data/tr";
+import "@formatjs/intl-numberformat/locale-data/ja";
+import "@formatjs/intl-numberformat/locale-data/ko";
+import "@formatjs/intl-datetimeformat/polyfill";
+import "@formatjs/intl-datetimeformat/locale-data/en";
+import "@formatjs/intl-datetimeformat/locale-data/fr";
+import "@formatjs/intl-datetimeformat/locale-data/es";
+import "@formatjs/intl-datetimeformat/locale-data/ru";
+import "@formatjs/intl-datetimeformat/locale-data/zh";
+import "@formatjs/intl-datetimeformat/locale-data/de";
+import "@formatjs/intl-datetimeformat/locale-data/tr";
+import "@formatjs/intl-datetimeformat/locale-data/ja";
+import "@formatjs/intl-datetimeformat/locale-data/ko";
+import "@formatjs/intl-datetimeformat/add-all-tz";
+
+// Fix error when adding Solana account
+import "@azure/core-asynciterator-polyfill";
+
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
@@ -25,32 +62,4 @@ if (__DEV__ && process.env.NODE_ENV !== "test") {
       console.warn(e);
     }
   }, 100);
-
-  // FIXME: we can safely remove that when the problem is fixed
-  //        on libcore side: actually if a callback based function
-  //        fails on libcore, the error callback is called twice
-  //
-  //        wrapping the calls in timeout doesnt help avoiding the
-  //        redbox, so we just want to ignore this like that for now :)
-  //
-  setupDirtyHackToHandleLibcoreDoubleCallback();
-}
-
-function setupDirtyHackToHandleLibcoreDoubleCallback() {
-  const { ErrorUtils } = global;
-  ErrorUtils.setGlobalHandler((e, isFatal) => {
-    try {
-      if (
-        e.message.match(
-          /only one callback may be registered to a function in a native module/,
-        )
-      ) {
-        return;
-      }
-      const ExceptionsManager = require("../node_modules/react-native/Libraries/Core/ExceptionsManager.js");
-      ExceptionsManager.handleException(e, isFatal);
-    } catch (ee) {
-      console.log("Failed to print error: ", ee.message);
-    }
-  });
 }

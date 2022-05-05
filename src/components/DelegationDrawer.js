@@ -13,7 +13,6 @@ import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 // TODO move to component
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
-import Close from "../icons/Close";
 import { rgba } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import BottomModal from "./BottomModal";
@@ -53,7 +52,6 @@ export default function DelegationDrawer({
   undelegation,
   icon,
 }: Props) {
-  const { colors } = useTheme();
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
   const unit = getAccountUnit(account);
@@ -68,16 +66,6 @@ export default function DelegationDrawer({
       onClose={onClose}
     >
       <View style={styles.root}>
-        <Touchable
-          event="DelegationDetailsModalClose"
-          onPress={onClose}
-          style={styles.closeButton}
-        >
-          <Circle size={iconWidth / 2} bg={colors.lightFog}>
-            <Close />
-          </Circle>
-        </Touchable>
-
         <DelegatingContainer
           left={
             icon || (

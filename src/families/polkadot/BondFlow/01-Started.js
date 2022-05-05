@@ -9,15 +9,17 @@ import {
 } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
 import Alert from "../../../components/Alert";
-import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
+import Illustration from "../../../images/illustration/Illustration";
+import EarnLight from "../../../images/illustration/Light/_003.png";
+import EarnDark from "../../../images/illustration/Dark/_003.png";
 
 type Props = {
   navigation: any,
@@ -32,10 +34,6 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
     navigation.navigate(ScreenName.PolkadotBondAmount, route.params);
   }, [navigation, route.params]);
 
-  const onCancel = useCallback(() => {
-    navigation.popToTop();
-  }, [navigation]);
-
   const onHelp = useCallback(() => {
     Linking.openURL(urls.polkadotStaking);
   }, []);
@@ -47,7 +45,13 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
         contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="BondFlow" name="Started" />
-        <IlluRewards />
+        <Flex alignItems="center" mb={6}>
+          <Illustration
+            lightSource={EarnLight}
+            darkSource={EarnDark}
+            size={150}
+          />
+        </Flex>
         <LText secondary style={styles.description}>
           <Trans i18nKey="polkadot.bond.steps.starter.description" />
         </LText>
@@ -65,14 +69,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
             </LText>
           ))}
         />
-        <View
-          style={[
-            styles.help,
-            {
-              borderColor: colors.live,
-            },
-          ]}
-        >
+        <View style={styles.help}>
           <ExternalLink
             event="PolkadotBondStartedHelp"
             onPress={onHelp}
@@ -82,28 +79,20 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
             }}
           />
         </View>
-        <View style={styles.warning}>
-          <Alert type="help">
-            <Trans i18nKey="polkadot.bond.steps.starter.warning" />
-          </Alert>
-        </View>
       </ScrollView>
 
       <View style={styles.footer}>
+        <Alert type="help">
+          <Trans i18nKey="polkadot.bond.steps.starter.warning" />
+        </Alert>
         <Button
           event="PolkadotBondStartedBtn"
           onPress={onNext}
-          title={<Trans i18nKey="common.continue" />}
-          type="primary"
-        />
-        <Button
-          event="PolkadotBondStartedBtnCancel"
-          onPress={onCancel}
-          title={<Trans i18nKey="common.cancel" />}
-          type="secondary"
-          outline={false}
-          containerStyle={styles.buttonContainer}
-        />
+          type="main"
+          mt={6}
+        >
+          <Trans i18nKey="common.continue" />
+        </Button>
       </View>
     </SafeAreaView>
   );
@@ -144,20 +133,8 @@ const styles = StyleSheet.create({
   },
   help: {
     marginTop: 32,
-    borderRadius: 32,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    flexDirection: "row",
-  },
-  warning: {
-    width: "100%",
-    marginTop: 16,
   },
   footer: {
     padding: 16,
-  },
-  buttonContainer: {
-    marginTop: 4,
   },
 });

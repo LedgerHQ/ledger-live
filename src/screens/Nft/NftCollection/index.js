@@ -29,6 +29,7 @@ import { NavigatorName, ScreenName } from "../../../const";
 import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -191,6 +192,7 @@ const NftCollection = ({ route }: Props) => {
 
   return (
     <SafeAreaView
+      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
       style={[
         styles.root,
         {
@@ -242,8 +244,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 64,
+    marginHorizontal: 8,
     flexGrow: 1,
   },
 });
 
-export default NftCollection;
+export default withDiscreetMode(NftCollection);
