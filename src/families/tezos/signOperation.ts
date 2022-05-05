@@ -8,6 +8,8 @@ import type { Account, SignOperationEvent } from "../../types";
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "../../env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { upperModulo } from "../../modulo";
+import BigNumber from "bignumber.js";
 
 export const signOperation = ({
   account,
@@ -38,40 +40,60 @@ export const signOperation = ({
         );
         tezos.setProvider({ signer: ledgerSigner });
 
+        // disable the broadcast because we want to do it in a second phase (broadcast hook)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        tezos.contract.context.injector.inject = async () => ""; // disable broadcast
+        tezos.contract.context.injector.inject = async () => "";
 
         o.next({ type: "device-signature-requested" });
 
-        let res, signature, opbytes;
+        let type = "OUT";
+
+        let res, opbytes;
+        const params = {
+          fee: transaction.fees?.toNumber() || 0,
+          storageLimit: transaction.storageLimit?.toNumber() || 0,
+          gasLimit: transaction.gasLimit?.toNumber() || 0,
+        };
+
+        if (["delegate", "undelegate"].includes(transaction.mode)) {
+          // https://ledgerhq.atlassian.net/browse/LL-8821
+          params.gasLimit = upperModulo(
+            transaction.gasLimit || new BigNumber(0),
+            new BigNumber(136),
+            new BigNumber(1000)
+          ).toNumber();
+        }
+
         switch (transaction.mode) {
           case "send":
             res = await tezos.contract.transfer({
+              mutez: true,
               to: transaction.recipient,
-              amount: transaction.amount.div(10 ** 6).toNumber(),
-              fee: transaction.fees?.toNumber() || 0,
-              storageLimit: transaction.storageLimit?.toNumber() || 0,
-              gasLimit: transaction.gasLimit?.toNumber() || 0,
+              amount: transaction.amount.toNumber(),
+              ...params,
             });
-            signature = res.raw.opOb.signature;
             opbytes = res.raw.opbytes;
             break;
           case "delegate":
             res = await tezos.contract.setDelegate({
+              ...params,
               source: freshAddress,
               delegate: transaction.recipient,
             });
             opbytes = res.raw.opbytes;
+            type = "DELEGATE";
             break;
           case "undelegate":
             res = await tezos.contract.setDelegate({
+              ...params,
               source: freshAddress,
             });
             opbytes = res.raw.opbytes;
+            type = "UNDELEGATE";
             break;
           default:
-            throw "not supported";
+            throw new Error("not supported");
         }
 
         if (cancelled) {
@@ -88,15 +110,14 @@ export const signOperation = ({
 
         // currently, all mode are always at least one OUT tx on ETH parent
         const operation = {
-          id: `${accountId}-${txHash}-OUT`,
+          id: `${accountId}-${txHash}-${type}`,
           hash: txHash,
-          type: "OUT",
+          type,
           value: transaction.amount,
           fee: fees,
           extra: {
             storageLimit: transaction.storageLimit,
             gasLimit: transaction.gasLimit,
-            opbytes,
           },
           blockHash: null,
           blockHeight: null,
@@ -110,7 +131,7 @@ export const signOperation = ({
           type: "signed",
           signedOperation: {
             operation,
-            signature,
+            signature: opbytes,
             expirationDate: null,
           },
         });

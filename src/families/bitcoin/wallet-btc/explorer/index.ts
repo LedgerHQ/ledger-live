@@ -207,28 +207,29 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
-    const res = (
-      await client.client.get(url, {
-        params,
-        // some altcoin may have outputs with values > MAX_SAFE_INTEGER
-        transformResponse: (string) =>
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          JSONBigNumber.parse(string, (key: string, value: any) => {
-            if (BigNumber.isBigNumber(value)) {
-              if (key === "value") {
-                return value.toString();
+    let res: { txs: TX[] } = { txs: [] };
+    try {
+      res = (
+        await client.client.get(url, {
+          params,
+          // some altcoin may have outputs with values > MAX_SAFE_INTEGER
+          transformResponse: (string) =>
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            JSONBigNumber.parse(string, (key: string, value: any) => {
+              if (BigNumber.isBigNumber(value)) {
+                if (key === "value") {
+                  return value.toString();
+                }
+                return value.toNumber();
               }
-
-              return value.toNumber();
-            }
-            return value;
-          }),
-      })
-    ).data as { txs: TX[] };
-    await this.client.release(client);
-
+              return value;
+            }),
+        })
+      ).data;
+    } finally {
+      await this.client.release(client);
+    }
     this.emit("fetched-address-transaction", { url, params, res });
-
     return res;
   }
 
@@ -239,6 +240,12 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     // @ts-ignore
     // eslint-disable-next-line no-param-reassign
     delete tx.confirmations;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete tx.hash;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete tx.lock_time;
 
     // eslint-disable-next-line no-param-reassign
     tx.account = address.account;
@@ -246,9 +253,23 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     tx.index = address.index;
     // eslint-disable-next-line no-param-reassign
     tx.address = address.address;
+    tx.inputs.forEach((input) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.txinwitness;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.script_signature;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete input.input_index;
+    });
     tx.outputs.forEach((output) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      delete output.script_hex;
       // eslint-disable-next-line no-param-reassign
-      output.output_hash = tx.hash;
+      output.output_hash = tx.id;
       // eslint-disable-next-line no-param-reassign
       output.block_height = tx.block ? tx.block.height : null;
       // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
@@ -285,7 +306,6 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
         params.block_hash = lastTx.block.hash;
       }
     }
-
     const res = await this.fetchTxs(address, params);
 
     const hydratedTxs: TX[] = [];

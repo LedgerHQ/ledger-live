@@ -162,6 +162,7 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBik"], "dash", true);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS4B"], "qtum", true);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8"], "zcash", true);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGhSRto8qK2qXCUiW3"], "zcash", true);
     validateAddrs(["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFr"], "bitcoin_gold", true);
     validateAddrs(["D8cMCRimfjwQ9E8jJvgUswt18WnZbCUAaW"], "dogecoin", true);
     validateAddrs(
@@ -177,6 +178,8 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2EkqJ"], "viacoin", true);
     validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GR"], "stakenet", true);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMuga8"], "stealthcoin", true);
+    validateAddrs(["Dso59DoPRkfATcZgHGgfh9mpku7taw9srAv"], "decred", true);
+    validateAddrs(["Dcck4QrFF5wuLzQpwxb5evhSRD7ZTsJZwuh"], "decred", true);
 
     validateAddrs(
       ["bitcoincash:qzl0x0982hy9xrh99wdnejx4eecdn02jv58as5p599"],
@@ -191,6 +194,7 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["Xh13o3cWixDBYJMGuJmFX17TZb9guXcBii"], "dash", false);
     validateAddrs(["MFYvHZcZ35typC4k2XyvRVooCDZxnoDS44"], "qtum", false);
     validateAddrs(["t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKtyy"], "zcash", false);
+    validateAddrs(["t3PU1j7YW3fJ67jUbkGySRto8qK2qXCUiW3"], "zcash", false);
     validateAddrs(
       ["AYRf8r4SJhmfaEwmWvY8ujmrepbrWyenFF"],
       "bitcoin_gold",
@@ -210,6 +214,8 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["ETx91CT52eBFYWbe4Yht5BpZNigWg2Ekqq"], "viacoin", false);
     validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GG"], "stakenet", false);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMugaa"], "stealthcoin", false);
+    validateAddrs(["Dso59DoPRkfATcZgHGgff9mpku7taw9srAv"], "decred", false);
+    validateAddrs(["Dcck4QrFF5wuLQzpwxb5evhSRD7ZTsJZwuh"], "decred", false);
   });
 });
 

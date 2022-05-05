@@ -40,10 +40,15 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
-  API_ALGORAND_BLOCKCHAIN_EXPLORER_API_KEY: {
-    def: "",
+  API_CELO_INDEXER: {
+    def: "https://celo.coin.ledger.com/indexer/",
     parser: stringParser,
-    desc: "Node API key for algorand",
+    desc: "Explorer API for celo",
+  },
+  API_CELO_NODE: {
+    def: "https://celo.coin.ledger.com/archive/",
+    parser: stringParser,
+    desc: "Node endpoint for celo",
   },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com/",
@@ -111,7 +116,7 @@ const envDefinitions = {
     desc: "Ledger explorer API for tezos",
   },
   API_TEZOS_TZKT_API: {
-    def: "http://xtz-tzkt-explorer.api-01.live.ledger-stg.com",
+    def: "https://xtz-tzkt-explorer.api.live.ledger.com",
     parser: stringParser,
     desc: "tzkt.io explorer",
   },
@@ -124,6 +129,16 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
+  },
+  API_SOLANA_PROXY: {
+    parser: stringParser,
+    def: "https://solana.coin.ledger.com",
+    desc: "proxy url for solana API",
+  },
+  SOLANA_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    desc: "base url for validators.app validator list",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -146,7 +161,7 @@ const envDefinitions = {
     desc: "location of the compound API",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 4,
+    def: 1.4,
     parser: intParser,
     desc: "estimate gas multiplier",
   },
@@ -156,7 +171,7 @@ const envDefinitions = {
     desc: "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   CRYPTO_ORG_INDEXER: {
-    def: "https://crypto.org/explorer",
+    def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org indexer API",
   },
@@ -166,7 +181,7 @@ const envDefinitions = {
     desc: "location of the crypto.org indexer testnet API",
   },
   CRYPTO_ORG_RPC_URL: {
-    def: "https://rpc.mainnet.crypto.org",
+    def: "https://cryptoorg-rpc-node.coin.ledger.com",
     parser: stringParser,
     desc: "location of the crypto.org chain node",
   },
@@ -225,11 +240,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
   },
-  EXPERIMENTAL_CURRENCIES_JS_BRIDGE: {
-    def: "",
-    parser: stringParser,
-    desc: "enable JS integration of currencies (comma separated)",
-  },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,
@@ -244,11 +254,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "enable experimental languages",
-  },
-  EXPERIMENTAL_LIBCORE: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental libcore implementation of a currency (affects scan accounts)",
   },
   EXPERIMENTAL_MANAGER: {
     def: false,
@@ -279,6 +284,11 @@ const envDefinitions = {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer API",
+  },
+  EXPLORER_STAGING: {
+    def: "https://explorers.api-01.live.ledger-stg.com",
+    parser: stringParser,
+    desc: "Ledger staging explorer API",
   },
   EXPLORER_BETA: {
     def: "https://explorers.api.live.ledger.com",
@@ -335,17 +345,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIBCORE_BALANCE_HISTORY_NOGO: {
-    def: "ripple,ethereum,tezos,stellar",
-    // LLC-475
-    parser: stringParser,
-    desc: "comma-separated list of currencies which does not properly support balance history libcore implementation",
-  },
-  LIBCORE_PASSWORD: {
-    def: "",
-    parser: stringParser,
-    desc: "libcore encryption password",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
@@ -376,19 +375,22 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
-  NFT: {
+  /**
+   * Note: the mocked cryptoassets config and test partner are signed with the
+   * Ledger test private key
+   */
+  MOCK_EXCHANGE_TEST_CONFIG: {
     def: false,
     parser: boolParser,
-    desc: "synchronizing nfts",
+    desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
   NFT_CURRENCIES: {
-    def: "ethereum",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
   NFT_ETH_METADATA_SERVICE: {
-    // FIXME LL-8001
-    def: "https://nft.staging.aws.ledger.fr/v1/ethereum/1/contracts/tokens/infos",
+    def: "https://nft.api.live.ledger.com",
     parser: stringParser,
     desc: "service uri used to get the metadata of an nft",
   },
@@ -400,7 +402,7 @@ const envDefinitions = {
   OPERATION_OPTIMISTIC_RETENTION: {
     def: 30 * 60 * 1000,
     parser: intParser,
-    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API",
+    desc: "timeout to keep an optimistic operation that was broadcasted but not yet visible from the coin implementation or the API",
   },
   OPERATION_PAGE_SIZE_INITIAL: {
     def: 100,
@@ -512,6 +514,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable visibility of debug apps and tools in Platform Catalog",
   },
+  PLATFORM_EXPERIMENTAL_APPS: {
+    def: false,
+    parser: boolParser,
+    desc: "enable visibility of experimental apps and tools in Platform Catalog",
+  },
   PLATFORM_MANIFEST_API_URL: {
     def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
     parser: stringParser,
@@ -519,6 +526,31 @@ const envDefinitions = {
   },
   PLATFORM_MANIFEST_STAGING_API_URL: {
     def: "https://cdn.live.ledger-stg.com/platform/apps/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
+  PLATFORM_LOCAL_MANIFEST_JSON: {
+    def: "",
+    parser: stringParser,
+    desc: 'json manifest for a local (test) platform app manifests. How to use: PLATFORM_LOCAL_MANIFEST_JSON="$(cat /path/to/file.json)"',
+  },
+  PLATFORM_GLOBAL_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_GLOBAL_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/catalog/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests (staging)",
+  },
+  PLATFORM_RAMP_CATALOG_API_URL: {
+    def: "https://cdn.live.ledger.com/platform/trade/v1/data.json",
+    parser: stringParser,
+    desc: "url used to fetch platform app manifests",
+  },
+  PLATFORM_RAMP_CATALOG_STAGING_API_URL: {
+    def: "https://cdn.live.ledger-stg.com/platform/trade/v1/data.json",
     parser: stringParser,
     desc: "url used to fetch platform app manifests (staging)",
   },
@@ -531,6 +563,16 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  MARKET_API_URL: {
+    def: "https://proxycg.api.live.ledger.com/api/v3",
+    parser: stringParser,
+    desc: "Market data api",
+  },
+  USE_LEARN_STAGING_URL: {
+    def: false,
+    parser: boolParser,
+    desc: "use the staging URL for the learn page",
   },
 };
 

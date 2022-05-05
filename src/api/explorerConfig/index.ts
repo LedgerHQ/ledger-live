@@ -12,17 +12,11 @@ const initialExplorerConfig: FullConfig = {
     },
   },
   bitcoin_cash: {
-    id: "abc",
+    id: "bch",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    /*
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
-    */
   },
   bitcoin_gold: {
     id: "btg",
@@ -195,6 +189,14 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  ethereum_goerli: {
+    id: "eth_goerli",
+    stable: {
+      base: "EXPLORER_STAGING",
+      version: "v3",
+    },
+  },
+
   ethereum_classic: {
     id: "etc",
     stable: {

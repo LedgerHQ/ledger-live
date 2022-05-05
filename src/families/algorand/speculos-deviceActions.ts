@@ -1,5 +1,5 @@
 import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
+import type { AlgorandTransaction } from "./types";
 import { formatCurrencyUnit, findTokenById } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
@@ -11,88 +11,93 @@ const expectedAmount = ({ account, status }) =>
     disableRounding: true,
   });
 
-const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
-  steps: [
-    {
-      title: "Txn Type",
-      button: "Rr",
-      expectedValue: ({ transaction }) =>
-        transaction.subAccountId ? "Asset xfer" : "Payment",
-    },
-    {
-      title: "Asset xfer",
-      button: "Rr",
-    },
-    {
-      title: "Payment",
-      button: "Rr",
-    },
-    {
-      title: "Fee",
-      button: "Rr",
-      expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(account.unit, status.estimatedFees, {
-          disableRounding: true,
-        }),
-    },
-    {
-      title: "Asset ID",
-      button: "Rr",
-      expectedValue: ({ transaction }) => {
-        const id = transaction.assetId
-          ? extractTokenId(transaction.assetId)
-          : transaction.subAccountId
-          ? extractTokenId(transaction.subAccountId)
-          : "";
-        const token = findTokenById(addPrefixToken(id));
-        return token ? displayTokenValue(token) : `#${id}`;
+const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
+  deviceActionFlow({
+    steps: [
+      {
+        title: "Txn Type",
+        button: "Rr",
+        expectedValue: ({ transaction }) =>
+          transaction.subAccountId ? "Asset xfer" : "Payment",
       },
-    },
-    {
-      title: "Asset amt",
-      button: "Rr",
-      expectedValue: ({ transaction, status }) =>
-        transaction.mode === "optIn" ? "0" : status.amount.toString(),
-    },
-    {
-      title: "Receiver",
-      button: "Rr",
-      expectedValue: ({ transaction }) => transaction.recipient,
-    },
-    {
-      title: "Asset dst",
-      button: "Rr",
-      expectedValue: ({ transaction }) => transaction.recipient,
-    },
-    {
-      title: "Amount",
-      button: "Rr",
-      expectedValue: ({ account, status, transaction }) =>
-        transaction.mode === "claimReward"
-          ? "0"
-          : expectedAmount({
-              account,
-              status,
-            }),
-    },
-    {
-      title: "Sign",
-      button: "LRlr",
-    },
-    {
-      title: "Review",
-      button: "Rr",
-    },
-    {
-      title: "Genesis ID",
-      button: "Rr",
-    }, // Only on testnet
-    {
-      title: "Genesis hash",
-      button: "Rr",
-    }, // Only on testnet
-  ],
-});
+      {
+        title: "Asset xfer",
+        button: "Rr",
+      },
+      {
+        title: "Payment",
+        button: "Rr",
+      },
+      {
+        title: "Fee",
+        button: "Rr",
+        expectedValue: ({ account, status }) =>
+          formatCurrencyUnit(account.unit, status.estimatedFees, {
+            disableRounding: true,
+          }),
+      },
+      {
+        title: "Asset ID",
+        button: "Rr",
+        expectedValue: ({ transaction }) => {
+          const id = transaction.assetId
+            ? extractTokenId(transaction.assetId)
+            : transaction.subAccountId
+            ? extractTokenId(transaction.subAccountId)
+            : "";
+          const token = findTokenById(addPrefixToken(id));
+          return token ? displayTokenValue(token) : `#${id}`;
+        },
+      },
+      {
+        title: "Asset amt",
+        button: "Rr",
+        expectedValue: ({ transaction, status }) =>
+          transaction.mode === "optIn" ? "0" : status.amount.toString(),
+      },
+      {
+        title: "Sender",
+        button: "Rr",
+      },
+      {
+        title: "Receiver",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Asset dst",
+        button: "Rr",
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Amount",
+        button: "Rr",
+        expectedValue: ({ account, status, transaction }) =>
+          transaction.mode === "claimReward"
+            ? "0"
+            : expectedAmount({
+                account,
+                status,
+              }),
+      },
+      {
+        title: "Sign",
+        button: "LRlr",
+      },
+      {
+        title: "Review",
+        button: "Rr",
+      },
+      {
+        title: "Genesis ID",
+        button: "Rr",
+      }, // Only on testnet
+      {
+        title: "Genesis hash",
+        button: "Rr",
+      }, // Only on testnet
+    ],
+  });
 export default {
   acceptTransaction,
 };

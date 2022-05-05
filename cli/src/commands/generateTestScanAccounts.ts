@@ -34,7 +34,6 @@ export default {
         if (accounts.length === 0) throw new Error("no accounts!");
         const { currency } = accounts[0];
         return `
-// @flow
 import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 
@@ -42,9 +41,9 @@ const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
       name: "${currency.id} seed 1",
-      apdus: \`\n${apdus.map((a) => "      " + a).join("\n")}\n      \`
-    }
-  ]
+      apdus: \`\n${apdus.map((a) => "      " + a).join("\n")}\n      \`,
+    },
+  ],
 };
 
 export default dataset;

@@ -1,4 +1,5 @@
-import { decodeAddress } from "@polkadot/util-crypto";
+import { encodeAddress, decodeAddress } from "@polkadot/util-crypto";
+import { hexToU8a, isHex } from "@polkadot/util";
 
 const POLKADOT_SS58_PREFIX = 0;
 
@@ -7,6 +8,7 @@ const POLKADOT_SS58_PREFIX = 0;
  *
  * @param {*} address
  */
+// TODO Cache this to improve perf
 export const isValidAddress = (
   address: string,
   ss58Format: number = POLKADOT_SS58_PREFIX
@@ -14,7 +16,11 @@ export const isValidAddress = (
   if (!address) return false;
 
   try {
-    decodeAddress(address, false, ss58Format);
+    encodeAddress(
+      isHex(address)
+        ? hexToU8a(address)
+        : decodeAddress(address, false, ss58Format)
+    );
     return true;
   } catch (err) {
     return false;

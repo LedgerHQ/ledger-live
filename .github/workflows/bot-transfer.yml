@@ -1,0 +1,75 @@
+name: "Bot Transfer"
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: "index of the seed to send from (e.g. 1)"
+        required: true
+      recipient:
+        description: "index of the seed to receive the funds (e.g. 4)"
+        required: true
+
+
+jobs:
+  start-runner:
+    name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance (Linux)"
+    needs: [start-runner, run-bot]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
+    if: ${{ always() }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  run-bot:
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: [start-runner]
+    steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v2
+      - name: Retrieving coin apps
+        uses: actions/checkout@v2
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.PAT }}
+          path: coin-apps
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.x
+      - name: install yarn
+        run: npm i -g yarn
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: kill apt-get
+        run: sudo killall -w apt-get apt || echo OK
+      - name: Install linux deps
+        run: sudo apt-get install -y jq
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile
+          yarn ci-setup-cli
+      - name: BOT
+        env:
+          SEED: ${{ secrets[format('SEED{0}', github.event.inputs.origin)] }}
+          SEED_RECIPIENT: ${{ secrets[format('SEED{0}', github.event.inputs.recipient)] }}
+          VERBOSE_FILE: bot-transfer.txt
+        run: COINAPPS=$PWD/coin-apps ledger-live botTransfer
+        timeout-minutes: 120
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: bot-transfer.txt
+          path: bot-transfer.txt

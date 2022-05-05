@@ -1,6 +1,10 @@
 import BigNumber from "bignumber.js";
 
-import { pickExchangeRate, getAccountTuplesForCurrency } from "./index";
+import {
+  pickExchangeRate,
+  getAccountTuplesForCurrency,
+  getAvailableAccountsById,
+} from "./index";
 import { getMockExchangeRate } from "../mock";
 import { genAccount } from "../../../mock/account";
 import type {
@@ -220,5 +224,44 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
       );
       expect(results).toHaveLength(0);
     });
+  });
+});
+
+describe("swap/utils/getAvailableAccountsById", () => {
+  const getEthAccount = getAccountCreator("ethereum");
+  const getBtcAccount = getAccountCreator("bitcoin");
+  const getPolkadotAccount = getAccountCreator("polkadot");
+  const getCosmosAccount = getAccountCreator("cosmos");
+
+  test("return the correct accounts after sorting/filtering them", () => {
+    const [
+      disabledAccount,
+      higherBalanceAccount,
+      lowerBalanceAccount,
+      ...accounts
+    ] = new Array(6).fill(null).map(getEthAccount);
+
+    // mutate some accounts to test sorting/filtering
+    disabledAccount.disabled = true;
+    higherBalanceAccount.balance = new BigNumber(10);
+    lowerBalanceAccount.balance = new BigNumber(2);
+
+    const allAccounts: Account[] = [
+      getCosmosAccount(),
+      disabledAccount,
+      higherBalanceAccount,
+      lowerBalanceAccount,
+      ...accounts,
+      getBtcAccount(),
+      getPolkadotAccount(),
+    ];
+
+    const results = getAvailableAccountsById("ethereum", allAccounts);
+    expect(results).toHaveLength(5);
+    expect(results[0].balance.toNumber()).toBeGreaterThan(0);
+    expect(results[1].balance.toNumber()).toBeGreaterThan(0);
+    expect(results[0].balance.toNumber()).toBeGreaterThan(
+      results[1].balance.toNumber()
+    );
   });
 });

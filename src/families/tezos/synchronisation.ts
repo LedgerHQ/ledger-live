@@ -1,7 +1,9 @@
 // @flow
-import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
+import bs58check from "bs58check";
+import blake2b from "blake2b";
 import { encodeAccountId } from "../../account";
 import { mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
@@ -10,47 +12,72 @@ import { areAllOperationsLoaded, decodeAccountId } from "../../account";
 import type { Operation, Account } from "../../types";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
-import { DerivationType } from "@taquito/ledger-signer";
-import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { b58cencode, prefix, Prefix } from "@taquito/utils";
 
-function restorePublicKey(
-  publicKey: string,
-  initialAccount: Account | undefined,
-  rest
+function reconciliatePublicKey(
+  publicKey: string | undefined,
+  initialAccount: Account | undefined
 ): string {
   if (publicKey) return publicKey;
   if (initialAccount) {
-    const { tezosResources } = initialAccount;
-    if (tezosResources) {
-      return tezosResources.publicKey;
-    }
     const { xpubOrAddress } = decodeAccountId(initialAccount.id);
-    if (xpubOrAddress) return xpubOrAddress;
+    return xpubOrAddress;
   }
-  invariant(rest.publicKey, "publicKey must not be empty");
-  return b58cencode(
-    compressPublicKey(
-      Buffer.from(rest.publicKey, "hex"),
-      DerivationType.ED25519
-    ),
-    prefix[Prefix.EDPK]
+  throw new Error("publicKey wasn't properly restored");
+}
+
+const encodeAddress = (publicKey: Buffer) => {
+  const curve = 0;
+  const curveData = {
+    pkB58Prefix: Buffer.from([13, 15, 37, 217]),
+    pkhB58Prefix: Buffer.from([6, 161, 159]),
+    compressPublicKey: (publicKey: Buffer, curve) => {
+      publicKey = publicKey.slice(0);
+      publicKey[0] = curve;
+      return publicKey;
+    },
+  };
+  const publicKeyBuf = curveData.compressPublicKey(publicKey, curve);
+  const key = publicKeyBuf.slice(1);
+  const keyHashSize = 20;
+  let hash = blake2b(keyHashSize);
+  hash.update(key);
+  hash.digest((hash = Buffer.alloc(keyHashSize)));
+  const address = bs58check.encode(
+    Buffer.concat([curveData.pkhB58Prefix, hash])
   );
+  return address;
+};
+
+function isStringHex(s: string): boolean {
+  for (let i = 0; i < s.length; i += 2) {
+    const ss = s.slice(i, i + 2);
+    const x = parseInt(ss, 16);
+    if (Number.isNaN(x)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export const getAccountShape: GetAccountShape = async (infoInput) => {
-  const { address, initialAccount, rest, currency, derivationMode } = infoInput;
+  const { initialAccount, rest, currency, derivationMode } = infoInput;
+  const publicKey = reconciliatePublicKey(rest?.publicKey, initialAccount);
+  invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
+  const hex = Buffer.from(publicKey, "hex");
+  const address = encodeAddress(hex);
+
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress: publicKey,
     derivationMode,
   });
 
-  const initialStableOperations = initialAccount
-    ? initialAccount.operations
-    : [];
+  const initialStableOperations =
+    initialAccount && initialAccount.id === accountId
+      ? initialAccount.operations
+      : [];
 
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
@@ -73,23 +100,27 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
   if (apiAccount.type === "empty") {
     return {
       id: accountId,
+      xpub: publicKey,
+      freshAddress: address,
       blockHeight,
       lastSyncDate: new Date(),
+      tezosResources: {
+        revealed: false,
+        counter: 0,
+      },
     };
   }
-  invariant(
-    apiAccount.type === "user",
-    "unsupported account of type ",
-    apiAccount.type
-  );
 
-  const apiOperations = await fetchAllTransactions(address, lastId);
+  const fullySupported = apiAccount.type === "user";
 
-  const { revealed, counter, publicKey } = apiAccount;
+  const apiOperations = fullySupported
+    ? await fetchAllTransactions(address, lastId)
+    : [];
+
+  const { revealed, counter } = apiAccount;
 
   const tezosResources = {
     revealed,
-    publicKey: restorePublicKey(publicKey, initialAccount, rest),
     counter,
   };
 
@@ -104,6 +135,8 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
 
   const accountShape = {
     id: accountId,
+    xpub: publicKey,
+    freshAddress: address,
     operations,
     balance,
     subAccounts,
@@ -198,6 +231,8 @@ const txToOp =
       level: blockHeight,
       block: blockHash,
       timestamp,
+      storageLimit,
+      gasLimit,
     } = tx;
 
     if (!hash) {
@@ -232,9 +267,7 @@ const txToOp =
       blockHash,
       accountId,
       date: new Date(timestamp),
-      extra: {
-        id,
-      },
+      extra: { gasLimit: gasLimit, storageLimit: storageLimit, id },
       hasFailed,
     };
   };

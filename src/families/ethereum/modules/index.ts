@@ -20,6 +20,8 @@ import type { Modes as ERC20Modes } from "./erc20";
 import type { Modes as SendModes } from "./send";
 import type { Modes as ERC721Modes } from "./erc721";
 import type { Modes as ERC1155Modes } from "./erc1155";
+import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+
 const modules = {
   erc20,
   compound,
@@ -98,6 +100,14 @@ export type ModeModule = {
     account: Account,
     transaction: Transaction
   ) => Promise<Transaction>;
+
+  /**
+   * tells what needs to be resolved in the transaction
+   */
+  getResolutionConfig?: (
+    account: Account,
+    transaction: Transaction
+  ) => ResolutionConfig;
 };
 export const modes: Record<TransactionMode, ModeModule> = {} as Record<
   TransactionMode,

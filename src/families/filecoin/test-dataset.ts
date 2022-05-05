@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import {
   AmountRequired,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
 
@@ -56,27 +55,6 @@ const filecoin = {
         balance: "1000",
       },
       transactions: [
-        {
-          name: "recipient and sender must not be the same",
-          transaction: fromTransactionRaw({
-            family: "filecoin",
-            method: 1,
-            version: 1,
-            nonce: 100,
-            gasFeeCap: "1000",
-            gasLimit: 100,
-            gasPremium: "200",
-            recipient: SEED_IDENTIFIER,
-            amount: "100000000",
-          }),
-          expectedStatus: {
-            amount: new BigNumber("100000000"),
-            errors: {
-              recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
-            },
-            warnings: {},
-          },
-        },
         {
           name: "Not a valid address",
           transaction: fromTransactionRaw({

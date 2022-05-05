@@ -5,6 +5,8 @@ import { Account } from "../../../../families/bitcoin/wallet-btc/account";
 import { Merge } from "../../../../families/bitcoin/wallet-btc/pickingstrategies/Merge";
 import MockBtc from "../../../../mock/Btc";
 
+jest.setTimeout(180000);
+
 describe("testing wallet", () => {
   const wallet = new BitcoinLikeWallet();
   let account: Account;
@@ -32,7 +34,7 @@ describe("testing wallet", () => {
     const balance = await wallet.getAccountBalance(account);
 
     expect(balance.toNumber()).toEqual(109088);
-  }, 60000);
+  });
 
   it("should allow to store and load an account", async () => {
     const serializedAccount = await wallet.exportToSerializedAccount(account);

@@ -82,7 +82,7 @@ describe("Unit tests for various bitcoin functions", () => {
     testAddresses(p2shTestnet, "bitcoin_testnet");
   });
 
-  it("Test taproot address generation", () => {
+  it("Test taproot address generation", async () => {
     const bitcoin = cryptoFactory("bitcoin_testnet");
     // Test data taken from project app-bitcoin-new, file test_get_wallet_address.py
     // Also generated using eg
@@ -298,28 +298,29 @@ describe("Unit tests for various bitcoin functions", () => {
       "tb1pkhlmr4xz5w8x8py8x7670zp9lzykhepw74jltvpleff3qpxc3m2sgsmgnu",
       "tb1ptp5mua0w462ahk56y8uvqgkv3pxk44dz67vjtax4jnu4ajm8ykgqd80ndj",
     ];
-
     const xpub =
       "tpubDDKYE6BREvDsSWMazgHoyQWiJwYaDDYPbCFjYxN3HFXJP5fokeiK4hwK5tTLBNEDBwrDXn8cQ4v9b2xdW62Xr5yxoQdMu1v6c7UDXYVH27U";
-    extAddrs.forEach((expected, index) => {
+    extAddrs.forEach(async (expected, index) => {
       expect(
-        bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 0, index)
+        await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 0, index)
       ).toEqual(expected);
     });
-    changeAddrs.forEach((expected, index) => {
+    changeAddrs.forEach(async (expected, index) => {
       expect(
-        bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 1, index)
+        await bitcoin.getAddress(DerivationModes.TAPROOT, xpub, 1, index)
       ).toEqual(expected);
     });
-
-    expect(
-      bitcoin.getAddress(DerivationModes.NATIVE_SEGWIT, xpub, 0, 0).slice(0, 4)
-    ).toEqual("tb1q");
-    expect(
-      bitcoin.getAddress(DerivationModes.LEGACY, xpub, 0, 0).slice(0, 1)
-    ).toMatch(new RegExp("[mn]"));
-    expect(
-      bitcoin.getAddress(DerivationModes.SEGWIT, xpub, 0, 0).slice(0, 1)
-    ).toEqual("2");
+    let prefix = (
+      await bitcoin.getAddress(DerivationModes.NATIVE_SEGWIT, xpub, 0, 0)
+    ).slice(0, 4);
+    expect(prefix).toEqual("tb1q");
+    prefix = (
+      await bitcoin.getAddress(DerivationModes.LEGACY, xpub, 0, 0)
+    ).slice(0, 1);
+    expect(prefix).toMatch(new RegExp("[mn]"));
+    prefix = (
+      await bitcoin.getAddress(DerivationModes.SEGWIT, xpub, 0, 0)
+    ).slice(0, 1);
+    expect(prefix).toEqual("2");
   });
 });

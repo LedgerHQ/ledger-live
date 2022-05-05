@@ -11,6 +11,7 @@ import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import * as explorerConfigAPI from "../../../api/explorerConfig";
+
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {
     const perCoin = perCoinLogic[account.currency.id];

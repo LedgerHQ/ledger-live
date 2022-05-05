@@ -1,21 +1,16 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { toOutputScript } from "bitcoinjs-lib/src/address";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import zec from "zcash-bitcore-lib";
 import bs58check from "bs58check";
-import coininfo from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
+import Base from "./base";
+import * as bjs from "bitcoinjs-lib";
 
-class Zen implements ICrypto {
+class Zen extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
+    super({ network });
     // refer to https://github.com/HorizenOfficial/zen/blob/master/src/chainparams.cpp for the blockchain params
     this.network = network;
     this.network.versions = {
@@ -25,15 +20,15 @@ class Zen implements ICrypto {
       },
       bip44: 121,
       private: 0x80,
-      public: 0x2096,
-      scripthash: 0x2089,
+      public: 0x2089,
+      scripthash: 0x2096,
     };
     this.network.name = "Zencash";
     this.network.unit = "ZEN";
     this.network.messagePrefix = "Zencash Signed Message:\n";
     this.network.wif = 0x80;
-    this.network.pubKeyHash = 0x2096;
-    this.network.scriptHash = 0x2089;
+    this.network.pubKeyHash = 0x2089;
+    this.network.scriptHash = 0x2096;
     this.network.dustThreshold = 10000;
     this.network.dustPolicy = "FIXED";
     this.network.usesTimestampedTransaction = false;
@@ -49,30 +44,22 @@ class Zen implements ICrypto {
     return bs58check.encode(Buffer.from(taddr));
   }
 
-  private static toBitcoinAddr(taddr: string) {
-    // refer to https://runkitcdn.com/gojomo/baddr2taddr/1.0.2
-    const baddr = new Uint8Array(21);
-    baddr.set(bs58check.decode(taddr).slice(2), 1);
-    return bs58check.encode(Buffer.from(baddr));
-  }
-
   // eslint-disable-next-line
-  getLegacyAddress(xpub: string, account: number, index: number): string {
-    const pubkey = new zec.HDPublicKey(xpub);
-    const child = pubkey.derive(account).derive(index);
-    const address = new zec.Address(child.publicKey, zec.Networks.livenet);
-    const baddr = new Uint8Array(21);
-    baddr.set(bs58check.decode(address.toString()).slice(2), 1);
-    return this.baddrToTaddr(bs58check.encode(Buffer.from(baddr)));
+  async getLegacyAddress(xpub: string, account: number, index: number): Promise<string> {
+    const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
+    const payload = Buffer.allocUnsafe(22);
+    payload.writeUInt16BE(this.network.pubKeyHash, 0);
+    pk.copy(payload, 2);
+    return bs58check.encode(payload);
   }
 
-  getAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
-    return this.getLegacyAddress(xpub, account, index);
+  ): Promise<string> {
+    return await this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,10 +71,23 @@ class Zen implements ICrypto {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();
     }
-    const outputScript = toOutputScript(
-      Zen.toBitcoinAddr(address),
-      coininfo.bitcoin.main.toBitcoinJS()
+    let outputScript: Buffer;
+    const version = Number(
+      "0x" + bs58check.decode(address).slice(0, 2).toString("hex")
     );
+    if (version === this.network.pubKeyHash) {
+      //Pay-to-PubkeyHash
+      outputScript = bjs.payments.p2pkh({
+        hash: bs58check.decode(address).slice(2),
+      }).output as Buffer;
+    } else if (version === this.network.scriptHash) {
+      //Pay-to-Script-Hash
+      outputScript = bjs.payments.p2sh({
+        hash: bs58check.decode(address).slice(2),
+      }).output as Buffer;
+    } else {
+      throw new InvalidAddress();
+    }
     // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/scripts/BitcoinLikeScript.cpp#L139 and https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/networks.cpp#L39 for bip115 Script and its network parameters
     const bip115Script = Buffer.from(
       "209ec9845acb02fab24e1c0368b3b517c1a4488fba97f0e3459ac053ea0100000003c01f02b4",
@@ -107,11 +107,6 @@ class Zen implements ICrypto {
       res[0] === 0x20 &&
       (res[1] === 0x89 || res[1] === 0x96)
     );
-  }
-
-  // eslint-disable-next-line
-  isTaprootAddress(address: string): boolean {
-    return false;
   }
 }
 

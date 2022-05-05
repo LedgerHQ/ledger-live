@@ -1,7 +1,6 @@
 import { $Shape } from "utility-types";
 import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
-import invariant from "invariant";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { App } from "../types/manager";
@@ -17,7 +16,7 @@ import {
   findCryptoCurrencyById,
   isCurrencySupported,
 } from "../currencies";
-import { LatestFirmwareVersionRequired } from "../errors";
+import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
 
 export const initState = (
   {
@@ -292,6 +291,7 @@ export const reducer = (state: State, action: Action): State => {
       // No app found but fw update is available
       if (
         !depApp &&
+        state.firmware?.updateAvailable?.final?.version &&
         semver.lt(
           state.deviceInfo.version,
           state.firmware?.updateAvailable?.final?.version
@@ -306,7 +306,10 @@ export const reducer = (state: State, action: Action): State => {
         );
       }
 
-      invariant(depApp, "no such app '%s'", name);
+      if (!depApp) {
+        throw new NoSuchAppOnProvider("", { appName: name });
+      }
+
       const deps = depApp.dependencies;
       const dependentsOfDep = flatMap(deps, (dep) =>
         findDependents(state.appByName, dep)

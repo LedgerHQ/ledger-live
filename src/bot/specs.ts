@@ -6,6 +6,9 @@ import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
 import type { DeviceAction, DeviceActionArg } from "./types";
 import type { Account, Transaction } from "../types";
+
+const stepValueTransformDefault = (s) => s.trim();
+
 // TODO should weight the choice to favorize accounts with small amounts
 export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
   const withoutEmpties = siblings.filter((a) => a.used);
@@ -37,6 +40,7 @@ type State<T extends Transaction> = {
 };
 type Step<T extends Transaction> = {
   title: string;
+  stepValueTransform?: (string) => string;
   expectedValue?: (
     arg0: DeviceActionArg<T, State<T>>,
     acc: Array<{
@@ -79,10 +83,12 @@ export function deviceActionFlow<T extends Transaction>(
         // there were accumulated text and we are on new step, we need to release it and compare to expected
         if (currentStep && currentStep.expectedValue) {
           const { expectedValue, ignoreAssertionFailure } = currentStep;
+          const stepValueTransform =
+            currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure) {
             expect({
-              [stepTitle]: stepValue.trim(),
+              [stepTitle]: stepValueTransform(stepValue),
             }).toMatchObject({
               [stepTitle]: expectedValue(arg, acc).trim(),
             });

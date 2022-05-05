@@ -1,36 +1,28 @@
 import { log } from "@ledgerhq/logs";
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+
 import { delay } from "../../promise";
 import ExchangeTransport from "../hw-app-exchange/Exchange";
 import perFamily from "../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
-import type { CompleteExchangeRequestEvent, Exchange } from "./types";
-import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import { getProviderNameAndSignature } from "./";
 import { getCurrencyExchangeConfig } from "../";
-import { Transaction } from "../../types";
+
+import type {
+  CompleteExchangeInputSwap,
+  CompleteExchangeRequestEvent,
+} from "../platform/types";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
 
-type CompleteExchangeInput = {
-  exchange: Exchange;
-  deviceId: string;
-  provider: string;
-  binaryPayload: string;
-  signature: string;
-  transaction: Transaction;
-  exchangeType: number;
-  rateType: number;
-};
-
 const completeExchange = (
-  input: CompleteExchangeInput
+  input: CompleteExchangeInputSwap
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
@@ -41,7 +33,7 @@ const completeExchange = (
     binaryPayload,
     signature,
     exchangeType,
-    rateType = 0x00, // TODO Pass fixed/float for UI switch ?
+    rateType,
   } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
@@ -131,41 +123,40 @@ const completeExchange = (
 
           throw e;
         }
-        if (exchangeType === 0x00) {
-          // Swap specific checks to confirm the refund address is correct.
-          if (unsubscribed) return;
-          const refundAddressParameters = await perFamily[
-            refundCurrency.family
-          ].getSerializedAddressParameters(
-            refundAccount.freshAddressPath,
-            refundAccount.derivationMode,
-            refundCurrency.id
+
+        // Swap specific checks to confirm the refund address is correct.
+        if (unsubscribed) return;
+        const refundAddressParameters = await perFamily[
+          refundCurrency.family
+        ].getSerializedAddressParameters(
+          refundAccount.freshAddressPath,
+          refundAccount.derivationMode,
+          refundCurrency.id
+        );
+        if (unsubscribed) return;
+
+        const {
+          config: refundAddressConfig,
+          signature: refundAddressConfigSignature,
+        } = getCurrencyExchangeConfig(refundCurrency);
+        if (unsubscribed) return;
+
+        try {
+          await exchange.checkRefundAddress(
+            refundAddressConfig,
+            refundAddressConfigSignature,
+            refundAddressParameters.addressParameters
           );
-          if (unsubscribed) return;
-
-          const {
-            config: refundAddressConfig,
-            signature: refundAddressConfigSignature,
-          } = getCurrencyExchangeConfig(refundCurrency);
-          if (unsubscribed) return;
-
-          try {
-            await exchange.checkRefundAddress(
-              refundAddressConfig,
-              refundAddressConfigSignature,
-              refundAddressParameters.addressParameters
-            );
-            log("exchange", "checkrefund address");
-          } catch (e) {
-            // @ts-expect-error TransportStatusError to be typed on ledgerjs
-            if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-              log("exchange", "transport error");
-              throw new WrongDeviceForAccount(undefined, {
-                accountName: refundAccount.name,
-              });
-            }
-            throw e;
+          log("exchange", "checkrefund address");
+        } catch (e) {
+          // @ts-expect-error TransportStatusError to be typed on ledgerjs
+          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+            log("exchange", "transport error");
+            throw new WrongDeviceForAccount(undefined, {
+              accountName: refundAccount.name,
+            });
           }
+          throw e;
         }
 
         o.next({

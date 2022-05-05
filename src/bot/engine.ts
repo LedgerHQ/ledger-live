@@ -39,6 +39,7 @@ import {
   formatReportForConsole,
   formatTime,
   formatAppCandidate,
+  formatError,
 } from "./formatters";
 import type {
   AppSpec,
@@ -51,6 +52,8 @@ import type {
   TransactionRes,
 } from "./types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
+import { accountDataToAccount, accountToAccountData } from "../cross";
+
 let appCandidates;
 const localCache = {};
 const cache = makeBridgeCacheSystem({
@@ -63,6 +66,15 @@ const cache = makeBridgeCacheSystem({
     return Promise.resolve(localCache[c.id]);
   },
 });
+
+// simulate the export/inport of an account
+async function crossAccount(account: Account): Promise<Account> {
+  const a = accountDataToAccount(accountToAccountData(account));
+  const synced = await syncAccount(a);
+  synced.name += " cross";
+  return synced;
+}
+
 export async function runWithAppSpec<T extends Transaction>(
   spec: AppSpec<T>,
   reportLog: (arg0: string) => void
@@ -80,6 +92,9 @@ export async function runWithAppSpec<T extends Transaction>(
   const mutationReports: MutationReport<T>[] = [];
   const { appQuery, currency, dependency } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
+  if (!appCandidate) {
+    console.warn("no app found for " + spec.name, { appQuery, appCandidates });
+  }
   invariant(
     appCandidate,
     "%s: no app found. Are you sure your COINAPPS is up to date?",
@@ -142,6 +157,15 @@ export async function runWithAppSpec<T extends Transaction>(
       )
       .toPromise();
     appReport.scanTime = scanTime;
+    // "Migrate" the FIRST and every {crossAccountFrequency} account to simulate an export/import (same logic as export to mobile) – default to every 10
+    // this is made a subset of the accounts to help identify problem that would be specific to the "cross" or not.
+    for (
+      let i = 0;
+      i < accounts.length;
+      i += spec.crossAccountFrequency || 10
+    ) {
+      accounts[i] = await crossAccount(accounts[i]);
+    }
     appReport.accountsBefore = accounts;
     invariant(
       accounts.length > 0,
@@ -180,8 +204,8 @@ export async function runWithAppSpec<T extends Transaction>(
     let mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
-
     const totalTries = spec.multipleRuns || 1;
+
     for (let j = 0; j < totalTries; j++) {
       for (let i = 0; i < length; i++) {
         log(
@@ -400,7 +424,7 @@ export async function runOnAccount<T extends Transaction>({
       }
     }
 
-    // without recovering mecanism, we simply assume an error is a failure
+    // without recovering mechanism, we simply assume an error is a failure
     if (errors.length) {
       throw errors[0];
     }
@@ -510,7 +534,8 @@ export async function runOnAccount<T extends Transaction>({
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
   } catch (error: any) {
-    log("mutation-error", spec.name + ": " + String(error));
+    console.error(error);
+    log("mutation-error", spec.name + ": " + formatError(error));
     report.error = error;
   }
 
@@ -676,7 +701,7 @@ function transactionTest<T>({
   const dt = Date.now().valueOf() - operation.date.valueOf();
   invariant(dt > 0, "operation.date must not be in in future");
   expect(dt).toBeLessThan(timingThreshold);
-  invariant(!operation.hasFailed, "operation must be hasFailed");
+  invariant(!operation.hasFailed, "operation has failed");
   const { blockAvgTime } = account.currency;
 
   if (blockAvgTime && account.blockHeight) {

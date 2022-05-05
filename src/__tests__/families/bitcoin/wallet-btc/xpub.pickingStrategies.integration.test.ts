@@ -60,14 +60,13 @@ describe("testing xpub legacy transactions", () => {
     // Initialize the xpub with 2 txs. So that it has 2 utxo
     dataset.xpub.storage.appendTxs([
       {
-        hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+        id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
         outputs: [
           {
             output_index: 0,
             value: "5000000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            script_hex: "76a914af9ab6987aa41b37c8bcb7c61154165d23f09e3488ac",
             output_hash:
               "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
@@ -77,8 +76,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 1,
             value: "0",
             address: "<unknown>",
-            script_hex:
-              "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9",
             output_hash:
               "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
@@ -96,7 +93,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T13:34:17Z",
       },
       {
-        hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+        id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
         inputs: [
           {
             output_hash:
@@ -112,7 +109,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 0,
             value: "300000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            script_hex: "76a914af9ab6987aa41b37c8bcb7c61154165d23f09e3488ac",
             output_hash:
               "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
@@ -122,7 +118,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 1,
             value: "4699983200",
             address: "2MynSTpze5SDcuLr1DekSV7RVrFpQCo3LeP",
-            script_hex: "a91447b810238a31777fc4e4de474419464c46aadf8187",
             output_hash:
               "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
@@ -193,7 +188,7 @@ describe("testing xpub legacy transactions", () => {
     // Add 3 txs for the xpub. So that it has 5 utxo
     dataset.xpub.storage.appendTxs([
       {
-        hash: "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
+        id: "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
         inputs: [
           {
             output_hash:
@@ -209,7 +204,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 0,
             value: "4599966400",
             address: "2NCSYYp4bWdHDYf9nYP1NDKb1GMBqa8e57H",
-            script_hex: "a914d28e7592fc2657433296eafc89e4a8d29289ebf087",
             output_hash:
               "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
             block_height: 122,
@@ -219,7 +213,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 1,
             value: "100000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            script_hex: "76a914af9ab6987aa41b37c8bcb7c61154165d23f09e3488ac",
             output_hash:
               "8f30fe84da5a5846d668b4bad260730f2b0125fa66fb2633fa1cee23c6b11053",
             block_height: 122,
@@ -237,7 +230,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T14:46:51Z",
       },
       {
-        hash: "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
+        id: "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
         inputs: [
           {
             output_hash:
@@ -253,7 +246,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 0,
             value: "4399949600",
             address: "2NFToPiLBtuKiqzZj43nPXknN8d4xNySe3o",
-            script_hex: "a914f3b3a49bd90e6e9ae30882a2b7e9b7edfe579a8c87",
             output_hash:
               "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
             block_height: 123,
@@ -263,7 +255,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 1,
             value: "200000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            script_hex: "76a914af9ab6987aa41b37c8bcb7c61154165d23f09e3488ac",
             output_hash:
               "2f90f3312ffd4dce490cb2f7429c586a43ef68c99fc2f8e549127b72af7b4209",
             block_height: 123,
@@ -281,7 +272,7 @@ describe("testing xpub legacy transactions", () => {
         received_at: "2021-07-28T14:46:51Z",
       },
       {
-        hash: "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
+        id: "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
         inputs: [
           {
             output_hash:
@@ -297,7 +288,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 0,
             value: "600000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            script_hex: "76a914af9ab6987aa41b37c8bcb7c61154165d23f09e3488ac",
             output_hash:
               "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
             block_height: 124,
@@ -307,7 +297,6 @@ describe("testing xpub legacy transactions", () => {
             output_index: 1,
             value: "3799932800",
             address: "2N53XuFRxqbShpK4XKwC1VXT4zu1wCzbAMU",
-            script_hex: "a914816b7896ce2c4f21c39c865030fe07e7a042a9c687",
             output_hash:
               "2fee0c4b55e08583aa5bc565d7e428f7cdcbd2b73262f62208a6a72a74e2c945",
             block_height: 124,

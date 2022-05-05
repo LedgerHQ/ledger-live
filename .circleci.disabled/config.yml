@@ -155,6 +155,3 @@ jobs:
           paths:
             - ~/.cache/yarn
       - run: yarn ci-lint
-      - run:
-          command: yarn ci-test-cli
-          no_output_timeout: 1h

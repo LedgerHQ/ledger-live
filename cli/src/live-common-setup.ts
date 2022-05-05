@@ -31,13 +31,8 @@ checkLibs({
   Transport,
   connect,
 });
-import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
-import BluetoothTransport from "@ledgerhq/hw-transport-node-ble";
-implementLibcore({
-  lib: () => require("@ledgerhq/ledger-core"),
-  // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
-});
+
+type BluetoothTransport = any;
 
 let idCounter = 0;
 const mockTransports = {};
@@ -78,6 +73,7 @@ if (process.env.DEVICE_PROXY_URL) {
   registerTransportModule({
     id: "http",
     open: () =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       retry(() => Tr.create(3000, 5000), {
         context: "open-http-proxy",
@@ -118,6 +114,8 @@ async function init() {
 
   const getTransport = async (): Promise<BluetoothTransport> => {
     if (!TransportNodeBle) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const { default: mod } = await import("@ledgerhq/hw-transport-node-ble");
       TransportNodeBle = mod;
     }
@@ -131,13 +129,9 @@ async function init() {
     const [, q] = m;
     if (cacheBle[query]) return cacheBle[query];
     const t = await (!q
-      ? (
-          (await getTransport().constructor) as typeof BluetoothTransport
-        ).create()
+      ? ((await getTransport().constructor) as typeof TransportNodeBle).create()
       : new Observable(
-          (
-            (await getTransport().constructor) as typeof BluetoothTransport
-          ).listen
+          ((await getTransport().constructor) as typeof TransportNodeBle).listen
         )
           .pipe(
             first(
@@ -166,7 +160,7 @@ async function init() {
       let s: any;
 
       getTransport().then((module) => {
-        (module.constructor as typeof BluetoothTransport).listen(o);
+        (module.constructor as typeof TransportNodeBle).listen(o);
         s = module;
       });
 
@@ -182,7 +176,7 @@ async function init() {
       query.startsWith("ble")
         ? cacheBle[query]
           ? (
-              (await getTransport().constructor) as typeof BluetoothTransport
+              (await getTransport().constructor) as typeof TransportNodeBle
             ).disconnect(cacheBle[query].id)
           : Promise.resolve()
         : undefined,

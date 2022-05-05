@@ -1,5 +1,5 @@
 import semver from "semver";
-import { Observable, concat, from, of, throwError, defer } from "rxjs";
+import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
 import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
@@ -53,6 +53,12 @@ export type ConnectAppEvent =
     }
   | {
       type: "disconnected";
+      expected?: boolean;
+    }
+  | {
+      type: "device-update-last-seen";
+      deviceInfo: DeviceInfo;
+      latestFirmware: FirmwareUpdateContext | null | undefined;
     }
   | {
       type: "device-permission-requested";
@@ -101,37 +107,54 @@ export const openAppFromDashboard = (
   transport: Transport,
   appName: string
 ): Observable<ConnectAppEvent> =>
-  concat(
-    of<ConnectAppEvent>({
-      type: "ask-open-app",
-      appName,
-    }),
-    defer(() => from(openApp(transport, appName))).pipe(
-      concatMap(() =>
-        of<ConnectAppEvent>({
-          type: "device-permission-granted",
-        })
-      ),
-      catchError((e) => {
-        if (e && e instanceof TransportStatusError) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
-          switch (e.statusCode) {
-            case 0x6984:
-            case 0x6807:
-              return streamAppInstall({
-                transport,
-                appNames: [appName],
-                onSuccessObs: () =>
-                  from(openAppFromDashboard(transport, appName)),
-              }) as Observable<ConnectAppEvent>;
-            case 0x6985:
-            case 0x5501:
-              return throwError(new UserRefusedOnDevice());
-          }
-        }
+  from(getDeviceInfo(transport)).pipe(
+    mergeMap((deviceInfo) =>
+      merge(
+        // Nb Allows LLD/LLM to update lastSeenDevice, this can run in parallel
+        // since there are no more device exchanges.
+        from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+          concatMap((latestFirmware) =>
+            of<ConnectAppEvent>({
+              type: "device-update-last-seen",
+              deviceInfo,
+              latestFirmware,
+            })
+          )
+        ),
+        concat(
+          of<ConnectAppEvent>({
+            type: "ask-open-app",
+            appName,
+          }),
+          defer(() => from(openApp(transport, appName))).pipe(
+            concatMap(() =>
+              of<ConnectAppEvent>({
+                type: "device-permission-granted",
+              })
+            ),
+            catchError((e) => {
+              if (e && e instanceof TransportStatusError) {
+                // @ts-expect-error TransportStatusError to be typed on ledgerjs
+                switch (e.statusCode) {
+                  case 0x6984:
+                  case 0x6807:
+                    return streamAppInstall({
+                      transport,
+                      appNames: [appName],
+                      onSuccessObs: () =>
+                        from(openAppFromDashboard(transport, appName)),
+                    }) as Observable<ConnectAppEvent>;
+                  case 0x6985:
+                  case 0x5501:
+                    return throwError(new UserRefusedOnDevice());
+                }
+              }
 
-        return throwError(e);
-      })
+              return throwError(e);
+            })
+          )
+        )
+      )
     )
   );
 
@@ -144,6 +167,7 @@ const attemptToQuitApp = (
         concatMap(() =>
           of<ConnectAppEvent>({
             type: "disconnected",
+            expected: true,
           })
         ),
         catchError((e) => throwError(e))

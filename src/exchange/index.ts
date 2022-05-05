@@ -1,6 +1,8 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "../types/currencies";
-import { findExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
+import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
+import { getEnv } from "../env";
+import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -20,6 +22,22 @@ const exchangeSupportAppVersions = {
   zcash: "1.5.0",
   zencash: "1.5.0",
 };
+
+const findExchangeCurrencyConfig = (
+  id: string
+):
+  | {
+      config: string;
+
+      signature: string;
+    }
+  | null
+  | undefined => {
+  return getEnv("MOCK_EXCHANGE_TEST_CONFIG")
+    ? findTestExchangeCurrencyConfig(id)
+    : findProdExchangeCurrencyConfig(id);
+};
+
 export type ExchangeCurrencyNameAndSignature = {
   config: Buffer;
   signature: Buffer;

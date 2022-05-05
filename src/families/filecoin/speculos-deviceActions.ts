@@ -6,20 +6,14 @@ import { formatCurrencyUnit } from "../../currencies";
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "To [1/2]",
+      title: "To",
       button: "Rr",
+      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "To [2/2]",
+      title: "From",
       button: "Rr",
-    },
-    {
-      title: "From [1/2]",
-      button: "Rr",
-    },
-    {
-      title: "From [2/2]",
-      button: "Rr",
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "Nonce",
@@ -29,9 +23,10 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Value",
       button: "Rr",
-      expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.amount, {
+      expectedValue: ({ account, status }) =>
+        formatCurrencyUnit(account.unit, status.amount, {
           disableRounding: true,
+          showAllDigits: true,
         }),
     },
     {
@@ -45,6 +40,7 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       expectedValue: ({ account, transaction }) =>
         formatCurrencyUnit(account.unit, transaction.gasPremium, {
           disableRounding: true,
+          showAllDigits: true,
         }),
     },
     {
@@ -53,10 +49,16 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       expectedValue: ({ account, transaction }) =>
         formatCurrencyUnit(account.unit, transaction.gasFeeCap, {
           disableRounding: true,
+          showAllDigits: true,
         }),
     },
     {
-      title: "Approve",
+      title: "Method",
+      button: "Rr",
+      expectedValue: () => "Transfer",
+    },
+    {
+      title: "APPROVE",
       button: "LRlr",
     },
   ],

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation, TokenAccount } from "../../types";
+import type { Operation, TokenAccount } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
@@ -111,9 +111,5 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   return { ...shape, operations: nativeOperations };
 };
 
-const postSync = (initial: Account, parent: Account) => {
-  return parent;
-};
-
-export const sync = makeSync(getAccountShape, postSync);
-export const scanAccounts = makeScanAccounts(getAccountShape);
+export const sync = makeSync({ getAccountShape });
+export const scanAccounts = makeScanAccounts({ getAccountShape });

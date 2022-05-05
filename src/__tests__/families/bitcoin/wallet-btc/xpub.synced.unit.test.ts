@@ -7,21 +7,21 @@ import { zipObject } from "lodash";
 import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
 import BitcoinLikeStorage from "../../../../families/bitcoin/wallet-btc/storage";
 import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
-import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
+import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoincash";
 import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
 
 describe("synced xpub utilites functions", () => {
   const explorer = new BitcoinLikeExplorer({
-    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/btc",
+    explorerURI: "https://explorers.api.vault.ledger.com/blockchain/v3/bch",
     explorerVersion: "v3",
   });
   const crypto = new Crypto({
-    network: coininfo.bitcoin.main.toBitcoinJS(),
+    network: coininfo.bitcoincash.main.toBitcoinJS(),
   });
 
-  describe("xpub xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz Legacy", () => {
+  describe("xpub xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv3xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8 Legacy", () => {
     const xpubraw =
-      "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz";
+      "xpub6BvNdfGcyMB9Usq88ibXUt3KhbaEJVLFMbhTSNNfTm8Qf1sX9inTv3xL6pA6KofW4WF9GpdxwGDoYRwRDjHEir3Av23m2wHb7AqhxJ9ohE8";
     // const truthDump = path.join(__dirname, 'data', 'sync', `${xpubraw}.json`);
     const storage = new BitcoinLikeStorage();
     const xpub = new Xpub({
@@ -34,16 +34,16 @@ describe("synced xpub utilites functions", () => {
 
     beforeAll(async () => {
       await xpub.sync();
-    }, 30000);
+    }, 120000);
 
     it("should compute accounts/addresses/balances correctly", async () => {
       const addresses = await xpub.getXpubAddresses();
-      expect(addresses.length).toEqual(15);
+      expect(addresses.length).toEqual(16);
 
-      expect((await xpub.getAccountAddresses(0)).length).toEqual(15);
+      expect((await xpub.getAccountAddresses(0)).length).toEqual(7);
 
-      expect((await xpub.getXpubBalance()).toNumber()).toEqual(12688908);
-      expect((await xpub.getAccountBalance(0)).toNumber()).toEqual(12688908);
+      expect((await xpub.getXpubBalance()).toNumber()).toEqual(360615);
+      expect((await xpub.getAccountBalance(0)).toNumber()).toEqual(10000);
       const addressesBalances = await Promise.all(
         addresses.map((address) => xpub.getAddressBalance(address))
       );
@@ -53,21 +53,22 @@ describe("synced xpub utilites functions", () => {
           addressesBalances.map((balance) => balance.toNumber())
         )
       ).toEqual({
-        "12iNxzdF6KFZ14UyRTYCRuptxkKSSVHzqF": 0,
-        "15NvG6YpVh2aUc3DroVttEcWa1Z99qhACP": 1000,
-        "15xANZb5vJv5RGL263NFuh8UGgHT7noXeZ": 100000,
-        "1687EJf5YEmeEtcscnuJPiV5b8HkM1o98q": 40160,
-        "16HH35ASv5rL8ZaaqdzvrJKTAKTucdKKNP": 656,
-        "16ZBYSHkLkRFHAuZvyzosXYgU1UDJxRV1R": 100000,
-        "1Ahipz531XtbzGC1bEKbhHZXmyfWKPNy32": 1000,
-        "1CcEugXu9Yf9Qw5cpB8gHUK4X9683WyghM": 8747,
-        "1EHeVKfjjq6FJpix86G2yzFeRbZ6RNg2Zm": 100000,
-        "1EfgV2Hr5CDjXPavHDpDMjmU33BA2veHy6": 10665,
-        "1HqsYkwczwvkMXCobk5WPZmhj2S2TK613Z": 40161,
-        "1KhVznhEQHumfmMQWnkgXLT4BmvtNpwLN9": 12183719,
-        "1LDPJCMZhYZjTvTGYahdhMXLuMfjfi6Kua": 1000,
-        "1MS6eGqD4iUGyJPbEsjqmoNaRhApgtmF8J": 1800,
-        "1PJMBXKBYEBMRDmpAoBRbDff26gHJrawSp": 100000,
+        "bitcoincash:qp2ujnlxjmkwtc299zwat3vt7j0jgltwls3q5avzsj": 0,
+        "bitcoincash:qp62d8j6ng0jhenc97dnnyn6qev24vykev5pea7jd3": 0,
+        "bitcoincash:qp64rlh8jf82kxsvh2rhjr8wnltt3vu5ccna7zygun": 0,
+        "bitcoincash:qpguw9mwet4aamye4texdrvje5wj7twhss5agzwzwa": 0,
+        "bitcoincash:qpvezzthl2075alur9y53tqsqcm3z8t4rgq6vcalun": 0,
+        "bitcoincash:qq3ch5aymjxvlt2q646gxtnrqeq45h269yt7l2yl0k": 350615,
+        "bitcoincash:qq6u57s2nc5zuywmwrw9tnkjvvw5rzs40vk6q5jjaz": 10000,
+        "bitcoincash:qqk8v7daqpl2fe4qezw5uzhueqxrj9eahvnhz2v39e": 0,
+        "bitcoincash:qqu0nek90hahl0sezqz8cf8yc7hmqvgseykqyp3awm": 0,
+        "bitcoincash:qqufmrqunkr3avkswhn378fjhwl3ueawag9e3htc49": 0,
+        "bitcoincash:qrkmvwx8y4lprh8xzz0fhnrmqpqvpssqnqle8lds8k": 0,
+        "bitcoincash:qzadqth7znrc7e5s5p40kadpu4lj9lkahvja522rh2": 0,
+        "bitcoincash:qzgah58nthe50jau20y67s4zq9u0xqvxeyqrv2aewk": 0,
+        "bitcoincash:qzj2q6yrxmxedffsz2rvpy067pcdvwhy9gcyhsne48": 0,
+        "bitcoincash:qzjgtadhd6j96a9mvlt5cj2ewgljyjzrlq4nplva5l": 0,
+        "bitcoincash:qzmwszdjh6h9crvk65zlravhal50rnwtfu6pacsdsn": 0,
       });
     });
   });

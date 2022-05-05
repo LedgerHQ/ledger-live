@@ -5,6 +5,7 @@ import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import type { App, DeviceInfo } from "../types/manager";
+import { AppType } from "../types/manager";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
@@ -313,6 +314,12 @@ export const listApps = (
             }
           }
 
+          const type =
+            application.description &&
+            Object.values(AppType).includes(application.description as AppType)
+              ? AppType[application.description]
+              : AppType.app;
+
           const app: App = polyfillApp({
             id: version.id,
             name: version.name,
@@ -320,6 +327,7 @@ export const listApps = (
             version: version.version,
             currencyId,
             description: version.description,
+            type,
             dateModified: version.date_last_modified,
             icon: version.icon,
             authorName: application.authorName,

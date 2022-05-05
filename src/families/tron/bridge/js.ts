@@ -32,7 +32,7 @@ import type {
   AccountBridge,
   DeviceId,
 } from "../../../types/bridge";
-import { open, close } from "../../../hw";
+import { withDevice } from "../../../hw/deviceAccess";
 import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
@@ -99,62 +99,63 @@ const signOperation = ({
   transaction: Transaction;
   deviceId: DeviceId;
 }): Observable<SignOperationEvent> =>
-  Observable.create((o) => {
-    async function main() {
-      const subAccount =
-        transaction.subAccountId && account.subAccounts
-          ? account.subAccounts.find((sa) => sa.id === transaction.subAccountId)
-          : null;
-      const isContractAddressRecipient =
-        (await fetchTronContract(transaction.recipient)) !== undefined;
-      const fee = await getEstimatedFees(
-        account,
-        transaction,
-        isContractAddressRecipient
-      );
-      const balance = subAccount
-        ? subAccount.balance
-        : BigNumber.max(0, account.spendableBalance.minus(fee));
-      transaction.amount = transaction.useAllAmount
-        ? balance
-        : transaction.amount;
+  withDevice(deviceId)((transport) =>
+    Observable.create((o) => {
+      async function main() {
+        const subAccount =
+          transaction.subAccountId && account.subAccounts
+            ? account.subAccounts.find(
+                (sa) => sa.id === transaction.subAccountId
+              )
+            : null;
+        const isContractAddressRecipient =
+          (await fetchTronContract(transaction.recipient)) !== undefined;
+        const fee = await getEstimatedFees(
+          account,
+          transaction,
+          isContractAddressRecipient
+        );
+        const balance = subAccount
+          ? subAccount.balance
+          : BigNumber.max(0, account.spendableBalance.minus(fee));
+        transaction.amount = transaction.useAllAmount
+          ? balance
+          : transaction.amount;
 
-      // send trc20 to a new account is forbidden by us (because it will not activate the account)
-      if (
-        transaction.recipient &&
-        transaction.mode === "send" &&
-        subAccount &&
-        subAccount.type === "TokenAccount" &&
-        subAccount.token.tokenType === "trc20" &&
-        !isContractAddressRecipient && // send trc20 to a smart contract is allowed
-        (await fetchTronAccount(transaction.recipient)).length === 0
-      ) {
-        throw new TronSendTrc20ToNewAccountForbidden();
-      }
-
-      const getPreparedTransaction = () => {
-        switch (transaction.mode) {
-          case "freeze":
-            return freezeTronTransaction(account, transaction);
-
-          case "unfreeze":
-            return unfreezeTronTransaction(account, transaction);
-
-          case "vote":
-            return voteTronSuperRepresentatives(account, transaction);
-
-          case "claimReward":
-            return claimRewardTronTransaction(account);
-
-          default:
-            return createTronTransaction(account, transaction, subAccount);
+        // send trc20 to a new account is forbidden by us (because it will not activate the account)
+        if (
+          transaction.recipient &&
+          transaction.mode === "send" &&
+          subAccount &&
+          subAccount.type === "TokenAccount" &&
+          subAccount.token.tokenType === "trc20" &&
+          !isContractAddressRecipient && // send trc20 to a smart contract is allowed
+          (await fetchTronAccount(transaction.recipient)).length === 0
+        ) {
+          throw new TronSendTrc20ToNewAccountForbidden();
         }
-      };
 
-      const preparedTransaction = await getPreparedTransaction();
-      const transport = await open(deviceId);
+        const getPreparedTransaction = () => {
+          switch (transaction.mode) {
+            case "freeze":
+              return freezeTronTransaction(account, transaction);
 
-      try {
+            case "unfreeze":
+              return unfreezeTronTransaction(account, transaction);
+
+            case "vote":
+              return voteTronSuperRepresentatives(account, transaction);
+
+            case "claimReward":
+              return claimRewardTronTransaction(account);
+
+            default:
+              return createTronTransaction(account, transaction, subAccount);
+          }
+        };
+
+        const preparedTransaction = await getPreparedTransaction();
+
         o.next({
           type: "device-signature-requested",
         });
@@ -274,16 +275,14 @@ const signOperation = ({
             expirationDate: null,
           },
         });
-      } finally {
-        close(transport, deviceId);
       }
-    }
 
-    main().then(
-      () => o.complete(),
-      (e) => o.error(e)
-    );
-  });
+      main().then(
+        () => o.complete(),
+        (e) => o.error(e)
+      );
+    })
+  );
 
 const broadcast = async ({
   signedOperation: { signature, operation, signatureRaw },
@@ -466,7 +465,7 @@ const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
   };
 };
 
-const scanAccounts = makeScanAccounts(getAccountShape);
+const scanAccounts = makeScanAccounts({ getAccountShape });
 // the balance does not update straightaway so we should ignore recent operations if they are in pending for a bit
 const preferPendingOperationsUntilBlockValidation = 35;
 
@@ -490,7 +489,7 @@ const postSync = (initial: Account, parent: Account): Account => {
   return parent;
 };
 
-const sync = makeSync(getAccountShape, postSync);
+const sync = makeSync({ getAccountShape, postSync });
 
 const currencyBridge: CurrencyBridge = {
   preload: async () => {

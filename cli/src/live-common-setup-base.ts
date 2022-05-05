@@ -3,7 +3,6 @@ import winston from "winston";
 import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import simple from "@ledgerhq/live-common/lib/logs/simple";
 import { listen } from "@ledgerhq/logs";
-import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 
@@ -13,19 +12,25 @@ setSupportedCurrencies([
   "bitcoin",
   "ethereum",
   "bsc",
+  "polkadot",
   "ripple",
-  "bitcoin_cash",
   "litecoin",
-  "dash",
-  "ethereum_classic",
-  "elrond",
-  "tezos",
-  "qtum",
-  "zcash",
-  "bitcoin_gold",
-  "stratis",
+  "polygon",
+  "bitcoin_cash",
+  "stellar",
   "dogecoin",
+  "cosmos",
+  "dash",
+  "tron",
+  "tezos",
+  "elrond",
+  "ethereum_classic",
+  "zcash",
+  "decred",
   "digibyte",
+  "algorand",
+  "qtum",
+  "bitcoin_gold",
   "komodo",
   "pivx",
   "zencash",
@@ -33,19 +38,13 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "stakenet",
-  "stealthcoin",
-  "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
-  "tron",
-  "stellar",
-  "cosmos",
-  "algorand",
-  "polkadot",
+  "ethereum_goerli",
   "cosmos_testnet",
   "crypto_org",
   "crypto_org_croeseid",
-  "filecoin",
+  "celo",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -107,14 +106,11 @@ listen((log) => {
   const { type } = log;
   let level = "info";
 
-  if (type === "libcore-call" || type === "libcore-result") {
-    level = "silly";
-  } else if (
+  if (
     type === "apdu" ||
     type === "hw" ||
     type === "speculos" ||
-    type.includes("debug") ||
-    type.startsWith("libcore")
+    type.includes("debug")
   ) {
     level = "debug";
   } else if (type.includes("warn")) {
@@ -125,10 +121,7 @@ listen((log) => {
     level = "error";
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   logger.log(level, log);
-});
-implementLibcore({
-  lib: () => require("@ledgerhq/ledger-core"),
-  // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
 });

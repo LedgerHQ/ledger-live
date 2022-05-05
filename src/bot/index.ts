@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import fs from "fs";
+import path from "path";
 import { BigNumber } from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
@@ -7,7 +9,7 @@ import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
 import network from "../network";
-import { withLibcore } from "../libcore/access";
+import { Account } from "../types";
 import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
@@ -16,9 +18,9 @@ import {
   formatCurrencyUnit,
   getFiatCurrencyByTicker,
 } from "../currencies";
-import { isAccountEmpty } from "../account";
+import { isAccountEmpty, toAccountRaw } from "../account";
 import { runWithAppSpec } from "./engine";
-import { formatReportForConsole } from "./formatters";
+import { formatReportForConsole, formatError } from "./formatters";
 import {
   initialState,
   calculate,
@@ -32,13 +34,25 @@ type Arg = Partial<{
   mutation: string;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
+
+function makeAppJSON(accounts: Account[]) {
+  const jsondata = {
+    data: {
+      settings: {
+        hasCompletedOnboarding: true,
+      },
+      accounts: accounts.map((account) => ({
+        data: toAccountRaw(account),
+        version: 1,
+      })),
+    },
+  };
+  return JSON.stringify(jsondata);
+}
+
 export async function bot({ currency, family, mutation }: Arg = {}) {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
-  const libcoreVersion = await withLibcore((core) =>
-    core.LedgerCore.getStringVersion()
-  );
-  log("libcoreVersion", "libcore version " + libcoreVersion);
   const specs: any[] = [];
   const specsLogs: string[][] = [];
   const maybeCurrency = currency
@@ -93,6 +107,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       }));
     }
   );
+  const allAccountsBefore = flatMap(results, (r) => r.accountsBefore || []);
   const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
   let countervaluesError;
   const countervaluesState = await loadCountervalues(initialState, {
@@ -230,7 +245,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     let subtitle = "";
 
     if (countervaluesError) {
-      subtitle += `> ${String(countervaluesError)}`;
+      subtitle += `> ${formatError(countervaluesError)}`;
     }
 
     let slackBody = "";
@@ -254,8 +269,8 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
       specFatals.forEach(({ spec, fatalError }) => {
         body += `**Spec ${spec.name} failed!**\n`;
-        body += "```\n" + String(fatalError) + "\n```\n\n";
-        slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
+        body += "```\n" + formatError(fatalError) + "\n```\n\n";
+        slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
       });
       body += "</details>\n\n";
     }
@@ -268,7 +283,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
           "```\n" +
           formatReportForConsole(c) +
           "\n" +
-          String(c.error) +
+          formatError(c.error) +
           "\n```\n\n";
       });
       body += "</details>\n\n";
@@ -400,17 +415,37 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       body += "|\n";
     });
     body += "\n</details>\n\n";
+
+    const { SLACK_API_TOKEN, SLACK_CHANNEL, BOT_REPORT_FOLDER } = process.env;
+
+    if (BOT_REPORT_FOLDER) {
+      await Promise.all([
+        fs.promises.writeFile(
+          path.join(BOT_REPORT_FOLDER, "full-report.md"),
+          body,
+          "utf-8"
+        ),
+        fs.promises.writeFile(
+          path.join(BOT_REPORT_FOLDER, "before-app.json"),
+          makeAppJSON(allAccountsBefore),
+          "utf-8"
+        ),
+        fs.promises.writeFile(
+          path.join(BOT_REPORT_FOLDER, "after-app.json"),
+          makeAppJSON(allAccountsAfter),
+          "utf-8"
+        ),
+      ]);
+    }
+
     const { data: githubComment } = await network({
       url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
       method: "POST",
       headers: {
         Authorization: `Bearer ${GITHUB_TOKEN}`,
       },
-      data: {
-        body,
-      },
+      data: { body },
     });
-    const { SLACK_API_TOKEN, SLACK_CHANNEL } = process.env;
 
     if (SLACK_API_TOKEN && githubComment) {
       const text = `${String(GITHUB_WORKFLOW)}: ${title} (<${

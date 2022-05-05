@@ -59,13 +59,17 @@ class Xpub extends EventEmitter {
   }
 
   async syncAddress(account: number, index: number) {
-    const address = this.crypto.getAddress(
+    const address = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       account,
       index
     );
 
+    this.storage.addAddress(
+      `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
+      address
+    );
     await this.whenSynced("address", address);
 
     const data = {
@@ -87,13 +91,13 @@ class Xpub extends EventEmitter {
 
       // in case pendings have changed we clean them out
       // TODO perf : bad : looping in the tx array
-      const hasPendings = !!(await this.storage.getLastTx({
+      const hasPendings = !!this.storage.getLastTx({
         confirmed: false,
         account,
         index,
-      }));
+      });
       if (hasPendings) {
-        await this.storage.removePendingTxs({ account, index });
+        this.storage.removePendingTxs({ account, index });
       }
       total = await this.fetchHydrateAndStoreNewTxs(address, account, index);
     } catch (e) {
@@ -103,7 +107,7 @@ class Xpub extends EventEmitter {
 
     this.emitSynced({ ...data, total });
 
-    const lastTx = await this.storage.getLastTx({
+    const lastTx = this.storage.getLastTx({
       account,
       index,
     });
@@ -172,7 +176,7 @@ class Xpub extends EventEmitter {
     }
 
     this.emitSynced({ type: "all", account });
-    this.freshAddress = this.crypto.getAddress(
+    this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       0,
@@ -200,7 +204,7 @@ class Xpub extends EventEmitter {
   async getAddressBalance(address: Address) {
     await this.whenSynced("address", address.address);
 
-    const unspentUtxos = await this.storage.getAddressUnspentUtxos(address);
+    const unspentUtxos = this.storage.getAddressUnspentUtxos(address);
 
     return unspentUtxos.reduce(
       (total, { value }) => total.plus(value),
@@ -230,7 +234,7 @@ class Xpub extends EventEmitter {
       index = lastIndex + gap;
     }
     const address: Address = {
-      address: this.crypto.getAddress(
+      address: await this.crypto.getAddress(
         this.derivationMode,
         this.xpub,
         account,
@@ -419,7 +423,7 @@ class Xpub extends EventEmitter {
     let txs: TX[] = [];
     let inserted = 0;
     do {
-      const lastTx = await this.storage.getLastTx({
+      const lastTx = this.storage.getLastTx({
         account,
         index,
         confirmed: true,
@@ -433,14 +437,14 @@ class Xpub extends EventEmitter {
       if (pendingTxs.length === 0) {
         pendingTxs = txs.filter((tx) => !tx.block);
       }
-      inserted += await this.storage.appendTxs(txs.filter((tx) => tx.block)); // only insert not pending tx
+      inserted += this.storage.appendTxs(txs.filter((tx) => tx.block)); // only insert not pending tx
     } while (txs.length - pendingTxs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
-    inserted += await this.storage.appendTxs(pendingTxs);
+    inserted += this.storage.appendTxs(pendingTxs);
     return inserted;
   }
 
   async checkAddressReorg(account: number, index: number) {
-    const lastTx = await this.storage.getLastTx({
+    const lastTx = this.storage.getLastTx({
       account,
       index,
       confirmed: true,
@@ -462,7 +466,7 @@ class Xpub extends EventEmitter {
     // TODO: delete only everything for this (address, block)
     // but need to think if its possible with current storage implem
 
-    await this.storage.removeTxs({
+    this.storage.removeTxs({
       account,
       index,
     });

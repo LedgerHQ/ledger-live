@@ -18,50 +18,11 @@ import {
 import { isCurrencySupported } from "../currencies";
 import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
-import jsBridges from "../generated/bridge/js";
 
-const experimentalIntegrations = [
-  "bitcoin",
-  "bsc",
-  "bitcoin_cash",
-  "litecoin",
-  "dash",
-  "qtum",
-  "zcash",
-  "bitcoin_gold",
-  "stratis",
-  "dogecoin",
-  "digibyte",
-  "komodo",
-  "pivx",
-  "zencash",
-  "vertcoin",
-  "peercoin",
-  "viacoin",
-  "stakenet",
-  "stealthcoin",
-  "decred",
-  "bitcoin_testnet",
-  "tezos",
-];
-export function shouldUseJS(currency: CryptoCurrency) {
-  const jsBridge = jsBridges[currency.family];
-  if (!jsBridge) return false;
-
-  if (experimentalIntegrations.includes(currency.id)) {
-    return getEnv("EXPERIMENTAL_CURRENCIES_JS_BRIDGE")
-      .split(",")
-      .includes(currency.id);
-  }
-
-  return true;
-}
-export const libcoreNoGoBalanceHistory = () =>
-  getEnv("LIBCORE_BALANCE_HISTORY_NOGO").split(",");
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode
-) => {
+): boolean => {
   const modes = getDerivationModesForCurrency(currency);
   // last mode is always creatable by convention
   if (modes[modes.length - 1] === derivationMode) return true;
@@ -101,7 +62,7 @@ export function canSend(
     return false;
   }
 }
-export function canBeMigrated(account: Account) {
+export function canBeMigrated(account: Account): boolean {
   try {
     const { version } = decodeAccountId(account.id);
 

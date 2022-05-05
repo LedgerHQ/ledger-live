@@ -31,7 +31,7 @@ const cacheValidators = makeLRUCache(
     if (isStargate(currency)) {
       const url = `${getBaseApiUrl(
         currency
-      )}/${namespace}/staking/${version}/validators?status=BOND_STATUS_BONDED&pagination.limit=130`;
+      )}/${namespace}/staking/${version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
       const { data } = await network({
         url,
         method: "GET",
@@ -181,8 +181,8 @@ const getRewardsState = makeLRUCache(
 );
 
 const getStargateRewardsState = makeLRUCache(
-  async (_currency: CryptoCurrency) => {
-    // Fake numbers until Gaia fixes its endpoints
+  async (currency: CryptoCurrency) => {
+    /*
     return {
       targetBondedRatio: 0.01,
       communityPoolCommission: 0.0,
@@ -196,81 +196,102 @@ const getStargateRewardsState = makeLRUCache(
       averageDailyFees: 0,
       currentValueInflation: 0.01,
     };
-    /*
-  // All obtained values are strings ; so sometimes we will need to parse them as numbers
-  const inflationUrl = `${getBaseApiUrl(
-    currency
-  )}/cosmos/mint/v1beta1/inflation`;
-  const { data: inflationData } = await network({
-    url: inflationUrl,
-    method: "GET",
-  });
-  const currentValueInflation = parseFloat(inflationData.inflation);
-   const inflationParametersUrl = `${getBaseApiUrl(
-    currency
-  )}/cosmos/mint/v1beta1/params`;
-  const { data: inflationParametersData } = await network({
-    url: inflationParametersUrl,
-    method: "GET",
-  });
-  const inflationRateChange = parseFloat(
-    inflationParametersData.params.inflation_rate_change
-  );
-  const inflationMaxRate = parseFloat(
-    inflationParametersData.params.inflation_max
-  );
-  const inflationMinRate = parseFloat(
-    inflationParametersData.params.inflation_min
-  );
-  const targetBondedRatio = parseFloat(
-    inflationParametersData.params.goal_bonded
-  );
-  // Source for seconds per year : https://github.com/gavinly/CosmosParametersWiki/blob/master/Mint.md#notes-3
-  //  365.24 (days) * 24 (hours) * 60 (minutes) * 60 (seconds) = 31556736 seconds
-  const assumedTimePerBlock =
-    31556736.0 / parseFloat(inflationParametersData.params.blocks_per_year);
-   const communityTaxUrl = `${getBaseApiUrl(
-    currency
-  )}/cosmos/distribution/v1beta1/params`;
-  const { data: communityTax } = await network({
-    url: communityTaxUrl,
-    method: "GET",
-  });
-  const communityPoolCommission = parseFloat(
-    communityTax.params.community_tax
-  );
-   const supplyUrl = `${getBaseApiUrl(currency)}/cosmos/bank/v1beta1/supply/${
-    currency.id == "cosmos_testnet" ? "umuon" : "uatom"
-  }`;
-  const { data: totalSupplyData } = await network({
-    url: supplyUrl,
-    method: "GET",
-  });
-  const totalSupply = parseUatomStrAsAtomNumber(
-    totalSupplyData.amount.amount
-  );
-   const ratioUrl = `${getBaseApiUrl(currency)}/cosmos/staking/v1beta1/pool`;
-  const { data: ratioData } = await network({ url: ratioUrl, method: "GET" });
-  const actualBondedRatio =
-    parseUatomStrAsAtomNumber(ratioData.pool.bonded_tokens) / totalSupply;
-   // Arbitrary value in ATOM.
-  const averageDailyFees = 20;
-   // Arbitrary value in seconds
-  const averageTimePerBlock = 7.5;
-   return {
-    targetBondedRatio,
-    communityPoolCommission,
-    assumedTimePerBlock,
-    inflationRateChange,
-    inflationMaxRate,
-    inflationMinRate,
-    actualBondedRatio,
-    averageTimePerBlock,
-    totalSupply,
-    averageDailyFees,
-    currentValueInflation,
-  };
-  */
+    */
+
+    // All obtained values are strings ; so sometimes we will need to parse them as numbers
+    const inflationUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/mint/v1beta1/inflation`;
+
+    const { data: inflationData } = await network({
+      url: inflationUrl,
+      method: "GET",
+    });
+
+    const currentValueInflation = parseFloat(inflationData.inflation);
+
+    const inflationParametersUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/mint/v1beta1/params`;
+
+    const { data: inflationParametersData } = await network({
+      url: inflationParametersUrl,
+      method: "GET",
+    });
+
+    const inflationRateChange = parseFloat(
+      inflationParametersData.params.inflation_rate_change
+    );
+
+    const inflationMaxRate = parseFloat(
+      inflationParametersData.params.inflation_max
+    );
+
+    const inflationMinRate = parseFloat(
+      inflationParametersData.params.inflation_min
+    );
+
+    const targetBondedRatio = parseFloat(
+      inflationParametersData.params.goal_bonded
+    );
+
+    // Source for seconds per year : https://github.com/gavinly/CosmosParametersWiki/blob/master/Mint.md#notes-3
+    //  365.24 (days) * 24 (hours) * 60 (minutes) * 60 (seconds) = 31556736 seconds
+    const assumedTimePerBlock =
+      31556736.0 / parseFloat(inflationParametersData.params.blocks_per_year);
+
+    const communityTaxUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/distribution/v1beta1/params`;
+
+    const { data: communityTax } = await network({
+      url: communityTaxUrl,
+      method: "GET",
+    });
+
+    const communityPoolCommission = parseFloat(
+      communityTax.params.community_tax
+    );
+
+    const supplyUrl = `${getBaseApiUrl(currency)}/cosmos/bank/v1beta1/supply/${
+      currency.id == "cosmos_testnet" ? "umuon" : "uatom"
+    }`;
+
+    const { data: totalSupplyData } = await network({
+      url: supplyUrl,
+      method: "GET",
+    });
+
+    const totalSupply = parseUatomStrAsAtomNumber(
+      totalSupplyData.amount.amount
+    );
+
+    const ratioUrl = `${getBaseApiUrl(currency)}/cosmos/staking/v1beta1/pool`;
+
+    const { data: ratioData } = await network({ url: ratioUrl, method: "GET" });
+
+    const actualBondedRatio =
+      parseUatomStrAsAtomNumber(ratioData.pool.bonded_tokens) / totalSupply;
+
+    // Arbitrary value in ATOM.
+    const averageDailyFees = 20;
+
+    // Arbitrary value in seconds
+    const averageTimePerBlock = 7.5;
+
+    return {
+      targetBondedRatio,
+      communityPoolCommission,
+      assumedTimePerBlock,
+      inflationRateChange,
+      inflationMaxRate,
+      inflationMinRate,
+      actualBondedRatio,
+      averageTimePerBlock,
+      totalSupply,
+      averageDailyFees,
+      currentValueInflation,
+    };
   },
   (currency: CryptoCurrency) => currency.id
 );

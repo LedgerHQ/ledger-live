@@ -3,7 +3,7 @@
 import * as bech32 from "bech32";
 import { bech32m } from "../../bech32m";
 import * as bjs from "bitcoinjs-lib";
-import { publicKeyTweakAdd } from "secp256k1";
+import { getSecp256k1Instance } from "./secp256k1";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import Base from "./base";
@@ -119,24 +119,17 @@ class Bitcoin extends Base {
   }
 
   // get address given an address type
-  getAddress(
+  async customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
-  ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
-    }
+  ): Promise<string> {
     switch (derivationMode) {
       case DerivationModes.TAPROOT:
-        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-          this.getTaprootAddress(xpub, account, index);
-        return Base.addressCache[
-          `${derivationMode}-${xpub}-${account}-${index}`
-        ];
+        return await this.getTaprootAddress(xpub, account, index);
       default:
-        return super.getAddress(derivationMode, xpub, account, index);
+        return super.customGetAddress(derivationMode, xpub, account, index);
     }
   }
 
@@ -183,12 +176,12 @@ class Bitcoin extends Base {
     return bjs.crypto.sha256(Buffer.concat([h, h, x]));
   }
 
-  private getTaprootAddress(
+  private async getTaprootAddress(
     xpub: string,
     account: number,
     index: number
-  ): string {
-    const ecdsaPubkey = this.getPubkeyAt(xpub, account, index);
+  ): Promise<string> {
+    const ecdsaPubkey = await this.getPubkeyAt(xpub, account, index);
     // A BIP32 derived key can be converted to a schnorr pubkey by dropping
     // the first byte, which represent the oddness/evenness. In schnorr all
     // pubkeys are even.
@@ -203,7 +196,7 @@ class Bitcoin extends Base {
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
     const outputEcdsaKey = Buffer.from(
-      publicKeyTweakAdd(evenEcdsaPubkey, tweak)
+      await getSecp256k1Instance().publicKeyTweakAdd(evenEcdsaPubkey, tweak)
     );
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);

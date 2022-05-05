@@ -2,15 +2,10 @@
 // @ts-ignore
 import { flatten } from "lodash";
 import BigNumber from "bignumber.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { BufferWriter } from "bitcoinjs-lib/src/bufferutils";
-
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { Transaction } from "@ledgerhq/hw-app-btc/lib/types";
 import { Currency } from "./crypto/types";
-
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
 import Xpub from "./xpub";
@@ -212,6 +207,8 @@ class BitcoinLikeWallet {
     lockTime?: number;
     sigHashType?: number;
     segwit?: boolean;
+    hasTimestamp?: boolean;
+    initialTimestamp?: number;
     additionals?: Array<string>;
     expiryHeight?: Buffer;
     hasExtraData?: boolean;
@@ -227,23 +224,50 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
+      initialTimestamp,
       additionals,
       hasExtraData,
       onDeviceSignatureRequested,
       onDeviceSignatureGranted,
       onDeviceStreaming,
     } = params;
-
-    const length = txInfo.outputs.reduce((sum, output) => {
+    let hasTimestamp = params.hasTimestamp;
+    let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
+    // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L478
+    // Decred has a witness and an expiry height
+    if (additionals && additionals.includes("decred")) {
+      length += 2 * txInfo.outputs.length;
+    }
     const buffer = Buffer.allocUnsafe(length);
-    const bufferWriter = new BufferWriter(buffer, 0);
-    bufferWriter.writeVarInt(txInfo.outputs.length);
+    let bufferOffset = 0;
+    bufferOffset = utils.writeVarInt(
+      buffer,
+      txInfo.outputs.length,
+      bufferOffset
+    );
     txInfo.outputs.forEach((txOut) => {
-      // xpub splits output into smaller outputs than SAFE_MAX_INT anyway
-      bufferWriter.writeUInt64(txOut.value.toNumber());
-      bufferWriter.writeVarSlice(txOut.script);
+      // refer to https://github.com/bitcoinjs/bitcoinjs-lib/blob/59b21162a2c4645c64271ca004c7a3755a3d72fb/ts_src/bufferutils.ts#L26
+      buffer.writeUInt32LE(
+        txOut.value.modulo(new BigNumber(0x100000000)).toNumber(),
+        bufferOffset
+      );
+      buffer.writeUInt32LE(
+        txOut.value.dividedToIntegerBy(new BigNumber(0x100000000)).toNumber(),
+        bufferOffset + 4
+      );
+      bufferOffset += 8;
+      if (additionals && additionals.includes("decred")) {
+        bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
+        bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
+      }
+      bufferOffset = utils.writeVarInt(
+        buffer,
+        txOut.script.length,
+        bufferOffset
+      );
+      bufferOffset += txOut.script.copy(buffer, bufferOffset);
     });
     const outputScriptHex = buffer.toString("hex");
     const associatedKeysets = txInfo.associatedDerivations.map(
@@ -257,10 +281,15 @@ class BitcoinLikeWallet {
       number | null | undefined
     ][];
     const inputs: Inputs = txInfo.inputs.map((i) => {
+      if (additionals && additionals.includes("peercoin")) {
+        // remove timestamp for new version of peercoin input, refer to https://github.com/peercoin/rfcs/issues/5 and https://github.com/LedgerHQ/ledgerjs/issues/701
+        const version = i.txHex.substring(0, 8);
+        hasTimestamp = version === "01000000" || version === "02000000";
+      }
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,
         isSegwitSupported: true,
-        hasTimestamp: false,
+        hasTimestamp,
         hasExtraData,
         additionals,
       });
@@ -268,7 +297,7 @@ class BitcoinLikeWallet {
         btc.splitTransaction(
           i.txHex,
           true,
-          false, // FIXME hasTimestamp needed for LL-7539
+          hasTimestamp,
           hasExtraData,
           additionals
         ),
@@ -287,7 +316,7 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      // initialTimestamp,
+      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
@@ -302,7 +331,7 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      // initialTimestamp,
+      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,

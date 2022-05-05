@@ -160,6 +160,8 @@ const compoundSupply: ModeModule = {
       ];
     }
   },
+
+  getResolutionConfig: () => ({ erc20: true, externalPlugins: true }),
 };
 
 /**

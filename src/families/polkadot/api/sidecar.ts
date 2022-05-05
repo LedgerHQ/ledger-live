@@ -275,10 +275,10 @@ const fetchStakingProgress =
  * @returns {SidecarTransactionMaterial}
  */
 const fetchTransactionMaterial = async (
+  // By default we don't want any metadata.
   withMetadata = false
 ): Promise<SidecarTransactionMaterial> => {
-  // By default we don't want any metadata.
-  const params = withMetadata ? "" : "?noMeta=true";
+  const params = withMetadata ? "?metadata=scale" : "?noMeta=true";
   const {
     data,
   }: {

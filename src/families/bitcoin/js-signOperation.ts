@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import type { Account, Operation, SignOperationEvent } from "./../../types";
 import { isSegwitDerivationMode } from "./../../derivation";
 import { encodeOperationId } from "./../../operation";
-import { open, close } from "./../../hw";
+import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildTransaction } from "./js-buildTransaction";
@@ -22,17 +22,16 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  Observable.create((o) => {
-    async function main() {
-      const { currency } = account;
-      const transport = await open(deviceId);
-      const hwApp = new Btc(transport);
-      const walletAccount = getWalletAccount(account);
+  withDevice(deviceId)((transport) =>
+    Observable.create((o) => {
+      async function main() {
+        const { currency } = account;
+        const hwApp = new Btc(transport);
+        const walletAccount = getWalletAccount(account);
 
-      try {
         log("hw", `signTransaction ${currency.id} for account ${account.id}`);
         const txInfo = await buildTransaction(account, transaction);
-        let senders: string[] = [];
+        let senders = new Set<string>();
         let recipients: string[] = [];
         let fee = new BigNumber(0);
         // Maybe better not re-calculate these fields here, instead include them
@@ -41,20 +40,13 @@ const signOperation = ({
           account,
           transaction,
         }).then((res) => {
-          senders = res.txInputs
-            .map((i) => i.address)
-            .filter(Boolean) as string[];
+          senders = new Set(res.txInputs.map((i) => i.address).filter(Boolean));
           recipients = res.txOutputs
             .filter((o) => o.address && !o.isChange)
             .map((o) => o.address) as string[];
           fee = res.fees;
         });
 
-        // FIXME (legacy)
-        // should be `transaction.getLockTime()` as soon as lock time is
-        // handled by libcore (actually: it always returns a default value
-        // and that caused issue with zcash (see #904))
-        // cf. https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/transaction_builders/BitcoinLikeUtxoPicker.cpp#L156-L159
         let lockTime;
 
         // (legacy) Set lockTime for Komodo to enable reward claiming on UTXOs created by
@@ -73,14 +65,10 @@ const signOperation = ({
 
         const segwit = isSegwitDerivationMode(account.derivationMode);
 
-        // FIXME Call to explorer needed to set timestamp (https://ledgerhq.atlassian.net/browse/LL-7539)
-        // cf. https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/transaction_builders/BitcoinLikeUtxoPicker.cpp#L150-L154
-        /*
-        const hasTimestamp = networkParams.usesTimestampedTransaction;
+        const hasTimestamp = currency.id === "peercoin";
         const initialTimestamp = hasTimestamp
-          ? transaction.timestamp
+          ? Math.floor(Date.now() / 1000)
           : undefined;
-        */
 
         const perCoin = perCoinLogic[currency.id];
         let additionals = [currency.id];
@@ -114,7 +102,8 @@ const signOperation = ({
           lockTime,
           sigHashType,
           segwit,
-          //initialTimestamp,
+          hasTimestamp,
+          initialTimestamp,
           additionals,
           expiryHeight,
           hasExtraData,
@@ -143,7 +132,7 @@ const signOperation = ({
           fee,
           blockHash: null,
           blockHeight: null,
-          senders,
+          senders: Array.from(senders),
           recipients,
           accountId: account.id,
           date: new Date(),
@@ -157,15 +146,13 @@ const signOperation = ({
             expirationDate: null,
           },
         });
-      } finally {
-        close(transport, deviceId);
       }
-    }
 
-    main().then(
-      () => o.complete(),
-      (e) => o.error(e)
-    );
-  });
+      main().then(
+        () => o.complete(),
+        (e) => o.error(e)
+      );
+    })
+  );
 
 export default signOperation;

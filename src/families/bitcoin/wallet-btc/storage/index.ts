@@ -1,67 +1,91 @@
-import { findLast, filter, uniqBy, findIndex, has } from "lodash";
+import { findLast, filter, uniqBy, findIndex, isEmpty } from "lodash";
+import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address } from "./types";
 
 // a mock storage class that just use js objects
 // sql.js would be perfect for the job
 class BitcoinLikeStorage implements IStorage {
-  txs: TX[] = [];
+  private txs: TX[] = [];
 
-  // indexes
+  // indexe: address + hash -> tx
   primaryIndex: { [key: string]: number } = {};
+
+  // indexe: account + index -> tx
+  accountIndex: { [key: string]: number[] } = {};
 
   // accounting
   unspentUtxos: { [key: string]: Output[] } = {};
+
+  addressCache: { [key: string]: string } = {};
 
   // only needed to handle the case when the input
   // is seen before the output (typically explorer
   // returning unordered tx within the same block)
   spentUtxos: { [key: string]: Input[] } = {};
 
-  async getLastTx(txFilter: {
-    account?: number;
-    index?: number;
-    address?: string;
-    confirmed?: boolean;
-  }) {
+  getLastTx(txFilter: { account: number; index: number; confirmed?: boolean }) {
+    if (
+      typeof this.accountIndex[`${txFilter.account}-${txFilter.index}`] ===
+      "undefined"
+    ) {
+      return undefined;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const tx: TX | undefined = findLast(
+      this.accountIndex[`${txFilter.account}-${txFilter.index}`].map(
+        (i) => this.txs[i]
+      ),
+      (t) => {
+        return (
+          typeof txFilter.confirmed === "undefined" ||
+          (txFilter.confirmed && t.block) ||
+          (!txFilter.confirmed && !t.block)
+        );
+      }
+    );
+    return tx;
+  }
+
+  getLastUnconfirmedTx() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const tx: TX | undefined = findLast(this.txs, (t) => {
-      return (
-        (!has(txFilter, "account") || t.account === txFilter.account) &&
-        (!has(txFilter, "index") || t.index === txFilter.index) &&
-        (!has(txFilter, "address") || t.address === txFilter.address) &&
-        (!has(txFilter, "confirmed") ||
-          (txFilter.confirmed && t.block) ||
-          (!txFilter.confirmed && !t.block))
-      );
+      return !t.block;
     });
     return tx;
   }
 
-  async getTx(address: string, hash: string) {
-    const index = `${address}-${hash}`;
+  getTx(address: string, txId: string) {
+    const index = `${address}-${txId}`;
     return this.txs[this.primaryIndex[index]];
   }
 
   // TODO: only expose unspentUtxos
-  async getAddressUnspentUtxos(address: Address) {
+  getAddressUnspentUtxos(address: Address) {
     const indexAddress = address.address;
     return this.unspentUtxos[indexAddress];
   }
 
-  async appendTxs(txs: TX[]) {
+  appendTxs(txs: TX[]) {
     const lastLength = this.txs.length;
 
     txs.forEach((tx) => {
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       // we reject already seen tx
       if (this.txs[this.primaryIndex[index]]) {
         return;
       }
-
-      this.primaryIndex[index] = this.txs.push(tx) - 1;
+      if (
+        typeof this.accountIndex[`${tx.account}-${tx.index}`] === "undefined"
+      ) {
+        this.accountIndex[`${tx.account}-${tx.index}`] = [];
+      }
+      const idx = this.txs.push(tx) - 1;
+      this.primaryIndex[index] = idx;
+      this.accountIndex[`${tx.account}-${tx.index}`].push(idx);
       this.unspentUtxos[indexAddress] = this.unspentUtxos[indexAddress] || [];
       this.spentUtxos[indexAddress] = this.spentUtxos[indexAddress] || [];
 
@@ -97,10 +121,7 @@ class BitcoinLikeStorage implements IStorage {
     return this.txs.length - lastLength;
   }
 
-  async getUniquesAddresses(addressesFilter: {
-    account?: number;
-    index?: number;
-  }) {
+  getUniquesAddresses(addressesFilter: { account?: number; index?: number }) {
     // TODO: to speed up, create more useful indexes in appendTxs
     return uniqBy(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -114,14 +135,14 @@ class BitcoinLikeStorage implements IStorage {
     );
   }
 
-  async removeTxs(txsFilter: { account: number; index: number }) {
+  removeTxs(txsFilter: { account: number; index: number }) {
     const newTxs: TX[] = [];
     this.primaryIndex = {};
-
+    this.accountIndex = {};
     this.txs.forEach((tx: TX) => {
       // clean
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
@@ -131,21 +152,21 @@ class BitcoinLikeStorage implements IStorage {
       delete this.unspentUtxos[indexAddress];
       delete this.spentUtxos[indexAddress];
     });
-
     this.txs = newTxs;
+    this.createAccountIndex();
   }
 
   // We are a bit ugly because we can't rely undo unspentUTXO
   // So we clean the address and rebuild without the pendings
-  async removePendingTxs(txsFilter: { account: number; index: number }) {
+  removePendingTxs(txsFilter: { account: number; index: number }) {
     const newTxs: TX[] = [];
     const txsToReAdd: TX[] = [];
     this.primaryIndex = {};
-
+    this.accountIndex = {};
     this.txs.forEach((tx: TX) => {
       // clean
       const indexAddress = tx.address;
-      const index = `${indexAddress}-${tx.hash}`;
+      const index = `${indexAddress}-${tx.id}`;
 
       if (tx.account !== txsFilter.account || tx.index !== txsFilter.index) {
         this.primaryIndex[index] = newTxs.push(tx) - 1;
@@ -161,25 +182,44 @@ class BitcoinLikeStorage implements IStorage {
     });
 
     this.txs = newTxs;
-    await this.appendTxs(txsToReAdd);
+    this.createAccountIndex();
+    this.appendTxs(txsToReAdd);
+  }
+
+  addAddress(key: string, address: string): void {
+    if (!this.addressCache) {
+      this.addressCache = {};
+    }
+    this.addressCache[key] = address;
   }
 
   exportSync() {
     return {
       txs: this.txs,
       primaryIndex: this.primaryIndex,
+      accountIndex: this.accountIndex,
       unspentUtxos: this.unspentUtxos,
+      addressCache: this.addressCache,
     };
   }
 
   loadSync(data: {
     txs: TX[];
     primaryIndex: { [key: string]: number };
+    accountIndex: { [key: string]: number[] };
     unspentUtxos: { [key: string]: Output[] };
+    addressCache: { [key: string]: string };
   }) {
     this.txs = data.txs;
     this.primaryIndex = data.primaryIndex;
+    this.accountIndex = data.accountIndex;
     this.unspentUtxos = data.unspentUtxos;
+    this.addressCache = data.addressCache;
+    Base.addressCache = { ...Base.addressCache, ...this.addressCache };
+    if (!this.accountIndex || isEmpty(this.accountIndex)) {
+      this.accountIndex = {};
+      this.createAccountIndex();
+    }
   }
 
   async export() {
@@ -189,9 +229,22 @@ class BitcoinLikeStorage implements IStorage {
   async load(data: {
     txs: TX[];
     primaryIndex: { [key: string]: number };
+    accountIndex: { [key: string]: number[] };
     unspentUtxos: { [key: string]: Output[] };
+    addressCache: { [key: string]: string };
   }) {
     return this.loadSync(data);
+  }
+
+  private createAccountIndex() {
+    this.txs.forEach((tx: TX, idx: number) => {
+      if (
+        typeof this.accountIndex[`${tx.account}-${tx.index}`] === "undefined"
+      ) {
+        this.accountIndex[`${tx.account}-${tx.index}`] = [];
+      }
+      this.accountIndex[`${tx.account}-${tx.index}`].push(idx);
+    });
   }
 }
 

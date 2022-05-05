@@ -62,6 +62,7 @@ describe("xpub integration sync", () => {
       coin: "dgb",
       explorerVersion: "v3",
     },
+    /*
     {
       xpub: "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // 3000ms
       derivationMode: DerivationModes.LEGACY,
@@ -71,6 +72,7 @@ describe("xpub integration sync", () => {
       coin: "btc",
       explorerVersion: "v3",
     },
+    */
     {
       xpub: "xpub6D4waFVPfPCpRvPkQd9A6n65z3hTp6TvkjnBHG5j2MCKytMuadKgfTUHqwRH77GQqCKTTsUXSZzGYxMGpWpJBdYAYVH75x7yMnwJvra1BUJ", // 5400ms
       derivationMode: DerivationModes.LEGACY,
@@ -217,6 +219,15 @@ describe("xpub integration sync", () => {
       coin: "xst",
       explorerVersion: "v2",
     },
+    {
+      xpub: "dpubZFUiMExUREbqJQVJkfXSs4wjUb1jwVkoofnPK8Mt95j3PanCyq9Mc4aFnWtRZkhci9ZYPVLZybVLMMkS6g1nKBTN4899KJwGeVBvyumvcjW",
+      derivationMode: DerivationModes.LEGACY,
+      addresses: 6,
+      balance: 0,
+      network: coininfo.decred.main.toBitcoinJS(),
+      coin: "dcr",
+      explorerVersion: "v3",
+    },
   ];
 
   walletDatasets.forEach((dataset) =>
@@ -283,6 +294,9 @@ describe("xpub integration sync", () => {
           break;
         case "zen": // zencash
           crypto = new currency.Zen({ network: dataset.network });
+          break;
+        case "dcr": // decred
+          crypto = new currency.Decred({ network: dataset.network });
           break;
         default:
           throw new Error("Should not be reachable");

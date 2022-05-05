@@ -2,11 +2,13 @@ import invariant from "invariant";
 import { Observable, from, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import eip55 from "eip55";
+import { encode } from "rlp";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
+import ethLedgerServices from "@ledgerhq/hw-app-eth/lib/services/ledger";
 import type { Transaction } from "./types";
 import type { Operation, Account, SignOperationEvent } from "../../types";
 import { getGasLimit, buildEthereumTx } from "./transaction";
@@ -14,6 +16,9 @@ import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
+import { getEnv } from "../../env";
+import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { Transaction as EthereumTx } from "@ethereumjs/tx";
 export const signOperation = ({
   account,
   deviceId,
@@ -51,23 +56,38 @@ export const signOperation = ({
                 throw new FeeNotLoaded();
               }
 
-              const { tx, fillTransactionDataResult } = buildEthereumTx(
-                account,
-                transaction,
-                nonce
-              );
-              const to = eip55.encode("0x" + tx.to.toString("hex"));
+              const { ethTxObject, tx, common, fillTransactionDataResult } =
+                buildEthereumTx(account, transaction, nonce);
+              const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
-              const eth = new Eth(transport);
+              // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
+              const rawData = tx.raw();
+              rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+              const txHex = Buffer.from(encode(rawData)).toString("hex");
+              const loadConfig: LoadConfig = {};
               if (isNFTActive(account.currency)) {
-                eth.setLoadConfig({
-                  // FIXME drop this after LL-8001
-                  nftExplorerBaseURL:
-                    "https://nft.staging.aws.ledger.fr/v1/ethereum",
-                });
+                loadConfig.nftExplorerBaseURL =
+                  getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum";
               }
+
+              const m = modes[transaction.mode];
+              invariant(m, "missing module for mode=" + transaction.mode);
+
+              const resolutionConfig = m.getResolutionConfig
+                ? m.getResolutionConfig(account, transaction)
+                : {};
+
+              const resolution = await ethLedgerServices.resolveTransaction(
+                txHex,
+                loadConfig,
+                resolutionConfig
+              );
+
+              const eth = new Eth(transport);
+              eth.setLoadConfig(loadConfig);
+
               // FIXME this part is still required for compound to correctly display info on the device
               const addrs =
                 (fillTransactionDataResult &&
@@ -86,25 +106,27 @@ export const signOperation = ({
                 }
               }
 
-              o.next({
-                type: "device-signature-requested",
-              });
+              o.next({ type: "device-signature-requested" });
               const result = await eth.signTransaction(
                 freshAddressPath,
-                tx.serialize().toString("hex")
+                txHex,
+                resolution
               );
               if (cancelled) return;
-              o.next({
-                type: "device-signature-granted",
-              });
+              o.next({ type: "device-signature-granted" });
               // Second, we re-set some tx fields from the device signature
-              const v = result.v;
+              const v = `0x${result.v}`;
+              const r = `0x${result.r}`;
+              const s = `0x${result.s}`;
 
-              tx.v = Buffer.from(v, "hex");
-              tx.r = Buffer.from(result.r, "hex");
-              tx.s = Buffer.from(result.s, "hex");
+              const signedTx = new EthereumTx(
+                { ...ethTxObject, v, r, s },
+                { common }
+              );
+
               // Generate the signature ready to be broadcasted
-              const signature = `0x${tx.serialize().toString("hex")}`;
+              const signature = `0x${signedTx.serialize().toString("hex")}`;
+
               // build optimistic operation
               const txHash = ""; // resolved at broadcast time
 
@@ -131,8 +153,6 @@ export const signOperation = ({
                 date: new Date(),
                 extra: {},
               };
-              const m = modes[transaction.mode];
-              invariant(m, "missing module for mode=" + transaction.mode);
               m.fillOptimisticOperation(account, transaction, operation);
               o.next({
                 type: "signed",

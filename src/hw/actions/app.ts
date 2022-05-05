@@ -2,6 +2,7 @@ import invariant from "invariant";
 import {
   concat,
   of,
+  timer,
   interval,
   Observable,
   throwError,
@@ -11,7 +12,6 @@ import {
 import {
   scan,
   debounce,
-  debounceTime,
   catchError,
   timeout,
   switchMap,
@@ -40,6 +40,7 @@ import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
+import type { DeviceInfo, FirmwareUpdateContext } from "../../types/manager";
 
 type State = {
   isLoading: boolean;
@@ -60,6 +61,8 @@ type State = {
   allowManagerRequestedWording: string | null | undefined;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
+  deviceInfo?: DeviceInfo | null | undefined;
+  latestFirmware?: FirmwareUpdateContext | null | undefined;
   error: Error | null | undefined;
   derivation:
     | {
@@ -146,6 +149,8 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   allowManagerRequestedWording: null,
   allowManagerGranted: false,
   device: null,
+  deviceInfo: null,
+  latestFirmware: null,
   opened: false,
   appAndVersion: null,
   error: null,
@@ -160,8 +165,15 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return { ...state, unresponsive: true };
 
+    case "device-update-last-seen":
+      return {
+        ...state,
+        deviceInfo: e.deviceInfo,
+        latestFirmware: e.latestFirmware,
+      };
+
     case "disconnected":
-      return getInitialState();
+      return { ...getInitialState(), isLoading: !!e.expected };
 
     case "deviceChange":
       return { ...getInitialState(e.device), device: e.device };
@@ -384,13 +396,14 @@ function inferCommandParams(appRequest: AppRequest) {
   };
 }
 
+const DISCONNECT_DEBOUNCE = 5000;
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
   event: ({ deviceSubject, connectApp, params }) =>
     deviceSubject.pipe(
-      // debounce a bit the connect/disconnect event that we don't need
-      debounceTime(1000), // each time there is a device change, we pipe to the command
+      // debounce a bit the disconnect events that we don't need
+      debounce((device) => timer(!device ? DISCONNECT_DEBOUNCE : 0)),
       switchMap((device) =>
         concat(
           of({
@@ -406,7 +419,6 @@ const implementations = {
     Observable.create((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
-      const DISCONNECT_DEBOUNCE = 5000;
       const DEVICE_POLLING_TIMEOUT = 20000;
       // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
       let pollingOnDevice;
@@ -486,7 +498,6 @@ const implementations = {
                     device,
                   });
                 }
-
                 o.next(event);
               }
             },
@@ -586,7 +597,11 @@ export const createAction = (
           scan(reducer, getInitialState()), // tap((s) => console.log("connectApp state", s)),
           // we debounce the UI state to not blink on the UI
           debounce((s: State) => {
-            if (s.allowOpeningRequestedWording || s.allowOpeningGranted) {
+            if (
+              s.allowOpeningRequestedWording ||
+              s.allowOpeningGranted ||
+              s.deviceInfo
+            ) {
               // no debounce for allow event
               return EMPTY;
             }
@@ -619,7 +634,8 @@ export const createAction = (
       ...state,
       inWrongDeviceForAccount:
         state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress
+          ? state.derivation.address !== appRequest.account.freshAddress &&
+            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
             ? {
                 accountName: getAccountName(appRequest.account),
               }

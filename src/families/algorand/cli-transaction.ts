@@ -102,7 +102,7 @@ function inferTransactions(
       memo: opts.memo,
       mode: opts.mode || "send",
       subAccountId: account.type === "TokenAccount" ? account.id : null,
-      assetId: "algorand/asa/" + opts.token,
+      assetId: opts.token ? "algorand/asa/" + opts.token : null,
     };
   });
 }

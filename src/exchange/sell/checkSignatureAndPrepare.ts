@@ -7,7 +7,7 @@ import { getAccountCurrency, getMainAccount } from "../../account";
 import { getCurrencyExchangeConfig } from "../";
 import perFamily from "../../generated/exchange";
 import type { SellRequestEvent } from "./types";
-import { TRANSACTION_TYPES } from "../hw-app-exchange/Exchange";
+import { ExchangeTypes } from "../hw-app-exchange/Exchange";
 import type {
   Account,
   AccountLike,
@@ -38,7 +38,7 @@ export default async (
     payloadSignature,
     transaction,
   } = input;
-  const exchange = new Exchange(transport, TRANSACTION_TYPES.SELL);
+  const exchange = new Exchange(transport, ExchangeTypes.Sell);
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
   const provider = getProvider("coinify"); // FIXME Don't forget to switch to prod

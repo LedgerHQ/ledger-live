@@ -18,8 +18,9 @@ const prepareTransaction = async (
   const feePerByte = inferFeePerByte(t, networkInfo);
 
   if (
-    t.networkInfo === networkInfo &&
-    (feePerByte === t.feePerByte || feePerByte.eq(t.feePerByte || 0))
+    (t.networkInfo === networkInfo &&
+      (feePerByte === t.feePerByte || feePerByte.eq(t.feePerByte || 0))) ||
+    t.feesStrategy === "custom"
   ) {
     // nothing changed
     return t;

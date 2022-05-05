@@ -7,7 +7,7 @@ function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
   account.algorandResources = {
     rewards: account.balance.multipliedBy(0.01),
-    rewardsAccumulated: account.balance.multipliedBy(0.1),
+    nbAssets: account.subAccounts?.length ?? 0,
   };
   return account;
 }
@@ -70,15 +70,6 @@ function addOptOut(account: Account, rng: Prando): Account {
   return account;
 }
 
-function addCloseAccount(account: Account, rng: Prando): Account {
-  /** select position on the operation stack where we will insert the new claim rewards */
-  const opIndex = rng.next(0, 10);
-  const opt = genBaseOperation(account, rng, "CLOSE_ACCOUNT", opIndex);
-  account.operations.splice(opIndex, 0, opt);
-  account.operationsCount++;
-  return account;
-}
-
 /**
  * add in specific algorand operations
  * @memberof algorand/mock
@@ -88,7 +79,6 @@ function addCloseAccount(account: Account, rng: Prando): Account {
 function genAccountEnhanceOperations(account: Account, rng: Prando): Account {
   addOptIn(account, rng);
   addOptOut(account, rng);
-  addCloseAccount(account, rng);
   setAlgorandResources(account);
   return account;
 }
@@ -122,7 +112,7 @@ function postScanAccount(
   if (isEmpty) {
     account.algorandResources = {
       rewards: new BigNumber(0),
-      rewardsAccumulated: new BigNumber(0),
+      nbAssets: account.subAccounts?.length ?? 0,
     };
     account.operations = [];
     account.subAccounts = [];

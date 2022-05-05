@@ -396,6 +396,38 @@ export function genAccount(
     balanceHistoryCache: emptyHistoryCache,
   };
 
+  if (
+    [
+      "ethereum",
+      "ethereum_ropsten",
+      "ethereum_goerli",
+      "tron",
+      "algorand",
+    ].includes(currency.id)
+  ) {
+    const tokenCount =
+      typeof opts.subAccountsCount === "number"
+        ? opts.subAccountsCount
+        : rng.nextInt(0, 8);
+    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
+      hardcodedMarketcap.includes(t.id)
+    );
+    const compoundReadyTokens = all.filter(findCompoundToken);
+    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
+    // favorize the generation of compound tokens
+    const tokens = compoundReadyTokens
+      .concat(
+        // from random index
+        notCompoundReadyTokens.slice(
+          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
+        )
+      )
+      .slice(0, tokenCount);
+    account.subAccounts = tokens.map((token, i) =>
+      genTokenAccount(i, account, token)
+    );
+  }
+
   if (currency.id === "cosmos") {
     account.cosmosResources = {
       // TODO variation in these
@@ -419,7 +451,7 @@ export function genAccount(
   if (currency.family === "algorand") {
     account.algorandResources = {
       rewards: new BigNumber(0),
-      rewardsAccumulated: new BigNumber(0),
+      nbAssets: account.subAccounts?.length ?? 0,
     };
   }
 
@@ -435,32 +467,6 @@ export function genAccount(
       nominations: [],
       numSlashingSpans: 0,
     };
-  }
-
-  if (
-    ["ethereum", "ethereum_ropsten", "tron", "algorand"].includes(currency.id)
-  ) {
-    const tokenCount =
-      typeof opts.subAccountsCount === "number"
-        ? opts.subAccountsCount
-        : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
-      hardcodedMarketcap.includes(t.id)
-    );
-    const compoundReadyTokens = all.filter(findCompoundToken);
-    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
-    // favorize the generation of compound tokens
-    const tokens = compoundReadyTokens
-      .concat(
-        // from random index
-        notCompoundReadyTokens.slice(
-          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
-        )
-      )
-      .slice(0, tokenCount);
-    account.subAccounts = tokens.map((token, i) =>
-      genTokenAccount(i, account, token)
-    );
   }
 
   account.operations = Array(operationsSize)

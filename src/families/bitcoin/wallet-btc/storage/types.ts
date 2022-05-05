@@ -1,5 +1,5 @@
 export interface TX {
-  hash: string;
+  id: string;
   account: number;
   index: number;
   received_at: string;
@@ -24,7 +24,6 @@ export interface Output {
   address: string;
   output_hash: string;
   output_index: number;
-  script_hex: string;
   block_height: number | null;
   // TODO Write tests for RBF unconfirmed outputs
   rbf: boolean;
@@ -43,24 +42,22 @@ export interface Address {
 }
 
 export interface IStorage {
-  appendTxs(txs: TX[]): Promise<number>;
-  getAddressUnspentUtxos(address: Address): Promise<Output[]>;
+  appendTxs(txs: TX[]): number;
+  getAddressUnspentUtxos(address: Address): Output[];
   getLastTx(txFilter: {
-    account?: number;
-    index?: number;
-    address?: string;
+    account: number;
+    index: number;
     confirmed?: boolean;
-  }): Promise<TX | undefined>;
-  getTx(address: string, hash: string): Promise<TX | undefined>;
+  }): TX | undefined;
+  getLastUnconfirmedTx(): TX | undefined;
+  getTx(address: string, txId: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;
     index?: number;
-  }): Promise<Address[]>;
-  removeTxs(txsFilter: { account: number; index: number }): Promise<void>;
-  removePendingTxs(txsFilter: {
-    account: number;
-    index: number;
-  }): Promise<void>;
+  }): Address[];
+  removeTxs(txsFilter: { account: number; index: number }): void;
+  removePendingTxs(txsFilter: { account: number; index: number }): void;
+  addAddress(key: string, address: string): void;
   export(): Promise<unknown>;
   load(data: unknown): Promise<void>;
   exportSync(): unknown;

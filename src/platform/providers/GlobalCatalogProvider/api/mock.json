@@ -1,0 +1,386 @@
+{
+  "promotedApps": [
+    {
+      "id": "Card",
+      "thumbnailUrl": ""
+    },
+    {
+      "id": "moonpay",
+      "thumbnailUrl": ""
+    },
+    {
+      "id": "paraswap",
+      "thumbnailUrl": ""
+    }
+  ],
+  "orderedCategories": [
+    "trade",
+    "earn",
+    "spend",
+    "nft",
+    "services",
+    "other"
+  ],
+  "appsMetadata": [
+    {
+      "type": "LIVE_APP",
+      "appId": "transak",
+      "platform": "all",
+      "branch": "experimental",
+      "currencies": "*",
+      "tags": [],
+      "categories": []
+    },
+    {
+      "type": "LIVE_APP",
+      "appId": "mercuryo",
+      "platform": "all",
+      "branch": "experimental",
+      "currencies": [
+        "bitcoin",
+        "ethereum",
+        "algorand",
+        "bitcoin cash",
+        "binance coin",
+        "tron",
+        "tether"
+      ],
+      "tags": [],
+      "categories": []
+    },
+    {
+      "appId": "changenow",
+      "type": "LIVE_APP",
+      "platform": "all",
+      "branch": "experimental",
+      "currencies": [
+        "bitcoin",
+        "ethereum"
+      ],
+      "tags": [],
+      "categories": []
+    },
+    {
+      "appId": "alkemi",
+      "type": "LIVE_APP",
+      "platform": "all",
+      "branch": "soon",
+      "currencies": [
+        "ethereum"
+      ],
+      "tags": [],
+      "categories": []
+    },
+    {
+      "appId": "paraswap v5",
+      "type": "LIVE_APP",
+      "platform": "all",
+      "branch": "experimental",
+      "currencies": [
+        "ethereum",
+        "bsc"
+      ],
+      "tags": [],
+      "categories": []
+    },
+    {
+      "appId": "moonpay",
+      "type": "LIVE_APP",
+      "tags": [
+        "buy"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "bitcoin",
+        "bitcoin_cash",
+        "bsc",
+        "digibyte",
+        "dogecoin",
+        "ethereum",
+        "litecoin",
+        "polkadot",
+        "ripple",
+        "stellar",
+        "tron"
+      ]
+    },
+    {
+      "appId": "ramp",
+      "type": "LIVE_APP",
+      "tags": [
+        "buy"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum",
+        "bitcoin",
+        "bsc",
+        "polkadot",
+        "ripple",
+        "litecoin",
+        "polygon",
+        "bitcoin_cash",
+        "stellar",
+        "dogecoin",
+        "tezos",
+        "elrond"
+      ]
+    },
+    {
+      "appId": "paraswap",
+      "type": "LIVE_APP",
+      "tags": [
+        "swap"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum",
+        "bsc"
+      ]
+    },
+    {
+      "appId": "lido",
+      "type": "LIVE_APP",
+      "tags": [
+        "stake"
+      ],
+      "categories": [
+        "earn"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "1inch",
+      "type": "LIVE_APP",
+      "tags": [
+        "swap"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "btcdirect",
+      "type": "LIVE_APP",
+      "tags": [
+        "buy"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "bitcoin",
+        "bitcoin_cash",
+        "ethereum",
+        "litecoin",
+        "ripple"
+      ]
+    },
+    {
+      "appId": "banxa",
+      "type": "LIVE_APP",
+      "tags": [
+        "buy"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "desktop",
+      "branch": "stable",
+      "currencies": [
+        "ethereum",
+        "bitcoin",
+        "litecoin",
+        "ripple",
+        "tether"
+      ]
+    },
+    {
+      "appId": "bitrefill",
+      "type": "LIVE_APP",
+      "tags": [
+        "gift card"
+      ],
+      "categories": [
+        "spend"
+      ],
+      "platform": "desktop",
+      "branch": "stable",
+      "currencies": [
+        "bitcoin",
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "wyre_buy",
+      "type": "LIVE_APP",
+      "tags": [
+        "buy"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum",
+        "bitcoin",
+        "algorand"
+      ]
+    },
+    {
+      "appId": "zerion",
+      "type": "LIVE_APP",
+      "tags": [
+        "portfolio"
+      ],
+      "categories": [
+        "services"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "rainbow",
+      "type": "LIVE_APP",
+      "tags": [
+        "nft"
+      ],
+      "categories": [
+        "nft"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "poap",
+      "type": "LIVE_APP",
+      "tags": [
+        "nft"
+      ],
+      "categories": [
+        "nft"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "aave",
+      "type": "LIVE_APP",
+      "tags": [
+        "lend"
+      ],
+      "categories": [
+        "earn"
+      ],
+      "platform": "all",
+      "branch": "soon",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "compound",
+      "type": "LIVE_APP",
+      "tags": [
+        "lend"
+      ],
+      "categories": [
+        "earn"
+      ],
+      "platform": "all",
+      "branch": "soon",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "deversifi",
+      "type": "LIVE_APP",
+      "tags": [
+        "swap"
+      ],
+      "categories": [
+        "trade"
+      ],
+      "platform": "all",
+      "branch": "soon",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "yearn",
+      "type": "LIVE_APP",
+      "tags": [
+        "lend"
+      ],
+      "categories": [
+        "earn"
+      ],
+      "platform": "all",
+      "branch": "experimental",
+      "currencies": [
+        "ethereum"
+      ]
+    },
+    {
+      "appId": "debug",
+      "type": "LIVE_APP",
+      "tags": [
+        "tools"
+      ],
+      "categories": [
+        "other"
+      ],
+      "platform": "all",
+      "branch": "debug",
+      "currencies": "*"
+    },
+    {
+      "appId": "dummy-live-app",
+      "type": "LIVE_APP",
+      "tags": [
+        "tools"
+      ],
+      "categories": [
+        "other"
+      ],
+      "platform": "all",
+      "branch": "stable",
+      "currencies": "*"
+    }
+  ]
+}

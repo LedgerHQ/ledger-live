@@ -1,0 +1,405 @@
+{
+  "onRamp": [
+    {
+      "type": "LIVE_APP",
+      "appId": "coinify",
+      "name": "Coinify",
+      "paramsMapping": {
+        "accountId": "accountId",
+        "cryptoCurrencyId": "cryptoCurrencyId",
+        "fiatCurrencyId": "fiatCurrencyId",
+        "fiatAmount": "fiatAmount",
+        "cryptoAmount": "cryptoAmount"
+      },
+      "paymentProviders": ["visa", "mastercard", "sepa"],
+      "cryptoCurrencies": [
+        {
+          "id": "bitcoin",
+          "providerId": "btc",
+          "ticker": "BTC"
+        },
+        {
+          "id": "ethereum",
+          "providerId": "eth",
+          "ticker": "ETH"
+        },
+        {
+          "id": "ethereum/erc20/usd__coin",
+          "providerId": "usdc",
+          "ticker": "USDC"
+        },
+        {
+          "id": "bsv",
+          "providerId": "bsv",
+          "ticker": "BSV"
+        },
+        {
+          "id": "bitcoin_cash",
+          "providerId": "bch",
+          "ticker": "BCH"
+        },
+        {
+          "id": "stellar",
+          "providerId": "xlm",
+          "ticker": "XLM"
+        },
+        {
+          "id": "nano",
+          "providerId": "nano",
+          "ticker": "NANO"
+        },
+        {
+          "id": "ethereum/erc20/okb",
+          "providerId": "okb",
+          "ticker": "OKB"
+        },
+        {
+          "id": "qtum",
+          "providerId": "qtum",
+          "ticker": "QTUM"
+        },
+        {
+          "id": "ethereum/erc20/usd_tether__erc20_",
+          "providerId": "usdt",
+          "ticker": "USDT"
+        },
+        {
+          "id": "tron/trc20/usdt",
+          "providerId": "usdttrc20",
+          "ticker": "USDT"
+        },
+        {
+          "id": "litecoin",
+          "providerId": "ltc",
+          "ticker": "LTC"
+        },
+        {
+          "id": "polkadot",
+          "providerId": "dot",
+          "ticker": "DOT"
+        },
+        {
+          "id": "ethereum/erc20/link_chainlink",
+          "providerId": "link",
+          "ticker": "LINK"
+        },
+        {
+          "id": "dogecoin",
+          "providerId": "doge",
+          "ticker": "DOGE"
+        },
+        {
+          "id": "ethereum/erc20/uniswap",
+          "providerId": "uni",
+          "ticker": "UNI"
+        },
+        {
+          "id": "ethereum/erc20/makerdao",
+          "providerId": "mkr",
+          "ticker": "MKR"
+        },
+        {
+          "id": "ethereum/erc20/compound",
+          "providerId": "comp",
+          "ticker": "COMP"
+        },
+        {
+          "id": "bsc",
+          "providerId": "bnbbsc",
+          "ticker": "BNB"
+        },
+        {
+          "id": "polygon",
+          "providerId": "matic",
+          "ticker": "MATIC"
+        },
+        {
+          "id": "ethereum/erc20/shiba_inu",
+          "providerId": "shib",
+          "ticker": "SHIB"
+        },
+        {
+          "id": "ethereum/erc20/aave",
+          "providerId": "aave",
+          "ticker": "AAVE"
+        }
+      ],
+      "fiatCurrencies": [
+        "eur",
+        "gbp",
+        "chf",
+        "dkk",
+        "usd",
+        "cad",
+        "nok",
+        "sek",
+        "aud",
+        "nzd",
+        "ars",
+        "bgn",
+        "brl",
+        "clp",
+        "cop",
+        "czk",
+        "hkd",
+        "hrk",
+        "huf",
+        "idr",
+        "inr",
+        "isk",
+        "jpy",
+        "kes",
+        "myr",
+        "pen",
+        "php",
+        "pln",
+        "ron",
+        "rub",
+        "try",
+        "twd",
+        "vnd",
+        "zar"
+      ]
+    },
+    {
+      "type": "LIVE_APP",
+      "appId": "btcdirect",
+      "name": "BTC Direct",
+      "paramsMapping": {
+        "accountId": "accountId",
+        "cryptoCurrencyId": "cryptoCurrencyId",
+        "fiatCurrencyId": "fiatCurrencyId",
+        "fiatAmount": "fiatAmount",
+        "cryptoAmount": "cryptoAmount"
+      },
+      "paymentProviders": ["visa", "mastercard", "maestro", "paypal", "sepa"],
+      "cryptoCurrencies": [
+        {
+          "id": "bitcoin_cash",
+          "providerId": "bch",
+          "ticker": "BCH"
+        },
+        {
+          "id": "bitcoin",
+          "providerId": "btc",
+          "ticker": "BTC"
+        },
+        {
+          "id": "ethereum",
+          "providerId": "eth",
+          "ticker": "ETH"
+        },
+        {
+          "id": "litecoin",
+          "providerId": "ltc",
+          "ticker": "LTC"
+        },
+        {
+          "id": "ripple",
+          "providerId": "xrp",
+          "ticker": "XRP"
+        },
+        {
+          "id": "ethereum/erc20/usd_tether__erc20_",
+          "providerId": "usdt",
+          "ticker": "USDT"
+        },
+        {
+          "id": "ethereum/erc20/usd__coin",
+          "providerId": "usdc",
+          "ticker": "USDC"
+        }
+      ],
+      "fiatCurrencies": ["eur"]
+    },
+    {
+      "type": "LIVE_APP",
+      "appId": "moonpay",
+      "name": "MoonPay",
+      "paramsMapping": {
+        "accountAddress": "walletAddress",
+        "language": "language",
+        "fiatCurrencyId": "baseCurrencyCode",
+        "cryptoCurrencyId": "defaultCurrencyCode",
+        "primaryColor": "colorCode",
+        "type": "type",
+        "fiatAmount": "baseCurrencyAmount",
+        "cryptoAmount": "quoteCurrencyAmount",
+        "address": "address"
+      },
+      "paymentProviders": ["visa", "mastercard", "sepa"],
+      "cryptoCurrencies": [
+        {
+          "id": "algorand",
+          "providerId": "algo",
+          "ticker": "ALGO"
+        },
+        {
+          "id": "ethereum/erc20/bat",
+          "providerId": "bat",
+          "ticker": "BAT"
+        },
+        {
+          "id": "bitcoin_cash",
+          "providerId": "bch",
+          "ticker": "BCH"
+        },
+        {
+          "id": "bsc",
+          "providerId": "bnb_bsc",
+          "ticker": "BNB"
+        },
+        {
+          "id": "bitcoin",
+          "providerId": "btc",
+          "ticker": "BTC"
+        },
+        {
+          "id": "ethereum/erc20/binance_usd",
+          "providerId": "busd",
+          "ticker": "BUSD"
+        },
+        {
+          "id": "bsc/bep20/binance-peg_busd_token",
+          "providerId": "busd_bsc",
+          "ticker": "BUSD"
+        },
+        {
+          "id": "ethereum/erc20/dai_stablecoin_v2_0",
+          "providerId": "dai",
+          "ticker": "DAI"
+        },
+        {
+          "id": "dogecoin",
+          "providerId": "doge",
+          "ticker": "DOGE"
+        },
+        {
+          "id": "polkadot",
+          "providerId": "dot",
+          "ticker": "DOT"
+        },
+        {
+          "id": "elrond",
+          "providerId": "egld",
+          "ticker": "EGLD"
+        },
+        {
+          "id": "ethereum",
+          "providerId": "eth",
+          "ticker": "ETH"
+        },
+        {
+          "id": "polygon/erc20/wrapped_ether",
+          "providerId": "eth_polygon",
+          "ticker": "WETH"
+        },
+        {
+          "id": "ethereum/erc20/link_chainlink",
+          "providerId": "link",
+          "ticker": "LINK"
+        },
+        {
+          "id": "litecoin",
+          "providerId": "ltc",
+          "ticker": "LTC"
+        },
+        {
+          "id": "polygon",
+          "providerId": "matic_polygon",
+          "ticker": "MATIC"
+        },
+        {
+          "id": "ethereum/erc20/shiba_inu",
+          "providerId": "shib",
+          "ticker": "SHIB"
+        },
+        {
+          "id": "ethereum/erc20/usd__coin",
+          "providerId": "usdc",
+          "ticker": "USDC"
+        },
+        {
+          "id": "usdc_polygon",
+          "providerId": "usdc_polygon",
+          "ticker": "USDC"
+        },
+        {
+          "id": "ethereum/erc20/usd_tether__erc20_",
+          "providerId": "usdt",
+          "ticker": "USDT"
+        },
+        {
+          "id": "stellar",
+          "providerId": "xlm",
+          "ticker": "XLM"
+        },
+        {
+          "id": "tezos",
+          "providerId": "xtz",
+          "ticker": "XTZ"
+        },
+        {
+          "id": "ethereum/erc20/0x_project",
+          "providerId": "zrx",
+          "ticker": "ZRX"
+        }
+      ],
+      "fiatCurrencies": ["eur", "usd"]
+    },
+    {
+      "type": "LIVE_APP",
+      "appId": "wyre_buy",
+      "name": "Wyre",
+      "paramsMapping": {
+        "accountId": "accountId",
+        "cryptoCurrencyId": "cryptoCurrencyId",
+        "fiatCurrencyId": "fiatCurrencyId",
+        "fiatAmount": "fiatAmount",
+        "cryptoAmount": "cryptoAmount"
+      },
+      "paymentProviders": ["visa", "mastercard", "sepa"],
+      "cryptoCurrencies": [
+        {
+          "id": "bitcoin",
+          "providerId": "btc",
+          "ticker": "BTC"
+        },
+        {
+          "id": "ethereum",
+          "providerId": "eth",
+          "ticker": "ETH"
+        },
+        {
+          "id": "polkadot",
+          "providerId": "dot",
+          "ticker": "DOT"
+        }
+      ],
+      "fiatCurrencies": ["eur", "usd"]
+    }
+  ],
+  "offRamp": [
+    {
+      "type": "LIVE_APP",
+      "appId": "coinify",
+      "name": "Coinify",
+      "paramsMapping": {
+        "accountId": "accountId",
+        "cryptoCurrencyId": "cryptoCurrencyId",
+        "fiatCurrencyId": "fiatCurrencyId",
+        "fiatAmount": "fiatAmount",
+        "cryptoAmount": "cryptoAmount"
+      },
+      "paymentProviders": ["sepa"],
+      "cryptoCurrencies": [
+        {
+          "id": "bitcoin",
+          "providerId": "bitcoin",
+          "ticker": "BTC"
+        }
+      ],
+      "fiatCurrencies": ["euro", "usd"]
+    }
+  ]
+}

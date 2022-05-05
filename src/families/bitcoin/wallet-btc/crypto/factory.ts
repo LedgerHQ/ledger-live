@@ -98,6 +98,11 @@ export default function cryptoFactory(currency: Currency) {
       res = new crypto.Bitcoin({ network });
       break;
     }
+    case "decred": {
+      const network = coininfo.decred.main.toBitcoinJS();
+      res = new crypto.Decred({ network });
+      break;
+    }
     default: {
       throw new Error(`Currency ${currency} doesn't exist!`);
     }

@@ -6,7 +6,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getAccountDelegationSync } from "./bakers";
+import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
 
 const maxAccount = 12;
@@ -24,6 +24,10 @@ function expectRevealed(account) {
   );
 }
 
+const tezosUnit = getCryptoCurrencyById("tezos").units[0];
+
+const safeMinimumForDestinationNotCreated = parseCurrencyUnit(tezosUnit, "0.6");
+
 const tezos: AppSpec<Transaction> = {
   name: "Tezos",
   currency: getCryptoCurrencyById("tezos"),
@@ -31,11 +35,10 @@ const tezos: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
   },
+  testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
-      maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("tezos").units[0], "0.1")
-      ),
+      maxSpendable.gt(parseCurrencyUnit(tezosUnit, "0.02")),
       "balance is too low"
     );
   },
@@ -48,6 +51,12 @@ const tezos: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
+        if (
+          sibling.balance.eq(0) &&
+          amount.lt(safeMinimumForDestinationNotCreated)
+        ) {
+          throw new Error("need more funds to send to new address");
+        }
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, amount }],
@@ -62,6 +71,12 @@ const tezos: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
+        if (
+          sibling.balance.eq(0) &&
+          amount.lt(safeMinimumForDestinationNotCreated)
+        ) {
+          throw new Error("need more funds to send to new address");
+        }
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, amount }],
@@ -69,11 +84,21 @@ const tezos: AppSpec<Transaction> = {
       },
     },
     {
-      name: "send max",
+      name: "send max (non delegating)",
       maxRun: 3,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(
+          !isAccountDelegating(account),
+          "account must not be delegating"
+        );
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
+        if (
+          sibling.balance.eq(0) &&
+          maxSpendable.lt(safeMinimumForDestinationNotCreated)
+        ) {
+          throw new Error("need more funds to send to new address");
+        }
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, useAllAmount: true }],
@@ -85,7 +110,10 @@ const tezos: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectUnrevealed(account);
-        const recipient = sample(whitelist);
+        const d = getAccountDelegationSync(account);
+        const recipient = sample(
+          d ? whitelist.filter((w) => w !== d.address) : whitelist
+        );
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, mode: "delegate" }],
@@ -97,7 +125,10 @@ const tezos: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectRevealed(account);
-        const recipient = sample(whitelist);
+        const d = getAccountDelegationSync(account);
+        const recipient = sample(
+          d ? whitelist.filter((w) => w !== d.address) : whitelist
+        );
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, mode: "delegate" }],

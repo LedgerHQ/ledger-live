@@ -299,10 +299,6 @@ export type AppSearch = {
   appVersion?: string;
 };
 
-function semverSatisfies(a, b) {
-  return semver.satisfies(a, b) || semver.satisfies(semver.coerce(a), b);
-}
-
 export function appCandidatesMatches(
   appCandidate: AppCandidate,
   search: AppSearch
@@ -316,12 +312,12 @@ export function appCandidatesMatches(
     ((!searchFirmware && !appCandidate.firmware.includes("rc")) ||
       appCandidate.firmware === searchFirmware ||
       (searchFirmware &&
-        semverSatisfies(
+        semver.satisfies(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
     (!search.appVersion ||
-      semverSatisfies(appCandidate.appVersion, search.appVersion))
+      semver.satisfies(appCandidate.appVersion, search.appVersion))
   );
 }
 export const findAppCandidate = (
@@ -412,7 +408,13 @@ function parseAppSearch(query: string):
   };
 }
 
-async function openImplicitSpeculos(query: string) {
+export async function createImplicitSpeculos(query: string): Promise<{
+  device: {
+    transport: SpeculosTransport;
+    id: string;
+  };
+  appCandidate: AppCandidate;
+} | null> {
   const coinapps = getEnv("COINAPPS");
   invariant(coinapps, "COINAPPS folder is missing!");
   const seed = getEnv("SEED");
@@ -438,16 +440,23 @@ async function openImplicitSpeculos(query: string) {
     "speculos",
     "using app " + formatAppCandidate(appCandidate as AppCandidate)
   );
-  const device = appCandidate
-    ? await createSpeculosDevice({
-        ...appCandidate,
-        coinapps,
-        appName,
-        dependency,
-        seed,
-      })
+  return appCandidate
+    ? {
+        device: await createSpeculosDevice({
+          ...appCandidate,
+          coinapps,
+          appName,
+          dependency,
+          seed,
+        }),
+        appCandidate,
+      }
     : null;
-  return device?.transport;
+}
+
+async function openImplicitSpeculos(query: string) {
+  const r = await createImplicitSpeculos(query);
+  return r?.device.transport;
 }
 
 registerTransportModule({

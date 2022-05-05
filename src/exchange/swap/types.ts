@@ -130,20 +130,7 @@ export type SwapRequestEvent =
       type: "init-swap-result";
       initSwapResult: InitSwapResult;
     };
-export type CompleteExchangeRequestEvent =
-  | { type: "complete-exchange" }
-  | {
-      type: "complete-exchange-requested";
-      estimatedFees: BigNumber;
-    }
-  | {
-      type: "complete-exchange-error";
-      error: Error;
-    }
-  | {
-      type: "complete-exchange-result";
-      completeExchangeResult: Transaction;
-    };
+
 export type SwapHistorySection = {
   day: Date;
   data: MappedSwapOperation[];

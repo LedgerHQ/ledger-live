@@ -7,14 +7,17 @@ export type OperationType =
   | "NONE"
   | "CREATE"
   | "REVEAL"
+  // COSMOS
   | "DELEGATE"
   | "UNDELEGATE"
   | "REDELEGATE"
   | "REWARD"
-  | "FEES" // TRON
+  // TRON
+  | "FEES"
   | "FREEZE"
   | "UNFREEZE"
-  | "VOTE" // POLKADOT
+  // POLKADOT
+  | "VOTE"
   | "REWARD_PAYOUT"
   | "BOND"
   | "UNBOND"
@@ -22,13 +25,15 @@ export type OperationType =
   | "SET_CONTROLLER"
   | "SLASH"
   | "NOMINATE"
-  | "CHILL" // COMPOUND TYPE OPERATIONS
+  | "CHILL"
+  // COMPOUND TYPE OPERATIONS
   | "SUPPLY"
   | "REDEEM"
   | "APPROVE"
+  // ALGORAND
   | "OPT_IN"
   | "OPT_OUT"
-  | "CLOSE_ACCOUNT"
+  // NFT
   | "NFT_IN"
   | "NFT_OUT";
 export type Operation = {

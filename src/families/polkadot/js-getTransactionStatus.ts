@@ -58,7 +58,9 @@ const getSendTransactionStatus = async (
   } else if (a.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress("");
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   const estimatedFees = t.fees || new BigNumber(0);
@@ -181,7 +183,9 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
         if (!t.recipient) {
           errors.recipient = new RecipientRequired("");
         } else if (!isValidAddress(t.recipient)) {
-          errors.recipient = new InvalidAddress("");
+          errors.recipient = new InvalidAddress("", {
+            currencyName: a.currency.name,
+          });
         } else if (await isControllerAddress(t.recipient)) {
           errors.recipient = new PolkadotUnauthorizedOperation(
             "Recipient is already a controller"

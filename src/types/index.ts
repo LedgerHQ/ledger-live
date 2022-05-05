@@ -10,3 +10,4 @@ export * from "../generated/types";
 export * from "./bridge";
 export * from "./pagination";
 export * from "./nft";
+export * from "../featureFlags/types";

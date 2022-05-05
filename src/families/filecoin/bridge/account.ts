@@ -2,7 +2,6 @@ import {
   AmountRequired,
   FeeNotLoaded,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -67,12 +66,12 @@ const getTransactionStatus = async (
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
+  const { balance } = a;
   const { address } = getAddress(a);
-  const { recipient, amount, gasPremium, gasFeeCap, gasLimit } = t;
+  const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit } = t;
+  let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (address === recipient)
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   else if (!validateAddress(recipient).isValid)
     errors.recipient = new InvalidAddress();
   else if (!validateAddress(address).isValid)
@@ -84,8 +83,8 @@ const getTransactionStatus = async (
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-  // Add the estimated fees to the tx amount
-  const totalSpent = amount.plus(estimatedFees);
+  const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
+  amount = useAllAmount ? balance.minus(estimatedFees) : amount;
 
   if (amount.lte(0)) errors.amount = new AmountRequired();
   if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
@@ -174,14 +173,16 @@ const prepareTransaction = async (
   return t;
 };
 
-const sync = makeSync(getAccountShape);
+const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation },
+  signedOperation: { operation, signature },
 }) => {
   // log("debug", "[broadcast] start fn");
 
-  const resp = await broadcastTx(operation.extra.reqToBroadcast);
+  const tx = getTxToBroadcast(operation, signature);
+
+  const resp = await broadcastTx(tx);
   const { hash } = resp;
 
   const result = patchOperationWithHash(operation, hash);
@@ -202,8 +203,18 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const { recipient, amount, gasFeeCap, gasLimit } = transaction;
-          const { id: accountId } = account;
+          const {
+            recipient,
+            method,
+            version,
+            nonce,
+            gasFeeCap,
+            gasLimit,
+            gasPremium,
+            useAllAmount,
+          } = transaction;
+          let { amount } = transaction;
+          const { id: accountId, balance } = account;
           const { address, derivationPath } = getAddress(account);
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
@@ -220,6 +231,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             o.next({
               type: "device-signature-requested",
             });
+
+            const fee = calculateEstimatedFees(gasFeeCap, gasLimit);
+            if (useAllAmount) amount = balance.minus(fee);
+
+            transaction = { ...transaction, amount };
 
             // Serialize tx
             const serializedTx = toCBOR(
@@ -246,20 +262,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               type: "device-signature-granted",
             });
 
-            const fee = calculateEstimatedFees(gasFeeCap, gasLimit);
-            const value = amount.plus(fee);
-
             // resolved at broadcast time
             const txHash = "";
 
             // build signature on the correct format
             const signature = `${result.signature_compact.toString("base64")}`;
-
-            const reqToBroadcast = getTxToBroadcast(
-              account,
-              transaction,
-              signature
-            );
 
             const operation: Operation = {
               id: `${accountId}-${txHash}-OUT`,
@@ -268,13 +275,19 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               senders: [address],
               recipients: [recipient],
               accountId,
-              value,
+              value: amount,
               fee,
               blockHash: null,
               blockHeight: null,
               date: new Date(),
               extra: {
-                reqToBroadcast,
+                gasLimit,
+                gasFeeCap,
+                gasPremium,
+                method,
+                version,
+                nonce,
+                signatureType: 1,
               },
             };
 

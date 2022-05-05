@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "./types";
+import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
@@ -8,7 +8,14 @@ import type { Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
-  { mode, subAccountId, amount, recipient, fees, useAllAmount }: Transaction,
+  {
+    mode,
+    subAccountId,
+    amount,
+    recipient,
+    fees,
+    useAllAmount,
+  }: AlgorandTransaction,
   mainAccount: Account
 ): string => {
   const account =
@@ -41,7 +48,9 @@ export const formatTransaction = (
     }`;
 };
 
-const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
+const fromTransactionRaw = (
+  tr: AlgorandTransactionRaw
+): AlgorandTransaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,
@@ -53,7 +62,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   };
 };
 
-const toTransactionRaw = (t: Transaction): TransactionRaw => {
+const toTransactionRaw = (t: AlgorandTransaction): AlgorandTransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
     ...common,

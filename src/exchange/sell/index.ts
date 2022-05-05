@@ -1,6 +1,6 @@
 import type { ExchangeProviderNameAndSignature } from "../";
 
-const sellProviders: Record<
+export const sellProviders: Record<
   string,
   {
     nameAndPubkey: Buffer;

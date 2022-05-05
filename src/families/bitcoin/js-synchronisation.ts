@@ -62,7 +62,6 @@ const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
     value: new BigNumber(utxo.value),
     rbf: utxo.rbf,
     isChange: false, // wallet-btc limitation: doesn't provide it
-    path: "",
   };
 };
 
@@ -91,16 +90,16 @@ const mapTxToOperations = (
   tx: TX,
   currencyId: string,
   accountId: string,
-  accountAddresses: string[],
-  changeAddresses: string[]
+  accountAddresses: Set<string>,
+  changeAddresses: Set<string>
 ): $Shape<Operation[]> => {
   const operations: Operation[] = [];
-  const hash = tx.hash;
+  const txId = tx.id;
   const fee = new BigNumber(tx.fees);
   const blockHeight = tx.block?.height;
   const blockHash = tx.block?.hash;
   const date = new Date(tx.block?.time || tx.received_at);
-  const senders: string[] = [];
+  const senders = new Set<string>();
   const recipients: string[] = [];
   let type: OperationType = "OUT";
   let value = new BigNumber(0);
@@ -111,12 +110,12 @@ const mapTxToOperations = (
 
   for (const input of tx.inputs) {
     if (input.address) {
-      senders.push(
+      senders.add(
         syncReplaceAddress ? syncReplaceAddress(input.address) : input.address
       );
 
       if (input.value) {
-        if (accountAddresses.includes(input.address)) {
+        if (accountAddresses.has(input.address)) {
           // This address is part of the account
           value = value.plus(input.value);
           accountInputs.push(input);
@@ -137,11 +136,12 @@ const mapTxToOperations = (
 
   for (const output of tx.outputs) {
     if (output.address) {
-      if (!accountAddresses.includes(output.address)) {
+      if (!accountAddresses.has(output.address)) {
         // The output doesn't belong to this account
         if (
-          tx.outputs.length === 1 || // The transaction has only 1 output
-          output.output_index < changeOutputIndex // The output isn't the change output
+          accountInputs.length > 0 && // It's a SEND operation
+          (tx.outputs.length === 1 || // The transaction has only 1 output
+            output.output_index < changeOutputIndex) // The output isn't the change output
         ) {
           recipients.push(
             syncReplaceAddress
@@ -153,7 +153,7 @@ const mapTxToOperations = (
         // The output belongs to this account
         accountOutputs.push(output);
 
-        if (!changeAddresses.includes(output.address)) {
+        if (!changeAddresses.has(output.address)) {
           // The output isn't a change output of this account
           recipients.push(
             syncReplaceAddress
@@ -182,19 +182,19 @@ const mapTxToOperations = (
   if (accountInputs.length > 0) {
     // It's a SEND operation
     for (const output of accountOutputs) {
-      if (changeAddresses.includes(output.address)) {
+      if (changeAddresses.has(output.address)) {
         value = value.minus(output.value);
       }
     }
 
     type = "OUT";
     operations.push({
-      id: encodeOperationId(accountId, hash, type),
-      hash,
+      id: encodeOperationId(accountId, txId, type),
+      hash: txId,
       type,
       value,
       fee,
-      senders,
+      senders: Array.from(senders),
       recipients,
       blockHeight,
       blockHash,
@@ -213,7 +213,7 @@ const mapTxToOperations = (
     let finalAmount = new BigNumber(0);
 
     for (const output of accountOutputs) {
-      if (!filterChangeAddresses || !changeAddresses.includes(output.address)) {
+      if (!filterChangeAddresses || !changeAddresses.has(output.address)) {
         finalAmount = finalAmount.plus(output.value);
         accountOutputCount += 1;
       }
@@ -223,12 +223,12 @@ const mapTxToOperations = (
       value = finalAmount;
       type = "IN";
       operations.push({
-        id: encodeOperationId(accountId, hash, type),
-        hash,
+        id: encodeOperationId(accountId, txId, type),
+        hash: txId,
         type,
         value,
         fee,
-        senders,
+        senders: Array.from(senders),
         recipients,
         blockHeight,
         blockHash,
@@ -323,17 +323,18 @@ const getAccountShape: GetAccountShape = async (info) => {
   const { txs: transactions } = await wallet.getAccountTransactions(
     walletAccount
   );
+
+  const accountAddresses: Set<string> = new Set<string>();
   const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
-  const accountAddresses = accountAddressesWithInfo
-    ? accountAddressesWithInfo.map((a) => a.address)
-    : [];
+  accountAddressesWithInfo.forEach((a) => accountAddresses.add(a.address));
+
+  const changeAddresses: Set<string> = new Set<string>();
   const changeAddressesWithInfo =
     await walletAccount.xpub.storage.getUniquesAddresses({
       account: 1,
     });
-  const changeAddresses = changeAddressesWithInfo
-    ? changeAddressesWithInfo.map((a) => a.address)
-    : [];
+  changeAddressesWithInfo.forEach((a) => changeAddresses.add(a.address));
+
   const newOperations = transactions
     ?.map((tx) =>
       mapTxToOperations(
@@ -406,5 +407,8 @@ const getAddressFn = (transport) => {
   return (opts) => getAddressWithBtcInstance(transport, btc, opts);
 };
 
-export const scanAccounts = makeScanAccounts(getAccountShape, getAddressFn);
-export const sync = makeSync(getAccountShape, postSync);
+export const scanAccounts = makeScanAccounts({
+  getAccountShape,
+  getAddressFn,
+});
+export const sync = makeSync({ getAccountShape, postSync });

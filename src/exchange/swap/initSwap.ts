@@ -23,10 +23,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import { getProviderNameAndSignature, getSwapAPIBaseURL } from "./";
 import { getCurrencyExchangeConfig } from "../";
 import { getEnv } from "../../env";
-import {
-  TRANSACTION_RATES,
-  TRANSACTION_TYPES,
-} from "../hw-app-exchange/Exchange";
+import { RateTypes, ExchangeTypes } from "../hw-app-exchange/Exchange";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
@@ -48,9 +45,9 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
       await withDevicePromise(deviceId, async (transport) => {
         const ratesFlag =
           exchangeRate.tradeMethod === "fixed"
-            ? TRANSACTION_RATES.FIXED
-            : TRANSACTION_RATES.FLOATING;
-        const swap = new Exchange(transport, TRANSACTION_TYPES.SWAP, ratesFlag);
+            ? RateTypes.Fixed
+            : RateTypes.Floating;
+        const swap = new Exchange(transport, ExchangeTypes.Swap, ratesFlag);
         // NB this id is crucial to prevent replay attacks, if it changes
         // we need to start the flow again.
         const deviceTransactionId = await swap.startNewTransaction();

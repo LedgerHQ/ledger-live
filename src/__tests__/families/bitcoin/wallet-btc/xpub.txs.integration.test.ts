@@ -175,8 +175,8 @@ describe.skip("testing xpub legacy transactions", () => {
     expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
       100000000
     );
-    let pendings0 = await xpubs[0].xpub.storage.getLastTx({ confirmed: false });
-    let pendings1 = await xpubs[1].xpub.storage.getLastTx({ confirmed: false });
+    let pendings0 = await xpubs[0].xpub.storage.getLastUnconfirmedTx();
+    let pendings1 = await xpubs[1].xpub.storage.getLastUnconfirmedTx();
     expect(pendings0).toBeTruthy();
     expect(pendings1).toBeTruthy();
 
@@ -200,8 +200,8 @@ describe.skip("testing xpub legacy transactions", () => {
     expect((await xpubs[1].xpub.getXpubBalance()).toNumber()).toEqual(
       100000000
     );
-    pendings0 = await xpubs[0].xpub.storage.getLastTx({ confirmed: false });
-    pendings1 = await xpubs[1].xpub.storage.getLastTx({ confirmed: false });
+    pendings0 = await xpubs[0].xpub.storage.getLastUnconfirmedTx();
+    pendings1 = await xpubs[1].xpub.storage.getLastUnconfirmedTx();
     expect(pendings0).toBeFalsy();
     expect(pendings1).toBeFalsy();
   }, 150000);

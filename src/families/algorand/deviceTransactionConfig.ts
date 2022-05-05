@@ -3,7 +3,7 @@ import type {
   TransactionStatus,
   TokenCurrency,
 } from "../../types";
-import type { Transaction } from "./types";
+import type { AlgorandTransaction } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit, findTokenById } from "../../currencies";
@@ -68,7 +68,7 @@ function getDeviceTransactionConfig({
   status,
 }: {
   account: AccountLike;
-  transaction: Transaction;
+  transaction: AlgorandTransaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const { mode, assetId } = transaction;
@@ -119,20 +119,6 @@ function getDeviceTransactionConfig({
         label: "Asset amt",
         value: "0",
       });
-      break;
-
-    case "optOut":
-      fields.push({
-        type: "text",
-        label: "Type",
-        value: "Opt out",
-      });
-      if (assetId)
-        fields.push({
-          type: "text",
-          label: "Asset id",
-          value: assetId,
-        });
       break;
 
     default:
