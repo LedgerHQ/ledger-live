@@ -13,13 +13,9 @@
 
 ## About
 
-`ledger-live` is a **monorepository** created to centralize all the javascript code related to the [Leger Live](https://www.ledger.com/ledger-live) applications in one place.
+`ledger-live` is a **monorepository** whose purpose is to centralize all the JavaScript code related to the [**Leger Live**](https://www.ledger.com/ledger-live) applications in one place.
 
-### Tools
-
-We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [remote caching](https://turborepo.org/docs/features/remote-caching).
-
-For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
+[**Leger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
 ## Installation
 
@@ -45,9 +41,15 @@ pnpm i
 
 **Important: All the commands should be run at the root of the monorepo.**
 
+### Tools
+
+We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turborepo.org/docs/features/remote-caching).
+
+For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
+
 ### Root scripts
 
-The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file will use `turborepo` under the hood and automatically perform needed tasks before running the action.
+The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/package.json) file will use _turborepo_ under the hood and automatically perform needed tasks before running the action.
 
 ```sh
 # This command will first build all the local dependencies needed in the right order.
@@ -72,11 +74,11 @@ pnpm desktop test
 
 ### Scoping
 
-You can scope any pnpm or turborepo based script by using the `--filter` flag.
+You can scope any _pnpm_ or _turborepo_ based script by using the `--filter` flag.
 
 **This is a very powerful feature that you should look into if you are a frequent contributor.**
 
-Please check out the [pnpm](https://pnpm.io/filtering) or [turborepo](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit pnpm being a bit more powerful).
+Please check out the [_pnpm_](https://pnpm.io/filtering) or [_turborepo_](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit _pnpm_ being a bit more powerful).
 
 Here are some examples:
 

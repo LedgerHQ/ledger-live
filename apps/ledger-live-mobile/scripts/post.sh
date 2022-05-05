@@ -4,8 +4,9 @@ cd $(dirname $0)/..
 
 ./scripts/sync-families-dispatch.sh
 
-patch -N -i scripts/patches/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
-patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
+# See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
+# patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
+patch -N -i scripts/patches/RNFastCrypto.h.patch node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
 
 rm -f 'third-party/glog-0.3.5/test-driver'
 
