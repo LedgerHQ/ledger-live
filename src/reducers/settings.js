@@ -83,7 +83,7 @@ export type SettingsState = {
   hasAvailableUpdate: boolean,
   theme: Theme,
   osTheme: ?string,
-  carouselVisibility: any,
+  carouselVisibility: number | { [slideName: string]: boolean }, // number is the legacy type from LLM V2
   discreetMode: boolean,
   language: string,
   languageIsSetByUser: boolean,
@@ -120,6 +120,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  // $FlowFixMe
   carouselVisibility: Object.fromEntries(
     SLIDES.map(slide => [slide.name, true]),
   ),
@@ -511,8 +512,19 @@ export const dismissedBannersSelector = (state: State) =>
 export const hasAvailableUpdateSelector = (state: State) =>
   state.settings.hasAvailableUpdate;
 
-export const carouselVisibilitySelector = (state: State) =>
-  state.settings.carouselVisibility;
+export const carouselVisibilitySelector = (state: State) => {
+  const settingValue = state.settings.carouselVisibility;
+  if (typeof settingValue === "number") {
+    /**
+     * Ensure correct behavior when using the legacy setting value from LLM v2:
+     * We show all the slides as they are different from the ones in V2.
+     * Users will then be able to hide them one by one if they want.
+     */
+    // $FlowFixMe
+    return Object.fromEntries(SLIDES.map(slide => [slide.name, true]));
+  }
+  return settingValue;
+};
 
 export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
