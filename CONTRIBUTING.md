@@ -7,7 +7,8 @@ to follow to get your code merged.
 
 ## Disclaimer
 
-Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are only accepting bugfixes. There is a good chance that we will reject feature based PRs based on the fact that they do not fit our roadmap or our long-term goals.
+Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are only accepting bugfixes for the moment.
+There is a good chance that we will reject feature based PRs based on the fact that they do not fit our roadmap or our long-term goals.
 
 ## Guidelines
 
@@ -20,10 +21,10 @@ Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are o
 3. Follow additional installation steps depending on which package you want to contribute to.
 4. Make your changes.
 5. If you’ve fixed a bug or added code that should be tested, add tests!
-6. Cleanup your branch. (make atomic commits, squash tiny commits, prevent unnecessary merge commits…)
+6. Cleanup your branch - unless it contains merge commits (perform atomic commits, squash tiny commits…).
 7. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
 8. Make sure the code passes unit and end to end tests (`pnpm test`).
-9. Add an entry to the changelog. (`pnpm changelog`)
+9. Add an entry to the changelog (`pnpm changelog`).
 10. Profit!
 
 ### Git Conventions
@@ -55,12 +56,14 @@ Following the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 #### Rebase & Merge strategies
 
-The rule of thumb is to **always prefer rebasing** as long as your branch does not contain merge commits.
+The rule of thumb is to **always favour rebasing** as long as your branch does not contain merge commits.
 
 For instance:
 
 - bugfix branches that are small and self-contained should always get rebased on top of develop
 - feature branches that have merge commit from other branches (sub-features) should merge their target into them to be kept up to date
+
+**⚠️ Important: do not rebase a branch that is waiting for translations from a third party service.**
 
 ### Pull Request Conventions
 
