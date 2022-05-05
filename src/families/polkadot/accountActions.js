@@ -10,9 +10,11 @@ import {
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
+  isStash,
 } from "@ledgerhq/live-common/lib/families/polkadot/logic";
 import { getCurrentPolkadotPreloadData } from "@ledgerhq/live-common/lib/families/polkadot/preload";
 
+import { Icons } from "@ledgerhq/native-ui";
 import BondIcon from "../../icons/LinkIcon";
 import UnbondIcon from "../../icons/Undelegate";
 import WithdrawUnbondedIcon from "../../icons/Coins";
@@ -51,11 +53,34 @@ const getActions = ({ account }: { account: Account }) => {
   const withdrawEnabled =
     !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
 
+  const earnRewardsEnabled =
+    !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
+
   if (hasExternalController(account) || hasExternalStash(account)) {
     return null;
   }
 
   return [
+    {
+      disabled: !(earnRewardsEnabled || nominationEnabled),
+      navigationParams: isStash(account)
+        ? [
+            NavigatorName.PolkadotNominateFlow,
+            {
+              screen: ScreenName.PolkadotNominateSelectValidators,
+              params: { accountId },
+            },
+          ]
+        : [
+            NavigatorName.PolkadotBondFlow,
+            {
+              screen: ScreenName.PolkadotBondStarted,
+              params: { accountId },
+            },
+          ],
+      label: <Trans i18nKey="account.stake" />,
+      Icon: Icons.ClaimRewardsMedium,
+    },
     {
       disabled: !bondingEnabled,
       navigationParams: [
