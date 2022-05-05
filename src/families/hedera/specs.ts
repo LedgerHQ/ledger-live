@@ -6,8 +6,6 @@ import type { AppSpec } from "../../bot/types";
 import type { Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
-import BigNumber from "bignumber.js";
-import { estimatedFeeSafetyRate } from './utils';
 
 const currency = getCryptoCurrencyById("hedera");
 
@@ -36,6 +34,9 @@ const hedera: AppSpec<Transaction> = {
     appVersion: "1.0.8",
   },
   currency,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(0), "Balance is too low");
+  },
   mutations: [
     {
       name: "Send ~50%",
@@ -78,11 +79,12 @@ const hedera: AppSpec<Transaction> = {
         };
       },
       test: ({ accountBeforeTransaction, account, operation, transaction }) => {
-
         const accountBalanceAfterTx = account.balance.toNumber();
 
         // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction
-        const amount = accountBeforeTransaction.balance.minus(transaction.amount.plus(operation.fee)).toNumber();
+        const amount = accountBeforeTransaction.balance
+          .minus(transaction.amount.plus(operation.fee))
+          .toNumber();
 
         expect(accountBalanceAfterTx).toBe(amount);
       },
