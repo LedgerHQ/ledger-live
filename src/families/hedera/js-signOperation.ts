@@ -74,7 +74,6 @@ async function buildOptimisticOperation({
   account: Account;
   transaction: Transaction;
 }): Promise<Operation> {
-
   const operation: Operation = {
     id: `${account.id}--OUT`,
     hash: "",

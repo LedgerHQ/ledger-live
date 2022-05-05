@@ -19,11 +19,10 @@ export async function calculateAmount({
   amount: BigNumber;
   totalSpent: BigNumber;
 }> {
-
   const amount =
-    transaction.useAllAmount === true ?
-      await estimateMaxSpendable({ account }) :
-      transaction.amount;
+    transaction.useAllAmount === true
+      ? await estimateMaxSpendable({ account })
+      : transaction.amount;
 
   return {
     amount,
