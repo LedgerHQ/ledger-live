@@ -139,13 +139,6 @@ async function init() {
 
     events({ store });
 
-    try {
-      const libcoreVersion = await command("libcoreGetVersion")().toPromise();
-      logger.log("libcore", libcoreVersion);
-    } catch (error) {
-      logger.error(error);
-    }
-
     window.addEventListener("keydown", (e: SyntheticKeyboardEvent<any>) => {
       if (e.which === TAB_KEY) {
         if (!isGlobalTabEnabled()) enableGlobalTab();
