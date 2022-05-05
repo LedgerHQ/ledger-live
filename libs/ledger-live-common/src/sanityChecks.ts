@@ -23,7 +23,7 @@ export function checkLibs(
       |  ()  |
       |______|
 
-${pkg} NPM package dup detected! You must \`yarn list ${pkg}\` and dedup with yarn or yarn-deduplicate.
+${pkg} NPM package dup detected! You must \`pnpm why -r ${pkg}\` and update the versions accordingly.
 
 `);
       throw new Error("duplicated " + pkg + " library");
