@@ -171,7 +171,15 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
+    return renderConfirmSwap({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      provider:
+        (request && request.exchangeRate && request.exchangeRate.provider) ||
+        undefined,
+    });
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {

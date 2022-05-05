@@ -26,6 +26,7 @@ import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -207,8 +208,10 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  provider,
 }: RawProps & {
   device: Device;
+  provider?: TermsProviders;
 }) {
   return (
     <Wrapper width="100%">
@@ -224,6 +227,7 @@ export function renderConfirmSwap({
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+      <TermsFooter provider={provider} />
     </Wrapper>
   );
 }
