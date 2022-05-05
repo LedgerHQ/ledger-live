@@ -128,6 +128,16 @@ export const showToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
+export const hideNftCollection = (collectionId: string) => ({
+  type: "HIDE_NFT_COLLECTION",
+  payload: collectionId,
+});
+
+export const unhideNftCollection = (collectionId: string) => ({
+  type: "UNHIDE_NFT_COLLECTION",
+  payload: collectionId,
+});
+
 export const dismissBanner = (bannerId: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
   payload: bannerId,

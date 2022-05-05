@@ -1,11 +1,18 @@
-import React, { memo } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { useNftCollectionMetadata } from "@ledgerhq/live-common/lib/nft";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
-import { ProtoNFT, NFTMetadata } from "@ledgerhq/live-common/lib/types";
+import {
+  ProtoNFT,
+  NFTMetadata,
+  Account,
+} from "@ledgerhq/live-common/lib/types";
+import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
 import NftCard from "../../../components/Nft/NftCard";
+import Touchable from "../../../components/Touchable";
 import Skeleton from "../../../components/Skeleton";
 import LText from "../../../components/LText";
+import NftCollectionOptionsMenu from "../../../components/Nft/NftCollectionOptionsMenu";
 
 const renderItem = ({ item, index }: { item: ProtoNFT; index: number }) => (
   <NftCard
@@ -17,16 +24,28 @@ const renderItem = ({ item, index }: { item: ProtoNFT; index: number }) => (
 
 const NftCollectionWithNameList = ({
   collection,
+  account,
   contentContainerStyle,
   status,
   metadata,
 }: {
+  account: Account;
   collection: ProtoNFT[];
   contentContainerStyle?: Object;
   status: NFTResource["status"];
   metadata?: NFTMetadata;
 }) => {
   const nft = collection?.[0] || {};
+  const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
+
+  const onOpenCollectionMenu = useCallback(
+    () => setIsCollectionMenuOpen(true),
+    [],
+  );
+  const onCloseCollectionMenu = useCallback(
+    () => setIsCollectionMenuOpen(false),
+    [],
+  );
 
   return (
     <SafeAreaView style={contentContainerStyle}>
@@ -44,6 +63,9 @@ const NftCollectionWithNameList = ({
             {metadata?.tokenName || nft?.contract}
           </LText>
         </Skeleton>
+        <Touchable event="ShowNftCollectionMenu" onPress={onOpenCollectionMenu}>
+          <OthersMedium size={24} color="neutral.c100" />
+        </Touchable>
       </View>
       <FlatList
         data={collection}
@@ -51,6 +73,13 @@ const NftCollectionWithNameList = ({
         scrollEnabled={false}
         numColumns={2}
         renderItem={renderItem}
+      />
+
+      <NftCollectionOptionsMenu
+        isOpen={isCollectionMenuOpen}
+        collection={collection}
+        onClose={onCloseCollectionMenu}
+        account={account}
       />
     </SafeAreaView>
   );
@@ -62,11 +91,13 @@ const NftCollectionWithNameMemo = memo(NftCollectionWithNameList);
 type Props = {
   collection: ProtoNFT[];
   contentContainerStyle?: Object;
+  account: Account;
 };
 
 const NftCollectionWithName = ({
   collection,
   contentContainerStyle,
+  account,
 }: Props) => {
   const nft: ProtoNFT | null = collection[0];
   const { status, metadata } = useNftCollectionMetadata(
@@ -78,6 +109,7 @@ const NftCollectionWithName = ({
     <NftCollectionWithNameMemo
       collection={collection}
       contentContainerStyle={contentContainerStyle}
+      account={account}
       status={status}
       metadata={metadata}
     />
@@ -89,6 +121,9 @@ const nftKeyExtractor = (nft: ProtoNFT) => nft?.id;
 const styles = StyleSheet.create({
   title: {
     paddingBottom: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   tokenNameSkeleton: {
     height: 12,

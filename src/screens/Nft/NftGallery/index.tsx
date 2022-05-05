@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Platform,
-  ListRenderItemInfo,
+  ListRenderItem,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -22,20 +22,12 @@ import NftCollectionWithName from "./NftCollectionWithName";
 import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
+import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
 
 const CollectionsList = Animated.createAnimatedComponent(FlatList);
-
-const renderItem = ({ item: collection }: ListRenderItemInfo<ProtoNFT[]>) => (
-  <View style={styles.collectionContainer}>
-    <NftCollectionWithName
-      key={collection?.[0]?.contract}
-      collection={collection}
-    />
-  </View>
-);
 
 const NftGallery = () => {
   const navigation = useNavigation();
@@ -45,6 +37,8 @@ const NftGallery = () => {
   const account = useSelector(state =>
     accountSelector(state, { accountId: params.accountId }),
   );
+
+  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
   const scrollY = useRef(new Value(0)).current;
   const onScroll = event(
@@ -61,12 +55,31 @@ const NftGallery = () => {
   const [collectionsCount, setCollectionsCount] = useState(
     MAX_COLLECTIONS_FIRST_RENDER,
   );
-  const collections = useMemo(() => nftsByCollections(account.nfts), [
-    account.nfts,
-  ]);
+  const collections = useMemo(
+    () =>
+      Object.entries(nftsByCollections(account.nfts)).filter(
+        ([contract]) =>
+          !hiddenNftCollections.includes(`${account.id}|${contract}`),
+      ),
+    [account.id, account.nfts, hiddenNftCollections],
+  ) as [string, ProtoNFT[]][];
+
   const collectionsSlice: Array<ProtoNFT[]> = useMemo(
-    () => Object.values(collections).slice(0, collectionsCount),
+    () =>
+      collections
+        .slice(0, collectionsCount)
+        .map(([, collection]) => collection),
     [collections, collectionsCount],
+  );
+
+  const renderItem: ListRenderItem<ProtoNFT[]> = ({ item: collection }) => (
+    <View style={styles.collectionContainer}>
+      <NftCollectionWithName
+        key={collection?.[0]?.contract}
+        collection={collection}
+        account={account}
+      />
+    </View>
   );
 
   const onEndReached = useCallback(() => {

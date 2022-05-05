@@ -13,6 +13,8 @@ import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 
 import { Box } from "@ledgerhq/native-ui";
+import { isNFTActive } from "@ledgerhq/live-common/lib/nft";
+
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -168,7 +170,7 @@ export function getListHeaderComponents({
             </Box>,
           ]
         : []),
-      ...(!empty && account.type === "Account" && account.nfts?.length
+      ...(!empty && account.type === "Account" && isNFTActive(account.currency)
         ? [<NftCollectionsList account={account} />]
         : []),
       ...(compoundSummary &&

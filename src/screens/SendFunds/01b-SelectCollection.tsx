@@ -14,8 +14,10 @@ import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/lib/nft";
+import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftImage from "../../components/Nft/NftImage";
 import Skeleton from "../../components/Skeleton";
@@ -88,22 +90,33 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   const { account } = params;
   const { colors } = useTheme();
 
-  const [collectionCount, setCollectionCount] = useState(
+  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
+  const [collectionsCount, setCollectionsCount] = useState(
     MAX_COLLECTIONS_FIRST_RENDER,
   );
-  const collections = useMemo(() => nftsByCollections(account.nfts), [
-    account.nfts,
-  ]);
-  const collectionsSlice = useMemo(
-    () => Object.values(collections).slice(0, collectionCount),
-    [collections, collectionCount],
+  const collections = useMemo(
+    () =>
+      Object.entries(nftsByCollections(account.nfts)).filter(
+        ([contract]) =>
+          !hiddenNftCollections.includes(`${account.id}|${contract}`),
+      ),
+    [account.id, account.nfts, hiddenNftCollections],
+  ) as [string, ProtoNFT[]][];
+
+  const collectionsSlice: Array<ProtoNFT[]> = useMemo(
+    () =>
+      collections
+        .slice(0, collectionsCount)
+        .map(([, collection]) => collection),
+    [collections, collectionsCount],
   );
   const onEndReached = useCallback(
     () =>
-      setCollectionCount(
-        collectionCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED,
+      setCollectionsCount(
+        collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED,
       ),
-    [collectionCount, setCollectionCount],
+    [collectionsCount, setCollectionsCount],
   );
 
   const renderItem = useCallback(
@@ -125,7 +138,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
         ListFooterComponent={
-          collectionCount < collections.length ? <LoadingFooter /> : null
+          collectionsCount < collections.length ? <LoadingFooter /> : null
         }
       />
     </SafeAreaView>
@@ -189,4 +202,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(SendFundsSelectCollection);
+export default memo<Props>(SendFundsSelectCollection);

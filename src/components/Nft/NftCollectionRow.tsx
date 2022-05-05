@@ -1,23 +1,26 @@
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
 } from "@ledgerhq/live-common/lib/nft";
 import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
+import Touchable from "../Touchable";
 
 type Props = {
   collection: ProtoNFT[];
   onCollectionPress: () => void;
+  onLongPress: () => void;
 };
 
-function NftCollectionRow({ collection, onCollectionPress }: Props) {
-  const { colors } = useTheme();
+function NftCollectionRow({
+  collection,
+  onCollectionPress,
+  onLongPress,
+}: Props) {
   const nft = collection[0];
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     nft?.contract,
@@ -32,10 +35,10 @@ function NftCollectionRow({ collection, onCollectionPress }: Props) {
   const loading = nftStatus === "loading" || collectionStatus === "loading";
 
   return (
-    <RectButton
-      style={styles.container}
-      underlayColor={colors.neutral.c50}
+    <Touchable
+      event="ShowNftCollectionMenu"
       onPress={onCollectionPress}
+      onLongPress={onLongPress}
     >
       <Flex accessible flexDirection={"row"} alignItems={"center"} py={6}>
         <NftImage
@@ -64,16 +67,13 @@ function NftCollectionRow({ collection, onCollectionPress }: Props) {
           {collection?.length}
         </Text>
       </Flex>
-    </RectButton>
+    </Touchable>
   );
 }
 
 export default memo(NftCollectionRow);
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 4,
-  },
   collectionNameSkeleton: {
     height: 8,
     width: 113,

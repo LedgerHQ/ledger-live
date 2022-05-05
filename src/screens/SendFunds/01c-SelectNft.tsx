@@ -210,4 +210,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(SendFundsSelectNft);
+export default memo<Props>(SendFundsSelectNft);
