@@ -24,17 +24,17 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "optionalDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "^6.24.1"
+    "@ledgerhq/hw-transport-node-ble": "^6.27.1"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "6.24.1",
+    "@ledgerhq/cryptoassets": "6.28.2",
     "@ledgerhq/errors": "6.10.0",
-    "@ledgerhq/hw-app-btc": "6.24.1",
-    "@ledgerhq/hw-transport-http": "6.24.1",
-    "@ledgerhq/hw-transport-mocker": "6.24.1",
-    "@ledgerhq/hw-transport-node-hid": "6.24.1",
-    "@ledgerhq/hw-transport-node-speculos": "6.24.1",
-    "@ledgerhq/live-common": "22.0.0",
+    "@ledgerhq/hw-app-btc": "6.27.1",
+    "@ledgerhq/hw-transport-http": "6.27.1",
+    "@ledgerhq/hw-transport-mocker": "6.27.1",
+    "@ledgerhq/hw-transport-node-hid": "6.27.1",
+    "@ledgerhq/hw-transport-node-speculos": "6.27.1",
+    "@ledgerhq/live-common": "22.0.3",
     "@ledgerhq/logs": "6.10.0",
     "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",
