@@ -823,8 +823,8 @@ importers:
       '@ledgerhq/logs': workspace:^
       '@polkadot/types': 8.1.1
       '@polkadot/types-known': 8.1.1
-      '@polkadot/util': ^8.3.1
-      '@polkadot/util-crypto': ^8.3.1
+      '@polkadot/util': ^9.1.1
+      '@polkadot/util-crypto': ^9.1.1
       '@solana/spl-token': ^0.1.8
       '@solana/web3.js': ^1.32.0
       '@svgr/core': ^5.5.0
@@ -975,8 +975,8 @@ importers:
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.1.1
       '@polkadot/types-known': 8.1.1
-      '@polkadot/util': 8.7.1
-      '@polkadot/util-crypto': 8.7.1
+      '@polkadot/util': 9.1.1
+      '@polkadot/util-crypto': 9.1.1
       '@solana/spl-token': 0.1.8
       '@solana/web3.js': 1.41.3
       '@taquito/ledger-signer': 11.1.0-stablelib.0
