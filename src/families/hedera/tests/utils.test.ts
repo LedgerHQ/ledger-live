@@ -1,7 +1,7 @@
-import { calculateAmount } from "../../../families/hedera/utils";
 import BigNumber from "bignumber.js";
 import type { Account } from "../../../types";
-import type { Transaction } from "../../../families/hedera/types";
+import type { Transaction } from "../types";
+import { calculateAmount } from "../utils";
 
 const account: Account = {
   type: "Account",
@@ -67,7 +67,6 @@ describe("utils", () => {
     const amount = account.balance.minus(estimatedFees.multipliedBy(2));
     const totalSpent = amount.plus(estimatedFees);
     const data = {
-      estimatedFees,
       amount,
       totalSpent,
     };
@@ -86,7 +85,6 @@ describe("utils", () => {
     const amount = transaction.amount;
     const totalSpent = amount.plus(estimatedFees);
     const data = {
-      estimatedFees,
       amount,
       totalSpent,
     };

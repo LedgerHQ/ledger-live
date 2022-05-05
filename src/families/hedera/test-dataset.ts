@@ -4,6 +4,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
@@ -51,6 +52,20 @@ const dataset: DatasetTest<Transaction> = {
               expectedStatus: {
                 errors: {
                   recipient: new InvalidAddress(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Recipient and sender must not be the same",
+              transaction: fromTransactionRaw({
+                family: "hedera",
+                recipient: "0.0.751515",
+                amount: "100000000",
+              }),
+              expectedStatus: {
+                errors: {
+                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
               },

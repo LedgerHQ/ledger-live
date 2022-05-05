@@ -1,6 +1,11 @@
-import estimateMaxSpendable from "../../../families/hedera/js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
 import type { Account } from "../../../types";
+import type { Transaction, TransactionRaw } from "../types";
+import {
+  formatTransaction,
+  fromTransactionRaw,
+  toTransactionRaw,
+} from "../transaction";
 
 const account: Account = {
   type: "Account",
@@ -50,14 +55,36 @@ const account: Account = {
   },
 };
 
-describe("js-estimateMaxSpendable", () => {
-  const estimatedFees = new BigNumber("83300").multipliedBy(2);
+const transaction: Transaction = {
+  family: "hedera",
+  amount: new BigNumber(1),
+  recipient: "0.0.3",
+};
 
-  test("estimateMaxSpendable", async () => {
-    const result = await estimateMaxSpendable({
-      account,
-    });
-    const data = account.balance.minus(estimatedFees);
+const transactionRaw: TransactionRaw = {
+  family: "hedera",
+  amount: "1",
+  recipient: "0.0.3",
+};
+
+describe("transaction", () => {
+  test("formatTransaction", () => {
+    const result = formatTransaction(transaction, account);
+    const string = `SEND 1\nTO 0.0.3`;
+
+    expect(result).toEqual(string);
+  });
+
+  test("fromTransactionRaw", () => {
+    const result = fromTransactionRaw(transactionRaw);
+    const data = transaction;
+
+    expect(result).toEqual(data);
+  });
+
+  test("toTransactionRaw", () => {
+    const result = toTransactionRaw(transaction);
+    const data = transactionRaw;
 
     expect(result).toEqual(data);
   });
