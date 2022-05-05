@@ -26,7 +26,9 @@ export default async function getTransactionStatus(
     try {
       AccountId.fromString(transaction.recipient);
     } catch (err) {
-      errors.recipient = new InvalidAddress(`${err}`);
+      errors.recipient = new InvalidAddress("", {
+        currencyName: account.currency.name,
+      });
     }
   }
 
@@ -35,10 +37,10 @@ export default async function getTransactionStatus(
     account,
   });
 
-  if (account.balance.isLessThan(totalSpent)) {
+  if (transaction.amount.eq(0)) {
+    errors.amount = new AmountRequired();
+  } else if (account.balance.isLessThan(totalSpent)) {
     errors.amount = new NotEnoughBalance("");
-  } else if (amount.eq(0)) {
-    errors.amount = new AmountRequired("");
   }
 
   return {
