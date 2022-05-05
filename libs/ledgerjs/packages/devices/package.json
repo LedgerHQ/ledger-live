@@ -26,6 +26,9 @@
     "rxjs": "6",
     "semver": "^7.3.5"
   },
+  "devDependencies": {
+    "@types/semver": "^7.3.9"
+  },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",

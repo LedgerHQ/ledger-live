@@ -317,7 +317,6 @@ platform :ios do
 end
 
 platform :android do
-
   before_all do
     set_version_name
     # Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.

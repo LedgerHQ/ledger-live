@@ -90,7 +90,6 @@
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		793F2C3B8DC0475194262928 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
 		854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ledgerlivemobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNLibLedgerCore.a; sourceTree = "<group>"; };
 		9390D938BCB148F2A34703E3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		976AEE7A15C2428DB85E53B3 /* libPasscodeAuth.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libPasscodeAuth.a; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
@@ -194,7 +193,6 @@
 			isa = PBXGroup;
 			children = (
 				793F2C3B8DC0475194262928 /* libRCTCamera.a */,
-				887CA7F3B5FF4445BB1C5960 /* libRNLibLedgerCore.a */,
 				EEF3655E56C24042B39DF4D3 /* libRNAnalytics.a */,
 				612C2DE49D8C4046AE4FF442 /* Lottie.framework */,
 				13BEF41FFA9D4B06B1C8A8E1 /* libLottie.a */,
