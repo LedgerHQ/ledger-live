@@ -154,7 +154,13 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  filecoin: {
+  // glif legacy derivation
+  gliflegacy: {
+    overridesDerivation: "44'/1'/0'/0/<account>",
+    tag: "legacy",
+  },
+  // glif normal derivation
+  glifnormal: {
     overridesDerivation: "44'/461'/0'/0/<account>",
   },
   solanaMain: {
@@ -178,7 +184,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
-  filecoin: ["filecoin"],
+  filecoin: ["gliflegacy", "glifnormal"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
