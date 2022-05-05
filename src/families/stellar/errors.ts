@@ -29,3 +29,6 @@ export const StellarNotEnoughNativeBalanceToAddTrustline =
 export const StellarMuxedAccountNotExist = createCustomErrorClass(
   "StellarMuxedAccountNotExist"
 );
+export const StellarSourceHasMultiSign = createCustomErrorClass(
+  "StellarSourceHasMultiSign"
+);

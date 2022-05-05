@@ -11,7 +11,6 @@ import {
 } from "@ledgerhq/errors";
 import {
   StellarWrongMemoFormat,
-  SourceHasMultiSign,
   AccountAwaitingSendPendingOperations,
   StellarAssetRequired,
   StellarAssetNotAccepted,
@@ -21,6 +20,7 @@ import {
   StellarFeeSmallerThanBase,
   StellarNotEnoughNativeBalanceToAddTrustline,
   StellarMuxedAccountNotExist,
+  StellarSourceHasMultiSign,
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -205,9 +205,7 @@ const getTransactionStatus = async (
   }
 
   if (await isAccountMultiSign(a)) {
-    errors.recipient = new SourceHasMultiSign("", {
-      currencyName: a.currency.name,
-    });
+    errors.recipient = new StellarSourceHasMultiSign();
   }
 
   if (t.memoType && t.memoValue && !isMemoValid(t.memoType, t.memoValue)) {
