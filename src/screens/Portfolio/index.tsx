@@ -242,7 +242,7 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showCarousel
         ? [
-            <SectionContainer px={0}>
+            <SectionContainer px={0} minHeight={175}>
               <SectionTitle
                 title={t("portfolio.recommended.title")}
                 containerProps={{ mb: 7, mx: 6 }}

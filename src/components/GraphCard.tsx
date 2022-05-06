@@ -118,9 +118,7 @@ function GraphCard({
                   >
                     <CurrencyUnitValue
                       unit={unit}
-                      value={
-                        hoveredItem?.value ? hoveredItem.value : item.value
-                      }
+                      value={hoveredItem ? hoveredItem.value : item.value}
                       joinFragmentsSeparator=" "
                     />
                   </Text>
@@ -134,20 +132,21 @@ function GraphCard({
                   </>
                 ) : (
                   <Flex flexDirection="row" alignItems="center">
-                    <Delta
-                      percent
-                      show0Delta
-                      valueChange={countervalueChange}
-                      // range={portfolio.range}
-                    />
-                    <Flex ml={2}>
-                      <Delta unit={unit} valueChange={countervalueChange} />
-                    </Flex>
                     {hoveredItem && hoveredItem.date ? (
-                      <Text ml={6} variant={"body"} fontWeight={"medium"}>
+                      <Text variant={"body"} fontWeight={"medium"}>
                         <FormatDate date={hoveredItem.date} />
                       </Text>
-                    ) : null}
+                    ) : (
+                      <>
+                        <Delta
+                          percent
+                          show0Delta
+                          valueChange={countervalueChange}
+                          // range={portfolio.range}
+                        />
+                        <Delta unit={unit} valueChange={countervalueChange} />
+                      </>
+                    )}
                   </Flex>
                 )}
               </Flex>
