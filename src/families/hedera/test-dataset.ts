@@ -43,6 +43,31 @@ const dataset: DatasetTest<Transaction> = {
           },
           transactions: [
             {
+              name: "Valid send",
+              transaction: fromTransactionRaw({
+                family: "hedera",
+                recipient: "0.0.751518",
+                amount: "100000000",
+              }),
+              expectedStatus: {
+                errors: {},
+                warnings: {},
+              },
+            },
+            {
+              name: "Valid send max",
+              transaction: fromTransactionRaw({
+                family: "hedera",
+                recipient: "0.0.751518",
+                amount: "",
+                useAllAmount: true,
+              }),
+              expectedStatus: {
+                errors: {},
+                warnings: {},
+              },
+            },
+            {
               name: "Not a valid address",
               transaction: fromTransactionRaw({
                 family: "hedera",

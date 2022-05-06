@@ -37,7 +37,7 @@ export default async function getTransactionStatus(
     account,
   });
 
-  if (transaction.amount.eq(0)) {
+  if (transaction.amount.eq(0) && !transaction.useAllAmount) {
     errors.amount = new AmountRequired();
   } else if (account.balance.isLessThan(totalSpent)) {
     errors.amount = new NotEnoughBalance("");
