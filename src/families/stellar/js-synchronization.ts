@@ -69,10 +69,8 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     (await fetchOperations({
       accountId,
       addr: address,
-      // To fetch new records, use "desc" + "now"
-      // To fetch latest records, use "asc" + paging token
-      order: lastPagingToken === "0" ? "desc" : "asc",
-      cursor: lastPagingToken === "0" ? "now" : lastPagingToken,
+      order: "asc",
+      cursor: lastPagingToken,
     })) || [];
 
   const allOperations = mergeOps(oldOperations, newOperations);
