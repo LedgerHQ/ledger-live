@@ -145,12 +145,13 @@ export const INITIAL_STATE: SettingsState = {
   lastSeenDevice: null,
   starredMarketCoins: [],
   lastConnectedDevice: null,
-  marketParams: {
+  marketRequestParams: {
     range: "24h",
     orderBy: "market_cap",
     order: "desc",
     liveCompatible: false,
     sparkline: false,
+    top100: false,
   },
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,

@@ -44,6 +44,15 @@ export default function MarketDataProviderWrapper({
       countervalue={counterCurrency}
       initState={{
         requestParams: {
+          range: "24h",
+          limit: 100,
+          ids: [],
+          orderBy: "market_cap",
+          order: "desc",
+          search: "",
+          liveCompatible: false,
+          sparkline: false,
+          top100: false,
           ...marketRequestParams,
           starred: filterByStarredAccount ? starredMarketCoins : [],
         },

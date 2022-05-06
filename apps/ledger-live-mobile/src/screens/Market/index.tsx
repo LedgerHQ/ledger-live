@@ -79,11 +79,12 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
   const filterByStarredAccount: boolean = useSelector(
     marketFilterByStarredAccountsSelector,
   );
-  const firstMount = useRef(false); // To known if this is the first mount of the page
+  const firstMount = useRef(true); // To known if this is the first mount of the page
 
   useEffect(() => {
-    if (!firstMount.current) {
-      firstMount.current = true;
+    if (firstMount.current) {
+      // We don't want to refresh the market data directly on mount, the data is already refreshed with wanted parameters from MarketDataProviderWrapper
+      firstMount.current = false;
       return;
     }
     if (filterByStarredAccount) {
