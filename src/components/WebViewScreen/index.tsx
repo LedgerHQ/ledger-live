@@ -81,7 +81,7 @@ const WebViewScreen = ({
 
   const defaultRenderError = useCallback(
     () => <WebViewNoConnectionError screenName={screenName} />,
-    [],
+    [screenName],
   );
 
   return (
@@ -100,6 +100,7 @@ const WebViewScreen = ({
               onLoadEnd={handleOnLoad}
               renderError={renderError || defaultRenderError}
               startInLoadingState
+              javaScriptCanOpenWindowsAutomatically
               allowsBackForwardNavigationGestures
               onNavigationStateChange={(navState: any) => {
                 setCanGoBack(!navState.canGoBack);

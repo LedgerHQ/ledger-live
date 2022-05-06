@@ -11,6 +11,7 @@ import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
+import { ScreenName } from "../../const";
 
 // const defaultURL = urls.buyNanoX;
 const defaultURL =
@@ -24,7 +25,9 @@ const PurchaseDevice = () => {
   const [url, setUrl] = useState(defaultURL);
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
-  const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+  const handleBack = useCallback(() => {
+    navigation.navigate(ScreenName.BuyDevice as any);
+  }, [navigation]);
 
   const handleOpenDrawer = useCallback(() => {
     setURLDrawerOpen(true);
