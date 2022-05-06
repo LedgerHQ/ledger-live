@@ -62,7 +62,9 @@ jobs:
           ruby-version: 2.7
           bundler-cache: true
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: |
+          pnpm add -g npm
+          npm --version
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
