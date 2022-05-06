@@ -10,11 +10,7 @@ import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
-import {
-  getMinRelayFee,
-  getUTXOStatus,
-  bchToCashaddrAddressWithoutPrefix,
-} from "./logic";
+import { getMinRelayFee, getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -315,6 +311,9 @@ const bitcoinGold: AppSpec<Transaction> = {
   test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
+
+const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+  bchaddrjs.toCashAddress(recipient).split(":")[1];
 
 const bitcoinCash: AppSpec<Transaction> = {
   name: "Bitcoin Cash",
