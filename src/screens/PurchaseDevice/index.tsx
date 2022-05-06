@@ -65,7 +65,6 @@ const PurchaseDevice = () => {
     <>
       <WebViewScreen
         screenName={t("purchaseDevice.pageTitle")}
-        trackEventName="Page Purchase Device"
         uri={url}
         onMessage={handleMessage}
         renderHeader={() => (
