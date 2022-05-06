@@ -145,7 +145,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
 
   build-desktop-app-macos:
-    name: "name: "Build Ledger Live Desktop (Mac OS X)""
+    name: "Build Ledger Live Desktop (Mac OS X)"
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
