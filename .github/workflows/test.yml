@@ -54,7 +54,14 @@ jobs:
           ruby-version: 2.6
           bundler-cache: true
       - name: Bump npm to latest
+        if: matrix.os != 'windows-latest'
         run: npm i -g npm
+      - name: Bump npm and node-gyp to latest
+        if: matrix.os == 'windows-latest'
+        run: |
+          npm i -g npm
+          cd "C:\npm\prefix\node_modules\npm\node_modules\@npmcli\run-script"
+          npm install node-gyp@latest
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
