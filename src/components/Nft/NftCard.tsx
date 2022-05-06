@@ -1,5 +1,3 @@
-// @flow
-
 import React, { memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import { View, StyleSheet, Platform } from "react-native";
