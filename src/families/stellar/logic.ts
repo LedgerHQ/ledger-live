@@ -18,7 +18,7 @@ import {
 } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
-import type { Transaction, BalanceAsset } from "./types";
+import type { Transaction, BalanceAsset, RawOperation } from "./types";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -96,7 +96,7 @@ export const getReservedBalance = (
 };
 
 export const getOperationType = (
-  operation: ServerApi.OperationRecord,
+  operation: RawOperation,
   addr: string
 ): OperationType => {
   switch (operation.type) {
@@ -146,7 +146,7 @@ const getRecipients = (operation): string[] => {
 };
 
 export const formatOperation = async (
-  rawOperation: ServerApi.OperationRecord,
+  rawOperation: RawOperation,
   accountId: string,
   addr: string
 ): Promise<Operation> => {
@@ -171,14 +171,11 @@ export const formatOperation = async (
     senders: [rawOperation.source_account],
     recipients,
     transactionSequenceNumber: Number(transaction.source_account_sequence),
-    // @ts-expect-error check transaction_successful property
     hasFailed: !rawOperation.transaction_successful,
     blockHash: null,
     extra: {
       pagingToken: rawOperation.paging_token,
-      // @ts-expect-error check transaction_successful property
       assetCode: rawOperation?.asset_code,
-      // @ts-expect-error check transaction_successful property
       assetIssuer: rawOperation?.asset_issuer,
       memo,
     },
@@ -187,13 +184,12 @@ export const formatOperation = async (
 };
 
 const getValue = (
-  operation: ServerApi.OperationRecord,
+  operation: RawOperation,
   transaction: ServerApi.TransactionRecord,
   type: OperationType
 ): BigNumber => {
   let value = new BigNumber(0);
 
-  // @ts-expect-error check transaction_successful property
   if (!operation.transaction_successful) {
     return type === "IN" ? value : new BigNumber(transaction.fee_charged || 0);
   }
@@ -328,7 +324,7 @@ export const recipientAccount = async (
 };
 
 export const rawOperationsToOperations = async (
-  operations: ServerApi.OperationRecord[],
+  operations: RawOperation[],
   addr: string,
   accountId: string
 ): Promise<Operation[]> => {
@@ -344,15 +340,10 @@ export const rawOperationsToOperations = async (
     operations
       .filter((operation) => {
         return (
-          // @ts-expect-error check from property
           operation.from === addr ||
-          // @ts-expect-error check to property
           operation.to === addr ||
-          // @ts-expect-error check funder property
           operation.funder === addr ||
-          // @ts-expect-error check account property
           operation.account === addr ||
-          // @ts-expect-error check account property
           operation.trustor === addr ||
           operation.source_account === addr
         );

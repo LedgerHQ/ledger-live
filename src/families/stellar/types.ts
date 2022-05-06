@@ -1,3 +1,4 @@
+import { ServerApi } from "stellar-sdk";
 import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
@@ -72,4 +73,15 @@ export type BalanceAsset = {
   asset_code: string;
   asset_issuer: string;
   liquidity_pool_id?: string;
+};
+
+export type RawOperation = ServerApi.OperationRecord & {
+  asset_code?: string;
+  asset_issuer?: string;
+  from?: string;
+  to?: string;
+  funder?: string;
+  trustor?: string;
+  account?: string;
+  transaction_successful: boolean;
 };

@@ -24,7 +24,7 @@ import {
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account } from "../../types";
+import type { Account, TokenAccount } from "../../types";
 import type { Transaction } from "./types";
 import {
   isAddressValid,
@@ -127,7 +127,7 @@ const getTransactionStatus = async (
 
     // Asset payment
     if (isAssetPayment) {
-      const asset = findSubAccountById(a, t.subAccountId || "");
+      const asset = findSubAccountById(a, t.subAccountId || "") as TokenAccount;
 
       if (asset === null) {
         // This is unlikely
@@ -148,7 +148,6 @@ const getTransactionStatus = async (
 
       const assetBalance = asset?.balance || new BigNumber(0);
 
-      // @ts-expect-error check spendableBalance property
       maxAmount = asset?.spendableBalance || assetBalance;
       amount = useAllAmount ? maxAmount : t.amount;
       totalSpent = amount;
