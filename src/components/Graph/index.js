@@ -48,8 +48,6 @@ function Graph({
   const minY = mapValue(minBy(data, mapValue));
   const paddedMinY = minY - (maxY - minY) / verticalRangeRatio;
 
-  const yExtractor = d => y(mapValue(d));
-
   const curve = d3shape[shape];
   const x = d3scale
     .scaleTime()
@@ -61,11 +59,15 @@ function Graph({
     .domain([paddedMinY, maxY])
     .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS]);
 
+  const yExtractor = d => y(mapValue(d));
+
   const area = d3shape
     .area()
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
-    .y1(d => yExtractor(d) + Math.max((maxY - minY) / verticalRangeRatio, 200))
+    .y1(
+      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
+    )
     .curve(curve)(data);
 
   const line = d3shape
