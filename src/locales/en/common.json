@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "Insufficient balance in the parent account"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "Balance cannot be below {{minimumAmount}}"
     },
@@ -1774,7 +1777,8 @@
       "sectionLabel": "Undelegation(s)"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "Receive NFT",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1924,6 +1928,13 @@
         "title": "Hide token",
         "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
         "confirm": "Hide token"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "Crypto assets",
@@ -3952,6 +3963,20 @@
     "service": "Terms of service",
     "subTitle": "Please take some time to review our Terms of service and Privacy Policy"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "Continue"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "Buy",
@@ -4207,7 +4232,7 @@
       "title": "Allocation"
     },
     "operations": {
-      "title": "Operations"
+      "title": "Transaction history"
     }
   }
 }
