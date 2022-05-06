@@ -2,8 +2,6 @@ import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 import {
   NotEnoughBalance,
-  RecipientRequired,
-  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
 } from "@ledgerhq/errors";
