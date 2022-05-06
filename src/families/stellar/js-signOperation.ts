@@ -7,7 +7,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
-import { getAmountValue } from "./getAmountValue";
+import { getAmountValue } from "./logic";
 
 const buildOptimisticOperation = async (
   account: Account,

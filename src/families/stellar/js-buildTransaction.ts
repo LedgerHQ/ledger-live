@@ -10,8 +10,7 @@ import {
   buildChangeTrustOperation,
   loadAccount,
 } from "./api";
-import { getRecipientAccount } from "./logic";
-import { getAmountValue } from "./getAmountValue";
+import { getRecipientAccount, getAmountValue } from "./logic";
 import {
   StellarAssetRequired,
   StellarMuxedAccountNotExist,

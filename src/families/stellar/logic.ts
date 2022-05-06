@@ -1,13 +1,24 @@
 import { BigNumber } from "bignumber.js";
 import StellarSdk, { ServerApi } from "stellar-sdk";
+import { findSubAccountById } from "../../account";
 import type { CacheRes } from "../../cache";
 import { makeLRUCache } from "../../cache";
-import type { Account, Operation, OperationType } from "../../types";
-import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "../../types";
+import {
+  fetchSigners,
+  fetchBaseFee,
+  loadAccount,
+  BASE_RESERVE,
+  BASE_RESERVE_MIN_COUNT,
+} from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
-import { getReservedBalance } from "./getReservedBalance";
-import { getBalanceId } from "./getBalanceId";
+import type { Transaction, BalanceAsset } from "./types";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -25,6 +36,63 @@ export const getAccountSpendableBalance = async (
   const minimumBalance = getMinimumBalance(account);
   const { recommendedFee } = await fetchBaseFee();
   return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
+};
+
+export const getAmountValue = (
+  account: Account,
+  transaction: Transaction,
+  fees: BigNumber
+): BigNumber => {
+  // Asset
+  if (transaction.subAccountId) {
+    const asset = findSubAccountById(
+      account,
+      transaction.subAccountId
+    ) as TokenAccount;
+    return transaction.useAllAmount
+      ? new BigNumber(asset.spendableBalance)
+      : transaction.amount;
+  }
+
+  // Native
+  return transaction.useAllAmount && transaction.networkInfo
+    ? BigNumber.max(account.spendableBalance.minus(fees), 0)
+    : transaction.amount;
+};
+
+export const getBalanceId = (balance: BalanceAsset): string | null => {
+  switch (balance.asset_type) {
+    case "native":
+      return "native";
+    case "liquidity_pool_shares":
+      return balance.liquidity_pool_id || null;
+    case "credit_alphanum4":
+    case "credit_alphanum12":
+      return `${balance.asset_code}:${balance.asset_issuer}`;
+    default:
+      return null;
+  }
+};
+
+export const getReservedBalance = (
+  account: ServerApi.AccountRecord
+): BigNumber => {
+  const numOfSponsoringEntries = Number(account.num_sponsoring);
+  const numOfSponsoredEntries = Number(account.num_sponsored);
+
+  const nativeAsset = account.balances?.find(
+    (b) => b.asset_type === "native"
+  ) as BalanceAsset;
+
+  const amountInOffers = new BigNumber(nativeAsset?.buying_liabilities || 0);
+  const numOfEntries = new BigNumber(account.subentry_count);
+
+  return new BigNumber(BASE_RESERVE_MIN_COUNT)
+    .plus(numOfEntries)
+    .plus(numOfSponsoringEntries)
+    .minus(numOfSponsoredEntries)
+    .times(BASE_RESERVE)
+    .plus(amountInOffers);
 };
 
 export const getOperationType = (

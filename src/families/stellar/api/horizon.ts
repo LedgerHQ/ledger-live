@@ -12,12 +12,12 @@ import type { NetworkInfo } from "../types";
 import {
   getAccountSpendableBalance,
   rawOperationsToOperations,
+  getReservedBalance,
 } from "../logic";
 import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel } from "../types";
-import { getReservedBalance } from "../getReservedBalance";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
