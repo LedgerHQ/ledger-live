@@ -29,7 +29,7 @@ import { Operation } from "../../../types/operation";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
 import { getAddressRaw, validateAddress } from "./utils/addresses";
-import { patchOperationWithHash } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { withDevice } from "../../../hw/deviceAccess";
 
 const receive = makeAccountBridgeReceive();
@@ -269,7 +269,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             const signature = `${result.signature_compact.toString("base64")}`;
 
             const operation: Operation = {
-              id: `${accountId}-${txHash}-OUT`,
+              id: encodeOperationId(accountId, txHash, "OUT"),
               hash: txHash,
               type: "OUT",
               senders: [address],
