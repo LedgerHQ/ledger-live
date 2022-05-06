@@ -1,7 +1,6 @@
 buildscript {
   repositories {
     mavenCentral()
-    jcenter()
     google()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   }
@@ -14,7 +13,6 @@ buildscript {
 allprojects {
   repositories {
     mavenCentral()
-    jcenter()
     google()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   }
@@ -39,7 +37,6 @@ android {
 
 repositories {
   mavenCentral()
-  jcenter()
   google()
   maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
   maven {
