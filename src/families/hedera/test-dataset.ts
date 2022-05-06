@@ -43,45 +43,6 @@ const dataset: DatasetTest<Transaction> = {
           },
           transactions: [
             {
-              name: "Valid send",
-              transaction: fromTransactionRaw({
-                family: "hedera",
-                recipient: "0.0.751518",
-                amount: "100000000",
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-              },
-            },
-            {
-              name: "Valid send max",
-              transaction: fromTransactionRaw({
-                family: "hedera",
-                recipient: "0.0.751518",
-                amount: "",
-                useAllAmount: true,
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-              },
-            },
-            {
-              name: "Not a valid address",
-              transaction: fromTransactionRaw({
-                family: "hedera",
-                recipient: "not a valid address",
-                amount: "100000000",
-              }),
-              expectedStatus: {
-                errors: {
-                  recipient: new InvalidAddress(),
-                },
-                warnings: {},
-              },
-            },
-            {
               name: "Recipient and sender must not be the same",
               transaction: fromTransactionRaw({
                 family: "hedera",
@@ -119,20 +80,6 @@ const dataset: DatasetTest<Transaction> = {
               expectedStatus: {
                 errors: {
                   amount: new NotEnoughBalance(),
-                },
-                warnings: {},
-              },
-            },
-            {
-              name: "No recipient",
-              transaction: fromTransactionRaw({
-                family: "hedera",
-                recipient: "",
-                amount: "1",
-              }),
-              expectedStatus: {
-                errors: {
-                  recipient: new RecipientRequired(),
                 },
                 warnings: {},
               },
