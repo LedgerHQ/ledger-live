@@ -1,5 +1,7 @@
 import { Cluster, clusterApiUrl } from "@solana/web3.js";
+import { partition } from "lodash/fp";
 import { getEnv } from "../../env";
+import { ValidatorsAppValidator } from "./validator-app";
 
 export const LEDGER_VALIDATOR_ADDRESS =
   "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
@@ -129,4 +131,42 @@ export function swap(arr: any[], i: number, j: number) {
   const tmp = arr[i];
   arr[i] = arr[j];
   arr[j] = tmp;
+}
+
+export type Functions<T> = keyof {
+  /* eslint-disable-next-line @typescript-eslint/ban-types*/
+  [K in keyof T as T[K] extends Function ? K : never]: T[K];
+};
+
+// move Ledger validator to the first position
+export function ledgerFirstValidators(
+  validators: ValidatorsAppValidator[]
+): ValidatorsAppValidator[] {
+  const [ledgerValidator, restValidators] = partition(
+    (v) => v.voteAccount === LEDGER_VALIDATOR_ADDRESS,
+    validators
+  );
+  return ledgerValidator.concat(restValidators);
+}
+
+export function profitableValidators(validators: ValidatorsAppValidator[]) {
+  return validators.filter((v) => v.commission < 100);
+}
+
+// https://stackoverflow.com/a/60132060
+export const tupleOfUnion =
+  <T>() =>
+  <U extends T[]>(
+    array: U &
+      ([T] extends [U[number]]
+        ? unknown
+        : "The array must contain all union values")
+  ) =>
+    array;
+
+export function sweetch<T extends keyof any, R>(
+  caze: T,
+  cases: Record<T, R>
+): R {
+  return cases[caze];
 }

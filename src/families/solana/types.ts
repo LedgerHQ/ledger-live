@@ -239,3 +239,5 @@ export type SolanaValidatorWithMeta = {
     img?: string;
   };
 };
+
+export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";

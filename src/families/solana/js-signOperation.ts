@@ -39,11 +39,20 @@ const buildOptimisticOperation = (
     throw new Error("invalid command");
   }
 
-  return buildOptimisticOperationForCommand(
+  const optimisticOp = buildOptimisticOperationForCommand(
     account,
     transaction,
     commandDescriptor
   );
+
+  const lastOpSeqNumber =
+    account.pendingOperations[0]?.transactionSequenceNumber ??
+    account.operations[0]?.transactionSequenceNumber ??
+    0;
+
+  optimisticOp.transactionSequenceNumber = lastOpSeqNumber + 1;
+
+  return optimisticOp;
 };
 
 export const signOperationWithAPI = (
@@ -62,8 +71,11 @@ export const signOperationWithAPI = (
     (transport) =>
       new Observable((subscriber) => {
         const main = async () => {
-          const [msgToHardwareBytes, signOnChainTransaction] =
-            await buildTransactionWithAPI(account, transaction, await api());
+          const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
+            account,
+            transaction,
+            await api()
+          );
 
           const hwApp = new Solana(transport);
 
@@ -73,20 +85,20 @@ export const signOperationWithAPI = (
 
           const { signature } = await hwApp.signTransaction(
             account.freshAddressPath,
-            msgToHardwareBytes
+            tx.compileMessage().serialize()
           );
 
           subscriber.next({
             type: "device-signature-granted",
           });
 
-          const signedOnChainTxBytes = signOnChainTransaction(signature);
+          const signedTx = signOnChainTransaction(signature);
 
           subscriber.next({
             type: "signed",
             signedOperation: {
               operation: buildOptimisticOperation(account, transaction),
-              signature: signedOnChainTxBytes.toString("hex"),
+              signature: signedTx.serialize().toString("hex"),
               expirationDate: null,
             },
           });

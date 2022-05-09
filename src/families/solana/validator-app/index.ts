@@ -57,7 +57,7 @@ const URLS = {
   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
     const clusterSlug = cluster === "mainnet-beta" ? "mainnet" : cluster;
     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-    return `${baseUrl}/${clusterSlug}.json`;
+    return `${baseUrl}/${clusterSlug}.json?order=score`;
   },
 };
 

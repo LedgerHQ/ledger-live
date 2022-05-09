@@ -3,37 +3,39 @@ import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";
 import { getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
+import { getMainAccount } from "../../account";
+import { estimateTxFee } from "./tx-fees";
 
 const estimateMaxSpendableWithAPI = async (
   {
     account,
+    parentAccount,
     transaction,
   }: Parameters<AccountBridge<Transaction>["estimateMaxSpendable"]>[0],
   api: ChainAPI
 ): Promise<BigNumber> => {
-  const txFee = (await api.getTxFeeCalculator()).lamportsPerSignature;
+  const mainAccount = getMainAccount(account, parentAccount);
 
   switch (account.type) {
     case "Account": {
-      const forTransfer = BigNumber.max(account.balance.minus(txFee), 0);
-      if (!transaction) {
-        return forTransfer;
-      }
-      switch (transaction.model.kind) {
+      const txKind = transaction?.model.kind ?? "transfer";
+      const txFee = await estimateTxFee(api, mainAccount, txKind);
+
+      switch (txKind) {
         case "stake.createAccount": {
           const stakeAccRentExempt =
             await getStakeAccountMinimumBalanceForRentExemption(api);
           return BigNumber.max(
-            account.balance.minus(txFee).minus(stakeAccRentExempt),
+            account.spendableBalance.minus(txFee).minus(stakeAccRentExempt),
             0
           );
         }
         default:
-          return forTransfer;
+          return BigNumber.max(account.spendableBalance.minus(txFee), 0);
       }
     }
     case "TokenAccount":
-      return account.balance;
+      return account.spendableBalance;
   }
 
   throw new Error("not supported account type");

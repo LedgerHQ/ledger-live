@@ -66,3 +66,7 @@ export const SolanaStakeNoWithdrawAuth = createCustomErrorClass(
 export const SolanaStakeNoStakeAuth = createCustomErrorClass(
   "SolanaStakeNoStakeAuth"
 );
+
+export const SolanaUseAllAmountStakeWarning = createCustomErrorClass(
+  "SolanaUseAllAmountStakeWarning"
+);

@@ -5,6 +5,8 @@ import { makeBridges } from "./bridge";
 import { makeLRUCache } from "../../../cache";
 import { getMockedMethods } from "./mock-data";
 import { minutes } from "../api/cached";
+import { Message } from "@solana/web3.js";
+import { Functions } from "../utils";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
@@ -18,14 +20,16 @@ function mockChainAPI(config: Config): ChainAPI {
         if (propKey === "then") {
           return undefined;
         }
-        const method = propKey.toString();
+        const method: Functions<ChainAPI> = propKey.toString() as any;
         const mocks = mockedMethods.filter((mock) => mock.method === method);
         if (mocks.length === 0) {
           throw new Error(`no mock found for api method: ${method}`);
         }
-        return function (...args: any[]) {
-          const definedArgs = removeUndefineds(args);
-          const mock = mocks.find(({ params }) => isEqual(definedArgs)(params));
+        return function (...rawArgs: any[]) {
+          const args = preprocessArgs(method, rawArgs);
+          const mock = mocks.find(({ params: mockArgs }) =>
+            isEqual(args)(mockArgs)
+          );
           if (mock === undefined) {
             const argsJson = JSON.stringify(args);
             throw new Error(
@@ -46,6 +50,18 @@ function removeUndefineds(input: any) {
       ? input.map(removeUndefineds)
       : flow(omitBy(isUndefined), mapValues(removeUndefineds))(input)
     : input;
+}
+
+function preprocessArgs(method: keyof ChainAPI, args: any) {
+  if (method === "getFeeForMessage") {
+    // getFeeForMessage needs some args preprocessing
+    if (args.length === 1 && args[0] instanceof Message) {
+      return [args[0].serialize().toString("base64")];
+    } else {
+      throw new Error("unexpected getFeeForMessage function signature");
+    }
+  }
+  return removeUndefineds(args);
 }
 
 // Bridge with this api will log all api calls to a file.

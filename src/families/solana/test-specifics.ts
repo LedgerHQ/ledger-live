@@ -13,6 +13,7 @@ import { SolanaStake, Transaction } from "./types";
 
 const baseAccount = {
   balance: new BigNumber(0),
+  spendableBalance: new BigNumber(0),
 } as Account;
 
 const baseTx = {
@@ -22,10 +23,8 @@ const baseTx = {
 } as Transaction;
 
 const baseAPI = {
-  getTxFeeCalculator: () =>
-    Promise.resolve({
-      lamportsPerSignature: testOnChainData.fees.lamportsPerSignature,
-    }),
+  getFeeForMessage: (_msg: unknown) =>
+    Promise.resolve(testOnChainData.fees.lamportsPerSignature),
 } as ChainAPI;
 
 type StakeTestSpec = {
