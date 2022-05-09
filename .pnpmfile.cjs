@@ -11,6 +11,25 @@ function readPackage(pkg, context) {
   process(
     [
       /*
+        Adding jest and co. as dev. dependencies for /ledgerjs/* sub-packages.
+        This is done this way because these packages are not hoisted hence unaccessible otherwise.
+        Furthermore it makes these packages self-contained which eases the CI install process.
+      */
+      addDevDependencies(
+        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
+        {
+          jest: "^27.4.7",
+          "ts-jest": "^27.1.2",
+          "ts-node": "^10.4.0",
+          "@types/node": "*",
+          "@types/jest": "*",
+          "source-map-support": "*",
+          typescript: "^4",
+          documentation: "13.2.4",
+        },
+        { silent: true }
+      ),
+      /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
