@@ -41,7 +41,7 @@ jobs:
           github-token: ${{ secrets.CI_BOT_TOKEN }}
           ec2-image-id: ${{ steps.get-ami-id.outputs.ami-id }}
           ec2-instance-type: ${{ inputs.instance-type }}
-          subnet-id: subnet-0eeb962bb7d9d96ef # production-shared-private-eu-west-1a
+          subnet-id: subnet-009c04af0177247e8 # production-shared-public-eu-west-1a
           security-group-id: sg-010daba499648d1e7 # infra-gha-runner-sg
           aws-resource-tags: > # optional, requires additional permissions
             [
