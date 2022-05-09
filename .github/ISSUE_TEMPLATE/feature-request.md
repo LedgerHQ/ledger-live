@@ -9,7 +9,8 @@ assignees: ''
 
 <!-- 
 Disclaimer
- ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞ ͞
+----------
+
 Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are only accepting bug reports for the moment.
 
 There is a good chance that we will reject feature requests based on the fact that they do not fit our roadmap or our long-term goals.
