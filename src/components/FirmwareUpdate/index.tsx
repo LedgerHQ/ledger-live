@@ -24,7 +24,11 @@ import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import { track } from "../../analytics";
 import { BluetoothNotSupportedError } from "@ledgerhq/live-common/lib/errors";
-import { DisconnectedDevice, WebsocketConnectionError } from "@ledgerhq/errors";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  WebsocketConnectionError,
+} from "@ledgerhq/errors";
 
 type Props = {
   device: Device;
@@ -213,7 +217,10 @@ export default function FirmwareUpdate({
         <>
           <GenericErrorView
             error={error as Error}
-            withDescription={false}
+            withDescription={
+              error instanceof DisconnectedDevice ||
+              error instanceof DisconnectedDeviceDuringOperation
+            }
             hasExportLogButton={!(error instanceof BluetoothNotSupportedError)}
             Icon={
               error instanceof BluetoothNotSupportedError

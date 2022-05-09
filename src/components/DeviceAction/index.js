@@ -6,7 +6,7 @@ import type {
   Device,
 } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError, DisconnectedDevice } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
@@ -236,6 +236,16 @@ export default function DeviceAction<R, H, P>({
         navigation,
         error: new DeviceNotOnboarded(),
         withOnboardingCTA: true,
+        colors,
+        theme,
+      });
+    }
+
+    if(error.message === "Invalid channel") {
+      return renderError({
+        t,
+        navigation,
+        error: new DisconnectedDevice(),
         colors,
         theme,
       });
