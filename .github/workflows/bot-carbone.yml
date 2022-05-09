@@ -55,7 +55,7 @@ jobs:
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-cli..." --frozen-lockfile
+          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
       - name: build bot
         run: |
           pnpm build:cli
