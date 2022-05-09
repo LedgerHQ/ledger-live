@@ -77,7 +77,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
         if (mutation) {
           spec = {
             ...spec,
-            mutations: spec.mutation.filter((m) =>
+            mutations: spec.mutations.filter((m) =>
               new RegExp(mutation).test(m.name)
             ),
           };

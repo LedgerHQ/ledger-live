@@ -16,7 +16,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     appName: "Filecoin",
   },
 
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 5 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
