@@ -138,14 +138,14 @@ export const getTxToBroadcast = (
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency } = info;
+  const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: address,
-    derivationMode: "",
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();
