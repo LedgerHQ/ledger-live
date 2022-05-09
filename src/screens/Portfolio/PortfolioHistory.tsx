@@ -25,12 +25,13 @@ import SectionHeader from "../../components/SectionHeader";
 import LoadingFooter from "../../components/LoadingFooter";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type Props = {
   navigation: any,
 };
 
-export function PortfolioHistoryList({
+export const PortfolioHistoryList = withDiscreetMode(({
   onEndReached,
   opCount = 5,
   navigation,
@@ -38,7 +39,7 @@ export function PortfolioHistoryList({
   onEndReached?: () => void,
   opCount?: number,
   navigation: any,
-}) {
+}) => {
   const accounts = useSelector(accountsSelector);
   const allAccounts = useSelector(flattenAccountsSelector);
 
@@ -127,7 +128,7 @@ export function PortfolioHistoryList({
       ListEmptyComponent={ListEmptyComponent}
     />
   );
-}
+})
 
 function PortfolioHistory({ navigation }: Props) {
   const [opCount, setOpCount] = useState(50);
