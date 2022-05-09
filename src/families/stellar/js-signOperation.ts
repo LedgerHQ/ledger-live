@@ -15,11 +15,12 @@ const buildOptimisticOperation = async (
 ): Promise<Operation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
+  const type = transaction.operationType === "changeTrust" ? "OPT_IN" : "OUT";
 
   const operation: Operation = {
-    id: `${account.id}--OUT`,
+    id: `${account.id}--${type}`,
     hash: "",
-    type: "OUT",
+    type,
     value: getAmountValue(account, transaction, fees),
     fee: fees,
     blockHash: null,
