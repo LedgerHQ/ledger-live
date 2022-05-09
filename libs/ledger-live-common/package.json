@@ -19,15 +19,14 @@
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",
     "lint:fix": "pnpm lint --fix",
-    "jest": "rimraf libcoredb && mkdir libcoredb && pnpm run:cross-env TZ=America/New_York jest",
+    "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
     "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
     "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && pnpm test",
-    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'",
-    "run:cross-env": "x-run node_modules/cross-env/src/bin/cross-env.js"
+    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
   },
   "files": [
     "lib",
