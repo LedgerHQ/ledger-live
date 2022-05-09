@@ -486,7 +486,7 @@ importers:
       expo: ^43.0.1
       expo-barcode-scanner: ~11.2.0
       expo-camera: ~12.0.3
-      expo-image-loader: ^3.1.0
+      expo-image-loader: ~3.1.1
       expo-modules-autolinking: ^0.5.5
       expo-modules-core: ^0.6.5
       flipper-plugin-rn-performance-android: ^0.1.0
@@ -652,7 +652,7 @@ importers:
       expo: 43.0.5_@babel+core@7.17.10
       expo-barcode-scanner: 11.2.1_expo@43.0.5
       expo-camera: 12.0.3_react@17.0.2
-      expo-image-loader: 3.2.0_expo@43.0.5
+      expo-image-loader: 3.1.1_expo@43.0.5
       expo-modules-autolinking: 0.5.5
       expo-modules-core: 0.6.5
       fuse.js: 6.6.1
@@ -25433,14 +25433,6 @@ packages:
 
   /expo-image-loader/3.1.1_expo@43.0.5:
     resolution: {integrity: sha512-ZX4Bh3K4CCX1aZflnmbOgFNLS+c0/GUys4wdvqxO+4A4KU1NNb3jE7RVa/OFYNPDcGhEw20c1QjyE/WsVURJpg==}
-    peerDependencies:
-      expo: '*'
-    dependencies:
-      expo: 43.0.5_@babel+core@7.17.10
-    dev: false
-
-  /expo-image-loader/3.2.0_expo@43.0.5:
-    resolution: {integrity: sha512-LU3Q2prn64/HxdToDmxgMIRXS1ZvD9Q3iCxRVTZn1fPQNNDciIQFE5okaa74Ogx20DFHs90r6WoUd7w9Af1OGQ==}
     peerDependencies:
       expo: '*'
     dependencies:
