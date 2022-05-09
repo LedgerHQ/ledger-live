@@ -13,6 +13,10 @@ Regarding Ledger Applications (Ledger Live Desktop, Ledger Live Mobile) we are o
 There is a good chance that we will reject feature requests based on the fact that they do not fit our roadmap or our long-term goals.
 -->
 
+**Context**
+
+_Specify which application or library is concerned._
+
 **Is your feature request related to a problem? Please describe.**
 
 _A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]_
