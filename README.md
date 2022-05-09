@@ -32,6 +32,8 @@ Then, clone the repository and install the dependencies:
 git clone git@github.com:LedgerHQ/ledger-live.git
 cd ledger-live
 pnpm i
+# Alternatively, if you want to bypass the postinstall scripts which can be long to run
+# pnpm i --ignore-scripts
 ```
 
 > Note: multiple postinstall steps will be triggered and fail if the applications prerequisites are not met.

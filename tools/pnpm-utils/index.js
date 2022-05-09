@@ -54,6 +54,15 @@ function addDependencies(
           `${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`
         );
 
+        if (kind === "peerDependencies") {
+          pkg.peerDependenciesMeta = {
+            ...(pkg.peerDependenciesMeta || {}),
+            [dep]: {
+              optional: true,
+            },
+          };
+        }
+
         pkg[kind] = {
           ...pkg[kind],
           [dep]: version,
@@ -80,8 +89,23 @@ function process(fns, pkg, context) {
   fns.forEach((fn) => fn(pkg, context));
 }
 
+function addDevDependencies(filter, dependencies, options = {}) {
+  return addDependencies(filter, dependencies, {
+    ...options,
+    kind: "devDependencies",
+  });
+}
+function addPeerDependencies(filter, dependencies, options = {}) {
+  return addDependencies(filter, dependencies, {
+    ...options,
+    kind: "peerDependencies",
+  });
+}
+
 module.exports = {
   process,
   addDependencies,
+  addDevDependencies,
+  addPeerDependencies,
   removePeerDeps,
 };
