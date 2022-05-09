@@ -2,10 +2,14 @@
 name: Bug - Libraries
 about: Report bugs related to the libraries.
 title: ''
-labels: bug, libraries
+labels: bug, libraries, Needs Triage
 assignees: ''
 
 ---
+
+<!--
+Note: Please search to see if an issue already exists for the bug you encountered.
+-->
 
 **Details**
 - Impacted Library: [e.g. `@ledgerhq/live-common`] 

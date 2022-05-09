@@ -2,10 +2,14 @@
 name: Bug - Ledger Live Application
 about: Report bugs related to the Ledger Live Desktop or Mobile applications.
 title: ''
-labels: applications, bug
+labels: applications, bug, Needs Triage
 assignees: ''
 
 ---
+
+<!--
+Note: Please search to see if an issue already exists for the bug you encountered.
+-->
 
 **Describe the bug**
 
