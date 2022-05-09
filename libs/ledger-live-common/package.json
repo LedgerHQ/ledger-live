@@ -39,7 +39,7 @@
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": "^12.1.1"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {

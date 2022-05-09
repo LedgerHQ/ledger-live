@@ -1,7 +1,8 @@
 const {
   process,
-  removePeerDeps,
   addDependencies,
+  addDevDependencies,
+  addPeerDependencies,
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
@@ -9,15 +10,18 @@ function readPackage(pkg, context) {
 
   process(
     [
-      // Prevents duplicate packages.
-      removePeerDeps("react-redux", "styled-components"),
-      // The following packages are broken and do not declare their dependencies properly.
-      addDependencies(
-        "@svgr/core",
-        { "@svgr/plugin-svgo": "*" },
-        { kind: "peerDependencies" }
-      ),
+      /*
+        The following packages are broken and do not declare their dependencies properly.
+        So we are going to patch these until the maintainers fix their own stuff…
+        Feel free to make PRs if you feel like it :).
+      */
+      /* Storybook packages */
       addDependencies("@storybook/webpack-config", { "resolve-from": "*" }),
+      addDependencies("@storybook/addon-knobs", {
+        // Match the major version of the package
+        "@storybook/client-api": major ? "" + major : "*",
+      }),
+      /* @celo/* packages */
       addDependencies(/@celo\/(?!base)+/, { "@celo/base": `^${pkg.version}` }),
       addDependencies("@celo/connect", {
         "@celo/base": `^${pkg.version}`,
@@ -30,6 +34,7 @@ function readPackage(pkg, context) {
         randombytes: "*",
         rlp: "*",
       }),
+      /*  @cosmjs/* packages */
       addDependencies("@cosmjs/proto-signing", {
         "@cosmjs/crypto": pkg.version,
         "@cosmjs/encoding": pkg.version,
@@ -39,84 +44,28 @@ function readPackage(pkg, context) {
       addDependencies("@cosmjs/tendermint-rpc", {
         "@cosmjs/utils": pkg.version,
       }),
+      /* @walletconnect/* packages */
       addDependencies("@walletconnect/iso-crypto", {
         "@walletconnect/encoding": "*",
-      }),
-      addDependencies("react-native", {
-        "react-native-codegen": "0.0.7",
-        mkdirp: "*",
-      }),
-      addDependencies("react-native-codegen", {
-        glob: "*",
-        invariant: "*",
-      }),
-      addDependencies("@react-native-community/cli", {
-        "metro-resolver": "^0.67.0",
-      }),
-      addDependencies("metro-config", {
-        "metro-transform-worker": pkg.version,
-      }),
-      addDependencies("metro-transform-worker", {
-        "metro-minify-uglify": pkg.version,
-      }),
-      addDependencies("@expo/webpack-config", {
-        "resolve-from": "*",
-        "fs-extra": "*",
-      }),
-      addDependencies("@sentry/react-native", {
-        tslib: "*",
-        promise: "*",
-      }),
-      addDependencies("react-native-text-input-mask", {
-        tslib: "*",
       }),
       addDependencies(/^@walletconnect\/.*/, {
         tslib: "*",
       }),
-      addDependencies("react-native-locale", {
-        fbjs: "*",
+      /* React Native and Metro bundler packages */
+      addPeerDependencies("@react-native-community/cli", {
+        "metro-resolver": "*",
       }),
-      addDependencies(
-        "any-observable",
-        {
-          rxjs: "*",
-        },
-        {
-          kind: "peerDependencies",
-        }
-      ),
-      addDependencies("@storybook/addon-knobs", {
-        "@storybook/client-api": major ? "" + major : "*",
+      addPeerDependencies("metro-config", {
+        "metro-transform-worker": "*",
       }),
-      addDependencies(
-        "@cspotcode/source-map-support",
-        {
-          "source-map-support": "*",
-        },
-        {
-          kind: "peerDependencies",
-        }
-      ),
-      addDependencies(
-        "eslint-plugin-jest",
-        {
-          jest: "*",
-        },
-        {
-          kind: "peerDependencies",
-        }
-      ),
-      addDependencies(
-        "jest-worker",
-        {
-          metro: "*",
-        },
-        {
-          kind: "peerDependencies",
-        }
-      ),
-      addDependencies("documentation", { micromark: "*" }),
-      addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
+      addPeerDependencies("metro-transform-worker", {
+        "metro-minify-uglify": "*",
+      }),
+      /* @expo/* packages */
+      addDependencies("@expo/webpack-config", {
+        "resolve-from": "*",
+        "fs-extra": "*",
+      }),
       addDependencies("expo-cli", { "@expo/metro-config": "*" }),
       addDependencies("@expo/metro-config", { glob: "*" }),
       addDependencies("@expo/dev-tools", { "@expo/spawn-async": "*" }),
@@ -125,24 +74,31 @@ function readPackage(pkg, context) {
         "@expo/spawn-async": "*",
         glob: "*",
       }),
-      // Adding jest and co. as dev. dependencies for ledgerjs sub-packages.
-      // This is done this way because these packages are not hoisted hence unaccessible otherwise.
-      addDependencies(
-        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
-        {
-          jest: "^27.4.7",
-          "ts-jest": "^27.1.2",
-          "ts-node": "^10.4.0",
-          "@types/node": "*",
-          "@types/jest": "*",
-          "source-map-support": "*",
-          typescript: "4",
-          documentation: "^13.2.5",
-        },
-        {
-          kind: "devDependencies",
-        }
-      ),
+      /* Other packages */
+      addPeerDependencies("@svgr/core", { "@svgr/plugin-svgo": "*" }),
+      addDependencies("@sentry/react-native", {
+        tslib: "*",
+        promise: "*",
+      }),
+      addDependencies("react-native-text-input-mask", {
+        tslib: "*",
+      }),
+      addDependencies("react-native-locale", {
+        fbjs: "*",
+      }),
+      addPeerDependencies("any-observable", {
+        rxjs: "*",
+      }),
+      addPeerDependencies("@cspotcode/source-map-support", {
+        "source-map-support": "*",
+      }),
+      addPeerDependencies("eslint-plugin-jest", {
+        jest: "*",
+      }),
+      addPeerDependencies("jest-worker", {
+        metro: "*",
+      }),
+      addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
     ],
     pkg,
     context
