@@ -25,10 +25,9 @@
     "prepublishOnly": "pnpm run build",
     "clean": "rimraf react native src/react src/native"
   },
-  "dependencies": {
-    "@types/styled-components": "^5.1.14",
-    "styled-components": "^5.2.3",
-    "styled-system": "^5.1.5"
+  "peerDependencies": {
+    "styled-components": "*",
+    "styled-system": "*"
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",
