@@ -1,20 +1,19 @@
 import React, { memo } from "react";
-import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, StyleSheet } from "react-native";
 import {
   useNftMetadata,
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/lib/nft";
-import { useRoute, useTheme, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp } from "@react-navigation/native";
 import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { scrollToTop } from "../../../navigation/utils";
 import NftImage from "../../../components/Nft/NftImage";
-import LText from "../../../components/LText";
 
 type RouteParams = RouteProp<{ params: { collection: ProtoNFT[] } }, "params">;
 
 const NftCollectionHeaderTitle = () => {
   const { params } = useRoute<RouteParams>();
-  const { colors } = useTheme();
   const { collection } = params;
   const nft = collection?.[0];
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
@@ -29,44 +28,26 @@ const NftCollectionHeaderTitle = () => {
 
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <View
-        style={[
-          styles.headerContainer,
-          {
-            backgroundColor: colors.card,
-          },
-        ]}
-      >
+      <Flex alignItems={"center"} flexDirection={"row"} ml={7} mr={9}>
         <NftImage
           style={styles.headerImage}
           src={nftMetadata?.media}
           status={nftStatus}
         />
-        <LText
-          ellipsizeMode={collectionMetadata?.tokenName ? "tail" : "middle"}
-          semiBold
-          secondary
+        <Text
+          variant={"body"}
+          fontWeight={"semiBold"}
           numberOfLines={1}
-          style={styles.title}
+          ellipsizeMode={collectionMetadata?.tokenName ? "tail" : "middle"}
         >
           {collectionMetadata?.tokenName || nft?.contract}
-        </LText>
-      </View>
+        </Text>
+      </Flex>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 16,
-    paddingRight: 32,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 32,
-    paddingVertical: 5,
-  },
   headerImage: {
     borderRadius: 4,
     overflow: "hidden",
