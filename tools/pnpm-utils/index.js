@@ -16,6 +16,7 @@ function addDependencies(
     matchDevVersion = true,
     ignoreExisting = false,
     filterOnPkg = null,
+    silent = false,
   } = {}
 ) {
   return (pkg, context) => {
@@ -41,18 +42,20 @@ function addDependencies(
 
         if (pkg[kind][dep]) {
           if (!ignoreExisting) {
-            console.log(
-              `${bold("[!]", 33)} ${field(depKey)} | ${field(key, {
-                length: 0,
-              })} already declares ${dep}@${pkg[kind][dep]} (${kind})`
-            );
+            !silent &&
+              console.log(
+                `${bold("[!]", 33)} ${field(depKey)} | ${field(key, {
+                  length: 0,
+                })} already declares ${dep}@${pkg[kind][dep]} (${kind})`
+              );
             return;
           }
         }
 
-        console.log(
-          `${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`
-        );
+        !silent &&
+          console.log(
+            `${bold("[+]", 32)} ${field(depKey)} | ${field(key)} (${kind})`
+          );
 
         if (kind === "peerDependencies") {
           pkg.peerDependenciesMeta = {

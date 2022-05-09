@@ -1,4 +1,3 @@
-// @flow
 import React, { useCallback, useMemo, useState } from "react";
 import {
   Flex,
