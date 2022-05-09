@@ -19,14 +19,12 @@ importers:
       migrate-branch: workspace:*
       pnpm-utils: workspace:*
       turbo: ^1.2.6
-      x-run: workspace:*
     devDependencies:
       '@changesets/cli': 2.22.0
       create-release-hash: link:tools/create-release-hash
       migrate-branch: link:tools/migrate-branch
       pnpm-utils: link:tools/pnpm-utils
       turbo: 1.2.8
-      x-run: link:tools/x-run
 
   apps/ledger-live-desktop:
     specifiers:
@@ -2322,9 +2320,6 @@ importers:
     specifiers: {}
 
   tools/pnpm-utils:
-    specifiers: {}
-
-  tools/x-run:
     specifiers: {}
 
 packages:
@@ -26049,7 +26044,7 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4_supports-color@6.1.0
+      debug: 4.3.4
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
