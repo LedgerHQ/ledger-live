@@ -58,7 +58,7 @@ const ConfirmRecoveryStep = ({
           <Text variant="h2" fontWeight="semiBold" mb={4}>
             {t("FirmwareUpdateReleaseNotes.introTitle", {
               version: firmwareVersion,
-              deviceName: device.deviceName,
+              deviceName: device.deviceName?.replace(/\u00a0/g, ' '),
             })}
           </Text>
           <Alert
