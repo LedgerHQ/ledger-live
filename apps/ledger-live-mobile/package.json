@@ -252,6 +252,8 @@
     "metro-extra-config": "workspace:*",
     "metro-react-native-babel-preset": "^0.67.0",
     "metro-resolver": "^0.67.0",
+    "metro-transform-worker": "^0.67.0",
+    "metro-minify-uglify": "^0.67.0",
     "prettier": "^1.19.1",
     "react-native-debugger-open": "^0.3.25",
     "react-native-flipper-performance-plugin": "^0.2.1",

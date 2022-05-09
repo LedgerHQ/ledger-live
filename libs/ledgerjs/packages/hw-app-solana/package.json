@@ -44,6 +44,6 @@
     "doc": "bash ../../script/doc.sh",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "bash ../../script/test.sh"
   }
 }

@@ -40,7 +40,7 @@
     "watch": "bash ../../script/watch.sh",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "bash ../../script/test.sh"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }
