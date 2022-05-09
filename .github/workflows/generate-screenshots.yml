@@ -1,53 +1,58 @@
 name: Desktop App - Generate Screenshots
 
 on:
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to generate screenshots for.
+        required: true
+  # issue_comment:
+  #   types: [created]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check-if-fork:
-    runs-on: ubuntu-20.04
-    outputs:
-      forked: ${{ steps.forked.outputs.forked }}
-    steps:
-      - name: check if we are on a forked repo
-        id: forked
-        run: echo "::set-output name=forked::$(${{github.event.issue.pull_request != '' && github.event.issue.pull_request.head.repo.full_name != github.repository || false }})"
+  # check-if-fork:
+  #   runs-on: ubuntu-20.04
+  #   outputs:
+  #     forked: ${{ steps.forked.outputs.forked }}
+  #   steps:
+  #     - name: check if we are on a forked repo
+  #       id: forked
+  #       run: echo "::set-output name=forked::$(${{github.event.issue.pull_request != '' && github.event.issue.pull_request.head.repo.full_name != github.repository || false }})"
 
-  add-reaction:
-    needs: [check-if-fork]
-    name: "[Reaction] 🚀"
-    if: ${{ !needs.check-if-fork.outputs.forked && contains(github.event.comment.body, '/generate-screenshots') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: add reaction to PR
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'rocket'
-            })
+  # add-reaction:
+  #   needs: [check-if-fork]
+  #   name: "[Reaction] 🚀"
+  #   if: ${{ !needs.check-if-fork.outputs.forked && contains(github.event.comment.body, '/generate-screenshots') }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: add reaction to PR
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           github.rest.reactions.createForIssueComment({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             comment_id: context.payload.comment.id,
+  #             content: 'rocket'
+  #           })
 
-            const body = `
-              [**Generating screenshots…**](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
+  #           const body = `
+  #             [**Generating screenshots…**](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+  #           `
 
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body,
-            });
+  #           github.rest.issues.createComment({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             issue_number: context.issue.number,
+  #             body,
+  #           });
 
   generate_screenshots:
-    needs: [add-reaction]
+    # needs: [add-reaction]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
@@ -63,8 +68,9 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
       - uses: pnpm/action-setup@v2.1.0
         with:
@@ -81,10 +87,10 @@ jobs:
         with:
           ruby-version: 2.6
           bundler-cache: true
-      - name: Checkout PR
-        run: gh pr checkout ${{ github.event.issue.number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Checkout PR
+      #   run: gh pr checkout ${{ github.event.issue.number }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set git user
         run: |
           git config user.email "team-live@ledger.fr"
