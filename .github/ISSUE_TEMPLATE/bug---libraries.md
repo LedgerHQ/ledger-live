@@ -2,7 +2,7 @@
 name: Bug - Libraries
 about: Report bugs related to the libraries.
 title: ''
-labels: bug
+labels: bug, libraries
 assignees: ''
 
 ---
