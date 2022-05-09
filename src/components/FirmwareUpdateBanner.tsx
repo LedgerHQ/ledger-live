@@ -61,7 +61,7 @@ const FirmwareUpdateBanner = () => {
     setShowDrawer(false);
   };
 
-  const usbFwUpdateFeatureFlag = { enabled: true }; // TODO: do not merge this!!! useFeature("llmUsbFirmwareUpdate");
+  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(
