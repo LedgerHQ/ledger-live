@@ -31,7 +31,11 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
-          - windows-latest
+          # Commenting because of random node-gyp failures on windows…
+          # See:
+          #  * https://github.com/serialport/node-serialport/issues/2322
+          #  * https://github.com/serialport/node-serialport/issues/2322
+          # - windows-latest
 
     runs-on: ${{ matrix.os }}
     steps:
