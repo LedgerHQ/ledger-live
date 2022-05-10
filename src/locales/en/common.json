@@ -260,12 +260,12 @@
       "description": "Please try again."
     },
     "DisconnectedDevice": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try selecting it again."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try selecting it again."
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",
