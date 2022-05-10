@@ -70,8 +70,8 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@bots-staging
         with:
           path: libs/ledger-live-common/botreport/
-          githubSha: ${GITHUB_SHA}
-          githubToken: ${{secrets.GITHUB_TOKEN}}
+          githubSha: ${{github.sha}}
+          githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
       - name: upload logs to github artifacts
         if: failure() || success()
