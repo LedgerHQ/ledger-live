@@ -2,7 +2,7 @@ name: Bot 'Carbone'
 on:
   push:
     branches:
-      - bots-staging_disabled
+      - bots-staging
 
 concurrency:
   group: bot-carbone
