@@ -86,7 +86,7 @@ Here are some examples:
 
 ```sh
 # Install all the dependencies needed for the packages under ./libs
-pnpm i -F "{libs}..."
+pnpm i -F "{libs/**}..."
 # Run lint only on packages that have been changed compared to origin/develop
 pnpm lint --filter=[origin/develop]
 # Test every package that has been changed since the last commit excluding the applications
