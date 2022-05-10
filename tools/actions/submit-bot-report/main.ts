@@ -33,10 +33,8 @@ async function main() {
     }
   ).then((r) => r.json());
 
-  core.info("Received response: " + JSON.stringify(githubComment));
-
   // optionally send to slack
-  if (slackApiToken) {
+  if (slackApiToken && githubComment) {
     const slackCommentTemplate = await slackCommentTemplateP;
     const text = slackCommentTemplate.replace(
       "{{url}}",
