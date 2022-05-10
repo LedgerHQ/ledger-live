@@ -20,10 +20,8 @@ async function main() {
     "utf-8"
   );
 
-  console.log("GITHUB COMMENT WITH", await reportBodyP);
-
   // upload to github comment
-  const githubCommentResponse = await fetch(
+  const githubComment = await fetch(
     `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${githubSha}/comments`,
     {
       method: "POST",
@@ -33,17 +31,17 @@ async function main() {
       },
       body: JSON.stringify({ body: await reportBodyP }),
     }
-  );
+  ).then((r) => r.json());
+
+  core.info("Received response: " + JSON.stringify(githubComment));
 
   // optionally send to slack
   if (slackApiToken) {
-    const githubComment = await githubCommentResponse.json();
     const slackCommentTemplate = await slackCommentTemplateP;
     const text = slackCommentTemplate.replace(
       "{{url}}",
       githubComment.html_url
     );
-    console.log("SLACK COMMENT WITH", text);
     await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: {
