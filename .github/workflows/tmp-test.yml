@@ -16,6 +16,6 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@bots-staging
         with:
           path: botreport/
-          githubSha: ${{GITHUB_SHA}}
+          githubSha: ${github.sha}
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
