@@ -83,3 +83,7 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
+      - name: Test coverage
+        run: npx codecov -F test
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
