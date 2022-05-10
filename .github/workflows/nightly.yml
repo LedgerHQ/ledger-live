@@ -72,6 +72,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes
+        if: ${{ always() }}
         run: |
           git push origin nightly --follow-tags
 
