@@ -20,6 +20,8 @@ async function main() {
     "utf-8"
   );
 
+  console.log("GITHUB COMMENT WITH", await reportBodyP);
+
   // upload to github comment
   const githubCommentResponse = await fetch(
     `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${githubSha}/comments`,
@@ -41,6 +43,7 @@ async function main() {
       "{{url}}",
       githubComment.html_url
     );
+    console.log("SLACK COMMENT WITH", text);
     await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
       headers: {
