@@ -53,7 +53,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs}..." --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." --frozen-lockfile
 
       - name: build libs
         run: pnpm run build:libs
