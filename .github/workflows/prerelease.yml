@@ -47,6 +47,7 @@ jobs:
           node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+          registry-url: "https://registry.npmjs.org"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
@@ -81,7 +82,7 @@ jobs:
       - name: publish prerelease
         run: pnpm changeset publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes (push event)
         if: ${{ github.event.push != '' }}
