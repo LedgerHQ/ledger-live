@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "../../types/account";
 import type {
-  AccountRawLike,
   AccountRaw,
-  Operation,
-  Transaction,
+  AccountRawLike,
   CryptoCurrency,
+  Operation,
   TokenCurrency,
+  Transaction,
   TransactionRaw,
 } from "../../types";
+import type { Account, AccountLike } from "../../types/account";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
@@ -125,10 +125,7 @@ export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
-export type InitSwapErrorResult = {
-  error: Error;
-  swapId: string;
-};
+
 type ValidSwapStatus =
   | "pending"
   | "onhold"
