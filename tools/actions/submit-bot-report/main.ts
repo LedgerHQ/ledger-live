@@ -28,17 +28,16 @@ async function main() {
   );
 
   // upload to github comment
-  const githubComment = await fetch(
-    `https://api.github.com/repos/LedgerHQ/ledger-live/commits/${githubSha}/comments`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${githubToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ body: await reportBodyP }),
-    }
-  )
+  const githubUrl = `https://api.github.com/repos/LedgerHQ/ledger-live/commits/${githubSha}/comments`;
+  console.log("sending to " + githubUrl);
+  const githubComment = await fetch(githubUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ body: await reportBodyP }),
+  })
     .then(handleErrors)
     .then((r) => r.json());
 
