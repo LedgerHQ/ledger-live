@@ -66,6 +66,13 @@ jobs:
       - name: Build and Test affected libraries
         run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]"
         shell: bash
+      - name: (On Failure) Upload live-common snapshots and source
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          path: |
+            libs/ledger-live-common/src
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v3
         if: failure()
