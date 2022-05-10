@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
@@ -23,37 +23,64 @@ const Init = ({ closeModal, setStep }: Props) => {
     handleRatingsSetDateOfNextAllowedRequest,
     ratingsFeatureParams,
   } = useRatings();
+
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
-    track("Satisfied", { source: ratingsHappyMoment.route_name });
-  }, [ratingsHappyMoment.route_name, setStep]);
+    track("button_clicked", {
+      flow: "review",
+      page: "review_step0",
+      button: "satisfied",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
+  }, [ratingsHappyMoment?.route_name, setStep, ratingsFeatureParams]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
-    track("Disappointed", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_step0",
+      button: "disappointed",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     handleRatingsSetDateOfNextAllowedRequest(
       ratingsFeatureParams?.conditions?.disappointed_delay,
     );
   }, [
     setStep,
-    ratingsHappyMoment.route_name,
+    ratingsHappyMoment?.route_name,
     handleRatingsSetDateOfNextAllowedRequest,
-    ratingsFeatureParams?.conditions?.disappointed_delay,
+    ratingsFeatureParams,
   ]);
   const onNotNow = useCallback(() => {
     closeModal();
-    track("NotNow", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_step0",
+      button: "notnow",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     handleRatingsSetDateOfNextAllowedRequest(
       ratingsFeatureParams?.conditions?.not_now_delay,
     );
   }, [
     closeModal,
-    ratingsHappyMoment.route_name,
+    ratingsHappyMoment?.route_name,
     handleRatingsSetDateOfNextAllowedRequest,
-    ratingsFeatureParams?.conditions?.not_now_delay,
+    ratingsFeatureParams,
   ]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
+      <TrackScreen
+        category="Review"
+        name="page_viewed"
+        flow="review"
+        page="review_step0"
+        source={ratingsHappyMoment?.route_name}
+        params={ratingsFeatureParams}
+      />
       <Text
         variant="h4"
         fontWeight="semiBold"
@@ -72,19 +99,13 @@ const Init = ({ closeModal, setStep }: Props) => {
         <Trans i18nKey="ratings.init.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToEnjoy} outline event="AddDevice" type="shade">
+        <Button onPress={goToEnjoy} outline type="shade">
           <Trans i18nKey="ratings.init.cta.enjoy" />
         </Button>
-        <Button
-          onPress={goToDisappointed}
-          outline
-          event="AddDevice"
-          type="shade"
-          mt={3}
-        >
+        <Button onPress={goToDisappointed} outline type="shade" mt={3}>
           <Trans i18nKey="ratings.init.cta.disappointed" />
         </Button>
-        <NotNowButton onPress={onNotNow} event="AddDevice">
+        <NotNowButton onPress={onNotNow}>
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="ratings.init.cta.notNow" />
           </Text>

@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import NoResultsFound from "../../icons/NoResultsFound";
-import { track } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
@@ -19,18 +19,38 @@ type Props = {
 };
 
 const Disappointed = ({ closeModal, setStep }: Props) => {
-  const { ratingsHappyMoment } = useRatings();
+  const { ratingsFeatureParams, ratingsHappyMoment } = useRatings();
   const goToDisappointedForm = useCallback(() => {
-    track("Sendfeedback", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_disappointedstep1",
+      button: "give_feedback",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     setStep("disappointedForm");
-  }, [ratingsHappyMoment.route_name, setStep]);
+  }, [ratingsFeatureParams, ratingsHappyMoment?.route_name, setStep]);
   const onNotNow = useCallback(() => {
-    track("NotNow", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_disappointedstep1",
+      button: "notnow",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     closeModal();
-  }, [closeModal, ratingsHappyMoment.route_name]);
+  }, [closeModal, ratingsFeatureParams, ratingsHappyMoment?.route_name]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
+      <TrackScreen
+        category="Review"
+        name="page_viewed"
+        flow="review"
+        page="review_disappointedstep1"
+        source={ratingsHappyMoment?.route_name}
+        params={ratingsFeatureParams}
+      />
       <NoResultsFound />
       <Text
         variant="h4"
@@ -51,10 +71,10 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         <Trans i18nKey="ratings.disappointed.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToDisappointedForm} event="AddDevice" type="main">
+        <Button onPress={goToDisappointedForm} type="main">
           <Trans i18nKey="ratings.disappointed.cta.sendFeedback" />
         </Button>
-        <NotNowButton onPress={onNotNow} event="AddDevice">
+        <NotNowButton onPress={onNotNow}>
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="ratings.disappointed.cta.notNow" />
           </Text>

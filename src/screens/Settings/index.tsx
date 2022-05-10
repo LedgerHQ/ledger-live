@@ -14,7 +14,6 @@ import TrackScreen from "../../analytics/TrackScreen";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import useRatings from "../../logic/ratings";
-import { track } from "../../analytics";
 
 type Props = {
   navigation: any;
@@ -37,11 +36,6 @@ export default function Settings({ navigation }: Props) {
       count.current = 0;
     }, 1000);
   }
-
-  const onRateApp = useCallback(() => {
-    track("ReviewPromptStarted", { source: "Settings" });
-    handleSettingsRateApp();
-  }, [handleSettingsRateApp]);
 
   const onDebugHiddenPress = useCallback(() => {
     if (debugTimeout) debugTimeout.current();
@@ -100,7 +94,7 @@ export default function Settings({ navigation }: Props) {
             title={t("settings.about.liveReview.title")}
             desc={t("settings.about.liveReview.desc")}
             Icon={Icons.StarMedium}
-            onClick={onRateApp}
+            onClick={handleSettingsRateApp}
           />
         </FeatureToggle>
       ) : null}

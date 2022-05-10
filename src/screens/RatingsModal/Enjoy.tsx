@@ -4,7 +4,7 @@ import { Linking, Platform, TouchableOpacity } from "react-native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { urls } from "../../config/urls";
-import { track } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
@@ -19,26 +19,58 @@ type Props = {
 
 const Enjoy = ({ closeModal }: Props) => {
   const {
+    ratingsFeatureParams,
     ratingsHappyMoment,
     handleEnjoyNotNow,
     handleGoToStore,
   } = useRatings();
   const goToStore = useCallback(() => {
     track("RedirectedToStore", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_satisfiedstep1",
+      button: "rate_store",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     Linking.openURL(
       Platform.OS === "ios" ? urls.applestoreRate : urls.playstore,
     );
     closeModal();
     handleGoToStore();
-  }, [handleGoToStore, closeModal, ratingsHappyMoment.route_name]);
+  }, [
+    ratingsHappyMoment.route_name,
+    ratingsFeatureParams,
+    closeModal,
+    handleGoToStore,
+  ]);
   const onNotNow = useCallback(() => {
-    track("NotNow", { source: ratingsHappyMoment.route_name });
+    track("button_clicked", {
+      flow: "review",
+      page: "review_satisfiedstep1",
+      button: "notnow",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
     closeModal();
     handleEnjoyNotNow();
-  }, [ratingsHappyMoment.route_name, closeModal, handleEnjoyNotNow]);
+  }, [
+    ratingsHappyMoment?.route_name,
+    ratingsFeatureParams,
+    closeModal,
+    handleEnjoyNotNow,
+  ]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
+      <TrackScreen
+        category="Review"
+        name="page_viewed"
+        flow="review"
+        page="review_satisfiedstep1"
+        source={ratingsHappyMoment?.route_name}
+        params={ratingsFeatureParams}
+      />
       <Text
         variant="h4"
         fontWeight="semiBold"
@@ -57,10 +89,10 @@ const Enjoy = ({ closeModal }: Props) => {
         <Trans i18nKey="ratings.enjoy.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToStore} event="AddDevice" type="main">
+        <Button onPress={goToStore} type="main">
           <Trans i18nKey="ratings.enjoy.cta.rate" />
         </Button>
-        <NotNowButton onPress={onNotNow} event="AddDevice">
+        <NotNowButton onPress={onNotNow}>
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="ratings.enjoy.cta.notNow" />
           </Text>

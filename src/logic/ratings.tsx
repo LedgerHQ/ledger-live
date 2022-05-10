@@ -176,7 +176,7 @@ const useRatings = () => {
     [ratingsOldRoute],
   );
 
-  const triggerRouteChange = useCallback(
+  const onRouteChange = useCallback(
     ratingsNewRoute => {
       if (!areRatingsConditionsMet()) return;
 
@@ -187,7 +187,6 @@ const useRatings = () => {
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
           const timeout = setTimeout(() => {
-            track("ReviewPromptStarted", { source: happyMoment.route_name });
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);
           dispatch(
@@ -222,7 +221,7 @@ const useRatings = () => {
       const navState = e?.data?.state;
       if (navState && navState.routeNames) {
         const currentRouteName = getCurrentRouteName(navState);
-        triggerRouteChange(currentRouteName);
+        onRouteChange(currentRouteName);
       }
     });
 
@@ -235,7 +234,7 @@ const useRatings = () => {
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
       });
     });
-  }, [navigation, ratingsFeature?.enabled, triggerRouteChange, updateRatingsDataOfUserInStateAndStore]);
+  }, [navigation, ratingsFeature?.enabled, onRouteChange, updateRatingsDataOfUserInStateAndStore]);
 
   const cleanRatings = useCallback(() => {
     navigation.removeListener("state");
@@ -252,8 +251,14 @@ const useRatings = () => {
         route_name: "Settings",
       }),
     );
+    track("button_clicked", {
+      flow: "review",
+      button: "manual_review",
+      source: "Settings",
+      params: ratingsFeature?.params,
+    });
     setRatingsModalOpenCallback(true);
-  }, [dispatch, setRatingsModalOpenCallback]);
+  }, [dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
     if (delay !== null && delay !== undefined) {
@@ -274,6 +279,7 @@ const useRatings = () => {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
         doNotAskAgain: true,
+        alreadyClosedFromEnjoyStep: false,
       });
     } else {
       handleRatingsSetDateOfNextAllowedRequest(

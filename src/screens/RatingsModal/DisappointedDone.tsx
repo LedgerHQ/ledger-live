@@ -3,23 +3,39 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import useRatings from "../../logic/ratings";
+import { track, TrackScreen } from "../../analytics";
 
 type Props = {
   closeModal: Function;
 };
 
 const DisappointedDone = ({ closeModal }: Props) => {
-  const { ratingsFeatureParams } = useRatings();
+  const { ratingsFeatureParams, ratingsHappyMoment } = useRatings();
   const goToMainNavigator = useCallback(() => {
     closeModal();
   }, [closeModal]);
 
   const onEmailClick = useCallback(() => {
     Linking.openURL(`mailto:${ratingsFeatureParams?.support_email}`);
-  }, [ratingsFeatureParams?.support_email]);
+    track("button_clicked", {
+      flow: "review",
+      page: "review_disappointedstep2",
+      button: "mailto",
+      source: ratingsHappyMoment?.route_name,
+      params: ratingsFeatureParams,
+    });
+  }, [ratingsFeatureParams, ratingsHappyMoment?.route_name]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center">
+      <TrackScreen
+        category="Review"
+        name="page_viewed"
+        flow="review"
+        page="review_disappointedstep3"
+        source={ratingsHappyMoment?.route_name}
+        params={ratingsFeatureParams}
+      />
       <Text
         variant="h4"
         fontWeight="semiBold"
@@ -37,11 +53,11 @@ const DisappointedDone = ({ closeModal }: Props) => {
       >
         <Trans i18nKey="ratings.disappointedDone.description" />
       </Text>
-      <Link type="main" event="TronManageVotes" onPress={onEmailClick} mb={6}>
+      <Link type="main" onPress={onEmailClick} mb={6}>
         {ratingsFeatureParams?.support_email}
       </Link>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToMainNavigator} event="AddDevice" type="shade">
+        <Button onPress={goToMainNavigator} type="shade">
           <Trans i18nKey="ratings.disappointedDone.cta.done" />
         </Button>
       </Flex>
