@@ -4,6 +4,13 @@ import * as fs from "fs";
 import * as FormData from "form-data";
 import * as path from "path";
 
+function handleErrors(response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response;
+}
+
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const clean = (str: string): string =>
@@ -38,7 +45,7 @@ const uploadImage = async () => {
         },
         // @ts-expect-error correct types are not found. FormData are acceptable
         body,
-      });
+      }).then(handleErrors);
 
       const link = (await res.json()).data.link;
       if (!link) {
