@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useReducer } from "react";
 import { useTranslation } from "react-i18next";
-import { NativeModules, Text } from "react-native";
+import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
