@@ -17,5 +17,5 @@ jobs:
         with:
           path: botreport/
           githubSha: ${GITHUB_SHA}
-          githubToken: ${{secrets.GITHUB_TOKEN}}
+          githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
