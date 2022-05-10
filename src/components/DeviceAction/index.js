@@ -243,7 +243,7 @@ export default function DeviceAction<R, H, P>({
       });
     }
 
-    if(error.message === "Invalid channel") {
+    if (error.message === "Invalid channel") {
       return renderError({
         t,
         navigation,
