@@ -46,6 +46,7 @@ const Row = ({
 }) => {
   const { colors } = useTheme();
   const tokenId = item.id.split("/")[2];
+  const assetIssuer = tokenId.split(":")[1];
   return (
     <TouchableOpacity
       style={[styles.row]}
@@ -64,8 +65,13 @@ const Row = ({
       <LText style={styles.ticker} color="grey">
         -
       </LText>
-      <LText style={styles.assetId} color="grey">
-        {tokenId}
+      <LText
+        style={styles.assetId}
+        color="grey"
+        numberOfLines={1}
+        ellipsizeMode="middle"
+      >
+        {assetIssuer}
       </LText>
     </TouchableOpacity>
   );

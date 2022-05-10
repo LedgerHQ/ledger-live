@@ -26,7 +26,7 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
       IconLeft={() => <IconPlus size={16} color={colors.live} />}
       title={<Trans i18nKey="account.tokens.stellar.addTokens" />}
       type="lightSecondary"
-      event="AccountReceiveASA"
+      event="AccountAddAsset"
       size={14}
     />
   );
@@ -58,7 +58,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
         </LText>
       </View>
       <Button
-        event="AccountReceiveASA"
+        event="AccountAddAsset"
         type="primary"
         IconLeft={() => (
           <IconPlus size={16} color={disabled ? colors.grey : colors.live} />
