@@ -3,6 +3,13 @@ import * as core from "@actions/core";
 import * as fs from "fs";
 import * as path from "path";
 
+function handleErrors(response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response;
+}
+
 async function main() {
   const githubToken = core.getInput("githubToken");
   const githubSha = core.getInput("githubSha");
@@ -31,9 +38,9 @@ async function main() {
       },
       body: JSON.stringify({ body: await reportBodyP }),
     }
-  ).then((r) => r.json());
-
-  console.log(githubComment);
+  )
+    .then(handleErrors)
+    .then((r) => r.json());
 
   // optionally send to slack
   if (slackApiToken && githubComment) {
@@ -52,7 +59,7 @@ async function main() {
         text,
         channel: slackChannel || "ledger-live-bot",
       }),
-    });
+    }).then(handleErrors);
   }
 }
 
