@@ -24,7 +24,10 @@ jobs:
         with:
           script: |
             const branch = context.payload.pull_request.head.ref
-            const isValid = /^(feat|support|bugfix)\/.+/.test(branch) || ["release", "hotfix"].includes(branch)
+            const isValid =
+              /^(feat|support|bugfix)\/.+/.test(branch) ||
+              ["release", "hotfix"].includes(branch) ||
+              branch.startsWith("smartling-translation-completed-")
             console.log(`::set-output name=valid::${isValid}`)
             if (!isValid) {
               const body = `
