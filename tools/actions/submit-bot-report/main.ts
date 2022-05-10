@@ -37,7 +37,7 @@ async function main() {
 
   // optionally send to slack
   if (slackApiToken) {
-    const githubComment = (await githubCommentResponse.json()).data;
+    const githubComment = await githubCommentResponse.json();
     const slackCommentTemplate = await slackCommentTemplateP;
     const text = slackCommentTemplate.replace(
       "{{url}}",
