@@ -193,7 +193,6 @@ export const postBuildTransaction = async (
     },
   };
 
-  // @ts-expect-error TODO: monorepo detected this error
   const registry = new Registry([
     ["/cosmos.staking.v1beta1.MsgDelegate", MsgDelegate],
     ["/cosmos.staking.v1beta1.MsgUndelegate", MsgUndelegate],
