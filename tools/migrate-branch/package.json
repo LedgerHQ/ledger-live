@@ -1,6 +1,6 @@
 {
   "name": "migrate-branch",
-  "version": "0.0.1",
+  "version": "0.0.2-nightly.0",
   "description": "Migrate a branch from an old LedgerHQ repository.",
   "main": "index.js",
   "bin": "index.js",

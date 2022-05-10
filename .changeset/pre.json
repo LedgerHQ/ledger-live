@@ -68,5 +68,7 @@
     "native-modules-tools": "1.0.0",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "popular-snails-smell"
+  ]
 }

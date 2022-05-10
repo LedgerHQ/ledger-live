@@ -1,7 +1,7 @@
 {
   "name": "create-release-hash",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1-nightly.0",
   "description": "Get release hash from desktop release binaries",
   "main": "index.js",
   "bin": {

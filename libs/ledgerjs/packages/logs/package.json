@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/logs",
-  "version": "6.10.0",
+  "version": "6.10.1-nightly.0",
   "description": "Ledger logs central point",
   "keywords": [
     "Ledger"
