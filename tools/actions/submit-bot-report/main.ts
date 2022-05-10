@@ -22,7 +22,7 @@ async function main() {
 
   // upload to github comment
   const githubComment = await fetch(
-    `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${githubSha}/comments`,
+    `https://api.github.com/repos/LedgerHQ/ledger-live/commits/${githubSha}/comments`,
     {
       method: "POST",
       headers: {
