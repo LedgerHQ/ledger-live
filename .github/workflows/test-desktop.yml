@@ -66,7 +66,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
-        run: npx playwright install-deps
+        run: npx @playwright/test install-deps
       - name: Build dependencies
         run: pnpm turbo run ledger-live-desktop#build:testing
       - name: Run code checkers [Linux]
