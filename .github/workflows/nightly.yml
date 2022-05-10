@@ -105,12 +105,9 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
-            console.log("mobile is disabled temporarily")
-            /*
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "nightly-mobile-mono.yml",
             });
-            */
