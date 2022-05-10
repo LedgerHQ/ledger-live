@@ -11,7 +11,7 @@ jobs:
         run: |
           mkdir -p botreport
           echo GRETESTcomment > botreport/full-report.md
-          echo 'GRETEST {{url}}' > botreport/slack-comment-template.md
+          echo 'GRETEST url={{url}}' > botreport/slack-comment-template.md
       - name: submit bot report
         uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@bots-staging
         with:

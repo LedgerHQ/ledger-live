@@ -33,6 +33,8 @@ async function main() {
     }
   ).then((r) => r.json());
 
+  console.log(githubComment);
+
   // optionally send to slack
   if (slackApiToken && githubComment) {
     const slackCommentTemplate = await slackCommentTemplateP;
