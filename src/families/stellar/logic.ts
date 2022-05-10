@@ -18,7 +18,12 @@ import {
 } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
-import type { Transaction, BalanceAsset, RawOperation } from "./types";
+import type {
+  Transaction,
+  TransactionRaw,
+  BalanceAsset,
+  RawOperation,
+} from "./types";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -130,6 +135,15 @@ export const getOperationType = (
 
       return "IN";
   }
+};
+
+export const getAssetCodeIssuer = (tr: Transaction | TransactionRaw) => {
+  if (tr.subAccountId) {
+    const assetString = tr.subAccountId.split("+")[1];
+    return assetString.split(":");
+  }
+
+  return [tr.assetCode, tr.assetIssuer];
 };
 
 const getRecipients = (operation): string[] => {

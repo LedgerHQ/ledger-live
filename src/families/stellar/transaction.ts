@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { getAssetCodeIssuer } from "./logic";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
@@ -7,15 +8,6 @@ import {
 import type { Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-
-const getAssetCodeIssuer = (tr: Transaction | TransactionRaw) => {
-  if (tr.subAccountId) {
-    const assetString = tr.subAccountId.split("+")[1];
-    return assetString.split(":");
-  }
-
-  return [tr.assetCode, tr.assetIssuer];
-};
 
 export const formatTransaction = (
   { amount, recipient, fees, memoValue, useAllAmount }: Transaction,
