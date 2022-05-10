@@ -84,9 +84,6 @@ export default function Content({
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
-      initial: false,
-      // Set to false so it still adds `Accounts` as the previous route in the stack history
-      // even if you're targeting another navigation stack from your current one
       params: {
         accountId: account.id,
         parentId: parentAccount?.id,

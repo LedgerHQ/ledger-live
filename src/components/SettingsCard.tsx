@@ -37,7 +37,7 @@ function Card({
 
 const StyledCard = styled(Card)`
   background-color: ${p => p.theme.colors.palette.background.main};
-  padding: ${p => p.theme.space[7]}px 0;
+  padding: ${p => p.theme.space[7]}px ${p => p.theme.space[6]}px;
   flex-direction: row;
   align-items: center;
 `;

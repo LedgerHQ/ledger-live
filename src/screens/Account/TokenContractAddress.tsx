@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 24,
   },
   iconWrapper: {
     justifyContent: "center",

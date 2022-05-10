@@ -828,8 +828,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Bienvenidos a Ledger",
-      "subtitle": "Administra de manera segura tus cripto desde tu smartphone.",
+      "title": "La billetera más segura para criptodivisas y NFTs",
+      "subtitle": "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
       "start": "Comenzar",
       "noDevice": "¿No tienes un dispositivo?",
       "buy": "Compra un {{fullDeviceName}}",
@@ -1219,7 +1219,7 @@
       },
       "nanoSP": {
         "title": "Conecta tu Nano",
-        "desc": "Esta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
         "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
@@ -1877,7 +1877,7 @@
         "bullet2": "Versión de Ledger Live, región del SO, idioma y región"
       },
       "hideEmptyTokenAccounts": "Ocultar cuentas de tokens sin saldo",
-      "hideEmptyTokenAccountsDesc": "Ocultar cuentas de tokens sin saldo en la página de Cuentas."
+      "hideEmptyTokenAccountsDesc": "Se ocultarán todas las cuentas de token vacías en la página de Activos."
     },
     "currencies": {
       "header": "Divisas",
@@ -2247,7 +2247,7 @@
           "receive": "Importe",
           "receiveFloat": "Importe a recibir antes de aplicar las tarifas de servicios",
           "provider": "Proveedor",
-          "method": "Tasa",
+          "method": "Tarifa",
           "fees": "Tarifas"
         }
       }
@@ -4123,7 +4123,7 @@
       "allTimeLow": "Mínimo histórico",
       "marketCapRank": "Posición según capitalización de mercado",
       "marketCapDominance": "Dominio de capitalización de mercado",
-      "supply": "Suministrar",
+      "supply": "Suministro",
       "circulatingSupply": "Suministro circulante",
       "totalSupply": "Suministro total",
       "maxSupply": "Suministro máximo",
@@ -4134,7 +4134,7 @@
       "24h": "24H",
       "7d": "7D",
       "30d": "30D",
-      "1y": "1 A"
+      "1y": "1A"
     },
     "warnings": {
       "connectionError": "Error de conexión",

@@ -8,13 +8,15 @@ import Video from "react-native-video";
 import { Linking } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
 import { useTermsAccept } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
+import InvertTheme from "../../../components/theme/InvertTheme";
+import ForceTheme from "../../../components/theme/ForceTheme";
+import Button from "../../../components/wrappedUi/Button";
 
 const source = require("../../../../assets/videos/onboarding.mp4");
 
@@ -74,116 +76,111 @@ function OnboardingStepWelcome({ navigation }: any) {
   const videoMounted = !useIsAppInBackground();
 
   return (
-    <Flex flex={1} position="relative" bg="constant.purple">
-      <StyledStatusBar barStyle="light-content" />
-      {videoMounted && (
-        <Video
-          disableFocus
-          source={source}
-          style={absoluteStyle}
-          muted
-          repeat
-          resizeMode={"cover"}
-        />
-      )}
-      <Svg
-        style={absoluteStyle}
-        width="100%"
-        height="120%"
-        preserveAspectRatio="xMinYMin slice"
-      >
-        <Defs>
-          <LinearGradient
-            id="myGradient"
-            x1="0%"
-            y1="0%"
-            x2="0%"
-            y2="100%"
-            gradientUnits="userSpaceOnUse"
-          >
-            <Stop offset="30%" stopOpacity={0} stopColor="black" />
-            <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
-          </LinearGradient>
-        </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
-      </Svg>
-      <Flex
-        justifyContent="center"
-        alignItems="center"
-        flex={1}
-        overflow="hidden"
-      >
-        <SafeFlex position="absolute" top={0} right={0}>
-          <Button
-            type="primary"
-            size="small"
-            mr={4}
-            Icon={ChevronBottomMedium}
-            iconPosition="right"
-            title={locale.toLocaleUpperCase()}
-            outline={false}
-            onPress={onLanguageSelect}
+    <ForceTheme selectedPalette={"dark"}>
+      <Flex flex={1} position="relative" bg="constant.purple">
+        <StyledStatusBar barStyle="light-content" />
+        {videoMounted && (
+          <Video
+            disableFocus
+            source={source}
+            style={absoluteStyle}
+            muted
+            repeat
+            resizeMode={"cover"}
           />
-        </SafeFlex>
-      </Flex>
-      <Flex px={6} py={10}>
-        <Text
-          variant="h1"
-          color="constant.white"
-          pb={2}
-          style={{ textTransform: "uppercase" }}
+        )}
+        <Svg
+          style={absoluteStyle}
+          width="100%"
+          height="100%"
+          preserveAspectRatio="xMinYMin slice"
         >
-          {t("onboarding.stepWelcome.title")}
-        </Text>
-        <Text variant="body" color="constant.white" pb={10}>
-          {t("onboarding.stepWelcome.subtitle")}
-        </Text>
-        <Button
-          type="default"
-          containerStyle={{ backgroundColor: "white" }}
-          outline={false}
-          size="large"
-          event="Onboarding - Start"
-          onPress={next}
-          mb={8}
+          <Defs>
+            <LinearGradient
+              id="myGradient"
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+              gradientUnits="userSpaceOnUse"
+            >
+              <Stop offset="30%" stopOpacity={0} stopColor="black" />
+              <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
+            </LinearGradient>
+          </Defs>
+          <Rect
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="url(#myGradient)"
+          />
+        </Svg>
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          flex={1}
+          overflow="hidden"
         >
+          <SafeFlex position="absolute" top={0} right={0}>
+            <InvertTheme>
+              <Button
+                type={"main"}
+                size="small"
+                mr={4}
+                Icon={ChevronBottomMedium}
+                iconPosition="right"
+                onPress={onLanguageSelect}
+              >
+                {locale.toLocaleUpperCase()}
+              </Button>
+            </InvertTheme>
+          </SafeFlex>
+        </Flex>
+        <Flex px={6} py={10}>
           <Text
-            variant="large"
-            color="constant.black"
-            flex={1}
-            textAlign="center"
-            fontWeight="semiBold"
+            variant="h1"
+            color="neutral.c100"
+            pb={3}
+            style={{ textTransform: "uppercase" }}
+          >
+            {t("onboarding.stepWelcome.title")}
+          </Text>
+          <Text variant="large" fontWeight="medium" color="neutral.c80" pb={9}>
+            {t("onboarding.stepWelcome.subtitle")}
+          </Text>
+          <Button
+            type="main"
+            size="large"
+            event="Onboarding - Start"
+            onPress={next}
+            mb={7}
           >
             {t("onboarding.stepWelcome.start")}
-          </Text>
-        </Button>
+          </Button>
 
-        <Text
-          variant="body"
-          textAlign="center"
-          lineHeight="22px"
-          color="constant.white"
-        >
-          {t("onboarding.stepWelcome.terms")}
-        </Text>
-        <Flex
-          flexDirection="row"
-          alignItems="baseline"
-          justifyContent="center"
-          pb={6}
-        >
-          <TextLink type="color" onPress={onTermsLink}>
-            {t("onboarding.stepWelcome.termsLink")}
-          </TextLink>
-          <Text mx={2} variant="body" color="constant.white">
-            {t("onboarding.stepWelcome.and")}
+          <Text variant="small" textAlign="center" color="neutral.c100">
+            {t("onboarding.stepWelcome.terms")}
           </Text>
-          <TextLink type="color" onPress={onPrivacyLink}>
-            {t("onboarding.stepWelcome.privacyLink")}
-          </TextLink>
+          <Flex
+            flexDirection="row"
+            alignItems="baseline"
+            justifyContent="center"
+            pb={6}
+          >
+            <TextLink type="color" size={"small"} onPress={onTermsLink}>
+              {t("onboarding.stepWelcome.termsLink")}
+            </TextLink>
+            <Text mx={2} variant="small" color="neutral.c100">
+              {t("onboarding.stepWelcome.and")}
+            </Text>
+            <TextLink type="color" size={"small"} onPress={onPrivacyLink}>
+              {t("onboarding.stepWelcome.privacyLink")}
+            </TextLink>
+          </Flex>
         </Flex>
       </Flex>
-    </Flex>
+    </ForceTheme>
   );
 }
 

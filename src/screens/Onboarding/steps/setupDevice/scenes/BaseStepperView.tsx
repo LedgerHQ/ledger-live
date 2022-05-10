@@ -78,7 +78,7 @@ const ImageHeader = ({
           onChange={() => {}}
         />
       )}
-      <Flex width="48">
+      <Flex width={48}>
         <InfoButton target={stepData.drawer} />
       </Flex>
     </Flex>
