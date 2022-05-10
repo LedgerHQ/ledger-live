@@ -5,9 +5,7 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
 import { hasFinalFirmware } from "@ledgerhq/live-common/lib/hw/hasFinalFirmware";
-import {
-  FirmwareUpdateContext,
-} from "@ledgerhq/live-common/lib/types/manager";
+import { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 
@@ -49,7 +47,7 @@ const BackgroundRunnerService = async ({
   const onFirmwareUpdated = () => {
     emitEvent({ type: "firmwareUpdated" });
     NativeModules.BackgroundRunner.stop();
-  }
+  };
 
   const waitForOnlineDevice = (maxWait: number) => {
     return withDevicePolling(deviceId)(
@@ -59,10 +57,7 @@ const BackgroundRunnerService = async ({
   };
 
   prepareFirmwareUpdate(deviceId, latestFirmware).subscribe({
-    next: ({
-      progress,
-      displayedOnDevice,
-    }) => {
+    next: ({ progress, displayedOnDevice }) => {
       if (displayedOnDevice) {
         emitEvent({ type: "confirmUpdate" });
       } else {
@@ -79,22 +74,19 @@ const BackgroundRunnerService = async ({
       ) {
         emitEvent({ type: "flashingMcu" });
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
-          next: ({
-            progress,
-            installing,
-          }) => {            
+          next: ({ progress, installing }) => {
             if (progress === 1 && installing === "flash-mcu") {
               // this is the point where we lose communication with the device until the update
-              // is finished and the user has entered their PIN. Therefore the message here should 
+              // is finished and the user has entered their PIN. Therefore the message here should
               // be generic about waiting for the firmware to finish and then entering the pin
               emitEvent({ type: "confirmPin" });
             } else {
               emitEvent({ type: "flashingMcu", progress, installing });
             }
-          },          
+          },
           error: onError,
           complete: () => {
-            emitEvent({ type: "confirmPin"});
+            emitEvent({ type: "confirmPin" });
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
               complete: onFirmwareUpdated,
@@ -102,7 +94,7 @@ const BackgroundRunnerService = async ({
           },
         });
       } else {
-        emitEvent({ type: "confirmPin" })
+        emitEvent({ type: "confirmPin" });
         // We're waiting forever condition that make getDeviceInfo work
         waitForOnlineDevice(5 * 60 * 1000).subscribe({
           error: onError,
