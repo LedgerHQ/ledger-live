@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { setSupportedCurrencies } from "../../currencies";
 import { setPlatformVersion } from "../../platform/version";
 
-jest.setTimeout(240000);
+jest.setTimeout(360000);
 
 expect.extend({
   toBeBigNumber(value) {
