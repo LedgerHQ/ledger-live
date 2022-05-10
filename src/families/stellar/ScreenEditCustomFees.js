@@ -3,7 +3,13 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  View,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
@@ -11,7 +17,6 @@ import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
-import NavigationScrollView from "../../components/NavigationScrollView";
 import LText from "../../components/LText";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyInput from "../../components/CurrencyInput";
@@ -20,6 +25,8 @@ const options = {
   title: <Trans i18nKey="send.summary.fees" />,
   headerLeft: null,
 };
+
+const forceInset = { bottom: "always" };
 
 type RouteParams = {
   accountId: string,
@@ -72,11 +79,14 @@ function StellarEditCustomFees({ navigation, route }: Props) {
   ]);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >
-        <NavigationScrollView contentContainerStyle={styles.root}>
+        <ScrollView
+          contentContainerStyle={styles.root}
+          keyboardShouldPersistTaps="always"
+        >
           <View style={styles.inputBox}>
             <View style={styles.feeWrapper}>
               <CurrencyInput
@@ -118,7 +128,7 @@ function StellarEditCustomFees({ navigation, route }: Props) {
               disabled={BigNumber(customFee || 0).isZero()}
             />
           </View>
-        </NavigationScrollView>
+        </ScrollView>
       </KeyboardView>
     </SafeAreaView>
   );
