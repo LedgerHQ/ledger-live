@@ -4340,5 +4340,6 @@
     "memo": "Memo",
     "memoPlaceholder": "Optional",
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
-  }
+  },
+  "_smartling_test": "test for smartling"
 }

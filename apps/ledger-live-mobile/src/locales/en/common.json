@@ -4210,5 +4210,6 @@
     "operations": {
       "title": "Transaction history"
     }
-  }
+  },
+  "_smartling_test": "test for smartling"
 }
