@@ -1,0 +1,17 @@
+{
+  "name": "@actions/submit-bot-report",
+  "version": "1.0.0",
+  "description": "Use the bot report to upload to all relevant places (Github comment, Slack)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m",
+    "watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1",
+    "isomorphic-unfetch": "^3.1.0"
+  }
+}

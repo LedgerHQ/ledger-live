@@ -49,30 +49,31 @@ jobs:
           node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
-      - name: bump npm
-        run: npm i -g npm
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
-      - name: Install dependencies
+      - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
-      - name: build bot
-        run: |
           pnpm build:cli
-      - name: BOT
+      - name: bot logic
         env:
           SEED: ${{ secrets.SEED2 }}
           BOT_REPORT_FOLDER: botreport
           VERBOSE_FILE: botreport/logs.txt
-          GITHUB_SHA: ${GITHUB_SHA}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
         run: |
           mkdir libs/ledger-live-common/botreport
           COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
         timeout-minutes: 120
-      - name: upload logs
+      - name: submit bot report
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@bots-staging
+        with:
+          path: libs/ledger-live-common/botreport/
+          githubSha: ${GITHUB_SHA}
+          githubToken: ${{secrets.GITHUB_TOKEN}}
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+      - name: upload logs to github artifacts
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
