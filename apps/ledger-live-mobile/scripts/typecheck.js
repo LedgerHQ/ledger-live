@@ -18,6 +18,10 @@ function compile() {
   });
   program.type;
 
+  console.log(
+    `⏳ - Running typescript type checker on ${config.fileNames.length} files…`,
+  );
+
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program)
     // Ignore js files
@@ -37,9 +41,11 @@ function compile() {
   );
 
   if (allDiagnostics.length > 0) {
-    console.log(`Found ${allDiagnostics.length} errors.`);
+    console.log(`⚠️ - Found ${allDiagnostics.length} errors.`);
     process.exit(1);
   }
+
+  console.log("✅ - All Good!");
 }
 
 compile();

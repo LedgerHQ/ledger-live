@@ -6,7 +6,21 @@ const {
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
-  const major = parseInt(pkg.version?.split(".")[0] || "0");
+  const major = parseInt(
+    pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0"
+  );
+
+  /*
+    Fix packages using latest @types/react causing incompatibilities with react 17 bindings.
+  */
+  if (pkg.dependencies["@types/react"] === "*" || major === 18) {
+    delete pkg.dependencies["@types/react"];
+    pkg.peerDependencies["@types/react"] = "*";
+    pkg.peerDependenciesMeta = {
+      ...pkg.peerDependenciesMeta,
+      "@types/react": { optional: true },
+    };
+  }
 
   process(
     [
@@ -118,6 +132,10 @@ function readPackage(pkg, context) {
         metro: "*",
       }),
       addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
+      /* Packages that are missing @types/* dependencies */
+      addPeerDependencies("react-native-gesture-handler", {
+        "@types/react": "*",
+      }),
     ],
     pkg,
     context
