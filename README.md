@@ -91,6 +91,8 @@ pnpm i -F "{libs/**}..."
 pnpm lint --filter=[origin/develop]
 # Test every package that has been changed since the last commit excluding the applications
 pnpm run test --continue --filter="!./apps/*" --filter="...[HEAD~1]"
+# Run typechecks for the Ledger Live Mobile project
+pnpm typecheck --filter="live-mobile"
 ```
 
 ## Documentation
