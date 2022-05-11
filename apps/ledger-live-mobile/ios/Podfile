@@ -63,7 +63,6 @@ target 'ledgerlivemobile' do
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         if ['RNAnalytics', 'react-native-fast-crypto'].include? target.name
-          puts target.name
           config.build_settings["USE_HEADERMAP"] = "NO"
         end
       end

@@ -7,6 +7,7 @@ import Animated, {
   useCode,
   EasingNode,
 } from "react-native-reanimated";
+// @ts-ignore
 import { useClock, timing } from "react-native-redash/lib/module/v1";
 import { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
