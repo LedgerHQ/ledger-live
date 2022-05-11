@@ -54,7 +54,7 @@
     "lint": "eslint src --ext .js,.json",
     "lint:fix": "pnpm lint --fix",
     "flow": "flow",
-    "typecheck": "flow",
+    "typecheck": "flow && node scripts/typecheck",
     "test": "",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
@@ -250,13 +250,14 @@
     "local-web-server": "^4.2.1",
     "metro": "^0.67.0",
     "metro-extra-config": "workspace:*",
+    "metro-minify-uglify": "^0.67.0",
     "metro-react-native-babel-preset": "^0.67.0",
     "metro-resolver": "^0.67.0",
     "metro-transform-worker": "^0.67.0",
-    "metro-minify-uglify": "^0.67.0",
     "prettier": "^1.19.1",
     "react-native-debugger-open": "^0.3.25",
     "react-native-flipper-performance-plugin": "^0.2.1",
+    "typescript": "^4.6.4",
     "ws": "^7.5.2"
   }
 }
