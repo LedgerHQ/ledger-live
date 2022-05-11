@@ -30,7 +30,7 @@ export type BaseModalProps = {
 } & Partial<ModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
-  background-color: "${(p) => p.theme.colors.background.main};";
+  background-color: ${(p) => p.theme.colors.background.main};
 `;
 
 const Container = styled.View`
