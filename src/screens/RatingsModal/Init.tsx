@@ -99,10 +99,16 @@ const Init = ({ closeModal, setStep }: Props) => {
         <Trans i18nKey="ratings.init.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToEnjoy} outline type="shade">
+        <Button onPress={goToEnjoy} outline type="shade" size="large">
           <Trans i18nKey="ratings.init.cta.enjoy" />
         </Button>
-        <Button onPress={goToDisappointed} outline type="shade" mt={3}>
+        <Button
+          onPress={goToDisappointed}
+          outline
+          type="shade"
+          mt={3}
+          size="large"
+        >
           <Trans i18nKey="ratings.init.cta.disappointed" />
         </Button>
         <NotNowButton onPress={onNotNow}>

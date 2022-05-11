@@ -71,7 +71,7 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         <Trans i18nKey="ratings.disappointed.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToDisappointedForm} type="main">
+        <Button onPress={goToDisappointedForm} type="main" size="large">
           <Trans i18nKey="ratings.disappointed.cta.sendFeedback" />
         </Button>
         <NotNowButton onPress={onNotNow}>

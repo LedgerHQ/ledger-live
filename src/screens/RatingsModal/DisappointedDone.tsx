@@ -53,11 +53,13 @@ const DisappointedDone = ({ closeModal }: Props) => {
       >
         <Trans i18nKey="ratings.disappointedDone.description" />
       </Text>
-      <Link type="main" onPress={onEmailClick} mb={6}>
-        {ratingsFeatureParams?.support_email}
-      </Link>
+      <Flex mb={6}>
+        <Link type="main" onPress={onEmailClick}>
+          {ratingsFeatureParams?.support_email}
+        </Link>
+      </Flex>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToMainNavigator} type="shade">
+        <Button onPress={goToMainNavigator} type="shade" size="large">
           <Trans i18nKey="ratings.disappointedDone.cta.done" />
         </Button>
       </Flex>

@@ -45,7 +45,11 @@ const RatingsModal = () => {
   }, [closeModal, setStep, step]);
 
   return (
-    <BottomDrawer isOpen={isRatingsModalOpen} onClose={closeModal}>
+    <BottomDrawer
+      isOpen={isRatingsModalOpen}
+      onClose={closeModal}
+      noCloseButton
+    >
       <ScrollView>{component}</ScrollView>
     </BottomDrawer>
   );

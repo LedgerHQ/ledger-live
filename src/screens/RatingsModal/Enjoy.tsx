@@ -89,7 +89,7 @@ const Enjoy = ({ closeModal }: Props) => {
         <Trans i18nKey="ratings.enjoy.description" />
       </Text>
       <Flex alignSelf="stretch" py={6}>
-        <Button onPress={goToStore} type="main">
+        <Button onPress={goToStore} type="main" size="large">
           <Trans i18nKey="ratings.enjoy.cta.rate" />
         </Button>
         <NotNowButton onPress={onNotNow}>
