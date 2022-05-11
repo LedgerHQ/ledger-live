@@ -1,14 +1,14 @@
 import React, { useCallback, useState, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 
-import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { ActivityIndicator, TouchableHighlight, TouchableHighlightProps, View } from "react-native";
 import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
 import { Icon as IconComponent } from "../../Icon";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-export type ButtonProps = TouchableOpacityProps &
+export type ButtonProps = TouchableHighlightProps &
   BaseStyledProps & {
     Icon?: React.ComponentType<{ size: number; color: string }> | null;
     iconName?: string;
@@ -31,7 +31,7 @@ const IconContainer = styled.View<{
     p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
-export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => ({
+export const Base = baseStyled(TouchableHighlight).attrs<ButtonProps>((p) => ({
   ...getButtonColorStyle(p.theme.colors, p).button,
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,
@@ -152,15 +152,17 @@ const Button = (props: ButtonProps): React.ReactElement => {
       {...props}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
-      activeOpacity={0.5}
+      activeOpacity={1}
       disabled={disabled || pending}
     >
-      <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />
-      {pending && !displayContentWhenPending ? (
-        <SpinnerContainer displayContentWhenPending={displayContentWhenPending}>
-          <ActivityIndicator color={theme.colors.neutral.c50} animating />
-        </SpinnerContainer>
-      ) : null}
+      <View>
+        <ButtonContainer {...props} type={type} hide={pending && !displayContentWhenPending} />
+        {pending && !displayContentWhenPending ? (
+          <SpinnerContainer displayContentWhenPending={displayContentWhenPending}>
+            <ActivityIndicator color={theme.colors.neutral.c50} animating />
+          </SpinnerContainer>
+        ) : null}
+      </View>
     </Base>
   );
 };
@@ -192,10 +194,12 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
       disabled={disabled || spinnerOn}
       onPress={onPressHandler}
     >
-      <ButtonContainer {...props} type={type} hide={spinnerOn} />
-      <SpinnerContainer>
-        <ActivityIndicator color={theme.colors.neutral.c50} animating={spinnerOn} />
-      </SpinnerContainer>
+      <View>
+        <ButtonContainer {...props} type={type} hide={spinnerOn} />
+        <SpinnerContainer>
+          <ActivityIndicator color={theme.colors.neutral.c50} animating={spinnerOn} />
+        </SpinnerContainer>
+      </View>
     </Base>
   );
 };
