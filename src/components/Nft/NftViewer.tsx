@@ -17,6 +17,7 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
+import Clipboard from "@react-native-community/clipboard";
 import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -38,6 +39,8 @@ type RouteParams = {
   nft: ProtoNFT;
 };
 
+type TimeoutReturn = ReturnType<typeof setTimeout>;
+
 const Section = ({
   title,
   value,
@@ -54,7 +57,9 @@ const Section = ({
   copiedString?: string;
 }) => {
   const [copied, setCopied] = useState(false);
-  const [timeoutFunction, setTimeoutFunction] = useState(null);
+  const [timeoutFunction, setTimeoutFunction] = useState<TimeoutReturn | null>(
+    null,
+  );
   const copy = useCallback(() => {
     Clipboard.setString(value);
     setCopied(true);
@@ -63,7 +68,7 @@ const Section = ({
         setCopied(false);
       }, 3000),
     );
-    return clearTimeout(timeoutFunction);
+    return clearTimeout(timeoutFunction as TimeoutReturn);
   }, [value, timeoutFunction]);
 
   return (

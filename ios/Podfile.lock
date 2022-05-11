@@ -694,7 +694,7 @@ DEPENDENCIES:
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - Adjust
     - Analytics
     - CocoaAsyncSocket
@@ -1008,6 +1008,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 706678d86edbba64cabd5f097814715fd00a1b59
+PODFILE CHECKSUM: 2aef56f42eb03d1fa531a77545e70759c36a9929
 
 COCOAPODS: 1.11.2
