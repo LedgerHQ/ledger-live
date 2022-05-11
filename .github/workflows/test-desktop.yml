@@ -21,6 +21,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     strategy:
