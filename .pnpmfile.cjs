@@ -1,3 +1,15 @@
+/**
+ * This file exists for the sole purpose of hijacking the packages installation process.
+ *
+ * It contains a lot of monkey patches because some packages we use have issues when declaring
+ * their own dependencies. It causes problems with pnpm which enforces a strict package resolution.
+ *
+ * Ideally package maintainers would update their packages and we would not need this file anymore.
+ * But this is world is cruel… Feel free to reach out and make PRs if you are motivated enough.
+ *
+ * See: https://pnpm.io/pnpmfile
+ */
+
 const {
   process,
   addDependencies,
@@ -11,10 +23,15 @@ function readPackage(pkg, context) {
   );
 
   /*
-    Fix packages using latest @types/react causing incompatibilities with react 17 bindings.
+    Fix packages using wrong @types/react versions by making it a peer dependency.
+    So ultimately it uses our types package instead of their own which can conflict.
   */
-  if (pkg.dependencies["@types/react"] === "*" || major === 18) {
-    delete pkg.dependencies["@types/react"];
+  if (
+    !!pkg.dependencies["@types/react"] &&
+    !pkg.name.startsWith("@ledgerhq") &&
+    !pkg.private
+  ) {
+    delete pkg.dependencies;
     pkg.peerDependencies["@types/react"] = "*";
     pkg.peerDependenciesMeta = {
       ...pkg.peerDependenciesMeta,
@@ -27,7 +44,7 @@ function readPackage(pkg, context) {
       /*
         Adding jest and co. as dev. dependencies for /ledgerjs/* sub-packages.
         This is done this way because these packages are not hoisted hence unaccessible otherwise.
-        Furthermore it makes these packages self-contained which eases the CI install process.
+        Furthermore it makes these packages self-contained which eases the CI process.
       */
       addDevDependencies(
         /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
