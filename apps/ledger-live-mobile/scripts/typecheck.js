@@ -42,10 +42,10 @@ function compile() {
 
   if (allDiagnostics.length > 0) {
     console.log(`⚠️ - Found ${allDiagnostics.length} errors.`);
-    process.exit(1);
+    process.exitCode = 1;
+  } else {
+    console.log("✅ - All Good!");
   }
-
-  console.log("✅ - All Good!");
 }
 
 compile();
