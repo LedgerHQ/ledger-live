@@ -2,6 +2,10 @@ import { log } from "@ledgerhq/logs";
 import { patchOperationWithHash } from "../../operation";
 import type { Account, Operation, SignedOperation } from "../../types";
 import { ChainAPI } from "./api";
+import {
+  SolanaTxConfirmationTimeout,
+  SolanaTxSimulationFailedPendingOp,
+} from "./errors";
 
 export const broadcastWithAPI = async (
   {
@@ -29,15 +33,11 @@ export const broadcastWithAPI = async (
         e.message.includes("simulation failed") &&
         account.pendingOperations.length > 0
       ) {
-        throw new Error(
-          "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
-        );
+        throw new SolanaTxSimulationFailedPendingOp();
       }
 
       if (e.message.includes("was not confirmed in")) {
-        throw new Error(
-          "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
-        );
+        throw new SolanaTxConfirmationTimeout();
       }
     }
 

@@ -70,3 +70,11 @@ export const SolanaStakeNoStakeAuth = createCustomErrorClass(
 export const SolanaUseAllAmountStakeWarning = createCustomErrorClass(
   "SolanaUseAllAmountStakeWarning"
 );
+
+export const SolanaTxSimulationFailedPendingOp = createCustomErrorClass(
+  "SolanaTxSimulationFailedWhilePendingOp"
+);
+
+export const SolanaTxConfirmationTimeout = createCustomErrorClass(
+  "SolanaTxConfirmationTimeout"
+);
