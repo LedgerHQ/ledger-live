@@ -32,6 +32,9 @@ jobs:
           node-version: 14
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
       - name: Bump npm to latest
         run: npm i -g npm
       - name: Install dependencies
