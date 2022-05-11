@@ -27,7 +27,13 @@
   },
   "peerDependencies": {
     "styled-components": "*",
-    "styled-system": "*"
+    "styled-system": "*",
+    "@types/react": "*"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",
