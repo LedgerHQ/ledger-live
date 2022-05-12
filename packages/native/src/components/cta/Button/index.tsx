@@ -152,7 +152,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
       {...props}
       type={type}
       iconButton={(!!Icon || !!iconName) && !children}
-      activeOpacity={0.5}
+      activeOpacity={1}
       disabled={disabled || pending}
     >
       <View>
