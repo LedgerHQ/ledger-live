@@ -1,0 +1,470 @@
+{
+  "data": {
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "EUR",
+      "preferredDeviceModel": "nanoX",
+      "language": null,
+      "theme": "dusk",
+      "region": null,
+      "orderAccounts": "name|asc",
+      "countervalueFirst": true,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "year",
+      "marketIndicator": "western",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "2.3.2",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "hasInstalledApps": true,
+      "blacklistedTokenIds": []
+    },
+    "user": {
+      "id": "9434c303-1d22-43a6-8fce-44c92d815ca8"
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "libcore:1:bitcoin:xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC:",
+          "seedIdentifier": "04b9b3078fbdef02b5f5aa8bb400423d5170015da06c31ad7745160cbab1fa4cdc965f271b924c2999639211310f6d35029698749b38ea7e64608de3ebcdbaa46a",
+          "name": "Bitcoin 1 (legacy)",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "1GaciDQKuhYMz5pcycBcBTwhRao8e4sfoK",
+          "freshAddressPath": "44'/0'/0'/0/112",
+          "freshAddresses": [
+            {
+              "address": "1GaciDQKuhYMz5pcycBcBTwhRao8e4sfoK",
+              "derivationPath": "44'/0'/0'/0/112"
+            },
+            {
+              "address": "1FJkd4ZQsz2GoaNhE7R3fDrKhPNm3MvSyw",
+              "derivationPath": "44'/0'/0'/0/113"
+            },
+            {
+              "address": "1KskXU25MWGFb2dR9Y1nfUZ3SaU2Xkd5gZ",
+              "derivationPath": "44'/0'/0'/0/114"
+            },
+            {
+              "address": "19W7vMG3MdEPrwdczh6QwT5bWZFnTM6rw7",
+              "derivationPath": "44'/0'/0'/0/115"
+            },
+            {
+              "address": "1FZuY8soygaCxqbrSURTteVj8ZxBrV2ouz",
+              "derivationPath": "44'/0'/0'/0/116"
+            },
+            {
+              "address": "17EutyEbazm1mWXWDfK2K5ejwYizPVq2gK",
+              "derivationPath": "44'/0'/0'/0/117"
+            },
+            {
+              "address": "19bMyLBBq8FbTE4L7hFCJsbjYewPBNe6Lf",
+              "derivationPath": "44'/0'/0'/0/118"
+            },
+            {
+              "address": "15jWmZ3ujDQCFzukYofW7LkCxerov5AAog",
+              "derivationPath": "44'/0'/0'/0/119"
+            },
+            {
+              "address": "1Asii6uVSc5Pk4pwXn7rrourtkMrzVsfyL",
+              "derivationPath": "44'/0'/0'/0/120"
+            },
+            {
+              "address": "1MY3Gsho5t3kkxa52FUYnXEJeuKiKZxSe5",
+              "derivationPath": "44'/0'/0'/0/121"
+            },
+            {
+              "address": "1AXqhTrgoy7PFFraTiMoGb7XnK261THDny",
+              "derivationPath": "44'/0'/0'/0/122"
+            },
+            {
+              "address": "1MErAsyj34SvUgdqJP5Xbs5kcrceETEBRo",
+              "derivationPath": "44'/0'/0'/0/123"
+            },
+            {
+              "address": "1EihrhVvQ2DZb1LQ2in7ZgdWaTxJ5qmLJD",
+              "derivationPath": "44'/0'/0'/0/124"
+            },
+            {
+              "address": "14TvLS3n8qEbVUfi8bPtLyiFrsecQR99in",
+              "derivationPath": "44'/0'/0'/0/125"
+            },
+            {
+              "address": "18PQpXEJb8yRerzTHRgP3sNzZwYwPw3tak",
+              "derivationPath": "44'/0'/0'/0/126"
+            },
+            {
+              "address": "1F5nBYmGfnFCUrHP6vgLh7Cr3rN5DmgEpb",
+              "derivationPath": "44'/0'/0'/0/127"
+            },
+            {
+              "address": "1jA5Gkk4eSp4d3aUqw8kK1ZDWggAu9ibd",
+              "derivationPath": "44'/0'/0'/0/128"
+            },
+            {
+              "address": "18nzNgCTonAxbG56Nu5ELfwyrGNch5vBQX",
+              "derivationPath": "44'/0'/0'/0/129"
+            },
+            {
+              "address": "1Mw5HcE4Pnt9KSK1FKTFQEVyqLnvhTJLVe",
+              "derivationPath": "44'/0'/0'/0/130"
+            },
+            {
+              "address": "1Epk9Hbsf8cEUZCjS6SvZWBqscX9mCZ4mj",
+              "derivationPath": "44'/0'/0'/0/131"
+            }
+          ],
+          "blockHeight": 628010,
+          "operationsCount": 219,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "2578",
+          "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC",
+          "balanceHistory": {},
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:bitcoin:xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK:native_segwit",
+          "seedIdentifier": "04c2f0fe9c27396ba3e37558d71d8308572c5bba380cfe0a68450bc38039b781ce02f1ce14db54eed0ba56ed4aebba93338d3d0af82a6078ace90458f09069b125",
+          "name": "Bitcoin 1 (native segwit)",
+          "starred": false,
+          "derivationMode": "native_segwit",
+          "index": 0,
+          "freshAddress": "bc1qehatadheaph4jjxfph0fn5sc5vsk0fskch0x5t",
+          "freshAddressPath": "84'/0'/0'/0/52",
+          "freshAddresses": [
+            {
+              "address": "bc1qehatadheaph4jjxfph0fn5sc5vsk0fskch0x5t",
+              "derivationPath": "84'/0'/0'/0/52"
+            },
+            {
+              "address": "bc1qzaavs2djzt34n0jkvm0063z0cgml3mfcyu25m0",
+              "derivationPath": "84'/0'/0'/0/53"
+            },
+            {
+              "address": "bc1qk0zcnpddv3z4eag68kt04d0e750kk4dq8exgqk",
+              "derivationPath": "84'/0'/0'/0/54"
+            },
+            {
+              "address": "bc1qmter0ysa83gh8q5y8xnetmj0ncd85l975zfpg3",
+              "derivationPath": "84'/0'/0'/0/55"
+            },
+            {
+              "address": "bc1qsh98tjaj7w5e88l5yzyyxz7kalsw3ar4amlpmy",
+              "derivationPath": "84'/0'/0'/0/56"
+            },
+            {
+              "address": "bc1queyny73jh45y74fwhfx62hmtplhv4hjftd7ltd",
+              "derivationPath": "84'/0'/0'/0/57"
+            },
+            {
+              "address": "bc1qlthx83tmu7kqjf4qt2ykspy0fs0u8mlslcjvje",
+              "derivationPath": "84'/0'/0'/0/58"
+            },
+            {
+              "address": "bc1qgy0azhlqze9q4axns0pfskvwfue3aqc5ldvzkc",
+              "derivationPath": "84'/0'/0'/0/59"
+            },
+            {
+              "address": "bc1qpqzqp3fmy456hfvatkw3akuq87ta7gn0q6wn7x",
+              "derivationPath": "84'/0'/0'/0/60"
+            },
+            {
+              "address": "bc1qtzkz29ejg28udkwrckner8wvlcxnzzx2l55r6x",
+              "derivationPath": "84'/0'/0'/0/61"
+            },
+            {
+              "address": "bc1qwrwgy6eddn4kmm4eac8y2tefrfk2ftfx854l3g",
+              "derivationPath": "84'/0'/0'/0/62"
+            },
+            {
+              "address": "bc1qrfe9n6gfs066jp46w2negq99ytrdg2va6vvkq5",
+              "derivationPath": "84'/0'/0'/0/63"
+            },
+            {
+              "address": "bc1qvlwgq9qmjuz2xdq76ygty0aafdvgauk08sezjw",
+              "derivationPath": "84'/0'/0'/0/64"
+            },
+            {
+              "address": "bc1qrrpkpqwxjs6qumn0xmmls45hywck77psrw7wnp",
+              "derivationPath": "84'/0'/0'/0/65"
+            },
+            {
+              "address": "bc1qpdkxswkqcqg8tge4l6tfhr7wjpkqv608quar9x",
+              "derivationPath": "84'/0'/0'/0/66"
+            },
+            {
+              "address": "bc1q8jwdg7u33vw6m5q4h68dcyat3hlhr67w3uw90s",
+              "derivationPath": "84'/0'/0'/0/67"
+            },
+            {
+              "address": "bc1q5n2gtsx782mdjq22gw4wyq2tsk9gehhg2zkwp3",
+              "derivationPath": "84'/0'/0'/0/68"
+            },
+            {
+              "address": "bc1qp6j23np9l93vp7asgc4g7cupm5wvekxa95wgsq",
+              "derivationPath": "84'/0'/0'/0/69"
+            },
+            {
+              "address": "bc1qpv55nkqalxweyphdse8nmqgwp6vuxaa9gpg7sh",
+              "derivationPath": "84'/0'/0'/0/70"
+            },
+            {
+              "address": "bc1qssp0tza6wrnxzsd405d7t9d6m7jvshz0glfl67",
+              "derivationPath": "84'/0'/0'/0/71"
+            }
+          ],
+          "blockHeight": 628010,
+          "operationsCount": 117,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "bitcoin",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "1700",
+          "xpub": "xpub6DVfEXXjv6nspJK6h7A57pRKgAStQDhEST2NNUUwmtGpatc2cEhvP4FbCYSmtF4DJoLHBPG5imcTNVxq8V2SDdENaf63HXPKgMkeZ7SEbsK",
+          "balanceHistory": {},
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:komodo:v4PKUB9vPNEx9QFvX7SJkYhpX2QbsXdikCPFbeJLZK4hrFSD2XBJ2Ze7zC68e3Kfaia5Xzgey12HeqwSzF5itsprdyJghVxvrrMod6oMzS14oBVf:",
+          "seedIdentifier": "04fb0f483df5f252ff2ef489859d4f630bcd15ff6706fb3c8515f65f9faeedef1ab8ca4a561dc9366d5c3e456b2c4765e4c7b5098dcf3abd468cecba3ef0bdf270",
+          "name": "Komodo 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "RJ8BdEPiYShsysUdYgDdVMRutkkTDgnu8w",
+          "freshAddressPath": "44'/141'/0'/0/48",
+          "freshAddresses": [
+            {
+              "address": "RJ8BdEPiYShsysUdYgDdVMRutkkTDgnu8w",
+              "derivationPath": "44'/141'/0'/0/48"
+            },
+            {
+              "address": "RXD42V42BhaGJtsxYr1YXdoUQnLHrPygbu",
+              "derivationPath": "44'/141'/0'/0/49"
+            },
+            {
+              "address": "RTq6JkQ4gttGiViKKwkruojSX8BUdMeKfg",
+              "derivationPath": "44'/141'/0'/0/50"
+            },
+            {
+              "address": "RVVZ32YuzimXokYkPFQveyf3nEfoMs981x",
+              "derivationPath": "44'/141'/0'/0/51"
+            },
+            {
+              "address": "RFZbwN64jQ8KoHACCirMUx99nkKv4Bauq4",
+              "derivationPath": "44'/141'/0'/0/52"
+            },
+            {
+              "address": "RVjjo4FATzgSUrmYwqbkU5brUKeXfhBhat",
+              "derivationPath": "44'/141'/0'/0/53"
+            },
+            {
+              "address": "RSLjcDRremkb98xXLScGmBNWkCbbTYFEtb",
+              "derivationPath": "44'/141'/0'/0/54"
+            },
+            {
+              "address": "RYQxTeUpWjFSTjvsg4jxAKXNjjjM34s2jE",
+              "derivationPath": "44'/141'/0'/0/55"
+            },
+            {
+              "address": "RQZHBDLWNx2zUnTPoYeKUeMFbUbRGVKUy1",
+              "derivationPath": "44'/141'/0'/0/56"
+            },
+            {
+              "address": "RQkUxunVMnJFSNMHZtMGzdKkLZhcmHKDyJ",
+              "derivationPath": "44'/141'/0'/0/57"
+            },
+            {
+              "address": "RLGJf75BE1wKwWjPJseGgs6tgH98YwGBGp",
+              "derivationPath": "44'/141'/0'/0/58"
+            },
+            {
+              "address": "RLf2gRk8MGwWnrXPGfRBxaUq3TrkrphDRN",
+              "derivationPath": "44'/141'/0'/0/59"
+            },
+            {
+              "address": "RAs7DhvoUE22gy3n3vsfuNeWJbRZT3yfZ1",
+              "derivationPath": "44'/141'/0'/0/60"
+            },
+            {
+              "address": "RByLBNDax7NscVf3egVVvPeAnVWetU8s3F",
+              "derivationPath": "44'/141'/0'/0/61"
+            },
+            {
+              "address": "RVb7N1aKZSbT7SJ94YsZNQ1bNwpsEfb9W8",
+              "derivationPath": "44'/141'/0'/0/62"
+            },
+            {
+              "address": "RPrgvcgR2piGZ4281YK8FqJqcXyFoCzV8b",
+              "derivationPath": "44'/141'/0'/0/63"
+            },
+            {
+              "address": "RQJUD12DZipBGj2PfprBXznLvKR3jEPP7h",
+              "derivationPath": "44'/141'/0'/0/64"
+            },
+            {
+              "address": "RETUiR3P5efnMiYiU9PiC3yad7VjYj6Hdg",
+              "derivationPath": "44'/141'/0'/0/65"
+            },
+            {
+              "address": "RP4XM58vo8bakSCWdUZ7jmroStSZRocEp7",
+              "derivationPath": "44'/141'/0'/0/66"
+            },
+            {
+              "address": "RTGK34H73gtrYspyMdtkCcHamhFi3dhN9W",
+              "derivationPath": "44'/141'/0'/0/67"
+            }
+          ],
+          "blockHeight": 1854558,
+          "operationsCount": 111,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "komodo",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "233798275",
+          "balanceHistory": {},
+          "xpub": "v4PKUB9vPNEx9QFvX7SJkYhpX2QbsXdikCPFbeJLZK4hrFSD2XBJ2Ze7zC68e3Kfaia5Xzgey12HeqwSzF5itsprdyJghVxvrrMod6oMzS14oBVf",
+          "subAccounts": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "libcore:1:zcash:xpub6CEGMFW91HKTGhzxJjnTZ4mSrRkNqCAiArP14Dy8GhkpwHGzyMrxWgh3aT69bpi3t4RQSg5TtwKjzVcFdfyf86jMMxTABBF6e66UC1vMGze:",
+          "seedIdentifier": "04ddd8dc9459f1991eb8f4ae03f2095eb66511917de8076e5aa6974fe2cb527a03f2467654f038ecdd123d447de7bd4019870f6f24a6666dee47f456f82aa9b904",
+          "name": "Zcash 2",
+          "starred": false,
+          "derivationMode": "",
+          "index": 1,
+          "freshAddress": "t1fEuxn1xqTsxRev942RtWY5gn6AWrC9GpY",
+          "freshAddressPath": "44'/133'/1'/0/83",
+          "freshAddresses": [
+            {
+              "address": "t1fEuxn1xqTsxRev942RtWY5gn6AWrC9GpY",
+              "derivationPath": "44'/133'/1'/0/83"
+            },
+            {
+              "address": "t1Me9UKBpfrCiiosVDpNhVXzjWnsAG6cTS2",
+              "derivationPath": "44'/133'/1'/0/84"
+            },
+            {
+              "address": "t1dRxwFjbpVUupmuR8iupykTF1wy33JJoG9",
+              "derivationPath": "44'/133'/1'/0/85"
+            },
+            {
+              "address": "t1X8HcikGryH9ZZPgCiDAhdur5Upfd1ApSm",
+              "derivationPath": "44'/133'/1'/0/86"
+            },
+            {
+              "address": "t1KCiKxLosdCLueGet6kwonPfvVJ8hg3N2q",
+              "derivationPath": "44'/133'/1'/0/87"
+            },
+            {
+              "address": "t1KTw9ghcEpL1Hwq1zkHy3nkEx1j98Tg44r",
+              "derivationPath": "44'/133'/1'/0/88"
+            },
+            {
+              "address": "t1KeC6nBJUg2oKbBv4Lb7qDXUcJDgXtQ7fs",
+              "derivationPath": "44'/133'/1'/0/89"
+            },
+            {
+              "address": "t1dFWqa61wTE9bkNoR5qCGKq7rSQy11hFBx",
+              "derivationPath": "44'/133'/1'/0/90"
+            },
+            {
+              "address": "t1MmT8DFhVQoapE6pCkPp7ec878zWnczNUX",
+              "derivationPath": "44'/133'/1'/0/91"
+            },
+            {
+              "address": "t1Tsrmy181nmhhiTdALGSTP3dCNM18TXpEx",
+              "derivationPath": "44'/133'/1'/0/92"
+            },
+            {
+              "address": "t1fERbygnTo8WafXrrU1YdVTdr6TaaJ7gp2",
+              "derivationPath": "44'/133'/1'/0/93"
+            },
+            {
+              "address": "t1eRu5VPo6iGUqn2yxBHx1Cyv6mJyNcNPbE",
+              "derivationPath": "44'/133'/1'/0/94"
+            },
+            {
+              "address": "t1Z3uPUb5wvWN27V9M2nehZc2nCiywne5mo",
+              "derivationPath": "44'/133'/1'/0/95"
+            },
+            {
+              "address": "t1LADMvGe6euGonbwc77YPdMCgKkyT9VD2u",
+              "derivationPath": "44'/133'/1'/0/96"
+            },
+            {
+              "address": "t1eFaYwmpDnPtHQEHqgExvxHA2yzKFhLm9T",
+              "derivationPath": "44'/133'/1'/0/97"
+            },
+            {
+              "address": "t1S2V2idhSDvPtrCKqfMYWSBvuVBsACPoQc",
+              "derivationPath": "44'/133'/1'/0/98"
+            },
+            {
+              "address": "t1czT6CaTrRUv4RuywwporncyjJCGCebv36",
+              "derivationPath": "44'/133'/1'/0/99"
+            },
+            {
+              "address": "t1ajRwDpYGE1W7heZibg3MXkHDo7QiPjgPt",
+              "derivationPath": "44'/133'/1'/0/100"
+            },
+            {
+              "address": "t1PXTyzjuuRUDRMgUJi8CRxX4ZSAW8nPmgg",
+              "derivationPath": "44'/133'/1'/0/101"
+            },
+            {
+              "address": "t1f1iYgWkzQmYsrrAA7AnWaaPzzTijJXvP6",
+              "derivationPath": "44'/133'/1'/0/102"
+            }
+          ],
+          "blockHeight": 812636,
+          "operationsCount": 179,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "zcash",
+          "unitMagnitude": 8,
+          "lastSyncDate": "",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistory": {},
+          "xpub": "xpub6CEGMFW91HKTGhzxJjnTZ4mSrRkNqCAiArP14Dy8GhkpwHGzyMrxWgh3aT69bpi3t4RQSg5TtwKjzVcFdfyf86jMMxTABBF6e66UC1vMGze",
+          "subAccounts": []
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {
+      "version": 2,
+      "daily": {},
+      "hourly": {}
+    }
+  }
+}

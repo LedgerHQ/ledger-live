@@ -7,6 +7,7 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/lib/bridge/react";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -63,9 +64,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const shouldSkipAmount =
     transaction.family === "ethereum" && transaction.mode === "erc721.transfer";
-  const isNftSend = ["erc721.transfer", "erc1155.transfer"].includes(
-    transaction.mode,
-  );
+  const isNftSend = isNftTransaction(transaction);
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);

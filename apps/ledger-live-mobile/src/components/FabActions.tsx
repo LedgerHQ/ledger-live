@@ -23,7 +23,6 @@ import { accountsCountSelector } from "../reducers/accounts";
 import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
-import useLendingActions from "../screens/Account/hooks/useLendingActions";
 
 type Props = {
   account?: AccountLike;
@@ -103,32 +102,9 @@ export const FabAccountActionsComponent = ({
     ...useActions({ account, parentAccount, colors }),
   ];
 
-  // Do not display separators as buttons. (they do not have a label)
-  //
-  // First, count the index at which there are 2 valid buttons.
-  let counter = 0;
-  const sliceIndex =
-    allActions.findIndex(action => {
-      if (action.label) counter++;
-      return counter === 2;
-    }) + 1;
-
-  // Then slice from 0 to the index and ignore invalid button elements.
-  // Chaining methods should not be a big deal given the size of the actions array.
-  const buttons = allActions
-    .slice(0, sliceIndex || undefined)
-    .filter(action => !!action.label)
-    .slice(0, 2);
-
-  const actions = {
-    default: sliceIndex ? allActions.slice(sliceIndex) : [],
-    lending: useLendingActions({ account }),
-  };
-
   return (
     <FabAccountButtonBar
-      buttons={buttons}
-      actions={actions}
+      buttons={allActions}
       account={account}
       parentAccount={parentAccount}
     />
@@ -200,8 +176,6 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
                   params: { selectedCurrency: currency },
                 },
               ],
-              type: "shade",
-              outline: true,
             },
             {
               event: "TransferSend",
@@ -214,8 +188,6 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
                   params: { selectedCurrency: currency },
                 },
               ],
-              type: "shade",
-              outline: true,
               disabled: defaultAccount?.balance.lte(0),
             },
           ]
@@ -301,8 +273,6 @@ const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
           screen: ScreenName.ReceiveSelectAccount,
         },
       ],
-      type: "shade",
-      outline: true,
     };
 
     const actionButtonTransferSend: ActionButton = {
@@ -315,8 +285,6 @@ const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
           screen: ScreenName.SendCoin,
         },
       ],
-      type: "shade",
-      outline: true,
       disabled: areAccountsEmpty,
     };
 

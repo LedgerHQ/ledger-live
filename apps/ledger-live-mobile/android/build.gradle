@@ -50,7 +50,6 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/expo-camera/android/maven"
         }
-        jcenter()
     }
     configurations.all {
         resolutionStrategy {

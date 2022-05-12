@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "主账户余额不足"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "数量需至少为 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "余额不能少于 {{minimumAmount}}"
     },
@@ -828,8 +831,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "The most secure cryptocurrency & NFT wallet",
-      "subtitle": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
+      "title": "最安全的加密货币和 NFT 钱包",
+      "subtitle": "在 Ledger Live 上安全管理、买入和增长您的加密资产和 NFT。",
       "start": "快速入门",
       "noDevice": "没有设备？",
       "buy": "购买一个 {{fullDeviceName}}",
@@ -1750,7 +1753,8 @@
       "sectionLabel": "解除委托"
     },
     "nft": {
-      "receiveNft": "接收 NFT"
+      "receiveNft": "接收 NFT",
+      "howTo": "要添加 NFT，您需要使用您的 <1>{{currency}} 地址</1> <0>接收资金</0>。"
     }
   },
   "accounts": {
@@ -1877,7 +1881,7 @@
         "bullet2": "Ledger Live 版本、操作系统区域、语言和地区"
       },
       "hideEmptyTokenAccounts": "隐藏空的代币帐户",
-      "hideEmptyTokenAccountsDesc": "All empty token accounts in the Assets page will be hidden."
+      "hideEmptyTokenAccountsDesc": "资产页面中所有空的代币账户都将被隐藏。"
     },
     "currencies": {
       "header": "币种",
@@ -1900,6 +1904,13 @@
         "title": "隐藏代币",
         "desc": "该操作会隐藏所有的<1><0>{tokenName}</0></1>账户，您可以通过<3>Settings (设置) > Accounts (账户)</3>重新恢复显示。",
         "confirm": "隐藏代币"
+      },
+      "hideNFTCollectionCTA": "隐藏收藏",
+      "hiddenNFTCollections": "隐藏的 NFT 收藏",
+      "hiddenNFTCollectionsDesc": "通过进入该账户，长按某个收藏，并选择“隐藏收藏”，就可以隐藏该代币。",
+      "hideNFTCollectionModal": {
+        "title": "隐藏收藏？",
+        "desc": "您可以在设置选项中取消隐藏此收藏。"
       },
       "cryptoAssets": {
         "header": "加密资产",
@@ -3928,6 +3939,20 @@
     "service": "服务条款",
     "subTitle": "请花一些时间查看我们的服务条款和隐私政策"
   },
+  "updatedTerms": {
+    "title": "使用条款更新",
+    "body": {
+      "intro": "您好！我们已经更新了我们的 Ledger Live 使用条款，以便使其更加清晰，并且反映 Ledger Live 新提供的服务和功能。 主要更新侧重于：",
+      "bulletPoints": [
+        "说明现有哪些服务可用，以及这些服务是如何运作的",
+        "说明服务费是如何工作的",
+        "改进我们的通知流程，以确保您正确了解我们的使用条款的任何新更改"
+      ],
+      "agreement": "点击“继续”即表示您同意您已阅读并接受以下使用条款。"
+    },
+    "link": "使用条款",
+    "cta": "继续"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "买入",
@@ -4183,7 +4208,7 @@
       "title": "配置"
     },
     "operations": {
-      "title": "操作"
+      "title": "交易记录"
     }
   }
 }

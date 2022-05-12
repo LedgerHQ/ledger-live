@@ -1,0 +1,5 @@
+950c950,951
+<                 if (decoderInitializationException.codecInfo.name == null) {
+---
+>                 if (decoderInitializationException.codecInfo == null
+>                         || decoderInitializationException.codecInfo.name == null) {
