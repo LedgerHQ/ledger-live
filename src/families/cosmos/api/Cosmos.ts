@@ -1,14 +1,17 @@
 import { getEnv } from "../../../env";
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import { Operation } from "../../../types";
+import { CryptoCurrency, Operation } from "../../../types";
 import { patchOperationWithHash } from "../../../operation";
 
 const defaultEndpoint = getEnv(
   "API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"
 ).replace(/\/$/, "");
 
-export const getAccountInfo = async (address: string): Promise<any> => {
+export const getAccountInfo = async (
+  address: string,
+  currency: CryptoCurrency
+): Promise<any> => {
   try {
     const [
       { accountNumber, sequence },
@@ -21,10 +24,10 @@ export const getAccountInfo = async (address: string): Promise<any> => {
       withdrawAddress,
     ] = await Promise.all([
       getAccount(address),
-      getAllBalances(address),
+      getAllBalances(address, currency),
       getHeight(),
       getTransactions(address),
-      getDelegations(address),
+      getDelegations(address, currency),
       getRedelegations(address),
       getUnbondings(address),
       getWithdrawAddress(address),
@@ -95,7 +98,10 @@ const getHeight = async (): Promise<number> => {
   return data.block.header.height;
 };
 
-const getAllBalances = async (address: string): Promise<BigNumber> => {
+const getAllBalances = async (
+  address: string,
+  currency: CryptoCurrency
+): Promise<BigNumber> => {
   const { data } = await network({
     method: "GET",
     url: `${defaultEndpoint}/cosmos/bank/v1beta1/balances/${address}`,
@@ -104,13 +110,17 @@ const getAllBalances = async (address: string): Promise<BigNumber> => {
   let amount = new BigNumber(0);
 
   for (const elem of data.balances) {
-    amount = amount.plus(elem.amount);
+    if (elem.denom === currency.units[1].code)
+      amount = amount.plus(elem.amount);
   }
 
   return amount;
 };
 
-const getDelegations = async (address: string): Promise<any> => {
+const getDelegations = async (
+  address: string,
+  currency: CryptoCurrency
+): Promise<any> => {
   const delegations: Array<any> = [];
 
   const { data: data1 } = await network({
@@ -135,7 +145,10 @@ const getDelegations = async (address: string): Promise<any> => {
 
     delegations.push({
       validatorAddress: d.delegation.validator_address,
-      amount: new BigNumber(d.balance.amount),
+      amount:
+        d.balance.denom === currency.units[1].code
+          ? new BigNumber(d.balance.amount)
+          : new BigNumber(0),
       pendingRewards: new BigNumber(0),
       status,
     });
