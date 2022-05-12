@@ -2,6 +2,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
 import jwtDecode from "jwt-decode";
 import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
+import { getEnv } from "../../../env";
 import { Account, SubAccount, TokenAccount } from "../../../types";
 import type { CheckQuoteStatus, ExchangeRate } from "../types";
 
@@ -127,24 +128,26 @@ export const getFTXURL = ({
   type: WidgetTypes;
   provider: FTXProviders;
 }): string => {
-  const domain = (() => {
-    switch (provider) {
-      case "ftx":
-        return "ftx.com";
+  const baseUrl =
+    getEnv("MOCK_SWAP_WIDGET_BASE_URL") ||
+    (() => {
+      switch (provider) {
+        case "ftx":
+          return "https://ftx.com";
 
-      case "ftxus":
-        return "ftx.us";
+        case "ftxus":
+          return "https://ftx.us";
 
-      default:
-        break;
-    }
-  })();
+        default:
+          break;
+      }
+    })();
 
-  if (!domain) {
+  if (!baseUrl) {
     throw new Error(`Could not find domain for ${provider}`);
   }
 
-  return `https://${domain}/${type}?hideFrame=true&ledgerLive=true`;
+  return `${baseUrl}/${type}?hideFrame=true&ledgerLive=true`;
 };
 
 // Note: used in UI (LLD / LLM)
