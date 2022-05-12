@@ -25,8 +25,6 @@ const hitSlop = {
   bottom: 16,
 };
 
-export const CAROUSEL_NONCE: number = 4;
-
 type CarouselCardProps = {
   id: string;
   children: React.ReactNode;

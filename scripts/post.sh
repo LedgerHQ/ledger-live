@@ -4,6 +4,8 @@ cd $(dirname $0)/..
 
 ./scripts/sync-families-dispatch.sh
 
+patch -N -i ./patches/react-native-video+5.2.0.patch node_modules/react-native-video/android-exoplayer/build.gradle
+
 rm -f 'third-party/glog-0.3.5/test-driver'
 
 # Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
@@ -17,6 +19,7 @@ rn-nodeify --hack
 # manually shim
 sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
 
+patch -N node_modules/react-native-video/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java ./scripts/react-native-video.2575.patch || false
 
 # Create the dev .env file with APP_NAME if it doesn't exist
 if ! [ -f .env ]; then

@@ -123,7 +123,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
               list={allAccounts.filter(
                 account =>
                   account.type === "Account" &&
-                  getAccountCurrency(account).id === "ethereum",
+                  ["ethereum", "bsc", "polygon"].includes(
+                    getAccountCurrency(account).id,
+                  ),
               )}
               inputWrapperStyle={styles.padding}
               renderList={this.renderList}

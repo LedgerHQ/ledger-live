@@ -5,23 +5,24 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type {
+import {
   Account,
   Operation,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import {
-  getOperationAmountNumber,
-  isConfirmedOperation,
-  getOperationConfirmationDisplayableNumber,
-} from "@ledgerhq/live-common/lib/operation";
-import {
+  decodeAccountId,
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
+import {
+  getOperationAmountNumber,
+  isConfirmedOperation,
+  getOperationConfirmationDisplayableNumber,
+} from "@ledgerhq/live-common/lib/operation";
+import { useNftCollectionMetadata } from "@ledgerhq/live-common/lib/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -76,9 +77,10 @@ export default function Content({
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
-  const { status, metadata } = useNftMetadata(
+  const { currencyId } = decodeAccountId(operation.accountId);
+  const { status, metadata } = useNftCollectionMetadata(
     operation.contract,
-    operation.tokenId,
+    currencyId,
   );
 
   const onPress = useCallback(() => {
