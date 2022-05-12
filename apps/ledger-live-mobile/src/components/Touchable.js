@@ -63,16 +63,16 @@ export default class Touchable extends Component<
   };
 
   onLongPress = async () => {
-      const { onLongPress, event, eventProperties } = this.props;
-      if (!onLongPress) return;
-      if (event) {
-        track(event, eventProperties);
-      }
-      
-      const res = onLongPress();
-      this.setState({ pending: true });
-      await res;
-      this.setState({ pending: false });
+    const { onLongPress, event, eventProperties } = this.props;
+    if (!onLongPress) return;
+    if (event) {
+      track(event, eventProperties);
+    }
+
+    const res = onLongPress();
+    this.setState({ pending: true });
+    await res;
+    this.setState({ pending: false });
   };
 
   render() {
