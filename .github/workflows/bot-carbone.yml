@@ -80,6 +80,6 @@ jobs:
           name: botreport
           path: libs/ledger-live-common/botreport/
       - name: Test coverage
-        run: npx codecov -F bot -f libs/ledger-live-common
+        run: npx codecov -F bot
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
