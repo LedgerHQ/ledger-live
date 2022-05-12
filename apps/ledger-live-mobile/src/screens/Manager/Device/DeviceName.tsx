@@ -45,7 +45,7 @@ export default function DeviceNameRow({
       >
         {savedName || initialDeviceName || productName}
       </Text>
-      {id !== "nanoS" && (
+      {id === "nanoX" && (
         <Flex
           ml={3}
           backgroundColor={"palette.primary.c30"}

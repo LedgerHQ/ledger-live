@@ -1,9 +1,9 @@
 import React from "react";
-import { Platform } from "react-native";
 import { urls } from "../../config/urls";
-import Slide from "./Slide";
+import Slide, { SlideProps } from "./Slide";
 import Illustration from "../../images/illustration/Illustration";
 import { width } from "../../helpers/normalizeSize";
+import { ScreenName } from "../../const";
 
 const illustrations = {
   dark: {
@@ -27,7 +27,7 @@ const illustrations = {
 };
 
 /*
-const AcademySlide = {
+const AcademySlide: SlideProps = {
   url: urls.banners.ledgerAcademy,
   name: "takeTour",
   title: "carousel.banners.tour.title",
@@ -49,7 +49,7 @@ const AcademySlide = {
 };
 */
 
-const BuySlide = {
+const BuySlide: SlideProps = {
   url: "ledgerlive://buy",
   name: "buyCrypto",
   title: "carousel.banners.buyCrypto.title",
@@ -70,7 +70,7 @@ const BuySlide = {
   },
 };
 
-const SwapSlide = {
+const SwapSlide: SlideProps = {
   url: "ledgerlive://swap",
   name: "Swap",
   title: "carousel.banners.swap.title",
@@ -91,8 +91,14 @@ const SwapSlide = {
   },
 };
 
-const LidoSlide = {
+const LidoSlide: SlideProps = {
   url: "ledgerlive://discover/lido",
+  onPress: navigate => {
+    navigate(ScreenName.PlatformApp, {
+      platform: "lido",
+      name: "Lido",
+    });
+  },
   name: "Lido",
   title: "carousel.banners.lido.title",
   description: "carousel.banners.lido.description",
@@ -112,7 +118,7 @@ const LidoSlide = {
   },
 };
 
-const MarketSlide = {
+const MarketSlide: SlideProps = {
   url: "ledgerlive://market",
   name: "Market",
   title: "carousel.banners.market.title",
@@ -134,7 +140,7 @@ const MarketSlide = {
 };
 
 /** 
-const FamilyPackSlide = {
+const FamilyPackSlide: SlideProps = {
   url: urls.banners.familyPack,
   name: "FamilyPack",
   title: "carousel.banners.familyPack.title",
@@ -156,7 +162,7 @@ const FamilyPackSlide = {
 };
 */
 
-const FamilyPackXSlide = {
+const FamilyPackXSlide: SlideProps = {
   url: urls.banners.familyPackX,
   name: "FamilyPack",
   title: "carousel.banners.familyPackX.title",
@@ -177,29 +183,18 @@ const FamilyPackXSlide = {
   },
 };
 
-export const SLIDES =
-  Platform.OS === "ios"
-    ? [SwapSlide, BuySlide, MarketSlide, FamilyPackXSlide]
-    : [SwapSlide, LidoSlide, BuySlide, MarketSlide, FamilyPackXSlide];
+export const SLIDES: SlideProps[] = [
+  SwapSlide,
+  LidoSlide,
+  BuySlide,
+  MarketSlide,
+  FamilyPackXSlide,
+];
 
 export const WIDTH = width * 0.8;
 
 export const getDefaultSlides = () =>
-  SLIDES.map((slide: any) => ({
+  SLIDES.map(slide => ({
     id: slide.name,
-    Component: () => (
-      <Slide
-        url={slide.url}
-        name={slide.name}
-        title={slide.title}
-        description={slide.description}
-        cta={slide.cta}
-        image={slide.image}
-        icon={slide.icon}
-        position={slide.position}
-        width={WIDTH}
-      />
-    ),
+    Component: () => <Slide width={WIDTH} {...slide} />,
   }));
-
-export const CAROUSEL_NONCE: number = 6;

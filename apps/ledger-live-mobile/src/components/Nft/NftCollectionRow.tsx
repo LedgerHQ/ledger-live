@@ -1,37 +1,50 @@
-import React from "react";
+import React, { memo } from "react";
 import { StyleSheet } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
 import {
+  useNftCollectionMetadata,
   useNftMetadata,
-  CollectionWithNFT,
 } from "@ledgerhq/live-common/lib/nft";
+import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
+import Touchable from "../Touchable";
 
 type Props = {
-  collection: CollectionWithNFT;
+  collection: ProtoNFT[];
   onCollectionPress: () => void;
+  onLongPress: () => void;
 };
 
-function NftCollectionRow({ collection, onCollectionPress }: Props) {
-  const { colors } = useTheme();
-  const { contract, nfts } = collection;
-  const { status, metadata } = useNftMetadata(contract, nfts[0].tokenId);
-  const loading = status === "loading";
+function NftCollectionRow({
+  collection,
+  onCollectionPress,
+  onLongPress,
+}: Props) {
+  const nft = collection[0];
+  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
+    nft?.contract,
+    nft?.tokenId,
+    nft?.currencyId,
+  );
+  const {
+    status: collectionStatus,
+    metadata: collectionMetadata,
+  } = useNftCollectionMetadata(nft?.contract, nft?.currencyId);
+
+  const loading = nftStatus === "loading" || collectionStatus === "loading";
 
   return (
-    <RectButton
-      style={styles.container}
-      underlayColor={colors.neutral.c50}
+    <Touchable
+      event="ShowNftCollectionMenu"
       onPress={onCollectionPress}
+      onLongPress={onLongPress}
     >
       <Flex accessible flexDirection={"row"} alignItems={"center"} py={6}>
         <NftImage
           style={styles.collectionImage}
-          status={status}
-          src={metadata?.media}
+          status={nftStatus}
+          src={nftMetadata?.media}
         />
         <Flex flexGrow={1} flexShrink={1} ml={6} flexDirection={"column"}>
           <Skeleton style={styles.collectionNameSkeleton} loading={loading}>
@@ -41,7 +54,7 @@ function NftCollectionRow({ collection, onCollectionPress }: Props) {
               ellipsizeMode="tail"
               numberOfLines={2}
             >
-              {metadata?.tokenName || collection.contract}
+              {collectionMetadata?.tokenName || nft?.contract}
             </Text>
           </Skeleton>
         </Flex>
@@ -51,19 +64,16 @@ function NftCollectionRow({ collection, onCollectionPress }: Props) {
           color={"neutral.c70"}
           ml={5}
         >
-          {collection.nfts.length}
+          {collection?.length}
         </Text>
       </Flex>
-    </RectButton>
+    </Touchable>
   );
 }
 
-export default NftCollectionRow;
+export default memo(NftCollectionRow);
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 4,
-  },
   collectionNameSkeleton: {
     height: 8,
     width: 113,

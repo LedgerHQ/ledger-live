@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "親アカウントに十分な残高がありません。"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "残高が{{minimumAmount}}を下回ることはできません。"
     },
@@ -828,8 +831,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "ようこそ、Ledgerへ",
-      "subtitle": "スマートフォンで暗号資産を安全に管理しましょう。",
+      "title": "最も安全な暗号資産とNFTのウォレット",
+      "subtitle": "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
       "start": "はじめる",
       "noDevice": "デバイスをお持ちでない場合",
       "buy": "{{fullDeviceName}}を購入",
@@ -1174,7 +1177,7 @@
           },
           "3": {
             "title": "デバイスの手順に従う",
-            "label": "PINコードの設定は、次のページをご確認ください。"
+            "label": "PINコードは、こちらで設定してください。"
           }
         }
       },
@@ -1490,9 +1493,9 @@
   },
   "time": {
     "day": "1日",
-    "week": "1週",
-    "month": "1月",
-    "year": "1年",
+    "week": "1週間",
+    "month": "1ヶ月",
+    "year": "1年間",
     "all": "すべて",
     "since": {
       "day": "過去1日間",
@@ -1750,7 +1753,8 @@
       "sectionLabel": "デリゲート解除"
     },
     "nft": {
-      "receiveNft": "NFTを受け取る"
+      "receiveNft": "NFTを受け取る",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1877,7 +1881,7 @@
         "bullet2": "Ledger Liveのバージョンと、OSのリージョン、言語、地域"
       },
       "hideEmptyTokenAccounts": "未使用アカウントを非表示にする",
-      "hideEmptyTokenAccountsDesc": "アカウントページで、未使用アカウントを非表示にする。"
+      "hideEmptyTokenAccountsDesc": "資産ページでは、全ての空のトークンアカウントが非表示になります。"
     },
     "currencies": {
       "header": "通貨",
@@ -1900,6 +1904,13 @@
         "title": "トークンを非表示",
         "desc": "この操作により、すべての<1><0>{tokenName}</0></1>アカウントが非表示になります。<3>設定 > アカウント</3>から再度表示することができます。",
         "confirm": "トークンを非表示"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "暗号資産",
@@ -1938,7 +1949,7 @@
       "exportLogs": "ログを保存",
       "exportLogsDesc": "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
       "hardReset": "Ledger Liveをリセット",
-      "hardResetDesc": "この操作は、資産には影響しません。アカウントデータやトランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理することも可能です。",
+      "hardResetDesc": "この操作は、資産には影響しません。アカウントデータやトランザクション履歴、設定など、Ledger Live上の全データを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理することも可能です。",
       "repairDevice": "Ledgerデバイスを修理する",
       "repairDeviceDesc": "デバイスのアップデート中に問題が発生し、アップデートを再開できない場合は、この方法でデバイスの修復を試みてください。"
     },
@@ -2137,8 +2148,8 @@
         "validate": "スワップ取引を確定",
         "tab": "取引",
         "button": "続行",
-        "from": "送付元",
-        "to": "送付先",
+        "from": "交換元",
+        "to": "交換先",
         "source": "ソース",
         "target": "ターゲットアカウント",
         "noAccount": "{{currency}}アカウントを持っていません。",
@@ -2175,8 +2186,8 @@
           "close": "閉じる"
         },
         "summary": {
-          "from": "送付元",
-          "to": "送付先",
+          "from": "交換元",
+          "to": "交換先",
           "send": "送る",
           "payoutNetworkFees": "ペイアウト手数料",
           "payoutNetworkFeesTooltip": "これはデバイスには表示されません。",
@@ -2198,9 +2209,9 @@
         "swapId": "スワップID",
         "provider": "プロバイダー",
         "date": "日付",
-        "from": "送付元",
+        "from": "交換元",
         "fromAmount": "送付額",
-        "to": "送付先",
+        "to": "交換先",
         "toAmount": "受取額",
         "statusTooltips": {
           "expired": "詳細については、スワップIDをご用意の上、スワッププロバイダーまでお問い合わせください。",
@@ -2243,7 +2254,7 @@
           "to": "送付先",
           "send": "送る",
           "payoutNetworkFees": "ペイアウト手数料",
-          "payoutNetworkFeesTooltip": "これはデバイスには表示されません。",
+          "payoutNetworkFeesTooltip": "この値はデバイスには表示されません",
           "receive": "数量",
           "receiveFloat": "サービス手数料を含まない受け取り額",
           "provider": "プロバイダー",
@@ -2309,7 +2320,7 @@
         }
       },
       "closedLoans": {
-        "tabTitle": "終了済み",
+        "tabTitle": "レンディング終了済み",
         "description": "引き出したローンと、獲得した利息をすべて表示します。",
         "cta": "資産をレンディング"
       },
@@ -2319,7 +2330,7 @@
         "cta": "資産をレンディング"
       },
       "terms": {
-        "label": "暗号資産のレンディング",
+        "label": "暗号資産をレンディング",
         "title": "コンパウンド・プロトコルで資産を貸し出す",
         "description": "コンパウンド・プロトコルを使用すると、Ethereumネットワーク上で資産の貸し出しや借り入れを行うことができます。Ledgerアカウントから直接、資産の貸し出しや利息を得ることが可能です。",
         "switchLabel": "私は<0><0>利用規約</0></0>を読み、内容に同意しました。"
@@ -2341,7 +2352,7 @@
           "description": "資産と獲得した利息の一部または全部を、Ledgerアカウントから直接いつでも引き出すことができます。",
           "cta": "今すぐレンディング"
         },
-        "title": "暗号資産のレンディング"
+        "title": "暗号資産をレンディング"
       },
       "noTokenAccount": {
         "info": {
@@ -2905,7 +2916,7 @@
     "intallParentApp": "{{appName}}アプリをインストールしてください",
     "readOnly": {
       "title": "Nano X",
-      "description": "Ledger LiveにLedger Nano Xに設定して、いつでも好きな場所からアプリのインストールやアカウントの作成、安全な取引を行いましょう。",
+      "description": "Ledger Nano XにLedger Liveを設定して、時間や場所を問わずアプリのインストールやアカウントの作成、安全な取引を行いましょう。",
       "question": "Ledger Nano Xをお持ちですか？",
       "button": "Nano Xのセットアップを開始",
       "noDevice": "デバイスをお持ちでない場合",
@@ -3250,7 +3261,7 @@
           "starter": {
             "description": "資産を管理しながら、ATOMをデリゲートして報酬を獲得しましょう。",
             "steps": {
-              "0": "デリゲートしても資産の所有者は変わりません。",
+              "0": "資産をデリゲートしても、資産の所有者は変わりません。",
               "1": "デリゲート解除が完了するまで、21日待つ必要があります。",
               "2": "Ledgerデバイスで安全にデリゲートする。"
             },
@@ -3407,7 +3418,7 @@
     "account": {
       "subHeader": {
         "cardTitle": "Powered by Crypto.org",
-        "moreInfo": "詳細はこちら",
+        "moreInfo": "詳細",
         "drawerTitle": "Crypto.orgを統合",
         "title": "Crypto.org (CRO) トークンがLedger Liveでご利用可能になりました",
         "description": "Ledger Liveで、Crypto.org (CRO) トークンを安全に保管しながら管理することができます。",
@@ -3602,7 +3613,7 @@
       "setController": "コントローラーを変更",
       "status": "ステータス",
       "totalStake": "合計ステーキング量",
-      "amount": "ボンド済み額",
+      "amount": "ボンド済み数量",
       "commission": "コミッション",
       "active": "アクティブ",
       "activeInfo": "このバリデータは選出済みで、ボンド済み資産に対する報酬を獲得中です。",
@@ -3785,7 +3796,7 @@
           "description": "ボンドを解除した資産を、利用可能残高に引き出します。"
         },
         "chill": {
-          "title": "ノミネートを解除する",
+          "title": "ノミネートを解除",
           "description": "すべてのノミネートを解除し、報酬の獲得を停止します。",
           "info": "ボンド資産は解除されません。ボンドを解除した場合は、28日後に引き出し可能になります。"
         },
@@ -3928,6 +3939,20 @@
     "service": "サービス利用規約",
     "subTitle": "サービス利用規約とプライバシーポリシーをご確認ください。"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "続行"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "購入",
@@ -3964,7 +3989,7 @@
       "description": "Ledgerアカウントから、Coinifyで暗号資産を直接売却し、銀行口座で法定通貨を受け取ることができます。",
       "CTAButton": "今すぐ売却",
       "emptyState": {
-        "title": "{{currency}}アカウントはありません。",
+        "title": "{{currency}}アカウントはありません",
         "description": "{{currency}}を売却するには、アカウントを追加する必要があります。",
         "CTAButton": "アカウントを追加"
       }
@@ -4123,7 +4148,7 @@
       "allTimeLow": "最安値",
       "marketCapRank": "時価総額ランキング",
       "marketCapDominance": "時価総額ドミナンス",
-      "supply": "サプライ",
+      "supply": "供給",
       "circulatingSupply": "循環サプライ",
       "totalSupply": "総供給量",
       "maxSupply": "最大供給量",
@@ -4134,7 +4159,7 @@
       "24h": "24時間",
       "7d": "7日間",
       "30d": "30日間",
-      "1y": "1年"
+      "1y": "1年間"
     },
     "warnings": {
       "connectionError": "接続エラー",
@@ -4183,7 +4208,7 @@
       "title": "配分"
     },
     "operations": {
-      "title": "オペレーション"
+      "title": "Transaction history"
     }
   }
 }

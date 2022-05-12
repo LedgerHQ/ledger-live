@@ -35,15 +35,16 @@ import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import RequireTerms from "../../components/RequireTerms";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
-import MarketSection from "./MarketSection";
+import { PortfolioHistoryList } from "./PortfolioHistory";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
+import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -130,7 +131,7 @@ const SectionTitle = ({
   );
 };
 
-const maxAssetsToDisplay = 3;
+const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
@@ -212,7 +213,7 @@ function PortfolioScreen({ navigation }: Props) {
                 balanceHistory={portfolio.balanceHistory}
                 assets={assetsToDisplay}
               />
-              {accounts.length < 3 && (
+              {accounts.length < maxAssetsToDisplay && (
                 <>
                   <Flex
                     mt={6}
@@ -241,7 +242,7 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showCarousel
         ? [
-            <SectionContainer px={0}>
+            <SectionContainer px={0} minHeight={175}>
               <SectionTitle
                 title={t("portfolio.recommended.title")}
                 containerProps={{ mb: 7, mx: 6 }}
@@ -250,18 +251,17 @@ function PortfolioScreen({ navigation }: Props) {
             </SectionContainer>,
           ]
         : []),
-      <SectionContainer mb={9}>
-        <SectionTitle
-          title={t("portfolio.topGainers.title")}
-          navigation={navigation}
-          navigatorName={NavigatorName.Market}
-          screenName={ScreenName.MarketList}
-          params={{ top100: true }}
-          seeMoreText={t("portfolio.topGainers.seeMarket")}
-          containerProps={{ mb: "17px" }}
-        />
-        <MarketSection />
-      </SectionContainer>,
+      ...(showAssets
+        ? [
+            <SectionContainer px={0} mb={8}>
+              <SectionTitle
+                title={t("analytics.operations.title")}
+                containerProps={{ mx: 6 }}
+              />
+              <PortfolioHistoryList navigation={navigation} />
+            </SectionContainer>,
+          ]
+        : []),
     ],
     [
       showAssets,
@@ -286,9 +286,8 @@ function PortfolioScreen({ navigation }: Props) {
     <>
       <FirmwareUpdateBanner />
       <ContentContainer>
-        <RequireTerms />
         <CheckLanguageAvailability />
-
+        <CheckTermOfUseUpdate />
         <TrackScreen
           category="Portfolio"
           accountsLength={accounts.length}

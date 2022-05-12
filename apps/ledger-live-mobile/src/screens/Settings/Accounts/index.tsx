@@ -4,11 +4,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/lib/currencies";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { Box } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";
-import { blacklistedTokenIdsSelector } from "../../../reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  hiddenNftCollectionsSelector,
+} from "../../../reducers/settings";
 import { cryptoCurrenciesSelector } from "../../../reducers/accounts";
 import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -22,6 +24,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
+  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
@@ -75,6 +78,15 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
             onPress={() => navigation.navigate(ScreenName.CryptoAssetsSettings)}
           />
         )}
+        {hiddenNftCollections.length > 0 && (
+          <SettingsRow
+            event="HiddenNftCollectionsSettings"
+            title={t("settings.accounts.hiddenNFTCollections")}
+            desc={t("settings.accounts.hiddenNFTCollectionsDesc")}
+            arrowRight
+            onPress={() => navigation.navigate(ScreenName.HiddenNftCollections)}
+          />
+        )}
         <HideEmptyTokenAccountsRow />
         <SettingsRow
           event="HideEmptyTokenAccountsRow"
@@ -85,7 +97,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
         </SettingsRow>
       </>
     ),
-    [navigation, t, currencies.length],
+    [currencies.length, t, hiddenNftCollections.length, navigation],
   );
 
   const sections = useMemo(() => {

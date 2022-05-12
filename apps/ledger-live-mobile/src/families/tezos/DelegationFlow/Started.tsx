@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Linking } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Icons, List, Link, Log } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
@@ -29,50 +29,52 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <Flex flex={1} justifyContent="space-between" bg="background.main">
-      <Flex m={6}>
-        <TrackScreen category="DelegationFlow" name="Started" />
-        <Flex alignItems="center">
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
+    <ScrollView>
+      <Flex flex={1} justifyContent="space-between" bg="background.main">
+        <Flex m={6}>
+          <TrackScreen category="DelegationFlow" name="Started" />
+          <Flex alignItems="center">
+            <Illustration
+              lightSource={EarnLight}
+              darkSource={EarnDark}
+              size={150}
+            />
+          </Flex>
+          <Flex py={8} alignItems="center">
+            <Log>
+              <Trans i18nKey="delegation.started.title" />
+            </Log>
+          </Flex>
+          <Text variant="body" fontWeight="medium" textAlign="center" mb={6}>
+            <Trans i18nKey="delegation.started.description" />
+          </Text>
+          <List
+            items={[
+              <Trans i18nKey="delegation.started.steps.0" />,
+              <Trans i18nKey="delegation.started.steps.1" />,
+              <Trans i18nKey="delegation.started.steps.2" />,
+            ].map(wording => ({ title: wording, bullet: Check }))}
+            itemContainerProps={{
+              alignItems: "center",
+            }}
+            my={8}
           />
+          <Link
+            type="color"
+            size="medium"
+            iconPosition="right"
+            Icon={Icons.ExternalLinkMedium}
+            onPress={howDelegationWorks}
+          >
+            <Trans i18nKey="delegation.howDelegationWorks" />
+          </Link>
         </Flex>
-        <Flex py={8} alignItems="center">
-          <Log>
-            <Trans i18nKey="delegation.started.title" />
-          </Log>
+        <Flex p={6}>
+          <Button event="DelegationStartedBtn" onPress={onNext} type="main">
+            <Trans i18nKey="delegation.started.cta" />
+          </Button>
         </Flex>
-        <Text variant="body" fontWeight="medium" textAlign="center" mb={6}>
-          <Trans i18nKey="delegation.started.description" />
-        </Text>
-        <List
-          items={[
-            <Trans i18nKey="delegation.started.steps.0" />,
-            <Trans i18nKey="delegation.started.steps.1" />,
-            <Trans i18nKey="delegation.started.steps.2" />,
-          ].map(wording => ({ title: wording, bullet: Check }))}
-          itemContainerProps={{
-            alignItems: "center",
-          }}
-          my={8}
-        />
-        <Link
-          type="color"
-          size="medium"
-          iconPosition="right"
-          Icon={Icons.ExternalLinkMedium}
-          onPress={howDelegationWorks}
-        >
-          <Trans i18nKey="delegation.howDelegationWorks" />
-        </Link>
       </Flex>
-      <Flex p={6}>
-        <Button event="DelegationStartedBtn" onPress={onNext} type="main">
-          <Trans i18nKey="delegation.started.cta" />
-        </Button>
-      </Flex>
-    </Flex>
+    </ScrollView>
   );
 }

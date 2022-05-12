@@ -246,7 +246,7 @@
     },
     "DeviceSocketFail": {
       "title": "抱歉，连接失败",
-      "description": "请重试。"
+      "description": "请再次尝试。"
     },
     "DeviceSocketNoBulkStatus": {
       "title": "连接失败",
@@ -328,11 +328,11 @@
     },
     "LedgerAPIErrorWithMessage": {
       "title": "{{message}}",
-      "description": "请重试。如果问题依旧存在，请使用下方按钮保存日志，并将其发送给 Ledger 客服。"
+      "description": "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "LedgerAPINotAvailable": {
       "title": "抱歉，{{currencyName}} 服务不可用",
-      "description": "请重试。如果问题依旧存在，请使用下方按钮保存日志，并将其发送给 Ledger 客服。"
+      "description": "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "ManagerAPIsFail": {
       "title": "抱歉，管理器服务不可用",
@@ -388,7 +388,7 @@
     },
     "NotEnoughBalance": {
       "title": "抱歉，资金不足",
-      "description": "请确保账户有足够的资金。"
+      "description": "请确保该账户资金充足。"
     },
     "NotEnoughGas": {
       "title": "以太币 ETH 不足以支付网络费用",
@@ -399,6 +399,9 @@
     },
     "NotEnoughBalanceInParentAccount": {
       "title": "主账户余额不足"
+    },
+    "QuantityNeedsToBePositive": {
+      "title": "数量需至少为 1"
     },
     "NotEnoughSpendableBalance": {
       "title": "余额不能少于 {{minimumAmount}}"
@@ -436,7 +439,7 @@
     },
     "TransactionRefusedOnDevice": {
       "title": "交易被设备端拒绝",
-      "description": "请重试。如果问题依旧存在，请使用下方按钮保存日志，并将其发送给 Ledger 客服。"
+      "description": "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "TransportError": {
       "title": "出错了。请重新连接您的设备。",
@@ -828,8 +831,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "欢迎使用 Ledger",
-      "subtitle": "通过您的手机来安全管理您的加密资产。",
+      "title": "最安全的加密货币和 NFT 钱包",
+      "subtitle": "在 Ledger Live 上安全管理、买入和增长您的加密资产和 NFT。",
       "start": "快速入门",
       "noDevice": "没有设备？",
       "buy": "购买一个 {{fullDeviceName}}",
@@ -1161,12 +1164,12 @@
               "label": "通过连接到手机的 USB 端口来启动您的设备。"
             },
             "blue": {
-              "label": "通过连接到您手机的 USB 端口并按电源按钮来启动您的设备。"
+              "label": "通过连接设备到您手机的 USB 端口并按电源按钮来启动您的设备。"
             }
           },
           "1": {
             "title": "浏览",
-            "label": "阅读屏幕上的说明，了解如何使用您的设备。"
+            "label": "阅读屏幕上的说明以了解如何使用您的设备。"
           },
           "2": {
             "title": "选择 “Restore from recovery phrase” (通过恢复短语进行还原)",
@@ -1511,7 +1514,7 @@
   },
   "operations": {
     "types": {
-      "IN": "已收到",
+      "IN": "已接收",
       "NFT_IN": "已收 NFT",
       "OUT": "已发送",
       "NFT_OUT": "已发 NFT",
@@ -1551,7 +1554,7 @@
     "fees": "网络费用",
     "noFees": "无费用",
     "from": "来自",
-    "to": "到",
+    "to": "发往",
     "identifier": "交易 ID",
     "viewOperation": "在浏览器中查看",
     "whatIsThis": "这是什么操作？",
@@ -1750,7 +1753,8 @@
       "sectionLabel": "解除委托"
     },
     "nft": {
-      "receiveNft": "接收 NFT"
+      "receiveNft": "接收 NFT",
+      "howTo": "要添加 NFT，您需要使用您的 <1>{{currency}} 地址</1> <0>接收资金</0>。"
     }
   },
   "accounts": {
@@ -1834,7 +1838,7 @@
       "region": "地区",
       "regionDesc": "选择您的地区来更新日期、时间和货币的格式。",
       "password": "密码锁",
-      "passwordDesc": "在您的手机上设置一个密码来保护 Ledger Live 的数据。",
+      "passwordDesc": "设置一个密码来保护您手机上的 Ledger Live 数据。",
       "counterValue": "首选币种",
       "theme": "主题",
       "themeDesc": "设置用户界面主题",
@@ -1877,7 +1881,7 @@
         "bullet2": "Ledger Live 版本、操作系统区域、语言和地区"
       },
       "hideEmptyTokenAccounts": "隐藏空的代币帐户",
-      "hideEmptyTokenAccountsDesc": "在账户页面隐藏空的代币帐户。"
+      "hideEmptyTokenAccountsDesc": "资产页面中所有空的代币账户都将被隐藏。"
     },
     "currencies": {
       "header": "币种",
@@ -1892,14 +1896,21 @@
       "header": "账户",
       "title": "账户",
       "desc": "管理应用程序中显示的资产。",
-      "hideTokenCTA": "隐藏一种代币",
+      "hideTokenCTA": "隐藏代币",
       "showContractCTA": "显示合约",
       "blacklistedTokens": "隐藏代币列表",
       "blacklistedTokensDesc": "进入账户列表，长按某种代币，然后选择“隐藏代币”，就可以隐藏该代币。",
       "blacklistedTokensModal": {
-        "title": "隐藏一种代币",
+        "title": "隐藏代币",
         "desc": "该操作会隐藏所有的<1><0>{tokenName}</0></1>账户，您可以通过<3>Settings (设置) > Accounts (账户)</3>重新恢复显示。",
-        "confirm": "隐藏一种代币"
+        "confirm": "隐藏代币"
+      },
+      "hideNFTCollectionCTA": "隐藏收藏",
+      "hiddenNFTCollections": "隐藏的 NFT 收藏",
+      "hiddenNFTCollectionsDesc": "通过进入该账户，长按某个收藏，并选择“隐藏收藏”，就可以隐藏该代币。",
+      "hideNFTCollectionModal": {
+        "title": "隐藏收藏？",
+        "desc": "您可以在设置选项中取消隐藏此收藏。"
       },
       "cryptoAssets": {
         "header": "加密资产",
@@ -2137,7 +2148,7 @@
         "validate": "确认 Swap 互换交易",
         "tab": "兑换",
         "button": "继续",
-        "from": "来自",
+        "from": "从",
         "to": "到",
         "source": "来源",
         "target": "目标账户",
@@ -2175,7 +2186,7 @@
           "close": "关闭"
         },
         "summary": {
-          "from": "来自",
+          "from": "从",
           "to": "到",
           "send": "发送",
           "payoutNetworkFees": "支出费用",
@@ -2198,7 +2209,7 @@
         "swapId": "Swap ID",
         "provider": "提供方",
         "date": "日期",
-        "from": "来自",
+        "from": "从",
         "fromAmount": "已发送数额",
         "to": "到",
         "toAmount": "待收数额",
@@ -2239,7 +2250,7 @@
     "swapv2": {
       "form": {
         "summary": {
-          "from": "来自",
+          "from": "从",
           "to": "到",
           "send": "发送",
           "payoutNetworkFees": "支出费用",
@@ -2266,7 +2277,7 @@
         "description": "由于以太坊网络的拥堵，在发起交易时您可能会面临高昂的费用。"
       },
       "account": {
-        "amountSupplied": "已存金额",
+        "amountSupplied": "已存数额",
         "amountSuppliedTooltip": "向网络借出的数额",
         "currencyAPY": "货币的年收益率 APY",
         "currencyAPYTooltip": "存款的年度回报率为连续复利模式",
@@ -2294,7 +2305,7 @@
         "apy": "{{value}} 年收益率 APY",
         "activeAccount": {
           "account": "账户",
-          "amountSupplied": "已存金额",
+          "amountSupplied": "已存数额",
           "interestEarned": "已赚取的利息",
           "status": "账户状态",
           "EARNING": "收益",
@@ -2931,7 +2942,7 @@
       "uninstallAll": "卸载全部"
     },
     "remove": {
-      "title": "移除设备",
+      "title": "删除设备",
       "description": "您确定吗？您随时可以再次添加您的 {{productName}}。",
       "button": "删除"
     },
@@ -3002,7 +3013,7 @@
       "progress": "正在更新全部……",
       "button": "全部更新",
       "version": "新版本{{version}}",
-      "buttonAction": "可用更新",
+      "buttonAction": "有可用的更新",
       "buttonModal": "更新所有应用程序",
       "loading": "正在更新……",
       "titleModal": "有可用的更新"
@@ -3048,7 +3059,7 @@
     "subtitle": "正版"
   },
   "RemoveRow": {
-    "title": "移除设备"
+    "title": "删除设备"
   },
   "FirmwareVersionRow": {
     "title": "固件版本",
@@ -3189,7 +3200,7 @@
             "pending": {
               "title": "正在播送交易……"
             },
-            "broadcastError": "您的交易可能已失败。请在几分钟后查看并在确保您的交易的确没有通过后，才再次重试。"
+            "broadcastError": "您的交易可能已失败。请等待几分钟后再次查看，如果确认交易未成功，则再次尝试。"
           }
         }
       }
@@ -3210,11 +3221,11 @@
         "description": "该数额可自由支配。"
       },
       "delegated": {
-        "title": "已委托的资产",
+        "title": "已委托资产",
         "description": "已委托的资产被用于 Cosmos 投票。这是您的总票数。"
       },
       "undelegating": {
-        "title": "解除委托中",
+        "title": "正在解除委托",
         "description": "解除委托的资产会有 21 天的时间锁，之后才可用。"
       },
       "delegationUnavailable": {
@@ -3318,7 +3329,7 @@
             "estYield": "预估收益：{{amount}}",
             "totalAvailable": "可用总额：<0>{{amount}}</0>",
             "allAssetsUsed": "已使用所有资产",
-            "noResultsFound": "未能找到 <0>{{search}}</0> 验证器"
+            "noResultsFound": "搜索 <0>{{search}}</0> 未找到验证器"
           },
           "amount": {
             "newRedelegatedBalance": "操作后，<0>{{name}}</0> 的新总额：<0>{{amount}}</0>"
@@ -3916,7 +3927,7 @@
     "gas": "Gas",
     "validatorAddress": "验证器地址",
     "rewardAmount": "奖励金额",
-    "undelegatedAmount": "已解除委托的数额",
+    "undelegatedAmount": "已解除委托金额",
     "memo": "Memo 标签"
   },
   "Terms": {
@@ -3927,6 +3938,20 @@
     "cta": "进入 Ledger 应用程序",
     "service": "服务条款",
     "subTitle": "请花一些时间查看我们的服务条款和隐私政策"
+  },
+  "updatedTerms": {
+    "title": "使用条款更新",
+    "body": {
+      "intro": "您好！我们已经更新了我们的 Ledger Live 使用条款，以便使其更加清晰，并且反映 Ledger Live 新提供的服务和功能。 主要更新侧重于：",
+      "bulletPoints": [
+        "说明现有哪些服务可用，以及这些服务是如何运作的",
+        "说明服务费是如何工作的",
+        "改进我们的通知流程，以确保您正确了解我们的使用条款的任何新更改"
+      ],
+      "agreement": "点击“继续”即表示您同意您已阅读并接受以下使用条款。"
+    },
+    "link": "使用条款",
+    "cta": "继续"
   },
   "exchange": {
     "buy": {
@@ -3976,7 +4001,7 @@
   "banner": {
     "exchangeBuyCrypto": {
       "title": "买入加密货币",
-      "description": "通过 Coinify 购买加密资产并直接使用您的 Ledger 账户接收。"
+      "description": "通过 Coinify 购买加密资产并直接在您的 Ledger 账户中接收这些资产。"
     },
     "swap": {
       "title": "SWAP 互换加密资产",
@@ -4123,7 +4148,7 @@
       "allTimeLow": "历史最低",
       "marketCapRank": "市值排名",
       "marketCapDominance": "市值主导",
-      "supply": "供应",
+      "supply": "供应量",
       "circulatingSupply": "流通供应量",
       "totalSupply": "总供应量",
       "maxSupply": "最大供应量",
@@ -4183,7 +4208,7 @@
       "title": "配置"
     },
     "operations": {
-      "title": "操作"
+      "title": "交易记录"
     }
   }
 }

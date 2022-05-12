@@ -12,6 +12,7 @@ type Props = {
   Icon: IconType;
   onClick: Function;
   arrowRight?: boolean;
+  settingsCardTestId?: string;
 };
 
 function Card({
@@ -37,7 +38,7 @@ function Card({
 
 const StyledCard = styled(Card)`
   background-color: ${p => p.theme.colors.palette.background.main};
-  padding: ${p => p.theme.space[7]}px 0;
+  padding: ${p => p.theme.space[7]}px ${p => p.theme.space[6]}px;
   flex-direction: row;
   align-items: center;
 `;
@@ -48,6 +49,7 @@ export default function SettingsCard({
   Icon,
   onClick,
   arrowRight,
+  settingsCardTestId,
 }: Props) {
   return (
     <StyledCard onPress={onClick}>
@@ -59,7 +61,7 @@ export default function SettingsCard({
         borderColor={"primary.c80"}
         iconColor={"primary.c80"}
       />
-      <Box ml={6} flex={1}>
+      <Box ml={6} flex={1} testID={settingsCardTestId}>
         <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"}>
           {title}
         </Text>

@@ -186,7 +186,7 @@
       "description": "Lütfen adresi kontrol edin ve tekrar deneyin."
     },
     "CosmosBroadcastCodeInsufficientCoins": {
-      "title": "Yetersiz fon",
+      "title": "Yetersiz fon miktarı",
       "description": "Lütfen hesaptaki fon miktarını arttırın."
     },
     "CosmosBroadcastCodeInvalidCoins": {
@@ -245,7 +245,7 @@
       "description": "Ledger Live ile kullanmaya başlamadan önce cihazınızı kurun."
     },
     "DeviceSocketFail": {
-      "title": "Üzgünüz, bağlantı başarısız",
+      "title": "Üzgünüz, bağlantı başarısız oldu",
       "description": "Lütfen tekrar deneyin."
     },
     "DeviceSocketNoBulkStatus": {
@@ -253,7 +253,7 @@
       "description": "Lütfen tekrar deneyin."
     },
     "DeviceSocketNoHandler": {
-      "title": "Üzgünüz, bağlantı başarısız",
+      "title": "Üzgünüz, bağlantı başarısız oldu",
       "description": "Lütfen tekrar deneyin."
     },
     "DisconnectedDevice": {
@@ -399,6 +399,9 @@
     },
     "NotEnoughBalanceInParentAccount": {
       "title": "Ana hesapta yetersiz bakiye"
+    },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
     },
     "NotEnoughSpendableBalance": {
       "title": "Bakiye {{minimumAmount}} altında olamaz"
@@ -828,8 +831,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Ledger'a Hoş Geldiniz",
-      "subtitle": "Kriptolarınızı akıllı telefonunuzdan güvenle yönetin.",
+      "title": "En güvenli kripto para ve NFT cüzdanı",
+      "subtitle": "Ledger live'da kriptolarınızı ve NFT'lerinizi güvenle yönetin, satın alın ve artırın.",
       "start": "Hemen başla",
       "noDevice": "Cihazınız yok mu?",
       "buy": "{{fullDeviceName}} satın alın",
@@ -977,7 +980,7 @@
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "nanoSP": {
-              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "blue": {
               "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
@@ -1155,13 +1158,13 @@
               "label": "Cihazınızı açmak için siyah tuşa 1 saniye boyunca basın."
             },
             "nanoS": {
-              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "nanoSP": {
-              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın."
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın."
             },
             "blue": {
-              "label": "Cihazınızı açmak için onu telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
+              "label": "Cihazınızı açmak için telefonunuzun USB bağlantı noktasına bağlayın ve çalıştırma tuşuna basın."
             }
           },
           "1": {
@@ -1657,7 +1660,7 @@
       "descToken": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse <3><0>{{currencyTicker}}</0></3> ile <5><0>{{tokenType}}</0> token'larını</5> almaya başlayabilirsiniz",
       "buttons": {
         "receiveFunds": "Al",
-        "buyCrypto": "Satın al"
+        "buyCrypto": "Satın Al"
       }
     },
     "settings": {
@@ -1729,7 +1732,7 @@
     },
     "availableBalance": "Mevcut bakiye",
     "totalSupplied": "Yatırılan tutar",
-    "tronFrozen": "Donduruldu",
+    "tronFrozen": "Dondurulan",
     "bandwidth": "Bant Genişliği",
     "energy": "Enerji",
     "delegatedAssets": "Yetkisi devredilen varlıklar",
@@ -1750,7 +1753,8 @@
       "sectionLabel": "Yetki İptalleri"
     },
     "nft": {
-      "receiveNft": "NFT Al"
+      "receiveNft": "NFT Al",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1877,7 +1881,7 @@
         "bullet2": "Ledger Live sürümü, işletim sistemi bölgesi, dil ve bölge"
       },
       "hideEmptyTokenAccounts": "Boş token hesaplarını gizle",
-      "hideEmptyTokenAccountsDesc": "Hesaplar sayfasında boş token hesaplarını gizleyin."
+      "hideEmptyTokenAccountsDesc": "Varlıklar sayfasındaki tüm boş token hesapları gizlenecek."
     },
     "currencies": {
       "header": "Para Birimleri",
@@ -1900,6 +1904,13 @@
         "title": "Token'ı gizle",
         "desc": "Bu işlem tüm <1><0>{tokenName}</0></1> hesaplarını gizler; tekrar görünür kılmak için <3>Ayarlar &gt; Hesaplar</3> kısmını kullanabilirsiniz.",
         "confirm": "Token'ı gizle"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "Kripto varlıklar",
@@ -1935,7 +1946,7 @@
       "clearCacheModal": "Emin misiniz?",
       "clearCacheModalDesc": "Ağdaki işlemlerin yeni ve eksiksiz bir taraması yapılacak. Hesap geçmişleri yeniden oluşturulacak ve bakiyeler yeniden hesaplanacaktır.",
       "clearCacheButton": "Temizle",
-      "exportLogs": "Logları kaydet",
+      "exportLogs": "Logları kaydedin",
       "exportLogsDesc": "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
       "hardReset": "Ledger Live'ı sıfırlayın",
       "hardResetDesc": "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
@@ -2037,12 +2048,12 @@
       "title": "Al / Sat"
     },
     "swap": {
-      "title": "Takas et",
+      "title": "Takas",
       "selectDevice": "Cihazınızı seçin",
       "broadcasting": "Takas işlemi yayınlanıyor",
       "loadingFees": "Ağ ücretleri yükleniyor...",
       "landing": {
-        "header": "Takas et",
+        "header": "Takas",
         "title": "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap": "Takas (Swap) nedir?",
         "disclaimer": "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
@@ -2053,7 +2064,7 @@
         "bannerCTA": "KYC'yi sıfırla"
       },
       "main": {
-        "header": "Takas et"
+        "header": "Takas"
       },
       "kyc": {
         "disclaimer": "Konum verilerimin uyumluluk için üçüncü taraflarla paylaşılacağını kabul ediyorum.",
@@ -2184,7 +2195,7 @@
           "receiveFloat": "Hizmet ücretleri hariç alınacak tutar",
           "provider": "Sağlayıcı",
           "method": "Kur",
-          "fees": "Maksimum ücret",
+          "fees": "Maksimum ücretler",
           "disclaimer": {
             "title": "Hüküm ve koşullar",
             "desc": "“Kabul Et” seçeneğine tıklayarak, bu hizmetin tamamen ve sadece <0>{{provider}}</0> Hüküm ve Koşulları tarafından yönetildiğini anlıyor ve kabul ediyorum.",
@@ -2426,7 +2437,7 @@
       },
       "withdraw": {
         "stepperHeader": {
-          "amount": "Çek",
+          "amount": "Çekim",
           "summary": "Özet",
           "selectDevice": "Cihaz Seç",
           "connectDevice": "Cihazı Bağla",
@@ -2480,7 +2491,7 @@
       "selectNft": "NFT"
     },
     "recipient": {
-      "scan": "QR kodunu tara",
+      "scan": "QR kodunu tarayın",
       "enterAddress": "Adresi girin",
       "input": "Adresi girin",
       "verifyAddress": "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
@@ -3741,7 +3752,7 @@
       },
       "steps": {
         "amount": {
-          "availableLabel": "Çözme",
+          "availableLabel": "Çözülmekte olan",
           "maxLabel": "Maksimum"
         },
         "confirm": {
@@ -3864,9 +3875,9 @@
     "goToAccount": "Hesaplara Git",
     "howDelegationWorks": "Yetki devri nasıl çalışır?",
     "actions": {
-      "redelegate": "Yetkinin yeniden devri",
+      "redelegate": "Yetkiyi yeniden devret",
       "collectRewards": "Ödülleri toplayın",
-      "undelegate": "Yetki İptali"
+      "undelegate": "Yetkiyi iptal et"
     }
   },
   "ValidateOnDevice": {
@@ -3927,6 +3938,20 @@
     "cta": "Ledger uygulamasına girin",
     "service": "Hizmet Şartları",
     "subTitle": "Hizmet Koşulları ve Gizlilik Politikamızı incelemek için lütfen biraz zaman ayırın"
+  },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "Devam"
   },
   "exchange": {
     "buy": {
@@ -4123,7 +4148,7 @@
       "allTimeLow": "Tüm zamanlar min.",
       "marketCapRank": "Piyasa değeri sıralaması",
       "marketCapDominance": "Piyasa değeri hakimiyeti",
-      "supply": "Arz Et",
+      "supply": "Arz",
       "circulatingSupply": "Dolaşımdaki arz",
       "totalSupply": "Toplam arz",
       "maxSupply": "Maksimum arz",
@@ -4183,7 +4208,7 @@
       "title": "Dağılım"
     },
     "operations": {
-      "title": "İşlemler"
+      "title": "Transaction history"
     }
   }
 }

@@ -20,7 +20,7 @@ const Connect = ({
   provider?: string,
 }) => {
   const [device, setDevice] = useState(null);
-  const [result, setLocalResult] = useState();
+  const [result] = useState();
 
   const onModalHide = useCallback(() => {
     if (result) {

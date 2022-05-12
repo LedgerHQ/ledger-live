@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";

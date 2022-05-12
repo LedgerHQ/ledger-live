@@ -1,4 +1,3 @@
-// @flow
 import React, { Component } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -8,9 +7,9 @@ import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Result } from "@ledgerhq/live-common/lib/cross";
-import type { ImportItem } from "@ledgerhq/live-common/lib/account";
+import { Account } from "@ledgerhq/live-common/lib/types";
+import { Result } from "@ledgerhq/live-common/lib/cross";
+import { ImportItem } from "@ledgerhq/live-common/lib/account";
 import { importAccountsMakeItems } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
 
@@ -36,20 +35,23 @@ type Props = {
   navigation: any;
   route: { params: RouteParams };
   accounts: Account[];
-  importAccounts: (d: { items: ImportItem[], selectedAccounts: string[] }) => void;
+  importAccounts: (d: {
+    items: ImportItem[];
+    selectedAccounts: string[];
+  }) => void;
   importDesktopSettings: (settings: any) => void;
 };
 
 type RouteParams = {
-  result: Result,
-  onFinish?: () => void,
+  result: Result;
+  onFinish?: () => void;
 };
 
 type State = {
-  selectedAccounts: string[],
-  items: ImportItem[],
-  importing: boolean,
-  importSettings: boolean,
+  selectedAccounts: string[];
+  items: ImportItem[];
+  importing: boolean;
+  importSettings: boolean;
 };
 
 export function BackButton() {
@@ -177,13 +179,10 @@ class DisplayResult extends Component<Props, State> {
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <SafeAreaView
-        forceInset={forceInset}
-        style={[styles.root]}
-      >
+      <SafeAreaView forceInset={forceInset} style={[styles.root]}>
         <Flex bg="background.main" flex={1}>
-        <TrackScreen category="ImportAccounts" name="DisplayResult" />
-        <StyledStatusBar />
+          <TrackScreen category="ImportAccounts" name="DisplayResult" />
+          <StyledStatusBar />
           <SectionList
             style={styles.body}
             contentContainerStyle={styles.list}

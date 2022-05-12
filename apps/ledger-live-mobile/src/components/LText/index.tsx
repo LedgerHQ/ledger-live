@@ -1,4 +1,3 @@
-/* @flow */
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
