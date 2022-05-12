@@ -7040,7 +7040,6 @@ packages:
       '@emotion/unitless': 0.7.5
       '@emotion/utils': 1.1.0
       csstype: 3.0.11
-    dev: false
 
   /@emotion/sheet/0.9.4:
     resolution: {integrity: sha512-zM9PFmgVSqBw4zL101Q0HrBVTGmpAxFZH/pYx/cjJT5advXguvcgjHFTCaIO3enL/xr89vK2bh0Mfyj9aa0ANA==}
@@ -7112,7 +7111,6 @@ packages:
 
   /@emotion/utils/1.1.0:
     resolution: {integrity: sha512-iRLa/Y4Rs5H/f2nimczYmS5kFJEbpiVvgN3XVfZ022IYhuNA1IRSHEizcof88LtCTXtl9S2Cxt32KgaXEu72JQ==}
-    dev: false
 
   /@emotion/weak-memoize/0.2.5:
     resolution: {integrity: sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==}
@@ -15078,7 +15076,9 @@ packages:
       '@types/react':
         optional: true
     dependencies:
+      '@babel/runtime': 7.17.9
       '@types/react': 17.0.45
+      '@types/react-test-renderer': 17.0.2_@types+react@17.0.45
       react: 17.0.2
       react-test-renderer: 17.0.2_react@17.0.2
     dev: true
@@ -15322,6 +15322,21 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
+  /@types/history/4.7.11:
+    resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
+    dev: true
+
+  /@types/hoist-non-react-statics/3.3.1:
+    resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+    dev: false
+
   /@types/hoist-non-react-statics/3.3.1_@types+react@17.0.45:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
     peerDependencies:
@@ -15331,7 +15346,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.45
-    dev: true
+      hoist-non-react-statics: 3.3.2
 
   /@types/html-minifier-terser/5.1.2:
     resolution: {integrity: sha512-h4lTMgMJctJybDp8CQrxTUiiYmedihHWkjnF/8Pxseu2S6Nlfcy8kwboQ8yejh456rP2yWoEVm1sS/FVsfM48w==}
@@ -15556,6 +15571,15 @@ packages:
       '@types/react': 17.0.45
     dev: true
 
+  /@types/react-dom/17.0.16:
+    resolution: {integrity: sha512-DWcXf8EbMrO/gWnQU7Z88Ws/p16qxGpPyjTKTpmBSFKeE+HveVubqGO1CVK7FrwlWD5MuOcvh8gtd0/XO38NdQ==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dev: true
+
   /@types/react-dom/17.0.16_@types+react@17.0.45:
     resolution: {integrity: sha512-DWcXf8EbMrO/gWnQU7Z88Ws/p16qxGpPyjTKTpmBSFKeE+HveVubqGO1CVK7FrwlWD5MuOcvh8gtd0/XO38NdQ==}
     peerDependencies:
@@ -15586,6 +15610,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.45
+      '@types/react-native': 0.66.18_@types+react@17.0.45
     dev: true
 
   /@types/react-native-video/5.0.13_@types+react@17.0.45:
@@ -15597,6 +15622,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.45
+      '@types/react-native': 0.66.18_@types+react@17.0.45
     dev: true
 
   /@types/react-native/0.65.22_@types+react@17.0.45:
@@ -15618,6 +15644,17 @@ packages:
         optional: true
     dev: true
 
+  /@types/react-native/0.66.18_@types+react@17.0.45:
+    resolution: {integrity: sha512-a+xIlll1Wo4rhBPdoecH6VfvMgm8dcMScJgO5GSt+BB+7rMX/UOTWmfAV7BXx/x4okf2Tu6nSbEygnNYgNtp2A==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.45
+    dev: true
+
   /@types/react-redux/7.1.24:
     resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
     peerDependencies:
@@ -15625,6 +15662,10 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+    dependencies:
+      '@types/hoist-non-react-statics': 3.3.1
+      hoist-non-react-statics: 3.3.2
+      redux: 4.2.0
     dev: false
 
   /@types/react-redux/7.1.24_@types+react@17.0.45:
@@ -15635,7 +15676,10 @@ packages:
       '@types/react':
         optional: true
     dependencies:
+      '@types/hoist-non-react-statics': 3.3.1_@types+react@17.0.45
       '@types/react': 17.0.45
+      hoist-non-react-statics: 3.3.2
+      redux: 4.2.0
 
   /@types/react-router-dom/5.3.3:
     resolution: {integrity: sha512-kpqnYK4wcdm5UaWI3fLcELopqLrHgLqNsdpHauzlQktfkHL3npOSwtj1Uz9oKBAzs7lFtVkV8j83voAz2D8fhw==}
@@ -15644,6 +15688,20 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+    dependencies:
+      '@types/history': 4.7.11
+      '@types/react-router': 5.1.18
+    dev: true
+
+  /@types/react-router/5.1.18:
+    resolution: {integrity: sha512-YYknwy0D0iOwKQgz9v8nOzt2J6l4gouBmDnWqUUznltOTaon+r8US8ky8HvN0tXvc38U9m6z/t2RsVsnd1zM0g==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/history': 4.7.11
     dev: true
 
   /@types/react-select/4.0.18:
@@ -15653,6 +15711,10 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+    dependencies:
+      '@emotion/serialize': 1.0.3
+      '@types/react-dom': 17.0.16
+      '@types/react-transition-group': 4.4.4
     dev: true
 
   /@types/react-syntax-highlighter/11.0.5:
@@ -15702,7 +15764,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-    dev: false
 
   /@types/react-transition-group/4.4.4_@types+react@17.0.45:
     resolution: {integrity: sha512-7gAPz7anVK5xzbeQW9wFBDg7G++aPLAFY0QaSMOou9rJZpbuI58WAuJrgu+qR92l61grlnCUe7AFX8KGahAgug==}
@@ -15782,6 +15843,8 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.45
+      '@types/react-native': 0.65.22_@types+react@17.0.45
+      '@types/styled-components': 5.1.25_@types+react@17.0.45
 
   /@types/styled-components/5.1.25_@types+react@17.0.45:
     resolution: {integrity: sha512-fgwl+0Pa8pdkwXRoVPP9JbqF0Ivo9llnmsm+7TCI330kbPIFd9qv1Lrhr37shf4tnxCOSu+/IgqM7uJXLWZZNQ==}
@@ -15791,7 +15854,9 @@ packages:
       '@types/react':
         optional: true
     dependencies:
+      '@types/hoist-non-react-statics': 3.3.1_@types+react@17.0.45
       '@types/react': 17.0.45
+      csstype: 3.0.11
 
   /@types/styled-system/5.1.15:
     resolution: {integrity: sha512-1uls4wipZn8FtYFZ7upRVFDoEeOXTQTs2zuyOZPn02T6rjIxtvj2P2lG5qsxXHhKuKsu3thveCZrtaeLE/ibLg==}
@@ -38007,7 +38072,6 @@ packages:
 
   /react-lifecycles-compat/3.0.4:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
-    dev: true
 
   /react-lottie/1.2.3_react@17.0.2:
     resolution: {integrity: sha512-qLCERxUr8M+4mm1LU0Ruxw5Y5Fn/OmYkGfnA+JDM/dZb3oKwVAJCjwnjkj9TMHtzR2U6sMEUD3ZZ1RaHagM7kA==}
@@ -39500,7 +39564,6 @@ packages:
     resolution: {integrity: sha512-oSBmcKKIuIR4ME29/AeNUnl5L+hvBq7OaJWzaptTQJAntaPvxIJqfnjbaEiCzzaIz+XmVILfqAM3Ob0aXLPfjA==}
     dependencies:
       '@babel/runtime': 7.17.9
-    dev: false
 
   /refractor/3.6.0:
     resolution: {integrity: sha512-MY9W41IOWxxk31o+YvFCNyNzdkc9M20NoZK5vq6jkv4I/uh2zkWcfudj0Q1fovjUQJrNewS9NMzeTtqPf+n5EA==}
@@ -43653,7 +43716,10 @@ packages:
       '@types/react':
         optional: true
     dependencies:
+      '@babel/runtime': 7.17.9
+      invariant: 2.2.4
       react: 17.0.2
+      react-lifecycles-compat: 3.0.4
     dev: false
 
   /underscore/1.12.1:
