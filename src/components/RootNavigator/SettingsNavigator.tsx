@@ -43,6 +43,7 @@ import Button from "../Button";
 import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
+import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -111,6 +112,11 @@ export default function SettingsNavigator() {
         name={ScreenName.CryptoAssetsSettings}
         component={CurrenciesList}
         options={{ title: t("settings.accounts.cryptoAssets.header") }}
+      />
+      <Stack.Screen
+        name={ScreenName.HiddenNftCollections}
+        component={HiddenNftCollections}
+        options={{ title: t("settings.accounts.hiddenNFTCollections") }}
       />
       <Stack.Screen
         name={ScreenName.CurrencySettings}

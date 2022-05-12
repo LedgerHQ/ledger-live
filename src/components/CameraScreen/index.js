@@ -39,7 +39,7 @@ export default function CameraScreen({
           styles.topCell,
         ]}
       >
-        {typeof progress === "number" ? <QRCodeTopLayer /> : null}
+        <QRCodeTopLayer liveQrCode={liveQrCode} />
       </View>
       <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
       <QRCodeBottomLayer

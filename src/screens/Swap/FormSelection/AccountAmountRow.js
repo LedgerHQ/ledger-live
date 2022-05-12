@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   active: {
-    fontSize: 30,
     ...getFontStyle({ semiBold: true }),
+    fontSize: 30,
   },
   error: {
     fontSize: 14,

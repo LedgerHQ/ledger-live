@@ -144,4 +144,4 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
 const m = connect(null, mapDispatchToProps)(EditDeviceName);
 
-export default memo(m);
+export default memo<Props>(m);

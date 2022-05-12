@@ -38,6 +38,9 @@ const mapDispatchToProps = {
   updateCurrencySettings,
 };
 
+export const getCurrencyHasSettings = (currency: CryptoCurrency) =>
+  !!currencySettingsDefaults(currency).confirmationsNb;
+
 function EachCurrencySettings({
   navigation,
   currency,

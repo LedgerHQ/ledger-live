@@ -11,6 +11,7 @@ import {
   getLastVotedDate,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 
+import { Icons } from "@ledgerhq/native-ui";
 import FreezeIcon from "../../icons/Freeze";
 import UnfreezeIcon from "../../icons/Unfreeze";
 import VoteIcon from "../../icons/Vote";
@@ -19,7 +20,15 @@ import LText from "../../components/LText";
 import DateFromNow from "../../components/DateFromNow";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account, colors }: { account: Account, colors: * }) => {
+const getActions = ({
+  account,
+  parentAccount,
+  colors,
+}: {
+  account: Account,
+  parentAccount: Account,
+  colors: *,
+}) => {
   if (!account.tronResources) return null;
 
   const {
@@ -60,6 +69,20 @@ const getActions = ({ account, colors }: { account: Account, colors: * }) => {
 
   return [
     {
+      disabled: !canVote && !canFreeze,
+      navigationParams: [
+        canVote ? NavigatorName.TronVoteFlow : NavigatorName.Freeze,
+        {
+          screen: canVote ? ScreenName.VoteStarted : ScreenName.FreezeInfo,
+          params: {
+            params: { accountId, parentId: parentAccount?.id },
+          },
+        },
+      ],
+      label: <Trans i18nKey="account.stake" />,
+      Icon: Icons.ClaimRewardsMedium,
+    },
+    {
       disabled: !canFreeze,
       navigationParams: [
         NavigatorName.Freeze,
@@ -92,6 +115,8 @@ const getActions = ({ account, colors }: { account: Account, colors: * }) => {
           </LText>
         </View>
       ),
+      type: "main",
+      outline: false,
     },
     {
       disabled: !canVote,
@@ -105,6 +130,8 @@ const getActions = ({ account, colors }: { account: Account, colors: * }) => {
       label: <Trans i18nKey="tron.manage.vote.title" />,
       description: <Trans i18nKey="tron.manage.vote.description" />,
       Icon: VoteIcon,
+      type: "main",
+      outline: false,
     },
   ];
 };

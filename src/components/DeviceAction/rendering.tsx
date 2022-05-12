@@ -67,9 +67,19 @@ const TitleContainer = styled(Flex).attrs({
   py: 8,
 })``;
 
-const TitleText = ({ children }: { children: React.ReactNode }) => (
+const TitleText = ({
+  children,
+  disableUppercase,
+}: {
+  children: React.ReactNode;
+  disableUppercase?: boolean;
+}) => (
   <TitleContainer>
-    <Log>{children}</Log>
+    <Log
+      extraTextProps={disableUppercase ? { textTransform: "none" } : undefined}
+    >
+      {children}
+    </Log>
   </TitleContainer>
 );
 
@@ -187,7 +197,7 @@ export function renderVerifyAddress({
             onPress={onPress}
           />
         )}
-        {address && <TitleText>{address}</TitleText>}
+        {address && <TitleText disableUppercase>{address}</TitleText>}
       </ActionContainer>
     </Wrapper>
   );

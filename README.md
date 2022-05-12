@@ -22,14 +22,20 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
 
 - Node LTS version
 - Yarn 1.10.1 or above
+- [Full React Native environment setup instructions here, **under "React Native CLI Quickstart" tab**](https://reactnative.dev/docs/environment-setup)
 
 ### iOS
 
 - XCode
+- Ruby 2.6.8 or above. The macOS built-in Ruby [does not work properly for installing dependencies of the iOS app](https://jeffreymorgan.io/articles/ruby-on-macos-with-rvm/), you have to install Ruby with for instance [Homebrew](https://brew.sh/) or [rvm](https://rvm.io/rvm/install) and make sure that `which ruby` points to that newly installed Ruby.
 
 ### Android
 
 - Android Studio
+- JDK 11
+- Required SDK tools: (go to Android Studio > Tools > SDK Manager > SDK Tools > check "Show Package Details" at the bottom right)
+  - Android NDK 21.4.7075529 (in case this doc is outdated, check the version specified as `ndkVersion` in `android/build.gradle`)
+  - CMake 3.10.2
 
 ## Scripts
 

@@ -23,15 +23,6 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  static {
-    try {
-      System.loadLibrary("ledger-core");
-    } catch (UnsatisfiedLinkError e) {
-      System.err.println("ledger-core native library failed to load: " + e);
-      System.exit(1);
-    }
-  }
-
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
         @Override
