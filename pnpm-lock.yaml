@@ -27604,7 +27604,6 @@ packages:
       minimatch: 5.0.1
       once: 1.4.0
       path-is-absolute: 1.0.1
-    dev: false
 
   /global-agent/3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -38193,6 +38192,8 @@ packages:
     resolution: {integrity: sha512-cMvrUelD81wiPitEPiwE/TCNscIVauXxmt4NTGcy18HrUd0WRWXfYzAQGXm0eI87u3NMudNhqFj2NISJenxQHg==}
     dependencies:
       flow-parser: 0.121.0
+      glob: 8.0.1
+      invariant: 2.2.4
       jscodeshift: 0.11.0_@babel+preset-env@7.17.10
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -38204,6 +38205,8 @@ packages:
     resolution: {integrity: sha512-dwNgR8zJ3ALr480QnAmpTiqvFo+rDtq6V5oCggKhYFlRjzOmVSFn3YD41u8ltvKS5G2nQ8gCs2vReFFnRGLYng==}
     dependencies:
       flow-parser: 0.121.0
+      glob: 8.0.1
+      invariant: 2.2.4
       jscodeshift: 0.11.0
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -38215,6 +38218,8 @@ packages:
     resolution: {integrity: sha512-k/944+0XD+8l7zDaiKfYabyEKmAmyZgS1mj+4LcSRPyHnrjgCHKrh/Y6jM6kucQ6xU1+1uyMmF/dSkikxK8i+Q==}
     dependencies:
       flow-parser: 0.121.0
+      glob: 8.0.1
+      invariant: 2.2.4
       jscodeshift: 0.11.0
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -38767,6 +38772,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0
       metro-runtime: 0.67.0
       metro-source-map: 0.64.0
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.1.0
@@ -38816,6 +38822,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0
       metro-runtime: 0.67.0
       metro-source-map: 0.66.2
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.1.0
@@ -38862,6 +38869,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0
       metro-runtime: 0.67.0
       metro-source-map: 0.66.2
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.1.0
