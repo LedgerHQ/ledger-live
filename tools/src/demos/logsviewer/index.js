@@ -1,20 +1,31 @@
 // @flow
 import React, { Fragment, Component, useMemo } from "react";
+import invariant from "invariant";
 import { ObjectInspector } from "react-inspector";
 import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
-import { BigNumber } from "bignumber.js";
-import {
-  decodeAccountId,
-  toAccountRaw,
-} from "@ledgerhq/live-common/lib/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
-import {
-  runDerivationScheme,
-  getDerivationScheme,
-} from "@ledgerhq/live-common/lib/derivation";
+
+function decodeAccountId(accountId) {
+  invariant(typeof accountId === "string", "accountId is not a string");
+  const splitted = accountId.split(":");
+  invariant(splitted.length === 5, "invalid size for accountId");
+  const [type, version, currencyId, xpubOrAddress, derivationMode] = splitted;
+  return {
+    type,
+    version,
+    currencyId,
+    xpubOrAddress,
+    derivationMode,
+  };
+}
+
+const shortAddressPreview = (addr, target = 20) => {
+  const slice = Math.floor((target - 3) / 2);
+  return addr.length < target - 3
+    ? addr
+    : `${addr.slice(0, slice)}...${addr.slice(addr.length - slice)}`;
+};
 
 const messageLenses = {
   libcore: ({ message }) => {
@@ -100,50 +111,36 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
   const accountsIds = logsMeta?.accountsIds;
   let accounts;
   try {
-    accounts = accountsIds.map((id) => {
-      const { derivationMode, xpubOrAddress, currencyId } = decodeAccountId(id);
-      const currency = getCryptoCurrencyById(currencyId);
-      const scheme = getDerivationScheme({
-        derivationMode,
-        currency,
-      });
-      const index = 0;
-      const freshAddressPath = runDerivationScheme(scheme, currency, {
-        account: index,
-        node: 0,
-        address: 0,
-      });
-
-      return {
-        type: "Account",
-        name:
-          currency.name +
-          " " +
-          (derivationMode || "legacy") +
-          " " +
-          shortAddressPreview(xpubOrAddress),
-        xpub: xpubOrAddress,
-        seedIdentifier: xpubOrAddress,
-        starred: true,
-        swapHistory: [],
-        id,
-        derivationMode,
-        currency,
-        unit: currency.units[0],
-        index,
-        freshAddress: xpubOrAddress,
-        freshAddressPath,
-        freshAddresses: [],
-        creationDate: new Date(),
-        lastSyncDate: new Date(0),
-        blockHeight: 0,
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-      };
-    });
+    accounts = accountsIds
+      .map((id) => {
+        const { derivationMode, xpubOrAddress, currencyId } =
+          decodeAccountId(id);
+        const index = 0;
+        const freshAddressPath = "0'/0'/0'/0/0"; // NB this is intentionally wrong. you are not in possession of this account.
+        return {
+          data: {
+            id,
+            seedIdentifier: xpubOrAddress,
+            xpub: xpubOrAddress,
+            derivationMode,
+            index,
+            freshAddress: xpubOrAddress,
+            freshAddressPath,
+            freshAddresses: [],
+            name: currencyId + " " + shortAddressPreview(xpubOrAddress),
+            starred: true,
+            balance: "0",
+            blockHeight: 0,
+            currencyId,
+            operations: [],
+            pendingOperations: [],
+            swapHistory: [],
+            unitMagnitude: 0,
+            lastSyncDate: "0",
+          },
+        };
+      })
+      .filter(Boolean);
   } catch (e) {
     console.error(e);
   }
@@ -158,7 +155,7 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
                 data: {
                   settings: { hasCompletedOnboarding: true },
                   user: { id: "_" },
-                  accounts: accounts.map((a) => ({ data: toAccountRaw(a) })),
+                  accounts,
                 },
               })
             );

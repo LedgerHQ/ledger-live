@@ -105,3 +105,4 @@ yarn upgrade-interactive -i --latest
 |winston                 | logs                           | monthly                          |
 |xstate                  | generic helper for React       | **TBD why it's needed.**         |
 |zcash-bitcore-lib       | Bitcoin coin integration       | monthly                          |
+|varuint-bitcoin         | Bitcoin coin integration       | monthly                          |

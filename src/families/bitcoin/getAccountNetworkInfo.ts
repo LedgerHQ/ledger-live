@@ -47,10 +47,12 @@ export async function getAccountNetworkInfo(
   }
   // Fix fees if suggested fee is too low, this is only for viacoin/decred because the fees backend endpoint is broken
   if (
-    (account.currency.id === "viacoin" || account.currency.id === "decred") &&
+    (account.currency.id === "viacoin" ||
+      account.currency.id === "decred" ||
+      account.currency.id === "qtum") &&
     feesPerByte[2].toNumber() < Math.ceil(relayFee * 100000)
   ) {
-    feesPerByte[2] = new BigNumber(Math.ceil(relayFee * 100000)).plus(1);
+    feesPerByte[2] = new BigNumber(Math.ceil(relayFee * 100000)).plus(2);
     feesPerByte[1] = feesPerByte[2].plus(1);
     if (feesPerByte[1].plus(1).gt(feesPerByte[0])) {
       feesPerByte[0] = feesPerByte[1].plus(1);
