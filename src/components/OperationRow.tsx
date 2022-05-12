@@ -135,7 +135,7 @@ export default function OperationRow({
         currency={currency}
       />
     ) : null;
-  }, [account, parentAccount, operation]);
+  }, [account, operation, parentAccount]);
 
   const amount = getOperationAmountNumber(operation);
   const valueColor = amount.isNegative() ? "neutral.c100" : "success.c100";
@@ -209,7 +209,11 @@ export default function OperationRow({
 
         {isNftOperation ? (
           <BodyRightContainer flexShrink={1} maxWidth="70%">
-            <OperationRowNftName operation={operation} />
+            <OperationRowNftName
+              operation={operation}
+              account={account}
+              parentAccount={parentAccount}
+            />
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
