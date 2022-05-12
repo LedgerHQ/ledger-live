@@ -65,7 +65,6 @@ jobs:
       - name: BOT
         env:
           SHOW_LEGACY_NEW_ACCOUNT: "1"
-          DEBUG_HTTP_RESPONSE: "1"
           SEED: ${{ secrets.SEED2 }}
           BOT_REPORT_FOLDER: botreport
           VERBOSE_FILE: botreport/logs.txt
