@@ -205,6 +205,10 @@ export const FreshAddressIndexInvalid = createCustomErrorClass(
   "FreshAddressIndexInvalid"
 );
 
+export const BluetoothNotSupportedError = createCustomErrorClass(
+  "FwUpdateBluetoothNotSupported"
+);
+
 export const UnsupportedDerivation = createCustomErrorClass(
   "UnsupportedDerivation"
 );

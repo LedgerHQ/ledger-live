@@ -1,5 +1,10 @@
 // Add others with union (e.g. "learn" | "market" | "foo")
-export type FeatureId = "learn" | "pushNotifications" | "ratings";
+export type FeatureId =
+  | "learn"
+  | "pushNotifications"
+  | "llmUsbFirmwareUpdate"
+  | "ratings"
+  | string;
 
 // We use objects instead of direct booleans for potential future improvements
 // like feature versioning etc
