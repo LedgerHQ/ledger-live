@@ -6,7 +6,7 @@
   "private": true,
   "dependencies": {
     "@rnx-kit/metro-config": "^1.2.27",
-    "@rnx-kit/metro-resolver-symlinks": "^0.1.16",
+    "@rnx-kit/metro-resolver-symlinks": "0.1.16",
     "metro-config": "^0.67.0",
     "metro-resolver": "^0.67.0"
   },
