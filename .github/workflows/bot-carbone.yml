@@ -74,12 +74,13 @@ jobs:
           githubToken: ${{github.token}}
           slackApiToken: ${{secrets.SLACK_API_TOKEN}}
       - name: upload logs to github artifacts
-        if: failure() || success()
+        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: botreport
           path: libs/ledger-live-common/botreport/
       - name: Test coverage
+        if: always()
         run: npx codecov -F bot
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
