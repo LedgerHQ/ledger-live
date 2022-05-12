@@ -102,6 +102,15 @@ function readPackage(pkg, context) {
         tslib: "*",
       }),
       /* React Native and Metro bundler packages */
+      // Crashes ios build
+      addDependencies("react-native-codegen", {
+        glob: "*",
+        invariant: "*",
+      }),
+      // Crashes ios build
+      addDependencies("react-native", {
+        mkdirp: "*",
+      }),
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
       }),
