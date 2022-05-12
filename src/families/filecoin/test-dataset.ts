@@ -142,8 +142,7 @@ const filecoin = {
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    // FIXME please enable again when test pass again
-    // filecoin,
+    filecoin,
   },
 };
 export default dataset;
