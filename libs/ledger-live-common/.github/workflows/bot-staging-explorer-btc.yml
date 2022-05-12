@@ -8,7 +8,7 @@ on:
       ref:
         description: "Which ref (branch or tag) to pull from ?"
         required: false
-        default: master
+        default: develop
 
 jobs:
   start-runner:
@@ -65,8 +65,7 @@ jobs:
       - name: BOT
         env:
           SHOW_LEGACY_NEW_ACCOUNT: "1"
-          DEBUG_HTTP_RESPONSE: "1"
-          SEED: ${{ secrets.SEED4 }}
+          SEED: ${{ secrets.SEED2 }}
           BOT_REPORT_FOLDER: botreport
           VERBOSE_FILE: botreport/logs.txt
           GITHUB_SHA: ${GITHUB_SHA}
@@ -79,9 +78,6 @@ jobs:
           EXPLORER: https://explorers.api-01.live.ledger-stg.com
         run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
-      - name: Run coverage
-        if: failure() || success()
-        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload logs
         if: failure() || success()
         uses: actions/upload-artifact@v1
