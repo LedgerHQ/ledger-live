@@ -2809,12 +2809,12 @@ importers:
   tools/metro-extra-config:
     specifiers:
       '@rnx-kit/metro-config': ^1.2.27
-      '@rnx-kit/metro-resolver-symlinks': ^0.1.16
+      '@rnx-kit/metro-resolver-symlinks': 0.1.16
       metro-config: ^0.67.0
       metro-resolver: ^0.67.0
     dependencies:
       '@rnx-kit/metro-config': 1.2.31_metro-config@0.67.0
-      '@rnx-kit/metro-resolver-symlinks': 0.1.17
+      '@rnx-kit/metro-resolver-symlinks': 0.1.16
       metro-config: 0.67.0
       metro-resolver: 0.67.0
 
@@ -11052,8 +11052,8 @@ packages:
       - supports-color
     dev: false
 
-  /@rnx-kit/metro-resolver-symlinks/0.1.17:
-    resolution: {integrity: sha512-RS7FMExhxxv0xy7us2KGyBM4PICKHpZu/Sr0SvqSSHxEEfPzsTD2T0Vpqh8YE+5jsdnSEb3/RobMoj7pQukx5A==}
+  /@rnx-kit/metro-resolver-symlinks/0.1.16:
+    resolution: {integrity: sha512-6+MgiUKucHuaN6u0jcgrq+yEsmc1qNd9npmqNeUtkvCW9UtqPj4l/dRRRbOO2ZtNmyd0Jfw7X06YeKv4DjSMXQ==}
     dependencies:
       '@rnx-kit/tools-node': 1.2.7
       '@rnx-kit/tools-react-native': 1.2.1
