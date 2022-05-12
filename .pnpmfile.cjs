@@ -31,7 +31,7 @@ function readPackage(pkg, context) {
     !pkg.name.startsWith("@ledgerhq") &&
     !pkg.private
   ) {
-    delete pkg.dependencies;
+    delete pkg.dependencies["@types/react"];
     pkg.peerDependencies["@types/react"] = "*";
     pkg.peerDependenciesMeta = {
       ...pkg.peerDependenciesMeta,
