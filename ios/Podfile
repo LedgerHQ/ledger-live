@@ -2,8 +2,6 @@ require File.join(File.dirname(`node --print "require.resolve('expo/package.json
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-source 'https://github.com/CocoaPods/Specs.git'
-
 platform :ios, '12.0'
 
 flipperkit_version = '0.111.0'
