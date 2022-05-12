@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.7.16",
+  "version": "0.7.17",
   "private": true,
   "description": "Ledger Live - React Native UI",
   "repository": "https://github.com/LedgerHQ/ui",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@ledgerhq/icons-ui": "^0.2.4",
-    "@ledgerhq/ui-shared": "^0.1.6",
+    "@ledgerhq/ui-shared": "^0.1.7",
     "@types/color": "^3.0.2",
     "@types/react": "^17.0.37",
     "@types/react-native": "^0.65.9",

@@ -6,12 +6,14 @@ export function getButtonColors(colors: Theme["colors"]): {
     primaryColor: string;
     secondaryColor: string;
     tertiaryColor?: string;
+    pressedColor?: string;
+    pressedOutlineColor?: string;
   };
 } {
   return {
     default: {
       primaryColor: colors.neutral.c100,
-      secondaryColor: "rgba(0,0,0,0)",
+      secondaryColor: "rgba(0,0,255,0)",
     },
     disabled: {
       primaryColor: colors.neutral.c50,
@@ -20,19 +22,27 @@ export function getButtonColors(colors: Theme["colors"]): {
     main: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.neutral.c100,
+      pressedColor: colors.neutral.c100a06,
+      pressedOutlineColor: colors.neutral.c100a01,
     },
     shade: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.neutral.c100,
       tertiaryColor: colors.neutral.c40,
+      pressedColor: colors.neutral.c100a06,
+      pressedOutlineColor: colors.neutral.c100a01,
     },
     error: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.error.c100,
+      pressedColor: colors.error.c100a07,
+      pressedOutlineColor: colors.error.c100a025,
     },
     color: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.primary.c80,
+      pressedColor: colors.primary.c80a70,
+      pressedOutlineColor: colors.primary.c70a025,
     },
   };
 }
@@ -52,7 +62,7 @@ export function getButtonColorStyle(
 } {
   const { outline, type = "main", disabled } = props;
 
-  const { primaryColor, secondaryColor, tertiaryColor } =
+  const { primaryColor, secondaryColor, tertiaryColor, pressedColor, pressedOutlineColor } =
     getButtonColors(colors)[disabled ? "disabled" : type];
 
   if (outline) {
@@ -62,6 +72,7 @@ export function getButtonColorStyle(
         backgroundColor: "transparent",
         borderColor: disabled ? primaryColor : tertiaryColor ?? secondaryColor,
         borderWidth: 1,
+        ...(pressedOutlineColor && { underlayColor: pressedOutlineColor }),
       },
     };
   } else {
@@ -69,6 +80,7 @@ export function getButtonColorStyle(
       text: { color: primaryColor },
       button: {
         backgroundColor: secondaryColor,
+        ...(pressedColor && { underlayColor: pressedColor }),
       },
     };
   }
