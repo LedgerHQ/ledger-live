@@ -36,7 +36,7 @@ export type NFT = Omit<ProtoNFT, "metadata"> & {
   metadata: NFTMetadata;
 };
 
-export type NFTMetadataLinksProviders = "opensea" | "rarible" | "etherscan";
+export type NFTMetadataLinksProviders = "opensea" | "rarible" | "explorer";
 
 export type NFTMetadataResponse = {
   status: 200 | 404 | 500;

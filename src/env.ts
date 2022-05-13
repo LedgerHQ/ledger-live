@@ -70,10 +70,10 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API to use for cosmos_testnet (COSMOS_NODE or STARGATE_NODE are known)",
   },
-  API_RIPPLE_WS: {
+  API_RIPPLE_RPC: {
     parser: stringParser,
-    def: "wss://xrplcluster.com/ledgerlive",
-    desc: "XRP Ledger full history open WebSocket endpoint",
+    def: "https://xrplcluster.com/ledgerlive",
+    desc: "XRP Ledger full history open JSON-RPC endpoint",
   },
   API_FILECOIN_ENDPOINT: {
     parser: stringParser,
