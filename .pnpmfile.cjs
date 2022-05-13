@@ -157,7 +157,15 @@ function readPackage(pkg, context) {
       addPeerDependencies("jest-worker", {
         metro: "*",
       }),
-      addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
+      // "dmg-builder" is required to build .dmg electron apps on macs,
+      // but is not declared as such by app-builder-lib.
+      // I'm not adding it as a dependency because if I did,
+      // then pnpm would fail on win / linux during install.
+      // Mildly related (error is not the same): https://github.com/pnpm/pnpm/issues/3640
+      addPeerDependencies("app-builder-lib", {
+        "dmg-builder": "*",
+        lodash: "*",
+      }),
       /* Packages that are missing @types/* dependencies */
       addPeerDependencies("react-native-gesture-handler", {
         "@types/react": "*",
