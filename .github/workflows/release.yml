@@ -18,6 +18,7 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
