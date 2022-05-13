@@ -67,7 +67,7 @@ jobs:
           COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
         timeout-minutes: 120
       - name: submit bot report
-        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@bots-staging
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@monorepo-setup
         with:
           path: libs/ledger-live-common/botreport/
           githubSha: ${{github.sha}}
