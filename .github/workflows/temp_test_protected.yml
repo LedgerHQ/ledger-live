@@ -1,0 +1,27 @@
+name: Protected Branches Push Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test_protected_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          token: ${{ secrets.GH_PAT }}
+      - name: Git stuff
+        run: |
+          git config checkout.defaultRemote origin
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+          echo "test" > test.txt
+          git add .
+          git commit -m "dummy: this is a test commit"
+          git push origin develop
+          rm test.txt
+          git add .
+          git commit -m "dummy: revert test commit"
+          git push origin develop
