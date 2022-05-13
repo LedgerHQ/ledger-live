@@ -426,6 +426,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': workspace:^
       '@ledgerhq/react-native-passcode-auth': ^2.1.0
       '@polkadot/reactnative-identicon': 0.87.5
+      '@polkadot/x-randomvalues': ^9.1.1
       '@react-native-async-storage/async-storage': ^1.15.17
       '@react-native-community/art': ^1.2.0
       '@react-native-community/cli-platform-android': ^6.3.0
@@ -621,6 +622,7 @@ importers:
       '@ledgerhq/react-native-hw-transport-ble': link:../../libs/ledgerjs/packages/react-native-hw-transport-ble
       '@ledgerhq/react-native-passcode-auth': 2.1.0
       '@polkadot/reactnative-identicon': 0.87.5_jtrxi44z2zn3egoyupbz6wol6a
+      '@polkadot/x-randomvalues': 9.1.1
       '@react-native-async-storage/async-storage': 1.17.4_react-native@0.67.3
       '@react-native-community/art': 1.2.0_jtrxi44z2zn3egoyupbz6wol6a
       '@react-native-community/cli-platform-android': 6.3.0
@@ -841,6 +843,7 @@ importers:
       '@polkadot/types-known': 8.1.1
       '@polkadot/util': ^9.1.1
       '@polkadot/util-crypto': ^9.1.1
+      '@polkadot/wasm-crypto': ^6.0.1
       '@solana/spl-token': ^0.1.8
       '@solana/web3.js': ^1.32.0
       '@svgr/core': ^5.5.0
@@ -994,6 +997,7 @@ importers:
       '@polkadot/types-known': 8.1.1
       '@polkadot/util': 9.1.1
       '@polkadot/util-crypto': 9.1.1
+      '@polkadot/wasm-crypto': 6.0.1_@polkadot+util@9.1.1
       '@solana/spl-token': 0.1.8
       '@solana/web3.js': 1.41.4
       '@taquito/ledger-signer': 11.1.0-stablelib.0
@@ -10253,6 +10257,19 @@ packages:
       '@polkadot/x-randomvalues': 8.7.1
     dev: false
 
+  /@polkadot/wasm-crypto/6.0.1_@polkadot+util@9.1.1:
+    resolution: {integrity: sha512-nW5DDrciHGbZbj0Xh7w0Bnh5exSJUw96Zux7RuGfXuoXXHZBcf0QiB4E2dcVh3d/NkF7PkB99FlkdQxQp4M0Rg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.17.9
+      '@polkadot/util': 9.1.1
+      '@polkadot/wasm-crypto-asmjs': 6.0.1_@polkadot+util@9.1.1
+      '@polkadot/wasm-crypto-wasm': 6.0.1_@polkadot+util@9.1.1
+    dev: false
+
   /@polkadot/wasm-crypto/6.0.1_w6feazvfzurr6chqij4fhtttmu:
     resolution: {integrity: sha512-nW5DDrciHGbZbj0Xh7w0Bnh5exSJUw96Zux7RuGfXuoXXHZBcf0QiB4E2dcVh3d/NkF7PkB99FlkdQxQp4M0Rg==}
     engines: {node: '>=14.0.0'}
@@ -18263,7 +18280,7 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -26728,15 +26745,6 @@ packages:
     dependencies:
       tabbable: 5.3.2
     dev: false
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.4:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}

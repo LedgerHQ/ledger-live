@@ -8,7 +8,7 @@ import {
   useNftMetadata,
 } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
 import { accountSelector } from "../../../reducers/accounts";
 import NftImage from "../../../components/Nft/NftImage";
