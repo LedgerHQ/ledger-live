@@ -1,0 +1,24 @@
+name: submit-bot-report
+description: Use the bot report to upload to all relevant places (Github comment, Slack)
+author: gre
+inputs:
+  path:
+    description: folder path with all the bot report files
+    required: true
+  githubToken:
+    description: github token to push a comment
+    required: true
+  githubSha:
+    description: github sha in context of the run
+    required: true
+  slackApiToken:
+    description: slack API token (if wanting to post to slack)
+  slackChannel:
+    description: slack channel to post on (optional)
+runs:
+  using: node12
+  main: build/index.js
+
+branding:
+  icon: image
+  color: orange
