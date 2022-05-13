@@ -28,6 +28,7 @@ jobs:
         if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         with:
           ref: ${{ github.event.inputs.ref || "release" }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: set ref
         id: ref

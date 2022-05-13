@@ -17,6 +17,7 @@ jobs:
         with:
           ref: nightly
           fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
 
       - name: set git user
         run: |
