@@ -53,22 +53,24 @@ export const buildTransaction = async (
       if (!transaction.validators || transaction.validators.length < 1) {
         isComplete = false;
       } else {
-        transaction.validators.forEach((validator) => {
-          if (!validator.address || validator.amount.lte(0)) {
-            isComplete = false;
-          }
+        const validator = transaction.validators[0];
+        if (!validator) {
+          isComplete = false;
+          break;
+        } else if (!validator.address || transaction.amount.lte(0)) {
+          isComplete = false;
+        }
 
-          msg.push({
-            typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-            value: {
-              delegatorAddress: account.freshAddress,
-              validatorAddress: validator.address,
-              amount: {
-                denom: account.currency.units[1].code,
-                amount: validator.amount.toString(),
-              },
+        msg.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+          value: {
+            delegatorAddress: account.freshAddress,
+            validatorAddress: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: transaction.amount.toString(),
             },
-          });
+          },
         });
       }
       break;
