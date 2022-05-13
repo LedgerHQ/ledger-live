@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.0.10",
+  "version": "3.1.0",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
@@ -85,6 +85,7 @@
     "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@polkadot/reactnative-identicon": "0.87.5",
+    "@polkadot/x-randomvalues": "^9.1.1",
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/cli-platform-android": "^6.3.0",

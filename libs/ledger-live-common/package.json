@@ -92,6 +92,7 @@
     "@polkadot/types-known": "8.1.1",
     "@polkadot/util": "^9.1.1",
     "@polkadot/util-crypto": "^9.1.1",
+    "@polkadot/wasm-crypto": "^6.0.1",
     "@solana/spl-token": "^0.1.8",
     "@solana/web3.js": "^1.32.0",
     "@taquito/ledger-signer": "stablelib",

@@ -16,6 +16,10 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
+// Uses Asm.js version of @polkadot/util-crypto
+// See: https://polkadot.js.org/docs/util-crypto/FAQ/#i-dont-have-wasm-available-in-my-environment
+import "@ledgerhq/live-common/lib/reactNative";
+
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
@@ -25,7 +29,6 @@ import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
-
 
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
