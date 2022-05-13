@@ -8,7 +8,6 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
-import network from "../network";
 import { Account } from "../types";
 import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
@@ -212,265 +211,233 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
           (s.mutations && s.mutations.every((r) => !r.mutation)))
     )
     .map((s) => s.spec.name);
-  const { GITHUB_SHA, GITHUB_TOKEN, GITHUB_RUN_ID, GITHUB_WORKFLOW } =
-    process.env;
+  const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
 
-  if (GITHUB_TOKEN && GITHUB_SHA) {
-    log("github", "will send a report to " + GITHUB_SHA);
-    let body = "";
-    let title = "";
-    const runURL = `https://github.com/LedgerHQ/ledger-live-common/actions/runs/${String(
-      GITHUB_RUN_ID
-    )}`;
-    const success = mutationReports.length - errorCases.length;
+  let body = "";
+  let title = "";
+  const runURL = `https://github.com/LedgerHQ/ledger-live-common/actions/runs/${String(
+    GITHUB_RUN_ID
+  )}`;
+  const success = mutationReports.length - errorCases.length;
 
-    if (success > 0) {
-      title += `✅ ${success} txs `;
-    }
+  if (success > 0) {
+    title += `✅ ${success} txs `;
+  }
 
-    if (errorCases.length) {
-      title += `❌ ${errorCases.length} txs `;
-    }
+  if (errorCases.length) {
+    title += `❌ ${errorCases.length} txs `;
+  }
 
-    if (specFatals.length) {
-      title += ` ⚠️ ${specFatals.length} specs`;
-    }
+  if (specFatals.length) {
+    title += ` ⚠️ ${specFatals.length} specs`;
+  }
 
-    if (countervaluesError) {
-      title += `❌ countervalues`;
-    } else {
-      title += ` (${totalUSD})`;
-    }
+  if (countervaluesError) {
+    title += `❌ countervalues`;
+  } else {
+    title += ` (${totalUSD})`;
+  }
 
-    let subtitle = "";
+  let subtitle = "";
 
-    if (countervaluesError) {
-      subtitle += `> ${formatError(countervaluesError)}`;
-    }
+  if (countervaluesError) {
+    subtitle += `> ${formatError(countervaluesError)}`;
+  }
 
-    let slackBody = "";
-    body += `## ${title}`;
+  let slackBody = "";
+  body += `## ${title}`;
 
-    if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
-      body += ` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`;
-    }
+  if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
+    body += ` for [**${GITHUB_WORKFLOW}**](${runURL})\n\n`;
+  }
 
-    body += "\n\n";
-    body += subtitle;
+  body += "\n\n";
+  body += subtitle;
 
-    if (uncoveredMutations.length) {
-      body += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
-    }
+  if (uncoveredMutations.length) {
+    body += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
+  }
 
-    body += "\n\n";
+  body += "\n\n";
 
-    if (specFatals.length) {
-      body += "<details>\n";
-      body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
-      specFatals.forEach(({ spec, fatalError }) => {
-        body += `**Spec ${spec.name} failed!**\n`;
-        body += "```\n" + formatError(fatalError) + "\n```\n\n";
-        slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
-      });
-      body += "</details>\n\n";
-    }
-
-    if (errorCases.length) {
-      body += "<details>\n";
-      body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
-      errorCases.forEach((c) => {
-        body +=
-          "```\n" +
-          formatReportForConsole(c) +
-          "\n" +
-          formatError(c.error) +
-          "\n```\n\n";
-      });
-      body += "</details>\n\n";
-    }
-
+  if (specFatals.length) {
     body += "<details>\n";
-    body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
-    results.forEach((r, i) => {
-      const spec = specs[i];
-      const logs = specsLogs[i];
-      body += `#### Spec ${spec.name} (${
-        r.mutations ? r.mutations.length : "failed"
-      })\n`;
-      body += "\n```\n";
-      body += logs.join("\n");
-
-      if (r.mutations) {
-        r.mutations.forEach((m) => {
-          if (m.error || m.mutation) {
-            body += formatReportForConsole(m) + "\n";
-          }
-        });
-      }
-
-      body += "\n```\n";
+    body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
+    specFatals.forEach(({ spec, fatalError }) => {
+      body += `**Spec ${spec.name} failed!**\n`;
+      body += "```\n" + formatError(fatalError) + "\n```\n\n";
+      slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
     });
     body += "</details>\n\n";
+  }
 
-    if (uncoveredMutations.length > 0) {
-      body += "<details>\n";
-      body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
-      specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
-        body += `#### Spec ${spec.name} (${unavailableMutations.length})\n`;
-        unavailableMutations.forEach((m) => {
-          // FIXME: we definitely got to stop using Maybe types or | undefined | null
-          if (!m) return;
-          const msgs = groupBy(m.errors.map((e) => e.message));
-          body +=
-            "- **" +
-            m.mutation.name +
-            "**: " +
-            Object.keys(msgs)
-              .map((msg) => `${msg} (${msgs[msg].length})`)
-              .join(", ") +
-            "\n";
-        });
-      });
-      body += "</details>\n\n";
-    }
-
-    body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
-
-    if (withoutFunds.length) {
-      body += `> ⚠️ ${
-        withoutFunds.length
-      } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
-    }
-
+  if (errorCases.length) {
     body += "<details>\n";
-    body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
-    body += "| Spec (accounts) | Operations | Balance | funds? |\n";
-    body += "|-----------------|------------|---------|--------|\n";
-    results.forEach((r) => {
-      function sumAccounts(all) {
-        if (!all || all.length === 0) return;
-        return all.reduce(
-          (sum, a) => sum.plus(a.spendableBalance),
-          new BigNumber(0)
-        );
-      }
-
-      const accountsBeforeBalance = sumAccounts(r.accountsBefore);
-      const accountsAfterBalance = sumAccounts(r.accountsAfter);
-      let balance = !accountsBeforeBalance
-        ? "🤷‍♂️"
-        : "**" +
-          formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
-            showCode: true,
-          }) +
-          "**";
-      let etaTxs =
-        r.mutations && r.mutations.every((m) => !m.mutation) ? "❌" : "???";
-
-      if (
-        accountsBeforeBalance &&
-        accountsAfterBalance &&
-        accountsAfterBalance.lt(accountsBeforeBalance)
-      ) {
-        const txCount = r.mutations
-          ? r.mutations.filter((m) => m.operation).length
-          : 0;
-        const d = accountsBeforeBalance.minus(accountsAfterBalance);
-        balance +=
-          " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
-        const eta = accountsAfterBalance.div(d.div(txCount)).integerValue();
-        etaTxs = eta.lt(50) ? "⚠️" : eta.lt(500) ? "👍" : "💪";
-      }
-
-      if (countervaluesState && r.accountsAfter) {
-        const portfolio = getPortfolio(r.accountsAfter, period, calc);
-        const totalUSD = formatCurrencyUnit(
-          usd.units[0],
-          portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
-          {
-            showCode: true,
-          }
-        );
-        balance += " (" + totalUSD + ")";
-      }
-
-      function countOps(all) {
-        if (!all) return 0;
-        return all.reduce((sum, a) => sum + a.operations.length, 0);
-      }
-
-      const beforeOps = countOps(r.accountsBefore);
-      const afterOps = countOps(r.accountsAfter);
-      const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
-      body += `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => a.used).length
-      }) `;
-      body += `| ${afterOps || beforeOps}${
-        afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
-      } `;
-      body += `| ${balance} `;
-      body += `| ${etaTxs} ${
-        (firstAccount && firstAccount.freshAddress) || ""
-      } `;
-      body += "|\n";
+    body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
+    errorCases.forEach((c) => {
+      body +=
+        "```\n" +
+        formatReportForConsole(c) +
+        "\n" +
+        formatError(c.error) +
+        "\n```\n\n";
     });
-    body += "\n</details>\n\n";
+    body += "</details>\n\n";
+  }
 
-    const { SLACK_API_TOKEN, SLACK_CHANNEL, BOT_REPORT_FOLDER } = process.env;
+  body += "<details>\n";
+  body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
+  results.forEach((r, i) => {
+    const spec = specs[i];
+    const logs = specsLogs[i];
+    body += `#### Spec ${spec.name} (${
+      r.mutations ? r.mutations.length : "failed"
+    })\n`;
+    body += "\n```\n";
+    body += logs.join("\n");
 
-    if (BOT_REPORT_FOLDER) {
-      await Promise.all([
-        fs.promises.writeFile(
-          path.join(BOT_REPORT_FOLDER, "full-report.md"),
-          body,
-          "utf-8"
-        ),
-        fs.promises.writeFile(
-          path.join(BOT_REPORT_FOLDER, "before-app.json"),
-          makeAppJSON(allAccountsBefore),
-          "utf-8"
-        ),
-        fs.promises.writeFile(
-          path.join(BOT_REPORT_FOLDER, "after-app.json"),
-          makeAppJSON(allAccountsAfter),
-          "utf-8"
-        ),
-      ]);
-    }
-
-    const { data: githubComment } = await network({
-      url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-      },
-      data: { body },
-    });
-
-    if (SLACK_API_TOKEN && githubComment) {
-      const text = `${String(GITHUB_WORKFLOW)}: ${title} (<${
-        githubComment.html_url
-      }|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
-      await network({
-        url: "https://slack.com/api/chat.postMessage",
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${SLACK_API_TOKEN}`,
-        },
-        data: {
-          text,
-          channel: SLACK_CHANNEL || "ledger-live-bot",
-        },
+    if (r.mutations) {
+      r.mutations.forEach((m) => {
+        if (m.error || m.mutation) {
+          body += formatReportForConsole(m) + "\n";
+        }
       });
     }
-  } else {
-    log(
-      "github",
-      "will NOT send a report. Missing " +
-        [GITHUB_SHA ? "" : "commit", GITHUB_TOKEN ? "" : "token"]
-          .filter(Boolean)
-          .join(" ")
-    );
+
+    body += "\n```\n";
+  });
+  body += "</details>\n\n";
+
+  if (uncoveredMutations.length > 0) {
+    body += "<details>\n";
+    body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
+    specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
+      body += `#### Spec ${spec.name} (${unavailableMutations.length})\n`;
+      unavailableMutations.forEach((m) => {
+        // FIXME: we definitely got to stop using Maybe types or | undefined | null
+        if (!m) return;
+        const msgs = groupBy(m.errors.map((e) => e.message));
+        body +=
+          "- **" +
+          m.mutation.name +
+          "**: " +
+          Object.keys(msgs)
+            .map((msg) => `${msg} (${msgs[msg].length})`)
+            .join(", ") +
+          "\n";
+      });
+    });
+    body += "</details>\n\n";
+  }
+
+  body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
+
+  if (withoutFunds.length) {
+    body += `> ⚠️ ${
+      withoutFunds.length
+    } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+  }
+
+  body += "<details>\n";
+  body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
+  body += "| Spec (accounts) | Operations | Balance | funds? |\n";
+  body += "|-----------------|------------|---------|--------|\n";
+  results.forEach((r) => {
+    function sumAccounts(all) {
+      if (!all || all.length === 0) return;
+      return all.reduce(
+        (sum, a) => sum.plus(a.spendableBalance),
+        new BigNumber(0)
+      );
+    }
+
+    const accountsBeforeBalance = sumAccounts(r.accountsBefore);
+    const accountsAfterBalance = sumAccounts(r.accountsAfter);
+    let balance = !accountsBeforeBalance
+      ? "🤷‍♂️"
+      : "**" +
+        formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
+          showCode: true,
+        }) +
+        "**";
+    let etaTxs =
+      r.mutations && r.mutations.every((m) => !m.mutation) ? "❌" : "???";
+
+    if (
+      accountsBeforeBalance &&
+      accountsAfterBalance &&
+      accountsAfterBalance.lt(accountsBeforeBalance)
+    ) {
+      const txCount = r.mutations
+        ? r.mutations.filter((m) => m.operation).length
+        : 0;
+      const d = accountsBeforeBalance.minus(accountsAfterBalance);
+      balance += " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
+      const eta = accountsAfterBalance.div(d.div(txCount)).integerValue();
+      etaTxs = eta.lt(50) ? "⚠️" : eta.lt(500) ? "👍" : "💪";
+    }
+
+    if (countervaluesState && r.accountsAfter) {
+      const portfolio = getPortfolio(r.accountsAfter, period, calc);
+      const totalUSD = formatCurrencyUnit(
+        usd.units[0],
+        portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
+        {
+          showCode: true,
+        }
+      );
+      balance += " (" + totalUSD + ")";
+    }
+
+    function countOps(all) {
+      if (!all) return 0;
+      return all.reduce((sum, a) => sum + a.operations.length, 0);
+    }
+
+    const beforeOps = countOps(r.accountsBefore);
+    const afterOps = countOps(r.accountsAfter);
+    const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
+    body += `| ${r.spec.name} (${
+      (r.accountsBefore || []).filter((a) => a.used).length
+    }) `;
+    body += `| ${afterOps || beforeOps}${
+      afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
+    } `;
+    body += `| ${balance} `;
+    body += `| ${etaTxs} ${(firstAccount && firstAccount.freshAddress) || ""} `;
+    body += "|\n";
+  });
+  body += "\n</details>\n\n";
+
+  const { BOT_REPORT_FOLDER } = process.env;
+
+  const slackCommentTemplate = `${String(
+    GITHUB_WORKFLOW
+  )}: ${title} (<{{url}}|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
+
+  if (BOT_REPORT_FOLDER) {
+    await Promise.all([
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "full-report.md"),
+        body,
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "slack-comment-template.md"),
+        slackCommentTemplate,
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "before-app.json"),
+        makeAppJSON(allAccountsBefore),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "after-app.json"),
+        makeAppJSON(allAccountsAfter),
+        "utf-8"
+      ),
+    ]);
   }
 
   if (botHaveFailed) {
