@@ -84,10 +84,12 @@ const getTransactionStatus = async (
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
   const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
-  amount = useAllAmount ? balance.minus(estimatedFees) : amount;
-
-  if (amount.lte(0)) errors.amount = new AmountRequired();
-  if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
+  if (totalSpent.gt(a.spendableBalance)) {
+    errors.amount = new NotEnoughBalance();
+  } else {
+    amount = useAllAmount ? balance.minus(estimatedFees) : amount;
+    if (amount.lte(0)) errors.amount = new AmountRequired();
+  }
 
   // log("debug", "[getTransactionStatus] finish fn");
 

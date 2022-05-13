@@ -8,29 +8,34 @@ import {
 import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "../filecoin/transaction";
+import { CurrenciesData } from "../../types";
 
-const SEED_IDENTIFIER = "f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i";
-const ACCOUNT_1 = "t1d2xrzcslx7xlbbylc5c3d5lvandqw4iwl6epxba";
+const SEED_IDENTIFIER = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
+const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const filecoin = {
+const filecoin: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [],
   scanAccounts: [
     {
       name: "filecoin seed 1",
       apdus: `
       => 0600000000
-      <= 0000120500311000049000
+      <= 0000160500311000049000
       => 06010000142c000080cd010080000000800000000000000000
-      <= 041e10b3a453db1e7324cd37e78820d7d150c13ba3bf784be204c91afe495816a19a836e85cb89b0e4ff36d06a71a9ca02947de79e16e66dacc645e46dcdf7d9091501cdf9b117d00fa23e938e52feb25da9a32e4ecdd02966317a78343363663671623672643565346f6b6c376c65786e6a756d786535746f716a3676747233699000
+      <= 04ca7b02cafdf36e8b4caaf530a96b949764af71b956b2a3328b7a10940794c860f574a9199be98bde3c261887fec8e5fd94bc5f104908bf5f992f52ef2a89abb015017ff83e316c2605c018ab3a6126d5d8ce0a3023e529663170373464346d6c6d657963346167666c686a71736e766f797a796664616937666d6b79736f32619000
       => 0600000000
-      <= 0000120500311000049000
+      <= 0000160200330000049000
+      => 06010000142c00008001000080000000800000000000000000
+      <= 04433296b4adc4c68ae79f6ed6ff1b09875c932d993a20dd068b07346c2dcefe42a791287afae0932dea2ded54982e9a4ca38e614a60f320c68ddb554949953094150111b66c4555016c4ea8677f4d71c954a869790d1a2974316367336779726b7661667765356b64687035677864736b757662757873646932686e7377646d699000
+      => 0600000000
+      <= 0000160500311000049000
       => 06010000142c000080cd010080000000800000000001000000
-      <= 04b481eeff158ba0044fa075b2a53cb34de11193699e0fd0ee8abb10fa2acd9bc32147af05001b01bf6341c9e78b7a8244d0d3fd2a424e361dab346de6aeee251515018003fd987489d8855f1f4486d85db219497bb346296631716162373367647572686d696b7879376973646e71786e7364666578786d32676f6d34376f70699000
+      <= 0419d91b4f9c3015637f5aa6b601b337f2770b1dcf93ba896d64627cd2aa67493ba924decd3024643478a84e06486b0a6b10d9f7607b6e92b0545bb3c998d4d75d15017ad86da94bab1ae1942e43050edb5f634b2d1ec9296631706c6d67336b6b6c766d6e6f6466626f696d6371357732376d6e66733268776a746173366769619000
       => 0600000000
-      <= 0000120500311000049000
+      <= 0000160500311000049000
       => 06010000142c000080cd010080010000800000000000000000
-      <= 047ad655911df4ff9307af1ecdb6aea774530aae68db5247e0ca62681ad8be304595b847825670f031d553add8151e3b46eb60f85627a4d85d3dd96cf1e5fc5ba21501b3c284b3a95a29e023a86bcb6184eebcaf6ed4a4296631777062696a6d356a6c697536616935696e7066776462686f7873787735766665677364366c79719000
+      <= 0463c18e9a3c08ecffab4fa384f977e5d380d2b252dbbd96875df9cc91c44c81e82639fd659a3eeeaed96901696d8c7832b03befafd0af6ab2bee634ea8141e52a15016f62da10a416f416e80ec32866b91f01f7746af82966316e35726e75656665633332626e32616f796d75676e6f693761683378693278796e766c746e71699000
       `,
     },
   ],
@@ -38,10 +43,10 @@ const filecoin = {
     {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
-        id: `js:2:filecoin:${SEED_IDENTIFIER}:filecoin`,
+        id: `js:2:filecoin:${SEED_IDENTIFIER}:glif`,
         seedIdentifier: SEED_IDENTIFIER,
         name: "Filecoin 1",
-        derivationMode: "filecoin",
+        derivationMode: "glif" as const,
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "44'/461'/0'/0/0",
@@ -86,7 +91,7 @@ const filecoin = {
             gasLimit: 10,
             gasPremium: "10000",
             recipient: ACCOUNT_1,
-            amount: "100000000000000000000000000",
+            amount: "100000000000000000000",
           }),
           expectedStatus: {
             errors: {
@@ -102,7 +107,7 @@ const filecoin = {
             method: 1,
             version: 1,
             nonce: 100,
-            gasFeeCap: "1000",
+            gasFeeCap: "10",
             gasLimit: 10,
             gasPremium: "10000",
             recipient: ACCOUNT_1,

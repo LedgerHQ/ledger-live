@@ -160,7 +160,7 @@ const modes = Object.freeze({
     tag: "legacy",
   },
   // glif normal derivation
-  glifnormal: {
+  glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
   },
   solanaMain: {
@@ -188,7 +188,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glifnormal"],
+  filecoin: ["gliflegacy", "glif"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
