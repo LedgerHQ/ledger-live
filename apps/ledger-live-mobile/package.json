@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
@@ -134,7 +134,6 @@
     "https-browserify": "~1.0.0",
     "i18next": "20.3.5",
     "invariant": "2.2.4",
-    "jsc-android": "^250230.2.1",
     "json-rpc-2.0": "^0.2.19",
     "lodash": "4.17.21",
     "lottie-ios": "3.2.3",
