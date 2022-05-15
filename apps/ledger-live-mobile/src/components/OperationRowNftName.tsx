@@ -1,8 +1,15 @@
 import React, { memo } from "react";
 
-import { Operation } from "@ledgerhq/live-common/lib/types";
+import {
+  Account,
+  AccountLike,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
 import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
-import { decodeAccountId } from "@ledgerhq/live-common/lib/account";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
@@ -10,14 +17,22 @@ import Skeleton from "./Skeleton";
 type Props = {
   style?: Object;
   operation: Operation;
+  account: AccountLike;
+  parentAccount?: Account | null;
 };
 
-const OperationRowNftName = ({ style, operation }: Props) => {
-  const { currencyId } = decodeAccountId(operation.accountId);
+const OperationRowNftName = ({
+  style,
+  operation,
+  account,
+  parentAccount,
+}: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(mainAccount);
   const { status, metadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
-    currencyId,
+    currency.id,
   );
 
   return (
