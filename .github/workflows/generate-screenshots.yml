@@ -110,8 +110,9 @@ jobs:
         run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
       - name: Commit snapshots
         if: steps.status.outputs.status != 0
-        run: |
-          git add ./apps/ledger-live-desktop/tests/specs
-          git commit -m 'update screenshots (${{ matrix.os }})'
-          git pull --rebase
-          git push
+        run: >
+          git add ./apps/ledger-live-desktop/tests/specs &&
+          git commit -m 'update screenshots (${{ matrix.os }})' &&
+          git pull --rebase &&
+          git push ||
+          echo ""
