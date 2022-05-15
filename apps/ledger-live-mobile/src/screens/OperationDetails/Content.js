@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
@@ -11,7 +11,6 @@ import {
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import {
-  decodeAccountId,
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
@@ -22,7 +21,10 @@ import {
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/lib/operation";
-import { useNftCollectionMetadata } from "@ledgerhq/live-common/lib/nft";
+import {
+  useNftCollectionMetadata,
+  useNftMetadata,
+} from "@ledgerhq/live-common/lib/nft";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -77,11 +79,6 @@ export default function Content({
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
-  const { currencyId } = decodeAccountId(operation.accountId);
-  const { status, metadata } = useNftCollectionMetadata(
-    operation.contract,
-    currencyId,
-  );
 
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
@@ -144,6 +141,19 @@ export default function Content({
     ["NFT_IN", "NFT_OUT"].includes(type) &&
     operation.contract &&
     operation.tokenId;
+  const {
+    status: collectionStatus,
+    metadata: collectionMetadata,
+  } = useNftCollectionMetadata(operation.contract, currency.id);
+  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
+    operation.contract,
+    operation.tokenId,
+    currency.id,
+  );
+  const status = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [nftStatus, collectionStatus],
+  );
 
   return (
     <>
@@ -164,8 +174,8 @@ export default function Content({
           currency={currency}
           unit={unit}
           isNftOperation={isNftOperation}
-          status={status}
-          metadata={metadata}
+          status={nftStatus}
+          metadata={nftMetadata}
           styles={styles}
         />
 
@@ -290,7 +300,7 @@ export default function Content({
               style={styles.tokenNameSkeleton}
               loading={status === "loading"}
             >
-              <LText semiBold>{metadata?.tokenName || "-"}</LText>
+              <LText semiBold>{collectionMetadata?.tokenName || "-"}</LText>
             </Skeleton>
           </Section>
           <Section
