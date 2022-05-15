@@ -5,6 +5,7 @@ import type { AlgorandTransaction } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
 import { createTransaction } from "./js-prepareTransaction";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { getEstimatedFees } from "./js-getFeesForTransaction";
 
 export const estimateMaxSpendable = async ({
   account,
@@ -38,14 +39,16 @@ export const estimateMaxSpendable = async ({
   if (tokenAccount) {
     return tokenAccount.balance;
   } else {
+    const fees = await getEstimatedFees(mainAccount, tx);
+
     let maxSpendable = computeAlgoMaxSpendable({
       accountBalance: mainAccount.balance,
       nbAccountAssets: algorandResources.nbAssets,
       mode: tx.mode,
     });
-    if (tx.fees) {
-      maxSpendable = maxSpendable.minus(tx.fees);
-    }
+
+    maxSpendable = maxSpendable.minus(fees);
+
     return maxSpendable.gte(0) ? maxSpendable : new BigNumber(0);
   }
 };
