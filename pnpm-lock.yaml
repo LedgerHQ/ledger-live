@@ -509,7 +509,6 @@ importers:
       jest: ^27.5.1
       jest-circus: ^27.5.1
       jetifier: ^1.6.6
-      jsc-android: ^250230.2.1
       json-rpc-2.0: ^0.2.19
       local-web-server: ^4.2.1
       lodash: 4.17.21
@@ -671,7 +670,6 @@ importers:
       https-browserify: 1.0.0
       i18next: 20.3.5
       invariant: 2.2.4
-      jsc-android: 250230.2.1
       json-rpc-2.0: 0.2.19
       lodash: 4.17.21
       lottie-ios: 3.2.3
