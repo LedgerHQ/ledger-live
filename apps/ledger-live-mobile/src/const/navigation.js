@@ -280,6 +280,7 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
   OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",

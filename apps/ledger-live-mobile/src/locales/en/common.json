@@ -847,6 +847,10 @@
       "privacyLink": "Privacy Policy",
       "and": "and"
     },
+    "stepDoYouHaveALedgerDevice": {
+      "title": "Do you have a ledger device ?",
+      "subtitle": "First things first"
+    },
     "postWelcomeStep": {
       "title": "Let’s get started",
       "subtitle": "Set up your Ledger or buy one now.",
@@ -860,11 +864,13 @@
         "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
       },
       "discoverLedger": {
-        "title": "Discover Ledger Live",
-        "subtitle": "Explore the app"
+        "title": "Explore Ledger Live",
+        "subtitle": "Explore the app and learn about its benefits "
       }
     },
     "discoverLive": {
+      "exploreWithoutADevice": "Explore without a device",
+      "buyALedgerNow": "Buy a Ledger now",
       "0": {
         "title": "One place for all your crypto needs",
         "desc": "Monitor, buy, sell, swap, grow and manage your assets securely and get the best crypto insights"
@@ -877,6 +883,10 @@
         "title": "Reclaim power over your money",
         "desc": "The Ledger Nano X keeps your coins offline and protected. Combine it to Ledger Live app for maximum security and control over your crypto",
         "cta": "Begin your Journey"
+      },
+      "3": {
+        "title": "One place for all your crypto needs",
+        "desc": "Monitor, buy, sell, swap, grow and manage your assets securely and get the best crypto insights"
       }
     },
     "stepLanguage": {

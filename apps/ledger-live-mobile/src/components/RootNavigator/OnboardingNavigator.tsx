@@ -39,6 +39,7 @@ import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/set
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 
 const Stack = createStackNavigator();
 const OnboardingCarefulWarningStack = createStackNavigator();
@@ -192,6 +193,10 @@ export default function OnboardingNavigator() {
         name={ScreenName.OnboardingPreQuizModal}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
+        component={OnboardingStepDoYouHaveALedgerDevice}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalDiscoverLive}
