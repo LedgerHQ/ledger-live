@@ -29,7 +29,7 @@
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
     "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
     "build:storybook": "pnpm build-storybook -o web-build",
-    "watch": "tsc --watch",
+    "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
     "eject": "expo eject",
     "ios": "expo start --ios",
