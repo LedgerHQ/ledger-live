@@ -99,7 +99,6 @@
       ],
       "outputs": [
         "lib/**",
-        "src/generated/**",
         "src/data/icons/react/**",
         "src/data/icons/reactNative/**",
         "src/data/flags/react/**",
