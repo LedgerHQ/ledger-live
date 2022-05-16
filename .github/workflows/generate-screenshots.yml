@@ -100,6 +100,7 @@ jobs:
         run: >
           git add ./apps/ledger-live-desktop/tests/specs &&
           git commit -m 'update screenshots (${{ matrix.os }})' &&
+          git restore . &&
           git pull --rebase &&
           git push ||
           echo ""
