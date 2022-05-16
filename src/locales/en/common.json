@@ -3082,7 +3082,7 @@
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please re-install the apps on your device.",
-    "pleaseConfirmUpdate": "Please confirm the update on your device",
+    "pleaseConfirmUpdate": "Confirm the update on your device",
     "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
