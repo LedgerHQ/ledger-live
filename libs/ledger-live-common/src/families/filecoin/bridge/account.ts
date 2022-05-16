@@ -116,29 +116,27 @@ const estimateMaxSpendable = async ({
   const a = getMainAccount(account, parentAccount);
   const { address } = getAddress(a);
 
+  const recipient = transaction?.recipient;
+
   if (!validateAddress(address).isValid) throw new InvalidAddress();
+  if (recipient && !validateAddress(recipient).isValid)
+    throw new InvalidAddress();
 
   const balances = await fetchBalances(address);
-
   const balance = new BigNumber(balances.spendable_balance);
 
-  const recipient = transaction?.recipient;
+  if (balance.eq(0)) return balance;
+
   const amount = transaction?.amount;
-  if (recipient) {
-    log(
-      "debug",
-      "[estimateMaxSpendable] fetching estimated fees to adjust the real max spendable balance"
-    );
 
-    if (!validateAddress(recipient).isValid) throw new InvalidAddress();
+  const result = await fetchEstimatedFees({ to: recipient, from: address });
+  const gasFeeCap = new BigNumber(result.gas_fee_cap);
+  const gasLimit = new BigNumber(result.gas_limit);
+  const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-    const result = await fetchEstimatedFees({ to: recipient, from: address });
-    const gasFeeCap = new BigNumber(result.gas_fee_cap);
-    const gasLimit = new BigNumber(result.gas_limit);
+  if (balance.lte(estimatedFees)) return new BigNumber(0);
 
-    balance.minus(calculateEstimatedFees(gasFeeCap, gasLimit));
-  }
-
+  balance.minus(estimatedFees);
   if (amount) balance.minus(amount);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
