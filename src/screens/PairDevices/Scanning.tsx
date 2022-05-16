@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Observable } from "rxjs";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/devices/src/index";
+import { getInfosForServiceUuid } from "@ledgerhq/devices";
 import logger from "../../logger";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
 import { knownDevicesSelector } from "../../reducers/ble";
@@ -32,11 +33,15 @@ export default function Scanning({ onTimeout, onError, onSelect }: Props) {
   const renderItem = useCallback(
     ({ item }) => {
       const knownDevice = knownDevices.find(d => d.id === item.id);
+      let modelId = "nanoX" as DeviceModelId;
+      const infos = getInfosForServiceUuid(item.serviceUUIDs[0]);
+      if (infos) modelId = infos.deviceModel.id;
+
       const deviceMeta = {
         deviceId: item.id,
         deviceName: item.localName ?? item.name,
         wired: false,
-        modelId: "nanoX" as DeviceModelId,
+        modelId,
       };
       return (
         <DeviceItem

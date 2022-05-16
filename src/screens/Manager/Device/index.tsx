@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useState } from "react";
+import { View } from "react-native";
 import { Trans } from "react-i18next";
 
 import { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
@@ -21,6 +22,11 @@ const illustrations = {
   nanoSP: NanoS,
   nanoX: NanoX,
   blue: NanoS,
+  nanoFTS: p => (
+    <View style={{ borderWidth: 1, borderColor: "red" }}>
+      <NanoS {...p} />
+    </View>
+  ),
 };
 
 type Props = {

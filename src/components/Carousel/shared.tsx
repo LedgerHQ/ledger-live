@@ -198,5 +198,3 @@ export const getDefaultSlides = () =>
     id: slide.name,
     Component: () => <Slide width={WIDTH} {...slide} />,
   }));
-
-export const CAROUSEL_NONCE: number = 6;

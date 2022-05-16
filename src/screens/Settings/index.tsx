@@ -52,6 +52,7 @@ export default function Settings({ navigation }: Props) {
         Icon={Icons.MobileMedium}
         onClick={() => navigation.navigate(ScreenName.GeneralSettings)}
         arrowRight
+        settingsCardTestId="general-settings-card"
       />
       {accounts.length > 0 && (
         <SettingsCard

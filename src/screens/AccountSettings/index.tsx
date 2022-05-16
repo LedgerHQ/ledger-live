@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import { TrackScreen } from "../../analytics";
+import { NavigatorName } from "../../const";
 
 import AccountNameRow from "./AccountNameRow";
 import AccountUnitsRow from "./AccountUnitsRow";
@@ -51,7 +52,7 @@ class AccountSettings extends PureComponent<Props, State> {
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
     deleteAccount(account);
-    navigation.popToTop();
+    navigation.replace(NavigatorName.PortfolioAccounts);
   };
 
   render() {
