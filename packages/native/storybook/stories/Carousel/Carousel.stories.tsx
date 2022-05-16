@@ -1,7 +1,10 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
+import { number, boolean } from "@storybook/addon-knobs";
+import { action } from "@storybook/addon-actions";
 import { storiesOf } from "../storiesOf";
 import { Flex, Carousel, Text, Button } from "../../../src";
+import StoriesIndicator from "../../../src/components/Navigation/StoriesIndicator";
 
 const description = `
 ### A simple responsive carousel.
@@ -135,6 +138,32 @@ const Controlled = (): JSX.Element => {
   );
 };
 
+const CustomIndicator = (): JSX.Element => {
+  return (
+    <Carousel
+      scrollOnSidePress={boolean("scrollOnSidePress", true)}
+      autoDelay={number("autoDelay", 5000)}
+      restartAfterEnd={boolean("restartAfterEnd", false)}
+      IndicatorComponent={StoriesIndicator}
+      onOverflow={action("onOverflow")}
+      onChange={action("onChange")}
+      slideIndicatorContainerProps={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        px: 7,
+      }}
+    >
+      <Item label="primary" />
+      <Item label="neutral" />
+      <Item label="success" />
+      <Item label="warning" />
+      <Item label="error" />
+    </Carousel>
+  );
+};
+
 storiesOf((story) =>
   story("Carousel", module)
     .add("Default", Default, {
@@ -147,5 +176,6 @@ storiesOf((story) =>
     })
     .add("AutoDelay", AutoDelay)
     .add("WithProps", WithProps)
-    .add("Controlled", Controlled),
+    .add("Controlled", Controlled)
+    .add("CustomIndicator - Story", CustomIndicator),
 );
