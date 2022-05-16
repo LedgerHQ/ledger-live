@@ -11570,7 +11570,7 @@ packages:
     dev: false
 
   /@stablelib/binary/0.7.2:
-    resolution: {integrity: sha1-GzOSFwyKh0HIuPhD6ilN5xrrLPc=}
+    resolution: {integrity: sha512-J7iGppeKR112ICTZTAoALcT3yBpTrd2Z/F0wwiOUZPVPTDFTQFWHZZdYzfal9+mY1uMUPRSEnNmDuXRZbtE8Xg==}
     dependencies:
       '@stablelib/int': 0.5.0
     dev: false
@@ -11614,7 +11614,7 @@ packages:
     dev: false
 
   /@stablelib/hash/0.5.0:
-    resolution: {integrity: sha1-if6QQKPUODsZIcfYpglIvDCEYGg=}
+    resolution: {integrity: sha512-rlNEBTskjKVl9f4rpRgM2GV3IrZWfNJFY5Y/2tmQtA2ozEkPLoUp9J/uJnBRnOpCsuflPW2z+pwqPbEYOPCHwQ==}
     dev: false
 
   /@stablelib/hash/1.0.1:
@@ -11622,7 +11622,7 @@ packages:
     dev: false
 
   /@stablelib/int/0.5.0:
-    resolution: {integrity: sha1-zKkiWVHVXS3khlZ1V4R4hjNmDCs=}
+    resolution: {integrity: sha512-cuaPoxm3K14LiEICiA3iz0aeGurg75v+haZMV+xloVTw3CT25oMRJgQ6VxZ2p2cHy4kjhVI68kX4oaYrhnTm+g==}
     dev: false
 
   /@stablelib/int/1.0.1:
@@ -11645,7 +11645,7 @@ packages:
     dev: false
 
   /@stablelib/wipe/0.5.0:
-    resolution: {integrity: sha1-poLV+USOlQ4JnlN+b3L8lgJ10VE=}
+    resolution: {integrity: sha512-SifvRV0rTTFR1qEF6G1hondGZyrmiM1laR8PPrO6TZwQG03hJduVbUX8uQk+Q6FdkND2Z9B8uLPyUAquQIk3iA==}
     dev: false
 
   /@stablelib/wipe/1.0.1:
@@ -18417,7 +18417,7 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -19629,7 +19629,7 @@ packages:
     dev: false
 
   /bn.js/4.11.6:
-    resolution: {integrity: sha1-UzRK2xRhehP26N0s4okF0cC6MhU=}
+    resolution: {integrity: sha512-XWwnNNFCuuSQ0m3r3C4LE3EiORltHd9M05pq6FOlVeiophzRbMo50Sbz1ehl8K3Z+jw9+vmgnXefY1hz8X+2wA==}
     dev: false
 
   /bn.js/4.11.8:
@@ -19858,7 +19858,7 @@ packages:
     dev: true
 
   /brorand/1.1.0:
-    resolution: {integrity: sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=}
+    resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
 
   /browser-process-hrtime/1.0.0:
     resolution: {integrity: sha512-9o5UecI3GhkpM6DrXr69PblIuWxPKk9Y0jHBRhdocZ2y7YECBFCsHm79Pr3OyR2AvjhDkabFJaDJMYRazHgsow==}
@@ -20625,7 +20625,7 @@ packages:
     dev: false
 
   /check-error/1.0.2:
-    resolution: {integrity: sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=}
+    resolution: {integrity: sha512-BrgHpW9NURQgzoNyjfq0Wu6VFO6D7IZEmJNdtgNqpzGG8RuNFHt2jQxWlAs4HMe119chBnv+34syEZtc6IhLtA==}
     dev: false
 
   /child-process-promise/2.2.1:
@@ -20637,7 +20637,7 @@ packages:
     dev: true
 
   /chokidar/1.7.0:
-    resolution: {integrity: sha1-eY5ol3gVHIB2tLNg5e3SjNortGg=}
+    resolution: {integrity: sha512-mk8fAWcRUOxY7btlLtitj3A45jOwSAxH4tOFOoEGbVsl6cL6pPMWUy7dwZ/canfj3QEdP6FHSnf/l1c6/WkzVg==}
     deprecated: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
     requiresBuild: true
     dependencies:
@@ -26882,6 +26882,15 @@ packages:
     dependencies:
       tabbable: 5.3.2
     dev: false
+
+  /follow-redirects/1.15.0:
+    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.4:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
