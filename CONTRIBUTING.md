@@ -17,7 +17,7 @@ There is a good chance that we will reject feature based PRs based on the fact t
 **Before submitting a pull request, please make sure the following is done:**
 
 1. Fork the repository and create your branch from `develop` (check the git conventions for the naming of the branch).
-2. Follow the main installation steps. (https://github.com/LedgerHQ/ledger-live/tree/monorepo-documentation#installation)
+2. Follow the main installation steps. (https://github.com/LedgerHQ/ledger-live#installation)
 3. Follow additional installation steps depending on which package you want to contribute to.
 4. Make your changes.
 5. If you’ve fixed a bug or added code that should be tested, add tests!
