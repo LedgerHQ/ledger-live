@@ -103,7 +103,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
     [iconName, size, Icon, text.color],
   );
 
-  const textColor = "yellow"; /*useMemo(
+  const textColor = "blue"; /*useMemo(
     () => (pending ? theme.colors.neutral.c50 : text.color),
     [pending, theme.colors.neutral.c50, text.color],
   );*/
