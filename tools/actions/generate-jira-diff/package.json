@@ -1,0 +1,18 @@
+{
+  "name": "@actions/generate-jira-diff",
+  "version": "1.0.0",
+  "description": "Generate Jira diff between two version of the repo",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m",
+    "watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1",
+    "isomorphic-unfetch": "^3.1.0"
+  }
+}

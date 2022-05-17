@@ -304,7 +304,7 @@ export function appCandidatesMatches(
   search: AppSearch
 ): boolean {
   const searchFirmware = search.firmware || defaultFirmware[appCandidate.model];
-  return (
+  return !!(
     (!search.model || search.model === appCandidate.model) &&
     (!search.appName ||
       search.appName.replace(/ /g, "").toLowerCase() ===

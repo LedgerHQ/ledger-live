@@ -108,7 +108,7 @@ const DropdownGeneric = ({
       ...(flipDisabled ? [] : [flip()]),
       size({
         padding: 6,
-        apply({ height, width }) {
+        apply({ height, width }: { height: number; width: number }) {
           setMaxHeight(height);
           setMaxWidth(width);
         },

@@ -35,7 +35,7 @@ jobs:
 
   stop-runner:
     name: "[Runner] stop ec2 instance"
-    if: ${{ always() && !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
+    if: ${{ always() && !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' && needs.start-runner.result == 'success'}}
     needs: [start-runner, ui-tests-linux-hosted]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     with:
@@ -61,12 +61,12 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -112,7 +112,7 @@ jobs:
       #     echo ${{ github.event.number }} > ./pr/NR
       - name: upload tests data
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests-reports
           path: |
@@ -126,13 +126,13 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
       - name: checkout feature branch for testing
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
       - name: setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -168,7 +168,7 @@ jobs:
         run: xvfb-run --auto-servernum -- yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/actions/packages/upload-images@main
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
         id: imgur
         with:
           path: tests/artifacts/test-results
@@ -176,13 +176,13 @@ jobs:
           os: linux
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-linux.json
           path: images-linux.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-linux
           path: |
@@ -197,12 +197,12 @@ jobs:
     runs-on: ubuntu-20.04
     if: ${{ needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -238,7 +238,7 @@ jobs:
         run: xvfb-run --auto-servernum -- yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/actions/packages/upload-images@main
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
         id: imgur
         with:
           path: tests/artifacts/test-results
@@ -246,13 +246,13 @@ jobs:
           os: linux
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-linux.json
           path: images-linux.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-linux
           path: |
@@ -266,12 +266,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - uses: ledgerhq/actions/packages/has-hash-commit-deps@main
@@ -298,7 +298,7 @@ jobs:
         run: yarn playwright
       - name: upload diffs to imgur
         if: always()
-        uses: ledgerhq/actions/packages/upload-images@main
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
         id: imgur
         with:
           path: tests/artifacts/test-results
@@ -306,13 +306,13 @@ jobs:
           os: windows-latest
       - name: upload images
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: images-windows-latest.json
           path: images-windows-latest.json
       - name: upload ci suggested screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: playwright-results-windows-latest
           path: |
@@ -325,12 +325,12 @@ jobs:
   #   name: "[macOS] UI"
   #   runs-on: [ledger-live, macos]
   #   steps:
-  #     - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v3
   #       with:
   #         ref: ${{ github.event.pull_request.head.sha }}
   #         repository: ${{github.event.pull_request.head.repo.full_name}}
   #         persist-credentials: false
-  #     - uses: actions/setup-node@v2
+  #     - uses: actions/setup-node@v3
   #       with:
   #         node-version: 14.x
   #     - name: install yarn
@@ -349,7 +349,7 @@ jobs:
   #       run: yarn playwright
   #     - name: upload diffs to imgur
   #       if: always()
-  #       uses: ledgerhq/actions/packages/upload-images@main
+  #       uses: ledgerhq/ledger-live/tools/actions/upload-images@main
   #       id: imgur
   #       with:
   #         path: tests/artifacts/test-results
@@ -357,13 +357,13 @@ jobs:
   #         os: macos
   #     - name: upload images
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: images-macos.json
   #         path: images-macos.json
   #     - name: upload ci suggested screenshots
   #       if: always()
-  #       uses: actions/upload-artifact@v2
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         name: playwright-results-macos
   #         path: |

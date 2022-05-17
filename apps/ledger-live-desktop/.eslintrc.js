@@ -22,7 +22,8 @@ module.exports = {
     __SENTRY_URL__: "readonly",
     __APP_VERSION__: "readonly",
     __GIT_REVISION__: "readonly",
-    __NIGHTLY__: "readonly",
+    __PRERELEASE__: "readonly",
+    __CHANNEL__: "readonly",
     __static: "readonly",
     $: "readonly",
   },
@@ -58,7 +59,7 @@ module.exports = {
       ],
       parser: "@typescript-eslint/parser",
       parserOptions: {
-        project: "./tsconfig.json",
+        project: "./src/tsconfig.json",
       },
       rules: {
         "space-before-function-paren": 0,
@@ -68,6 +69,7 @@ module.exports = {
         "react-hooks/exhaustive-deps": "warn", // Checks effect dependencies
         "no-use-before-define": "off",
         "@typescript-eslint/no-use-before-define": ["error"],
+        "flowtype/no-types-missing-file-annotation": 0,
       },
     },
   ],

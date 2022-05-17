@@ -1,7 +1,6 @@
 // @flow
 
 import React from "react";
-import { connect } from "react-redux";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts";
@@ -58,7 +57,6 @@ async function init() {
     React,
     log,
     Transport,
-    connect,
   });
 
   if (process.env.PLAYWRIGHT_RUN) {

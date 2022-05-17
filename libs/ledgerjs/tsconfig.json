@@ -12,6 +12,10 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "downlevelIteration": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "lib": [
+      "DOM",
+      "ES2017"
+    ]
   }
 }

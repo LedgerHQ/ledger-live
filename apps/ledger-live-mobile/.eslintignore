@@ -1,2 +1,7 @@
+node_modules
 src/locales/index.js
 generated
+scripts
+*.ts
+*.tsx
+*.d.ts

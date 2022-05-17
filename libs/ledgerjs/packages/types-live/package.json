@@ -21,7 +21,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/types-cryptoassets": "^6.22.0",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
     "bignumber.js": "9",
     "rxjs": "6"
   },
@@ -29,6 +29,9 @@
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",
     "watch": "bash ../../script/watch.sh",
-    "doc": "bash ../../script/doc.sh"
+    "doc": "bash ../../script/doc.sh",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
   }
 }

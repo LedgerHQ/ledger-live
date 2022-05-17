@@ -1,0 +1,13 @@
+{
+  "name": "migrate-branch",
+  "version": "0.0.1",
+  "description": "Migrate a branch from an old LedgerHQ repository.",
+  "main": "index.js",
+  "bin": "index.js",
+  "private": true,
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "yargs": "^17.1.1-candidate.0"
+  }
+}

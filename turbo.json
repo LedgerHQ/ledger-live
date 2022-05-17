@@ -1,0 +1,143 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "baseBranch": "origin/develop",
+  "globalDependencies": [
+    "turbo.json"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "lib-es/**",
+        "build/**"
+      ]
+    },
+    "lint": {
+      "outputs": [],
+      "dependsOn": [
+        "$CI_OS"
+      ]
+    },
+    "lint:fix": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": [],
+      "dependsOn": [
+        "^build",
+        "$CI_OS"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "lint",
+        "typecheck",
+        "build",
+        "$CI_OS"
+      ],
+      "outputs": []
+    },
+    "start": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "build-ci": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "nightly": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "pre-build": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "release": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "watch": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "doc": {
+      "cache": false
+    },
+    "@ledgerhq/icons-ui#build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "react/**",
+        "native/**",
+        "index.js"
+      ]
+    },
+    "@ledgerhq/live-common#build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "lib/**",
+        "src/data/icons/react/**",
+        "src/data/icons/reactNative/**",
+        "src/data/flags/react/**",
+        "src/data/flags/reactNative/**"
+      ]
+    },
+    "@ledgerhq/live-common#typecheck": {
+      "dependsOn": [
+        "build",
+        "$CI_OS"
+      ],
+      "outputs": []
+    },
+    "live-mobile#lint": {
+      "dependsOn": [
+        "^build",
+        "$CI_OS"
+      ],
+      "outputs": []
+    },
+    "ledger-live-desktop#lint": {
+      "dependsOn": [
+        "^build",
+        "$CI_OS"
+      ],
+      "outputs": []
+    },
+    "ledger-live-desktop#test": {
+      "dependsOn": [
+        "ledger-live-desktop#build:testing",
+        "$CI_OS"
+      ],
+      "outputs": []
+    },
+    "ledger-live-desktop#build:testing": {
+      "cache": false,
+      "dependsOn": [
+        "^build"
+      ]
+    }
+  }
+}

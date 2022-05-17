@@ -1,0 +1,30 @@
+name: get-package-infos
+description: get package.json version and name and exposes them
+author: valpinkman
+inputs:
+  package:
+    description: package name (defaults to package.json)
+    required: false
+    default: package.json
+  path:
+    description: usually github.workspace, the root path where `package` is located
+    required: true
+outputs:
+  name:
+    description: name found in package.json
+  clean:
+    description: clean version found in package.json so it looks like X.Y.Z
+  version:
+    description: version found in package.json
+  prerelease:
+    description: boolean if version is prerelease
+  channel:
+    description: null if not prerelease, otherwise channel name (v1.2.3-nightly.0 => nightly)
+
+runs:
+  using: node12
+  main: build/index.js
+
+branding:
+  icon: package
+  color: yellow

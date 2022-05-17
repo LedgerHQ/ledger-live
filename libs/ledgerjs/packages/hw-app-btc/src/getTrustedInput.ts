@@ -36,14 +36,8 @@ export async function getTrustedInput(
   transaction: Transaction,
   additionals: Array<string> = []
 ): Promise<string> {
-  const {
-    version,
-    inputs,
-    outputs,
-    locktime,
-    nExpiryHeight,
-    extraData,
-  } = transaction;
+  const { version, inputs, outputs, locktime, nExpiryHeight, extraData } =
+    transaction;
 
   if (!outputs || !locktime) {
     throw new Error("getTrustedInput: locktime & outputs is expected");

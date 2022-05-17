@@ -2,14 +2,10 @@
 
 set -e
 
+export NODE_ENV=production
+
 cd ../..
-PATH=$(yarn bin):$PATH
+PATH=$(pnpm bin):$PATH
 cd -
 
-export NODE_ENV=production
 tsc && tsc -m ES6 --outDir lib-es
-
-(
-    cd ../../flow-support
-    yarn copy
-)

@@ -1,0 +1,19 @@
+{
+  "name": "@actions/get-package-infos",
+  "version": "1.0.0",
+  "description": "returns the current version, clean semver version and name from package.json",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m",
+    "watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.33.1",
+    "isomorphic-unfetch": "^3.1.0",
+    "semver": "^7.3.5"
+  }
+}

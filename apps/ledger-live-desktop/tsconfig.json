@@ -13,21 +13,18 @@
     "strict": true,
     "target": "esnext",
     "baseUrl": ".",
-    "paths": {
-      "~/*": ["src/*"]
-    },
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "tests/tests-out",
-    "rootDir": "./src"
+    "rootDir": "."
   },
-  "include": ["tests", "src/**/*"],
+  "include": ["tests"],
+  "files": ["package.json", "release-notes.json"],
   "exclude": [
     "node_modules",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js",
     "./scripts",
-    "./lib",
+    "./lib"
   ]
 }

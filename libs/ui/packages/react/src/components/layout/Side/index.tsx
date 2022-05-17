@@ -28,10 +28,12 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   }, [state]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: number;
 
     if (queue.length > 1) {
       const [, ...rest] = queue;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore mismatch between nodejs and dom types
       timeout = setTimeout(() => {
         setQueue(rest);
         setDirection("left");

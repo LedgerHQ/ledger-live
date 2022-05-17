@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { WalletMedium } from "@ledgerhq/native-ui/assets/icons";
 

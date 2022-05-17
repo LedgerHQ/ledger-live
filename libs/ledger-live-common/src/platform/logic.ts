@@ -9,7 +9,7 @@ export function translateContent(content: any, locale = "en") {
 
 export function isSupported(manifest: AppManifest) {
   return semver.satisfies(
-    semver.coerce(getPlatformVersion()),
+    semver.coerce(getPlatformVersion()) || "",
     manifest.apiVersion
   );
 }

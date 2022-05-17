@@ -1,6 +1,5 @@
 export * from "./live-common-setup-base";
 import React from "react";
-import { connect } from "react-redux";
 import invariant from "invariant";
 import {
   openTransportReplayer,
@@ -29,7 +28,6 @@ checkLibs({
   React,
   log,
   Transport,
-  connect,
 });
 
 type BluetoothTransport = any;

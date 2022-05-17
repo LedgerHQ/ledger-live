@@ -129,17 +129,8 @@ export default class Solana {
    * solana.getAppConfiguration().then(r => r.version)
    */
   async getAppConfiguration(): Promise<AppConfig> {
-    const [
-      blindSigningEnabled,
-      pubKeyDisplayMode,
-      major,
-      minor,
-      patch,
-    ] = await this.sendToDevice(
-      INS.GET_VERSION,
-      P1_NON_CONFIRM,
-      Buffer.alloc(0)
-    );
+    const [blindSigningEnabled, pubKeyDisplayMode, major, minor, patch] =
+      await this.sendToDevice(INS.GET_VERSION, P1_NON_CONFIRM, Buffer.alloc(0));
     return {
       blindSigningEnabled: Boolean(blindSigningEnabled),
       pubKeyDisplayMode,

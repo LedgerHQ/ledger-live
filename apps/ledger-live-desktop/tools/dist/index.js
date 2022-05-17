@@ -47,20 +47,27 @@ const cleaningTasks = args => [
   },
 ];
 
-const setupTasks = args => [
-  {
-    title: "Installing packages",
-    task: async () => {
-      await exec("yarn", ["-s", "--frozen-lockfile"]);
-    },
-  },
-];
+// const setupTasks = args => [
+//   {
+//     title: "Installing packages",
+//     task: async () => {
+//       await exec("pnpm", [
+//         "i",
+//         "--filter=ledger-live-desktop...",
+//         "--filter=ledger-live",
+//         "--unsafe-perm",
+//         "--package-import-method=copy",
+//         "--node-linker=hoisted",
+//       ]);
+//     },
+//   },
+// ];
 
 const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      await exec("yarn", ["build"]);
+      await exec("pnpm", ["run", "build"]);
     },
   },
   {
@@ -68,25 +75,24 @@ const buildTasks = args => [
       ? "Bundling and publishing the electron application"
       : "Bundling the electron application",
     task: async () => {
-      const commands = ["dist:internal"];
+      const commands = ["dist:internal", "--"];
       if (args.dir) commands.push("--dir");
-      if (args.publish) {
-        commands.push("--publish", "always");
-      } else {
-        commands.push("-c.afterSign='lodash/noop'");
-        commands.push("--publish", "never");
-      }
       if (args.nightly) {
         commands.push("--config");
         commands.push("electron-builder-nightly.yml");
-      }
-      if (args.ci) {
+      } else if (args.pre) {
+        commands.push("--config");
+        commands.push("electron-builder-pre.yml");
+      } else if (args.ci) {
         commands.push("--config");
         commands.push("electron-builder-ci.yml");
+        commands.push("-c.afterSign='lodash/noop'");
+        commands.push("--publish", "never");
       }
 
-      await exec("yarn", commands, {
-        env: args.publish
+      // Using npm here because pnpm will refuse to rebuild cached modules.
+      await exec("npm", ["run", ...commands], {
+        env: !args.ci
           ? {
               SENTRY_URL:
                 "https://db8f5b9b021048d4a401f045371701cb@o118392.ingest.sentry.io/274561",
@@ -146,11 +152,11 @@ const mainTask = (args = {}) => {
       skip: () => (dirty ? "--dirty flag passed" : false),
       task: () => setupList(cleaningTasks, args),
     },
-    {
-      title: "Setup",
-      skip: () => (dirty ? "--dirty flag passed" : false),
-      task: () => setupList(setupTasks, args),
-    },
+    // {
+    //   title: "Setup",
+    //   skip: () => (dirty ? "--dirty flag passed" : false),
+    //   task: () => setupList(setupTasks, args),
+    // },
     {
       title: publish ? "Build and publish" : "Build",
       task: () => setupList(buildTasks, args),
@@ -195,6 +201,10 @@ yargs
         .option("nightly", {
           alias: "n",
           type: "boolean",
+        })
+        .option("pre", {
+          type: "boolean",
+          describe: "make it a prerelease build (doesn't combine with nightly)",
         })
         .option("ci", {
           type: "boolean",

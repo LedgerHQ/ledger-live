@@ -42,6 +42,7 @@ const Chart = ({
   valueFormatter,
   valueKey = "value",
   height = 200,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   xAxisFormatter = (timestamp: number): string => `${new Date(timestamp).toLocaleDateString()}`,
   disableTooltips = false,
 }: ChartProps): JSX.Element => {
@@ -108,6 +109,7 @@ const Chart = ({
         minDomain={{ y: domainValues.min }}
         containerComponent={
           <VictoryVoronoiContainer
+            // @ts-expect-error disable this error for the sake of the monorepo
             disable={disableTooltips}
             voronoiBlacklist={["victory-area"]}
             labels={labelFormatted}

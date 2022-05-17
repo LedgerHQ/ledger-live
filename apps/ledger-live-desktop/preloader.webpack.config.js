@@ -1,5 +1,4 @@
 const path = require("path");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 
 const babelConfig = {
@@ -41,7 +40,6 @@ const babelTsConfig = {
   ],
   plugins: [
     ...babelPlugins,
-    "react-hot-loader/babel",
     [
       "babel-plugin-styled-components",
       {
@@ -52,25 +50,18 @@ const babelTsConfig = {
 };
 
 module.exports = {
+  stats: "errors-only",
   target: "electron-renderer",
   entry: ["./src/preloader/index.js"],
   output: {
     path: path.resolve(__dirname, ".webpack"),
     filename: "preloader.bundle.js",
   },
-  optimization: {
-    minimize: false,
-  },
-  plugins: [
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cachePreloader"),
-    }),
-  ],
+  plugins: [],
   module: {
     rules: [
       {
         test: /\.(ts)x?$/,
-        exclude: /node_modules/,
         loader: "babel-loader",
         options: babelTsConfig,
       },
@@ -106,6 +97,7 @@ module.exports = {
     ],
   },
   resolve: {
+    modules: ["node_modules", path.resolve(__dirname, "node_modules")],
     alias: {
       "~": path.resolve(__dirname, "src"),
     },

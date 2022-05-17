@@ -27,10 +27,10 @@
   "types": "lib/TransportWebBLE.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/devices": "^6.27.1",
-    "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.27.1",
-    "@ledgerhq/logs": "^6.10.0",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
     "rxjs": "6"
   },
   "devDependencies": {
@@ -39,7 +39,10 @@
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",
-    "watch": "bash ../../script/watch.sh"
+    "watch": "bash ../../script/watch.sh",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
 }

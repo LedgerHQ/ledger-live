@@ -32,12 +32,12 @@ jobs:
     name: "[macOS] Build"
     runs-on: [ledger-live, macos]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: install yarn
@@ -87,20 +87,10 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload macOS app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-mac.dmg
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-mac.dmg
-
-  clean-macos-runner:
-    runs-on: [ledger-live, macos]
-    needs: [bundle-macos]
-    steps:
-      - name: Clean working directory
-        run: |
-          cd $RUNNER_WORKSPACE
-          cd ..
-          rm -r *
 
   start-runner:
     name: "[Runner] start ec2 instance"
@@ -114,7 +104,7 @@ jobs:
 
   stop-runner:
     name: "[Runner] stop ec2 instance"
-    if: ${{ always() }}
+    if: ${{ always() && needs.start-runner.result == 'success' }}
     needs: [start-runner, bundle-linux-hosted]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     with:
@@ -132,12 +122,12 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -191,7 +181,7 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload linux app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
@@ -202,12 +192,12 @@ jobs:
     runs-on: ubuntu-20.04
     if: ${{needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         if: always()
         with:
           node-version: 14.x
@@ -259,7 +249,7 @@ jobs:
         with:
           path: ${{ github.workspace }}
       - name: upload linux app
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
           path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
@@ -268,12 +258,12 @@ jobs:
     name: "[Windows] Build"
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
           persist-credentials: false
-      - uses: actions/setup-node@main
+      - uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - uses: actions/setup-python@v2
@@ -316,7 +306,7 @@ jobs:
       - name: build the app
         run: yarn build-ci
       - name: upload windows
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.postversion1.outputs.content }}${{ steps.postversion2.outputs.content }}-win-x64.exe
           path: dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe

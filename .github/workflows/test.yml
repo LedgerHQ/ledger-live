@@ -1,4 +1,4 @@
-name: Test
+name: Test Libraries
 
 on:
   push:
@@ -6,9 +6,6 @@ on:
       - main
       - develop
   pull_request:
-    branches:
-      - main
-      - develop
   workflow_dispatch:
     inputs:
       since_branch:
@@ -16,9 +13,78 @@ on:
         default: "develop"
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  test-libraries:
+    name: "Test Libraries"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          # Commenting because of random node-gyp failures on windows…
+          # See:
+          #  * https://github.com/serialport/node-serialport/issues/2322
+          #  * https://github.com/serialport/node-serialport/issues/2322
+          # - windows-latest
+
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Dummy
-        run: echo "hello world"
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "2.7.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Bump npm to latest
+        run: |
+          npm i -g npm
+          npm --version
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**"
+      - name: Build and Test affected libraries
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]"
+        shell: bash
+      - name: (On Failure) Upload live-common snapshots and source
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          path: |
+            libs/ledger-live-common/src
+      - name: (On Failure) Upload react-ui test results
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('react-ui-test-results-{0}', matrix.os) }}
+          path: |
+            libs/ui/tests/react.spec.js-snapshots/
+            libs/ui/test-results/
+      - name: Test coverage
+        if: always()
+        run: npx codecov -F test
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

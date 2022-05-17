@@ -1,0 +1,8 @@
+{
+  "name": "native-modules-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tools to crawl and package native nodejs addons",
+  "main": "index.js",
+  "license": "ISC"
+}

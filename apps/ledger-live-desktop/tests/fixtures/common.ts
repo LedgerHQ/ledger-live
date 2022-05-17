@@ -78,6 +78,7 @@ const test = base.extend<TestFixtures>({
       env,
       colorScheme: theme,
       locale: lang,
+      executablePath: require("electron/index.js"),
     });
 
     // app is ready

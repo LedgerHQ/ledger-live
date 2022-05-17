@@ -1,7 +1,7 @@
 import React from "react";
 import { getStorybookUI, configure, addDecorator } from "@storybook/react-native";
-import { withKnobs } from "@storybook/addon-knobs";
 import "./rn-addons";
+import { withKnobs } from "@storybook/addon-knobs";
 import CenterView from "./stories/CenterView";
 
 const ledgerTheme = {
@@ -17,11 +17,13 @@ const ledgerTheme = {
 // enables knobs for all stories
 // (putting any type because bindings are incorrect)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-addDecorator((Story: any) => (
-  <CenterView waitFonts>
-    <Story />
-  </CenterView>
-));
+addDecorator((Story: any) => {
+  return (
+    <CenterView waitFonts={false}>
+      <Story />
+    </CenterView>
+  );
+});
 addDecorator(withKnobs);
 
 // import stories

@@ -1,5 +1,4 @@
 const path = require("path");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 const UnusedWebpackPlugin = require("unused-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
@@ -19,46 +18,21 @@ const babelConfig = {
   plugins: babelPlugins,
 };
 
-const babelTsConfig = {
-  presets: [
-    "@babel/preset-typescript",
-    [
-      "@babel/preset-env",
-      {
-        targets: {
-          electron: "7.1.9",
-        },
-      },
-    ],
-    "@babel/preset-react",
-    "@babel/preset-flow",
-  ],
-  plugins: [
-    ...babelPlugins,
-    "react-hot-loader/babel",
-    [
-      "babel-plugin-styled-components",
-      {
-        ssr: false,
-      },
-    ],
-  ],
-};
-
 module.exports = {
+  stats: "errors-only",
   target: "electron-main",
-  optimization: {
-    minimize: false,
-  },
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, ".webpack"),
     filename: "main.bundle.js",
   },
+  optimization: {
+    minimize: false,
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  },
   plugins: [
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cacheMain"),
-    }),
     new UnusedWebpackPlugin({
       directories: [path.join(__dirname, "src/main"), path.join(__dirname, "src/internal")],
       exclude: ["*.test.js", "*.html", "updater/*"],
@@ -85,6 +59,11 @@ module.exports = {
     ],
   },
   resolve: {
+    modules: ["node_modules", path.resolve(__dirname, "node_modules")],
+    // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)
+    // Picking the the main field first is safer.
+    // See this comment: https://github.com/webpack/webpack/issues/4742#issuecomment-295115576
+    mainFields: ["main", "module"],
     alias: {
       "~": path.resolve(__dirname, "src"),
     },

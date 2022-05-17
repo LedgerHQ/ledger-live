@@ -1,23 +1,199 @@
-name: Build Dekstop App
+name: Build Desktop App
 
 on:
   push:
     branches:
       - main
       - develop
-    path:
-      - apps/ledger-live-desktop/**
+    # paths:
+    #   - apps/ledger-live-desktop/**
   pull_request:
-    branches:
-      - main
-      - develop
-    path:
-      - apps/ledger-live-desktop/**
+    # branches:
+    #   - main
+    #   - develop
+    # paths:
+    #   - apps/ledger-live-desktop/**
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build-ubuntu:
-    name: "Ubuntu"
-    runs-on: ubuntu-20.04
+  start-runner:
+    name: "start ec2 instance"
+    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@monorepo-setup
+    with:
+      instance-type: c5.4xlarge
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance"
+    if: ${{ always() && needs.start-runner.result == 'success' }}
+    needs: [start-runner, build-desktop-app-linux]
+    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  build-desktop-app-linux:
+    name: "Build Ledger Live Desktop (Linux)"
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Echo
-        run: echo "coucou"
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install and switch to GCC 5.4x
+        run: |
+          cd apps/ledger-live-desktop
+          ./tools/g++-5.4/install.sh
+      - name: install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: set beta name
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: build the app
+        env:
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        run: pnpm build:lld
+      - name: upload linux app
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-linux-x86_64.AppImage
+
+  build-desktop-app-windows:
+    name: "Build Ledger Live Desktop (Windows)"
+    runs-on: [ledger-live, windows]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          # repository: ${{github.event.pull_request.head.repo.full_name}}
+          fetch-depth: 0
+      - name: update path
+        run: |
+          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.1.816
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - name: bump npm
+        run: |
+          npm i -g npm
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+        shell: bash
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: set beta name
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: build the app
+        env:
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        run: |
+          pnpm build:lld
+        shell: bash
+      - name: upload windows
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.version.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
+
+  build-desktop-app-macos:
+    name: "Build Ledger Live Desktop (Mac OS X)"
+    runs-on: [ledger-live, macos]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install dependencies
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: set beta name
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - name: build the app
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        run: |
+          eval "$(rbenv init - bash)"
+          pnpm build:lld
+      - name: upload macOS app
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.version.outputs.version }}-mac.dmg
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg

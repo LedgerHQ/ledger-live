@@ -8,7 +8,7 @@
 
 ## Reference
 
-[**🔗 Icons list**](https://ledger-live-ui-react.vercel.app/?path=/story/asorted-icons--list)
+[**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/asorted-icons--list)
 
 ## Installation
 

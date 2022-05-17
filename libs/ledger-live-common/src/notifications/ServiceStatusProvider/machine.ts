@@ -1,4 +1,4 @@
-import { assign, Machine } from "xstate";
+import { assign, createMachine } from "xstate";
 import type { State } from "./types";
 const initialState: State = {
   incidents: [],
@@ -7,7 +7,7 @@ const initialState: State = {
   isLoading: false,
   context: { tickers: [] },
 };
-export const serviceStatusMachine = Machine({
+export const serviceStatusMachine = createMachine({
   id: "serviceStatus",
   initial: "updating",
   context: initialState,
@@ -18,13 +18,14 @@ export const serviceStatusMachine = Machine({
           target: "updating",
         },
       },
+      // @ts-expect-error xstate bindings updates caused this error
       on: {
         UPDATE_DATA: {
           target: "updating",
           actions: assign({
             isLoading: true,
             error: null,
-          } as any),
+          }),
         },
       },
     },

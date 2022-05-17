@@ -33,7 +33,7 @@ export default styled.svg\`
 const reactNativeSvgStyledComponent = `
 import styled from "styled-components/native";
 import { system } from "styled-system";
-import Svg from "react-native-svg";
+import Svg, { SvgProps } from "react-native-svg";
 
 const fillSystem = system({
   fill: {
@@ -42,7 +42,7 @@ const fillSystem = system({
   },
 });
 
-export default styled(Svg).attrs((props) => ({
+export default styled(Svg).attrs((props:  SvgProps) => ({
   ...fillSystem(props),
 }))\`\`;
 `;
@@ -95,7 +95,7 @@ function reactNativeTemplate(
 
 const convert = (svg, options, componentName, outputFile) => {
   svgr(svg, options, componentName)
-    .then((result) => {
+    .then(result => {
       let component = result
         .replace("xlinkHref=", "href=")
         .replace(/fill=("(?!none)\S*")/g, "")
@@ -106,7 +106,7 @@ const convert = (svg, options, componentName, outputFile) => {
 
       fs.writeFileSync(outputFile, component, "utf-8");
     })
-    .catch((e) => console.error(e));
+    .catch(e => console.error(e));
 };
 
 glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
@@ -124,7 +124,7 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
   fs.writeFileSync(`${nativeDir}/StyledSvg.ts`, reactNativeSvgStyledComponent, "utf-8");
 
   // Extract the icon weight
-  icons.forEach((icon) => {
+  icons.forEach(icon => {
     const parts = icon.split("/");
     const weight = parts[parts.length - 2];
 

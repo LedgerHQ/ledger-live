@@ -10,6 +10,7 @@ const log = str => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const isClean = () => {
   const isDirty = git.isDirty();
 
@@ -20,6 +21,7 @@ const isClean = () => {
   }
 };
 
+// eslint-disable-next-line no-unused-vars
 const isTagged = nightly => ctx => {
   const isTagDirty = git.isTagDirty();
 
@@ -36,6 +38,7 @@ const isTagged = nightly => ctx => {
   ctx.tag = tag;
 };
 
+// eslint-disable-next-line no-unused-vars
 const checkRemote = nightly => ctx => {
   const { repository } = pkg;
   const gitRemote = git.remoteUrl();
@@ -60,15 +63,16 @@ const checkRemote = nightly => ctx => {
 const checkEnv = nightly => ctx => {
   const platform = require("os").platform();
 
-  const { GH_TOKEN, APPLEID, APPLEID_PASSWORD } = process.env;
+  // const { GH_TOKEN, APPLEID, APPLEID_PASSWORD } = process.env;
+  const { APPLEID, APPLEID_PASSWORD } = process.env;
 
-  if (!GH_TOKEN) {
-    throw new Error("GH_TOKEN is not set");
-  }
+  // if (!GH_TOKEN) {
+  //   throw new Error("GH_TOKEN is not set");
+  // }
 
-  log("GH_TOKEN is set");
+  // log("GH_TOKEN is set");
 
-  ctx.token = GH_TOKEN;
+  // ctx.token = GH_TOKEN;GH
 
   if (!nightly) {
     if (platform !== "darwin") {
@@ -92,18 +96,19 @@ module.exports = args => {
       title: "Check for required environment variables",
       task: checkEnv(args.nightly),
     },
-    {
-      title: "Check that git remote branch matches package.json `repository`",
-      task: checkRemote(args.nightly),
-    },
-    {
-      title: "Check that the local git repository is clean",
-      task: isClean,
-      skip: () => !!args.nightly,
-    },
-    {
-      title: "Check that HEAD is tagged",
-      task: isTagged(args.nightly),
-    },
+    // TODO: make sure this is not needed anymore
+    // {
+    //   title: "Check that git remote branch matches package.json `repository`",
+    //   task: checkRemote(args.nightly),
+    // },
+    // {
+    //   title: "Check that the local git repository is clean",
+    //   task: isClean,
+    //   skip: () => !!args.nightly,
+    // },
+    // {
+    //   title: "Check that HEAD is tagged",
+    //   task: isTagged(args.nightly),
+    // },
   ];
 };

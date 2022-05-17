@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "libs/*"
+  - "libs/ledgerjs/**"
+  - "libs/ui/packages/*"
+  - "libs/ledger-live-common/cli"
+  - "libs/ledger-live-common/tools"
+  - "tools/**"

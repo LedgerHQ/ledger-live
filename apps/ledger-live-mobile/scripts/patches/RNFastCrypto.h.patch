@@ -1,0 +1,13 @@
+diff --git a/./apps/ledger-live-mobile/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h b/./RNFastCrypto.h
+index 884ca905cc..0a8f93d97e 100644
+--- a/./apps/ledger-live-mobile/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
++++ b/./RNFastCrypto.cpp
+@@ -2,7 +2,7 @@
+ #if __has_include("RCTBridgeModule.h")
+ #import "RCTBridgeModule.h"
+ #else
+-#import <RCTBridgeModule.h>
++#import <React/RCTBridgeModule.h>
+ #endif
+
+ @interface RNFastCrypto : NSObject <RCTBridgeModule>

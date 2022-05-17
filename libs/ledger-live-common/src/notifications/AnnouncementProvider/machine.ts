@@ -1,4 +1,4 @@
-import { assign, Machine } from "xstate";
+import { assign, createMachine } from "xstate";
 import intersection from "lodash/intersection";
 import type { State } from "./types";
 const initialState: State = {
@@ -9,13 +9,14 @@ const initialState: State = {
   lastUpdateTime: null,
   isLoading: false,
 };
-export const announcementMachine = Machine(
+export const announcementMachine = createMachine(
   {
     id: "announcement",
     initial: "initializing",
     context: initialState,
     states: {
       initializing: {
+        // @ts-expect-error xstate bindings updates caused this error
         invoke: {
           src: "loadData",
           onDone: {
@@ -43,6 +44,7 @@ export const announcementMachine = Machine(
             target: "updating",
           },
         },
+        // @ts-expect-error xstate bindings updates caused this error
         on: {
           UPDATE_DATA: {
             target: "updating",
@@ -54,6 +56,7 @@ export const announcementMachine = Machine(
         },
       },
       updating: {
+        // @ts-expect-error xstate bindings updates caused this error
         invoke: {
           src: "fetchData",
           onDone: {

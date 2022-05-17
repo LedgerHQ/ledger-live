@@ -1,15 +1,31 @@
 #!/usr/bin/env node
 const Electron = require("./utils/Electron");
 const WebpackWorker = require("./utils/WebpackWorker");
+const processReleaseNotes = require("./utils/processReleaseNotes");
 const WebpackBar = require("webpackbar");
 const webpack = require("webpack");
 const yargs = require("yargs");
 const nodeExternals = require("webpack-node-externals");
 const childProcess = require("child_process");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const {
+  processNativeModules,
+  copyFolderRecursivelySync,
+  buildWebpackExternals,
+} = require("native-modules-tools");
+const path = require("path");
+const { prerelease } = require("semver");
 
+const lldRoot = path.resolve(__dirname, "..");
 const pkg = require("./../package.json");
 
-const NIGHTLY = pkg.name.includes("nightly");
+const parsed = prerelease(pkg.version);
+let PRERELEASE = false;
+let CHANNEL;
+if (parsed) {
+  PRERELEASE = !!(parsed && parsed.length);
+  CHANNEL = parsed[0];
+}
 
 const { SENTRY_URL } = process.env;
 
@@ -49,7 +65,10 @@ const buildMainEnv = (mode, config, argv) => {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
-    __NIGHTLY__: NIGHTLY,
+    // See: https://github.com/node-formidable/formidable/issues/337
+    "global.GENTLY": false,
+    __PRERELEASE__: JSON.stringify(PRERELEASE),
+    __CHANNEL__: JSON.stringify(CHANNEL),
   };
 
   if (mode === "development") {
@@ -65,7 +84,8 @@ const buildRendererEnv = (mode, config) => {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __GIT_REVISION__: JSON.stringify(GIT_REVISION),
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
-    __NIGHTLY__: NIGHTLY,
+    __PRERELEASE__: JSON.stringify(PRERELEASE),
+    __CHANNEL__: JSON.stringify(CHANNEL),
   };
 
   return env;
@@ -83,13 +103,12 @@ const buildRendererConfig = (mode, config, argv) => {
 
   const plugins =
     mode === "development"
-      ? [...wpConf.plugins, new webpack.HotModuleReplacementPlugin()]
+      ? [
+          ...wpConf.plugins,
+          new ReactRefreshWebpackPlugin(),
+          new webpack.HotModuleReplacementPlugin(),
+        ]
       : wpConf.plugins;
-
-  const alias =
-    mode === "development"
-      ? { ...wpConf.resolve.alias, "react-dom": "@hot-loader/react-dom" }
-      : wpConf.resolve.alias;
 
   const module = {
     ...wpConf.module,
@@ -113,7 +132,7 @@ const buildRendererConfig = (mode, config, argv) => {
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : "none",
+    devtool: mode === "development" ? "eval-source-map" : undefined,
     entry,
     plugins: [
       ...plugins,
@@ -124,10 +143,6 @@ const buildRendererConfig = (mode, config, argv) => {
       __dirname: false,
       __filename: false,
     },
-    resolve: {
-      ...wpConf.resolve,
-      alias,
-    },
     output: {
       ...wpConf.output,
       publicPath: mode === "production" ? "./" : "/webpack",
@@ -136,13 +151,18 @@ const buildRendererConfig = (mode, config, argv) => {
   };
 };
 
-const buildMainConfig = (mode, config, argv) => {
+const buildMainConfig = (mode, config, argv, mappedNativeModules) => {
   const { wpConf, color, name } = config;
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : "none",
-    externals: [nodeExternals()],
+    devtool: mode === "development" ? "eval-source-map" : undefined,
+    // In 'dev' mode, treat everything as an external module so we can rely on the node_modules folder.
+    // In 'production' mode we exclude the native modules from the bundle.
+    externals:
+      mode !== "production" || !mappedNativeModules
+        ? [nodeExternals()]
+        : buildWebpackExternals(mappedNativeModules),
     node: {
       __dirname: false,
       __filename: false,
@@ -171,6 +191,12 @@ const startDev = async argv => {
   );
   const electron = new Electron("./.webpack/main.bundle.js");
 
+  try {
+    await processReleaseNotes();
+  } catch (error) {
+    console.log(error);
+  }
+
   await Promise.all([
     mainWorker.watch(() => {
       electron.reload();
@@ -187,9 +213,30 @@ const startDev = async argv => {
 };
 
 const build = async argv => {
-  const mainConfig = buildMainConfig("production", bundles.main, argv);
-  const preloaderConfig = buildMainConfig("production", bundles.preloader, argv);
-  const webviewPreloaderConfig = buildMainConfig("production", bundles.webviewPreloader, argv);
+  let mappedNativeModules;
+
+  if (!process.env.TESTING) {
+    // Find native modules and copy them to ./dist/node_modules with their dependencies.
+    mappedNativeModules = processNativeModules({ root: lldRoot, destination: "dist" });
+    // Also copy to ./node_modules to be able to run the production build with playwright.
+    copyFolderRecursivelySync(
+      path.join(lldRoot, "dist", "node_modules"),
+      path.join(lldRoot, "node_modules"),
+    );
+  }
+  const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
+  const preloaderConfig = buildMainConfig(
+    "production",
+    bundles.preloader,
+    argv,
+    mappedNativeModules,
+  );
+  const webviewPreloaderConfig = buildMainConfig(
+    "production",
+    bundles.webviewPreloader,
+    argv,
+    mappedNativeModules,
+  );
   const rendererConfig = buildRendererConfig("production", bundles.renderer, argv);
 
   const mainWorker = new WebpackWorker("main", mainConfig);
@@ -197,12 +244,25 @@ const build = async argv => {
   const preloaderWorker = new WebpackWorker("preloader", preloaderConfig);
   const webviewPreloaderWorker = new WebpackWorker("preloader", webviewPreloaderConfig);
 
+  try {
+    await processReleaseNotes();
+  } catch (error) {
+    console.log(error);
+  }
+
   await Promise.all([
     mainWorker.bundle(),
-    rendererWorker.bundle(),
     preloaderWorker.bundle(),
     webviewPreloaderWorker.bundle(),
-  ]);
+  ])
+    .then(() => rendererWorker.bundle())
+    .catch(err => {
+      if (err instanceof Error) {
+        throw err;
+      }
+      console.error(err.compilation.errors);
+      throw new Error("Build failed.");
+    });
 };
 
 yargs

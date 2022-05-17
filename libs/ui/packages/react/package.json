@@ -1,49 +1,53 @@
 {
   "name": "@ledgerhq/react-ui",
-  "private": true,
-  "description": "Ledger Live - Desktop UI",
   "version": "0.7.6",
+  "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
+  "types": "index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "lib/*",
+        "lib/*/index.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
-      "require": "./cjs/index.js",
-      "default": "./index.js"
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/index.js"
     },
     "./": {
-      "require": "./cjs/",
-      "default": "./"
-    }
+      "require": "./lib/cjs/",
+      "default": "./lib/"
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.woff2",
-    "assets/fonts.js"
+    "lib/assets/fonts.js"
   ],
   "files": [
-    "components/**/*",
-    "assets/**/*",
-    "styles/**/*",
-    "index.d.ts",
-    "index.js"
+    "lib/**/*"
   ],
   "scripts": {
     "storybook": "start-storybook -p 6006 -s ./src",
-    "build-storybook": "npm run build:icons && npm run build:storybook",
-    "build": "tsc -p tsconfig.prod.json && node scripts/transpile",
-    "build:icons": "node -e \"process.env['VERCEL_BUILD'] ? process.exit(1) : process.exit(0)\" || (cd ../icons && npm run build)",
+    "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
     "build:storybook": "build-storybook -s ./src",
+    "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
-    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix --cache",
+    "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --p . --noEmit",
-    "prerelease": "node scripts/prepareRelease.js",
-    "release": "yarn publish ./lib --access public"
+    "test": "pnpm -w -F ui test:react"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^0.4.0",
-    "@ledgerhq/icons-ui": "^0.2.3",
-    "@ledgerhq/ui-shared": "^0.1.7",
+    "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/color": "^3.0.2",
     "@types/react": "~17.0.37",
@@ -69,27 +73,33 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@babel/core": "7",
     "@storybook/addon-actions": "^6.3.6",
     "@storybook/addon-essentials": "^6.3.6",
     "@storybook/addon-links": "^6.3.6",
     "@storybook/react": "^6.3.6",
     "@svgr/core": "^5.5.0",
+    "@svgr/plugin-svgo": "*",
+    "@types/hoist-non-react-statics": "^3.3.1",
     "@types/react-is": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "5.3.1",
-    "@typescript-eslint/parser": "^5.3.1",
+    "@typescript-eslint/parser": "^5.22.0",
+    "babel-loader": "^8.0.0",
+    "csstype": "^3.0.11",
     "esbuild": "^0.13.13",
     "eslint": "8.2.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react": "^7.29.2",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.0.1",
     "prettier": "^2.4.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "rimraf": "^3.0.2",
     "styled-components": "^5.3.3",
     "tiny-glob": "^0.2.9",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "webpack": "*"
   }
 }

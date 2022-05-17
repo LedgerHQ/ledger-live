@@ -1,10 +1,34 @@
-require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+# Use the node resolver because pnpm nests modules.
+def relative_path(module_name)
+  module_pathname = Pathname.new File.dirname(`node --print "require.resolve('#{module_name}/package.json')"`)
+  module_pathname.relative_path_from(Pathname.new File.absolute_path ".")
+end
+
+expo_autolinking = File.join(relative_path("expo"), "scripts/autolinking")
+rct_text = File.join(relative_path("react-native"), "Libraries/Text")
+
+require expo_autolinking
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '12.0'
 
 flipperkit_version = '0.111.0'
+
+# Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.
+platform_separator = Gem.win_platform? ? ";" : ":"
+pnpm_hoisted_node_modules = File.expand_path(
+  File.join(
+    File.dirname(__FILE__), "..", "..", "..", "node_modules", ".pnpm", "node_modules"
+  )
+)
+common_node_modules = File.expand_path(
+  File.join(
+    File.dirname(__FILE__), "..", "..", "..", "libs", "ledger-live-common", "node_modules"
+  )
+)
+
+ENV["NODE_PATH"] ||= pnpm_hoisted_node_modules + platform_separator + common_node_modules
 
 target 'ledgerlivemobile' do
   use_expo_modules!
@@ -16,8 +40,8 @@ target 'ledgerlivemobile' do
     :hermes_enabled => true
   )
 
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
-  
+  pod 'React-RCTText', :path => rct_text, :modular_headers => true
+
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing
@@ -33,5 +57,15 @@ target 'ledgerlivemobile' do
     react_native_post_install(installer)
     flipper_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+    # Workaround build error for classic quoted imports
+    # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if ['RNAnalytics', 'react-native-fast-crypto'].include? target.name
+          config.build_settings["USE_HEADERMAP"] = "NO"
+        end
+      end
+    end
   end
 end

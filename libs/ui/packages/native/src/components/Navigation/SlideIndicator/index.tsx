@@ -45,6 +45,7 @@ const AnimatedBullet = Animated.createAnimatedComponent(ActiveBullet);
 
 const config = {
   duration: 200,
+
   easing: Easing.bezier(0.5, 0.01, 0, 1),
 };
 

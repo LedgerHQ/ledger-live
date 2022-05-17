@@ -1,23 +1,21 @@
 {
-  "private": "true",
+  "name": "ui",
+  "private": true,
+  "version": "0.0.0",
   "devDependencies": {
-    "@playwright/test": "^1.16.3",
+    "@ledgerhq/native-ui": "workspace:^",
+    "@ledgerhq/react-ui": "workspace:^",
+    "@ledgerhq/ui-shared": "workspace:^",
+    "@ledgerhq/icons-ui": "workspace:^",
+    "@playwright/test": "~1.17.0",
     "concurrently": "^6.4.0",
-    "husky": "^7.0.4",
     "json": "^11.0.0",
     "lint-staged": "^11.2.6"
   },
   "scripts": {
-    "prepare": "husky install",
-    "react": "yarn workspace @ledgerhq/react-ui",
-    "native": "yarn workspace @ledgerhq/native-ui",
-    "shared": "yarn workspace @ledgerhq/ui-shared",
-    "icons": "yarn workspace @ledgerhq/icons-ui",
-    "test:react:setup": "yarn playwright install && yarn icons build && yarn shared build && yarn react prerelease",
+    "pretest:react": "playwright install",
     "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
+    "pretest:react:update-snapshots": "playwright install",
     "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+  }
 }

@@ -1,0 +1,14 @@
+name: change-product-name
+description: changes `productName` in package.json
+inputs:
+  suffix:
+    description: name of suffix to add to the package's name
+    required: false
+    default: Beta
+  path:
+    description: root folder where package.json is found (usually github.workspace)
+    required: true
+
+runs:
+  using: "node12"
+  main: "build/index.js"

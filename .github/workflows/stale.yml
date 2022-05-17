@@ -1,0 +1,15 @@
+name: Tag Stale PRs and Issues
+on:
+  schedule:
+    - cron: "20 4 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v4
+        with:
+          stale-issue-message: "This issue is stale because it has been open 30 days with no activity. Remove stale label, comment, or consider closing it."
+          days-before-issue-stale: 30
+          stale-pr-message: "There as been no activity on this PR for the last 14 days. Please consider closing this PR."
+          days-before-pr-stale: 15

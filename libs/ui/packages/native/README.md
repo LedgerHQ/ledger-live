@@ -1,8 +1,7 @@
 # `@ledgerhq/native-ui`
 
-[![build](https://github.com/LedgerHQ/ui/actions/workflows/native.yml/badge.svg)](https://github.com/LedgerHQ/ui/actions/workflows/native.yml)
 [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
-[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-native.vercel.app)
+[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://native-ui-storybook.vercel.app)
 
 ### Design and interface resources for React Native
 
@@ -10,7 +9,7 @@
 
 ## Reference
 
-**[🔗 Storybook](https://ledger-live-ui-native.vercel.app/)**
+**[🔗 Storybook](https://native-ui-storybook.vercel.app)**
 
 ## Installation
 
@@ -29,8 +28,6 @@ npm i styled-components react-native-reanimated react-native-svg
 ```
 
 ### Additional setup
-
-**Skip this step if your project is managed by Expo.**
 
 Follow the installation instructions for:
 
@@ -86,10 +83,10 @@ import { useFonts } from "expo-font";
 */
 function FontProvider({ children }) {
   const [fontsLoaded] = useFonts({
-    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
-    "Inter-Medium": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Medium.otf"),
-    "Inter-SemiBold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-SemiBold.otf"),
-    "Inter-Bold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Bold.otf"),
+    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
+    "Inter-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Medium.otf"),
+    "Inter-SemiBold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-SemiBold.otf"),
+    "Inter-Bold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Bold.otf"),
   });
 
   if (!fontsLoaded) {
@@ -107,8 +104,8 @@ Add the paths in the `react-native.config.js` file:
 ```js
 module.exports = {
   assets: [
-    "node_modules/@ledgerhq/native-ui/assets/fonts/alpha",
-    "node_modules/@ledgerhq/native-ui/assets/fonts/inter",
+    "node_modules/@ledgerhq/native-ui/lib/assets/fonts/alpha",
+    "node_modules/@ledgerhq/native-ui/lib/assets/fonts/inter",
   ],
 };
 ```
@@ -138,10 +135,10 @@ function Logo() {
 
 function FontProvider({ children }) {
   const [fontsLoaded] = useFonts({
-    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
-    "Inter-Medium": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Medium.otf"),
-    "Inter-SemiBold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-SemiBold.otf"),
-    "Inter-Bold": require("@ledgerhq/native-ui/assets/fonts/inter/Inter-Bold.otf"),
+    "HMAlphaMono-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
+    "Inter-Medium": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Medium.otf"),
+    "Inter-SemiBold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-SemiBold.otf"),
+    "Inter-Bold": require("@ledgerhq/native-ui/lib/assets/fonts/inter/Inter-Bold.otf"),
   });
 
   if (!fontsLoaded) {
@@ -184,7 +181,7 @@ export default function App() {
 
 ```js
 import React from "react";
-import { StyleProvider } from "@ledgerhq/native-ui/styles";
+import { StyleProvider } from "@ledgerhq/native-ui";
 import { Flex, Text, Logos, Switch } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 
