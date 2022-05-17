@@ -1,7 +1,7 @@
 <!--
 Thank you for your contribution! 👍
 
-Please make sure to read the [Contributing guidelines](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md) if you have not already.
+Please make sure to read the [Contributing guidelines](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) if you have not already.
 
 Disclaimer: Pull Requests that do not comply with the rules will be arbitrarily closed.
 -->
@@ -32,7 +32,7 @@ _Write a clear and concise description of what this pull request is about and wh
 
 ### 🚀 Expectations to reach
 
-_Please make sure you follow these [**Important Steps**](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md#important-steps)._
+_Please make sure you follow these [**Important Steps**](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md#important-steps)._
 
 _Pull Requests must pass the CI and be internally validated in order to be merged._
 

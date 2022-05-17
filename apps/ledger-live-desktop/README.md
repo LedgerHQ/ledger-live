@@ -2,8 +2,8 @@
 
 # Ledger Live (desktop) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/ledger-wallet/localized.svg)](https://crowdin.com/project/ledger-wallet)
 
-- Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-mobile)
-- Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common)
+- Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
+- Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
 > Ledger Live is a new generation wallet desktop application providing a unique interface to maintain multiple cryptocurrencies for your Ledger Nano S / Blue. Manage your device, create accounts, receive and send cryptoassets, [...and many more](https://www.ledger.com/ledger-launches-ledger-live-the-all-in-one-companion-app-to-your-ledger-device).
 
@@ -15,7 +15,7 @@
 
 ## Architecture
 
-Ledger Live is an hybrid desktop application built with Electron, React, Redux, RxJS,.. and highly optimized with [ledger-core](https://github.com/LedgerHQ/lib-ledger-core) C++ library to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-node-bindings). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common).
+Ledger Live is an hybrid desktop application built with Electron, React, Redux, RxJS,.. and highly optimized with [ledger-core](https://github.com/LedgerHQ/lib-ledger-core) C++ library to deal with blockchains (sync, broadcast,..) via [ledger-core-node-bindings](https://github.com/LedgerHQ/lib-ledger-core-node-bindings). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
 <p align="center">
  <img src="./docs/architecture.png" width="550"/>
@@ -136,7 +136,7 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-other envs can be seen in [live-common:src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/libs/ledger-live-common/src/env.ts)
+other envs can be seen in [live-common:src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/env.ts)
 
 ### Run tests
 
