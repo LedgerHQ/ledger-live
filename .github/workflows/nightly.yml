@@ -1,8 +1,8 @@
 name: Nightly Release
 
 on:
-  # schedule:
-  #   - cron: "0 22 * * *"
+  schedule:
+    - cron: "0 2 * * *"
   workflow_dispatch:
 
 jobs:
@@ -24,9 +24,9 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
-      - name: merge develop # TODO: update the branch when we sanitize the monorepo
+      - name: merge develop
         run: |
-          git merge origin/monorepo-setup -X theirs
+          git merge origin/develop -X theirs
 
       - uses: pnpm/action-setup@v2.1.0
         with:
