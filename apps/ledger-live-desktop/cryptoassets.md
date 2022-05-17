@@ -56,7 +56,6 @@
 | Expanse | EXP | NO | expanse |
 | FIC | FIC | NO | fic |
 | Factom | FCT | NO | factom |
-| Filecoin | FIL | NO | filecoin |
 | Flow | FLOW | NO | flow |
 | GameCredits | GAME | NO | game_credits |
 | GoChain | GO | NO | gochain |
