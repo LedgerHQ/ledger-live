@@ -1,5 +1,5 @@
 // @flow
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
@@ -46,6 +46,8 @@ export type RatingsDataOfUser = {
     alreadyRated?: boolean,
     /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
     doNotAskAgain?: boolean,
+    /** "satisfied" if user clicked on the "Satisfied" cta in the ratings flow, "disappointed" if user clicked on the "I'm disappointed" in the ratings flow */
+    satisfaction?: string,
 };
 
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
@@ -178,11 +180,11 @@ const useRatings = () => {
 
   const onRouteChange = useCallback(
     ratingsNewRoute => {
-      if (!areRatingsConditionsMet()) return;
-
       if (ratingsHappyMoment?.timeout) {
         clearTimeout(ratingsHappyMoment?.timeout);
       }
+
+      if (!areRatingsConditionsMet()) return;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -201,7 +203,7 @@ const useRatings = () => {
     },
     [
       areRatingsConditionsMet,
-      ratingsHappyMoment,
+      ratingsHappyMoment?.timeout,
       dispatch,
       ratingsFeature?.params?.happy_moments,
       isHappyMomentTriggered,
@@ -224,7 +226,9 @@ const useRatings = () => {
         onRouteChange(currentRouteName);
       }
     });
+  }, [navigation, ratingsFeature?.enabled, onRouteChange]);
 
+  const initRatingsData = useCallback(() => {
     getRatingsDataOfUserFromStorage().then(ratingsDataOfUser => {
       updateRatingsDataOfUserInStateAndStore({
         ...ratingsDataOfUser,
@@ -234,7 +238,7 @@ const useRatings = () => {
           (ratingsDataOfUser?.numberOfAppStartsSinceLastCrash ?? 0) + 1,
       });
     });
-  }, [navigation, ratingsFeature?.enabled, onRouteChange, updateRatingsDataOfUserInStateAndStore]);
+  }, []);
 
   const cleanRatings = useCallback(() => {
     navigation.removeListener("state");
@@ -304,13 +308,22 @@ const useRatings = () => {
     });
   }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
 
+  const handleSatisfied = useCallback(() => {
+    updateRatingsDataOfUserInStateAndStore({
+      ...ratingsDataOfUser,
+      satisfaction: "satisfied",
+    });
+  }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
+
   return {
     initRatings,
+    initRatingsData,
     cleanRatings,
     handleSettingsRateApp,
     handleRatingsSetDateOfNextAllowedRequest,
     handleEnjoyNotNow,
     handleGoToStore,
+    handleSatisfied,
     ratingsFeatureParams: ratingsFeature?.params,
     ratingsInitialStep,
     isRatingsModalOpen,

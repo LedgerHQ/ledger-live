@@ -22,10 +22,12 @@ const Init = ({ closeModal, setStep }: Props) => {
     ratingsHappyMoment,
     handleRatingsSetDateOfNextAllowedRequest,
     ratingsFeatureParams,
+    handleSatisfied,
   } = useRatings();
 
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
+    handleSatisfied();
     track("button_clicked", {
       flow: "review",
       page: "review_step0",
@@ -33,7 +35,12 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-  }, [ratingsHappyMoment?.route_name, setStep, ratingsFeatureParams]);
+  }, [
+    setStep,
+    handleSatisfied,
+    ratingsHappyMoment?.route_name,
+    ratingsFeatureParams,
+  ]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
     track("button_clicked", {
@@ -45,12 +52,13 @@ const Init = ({ closeModal, setStep }: Props) => {
     });
     handleRatingsSetDateOfNextAllowedRequest(
       ratingsFeatureParams?.conditions?.disappointed_delay,
+      { satisfaction: "disappointed" },
     );
   }, [
     setStep,
     ratingsHappyMoment?.route_name,
-    handleRatingsSetDateOfNextAllowedRequest,
     ratingsFeatureParams,
+    handleRatingsSetDateOfNextAllowedRequest,
   ]);
   const onNotNow = useCallback(() => {
     closeModal();

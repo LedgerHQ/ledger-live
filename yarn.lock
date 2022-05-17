@@ -2741,13 +2741,13 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.50.0.tgz#29c6419e8379d496ab6d0426eadf3c4d100cd186"
   integrity sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==
 
-"@ledgerhq/native-ui@^0.7.16":
-  version "0.7.16"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.16.tgz#ed3a5240a5a94c8db5fea533cd58f9351cb99ca3"
-  integrity sha512-4MIo1h5w14fq49uAWocTtJfWZ7dkhNvupcatmjyfkYGfJMn0MSDoZBQS+HZpJGJVG68QEZSsjcUD2e8pK3/K9Q==
+"@ledgerhq/native-ui@^0.7.17":
+  version "0.7.17"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/native-ui/-/native-ui-0.7.17.tgz#7c2911e91a201cdd634fb554c6c406585c0f6262"
+  integrity sha512-yzsE1N243tChlx90iOhNltz/EYwp2+KAGFx1PBObHe7NytAgl9Gm3V/q4NfW/54JsTdYByKfO7OLUcAR2ZCjKw==
   dependencies:
     "@ledgerhq/icons-ui" "^0.2.4"
-    "@ledgerhq/ui-shared" "^0.1.6"
+    "@ledgerhq/ui-shared" "^0.1.7"
     "@types/color" "^3.0.2"
     "@types/react" "^17.0.37"
     "@types/react-native" "^0.65.9"
@@ -2790,10 +2790,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-passcode-auth/-/react-native-passcode-auth-2.1.0.tgz#d2073e9d1b9d81c9782cf3e0f9d8796eb729295a"
   integrity sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==
 
-"@ledgerhq/ui-shared@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ui-shared/-/ui-shared-0.1.6.tgz#32a938c7889705a6d4b02d8c8b093992c6aa88ec"
-  integrity sha512-D7hV8CfOt52oDf51pD7y07h+7RTE5Onvdv7PZ1WF8Oe/ywzUL+TYAViOwM664X/VeT1cFXsqYebDVxmT8LeUWQ==
+"@ledgerhq/ui-shared@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ui-shared/-/ui-shared-0.1.7.tgz#3bf6c79d900610b7dc26db46fc3beee025358ade"
+  integrity sha512-Fcspc01jA9ZJqXMzpEEZqdbfkRy0zzUTGMXpr4Ik73D8Z8X64nRVXW2ZrL0t4ZvmC9mUMpRNUOQ8LpFFI+NNtg==
 
 "@noble/hashes@0.4.1":
   version "0.4.1"

@@ -64,4 +64,7 @@ export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
 
 export const ratingsDataOfUserSelector = (s: State) => s.ratings.dataOfUser;
 
+export const satisfactionSelector = (s: State) =>
+  s.ratings.dataOfUser?.satisfaction;
+
 export default handleActions(handlers, initialState);

@@ -6,15 +6,32 @@ import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const injectedJavascript = `
-const interval = setInterval(addListenerOnFormSubmitButton, 100);
+const submitInterval = setInterval(addListenerOnFormSubmitButton, 100);
+const alreadySubmittedInterval = setInterval(addListenerOnFormAlreadySubmittedButton, 100);
+
 function addListenerOnFormSubmitButton() {
   const submitButton = document.querySelector('button[data-qa*="submit-button"]');
   if (submitButton) {
+    clearInterval(submitInterval);
+    clearInterval(alreadySubmittedInterval);
     submitButton.addEventListener('click', () => {
       window.ReactNativeWebView.postMessage('form-submit');
     });
   }
-  clearInterval(interval);
+}
+
+// If the user was too quick and we didn't catch the click on
+// the submit button but the form has already been submitted
+window.ReactNativeWebView.postMessage('Hello');
+function addListenerOnFormAlreadySubmittedButton() {
+  window.ReactNativeWebView.postMessage('Hella');
+  const alreadySubmittedButton = document.querySelector('button[data-qa*="thank-you-button"]');
+  window.ReactNativeWebView.postMessage(alreadySubmittedButton);
+  if (alreadySubmittedButton) {
+    clearInterval(submitInterval);
+    clearInterval(alreadySubmittedInterval);
+    window.ReactNativeWebView.postMessage('form-submit');
+  }
 }
 
 true;
