@@ -10,6 +10,7 @@ import {
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { TokenCurrency, SubAccount, Account } from "../../types";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
@@ -18,6 +19,11 @@ const reserve = parseCurrencyUnit(currency.units[0], "1.5");
 const MAX_FEE = 5000;
 const USDC_CODE = "USDC";
 const USDC_ISSUER = "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN";
+const USDC_ASSET_ID = `${USDC_CODE}:${USDC_ISSUER}`;
+const MIN_ASSET_BALANCE = parseCurrencyUnit(currency.units[0], "0.01");
+
+const findAssetUSDC = <T extends { id: string }>(subAccounts?: T[]) =>
+  (subAccounts || []).find((s) => s.id.endsWith(USDC_ASSET_ID));
 
 const stellar: AppSpec<Transaction> = {
   name: "Stellar",
@@ -28,9 +34,10 @@ const stellar: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "move ~50%",
+      name: "move ~50% XLM",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+      transaction: (props) => {
+        const { account, siblings, bridge, maxSpendable } = props;
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
         const transaction = bridge.createTransaction(account);
@@ -103,17 +110,14 @@ const stellar: AppSpec<Transaction> = {
       name: "add USDC asset",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(reserve), "balance is too low");
+        invariant(maxSpendable.gt(reserve), "XLM balance is too low");
+
+        const assetUSDC = findAssetUSDC<TokenCurrency>(
+          listTokensForCryptoCurrency(account.currency)
+        );
+        invariant(assetUSDC, "USDC asset not found");
 
         const transaction = bridge.createTransaction(account);
-        const assets = listTokensForCryptoCurrency(account.currency).map(
-          (a) => a.id
-        );
-        const assetUSDC = assets.find((a) =>
-          a.endsWith(`${USDC_CODE}:${USDC_ISSUER}`)
-        );
-
-        invariant(assetUSDC, "USDC asset not found");
 
         const updates: Array<Partial<Transaction>> = [
           {
@@ -139,6 +143,85 @@ const stellar: AppSpec<Transaction> = {
           a.id.endsWith(assetId)
         );
         expect(hasAsset).toBeTruthy();
+      },
+    },
+    {
+      name: "move ~50% USDC asset",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
+
+        const usdcSubAccount = findAssetUSDC<SubAccount>(account?.subAccounts);
+
+        invariant(usdcSubAccount, "USDC asset not found");
+        invariant(
+          usdcSubAccount?.balance.gt(MIN_ASSET_BALANCE),
+          "USDC balance is too low"
+        );
+
+        const siblingWithAssetUSDC = siblings.find((s) =>
+          findAssetUSDC(s.subAccounts)
+        );
+        invariant(siblingWithAssetUSDC, "No siblings with USDC asset");
+
+        if (!usdcSubAccount || !siblingWithAssetUSDC) {
+          throw new Error("No USDC asset or sibling with USDC asset");
+        }
+
+        const transaction = bridge.createTransaction(account);
+        const recipient = siblingWithAssetUSDC.freshAddress;
+        const amount = usdcSubAccount.balance
+          .div(1.9 + 0.2 * Math.random())
+          .integerValue();
+
+        const updates: Array<Partial<Transaction>> = [
+          {
+            subAccountId: usdcSubAccount.id,
+          },
+          {
+            recipient,
+          },
+          {
+            amount,
+            // Setting higher max fee here to make sure transaction doesn't
+            // time out.
+            fees: new BigNumber(MAX_FEE),
+          },
+        ];
+
+        if (Math.random() < 0.5) {
+          updates.push({
+            memoType: "MEMO_TEXT",
+            memoValue: "Ledger Live",
+          });
+        }
+
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({
+        account,
+        accountBeforeTransaction,
+        operation,
+        transaction,
+        status,
+      }) => {
+        const asset = findAssetUSDC<SubAccount>(account?.subAccounts);
+        const assetBeforeTx = findAssetUSDC<SubAccount>(
+          accountBeforeTransaction?.subAccounts
+        );
+
+        expect(asset?.balance.toString()).toBe(
+          assetBeforeTx?.balance.minus(status.amount).toString()
+        );
+
+        if (transaction.memoValue) {
+          expect(operation.extra).toMatchObject({
+            memo: transaction.memoValue,
+          });
+        }
       },
     },
   ],
