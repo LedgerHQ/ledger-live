@@ -1,11 +1,13 @@
-name: Bot 'Carbone'
+name: Bot 'Phosphore'
 on:
+  schedule:
+    - cron: "0 8-16/2 * * 1-5"
   push:
     branches:
-      - bots-staging
+      - bot-phosphore
 
 concurrency:
-  group: bot-carbone
+  group: bot-seed6
 
 jobs:
   start-runner:
@@ -57,11 +59,12 @@ jobs:
           pnpm build:cli
       - name: bot logic
         env:
-          SEED: ${{ secrets.SEED2 }}
+          SEED: ${{ secrets.SEED6 }}
           BOT_REPORT_FOLDER: botreport
           VERBOSE_FILE: botreport/logs.txt
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
         run: |
           mkdir libs/ledger-live-common/botreport
           COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
