@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* ledgerlivemobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ledgerlivemobileTests.m */; };
-		0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EC70FE4282B9CAA00E9E355 /* AdServices.framework */; };
+		0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EC70FE4282B9CAA00E9E355 /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
