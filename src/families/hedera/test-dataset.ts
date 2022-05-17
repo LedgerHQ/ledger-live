@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const hedera: CurrenciesData<Transaction> = {
   scanAccounts: [
     {
