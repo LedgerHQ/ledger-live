@@ -90,6 +90,7 @@ import StyleProvider from "./StyleProvider";
 // $FlowFixMe
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
+import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 
 const themes = {
   light: lightTheme,
@@ -474,6 +475,7 @@ export default class Root extends Component<
                 <SetEnvsFromSettings />
                 <HookSentry />
                 <AdjustProvider />
+                <DelayedTrackingProvider />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
                   <PlatformAppProvider

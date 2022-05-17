@@ -3,7 +3,6 @@ import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
-import { Adjust, AdjustEvent } from "react-native-adjust";
 
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
@@ -12,6 +11,7 @@ import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { ScreenName } from "../../const";
+import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvider";
 
 // const defaultURL = urls.buyNanoX;
 const defaultURL =
@@ -34,15 +34,14 @@ const PurchaseDevice = () => {
   }, [setURLDrawerOpen]);
 
   const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
-    const event = new AdjustEvent(`${data.type}-${data.value?.deviceId}`);
-    if (
-      data.type === "ledgerLiveOrderSuccess" &&
-      data.value?.price &&
-      data.value?.currency
-    ) {
-      event.setRevenue(data.value.price, data.value.currency);
-    }
-    Adjust.trackEvent(event);
+    pushDelayedTrackingEvent({
+      type: "adjust",
+      payload: {
+        id: `${data.type}-${data.value?.deviceId}`,
+        revenue: data.value?.price,
+        currency: data.value?.currency,
+      },
+    });
   }, []);
 
   const handleMessage = useCallback(
