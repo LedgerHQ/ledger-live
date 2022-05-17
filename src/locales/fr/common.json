@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "Solde du compte parent insuffisant"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Le nombre doit être égal ou supérieur à 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "Le solde ne peut pas être inférieur à {{minimumAmount}}."
     },
@@ -1537,7 +1540,7 @@
       "SLASH": "Slashé",
       "WITHDRAW_UNBONDED": "Retrait",
       "NOMINATE": "Nomination",
-      "CHILL": "Enlever les nominations",
+      "CHILL": "Retirer les nominations",
       "SET_CONTROLLER": "Définir contrôleur"
     }
   },
@@ -1750,7 +1753,8 @@
       "sectionLabel": "Délégation(s) interrompue(s)"
     },
     "nft": {
-      "receiveNft": "Recevoir NFT"
+      "receiveNft": "Recevoir NFT",
+      "howTo": "Pour ajouter des NFT, il vous suffit de <0>les recevoir</0> sur votre <1>adresse {{currency}}</1>."
     }
   },
   "accounts": {
@@ -1900,6 +1904,13 @@
         "title": "Masquer le token",
         "desc": "Cette action masquera tous les comptes de <1><0>{tokenName}</0></1>. Vous pouvez restaurer leur visibilité dans <3>Paramètres > Comptes</3>.",
         "confirm": "Masquer le token"
+      },
+      "hideNFTCollectionCTA": "Cacher la collection",
+      "hiddenNFTCollections": "Collections de NFT cachées",
+      "hiddenNFTCollectionsDesc": "Pour cacher des NFT, accédez au compte correspondant, faites un appui long sur la collection et choisissez Cacher la collection.",
+      "hideNFTCollectionModal": {
+        "title": "Cacher cette collection ?",
+        "desc": "Vous pourrez afficher à nouveau cette collection à partir des Paramètres."
       },
       "cryptoAssets": {
         "header": "Crypto-actifs",
@@ -2790,8 +2801,8 @@
   "SelectDevice": {
     "title": "Coupler un nouvel appareil",
     "bluetooth": {
-      "title": "Connexion via Bluetooth",
-      "label": "Détecter automatiquement votre Nano"
+      "title": "Se connecter en Bluetooth",
+      "label": "Détectez automatiquement votre Nano"
     },
     "deviceNotFoundPairNewDevice": "Coupler via Bluetooth",
     "headerDescription": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
@@ -3598,7 +3609,7 @@
       },
       "header": "Nominations",
       "nominate": "Nommer",
-      "chill": "Enlever les nominations",
+      "chill": "Retirer les nominations",
       "setController": "Changer contrôleur",
       "status": "Statut",
       "totalStake": "Stake total",
@@ -3652,8 +3663,8 @@
         "description": "Choisissez jusqu'à 16 validateurs. Pour gagner des récompenses, assurez-vous que vos nominations ont toutes le statut Actif."
       },
       "chill": {
-        "title": "Enlever les nominations",
-        "description": "Supprimez toutes vos nominations. Vous ne gagnerez plus de récompenses. Votre montant lié reste lié."
+        "title": "Retirer les nominations",
+        "description": "Retire toutes vos nominations. Vous ne gagnerez plus de récompenses. Votre montant lié reste lié."
       }
     },
     "nominate": {
@@ -3671,7 +3682,7 @@
           "noResultsFound": "Aucun validateur trouvé pour <0>{{search}}</0>",
           "selected": "{{selected}} sur {{total}} sélectionnés",
           "notValidatorsRemoved": "Vous avez proposé {{count}} adresses qui ne sont plus des validateurs. Elles seront automatiquement supprimées de votre transaction de nomination.",
-          "maybeChill": "Supprimer les nominations à la place"
+          "maybeChill": "Retirer les nominations à la place"
         },
         "validation": {
           "success": {
@@ -3785,8 +3796,8 @@
           "description": "Retirez les actifs déliés vers votre solde disponible."
         },
         "chill": {
-          "title": "Enlever les nominations",
-          "description": "Efface toutes les nominations et met fin au gain de récompenses.",
+          "title": "Retirer les nominations",
+          "description": "Retire toutes les nominations et met fin au gain de récompenses.",
           "info": "Les actifs liés restent liés. Si vous les déliez, ils seront disponibles après 28 jours."
         },
         "setController": {
@@ -3927,6 +3938,20 @@
     "cta": "Entrer dans Ledger Live",
     "service": "Conditions d'utilisation",
     "subTitle": "Veuillez prendre connaissance de nos Conditions d'utilisation et Politique de confidentialité."
+  },
+  "updatedTerms": {
+    "title": "Mise à jour des Conditions d'utilisation",
+    "body": {
+      "intro": "Les Conditions d'utilisation de Ledger Live ont été mises à jour. Elles ont été simplifiées, et reflètent les nouveaux services et fonctionnalités disponibles via Ledger Live. Les mises à jour comprennent :",
+      "bulletPoints": [
+        "Précisions supplémentaires sur les services disponibles et leur fonctionnement",
+        "Explications sur les frais applicables aux services",
+        "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d'utilisation"
+      ],
+      "agreement": "En cliquant sur Continuer, vous reconnaissez avoir lu et vous acceptez les Conditions d'utilisation ci-dessous."
+    },
+    "link": "Conditions d'utilisation",
+    "cta": "Continuer"
   },
   "exchange": {
     "buy": {
@@ -4183,7 +4208,7 @@
       "title": "Répartition"
     },
     "operations": {
-      "title": "Opérations"
+      "title": "Historique des transactions"
     }
   }
 }

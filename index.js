@@ -22,6 +22,7 @@ import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
 
+
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [
   // networking conditions
@@ -36,18 +37,24 @@ const excludedErrorName = [
   "EthAppPleaseEnableContractData",
   "CantOpenDevice",
   "DisconnectedDeviceDuringOperation",
+  "DeviceOnDashboardExpected",
   "PairingFailed",
+  "GetAppAndVersionUnsupportedFormat",
+  // other
+  "InvalidAddressError",
 ];
 const excludedErrorDescription = [
   // networking
   /timeout of .* exceeded/,
+  "Network request failed",
+  "INVALID_STATE_ERR",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
   // others
   "Transaction signing request was rejected by the user",
+  "Transaction approval request was rejected",
 ];
-
 if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
   Sentry.init({
     dsn: Config.SENTRY_DSN,

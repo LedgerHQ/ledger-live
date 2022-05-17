@@ -1,14 +1,17 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useCallback } from "react";
+import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+
 import SettingsRow from "../../../components/SettingsRow";
-import { TermModals } from "../../../components/RequireTerms";
+import { useLocalizedTermsUrl } from "../../../logic/terms";
 
 const TermsConditionsRow = () => {
-  const [isOpened, open] = useState(false);
+  const termsUrl = useLocalizedTermsUrl();
 
-  const onOpen = useCallback(() => open(true), [open]);
-  const onClose = useCallback(() => open(false), [open]);
+  const onClick = useCallback(() => {
+    Linking.openURL(termsUrl);
+  }, [termsUrl]);
 
   return (
     <>
@@ -16,11 +19,10 @@ const TermsConditionsRow = () => {
         event="TermsConditionsRow"
         title={<Trans i18nKey="settings.about.termsConditions" />}
         desc={<Trans i18nKey="settings.about.termsConditionsDesc" />}
-        onPress={onOpen}
+        onPress={onClick}
       >
         <ExternalLinkMedium size={20} color={"neutral.c100"} />
       </SettingsRow>
-      <TermModals isOpened={isOpened} close={onClose} />
     </>
   );
 };

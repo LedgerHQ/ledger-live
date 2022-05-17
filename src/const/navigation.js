@@ -26,6 +26,7 @@ export const ScreenName = {
   ConfirmPassword: "ConfirmPassword",
   CountervalueSettings: "CountervalueSettings",
   CryptoAssetsSettings: "CryptoAssetsSettings",
+  HiddenNftCollections: "HiddenNftCollections",
   CurrenciesList: "CurrenciesList",
   CurrencySettings: "CurrencySettings",
   DebugBLE: "DebugBLE",
