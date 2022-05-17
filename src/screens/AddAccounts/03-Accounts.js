@@ -53,6 +53,7 @@ import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import BottomModal from "../../components/BottomModal";
 import { urls } from "../../config/urls";
+import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 
 const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
@@ -333,6 +334,7 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
 
+  const CustomNoAssociatedAccounts = noAssociatedAccountsByFamily[currency.family];
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>
@@ -342,6 +344,8 @@ function AddAccountsAccounts({
           {"PLACEHOLDER-2"}
         </Trans>
       </LText>
+    ) : CustomNoAssociatedAccounts ? (
+      <CustomNoAssociatedAccounts style={styles} />
     ) : (
       <LText style={styles.paddingHorizontal}>
         <Trans i18nKey="addAccounts.noAccountToCreate">
