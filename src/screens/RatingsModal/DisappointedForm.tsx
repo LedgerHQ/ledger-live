@@ -39,6 +39,7 @@ true;
 
 const StyledWebview = styled(WebView)`
   background-color: transparent; // avoids white background before page loads
+  flex: 1;
 `;
 
 type Props = {
@@ -85,14 +86,16 @@ const DisappointedForm = ({ setStep }: Props) => {
         source={ratingsHappyMoment?.route_name}
         params={ratingsFeatureParams}
       />
-      <StyledWebview
-        source={{ uri: ratingsFeatureParams?.typeform_url }}
-        originWhitelist={["*"]}
-        javaScriptEnabledAndroid={true}
-        injectedJavaScript={injectedJavascript}
-        onLoadEnd={onLoadEnd}
-        onMessage={onMessage}
-      />
+      <Flex flex={1} borderRadius={24} marginTop={5} overflow="hidden">
+        <StyledWebview
+          source={{ uri: ratingsFeatureParams?.typeform_url }}
+          originWhitelist={["*"]}
+          javaScriptEnabledAndroid={true}
+          injectedJavaScript={injectedJavascript}
+          onLoadEnd={onLoadEnd}
+          onMessage={onMessage}
+        />
+      </Flex>
     </Flex>
   );
 };
