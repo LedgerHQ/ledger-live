@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import ErrorScreen from "./ErrorScreen";
+
+import WebViewError from "./Error";
 import noConnectionImg from "../../images/noConnection.png";
 
 const NoConnectionIllustration = styled.Image.attrs({ resizeMode: "contain" })`
@@ -10,15 +11,21 @@ const NoConnectionIllustration = styled.Image.attrs({ resizeMode: "contain" })`
   width: 204px;
 `;
 
-const NoConnectionErrorScreen = () => {
+export type Props = {
+  screenName: string;
+};
+
+const WebViewNoConnectionError = ({ screenName }: Props) => {
   const { t } = useTranslation();
+
   return (
-    <ErrorScreen
+    <WebViewError
+      screenName={screenName}
       Illustration={<NoConnectionIllustration source={noConnectionImg} />}
-      title={t("learn.noConnection")}
-      description={t("learn.noConnectionDesc")}
+      title={t("webview.noConnectionError.title")}
+      description={t("webview.noConnectionError.description")}
     />
   );
 };
 
-export default NoConnectionErrorScreen;
+export default WebViewNoConnectionError;

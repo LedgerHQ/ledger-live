@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { track, TrackScreen } from "../../../analytics";
 import ChoiceCard from "../../../components/ChoiceCard";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
@@ -25,7 +26,7 @@ function PostWelcomeSelection() {
 
   const buyLedger = useCallback(() => {
     track("Onboarding PostWelcome - Buy Ledger");
-    navigation.navigate(ScreenName.BuyDeviceScreen);
+    navigation.navigate(NavigatorName.BuyDevice);
   }, []);
 
   return (
