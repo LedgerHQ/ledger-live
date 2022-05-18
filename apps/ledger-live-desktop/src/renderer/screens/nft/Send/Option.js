@@ -5,8 +5,8 @@ import { useNftMetadata } from "@ledgerhq/live-common/lib/nft/NftMetadataProvide
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
-import Image from "~/renderer/screens/nft/Image";
-import Skeleton from "~/renderer/screens/nft/Skeleton";
+import Media from "~/renderer/components/Nft/Media";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
 
 type OptionProps = {
   data: {
@@ -24,7 +24,7 @@ const Option = ({ data: { tokenId, amount, contract, standard, currencyId } }: O
   return (
     <Box horizontal>
       <Skeleton width={30} minHeight={30} show={show}>
-        <Image nft={metadata} size={30} />
+        <Media metadata={metadata} tokenId={tokenId} size={30} mediaFormat="preview" />
       </Skeleton>
       <Box horizontal alignItems="center" justifyContent="space-between" flex={1}>
         <Box ml={3}>
