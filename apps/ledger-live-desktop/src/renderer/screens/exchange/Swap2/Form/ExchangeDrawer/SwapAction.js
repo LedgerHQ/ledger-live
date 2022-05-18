@@ -9,7 +9,7 @@ import type { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import { toTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
-import type { SignedOperation } from "@ledgerhq/live-common/lib/types";
+import type { SignedOperation, Operation } from "@ledgerhq/live-common/lib/types";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";

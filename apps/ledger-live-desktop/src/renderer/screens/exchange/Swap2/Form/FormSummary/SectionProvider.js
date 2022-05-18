@@ -1,4 +1,8 @@
 // @flow
+import type {
+  RatesReducerState,
+  SwapSelectorStateType,
+} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import type { KYCStatus } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import React, { useContext, useMemo } from "react";
