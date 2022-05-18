@@ -172,6 +172,7 @@ function PortfolioScreen({ navigation }: Props) {
     () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
     [accounts],
   );
+  console.log("assets", assetsToDisplay);
 
   const data = useMemo(
     () => [
