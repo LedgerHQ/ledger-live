@@ -1,19 +1,21 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { Icons } from "@ledgerhq/native-ui";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName, NavigatorName } from "../../const";
 import { PortfolioTabIcon } from "../../screens/Portfolio";
-import Transfer, { TransferTabIcon } from "../../screens/Transfer";
+import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
+import customTabBar from "../TabBar/CustomTabBar";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,11 +31,19 @@ export default function MainNavigator({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { hideTabNavigation } = params || {};
+
+  const insets = useSafeAreaInsets();
+  const tabBar = useMemo(
+    () => ({ ...props }) => customTabBar({ ...props, colors, insets }),
+    [insets, colors],
+  );
   return (
     <Tab.Navigator
+      tabBar={tabBar}
       screenOptions={{
         tabBarStyle: [
           {
+            height: 300,
             borderTopColor: colors.neutral.c30,
             borderTopWidth: 1,
             elevation: 5,

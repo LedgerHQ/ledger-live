@@ -11,6 +11,13 @@ import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
 import {
+  getFocusedRouteNameFromRoute,
+  RouteProp,
+  useRoute,
+} from "@react-navigation/native";
+import { snakeCase } from "lodash";
+import { useCallback } from "react";
+import {
   getAndroidArchitecture,
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
@@ -23,6 +30,7 @@ import {
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import type { State } from "../reducers";
+import { NavigatorName } from "../const";
 
 const sessionId = uuid();
 
@@ -136,6 +144,46 @@ export const track = (
 
   if (!token) return;
   analytics.track(event, allProperties, { context });
+};
+
+export const getPageNameFromRoute = (route: RouteProp) => {
+  const routeName =
+    getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
+  return snakeCase(routeName);
+};
+
+export const trackWithRoute = (
+  event: string,
+  properties: ?Object,
+  mandatory: ?boolean,
+  route: RouteProp,
+) => {
+  const newProperties = {
+    page: getPageNameFromRoute(route), // don't override page if it's already set
+    ...(properties || {}),
+  };
+  track(event, newProperties, mandatory);
+};
+
+export const useTrack = () => {
+  const route = useRoute();
+  const track = useCallback(
+    (event: string, properties: ?Object, mandatory: ?boolean) =>
+      trackWithRoute(event, properties, mandatory, route),
+    [route],
+  );
+  return track;
+};
+
+export const usePageNameFromRoute = () => {
+  const route = useRoute();
+  return getPageNameFromRoute(route);
+};
+
+export const useAnalytics = () => {
+  const track = useTrack();
+  const page = usePageNameFromRoute();
+  return { track, page };
 };
 
 export const screen = (

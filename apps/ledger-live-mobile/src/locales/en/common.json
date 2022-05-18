@@ -80,7 +80,8 @@
     },
     "seeMore": "See more",
     "moreInfo": "More info",
-    "buyEth": "Buy Ethereum"
+    "buyEth": "Buy Ethereum",
+    "popular": "popular"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -806,7 +807,12 @@
     "title": "GET YOUR LEDGER",
     "desc": "Protect your crypto & NFTs with industry-leading security",
     "cta": "Buy your Ledger now",
-    "footer": "I already have a device, set it up now"
+    "footer": "I already have a device, set it up now",
+    "bannerTitle": "Keep your crypto and NFTs safe",
+    "bannerTitle2": "You'll need a Nano to trade",
+    "bannerSubtitle": "with a Ledger Device",
+    "bannerButtonTitle": "Discover the Nano",
+    "bannerButtonTitle2": "Buy a device"
   },
   "discover": {
     "title": "Discover",
@@ -2011,13 +2017,15 @@
       "input": "Enter address"
     },
     "send": {
-      "title": "Send"
+      "title": "Send",
+      "description": "Send crypto to another wallet."
     },
     "fees": {
       "title": "Edit fees"
     },
     "receive": {
       "title": "Receive",
+      "description": "Receive crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -2044,11 +2052,20 @@
       "noResultsFound": "No crypto asset found",
       "noResultsDesc": "Please verify the spelling and try again"
     },
+    "buy": {
+      "title": "Buy",
+      "description": "Buy crypto securely with cash."
+    },
+    "sell": {
+      "title": "Sell",
+      "description": "Sell crypto securely for cash."
+    },
     "exchange": {
       "title": "Buy / Sell"
     },
     "swap": {
       "title": "Swap",
+      "description": "Exchange crypto to crypto.",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
@@ -2265,7 +2282,8 @@
     },
     "lending": {
       "title": "Lend crypto",
-      "titleTransferTab": "Lend",
+      "titleTransferTab": "Earn",
+      "descriptionTransferTab": "Earn passive income.",
       "actionTitle": "Lend",
       "accountActions": {
         "approve": "Approve",

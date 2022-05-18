@@ -20,6 +20,8 @@ import type { Props as DisclaimerProps } from "./DAppDisclaimer";
 import CatalogBanner from "./CatalogBanner";
 import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 
 type RouteParams = {
   defaultAccount: ?AccountLike,
@@ -100,47 +102,47 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   }, [platform, filteredManifests, navigation, routeParams]);
 
   return (
-    <AnimatedHeaderView
-      titleStyle={styles.title}
-      title={<Trans i18nKey={"platform.catalog.title"} />}
-      hasBackButton
-    >
-      <TrackScreen category="Platform" name="Catalog" />
-      {disclaimerOpts && (
-        <DAppDisclaimer
-          disableDisclaimer={disclaimerOpts.disableDisclaimer}
-          closeDisclaimer={disclaimerOpts.closeDisclaimer}
-          onContinue={disclaimerOpts.onContinue}
-          isOpened={disclaimerOpened}
-          icon={disclaimerOpts.icon}
-          name={disclaimerOpts.name}
-        />
-      )}
+    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <AnimatedHeaderView
+        edges={[]}
+        titleStyle={styles.title}
+        title={<Trans i18nKey={"platform.catalog.title"} />}
+        hasBackButton
+      >
+        <TrackScreen category="Platform" name="Catalog" />
+        {disclaimerOpts && (
+          <DAppDisclaimer
+            disableDisclaimer={disclaimerOpts.disableDisclaimer}
+            closeDisclaimer={disclaimerOpts.closeDisclaimer}
+            onContinue={disclaimerOpts.onContinue}
+            isOpened={disclaimerOpened}
+            icon={disclaimerOpts.icon}
+            name={disclaimerOpts.name}
+          />
+        )}
 
-      <CatalogBanner />
-      <CatalogTwitterBanner />
-      {filteredManifests.map(manifest => (
-        <AppCard
-          key={manifest.id}
-          manifest={manifest}
-          onPress={handlePressCard}
-        />
-      ))}
-      <View style={styles.bottomPadding} />
-    </AnimatedHeaderView>
+        <CatalogBanner />
+        <CatalogTwitterBanner />
+        {filteredManifests.map(manifest => (
+          <AppCard
+            key={manifest.id}
+            manifest={manifest}
+            onPress={handlePressCard}
+          />
+        ))}
+        <View style={styles.bottomPadding} />
+      </AnimatedHeaderView>
+    </TabBarSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   title: {
     lineHeight: 40,
     textAlign: "left",
   },
   bottomPadding: {
-    height: 40,
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });
 
