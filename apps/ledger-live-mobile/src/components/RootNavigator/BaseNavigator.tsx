@@ -1,83 +1,81 @@
-import React, { useMemo } from "react";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import {
-  createStackNavigator,
   CardStyleInterpolators,
+  createStackNavigator,
   TransitionPresets,
 } from "@react-navigation/stack";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
-import { ScreenName, NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import * as families from "../../families";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import styles from "../../navigation/styles";
+import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import Account from "../../screens/Account";
+import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
+import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
+import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import EditDeviceName from "../../screens/EditDeviceName";
+import ProviderList from "../../screens/Exchange/ProviderList";
+import ProviderView from "../../screens/Exchange/ProviderView";
+import ScreenHeader from "../../screens/Exchange/ScreenHeader";
+import Learn from "../../screens/Learn";
+import ManagerMain from "../../screens/Manager/Manager";
+import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import OperationDetails, {
   BackButton,
   CloseButton,
 } from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
-import EditDeviceName from "../../screens/EditDeviceName";
-import Distribution from "../../screens/Distribution";
-import Asset, { HeaderTitle } from "../../screens/Asset";
-import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
-import WalletConnectScan from "../../screens/WalletConnect/Scan";
-import WalletConnectConnect from "../../screens/WalletConnect/Connect";
-import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
-import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
-import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
-import SettingsNavigator from "./SettingsNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import SendFundsNavigator from "./SendFundsNavigator";
-import SignMessageNavigator from "./SignMessageNavigator";
-import SignTransactionNavigator from "./SignTransactionNavigator";
-import FreezeNavigator from "./FreezeNavigator";
-import UnfreezeNavigator from "./UnfreezeNavigator";
-import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeBuyFlowNavigator from "./ExchangeBuyFlowNavigator";
-import ExchangeSellFlowNavigator from "./ExchangeSellFlowNavigator";
-import ExchangeNavigator from "./ExchangeNavigator";
-import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
-import SwapNavigator from "./SwapNavigator";
-import LendingNavigator from "./LendingNavigator";
-import LendingInfoNavigator from "./LendingInfoNavigator";
-import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
-import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
-import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
-import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
-import NftNavigator from "./NftNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Account from "../../screens/Account";
-import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
-import styles from "../../navigation/styles";
-import HeaderRightClose from "../HeaderRightClose";
-import StepHeader from "../StepHeader";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
-import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
-import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
-import AccountsNavigator from "./AccountsNavigator";
-
-import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
+import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
+import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccountScreen";
 import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
-
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import Learn from "../../screens/Learn";
-import ManagerMain from "../../screens/Manager/Manager";
+import VerifyAccount from "../../screens/VerifyAccount";
+import WalletConnectConnect from "../../screens/WalletConnect/Connect";
+import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
+import WalletConnectScan from "../../screens/WalletConnect/Scan";
+import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
+import HeaderRightClose from "../HeaderRightClose";
+import StepHeader from "../StepHeader";
+import AccountSettingsNavigator from "./AccountSettingsNavigator";
+import AccountsNavigator from "./AccountsNavigator";
+import AddAccountsNavigator from "./AddAccountsNavigator";
+import AnalyticsNavigator from "./AnalyticsNavigator";
+import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
+import ExchangeNavigator from "./ExchangeNavigator";
+import ExchangeStackNavigator from "./ExchangeStackNavigator";
+import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
+import FreezeNavigator from "./FreezeNavigator";
+import ImportAccountsNavigator from "./ImportAccountsNavigator";
+import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
+import LendingInfoNavigator from "./LendingInfoNavigator";
+import LendingNavigator from "./LendingNavigator";
+import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
+import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
+import Main from "./MainNavigator";
+import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
+import NftNavigator from "./NftNavigator";
+import NotificationCenterNavigator from "./NotificationCenterNavigator";
+import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
+import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
+import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
+import RequestAccountNavigator from "./RequestAccountNavigator";
+import SendFundsNavigator from "./SendFundsNavigator";
+import SettingsNavigator from "./SettingsNavigator";
+import SignMessageNavigator from "./SignMessageNavigator";
+import SignTransactionNavigator from "./SignTransactionNavigator";
+import SwapNavigator from "./SwapNavigator";
+import UnfreezeNavigator from "./UnfreezeNavigator";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -327,18 +325,32 @@ export default function BaseNavigator() {
             })}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeBuyFlow}
-        component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeBuyFlowNavigator
-        }
-        initialParams={{ mode: "buy" }}
-        options={{ headerShown: false }}
+        name={NavigatorName.ProviderList}
+        component={ProviderList}
+        options={({ route }) => ({
+          headerStyle: styles.headerNoShadow,
+          title:
+            route.params.type === "onRamp"
+              ? t("exchange.buy.screenTitle")
+              : t("exchange.sell.screenTitle"),
+        })}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeSellFlow}
+        name={NavigatorName.ProviderView}
+        component={ProviderView}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <ScreenHeader icon={route.params.icon} name={route.params.name} />
+          ),
+          headerStyle: styles.headerNoShadow,
+        })}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExchangeStack}
         component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeSellFlowNavigator
+          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeStackNavigator
         }
+        initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -429,15 +441,6 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.Distribution}
-        component={Distribution}
-        options={{
-          ...stackNavigationConfig,
-          title: t("distribution.header"),
-          headerLeft: null,
-        }}
-      />
-      <Stack.Screen
         name={NavigatorName.Analytics}
         component={AnalyticsNavigator}
         options={{
@@ -453,14 +456,6 @@ export default function BaseNavigator() {
           title: t("market.filters.currency"),
           headerLeft: null,
           unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.Asset}
-        component={readOnlyModeEnabled ? BuyDeviceScreen : Asset}
-        options={{
-          headerTitle: () => <HeaderTitle />,
-          headerRight: null,
         }}
       />
       <Stack.Screen

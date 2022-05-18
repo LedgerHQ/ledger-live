@@ -1,40 +1,40 @@
 /* @flow */
+import { NotEnoughGas } from "@ledgerhq/errors";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useState, useCallback, Component, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
+import React, { Component, useCallback, useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
-import { NotEnoughGas } from "@ledgerhq/errors";
-import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
-import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
 import Alert from "../../components/Alert";
-import TranslatedError from "../../components/TranslatedError";
+import Button from "../../components/Button";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import LText from "../../components/LText";
+import NavigationScrollView from "../../components/NavigationScrollView";
+import SectionSeparator from "../../components/SectionSeparator";
 import SendRowsCustom from "../../components/SendRowsCustom";
 import SendRowsFee from "../../components/SendRowsFee";
-import SummaryFromSection from "./SummaryFromSection";
-import SummaryToSection from "./SummaryToSection";
-import SummaryAmountSection from "./SummaryAmountSection";
-import SummaryNft from "./SummaryNft";
-import SummaryTotalSection from "./SummaryTotalSection";
-import SectionSeparator from "../../components/SectionSeparator";
+import TranslatedError from "../../components/TranslatedError";
+import { NavigatorName, ScreenName } from "../../const";
 import AlertTriangle from "../../icons/AlertTriangle";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
-import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
+import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
+import { accountScreenSelector } from "../../reducers/accounts";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
+import SummaryAmountSection from "./SummaryAmountSection";
+import SummaryFromSection from "./SummaryFromSection";
+import SummaryNft from "./SummaryNft";
+import SummaryToSection from "./SummaryToSection";
+import SummaryTotalSection from "./SummaryTotalSection";
+import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 
 const forceInset = { bottom: "always" };
 
@@ -159,25 +159,27 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     setContinuing(false);
   }, [setHighFeesOpen]);
 
+  const { amount, totalSpent, errors } = status;
+  const { transaction: transactionError } = errors;
+  const error = errors[Object.keys(errors)[0]];
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = account && getAccountCurrency(account);
+  const hasNonEmptySubAccounts =
+    account &&
+    account.type === "Account" &&
+    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
+
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
       params: {
-        accountId: account && account.id,
-        parentId: parentAccount && parentAccount.id,
+        defaultAccountId: account?.id,
+        defaultCurrencyId: currency?.id,
       },
     });
-  }, [account, parentAccount, navigation]);
+  }, [navigation, account?.id, currency?.id]);
 
   if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
-  const { amount, totalSpent, errors } = status;
-  const { transaction: transactionError } = errors;
-  const error = status.errors[Object.keys(status.errors)[0]];
-  const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
-  const hasNonEmptySubAccounts =
-    account.type === "Account" &&
-    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   return (
     <SafeAreaView
@@ -187,7 +189,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       <TrackScreen
         category="SendFunds"
         name="Summary"
-        currencyName={currency.name}
+        currencyName={currency?.name}
       />
       <NavigationScrollView style={styles.body}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
@@ -196,7 +198,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
               <Trans
                 i18nKey="send.summary.subaccountsWarning"
                 values={{
-                  currency: currency.name,
+                  currency: currency?.name,
                 }}
               />
             </Alert>
@@ -265,7 +267,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          isCurrencySupported(mainAccount.currency) && (
+          isCurrencySupported(currency) && (
             <Button
               event="SummaryBuyEth"
               type="primary"

@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
+import { Text } from "@ledgerhq/native-ui";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
-import Sell from "../../screens/Exchange/Sell";
-import BuyNavigator from "./BuyNavigator";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import Buy from "../../screens/Exchange/Buy";
+import Sell from "../../screens/Exchange/Sell";
 
 type TabLabelProps = {
   focused: boolean;
@@ -24,7 +24,7 @@ export default function ExchangeNavigator() {
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen
         name={ScreenName.ExchangeBuy}
-        component={BuyNavigator}
+        component={Buy}
         options={{
           title: t("exchange.buy.tabTitle"),
           tabBarLabel: (props: TabLabelProps) => (

@@ -1,6 +1,6 @@
-import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
-import { Animated } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import React, { memo, ReactElement, useEffect, useMemo, useRef } from "react";
+import { Animated } from "react-native";
 
 type Props = {
   style?: any;
@@ -9,12 +9,12 @@ type Props = {
   animated?: boolean;
 };
 
-const Skeleton = ({
+const Skeleton: React.FC<Props> = ({
   style,
   loading,
-  children = <></>,
+  children = null,
   animated = true,
-}: Props) => {
+}) => {
   const { colors } = useTheme();
   const opacityAnim = useRef(new Animated.Value(1)).current;
 

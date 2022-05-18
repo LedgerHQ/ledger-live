@@ -1,20 +1,20 @@
 // @flow
-import React, { useMemo, useCallback, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-import { BigNumber } from "bignumber.js";
-import { Trans } from "react-i18next";
-import _ from "lodash";
-import type { AccountLikeArray } from "@ledgerhq/live-common/lib/types";
 import type { CurrentRate } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
+import type { AccountLikeArray } from "@ledgerhq/live-common/lib/types";
 // import { formatShort } from "@ledgerhq/live-common/lib/currencies";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import { BigNumber } from "bignumber.js";
+import _ from "lodash";
+import React, { useCallback, useMemo, useState } from "react";
+import { Trans } from "react-i18next";
+import { FlatList, StyleSheet, View } from "react-native";
 import CurrencyIcon from "../../../components/CurrencyIcon";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../../const";
-import InfoModalBottom from "./InfoModalBottom";
 import { getSupportedCurrencies } from "../../Exchange/coinifyConfig";
+import InfoModalBottom from "./InfoModalBottom";
 
 const Row = ({
   data,
@@ -93,14 +93,14 @@ const Rates = ({
     token => {
       navigation.navigate(NavigatorName.LendingEnableFlow, {
         screen: ScreenName.LendingEnableSelectAccount,
-        params: { currency: token },
+        params: { token },
       });
     },
     [navigation],
   );
   const navigateToBuyFlow = useCallback(
     token => {
-      navigation.navigate(NavigatorName.ExchangeBuyFlow, {
+      navigation.navigate(NavigatorName.ExchangeStack, {
         screen: ScreenName.ExchangeSelectAccount,
         params: {
           currency: token,

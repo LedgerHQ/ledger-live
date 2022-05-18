@@ -2,34 +2,34 @@
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/named */
 /* eslint-disable import/no-unresolved */
-import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
-import { useTheme } from "styled-components/native";
-import { Flex, Text, ScrollContainerHeader, Icons } from "@ledgerhq/native-ui";
-import { FlatList, Image, RefreshControl } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Account } from "@ledgerhq/live-common/lib/types";
-import { starredMarketCoinsSelector } from "../../../reducers/settings";
-import { useLocale } from "../../../context/Locale";
-import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
-import { IconContainer } from "../MarketRowItem";
-import { counterValueFormatter, getDateFormatter } from "../utils";
-import DeltaVariation from "../DeltaVariation";
+import { Flex, Icons, ScrollContainerHeader, Text } from "@ledgerhq/native-ui";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FlatList, Image, RefreshControl } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import {
   addStarredMarketCoins,
   removeStarredMarketCoins,
 } from "../../../actions/settings";
-import MarketStats from "./MarketStats";
-import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
-import AccountRow from "../../Accounts/AccountRow";
 import { track } from "../../../analytics";
-import Button from "../../../components/wrappedUi/Button";
-import MarketGraph from "./MarketGraph";
+import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
 import { FabMarketActions } from "../../../components/FabActions";
+import Button from "../../../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import { useLocale } from "../../../context/Locale";
+import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
+import { starredMarketCoinsSelector } from "../../../reducers/settings";
+import AccountRow from "../../Accounts/AccountRow";
+import DeltaVariation from "../DeltaVariation";
+import { IconContainer } from "../MarketRowItem";
+import { counterValueFormatter, getDateFormatter } from "../utils";
+import MarketGraph from "./MarketGraph";
+import MarketStats from "./MarketStats";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -72,7 +72,6 @@ function MarketDetail({
     priceChangePercentage,
     internalCurrency,
     chartData,
-    isLiveSupported,
   } = currency || {};
 
   useEffect(() => {
@@ -164,7 +163,7 @@ function MarketDetail({
             justifyContent="flex-start"
             alignItems="center"
           >
-            {isLiveSupported && internalCurrency ? (
+            {internalCurrency ? (
               // @ts-expect-error import js issue
               <CircleCurrencyIcon
                 size={32}
@@ -225,7 +224,7 @@ function MarketDetail({
                 )}
               </Flex>
             </Flex>
-            {internalCurrency && isLiveSupported ? (
+            {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions
                   currency={internalCurrency}

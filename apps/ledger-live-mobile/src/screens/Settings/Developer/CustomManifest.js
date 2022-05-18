@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { TextInput, StyleSheet } from "react-native";
 import { useTheme, NavigationProp } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
@@ -62,7 +62,7 @@ export default function CustomManifest({
 
 function useCustomManifest() {
   const [manifest, setManifest] = useState("");
-  const { addLocalManifest } = usePlatformApp();
+  const { addLocalManifest } = useLocalLiveAppContext();
 
   const onChange = useCallback(val => {
     try {

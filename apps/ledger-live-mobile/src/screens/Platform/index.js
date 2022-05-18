@@ -4,7 +4,7 @@ import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
 import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
@@ -35,7 +35,8 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation();
 
-  const { manifests } = usePlatformApp();
+  const { state } = useRemoteLiveAppContext();
+  const manifests = state.value.liveAppByIndex;
   const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
 
   const filteredManifests = useMemo(() => {
@@ -121,7 +122,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       <CatalogTwitterBanner />
       {filteredManifests.map(manifest => (
         <AppCard
-          key={manifest.id}
+          key={`${manifest.id}.${manifest.branch}`}
           manifest={manifest}
           onPress={handlePressCard}
         />

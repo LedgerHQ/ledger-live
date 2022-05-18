@@ -1,44 +1,42 @@
 /* @flow */
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import React, { useCallback, useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountCurrency,
+  getAccountName,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type {
   Account,
   AccountLike,
-  CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
-
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
-import {
-  getAccountName,
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
 import { useTheme } from "@react-navigation/native";
-import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
-import { rgba } from "../../../colors";
-import { ScreenName, NavigatorName } from "../../../const";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import React, { useCallback, useEffect, useState } from "react";
+import { Trans } from "react-i18next";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
+import { rgba } from "../../../colors";
+import Alert from "../../../components/Alert";
+import Card from "../../../components/Card";
+import Circle from "../../../components/Circle";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
-import Alert from "../../../components/Alert";
-import LendingWarnings from "../shared/LendingWarnings";
-import Card from "../../../components/Card";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CheckCircle from "../../../icons/CheckCircle";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import ConfirmationModal from "../../../components/ConfirmationModal";
-import Circle from "../../../components/Circle";
-import Info from "../../../icons/Info";
+import LText from "../../../components/LText";
 import { urls } from "../../../config/urls";
+import { NavigatorName, ScreenName } from "../../../const";
+import CheckCircle from "../../../icons/CheckCircle";
+import Info from "../../../icons/Info";
+import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";
+import LendingWarnings from "../shared/LendingWarnings";
 
 const SEARCH_KEYS = [
   "account.name",
@@ -49,7 +47,7 @@ const SEARCH_KEYS = [
 
 type Props = {
   navigation: any,
-  route: { params?: { currency: CryptoCurrency | TokenCurrency } },
+  route: { params?: { token: TokenCurrency } },
 };
 
 const keyExtractor = item => item.account.id;
@@ -57,8 +55,8 @@ const keyExtractor = item => item.account.id;
 function LendingEnableSelectAccount({ route, navigation }: Props) {
   const { colors } = useTheme();
   const locale = useSelector(localeSelector);
-  const currency = route?.params?.currency;
-  invariant(currency, "currency required");
+  const token = route?.params?.token;
+  invariant(token, "token required");
 
   let enabledTotalAmount = null;
   const accounts = useSelector(
@@ -74,10 +72,10 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
       const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
-        params: { token: currency },
+        params: { token },
       });
     }
-  }, [currency, filteredAccounts, navigation]);
+  }, [token, filteredAccounts, navigation]);
 
   let accountsWithUnlimitedEnabledAmount = 0;
   filteredAccounts.forEach(({ account }) => {
@@ -103,7 +101,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
 
   const formattedEnabledAmount =
     enabledTotalAmount instanceof BigNumber &&
-    formatCurrencyUnit(currency.units[0], enabledTotalAmount, {
+    formatCurrencyUnit(token.units[0], enabledTotalAmount, {
       showCode: true,
       disableRounding: false,
       locale,
@@ -235,7 +233,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
       <TrackScreen
         category="Lend Approve"
         name="Select Account"
-        eventProperties={{ currencyName: currency.name }}
+        eventProperties={{ currencyName: token.name }}
       />
       <LendingWarnings />
       <ConfirmationModal
@@ -284,7 +282,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
                       ? filteredAccounts.length
                       : accountsWithUnlimitedEnabledAmount,
                   amount: formattedEnabledAmount,
-                  currency: currency.name,
+                  currency: token.name,
                 }}
                 count={
                   enabledTotalAmount < Infinity
