@@ -18,11 +18,12 @@ type Props = {
   // will wait the promise to complete before enabling the button again
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress: ?() => ?Promise<any> | void,
+  onLongPress?: ?() => ?Promise<any> | void,
   children: *,
   event?: string,
   eventProperties?: { [key: string]: any },
   style?: *,
-  testID?: string,
+  touchableTestID?: string,
 };
 
 export default class Touchable extends Component<
@@ -61,13 +62,26 @@ export default class Touchable extends Component<
     }
   };
 
+  onLongPress = async () => {
+      const { onLongPress, event, eventProperties } = this.props;
+      if (!onLongPress) return;
+      if (event) {
+        track(event, eventProperties);
+      }
+      
+      const res = onLongPress();
+      this.setState({ pending: true });
+      await res;
+      this.setState({ pending: false });
+  };
+
   render() {
     const {
       onPress,
       children,
       event,
       eventProperties,
-      testID,
+      touchableTestID,
       ...rest
     } = this.props;
     const { pending } = this.state;
@@ -79,7 +93,7 @@ export default class Touchable extends Component<
         onPress={this.onPress}
         disabled={disabled}
         hitSlop={defaultHitSlop}
-        testID={testID ?? event}
+        testID={touchableTestID ?? event}
         {...rest}
       >
         {children}

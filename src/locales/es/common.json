@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "Saldo insuficiente en la cuenta principal"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "El saldo no puede ser inferior a {{minimumAmount}}"
     },
@@ -828,8 +831,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Bienvenidos a Ledger",
-      "subtitle": "Administra de manera segura tus cripto desde tu smartphone.",
+      "title": "La billetera más segura para criptodivisas y NFTs",
+      "subtitle": "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
       "start": "Comenzar",
       "noDevice": "¿No tienes un dispositivo?",
       "buy": "Compra un {{fullDeviceName}}",
@@ -1219,7 +1222,7 @@
       },
       "nanoSP": {
         "title": "Conecta tu Nano",
-        "desc": "Esta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
         "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
@@ -1750,7 +1753,8 @@
       "sectionLabel": "Desdelegaciones"
     },
     "nft": {
-      "receiveNft": "Recibir NFT"
+      "receiveNft": "Recibir NFT",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1877,7 +1881,7 @@
         "bullet2": "Versión de Ledger Live, región del SO, idioma y región"
       },
       "hideEmptyTokenAccounts": "Ocultar cuentas de tokens sin saldo",
-      "hideEmptyTokenAccountsDesc": "Ocultar cuentas de tokens sin saldo en la página de Cuentas."
+      "hideEmptyTokenAccountsDesc": "Se ocultarán todas las cuentas de token vacías en la página de Activos."
     },
     "currencies": {
       "header": "Divisas",
@@ -1900,6 +1904,13 @@
         "title": "Ocultar token",
         "desc": "Esta acción ocultará todas las cuentas <1><0>{tokenName}</0></1>, puedes mostrarlas de nuevo mediante <3>Ajustes > Cuentas</3>.",
         "confirm": "Ocultar token"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "Activos cripto",
@@ -2247,7 +2258,7 @@
           "receive": "Importe",
           "receiveFloat": "Importe a recibir antes de aplicar las tarifas de servicios",
           "provider": "Proveedor",
-          "method": "Tasa",
+          "method": "Tarifa",
           "fees": "Tarifas"
         }
       }
@@ -3928,6 +3939,20 @@
     "service": "Términos del servicio",
     "subTitle": "Por favor, dedica algo de tiempo a revisar nuestros Términos de servicio y Política de privacidad"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "Continuar"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "Comprar",
@@ -4123,7 +4148,7 @@
       "allTimeLow": "Mínimo histórico",
       "marketCapRank": "Posición según capitalización de mercado",
       "marketCapDominance": "Dominio de capitalización de mercado",
-      "supply": "Suministrar",
+      "supply": "Suministro",
       "circulatingSupply": "Suministro circulante",
       "totalSupply": "Suministro total",
       "maxSupply": "Suministro máximo",
@@ -4134,7 +4159,7 @@
       "24h": "24H",
       "7d": "7D",
       "30d": "30D",
-      "1y": "1 A"
+      "1y": "1A"
     },
     "warnings": {
       "connectionError": "Error de conexión",
@@ -4183,7 +4208,7 @@
       "title": "Asignación"
     },
     "operations": {
-      "title": "Operaciones"
+      "title": "Transaction history"
     }
   }
 }

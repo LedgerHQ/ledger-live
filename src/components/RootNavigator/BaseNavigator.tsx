@@ -467,7 +467,7 @@ export default function BaseNavigator() {
         name={ScreenName.PortfolioOperationHistory}
         component={PortfolioHistory}
         options={{
-          headerTitle: t("tabs.portfolio"),
+          headerTitle: t("analytics.operations.title"),
           headerRight: null,
         }}
       />
@@ -545,11 +545,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.NftNavigator}
         component={NftNavigator}
-        options={({ navigation }) => ({
-          title: null,
-          headerRight: null,
-          headerLeft: () => <CloseButton navigation={navigation} />,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.Accounts}

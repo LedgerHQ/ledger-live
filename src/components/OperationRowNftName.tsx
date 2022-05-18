@@ -1,25 +1,43 @@
-import React from "react";
+import React, { memo } from "react";
 
-import { Operation } from "@ledgerhq/live-common/lib/types";
+import {
+  Account,
+  AccountLike,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
 import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
-import { StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";
 
 type Props = {
   style?: Object;
   operation: Operation;
+  account: AccountLike;
+  parentAccount?: Account | null;
 };
 
-const OperationRowNftName = ({ style, operation }: Props) => {
+const OperationRowNftName = ({
+  style,
+  operation,
+  account,
+  parentAccount,
+}: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(mainAccount);
   const { status, metadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
+    currency.id,
   );
 
   return (
-    <>
-      <Skeleton style={[styles.skeleton]} loading={status === "loading"}>
+    <View style={style}>
+      <Skeleton style={styles.skeleton} loading={status === "loading"}>
         <Text
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -38,7 +56,7 @@ const OperationRowNftName = ({ style, operation }: Props) => {
       >
         ID {operation.tokenId}
       </Text>
-    </>
+    </View>
   );
 };
 
@@ -48,6 +66,13 @@ const styles = StyleSheet.create({
     width: 120,
     borderRadius: 4,
   },
+  nftName: {
+    fontSize: 15,
+    marginBottom: 4,
+  },
+  tokenId: {
+    fontSize: 12,
+  },
 });
 
-export default OperationRowNftName;
+export default memo(OperationRowNftName);

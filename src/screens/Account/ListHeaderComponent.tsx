@@ -5,7 +5,6 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import {
-  Unit,
   AccountLike,
   Account,
   Currency,
@@ -13,13 +12,11 @@ import {
 import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import { Box } from "@ledgerhq/native-ui";
+import { isNFTActive } from "@ledgerhq/live-common/lib/nft";
+
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
-import Touchable from "../../components/Touchable";
-import TransactionsPendingConfirmationWarning from "../../components/TransactionsPendingConfirmationWarning";
-import { Item } from "../../components/Graph/types";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
 import CompoundSummary from "../Lending/Account/CompoundSummary";
@@ -29,14 +26,11 @@ import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import { FabAccountActions } from "../../components/FabActions";
-import { NoCountervaluePlaceholder } from "../../components/CounterValue.js";
-import DiscreetModeButton from "../../components/DiscreetModeButton";
-import Delta from "../../components/Delta";
 
 const renderAccountSummary = (
-  account,
-  parentAccount,
-  compoundSummary,
+  account: AccountLike,
+  parentAccount: Account,
+  compoundSummary: CompoundAccountSummary,
 ) => () => {
   const mainAccount = getMainAccount(account, parentAccount);
   const AccountBalanceSummaryFooter =
@@ -63,69 +57,6 @@ const renderAccountSummary = (
     );
   if (!footers.length) return null;
   return footers;
-};
-
-type HeaderTitleProps = {
-  useCounterValue?: boolean;
-  cryptoCurrencyUnit: Unit;
-  counterValueUnit: Unit;
-  item: Item;
-};
-
-const ListHeaderTitle = ({
-  account,
-  countervalueAvailable,
-  onSwitchAccountCurrency,
-  valueChange,
-  useCounterValue,
-  cryptoCurrencyUnit,
-  counterValueUnit,
-  item,
-}: HeaderTitleProps) => {
-  const items = [
-    { unit: cryptoCurrencyUnit, value: item.value },
-    { unit: counterValueUnit, value: item.countervalue },
-  ];
-
-  const shouldUseCounterValue = countervalueAvailable && useCounterValue;
-  if (shouldUseCounterValue) {
-    items.reverse();
-  }
-
-  return (
-    <Flex flexDirection={"row"} justifyContent={"space-between"}>
-      <Touchable
-        event="SwitchAccountCurrency"
-        eventProperties={{ useCounterValue: shouldUseCounterValue }}
-        onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
-        style={{ flexShrink: 1 }}
-      >
-        <Flex>
-          <Flex flexDirection={"row"}>
-            <Text variant={"large"} fontWeight={"medium"} color={"neutral.c70"}>
-              <CurrencyUnitValue
-                {...items[0]}
-                disableRounding
-                joinFragmentsSeparator=" "
-              />
-            </Text>
-            <TransactionsPendingConfirmationWarning maybeAccount={account} />
-          </Flex>
-          <Text variant={"h1"}>
-            {typeof items[1]?.value === "number" ? (
-              <CurrencyUnitValue {...items[1]} />
-            ) : (
-              <NoCountervaluePlaceholder />
-            )}
-          </Text>
-          <Delta percent valueChange={valueChange} />
-        </Flex>
-      </Touchable>
-      <Flex justifyContent={"center"} ml={4}>
-        <DiscreetModeButton />
-      </Flex>
-    </Flex>
-  );
 };
 
 type Props = {
@@ -186,33 +117,6 @@ export function getListHeaderComponents({
       ),
       !empty && (
         <Box mx={6} my={6}>
-          <ListHeaderTitle
-            account={account}
-            countervalueAvailable={countervalueAvailable}
-            onSwitchAccountCurrency={onSwitchAccountCurrency}
-            countervalueChange={countervalueChange}
-            counterValueUnit={counterValueCurrency.units[0]}
-            useCounterValue={useCounterValue}
-            cryptoCurrencyUnit={getAccountUnit(account)}
-            item={history[history.length - 1]}
-            valueChange={
-              shouldUseCounterValue ? countervalueChange : cryptoChange
-            }
-          />
-        </Box>
-      ),
-      ...(!empty
-        ? [
-            <Box py={3}>
-              <FabAccountActions
-                account={account}
-                parentAccount={parentAccount}
-              />
-            </Box>,
-          ]
-        : []),
-      !empty && (
-        <Box mx={6} mt={7} mb={8} pb={6}>
           <AccountGraphCard
             account={account}
             range={range}
@@ -228,9 +132,23 @@ export function getListHeaderComponents({
               parentAccount,
               compoundSummary,
             )}
+            onSwitchAccountCurrency={onSwitchAccountCurrency}
+            countervalueChange={countervalueChange}
+            counterValueUnit={counterValueCurrency.units[0]}
+            cryptoCurrencyUnit={getAccountUnit(account)}
           />
         </Box>
       ),
+      ...(!empty
+        ? [
+            <Box py={3} mb={8}>
+              <FabAccountActions
+                account={account}
+                parentAccount={parentAccount}
+              />
+            </Box>,
+          ]
+        : []),
 
       ...(!empty && AccountBodyHeader
         ? [
@@ -252,7 +170,7 @@ export function getListHeaderComponents({
             </Box>,
           ]
         : []),
-      ...(!empty && account.type === "Account" && account.nfts?.length
+      ...(!empty && account.type === "Account" && isNFTActive(account.currency)
         ? [<NftCollectionsList account={account} />]
         : []),
       ...(compoundSummary &&
