@@ -384,6 +384,8 @@ PODS:
     - React
   - react-native-fingerprint-scanner (6.0.0):
     - React
+  - react-native-flipper (0.145.0):
+    - React-Core
   - react-native-flipper-performance-plugin (0.2.1):
     - React-Core
     - react-native-flipper-performance-plugin/FBDefines (= 0.2.1)
@@ -631,6 +633,7 @@ DEPENDENCIES:
   - "react-native-config (from `../../../node_modules/.pnpm/react-native-config@1.4.4/node_modules/react-native-config`)"
   - "react-native-fast-crypto (from `../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_react-native@0.67.3/node_modules/react-native-fast-crypto`)"
   - "react-native-fingerprint-scanner (from `../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.67.3/node_modules/react-native-fingerprint-scanner`)"
+  - "react-native-flipper (from `../../../node_modules/.pnpm/react-native-flipper@0.145.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-flipper`)"
   - "react-native-flipper-performance-plugin (from `../../../node_modules/.pnpm/react-native-flipper-performance-plugin@0.2.1/node_modules/react-native-flipper-performance-plugin`)"
   - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.67.3/node_modules/@react-native-community/netinfo`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@2.1.0_react-native@0.67.3/node_modules/react-native-performance/ios`)"
@@ -775,6 +778,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-fast-crypto@2.2.0_react-native@0.67.3/node_modules/react-native-fast-crypto"
   react-native-fingerprint-scanner:
     :path: "../../../node_modules/.pnpm/github.com+hieuvp+react-native-fingerprint-scanner@f1d136f605412d58e4de9e7e155d6f818ba24731_react-native@0.67.3/node_modules/react-native-fingerprint-scanner"
+  react-native-flipper:
+    :path: "../../../node_modules/.pnpm/react-native-flipper@0.145.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-flipper"
   react-native-flipper-performance-plugin:
     :path: "../../../node_modules/.pnpm/react-native-flipper-performance-plugin@0.2.1/node_modules/react-native-flipper-performance-plugin"
   react-native-netinfo:
@@ -923,6 +928,7 @@ SPEC CHECKSUMS:
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
+  react-native-flipper: 1b78844db5b0de19bd64847c3b88cafc6cc119ba
   react-native-flipper-performance-plugin: ab280430bbdd17deffb7a30d94b604738cd04150
   react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
   react-native-performance: f4b6604a9d5a8a7407e34a82fab6c641d9a3ec12

@@ -96,6 +96,7 @@
     "@react-native-firebase/remote-config": "^14.3.1",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/bottom-tabs": "^6.0.9",
+    "@react-navigation/devtools": "^6.0.7",
     "@react-navigation/elements": "^1.2.1",
     "@react-navigation/material-top-tabs": "^6.0.6",
     "@react-navigation/native": "^6.0.6",
@@ -263,6 +264,7 @@
     "metro-transform-worker": "^0.67.0",
     "prettier": "^1.19.1",
     "react-native-debugger-open": "^0.3.25",
+    "react-native-flipper": "^0.145.0",
     "react-native-flipper-performance-plugin": "^0.2.1",
     "typescript": "^4.6.4",
     "ws": "^7.5.2"

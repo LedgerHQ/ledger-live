@@ -25,6 +25,7 @@ import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import { NavigationContainer } from "@react-navigation/native";
+import { useFlipper } from "@react-navigation/devtools";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -416,6 +417,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       ((theme === "system" && osTheme) || theme) === "light" ? "light" : "dark",
     [theme, osTheme],
   );
+
+  useFlipper(navigationRef);
 
   if (!isReady) {
     return null;
