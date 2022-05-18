@@ -7,6 +7,9 @@ export const defaultFeatures: DefaultFeatures = {
   pushNotifications: {
     enabled: false,
   },
+  buyDeviceFromLive: {
+    enabled: false,
+  },
   ratings: {
     enabled: false,
     params: {
