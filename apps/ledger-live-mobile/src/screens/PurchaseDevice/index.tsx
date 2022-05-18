@@ -10,7 +10,7 @@ import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvider";
 
 // const defaultURL = urls.buyNanoX;
@@ -26,7 +26,12 @@ const PurchaseDevice = () => {
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
   const handleBack = useCallback(() => {
-    navigation.navigate(ScreenName.BuyDevice as any);
+    navigation.navigate(
+      NavigatorName.BuyDevice as never,
+      {
+        screen: ScreenName.GetDevice,
+      } as never,
+    );
   }, [navigation]);
 
   const handleOpenDrawer = useCallback(() => {

@@ -67,7 +67,7 @@ const videoStyle = {
   right: 0,
 };
 
-export default function BuyDeviceScreen() {
+export default function GetDeviceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { theme, colors } = useTheme();
@@ -159,7 +159,7 @@ export default function BuyDeviceScreen() {
         my={4}
         type="main"
         outline={false}
-        event="BuyDeviceScreen - Buy Ledger"
+        event="GetDeviceScreen - Buy Ledger"
         onPress={buyLedger}
         size="large"
       >

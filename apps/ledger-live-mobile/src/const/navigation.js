@@ -85,7 +85,7 @@ export const ScreenName = {
   FreezeValidationError: "FreezeValidationError",
   FreezeValidationSuccess: "FreezeValidationSuccess",
   GeneralSettings: "GeneralSettings",
-  BuyDevice: "BuyDevice",
+  GetDevice: "GetDevice",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
   ManagerDevice: "ManagerDevice",
@@ -351,8 +351,6 @@ export const ScreenName = {
 
   // solana
   SolanaEditMemo: "SolanaEditMemo",
-
-  BuyDeviceScreen: "BuyDeviceScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",

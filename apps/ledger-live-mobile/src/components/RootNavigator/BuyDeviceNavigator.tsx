@@ -5,7 +5,7 @@ import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import BuyDevice from "../../screens/BuyDeviceScreen";
+import GetDevice from "../../screens/GetDeviceScreen";
 import PurchaseDevice from "../../screens/PurchaseDevice";
 
 const Stack = createStackNavigator();
@@ -22,7 +22,7 @@ const BuyDeviceNavigator = () => {
     <Stack.Navigator
       screenOptions={{ ...stackNavigationConfig, headerShown: false }}
     >
-      <Stack.Screen name={ScreenName.BuyDevice} component={BuyDevice} />
+      <Stack.Screen name={ScreenName.GetDevice} component={GetDevice} />
       {buyDeviceFromLive?.enabled && (
         <Stack.Screen
           name={ScreenName.PurchaseDevice}

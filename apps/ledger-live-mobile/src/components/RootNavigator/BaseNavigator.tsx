@@ -75,7 +75,7 @@ import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScree
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import GetDeviceScreen from "../../screens/GetDeviceScreen";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Learn from "../../screens/Learn";
 import ManagerMain from "../../screens/Manager/Manager";
@@ -316,7 +316,7 @@ export default function BaseNavigator() {
         name={NavigatorName.Exchange}
         {...(readOnlyModeEnabled
           ? {
-              component: BuyDeviceScreen,
+              component: BuyDeviceNavigator,
               options: {
                 ...TransitionPresets.ModalTransition,
                 headerShown: false,
@@ -330,7 +330,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}
         component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeBuyFlowNavigator
+          readOnlyModeEnabled ? BuyDeviceNavigator : ExchangeBuyFlowNavigator
         }
         initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
@@ -338,7 +338,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.ExchangeSellFlow}
         component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeSellFlowNavigator
+          readOnlyModeEnabled ? BuyDeviceNavigator : ExchangeSellFlowNavigator
         }
         options={{ headerShown: false }}
       />
@@ -458,7 +458,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Asset}
-        component={readOnlyModeEnabled ? BuyDeviceScreen : Asset}
+        component={readOnlyModeEnabled ? GetDeviceScreen : Asset}
         options={{
           headerTitle: () => <HeaderTitle />,
           headerRight: null,
@@ -474,7 +474,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? BuyDeviceScreen : Account}
+        component={readOnlyModeEnabled ? GetDeviceScreen : Account}
         options={({ route, navigation }) => ({
           headerLeft: () => (
             <BackButton navigation={navigation} route={route} />
