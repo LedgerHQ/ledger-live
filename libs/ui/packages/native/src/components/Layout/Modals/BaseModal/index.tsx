@@ -4,13 +4,12 @@ import styled from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
 
 import sizes from "../../../../helpers/getDeviceSize";
-import Link from "../../../cta/Link";
-import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
 import Text from "../../../Text";
 import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
 import { Flex } from "../../index";
 import { space } from "styled-system";
+import { Icons } from "../../../../assets";
 
 const { width, height } = sizes;
 
@@ -18,6 +17,7 @@ export type BaseModalProps = {
   isOpen?: boolean;
   onClose?: () => void;
   modalStyle?: StyleProp<ViewStyle>;
+  safeContainerStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   preventBackdropClick?: boolean;
   Icon?: IconOrElementType;
@@ -52,10 +52,11 @@ const CloseContainer = styled.View`
 `;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
-  p: 5,
-  m: -5,
+  p: 3,
 })`
   ${space};
+  border-radius: 100px;
+  background-color: ${(p) => p.theme.colors.neutral.c30};
 `;
 
 const StyledTitle = styled(Text).attrs({ variant: "h2" })`
@@ -113,6 +114,7 @@ export default function BaseModal({
   isOpen,
   onClose = () => {},
   noCloseButton,
+  safeContainerStyle = {},
   containerStyle = {},
   modalStyle = {},
   preventBackdropClick,
@@ -145,12 +147,12 @@ export default function BaseModal({
       onModalHide={onClose}
       style={[defaultModalStyle, modalStyle]}
     >
-      <SafeContainer>
+      <SafeContainer style={safeContainerStyle}>
         <Container style={containerStyle}>
           {!noCloseButton && (
             <CloseContainer>
               <ClosePressableExtendedBounds onPress={onClose}>
-                <Link Icon={CloseMedium} onPress={onClose} />
+                <Icons.CloseMedium color="neutral.c100" size="20px" />
               </ClosePressableExtendedBounds>
             </CloseContainer>
           )}

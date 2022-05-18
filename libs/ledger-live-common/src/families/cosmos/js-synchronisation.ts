@@ -20,7 +20,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
     let fees = new BigNumber(0);
 
     tx.tx.auth_info.fee.amount.forEach((elem) => {
-      fees = fees.plus(elem.amount);
+      if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
     });
 
     const op: Operation = {
@@ -184,7 +184,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     redelegations,
     unbondings,
     withdrawAddress,
-  } = await getAccountInfo(xpubOrAddress);
+  } = await getAccountInfo(xpubOrAddress, currency);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);

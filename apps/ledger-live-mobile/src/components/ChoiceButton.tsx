@@ -28,7 +28,7 @@ const ChoiceButton = ({
 }: ChoiceButtonProps) => (
   <Button
     onPress={() => onSelect({ navigationParams, enableActions, linkUrl })}
-    type={"shade"}
+    type={"color"}
     outline
     size={"small"}
     disabled={disabled}

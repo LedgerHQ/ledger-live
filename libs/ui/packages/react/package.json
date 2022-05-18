@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.7.6-nightly.0",
+  "version": "0.7.6",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
@@ -37,7 +37,7 @@
     "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
     "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
     "build:storybook": "build-storybook -s ./src",
-    "watch": "tsc --watch",
+    "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",

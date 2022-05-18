@@ -13,7 +13,7 @@ const getProviders: GetProviders = async () => {
   });
 
   if (!res.data.length) {
-    return new SwapNoAvailableProviders();
+    throw new SwapNoAvailableProviders();
   }
 
   return res.data;

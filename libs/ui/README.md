@@ -8,13 +8,13 @@
 
 **The `ui` umbrella is a comprised of the following packages:**
 
-- [**`@ledgerhq/react-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/react): [React](https://reactjs.org/) components and styles.
+- [**`@ledgerhq/react-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react): [React](https://reactjs.org/) components and styles.
 
-- [**`@ledgerhq/native-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/native): [React Native](https://reactnative.dev/) components and styles
+- [**`@ledgerhq/native-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native): [React Native](https://reactnative.dev/) components and styles
 
-- [**`@ledgerhq/ui-shared`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/shared): Shared assets and code shared between react and native modules.
+- [**`@ledgerhq/ui-shared`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/shared): Shared assets and code shared between react and native modules.
 
-- [**`@ledgerhq/icons-ui`**](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/packages/icons): Shared SVG icons.
+- [**`@ledgerhq/icons-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons): Shared SVG icons.
 
 ## Installation
 
@@ -51,4 +51,4 @@ pnpm ui:icons build
 
 ## Examples
 
-The [examples folder](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ui/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.
+The [examples folder](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.

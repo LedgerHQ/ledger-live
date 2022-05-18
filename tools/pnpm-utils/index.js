@@ -75,15 +75,27 @@ function addDependencies(
   };
 }
 
-function removePeerDeps(filter) {
+function removeDependencies(
+  filter,
+  dependencies,
+  { kind = "dependencies" } = {}
+) {
   return (pkg, context) => {
     const key = `${pkg.name}@${pkg.version}`;
     if (
       filter instanceof RegExp ? filter.test(pkg?.name) : pkg.name === filter
     ) {
-      console.log(`${bold("[-]", 31)} ${field(key)} | (peerDependencies)`);
-      delete pkg.peerDependencies;
-      delete pkg.peerDependenciesMeta;
+      dependencies.forEach((dependency) => {
+        if (pkg[kind][dependency]) {
+          console.log(
+            `${bold("[-]", 31)} ${field(dependency)} | ${field(key)} (${kind})`
+          );
+          delete pkg[kind][dependency];
+        }
+        if (pkg.peerDependenciesMeta && kind === "peerDependencies") {
+          delete pkg.peerDependenciesMeta[dependency];
+        }
+      });
     }
   };
 }
@@ -110,5 +122,5 @@ module.exports = {
   addDependencies,
   addDevDependencies,
   addPeerDependencies,
-  removePeerDeps,
+  removeDependencies,
 };

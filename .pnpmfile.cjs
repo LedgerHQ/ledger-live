@@ -1,3 +1,15 @@
+/**
+ * This file exists for the sole purpose of hijacking the packages installation process.
+ *
+ * It contains a lot of monkey patches because some packages we use have issues when declaring
+ * their own dependencies. It causes problems with pnpm which enforces a strict package resolution.
+ *
+ * Ideally package maintainers would update their packages and we would not need this file anymore.
+ * But this is world is cruel… Feel free to reach out and make PRs if you are motivated enough.
+ *
+ * See: https://pnpm.io/pnpmfile
+ */
+
 const {
   process,
   addDependencies,
@@ -6,14 +18,33 @@ const {
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
-  const major = parseInt(pkg.version?.split(".")[0] || "0");
+  const major = parseInt(
+    pkg.version?.replace(/(\^|~|>=|>|<=|<)/g, "").split(".")[0] || "0"
+  );
+
+  /*
+    Fix packages using wrong @types/react versions by making it a peer dependency.
+    So ultimately it uses our types package instead of their own which can conflict.
+  */
+  if (
+    !!pkg.dependencies["@types/react"] &&
+    !pkg.name.startsWith("@ledgerhq") &&
+    !pkg.private
+  ) {
+    delete pkg.dependencies["@types/react"];
+    pkg.peerDependencies["@types/react"] = "*";
+    pkg.peerDependenciesMeta = {
+      ...pkg.peerDependenciesMeta,
+      "@types/react": { optional: true },
+    };
+  }
 
   process(
     [
       /*
         Adding jest and co. as dev. dependencies for /ledgerjs/* sub-packages.
         This is done this way because these packages are not hoisted hence unaccessible otherwise.
-        Furthermore it makes these packages self-contained which eases the CI install process.
+        Furthermore it makes these packages self-contained which eases the CI process.
       */
       addDevDependencies(
         /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
@@ -71,6 +102,15 @@ function readPackage(pkg, context) {
         tslib: "*",
       }),
       /* React Native and Metro bundler packages */
+      // Crashes ios build if removed /!\
+      addDependencies("react-native-codegen", {
+        glob: "*",
+        invariant: "*",
+      }),
+      // Crashes ios build if removed /!\
+      addDependencies("react-native", {
+        mkdirp: "*",
+      }),
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
       }),
@@ -117,7 +157,19 @@ function readPackage(pkg, context) {
       addPeerDependencies("jest-worker", {
         metro: "*",
       }),
-      addDependencies("app-builder-lib", { "dmg-builder": "*", lodash: "*" }),
+      // "dmg-builder" is required to build .dmg electron apps on macs,
+      // but is not declared as such by app-builder-lib.
+      // I'm not adding it as a dependency because if I did,
+      // then pnpm would fail on win / linux during install.
+      // Mildly related (error is not the same): https://github.com/pnpm/pnpm/issues/3640
+      addPeerDependencies("app-builder-lib", {
+        "dmg-builder": "*",
+        lodash: "*",
+      }),
+      /* Packages that are missing @types/* dependencies */
+      addPeerDependencies("react-native-gesture-handler", {
+        "@types/react": "*",
+      }),
     ],
     pkg,
     context

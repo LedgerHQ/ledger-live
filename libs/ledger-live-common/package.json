@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "22.0.4-nightly.0",
+  "version": "22.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
@@ -24,7 +24,6 @@
     "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
     "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && pnpm test",
     "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
   },
@@ -38,13 +37,17 @@
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1"
+    "react-native-svg": ">=12.1.1",
+    "@types/react": "*"
   },
   "peerDependenciesMeta": {
     "react-dom": {
       "optional": true
     },
     "react-native": {
+      "optional": true
+    },
+    "@types/react": {
       "optional": true
     }
   },
@@ -87,8 +90,8 @@
     "@ledgerhq/logs": "workspace:^",
     "@polkadot/types": "8.1.1",
     "@polkadot/types-known": "8.1.1",
-    "@polkadot/util": "^9.1.1",
-    "@polkadot/util-crypto": "^9.1.1",
+    "@polkadot/util": "9.1.1",
+    "@polkadot/util-crypto": "9.1.1",
     "@solana/spl-token": "^0.1.8",
     "@solana/web3.js": "^1.32.0",
     "@taquito/ledger-signer": "stablelib",
@@ -145,7 +148,6 @@
     "ripemd160": "^2.0.2",
     "ripple-binary-codec": "^1.3.0",
     "ripple-bs58check": "^2.0.2",
-    "ripple-lib": "1.10.0",
     "rlp": "^3.0.0",
     "rxjs": "6",
     "rxjs-compat": "^6.6.7",
@@ -157,6 +159,7 @@
     "superstruct": "0.14.2",
     "tiny-secp256k1": "^1.1.6",
     "triple-beam": "^1.3.0",
+    "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2",
     "utility-types": "^3.10.0",
     "winston": "^3.4.0",
@@ -172,6 +175,7 @@
     "@types/lodash": "^4.14.179",
     "@types/node": "16.11.12",
     "@types/object-hash": "^2.1.0",
+    "@types/react": "^17",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "benchmark": "^2.1.4",

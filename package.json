@@ -40,6 +40,7 @@
     "cli": "pnpm --filter live-cli",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
+    "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryoptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter cryptoassets",
     "ljs:errors": "pnpm --filter cryptoassets",

@@ -1,8 +1,8 @@
 name: Nightly Release
 
 on:
-  # schedule:
-  #   - cron: "0 22 * * *"
+  schedule:
+    - cron: "0 2 * * *"
   workflow_dispatch:
 
 jobs:
@@ -17,15 +17,16 @@ jobs:
         with:
           ref: nightly
           fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
-      - name: merge develop # TODO: update the branch when we sanitize the monorepo
+      - name: merge develop
         run: |
-          git merge origin/monorepo-setup -X theirs
+          git merge origin/develop -X theirs
 
       - uses: pnpm/action-setup@v2.1.0
         with:
@@ -36,18 +37,19 @@ jobs:
           node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+          registry-url: "https://registry.npmjs.org"
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -69,18 +71,19 @@ jobs:
       - name: publish nightly
         run: pnpm changeset publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes
+        if: ${{ always() }}
         run: |
           git push origin nightly --follow-tags
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -104,12 +107,9 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
-            console.log("mobile is disabled temporarily")
-            /*
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "nightly-mobile-mono.yml",
             });
-            */

@@ -17,15 +17,16 @@ There is a good chance that we will reject feature based PRs based on the fact t
 **Before submitting a pull request, please make sure the following is done:**
 
 1. Fork the repository and create your branch from `develop` (check the git conventions for the naming of the branch).
-2. Follow the main installation steps. (https://github.com/LedgerHQ/ledger-live/tree/monorepo-documentation#installation)
+2. Follow the main installation steps. (https://github.com/LedgerHQ/ledger-live#installation)
 3. Follow additional installation steps depending on which package you want to contribute to.
 4. Make your changes.
 5. If you’ve fixed a bug or added code that should be tested, add tests!
-6. Cleanup your branch - unless it contains merge commits (perform atomic commits, squash tiny commits…).
-7. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
-8. Make sure the code passes unit and end to end tests (`pnpm test`).
-9. Add an entry to the changelog (`pnpm changelog`).
-10. Profit!
+6. If needed, wait for the translations to be provided by the third party service.
+7. Add an entry to the changelog (`pnpm changelog`).
+8. Make sure that the code passes linter and type checks (`pnpm lint:fix` and `pnpm typecheck`).
+9. Make sure the code passes unit and end to end tests (`pnpm test`).
+10. Cleanup your branch - unless it contains merge commits (perform atomic commits, squash tiny commits…).
+11. Profit!
 
 ### Git Conventions
 
@@ -79,3 +80,14 @@ For instance:
 - Github actions will trigger depending on which part of the codebase is impacted.
 - Your PR must pass the required CI actions.
 - Your PR must include a changelog (`pnpm changelog`).
+
+### Translations
+
+We use a third party service called [**Smartling**](https://www.smartling.com/) to automate and manage translations for the Ledger Live applications (Desktop and Mobile).
+
+**⚠️ Only add or edit translation files for the english language.**
+
+You can find these files at the following locations:
+
+- Ledger Live Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
+- Ledger Live Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`

@@ -11,9 +11,9 @@ Welcome to Ledger's JavaScript libraries.
 
 - [Changelog](https://github.com/LedgerHQ/ledger-live/releases)
 - [**LedgerJS examples**](https://github.com/LedgerHQ/ledgerjs-examples)
-- [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-desktop)
-- [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/apps/ledger-live-mobile)
-- [live-common](https://github.com/LedgerHQ/ledger-live/tree/monorepo-setup/libs/ledger-live-common)
+- [Ledger Live Desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop)
+- [Ledger Live Mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
+- [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 - Deprecated libraries are archived in https://github.com/LedgerHQ/ledgerjs-legacy
 
 ## `@ledgerhq/hw-transport-*`

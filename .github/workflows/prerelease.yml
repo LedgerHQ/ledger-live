@@ -28,6 +28,7 @@ jobs:
         if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         with:
           ref: ${{ github.event.inputs.ref || "release" }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: set ref
         id: ref
@@ -47,11 +48,12 @@ jobs:
           node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
+          registry-url: "https://registry.npmjs.org"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
@@ -81,7 +83,7 @@ jobs:
       - name: publish prerelease
         run: pnpm changeset publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes (push event)
         if: ${{ github.event.push != '' }}
@@ -92,7 +94,7 @@ jobs:
         run: |
           git push origin ${{ steps.ref.outputs.ref }} --follow-tags
 
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop

@@ -192,4 +192,4 @@ ReactDOM.render(<Root />, document.getElementById("react-root"));
 
 ### Contributing
 
-Check the [contributing guide here](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/libs/ui/packages/react/CONTRIBUTING.md).
+Check the [contributing guide here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ui/packages/react/CONTRIBUTING.md).

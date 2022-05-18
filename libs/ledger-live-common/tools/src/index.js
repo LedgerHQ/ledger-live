@@ -1,8 +1,6 @@
-import "./live-common-setup";
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
-import { version } from "@ledgerhq/live-common/package.json";
 import "./index.css";
 import Demos from "./demos";
 
@@ -30,9 +28,6 @@ class Dashboard extends Component {
               </Link>
             );
           })}
-        <footer style={{ paddingTop: 20, fontSize: "1em" }}>
-          @ledgerhq/live-common {version}
-        </footer>
       </div>
     );
   }

@@ -1,29 +1,24 @@
-// @flow
-import { it } from "jest-circus";
-import { cleanLaunch, onboard } from "../engine";
+import OnboardingSteps from "../models/onboarding/onboardingSteps";
+import PortfolioPage from "../models/portfolioPage";
 
 describe("Onboarding", () => {
-  describe("Nano X", () => {
-    beforeAll(async () => {
-      await cleanLaunch();
-    });
-
-    describe("New Device", () => {});
-
-    describe("Import", () => {});
-
-    describe("Restore", () => {});
-
-    describe("Connect", () => {
-      onboard("nanoX", "connect");
-    });
+  beforeAll(async () => {
+    await device.launchApp();
   });
 
-  describe("Nano S", () => {
-    it.todo("should run through Nano S onboarding");
-  });
+  it("should be able to connect a Nano X", async () => {
+    await OnboardingSteps.waitForPageToBeVisible();
+    await OnboardingSteps.startOnboarding();
+    await OnboardingSteps.chooseToSetupLedger();
+    await OnboardingSteps.selectYourDevice("NANO X");
+    await OnboardingSteps.chooseToConnectYourNano();
+    await OnboardingSteps.verifyContentsOfBoxAreChecked();
+    await OnboardingSteps.chooseToPairMyNano();
+    await OnboardingSteps.selectPairWithBluetooth();
+    await OnboardingSteps.addDeviceViaBluetooth();
+    await OnboardingSteps.openLedgerLive();
 
-  describe("Nano Blue", () => {
-    it.todo("should run through Nano blue onboarding");
+    await PortfolioPage.waitForPageToBeVisible();
+    await PortfolioPage.emptyPortfolioIsVisible();
   });
 });

@@ -11,6 +11,7 @@ import api from "./api";
 import type { AppManifest } from "../types";
 import { initializeLocalManifest } from "./helpers";
 
+// @ts-expect-error TODO: Investigate? Monorepo caught this error
 const PlatformAppContext = createContext<PlatformAppContextType>({});
 const initialState: State = {
   localManifests: initializeLocalManifest(),

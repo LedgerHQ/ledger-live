@@ -1639,6 +1639,34 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  moonbeam: {
+    type: "CryptoCurrency",
+    id: "moonbeam",
+    coinType: 60,
+    name: "Moonbeam",
+    managerAppName: "Moonbeam",
+    ticker: "GLMR",
+    scheme: "moonbeam",
+    color: "#3D1D5A",
+    family: "ethereum",
+    units: [
+      {
+        name: "GLMR",
+        code: "GLMR",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 1284,
+    },
+    explorerViews: [
+      {
+        tx: "https://moonbeam.moonscan.io/tx/$hash",
+        address: "https://moonbeam.moonscan.io/address/$address",
+        token: "https://moonbeam.moonscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   moonriver: {
     type: "CryptoCurrency",
     id: "moonriver",
@@ -2527,6 +2555,31 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
         address: "https://www.mintscan.io/osmosis/account/$address",
+      },
+    ],
+  },
+  shyft: {
+    type: "CryptoCurrency",
+    id: "shyft",
+    coinType: 7341,
+    name: "Shyft",
+    managerAppName: "Shyft",
+    ticker: "SHFT",
+    scheme: "shfyt",
+    color: "#662c5e",
+    family: "shyft",
+    blockAvgTime: 5,
+    units: [
+      {
+        name: "SHFT",
+        code: "SHFT",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://bx.shyft.network/tx/$hash",
+        address: "https://bx.shyft.network/address/$address",
       },
     ],
   },

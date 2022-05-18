@@ -20,6 +20,8 @@ jobs:
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     strategy:
@@ -46,6 +48,8 @@ jobs:
               return "windows"
             }
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -66,7 +70,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
-        run: npx playwright install-deps
+        run: npx @playwright/test install-deps
       - name: Build dependencies
         run: pnpm turbo run ledger-live-desktop#build:testing
       - name: Run code checkers [Linux]
@@ -85,7 +89,7 @@ jobs:
         shell: bash
       - name: upload diffs to imgur
         if: always() && !cancelled()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
         id: imgur
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -155,7 +159,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
       - name: edit comment

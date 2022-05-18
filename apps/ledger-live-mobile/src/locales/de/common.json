@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "Unzureichender Saldo auf dem übergeordneten Konto"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "Kontostand darf nicht unter {{minimumAmount}} liegen"
     },
@@ -1750,7 +1753,8 @@
       "sectionLabel": "Aufgehobene Delegierung(en)"
     },
     "nft": {
-      "receiveNft": "NFT erhalten"
+      "receiveNft": "NFT erhalten",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1900,6 +1904,13 @@
         "title": "Token ausblenden",
         "desc": "Diese Aktion blendet alle <1><0>{tokenName}</0></1> Konten aus, Sie können sie mit <3>Einstellungen > Konten</3> wieder einblenden.",
         "confirm": "Token ausblenden"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "Krypto-Vermögenswerte",
@@ -3928,6 +3939,20 @@
     "service": "Allgemeine Geschäftsbedingungen",
     "subTitle": "Bitte nehmen Sie sich etwas Zeit, um unsere Nutzungsbedingungen und Datenschutzrichtlinien zu lesen"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "Weiter"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "Kaufen",
@@ -4183,7 +4208,7 @@
       "title": "Aufteilung"
     },
     "operations": {
-      "title": "Vorgänge"
+      "title": "Transaction history"
     }
   }
 }

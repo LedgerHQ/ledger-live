@@ -134,7 +134,7 @@ jobs:
 
             fs.writeFileSync(`./images.json`, JSON.stringify(result, null, 2));
       - name: prepare slack message
-        uses: ledgerhq/ledger-live/tools/actions/generate-slack-screenshots-diff@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/generate-slack-screenshots-diff@develop
         with:
           images: images.json
           workspace: ${{ github.workspace }}

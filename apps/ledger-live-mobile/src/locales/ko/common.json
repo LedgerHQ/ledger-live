@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "상위 계정의 잔액이 부족합니다"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "잔액은 {{minimumAmount}} 미만일 수 없습니다"
     },
@@ -1750,7 +1753,8 @@
       "sectionLabel": "위임 해제"
     },
     "nft": {
-      "receiveNft": "NFT 수령"
+      "receiveNft": "NFT 수령",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1900,6 +1904,13 @@
         "title": "토큰 숨기기",
         "desc": "이 작업은 모든 <1><0>{tokenName}</0></1>의 계정을 숨기며 <3>설정 > 계정</3>을 사용하여 다시 표시할 수 있습니다.",
         "confirm": "토큰 숨기기"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "암호화폐",
@@ -3928,6 +3939,20 @@
     "service": "이용 약관",
     "subTitle": "시간을 내어 이용 약관과 개인 정보 보호 정책을 살펴보세요"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "계속"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "매수",
@@ -4183,7 +4208,7 @@
       "title": "할당"
     },
     "operations": {
-      "title": "운영"
+      "title": "Transaction history"
     }
   }
 }

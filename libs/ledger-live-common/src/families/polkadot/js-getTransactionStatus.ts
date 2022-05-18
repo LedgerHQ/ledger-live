@@ -36,6 +36,7 @@ import {
   calculateAmount,
   getMinimumAmountToBond,
   getMinimumBalance,
+  EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
 } from "./logic";
 import { isValidAddress } from "./address";
 import { getCurrentPolkadotPreloadData } from "./preload";
@@ -78,6 +79,12 @@ const getSendTransactionStatus = async (
   const leftover = a.spendableBalance.minus(totalSpent);
 
   if (
+    a.spendableBalance.lte(
+      EXISTENTIAL_DEPOSIT.plus(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN)
+    )
+  ) {
+    errors.amount = new NotEnoughBalance();
+  } else if (
     minimumBalanceExistential.gt(0) &&
     leftover.lt(minimumBalanceExistential) &&
     leftover.gt(0)

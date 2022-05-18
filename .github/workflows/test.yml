@@ -24,6 +24,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
@@ -66,6 +68,13 @@ jobs:
       - name: Build and Test affected libraries
         run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]"
         shell: bash
+      - name: (On Failure) Upload live-common snapshots and source
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          path: |
+            libs/ledger-live-common/src
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v3
         if: failure()
@@ -74,3 +83,8 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
+      - name: Test coverage
+        if: always()
+        run: npx codecov -F test
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

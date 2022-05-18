@@ -18,7 +18,7 @@ concurrency:
 jobs:
   start-runner:
     name: "start ec2 instance"
-    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@monorepo-setup
+    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
       instance-type: c5.4xlarge
     secrets:
@@ -28,7 +28,7 @@ jobs:
     name: "stop ec2 instance"
     if: ${{ always() && needs.start-runner.result == 'success' }}
     needs: [start-runner, build-mobile-app-android]
-    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
+    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
@@ -89,7 +89,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       # - name: Get short SHA

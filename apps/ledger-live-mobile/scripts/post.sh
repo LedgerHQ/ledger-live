@@ -8,6 +8,10 @@ cd $(dirname $0)/..
 # patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
 patch -N -i scripts/patches/RNFastCrypto.h.patch node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
 
+# patching transitive gradle dependency
+patch -N -i ./scripts/patches/react-native-video.2575.patch node_modules/react-native-video/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java
+patch -N -i ./scripts/patches/react-native-video+5.2.0.patch node_modules/react-native-video/android-exoplayer/build.gradle
+
 rm -f 'third-party/glog-0.3.5/test-driver'
 
 # Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
@@ -18,7 +22,6 @@ rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 # issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
 # manually shim
 # sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
-
 
 # Create the dev .env file with APP_NAME if it doesn't exist
 if ! [ -f .env ]; then

@@ -13,7 +13,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, nominate, bond, claimReward",
+    desc: "mode of transaction: send, nominate, bond, claimReward, withdrawUnbonded",
   },
   {
     name: "fees",
