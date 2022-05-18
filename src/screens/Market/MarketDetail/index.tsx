@@ -30,6 +30,9 @@ import MarketGraph from "./MarketGraph";
 import { FabMarketActions } from "../../../components/FabActions";
 import { NavigatorName, ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../../components/TabBar/TabBarSafeAreaView";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -154,8 +157,9 @@ function MarketDetail({
   const [hoveredItem, setHoverItem] = useState<any>(null);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
+    <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>
       <ScrollContainerHeader
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         TopLeftSection={<BackButton navigation={navigation} />}
         MiddleSection={
           <Flex
@@ -267,7 +271,7 @@ function MarketDetail({
         ) : null}
         <MarketStats currency={currency} counterCurrency={counterCurrency} />
       </ScrollContainerHeader>
-    </SafeAreaView>
+    </TabBarSafeAreaView>
   );
 }
 

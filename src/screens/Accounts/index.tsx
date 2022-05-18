@@ -8,7 +8,6 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { useRefreshAccountsOrdering } from "../../actions/general";
@@ -29,6 +28,9 @@ import AddAccount from "./AddAccount";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../components/TabBar/TabBarSafeAreaView";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -110,7 +112,10 @@ function Accounts({ navigation, route }: Props) {
         renderItem={renderItem}
         keyExtractor={(i: any) => i.id}
         ListEmptyComponent={<NoAccounts />}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: TAB_BAR_SAFE_HEIGHT,
+        }}
       />
     ),
     [renderItem],
@@ -146,10 +151,7 @@ function Accounts({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView
-      style={{ flex: 1 }}
-      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
         <Flex p={6} flexDirection="row" alignItems="center">
@@ -208,7 +210,7 @@ function Accounts({ navigation, route }: Props) {
           account={account}
         />
       </Flex>
-    </SafeAreaView>
+    </TabBarSafeAreaView>
   );
 }
 

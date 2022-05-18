@@ -400,6 +400,9 @@
     "NotEnoughBalanceInParentAccount": {
       "title": "رصيد غير كافٍ في الحساب الرئيسي"
     },
+    "QuantityNeedsToBePositive": {
+      "title": "Quantity needs to be at least 1"
+    },
     "NotEnoughSpendableBalance": {
       "title": "لا يمكن للحساب أن يقل عن {{minimumAmount}}"
     },
@@ -1750,7 +1753,8 @@
       "sectionLabel": "إلغاء التفويض (إلغاء التفويضات)"
     },
     "nft": {
-      "receiveNft": "قم بتلقي NFT (رموز غير قابلة للاستبدال)"
+      "receiveNft": "قم بتلقي NFT (رموز غير قابلة للاستبدال)",
+      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     }
   },
   "accounts": {
@@ -1900,6 +1904,13 @@
         "title": "إخفاء رمز التوكن",
         "desc": "سيخفي هذا الإجراء جميع حسابات <1><0>{tokenName}</0></1>، ويمكنك إظهارها مرة أخرى باستخدام <3>الإعدادات > الحسابات</3>.",
         "confirm": "إخفاء رمز التوكن"
+      },
+      "hideNFTCollectionCTA": "Hide collection",
+      "hiddenNFTCollections": "Hidden NFT collections",
+      "hiddenNFTCollectionsDesc": "You can hide tokens by going to the account then long-pressing on a collection and selecting \"Hide Collection\".",
+      "hideNFTCollectionModal": {
+        "title": "Hide Collection?",
+        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "الأصول المشفرة",
@@ -3928,6 +3939,20 @@
     "service": "شروط الخدمة",
     "subTitle": "Please take some time to review our Terms of service and Privacy Policy"
   },
+  "updatedTerms": {
+    "title": "Terms of Use Update",
+    "body": {
+      "intro": "Hi! We've updated our Ledger Live Terms of Use with the aim to make them clearer and to reflect Ledger Live's newly available services and features. Key updates are focused on:",
+      "bulletPoints": [
+        "Clarifying what services are available and how they work",
+        "Explaining how fees for Services work",
+        "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"
+      ],
+      "agreement": "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
+    },
+    "link": "Terms of Use",
+    "cta": "متابعة"
+  },
   "exchange": {
     "buy": {
       "tabTitle": "شراء",
@@ -4183,7 +4208,7 @@
       "title": "Allocation"
     },
     "operations": {
-      "title": "Operations"
+      "title": "Transaction history"
     }
   }
 }
