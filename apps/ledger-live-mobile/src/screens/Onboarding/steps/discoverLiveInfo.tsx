@@ -30,10 +30,6 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
-const ChildContainer = styled(Flex).attrs({
-  flex: 1,
-})``;
-
 const Item = ({
   title,
   imageProps,
@@ -66,7 +62,7 @@ const Item = ({
   }, [navigation]);
 
   return (
-    <ChildContainer backgroundColor={`neutral.c20`}>
+    <Flex flex={1} backgroundColor={`neutral.c20`}>
       <Svg width="100%" height={102} preserveAspectRatio="xMinYMin slice">
         <Defs>
           <LinearGradient
@@ -114,7 +110,7 @@ const Item = ({
           </Button>
         </Box>
       )}
-    </ChildContainer>
+    </Flex>
   );
 };
 
