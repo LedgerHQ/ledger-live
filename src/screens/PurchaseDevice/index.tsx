@@ -15,7 +15,7 @@ import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvid
 
 // const defaultURL = urls.buyNanoX;
 const defaultURL =
-  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=16af786e8c3e41d054096a00e8e3aa4f148f45007b0dd8ea43181ea9fcefcc69&preview_theme_id=129096581308&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
+  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=f75e14afa4723d02d7b736f4786cbfcc73176f6f6bc65d786081e68f9360c1bf&preview_theme_id=129396441276&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
 
 const PurchaseDevice = () => {
   const { t } = useTranslation();
@@ -42,6 +42,8 @@ const PurchaseDevice = () => {
         currency: data.value?.currency,
       },
     });
+    // TODO: Dispatch redux event if data.type === "ledgerLiveOrderSuccess" in
+    // order to update UI
   }, []);
 
   const handleMessage = useCallback(
