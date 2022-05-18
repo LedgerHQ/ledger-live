@@ -78,6 +78,7 @@ import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Learn from "../../screens/Learn";
 import ManagerMain from "../../screens/Manager/Manager";
+import ReadOnlyAccounts from "../../screens/Accounts/ReadOnlyAccounts";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
