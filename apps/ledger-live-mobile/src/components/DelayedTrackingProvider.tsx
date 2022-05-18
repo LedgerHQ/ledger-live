@@ -43,11 +43,7 @@ export const pushDelayedTrackingEvent = async (
   event: TrackingEvent,
 ): Promise<void> => {
   try {
-    const events = await getDelayedEvents();
-
-    if (!events) {
-      return;
-    }
+    const events = (await getDelayedEvents()) || [];
 
     events.push(event);
 
