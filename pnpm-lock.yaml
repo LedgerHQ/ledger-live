@@ -835,7 +835,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/json-bignumber': ^1.1.0
-      '@ledgerhq/live-app-sdk': ^0.6.1
+      '@ledgerhq/live-app-sdk': github:LedgerHQ/live-app-sdk#adding-token-support
       '@ledgerhq/logs': workspace:^
       '@polkadot/types': 8.1.1
       '@polkadot/types-known': 8.1.1
@@ -918,6 +918,7 @@ importers:
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
+      minimatch: ^5.1.0
       numeral: ^2.0.6
       object-hash: ^2.2.0
       performance-now: ^2.1.0
@@ -988,7 +989,7 @@ importers:
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/json-bignumber': 1.1.0
-      '@ledgerhq/live-app-sdk': 0.6.1
+      '@ledgerhq/live-app-sdk': github.com/LedgerHQ/live-app-sdk/78d35797cd79183cc5a018a86a99d93b6e59c05c
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.1.1
       '@polkadot/types-known': 8.1.1
@@ -1041,6 +1042,7 @@ importers:
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
+      minimatch: 5.1.0
       numeral: 2.0.6
       object-hash: 2.2.0
       performance-now: 2.1.0
@@ -9582,13 +9584,6 @@ packages:
     resolution: {integrity: sha512-FxWFC3UrYF077OV8eXLZ+2ymnr0IEVICdBk5SgplcIM1T4aZWMAJ+KvCVIxUB+DirygBaCYeUwWBrs5twxHUXA==}
     dependencies:
       bignumber.js: 9.0.2
-    dev: false
-
-  /@ledgerhq/live-app-sdk/0.6.1:
-    resolution: {integrity: sha512-pGSNsTIg/K3P5xrj9n50Lmb6/sILh/7XrZjMsJA5HDTOYfbhWuYNOXtmDgaSjEO5vkI2YrU2I49VoE2XbwpEwg==}
-    dependencies:
-      bignumber.js: 9.0.2
-      json-rpc-2.0: 1.1.0
     dev: false
 
   /@ledgerhq/logs/5.50.0:
@@ -19003,7 +18998,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -19011,7 +19006,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -19026,7 +19021,7 @@ packages:
   /axios/0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -31226,7 +31221,7 @@ packages:
       pretty-format: 27.5.1
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_sihq2egcoz3xk6sc4vk74xvt4u
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -33357,10 +33352,6 @@ packages:
     resolution: {integrity: sha512-tegZKneDQjWintJS5Zlw8xNvJK0/xq4sct2M5AgfFmcCJFMjvrLgk1noH7OPfFgEQ+ScueuWdaGfikCPr+qBtg==}
     dev: false
 
-  /json-rpc-2.0/1.1.0:
-    resolution: {integrity: sha512-A4v62rLgwC2U+G3hA1PKRgAXKS55ItTtjUJVbIq68yccD+AUJZSdjayxd0PLQD8i3ustyLvvaYKW6+DglScrjA==}
-    dev: false
-
   /json-schema-deref-sync/0.13.0:
     resolution: {integrity: sha512-YBOEogm5w9Op337yb6pAT6ZXDqlxAsQCanM3grid8lMWNxRJO/zWEJi3ZzqDL8boWfwhTFym5EFrNgWwpqcBRg==}
     engines: {node: '>=6.0.0'}
@@ -35219,24 +35210,6 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
-    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-core: 0.67.0_metro@0.67.0
-      metro-runtime: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-    transitivePeerDependencies:
-      - metro
-
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -35510,7 +35483,7 @@ packages:
       '@babel/parser': 7.17.10
       '@babel/types': 7.17.10
       babel-preset-fbjs: 3.4.0_@babel+core@7.17.10
-      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro: 0.67.0
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -35583,68 +35556,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - supports-color
-      - utf-8-validate
-
-  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
-    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
-    hasBin: true
-    dependencies:
-      '@babel/code-frame': 7.16.7
-      '@babel/core': 7.17.10
-      '@babel/generator': 7.17.10
-      '@babel/parser': 7.17.10
-      '@babel/template': 7.16.7
-      '@babel/traverse': 7.17.10
-      '@babel/types': 7.17.10
-      absolute-path: 0.0.0
-      accepts: 1.3.8
-      async: 2.6.4
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 2.6.9
-      denodeify: 1.2.1
-      error-stack-parser: 2.0.7
-      fs-extra: 1.0.0
-      graceful-fs: 4.2.10
-      hermes-parser: 0.5.0
-      image-size: 0.6.3
-      invariant: 2.2.4
-      jest-haste-map: 27.5.1_metro@0.67.0
-      jest-worker: 26.6.2_metro@0.67.0
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-cache-key: 0.67.0
-      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
-      metro-core: 0.67.0_metro@0.67.0
-      metro-hermes-compiler: 0.67.0
-      metro-inspector-proxy: 0.67.0
-      metro-minify-uglify: 0.67.0
-      metro-react-native-babel-preset: 0.67.0
-      metro-resolver: 0.67.0
-      metro-runtime: 0.67.0
-      metro-source-map: 0.67.0
-      metro-symbolicate: 0.67.0
-      metro-transform-plugins: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-      mime-types: 2.1.35
-      mkdirp: 0.5.6
-      node-fetch: 2.6.7
-      nullthrows: 1.1.1
-      rimraf: 2.7.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      strip-ansi: 6.0.1
-      temp: 0.8.3
-      throat: 5.0.0
-      ws: 7.5.7
-      yargs: 15.4.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -35867,6 +35778,13 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       brace-expansion: 2.0.1
+
+  /minimatch/5.1.0:
+    resolution: {integrity: sha512-9TPBGGak4nHfGZsPBohm9AWg6NoT7QTCehS3BIJABslyZbzxfV78QM2Y6+i741OPZIafFAaiiEMh5OyIrJPgtg==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.1
+    dev: false
 
   /minimist-options/4.1.0:
     resolution: {integrity: sha512-Q4r8ghd80yhO/0j1O3B2BjweX3fiHg9cdOwjJd2J76Q135c+NDxGCqdYKQ1SKBuFfgWbAUzBfvYjPUEeNgqN1A==}
@@ -48831,6 +48749,17 @@ packages:
 
   /zxcvbn/4.4.2:
     resolution: {integrity: sha1-KOwXzwl0PtyrBW3dixsGJizHPDA=}
+    dev: false
+
+  github.com/LedgerHQ/live-app-sdk/78d35797cd79183cc5a018a86a99d93b6e59c05c:
+    resolution: {tarball: https://codeload.github.com/LedgerHQ/live-app-sdk/tar.gz/78d35797cd79183cc5a018a86a99d93b6e59c05c}
+    name: '@ledgerhq/live-app-sdk'
+    version: 0.5.0
+    prepare: true
+    requiresBuild: true
+    dependencies:
+      bignumber.js: 9.0.2
+      json-rpc-2.0: 0.2.19
     dev: false
 
   github.com/bitcoinjs/bip39/d8ea080a18b40f301d4e2219a2991cd2417e83c2:

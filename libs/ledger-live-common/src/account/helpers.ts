@@ -8,6 +8,7 @@ import type {
   SubAccount,
   TokenCurrency,
   TokenAccount,
+  ChildAccount,
 } from "../types";
 import { getEnv } from "../env";
 import { encodeTokenAccountId } from "./accountId";
@@ -26,6 +27,7 @@ export const getMainAccount = (
   invariant(mainAccount, "an account is expected");
   return mainAccount as Account;
 };
+
 export const getAccountCurrency = (account: AccountLike) => {
   switch (account.type) {
     case "Account":
@@ -39,6 +41,7 @@ export const getAccountCurrency = (account: AccountLike) => {
       throw new Error("invalid account.type=" + (account as AccountLike).type);
   }
 };
+
 export const getAccountUnit = (account: AccountLike): Unit => {
   switch (account.type) {
     case "Account":
@@ -54,6 +57,7 @@ export const getAccountUnit = (account: AccountLike): Unit => {
       throw new Error("invalid account.type=" + (account as AccountLike).type);
   }
 };
+
 export const getAccountName = (account: AccountLike): string => {
   switch (account.type) {
     case "Account":
@@ -67,6 +71,7 @@ export const getAccountName = (account: AccountLike): string => {
       throw new Error("invalid account.type=" + (account as AccountLike).type);
   }
 };
+
 export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
   switch (account.type) {
     case "Account":
@@ -80,6 +85,7 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
       throw new Error("invalid account.type=" + (account as AccountLike).type);
   }
 };
+
 export const isAccountEmpty = (a: AccountLike): boolean => {
   if (
     a.type === "Account" &&
@@ -95,6 +101,7 @@ export const isAccountEmpty = (a: AccountLike): boolean => {
     a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
+
 export function areAllOperationsLoaded(account: AccountLike): boolean {
   if (account.operationsCount !== account.operations.length) {
     return false;
@@ -106,8 +113,10 @@ export function areAllOperationsLoaded(account: AccountLike): boolean {
 
   return true;
 }
+
 export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
   a.balance.gt(100);
+
 // in future, could be a per currency thing
 // clear account to a bare minimal version that can be restored via sync
 // will preserve the balance to avoid user panic
@@ -153,12 +162,14 @@ export function clearAccount<T extends AccountLike>(account: T): T {
   delete copy.nfts;
   return copy as T;
 }
+
 export function findSubAccountById(
   account: Account,
   id: string
 ): SubAccount | null | undefined {
   return (account.subAccounts || []).find((a) => a.id === id);
 }
+
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
 export function listSubAccounts(account: Account): SubAccount[] {
   const accounts = account.subAccounts || [];
@@ -169,9 +180,11 @@ export function listSubAccounts(account: Account): SubAccount[] {
 
   return accounts;
 }
+
 export type FlattenAccountsOptions = {
   enforceHideEmptySubAccounts?: boolean;
 };
+
 export function flattenAccounts(
   topAccounts: AccountLikeArray,
   o: FlattenAccountsOptions = {}
@@ -195,16 +208,19 @@ export function flattenAccounts(
 
   return accounts;
 }
+
 export const shortAddressPreview = (addr: string, target = 20): string => {
   const slice = Math.floor((target - 3) / 2);
   return addr.length < target - 3
     ? addr
     : `${addr.slice(0, slice)}...${addr.slice(addr.length - slice)}`;
 };
+
 export const isAccountBalanceUnconfirmed = (account: AccountLike): boolean =>
   account.pendingOperations.some(
     (op) => !account.operations.find((o) => o.hash === op.hash)
   ) || account.operations.some((op) => !op.blockHeight);
+
 export const isUpToDateAccount = (account: Account | null | undefined) => {
   if (!account) return true;
   const { lastSyncDate, currency } = account;
@@ -216,6 +232,7 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
     blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
   return !outdated;
 };
+
 export const getVotesCount = (
   account: AccountLike,
   parentAccount?: Account | null | undefined
@@ -233,6 +250,7 @@ export const getVotesCount = (
 
   return 0;
 };
+
 export const makeEmptyTokenAccount = (
   account: Account,
   token: TokenCurrency
@@ -348,3 +366,36 @@ export const findTokenAccountByCurrency = (
 
   return null; // else return nothing
 };
+
+export function isTokenAccount(account: AccountLike): account is TokenAccount {
+  return account.type === "TokenAccount";
+}
+
+export function isChildAccount(account: AccountLike): account is ChildAccount {
+  return account.type === "ChildAccount";
+}
+
+export function isSubAccount(account: AccountLike): account is SubAccount {
+  return isTokenAccount(account) || isChildAccount(account);
+}
+
+export function getParentAccount(
+  account: AccountLike,
+  accounts: AccountLike[]
+): Account {
+  switch (account.type) {
+    case "Account":
+      return account;
+    case "TokenAccount":
+    case "ChildAccount": {
+      const parentAccount = accounts.find((a) => a.id == account.parentId);
+      if (!parentAccount) {
+        throw new Error(
+          "No 'parentAccount' account provided for token account"
+        );
+      }
+
+      return parentAccount as Account;
+    }
+  }
+}
