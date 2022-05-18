@@ -1,5 +1,4 @@
 const path = require("path");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 
 const babelConfig = {
@@ -27,20 +26,14 @@ const babelConfig = {
 };
 
 module.exports = {
+  stats: "errors-only",
   target: "electron-renderer",
   entry: ["./src/swapConnectWebviewPreloader/index.js"],
   output: {
     path: path.resolve(__dirname, ".webpack"),
     filename: "swapConnectWebviewPreloader.bundle.js",
   },
-  optimization: {
-    minimize: false,
-  },
-  plugins: [
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cacheSwapConnectWebviewPreloader"),
-    }),
-  ],
+  plugins: [],
   module: {
     rules: [
       {
@@ -75,6 +68,7 @@ module.exports = {
     ],
   },
   resolve: {
+    modules: ["node_modules", path.resolve(__dirname, "node_modules")],
     alias: {
       "~": path.resolve(__dirname, "src"),
     },

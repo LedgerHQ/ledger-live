@@ -915,6 +915,7 @@ importers:
       jest: ^27.5.1
       jest-file-snapshot: ^0.5.0
       json-rpc-2.0: ^0.2.19
+      jwt-decode: ^3.1.2
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
@@ -1038,6 +1039,7 @@ importers:
       invariant: 2.2.4
       isomorphic-ws: 4.0.1_ws@7.5.7
       json-rpc-2.0: 0.2.19
+      jwt-decode: 3.1.2
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
@@ -33597,6 +33599,10 @@ packages:
     dependencies:
       jwa: 1.4.1
       safe-buffer: 5.2.1
+    dev: false
+
+  /jwt-decode/3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /keccak/1.4.0:
