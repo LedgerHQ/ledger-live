@@ -64,7 +64,11 @@ const Item = ({ label }: { label: string }) => (
 
 const Default = (): JSX.Element => {
   return (
-    <Carousel>
+    <Carousel
+      scrollViewProps={{
+        style: { width: "100%" },
+      }}
+    >
       <Item label="primary" />
       <Item label="neutral" />
       <Item label="success" />
@@ -76,7 +80,14 @@ const Default = (): JSX.Element => {
 
 const AutoDelay = (): JSX.Element => {
   return (
-    <Carousel autoDelay={2000}>
+    <Carousel
+      autoDelay={2000}
+      scrollViewProps={{
+        style: {
+          width: "100%",
+        },
+      }}
+    >
       <Item label="primary" />
       <Item label="neutral" />
       <Item label="success" />
@@ -92,10 +103,10 @@ const WithProps = (): JSX.Element => {
     <Carousel
       containerProps={{
         p: 10,
-        backgroundColor: "neutral.c20",
+        backgroundColor: "red",
       }}
       scrollViewProps={{
-        style: { borderRadius: 20 },
+        style: { borderRadius: 20, width: "100%" },
       }}
       slideIndicatorContainerProps={{
         p: 4,
@@ -118,7 +129,15 @@ const Controlled = (): JSX.Element => {
 
   return (
     <>
-      <Carousel activeIndex={forceActiveIndex} onChange={setCarouselIndex}>
+      <Carousel
+        activeIndex={forceActiveIndex}
+        onChange={setCarouselIndex}
+        scrollViewProps={{
+          style: {
+            width: "100%",
+          },
+        }}
+      >
         <Item label="primary" />
         <Item label="neutral" />
         <Item label="success" />
@@ -147,6 +166,11 @@ const CustomIndicator = (): JSX.Element => {
       IndicatorComponent={StoriesIndicator}
       onOverflow={action("onOverflow")}
       onChange={action("onChange")}
+      scrollViewProps={{
+        style: {
+          width: "100%",
+        },
+      }}
       slideIndicatorContainerProps={{
         position: "absolute",
         top: 0,

@@ -40,57 +40,39 @@ export interface StoriesIndicatorProps extends FlexBoxProps {
   duration?: number;
 }
 
-const ActiveBar = styled.View<{ full?: boolean }>`
+const ProgressBar = styled.View`
   background-color: ${(p) => p.theme.colors.primary.c100};
   height: 100%;
   width: 100%;
-  border-radius: 8px;
+  border-radius: ${(p) => p.theme.radii[2]}px;
 `;
 
-const AnimatedBar = Animated.createAnimatedComponent(ActiveBar);
+const AnimatedProgressBar = Animated.createAnimatedComponent(ProgressBar);
 
-export const TabsContainer = styled(Flex).attrs({
-  // Avoid conflict with styled-system's size property by nulling size and renaming it
-  size: undefined,
-  flexDirection: "row",
-  alignItems: "stretch",
-})`
-  width: 100%;
-`;
-
-function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
-  const width = useSharedValue(full ? 100 : 0);
+function ActiveProgressBar({ duration }: StoryBarProps) {
+  const width = useSharedValue(0);
 
   useEffect(() => {
-    if (isActive) {
-      width.value = 100;
-    } else if (full) {
-      width.value = 0;
-    } else {
-      width.value = 0;
-    }
-  }, [isActive, full, width]);
+    width.value = 100;
+  }, [width]);
 
   const animatedStyles = useAnimatedStyle(
     () => ({
       width: withTiming(`${width.value}%`, {
-        duration: isActive ? duration || 200 : 0,
-        easing: duration ? Easing.linear : Easing.linear,
+        duration: duration || 200,
+        easing: Easing.linear,
       }),
     }),
-    [isActive, duration, full],
+    [width, duration],
   );
 
+  return <AnimatedProgressBar style={animatedStyles} />;
+}
+
+function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
   return (
-    <Flex
-      height={4}
-      backgroundColor="neutral.c50"
-      margin={"auto"}
-      borderRadius={"8px"}
-      flex={1}
-      mx={1}
-    >
-      {full ? <ActiveBar /> : <AnimatedBar style={animatedStyles} />}
+    <Flex height={4} backgroundColor="neutral.c50" margin={"auto"} borderRadius={2} flex={1} mx={1}>
+      {isActive ? <ActiveProgressBar duration={duration} /> : full ? <ProgressBar /> : null}
     </Flex>
   );
 }
@@ -98,15 +80,16 @@ function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
 function StoriesIndicator({ activeIndex, slidesLength, duration }: StoriesIndicatorProps) {
   const storiesArray = useMemo(() => new Array(slidesLength).fill(0), [slidesLength]);
   return (
-    <TabsContainer>
+    <Flex flexDirection={"row"} alignItems={"stretch"} width={"100%"}>
       {storiesArray.map((_, storyIndex) => (
         <StoryBar
+          key={storyIndex}
           full={activeIndex > storyIndex}
           isActive={activeIndex === storyIndex}
           duration={duration}
         />
       ))}
-    </TabsContainer>
+    </Flex>
   );
 }
 

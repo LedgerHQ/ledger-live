@@ -198,7 +198,6 @@ function Carousel({
         scrollEventThrottle={200}
         contentContainerStyle={{ width: `${fullWidth}%` }}
         decelerationRate="fast"
-        disableIntervalMomentum={true}
         onTouchEnd={scrollOnSidePress ? onTap : undefined}
         {...scrollViewProps}
       >
