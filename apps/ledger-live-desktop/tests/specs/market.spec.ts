@@ -7,7 +7,7 @@ import { MarketCoinPage } from "../models/MarketCoinPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-test.skip("Market", async ({ page }) => {
+test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const layout = new Layout(page);
