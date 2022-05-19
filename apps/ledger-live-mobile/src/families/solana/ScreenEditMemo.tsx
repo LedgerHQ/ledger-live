@@ -1,34 +1,36 @@
-// @flow
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { useTranslation } from "react-i18next";
-import i18next from "i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
+import { Account } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
-import KeyboardView from "../../components/KeyboardView";
+import i18next from "i18next";
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView, StyleSheet, View } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import Button from "../../components/Button";
-import { ScreenName } from "../../const";
 import TextInput from "../../components/FocusedTextInput";
-
-const forceInset = { bottom: "always" };
+import KeyboardView from "../../components/KeyboardView";
+import { ScreenName } from "../../const";
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 type RouteParams = {
-  account: Account,
-  transaction: Transaction,
+  account: Account;
+  transaction: Transaction;
 };
 
 function SolanaEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [memo, setMemo] = useState(route.params.transaction.model.uiState.memo);
+  const { model } = route.params.transaction;
+
+  invariant(model.kind === "transfer", "must be a transfer tx");
+
+  const [memo, setMemo] = useState(model.uiState.memo);
   const account = route.params.account;
 
   const onValidateText = useCallback(() => {
@@ -50,7 +52,7 @@ function SolanaEditMemo({ navigation, route }: Props) {
   }, [navigation, route.params, account, memo]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root} forceInset={{ bottom: "always" }}>
       <KeyboardView
         style={[styles.body, { backgroundColor: colors.background }]}
       >

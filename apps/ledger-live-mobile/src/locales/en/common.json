@@ -629,6 +629,15 @@
     },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "Ensure you have enough balance left for future transactions fees"
+    },
+    "SolanaTxSimulationFailedWhilePendingOp": {
+      "title": "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     }
   },
   "bluetooth": {
@@ -3820,6 +3829,23 @@
           }
         }
       }
+    }
+  },
+  "solana": {
+    "delegation": {
+      "iDelegate": "I delegate",
+      "iActivate": "I activate",
+      "iReactivate": "I reactivate",
+      "iDeactivate": "I undelegate",
+      "iWithdraw": "I withdraw",
+      "totalStake": "Total stake",
+      "commission": "Commission",
+      "stakeActivationState": "State",
+      "delegationEarn": "You can earn SOL rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "broadcastSuccessTitle": "Operation sent",
+      "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
+      "delegatedTo": "delegated to"
     }
   },
   "delegation": {
