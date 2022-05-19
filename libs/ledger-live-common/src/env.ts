@@ -141,7 +141,7 @@ const envDefinitions = {
     desc: "base url for validators.app validator list",
   },
   SOLANA_TX_CONFIRMATION_TIMEOUT: {
-    def: 30 * 1000,
+    def: 100 * 1000,
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
