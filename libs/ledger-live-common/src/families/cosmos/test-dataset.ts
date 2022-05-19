@@ -292,7 +292,7 @@ const cosmos: CurrenciesData<Transaction> = {
           expectedStatus: (a, t) => {
             invariant(t.memo === "Ledger Live", "Should have a memo");
             return {
-              errors: {},
+              errors: { amount: new AmountRequired() },
               warnings: {},
             };
           },

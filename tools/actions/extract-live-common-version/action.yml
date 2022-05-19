@@ -11,7 +11,7 @@ inputs:
     description: owner of the repo
     required: false
   ref:
-    default: master
+    default: main
     description: ref/branch/tag to look into
     required: false
 
@@ -20,5 +20,5 @@ outputs:
     description: version of LLC found in yarn.lock
 
 runs:
-  using: 'node12'
-  main: 'build/index.js'
+  using: "node12"
+  main: "build/index.js"
