@@ -2,6 +2,7 @@
     "data": {
         "SPECTRON_RUN": {
             "localStorage": {
+                "acceptedTermsVersion": "2042-01-01",
                 "experimentalFlags": "{\"EXPERIMENTAL_LANGUAGES\":true}"
             }
         },
