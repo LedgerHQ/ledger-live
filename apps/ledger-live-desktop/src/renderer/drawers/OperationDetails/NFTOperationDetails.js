@@ -12,14 +12,14 @@ import {
   HashContainer,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
-import Image from "~/renderer/screens/nft/Image";
+import Media from "~/renderer/components/Nft/Media";
 import Box from "~/renderer/components/Box";
 import {
   useNftMetadata,
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import Skeleton from "~/renderer/screens/nft/Skeleton";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 
 const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
@@ -46,7 +46,12 @@ const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
         <OpDetailsData>
           <Box horizontal alignItems="center">
             <Skeleton width={24} minHeight={24} show={show}>
-              <Image nft={nftMetadata} size={24} />
+              <Media
+                metadata={nftMetadata}
+                tokenId={operation.tokenId}
+                size={24}
+                mediaFormat="preview"
+              />
             </Skeleton>
             <Box ml={2}>
               <Skeleton width={200} barHeight={10} minHeight={32} show={show}>

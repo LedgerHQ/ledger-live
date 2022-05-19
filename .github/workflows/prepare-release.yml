@@ -62,8 +62,8 @@ jobs:
           git merge ${{ github.event.inputs.ref }}
           git push origin develop
 
-      - name: merge into master
+      - name: merge into main
         run: |
-          git checkout master
+          git checkout main
           git merge ${{ github.event.inputs.ref }}
-          git push origin master
+          git push origin main
