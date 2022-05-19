@@ -37,7 +37,7 @@ const ConfirmPinStep = ({ device }: Props) => {
       </Flex>
       <Flex
         border={1}
-        borderColor="neutral.c80"
+        borderColor="neutral.c50"
         alignSelf="stretch"
         px={6}
         pt={6}

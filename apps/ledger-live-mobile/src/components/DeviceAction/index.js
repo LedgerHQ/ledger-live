@@ -243,16 +243,6 @@ export default function DeviceAction<R, H, P>({
       });
     }
 
-    if (error.message === "Invalid channel") {
-      return renderError({
-        t,
-        navigation,
-        error: new DisconnectedDevice(),
-        colors,
-        theme,
-      });
-    }
-
     return renderError({
       t,
       navigation,
