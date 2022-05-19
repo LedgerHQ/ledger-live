@@ -14,13 +14,11 @@ import {
   flattenAccounts,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
-  currencyToPlatformCurrency,
   getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/lib/platform/converters";
 import type {
@@ -263,7 +261,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
       if (
         (account.type === "TokenAccount"
-          ? parentAccount.currency.family
+          ? parentAccount?.currency.family
           : account.currency.family) !== platformTransaction.family
       ) {
         throw new Error("Transaction family not matching account currency family");
