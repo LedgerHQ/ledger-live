@@ -27,14 +27,14 @@ jobs:
       - uses: actions/checkout@v3
         if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         with:
-          ref: ${{ github.event.inputs.ref || "release" }}
+          ref: ${{ github.event.inputs.ref || 'release' }}
           token: ${{ secrets.GH_PAT }}
 
       - name: set ref
         id: ref
         if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         run: |
-          echo "::set-output name=ref::${{ github.event.inputs.ref || "release" }}"
+          echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
       - name: set git user
         run: |
@@ -65,17 +65,17 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == "release" }}
+        if: ${{ github.ref_name == 'release' }}
         run: |
           git add .
           git commit -m ":rocket: prerelease"
       - name: commit (from hotfix branch)
-        if: ${{ github.ref_name == "hotfix" }}
+        if: ${{ github.ref_name == 'hotfix' }}
         run: |
           git add .
           git commit -m ":fire: hotfix prerelease"
       - name: commit (from ${{ steps.ref.outputs.ref }} branch)
-        if: ${{ github.ref_name != "release" || github.ref_name != "hotfix" }}
+        if: ${{ github.ref_name != 'release' || github.ref_name != 'hotfix' }}
         run: |
           git add .
           git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease"
