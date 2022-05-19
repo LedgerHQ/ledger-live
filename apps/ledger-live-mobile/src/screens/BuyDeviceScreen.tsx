@@ -74,15 +74,21 @@ export default function BuyDeviceScreen() {
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
+  // const setupDevice = useCallback(() => {
+  //   setShowWelcome(false);
+  //   setFirstTimeOnboarding(false);
+  //   navigation.navigate(NavigatorName.BaseOnboarding, {
+  //     screen: NavigatorName.Onboarding,
+  //     params: {
+  //       screen: ScreenName.OnboardingDeviceSelection,
+  //     },
+  //   });
+  // }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
+
   const setupDevice = useCallback(() => {
-    setShowWelcome(false);
-    setFirstTimeOnboarding(false);
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: {
-        screen: ScreenName.OnboardingDeviceSelection,
-      },
-    });
+    //setShowWelcome(false);
+    //setFirstTimeOnboarding(false);
+    navigation.navigate(ScreenName.PostBuyDeviceScreen);
   }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
