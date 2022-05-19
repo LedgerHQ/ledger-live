@@ -4,8 +4,11 @@ import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
+import { from } from "rxjs";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
+import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
+import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/lib/promise";
@@ -28,6 +31,7 @@ import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
+import { ScreenName, NavigatorName } from "../../const";
 
 type Props = {
   navigation: any,
@@ -44,6 +48,8 @@ type PairDevicesProps = {
 
 type RouteParams = {
   onDone?: (device: Device) => void,
+  onDoneNavigateTo: string,
+  onlySelectDeviceWithoutFullAppPairing?: Boolean,
 };
 
 type BleDevice = {
@@ -110,7 +116,26 @@ function PairDevicesInner({ navigation, route }: Props) {
         modelId: "nanoX",
         wired: false,
       };
+
+      // Pairing state for a known or unknown bluetooth device
       dispatch({ type: "pairing", payload: device });
+
+      if (route.params?.onlySelectDeviceWithoutFullAppPairing) {
+        // Sends a first request to trigger the native bluetooth pairing step
+        // (if the device is unknown to the phone) and make sure that the device
+        // is correctly paired to the phone
+        try {
+          await withDevice(device.deviceId)(t =>
+            from(getVersion(t)),
+          ).toPromise();
+        } catch (_) {
+          // Silently swwallowing error, we only want to trigger the native ble pairing step
+        }
+
+        onDone(device);
+        return;
+      }
+
       try {
         const transport = await TransportBLE.open(bleDevice);
         if (unmounted.current) return;
@@ -204,8 +229,17 @@ function PairDevicesInner({ navigation, route }: Props) {
 
   const onDone = useCallback(
     (device: Device) => {
-      navigation.goBack();
-      route.params?.onDone?.(device);
+      // To avoid passing a onDone function param that is not serializable
+      if (route.params?.onDoneNavigateTo === ScreenName.SyncOnboardingWelcome) {
+        console.log("PairDevices: 🦮 navigate directly to SyncOnboarding");
+        navigation.navigate(NavigatorName.SyncOnboarding, {
+          screen: ScreenName.SyncOnboardingWelcome,
+          params: { pairedDevice: device },
+        });
+      } else {
+        navigation.goBack();
+        route.params?.onDone?.(device);
+      }
     },
     [navigation, route],
   );
