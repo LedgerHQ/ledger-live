@@ -1,14 +1,8 @@
-name: Bot Staging Explorer 'Ethereum'
+name: Bot 'Polkadot on Silicium'
 on:
-  schedule:
-  - cron: 0 8,12,16 * * 1-5
-  
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: "Which ref (branch or tag) to pull from ?"
-        required: false
-        default: develop
+  push:
+    branches:
+      - family/polkadot
 
 jobs:
   start-runner:
@@ -37,9 +31,7 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{github.event.inputs.ref}}
+      - uses: actions/checkout@v2
       - name: Retrieving coin apps
         uses: actions/checkout@v2
         with:
@@ -64,8 +56,7 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
-          SHOW_LEGACY_NEW_ACCOUNT: "1"
-          SEED: ${{ secrets.SEED2 }}
+          SEED: ${{ secrets.SEED3 }}
           BOT_REPORT_FOLDER: botreport
           VERBOSE_FILE: botreport/logs.txt
           GITHUB_SHA: ${GITHUB_SHA}
@@ -73,11 +64,13 @@ jobs:
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_WORKFLOW: ${{ github.workflow }}
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
-          SLACK_CHANNEL: explorer-bot-stg
-          BOT_FILTER_FAMILY: ethereum
-          EXPLORER: https://explorers.api-01.live.ledger-stg.com
+          SLACK_CHANNEL: ci-dot-ll
+          BOT_FILTER_FAMILY: polkadot
         run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
+      - name: Run coverage
+        if: failure() || success()
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload logs
         if: failure() || success()
         uses: actions/upload-artifact@v1
