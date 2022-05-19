@@ -6,7 +6,7 @@ import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 
-const RenderVertical = require("../../../../assets/images/devices/3DRenderVertical.png");
+const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
