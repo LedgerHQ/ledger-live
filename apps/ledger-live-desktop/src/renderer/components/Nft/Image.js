@@ -2,10 +2,9 @@
 import React from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { NFTWithMetadata } from "@ledgerhq/live-common/lib/types";
-import { centerEllipsis } from "~/renderer/styles/helpers";
-import Fallback from "~/renderer/images/nftFallback.jpg";
+import type { NFTMetadata } from "@ledgerhq/live-common/lib/types";
 import Skeleton from "./Skeleton";
+import Placeholder from "./Placeholder";
 
 /**
  * Nb: This image component can be used for small listings, large gallery rendering,
@@ -38,11 +37,11 @@ const Wrapper: ThemedComponent<{
   justify-content: center;
 
   & > *:nth-child(1) {
-    display: ${p => (p.isLoading ? "block" : "none")};
+    display: ${({ loaded, error }) => (loaded || error ? "none" : "block")};
   }
 
   & > img {
-    display: ${p => (p.isLoading ? "none" : "block")};
+    display: ${({ loaded, error }) => (loaded || error ? "block" : "none")};
     ${({ objectFit }) =>
       objectFit === "cover"
         ? `width: 100%;
@@ -55,37 +54,11 @@ const Wrapper: ThemedComponent<{
   }
 `;
 
-// TODO Figure out if we really need this once we know who creates/processes the media.
-const Gen = styled.div`
-  --hue: ${p => (p?.nft?.tokenId || "abcdefg").substr(-8) % 360};
-  background-image: url(${Fallback});
-  background-size: contain;
-  border-radius: 4px;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background-color: hsla(var(--hue), 55%, 66%, 1);
-  background-blend-mode: hard-light;
-
-  &:after {
-    display: ${p => (p.full ? "flex" : "none")}
-    content: "${p => p?.nft?.nftName || centerEllipsis(p?.nft?.tokenId || "-")}";
-    font-size: 16px;
-    font-size: 1vw;
-    color: #fff;
-    padding: 0.1vh;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: "Inter", Arial;
-    font-weight: 600;
-    width: 100%;
-    height: 100%;
-  }
-`;
-
 type Props = {
-  nft: NFTWithMetadata,
+  uri: string,
+  mediaType: string,
+  metadata: NFTMetadata,
+  tokenId: string,
   full?: boolean,
   size?: number,
   maxHeight?: number,
@@ -93,6 +66,8 @@ type Props = {
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down",
   square?: boolean,
   onClick?: (e: Event) => void,
+  setUseFallback: boolean => void,
+  isFallback: boolean,
 };
 
 type State = {
@@ -104,6 +79,7 @@ class Image extends React.PureComponent<Props, State> {
   static defaultProps = {
     full: false,
     size: 32,
+    mediaFormat: "preview",
   };
 
   state = {
@@ -112,28 +88,50 @@ class Image extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { full, size, nft, maxHeight, onClick, square = true, objectFit = "cover" } = this.props;
+    const {
+      uri,
+      metadata,
+      full,
+      size,
+      tokenId,
+      maxHeight,
+      onClick,
+      square = true,
+      objectFit = "cover",
+      setUseFallback,
+      isFallback,
+    } = this.props;
     const { loaded, error } = this.state;
 
     return (
       <Wrapper
         full={full}
         size={size}
-        loaded={loaded || error}
+        loaded={loaded}
+        error={error || !uri}
         square={square}
         maxHeight={maxHeight}
         objectFit={objectFit}
       >
         <Skeleton full />
-        {nft?.media && !error ? (
+        {uri && !error ? (
           <img
+            // This prevent a bug where the change of props from isFallback
+            // would not unbind onError and would not trigger it again in case of error
+            key={isFallback?.toString()}
             onClick={onClick}
             onLoad={() => this.setState({ loaded: true })}
-            onError={() => this.setState({ error: true })}
-            src={nft.media}
+            onError={() => {
+              if (isFallback) {
+                this.setState({ error: true });
+              } else {
+                setUseFallback(true);
+              }
+            }}
+            src={uri}
           />
         ) : (
-          <Gen nft={nft} />
+          <Placeholder tokenId={tokenId} metadata={metadata} full={full} />
         )}
       </Wrapper>
     );
