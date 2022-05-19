@@ -1,14 +1,11 @@
-name: Prerelease
+name: Prerelease Auto
 on:
-  push:
-    branches:
-      - "release"
-      - "hotfix"
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: the branch to prerelease from
-        required: true
+  workflow_run:
+    workflows:
+      - "Create release"
+    types:
+      - "completed"
+
 jobs:
   prerelease:
     name: Prerelease
@@ -17,15 +14,15 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.push != '' }}
       - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         with:
           ref: ${{ github.event.inputs.ref || 'release' }}
           token: ${{ secrets.GH_PAT }}
       - name: set ref
         id: ref
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         run: |
           echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
@@ -79,11 +76,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes (push event)
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event.push != '' }}
         run: |
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         run: |
           git push origin ${{ steps.ref.outputs.ref }} --follow-tags
 
