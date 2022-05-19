@@ -18,6 +18,7 @@
 | Elrond | EGLD | YES | elrond |
 | Ethereum | ETH | YES | ethereum |
 | Ethereum Classic | ETC | YES | ethereum_classic |
+| Filecoin | FIL | YES | filecoin |
 | Horizen | ZEN | YES | zencash |
 | Komodo | KMD | YES | komodo |
 | Litecoin | LTC | YES | litecoin |
@@ -55,7 +56,6 @@
 | Expanse | EXP | NO | expanse |
 | FIC | FIC | NO | fic |
 | Factom | FCT | NO | factom |
-| Filecoin | FIL | NO | filecoin |
 | Flow | FLOW | NO | flow |
 | GameCredits | GAME | NO | game_credits |
 | GoChain | GO | NO | gochain |
@@ -109,7 +109,11 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
+<<<<<<< HEAD
 ## Tokens (9968)
+=======
+## Tokens (9957)
+>>>>>>> ledger-live-desktop/family/filecoin
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -606,8 +610,13 @@
 | Binance Smart Chain | TEN | 0xdFF8cb622790b7F92686c722b02CaB55592f152C | Tenet |  | bsc/bep20/tenet |
 | Binance Smart Chain | FOR | 0x658A109C5900BC6d2357c87549B651670E5b0539 | The Force Token | countervalues disabled | bsc/bep20/the_force_token |
 | Binance Smart Chain | TITAN | 0xe898EDc43920F357A93083F1d4460437dE6dAeC2 | TitanSwap |  | bsc/bep20/titanswap |
+<<<<<<< HEAD
 | Binance Smart Chain | TITANO | 0x4e3cABD3AD77420FF9031d19899594041C420aeE | Titano | countervalues disabled | bsc/bep20/titano |
 | Binance Smart Chain | TITANO_ | 0xBA96731324dE188ebC1eD87ca74544dDEbC07D7f | Titano (Old) | delisted, countervalues disabled | bsc/bep20/titano_old |
+=======
+| Binance Smart Chain | TITANO | 0x4e3cABD3AD77420FF9031d19899594041C420aeE | Titano | delisted, countervalues disabled | bsc/bep20/titano_ |
+| Binance Smart Chain | TITANO_ | 0xBA96731324dE188ebC1eD87ca74544dDEbC07D7f | Titano (Old) |  | bsc/bep20/titano |
+>>>>>>> ledger-live-desktop/family/filecoin
 | Binance Smart Chain | TXL | 0x1FFD0b47127fdd4097E54521C9E2c7f0D66AafC5 | Tixl Token |  | bsc/bep20/tixl_token |
 | Binance Smart Chain | TPT | 0xECa41281c24451168a37211F0bc2b8645AF45092 | TokenPocket Token |  | bsc/bep20/tokenpocket_token |
 | Binance Smart Chain | TKO | 0x9f589e3eabe42ebC94A44727b3f3531C0c877809 | Tokocrypto Token | countervalues disabled | bsc/bep20/tokocrypto_token |
@@ -750,7 +759,11 @@
 | Ethereum | 1MT | 0xf0Bc1ae4eF7ffb126A8347D06Ac6f8AdD770e1CE | 1Million Token |  | ethereum/erc20/1million_token |
 | Ethereum | 1SG | 0x0F72714B35a366285Df85886A2eE174601292A17 | 1SG |  | ethereum/erc20/1sg |
 | Ethereum | 1WO | 0xfDBc1aDc26F0F8f8606a5d63b7D3a3CD21c22B23 | 1WO |  | ethereum/erc20/1wo |
+<<<<<<< HEAD
 | Ethereum | FST | 0x310c93dfc1C5E34CDF51678103f63C41762089CD | 1irst | delisted, countervalues disabled | ethereum/erc20/1irst |
+=======
+| Ethereum | FST | 0x310c93dfc1C5E34CDF51678103f63C41762089CD | 1irst |  | ethereum/erc20/1irst |
+>>>>>>> ledger-live-desktop/family/filecoin
 | Ethereum | T-AB1 | 0x6161f01C3E833c192504840582e935c1632d1B9d | 1stDigital-com-art-ab1 |  | ethereum/erc20/1stdigital-com-art-ab1 |
 | Ethereum | 22X | 0x0073e5E52E2B4fE218D75d994eE2B3c82f9C87EA | 22x Fund |  | ethereum/erc20/22x_fund |
 | Ethereum | 2CRZ | 0x2C9C19cE3b15ae77C6d80aEc3C1194Cfd6F7F3fA | 2CrazyToken |  | ethereum/erc20/2crazytoken |
@@ -5777,7 +5790,11 @@
 | Ethereum | TSW | 0x6B87999bE87358065bBdE41e8a0fe0B7b1cd2514 | TeslaWatt |  | ethereum/erc20/teslawatt |
 | Ethereum | TESLF | 0x2d5Bed63B0fE325Ed3B865Ae2cdAa3649eB25461 | Teslafan |  | ethereum/erc20/teslafan |
 | Ethereum | TSR | 0x58959E0C71080434f237bD42d07Cd84B74CeF438 | Tesra AI Supernet |  | ethereum/erc20/tesra_ai_supernet |
+<<<<<<< HEAD
 | Ethereum | TSLA | 0x110FE5f21C1EDd4F03a6e0DE0D96D0c2eED0B9CC | Tessla |  | ethereum/erc20/tessla |
+=======
+| Ethereum | TSLA | 0x110FE5f21C1EDd4F03a6e0DE0D96D0c2eED0B9CC | Tessla | countervalues disabled | ethereum/erc20/tessla |
+>>>>>>> ledger-live-desktop/family/filecoin
 | Ethereum | XAUT_ | 0x4922a015c4407F87432B179bb209e125432E4a2A | Tether Gold (old) |  | ethereum/erc20/gold_tether |
 | Ethereum | USDT | 0xdAC17F958D2ee523a2206206994597C13D831ec7 | Tether USD |  | ethereum/erc20/usd_tether__erc20_ |
 | Ethereum | TAL | 0x375A08cE3a460F20BbaFd282Be1E3579a2c31F41 | Thaler |  | ethereum/erc20/thaler |
@@ -7116,7 +7133,10 @@
 | Polygon | MVI | 0xfe712251173A2cd5F5bE2B46Bb528328EA3565E1 | Metaverse Index (PoS) |  | polygon/erc20/metaverse_index_(pos) |
 | Polygon | MOVE | 0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC | Mover |  | polygon/erc20/mover |
 | Polygon | MYST | 0x1379E8886A944d2D9d440b3d88DF536Aea08d9F3 | Mysterium (PoS) |  | polygon/erc20/mysterium_(pos) |
+<<<<<<< HEAD
 | Polygon | CHAMP | 0x8f9E8e833A69Aa467E42c46cCA640da84DD4585f | NFT Champions |  | polygon/erc20/nft_champions |
+=======
+>>>>>>> ledger-live-desktop/family/filecoin
 | Polygon | WRLD | 0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9 | NFT Worlds |  | polygon/erc20/nft_worlds |
 | Polygon | NAKA | 0x311434160D7537be358930def317AfB606C0D737 | Nakamoto.Games |  | polygon/erc20/nakamoto.games |
 | Polygon | NPX | 0x106035DEDcA635d75d6Ff05F98F25916829eDB77 | NapoleonX |  | polygon/erc20/napoleonx |
