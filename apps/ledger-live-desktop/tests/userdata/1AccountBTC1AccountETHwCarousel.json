@@ -1,6 +1,6 @@
 {
     "data": {
-        "SPECTRON_RUN": {
+        "PLAYWRIGHT_RUN": {
             "localStorage": {
                 "acceptedTermsVersion": "2042-01-01"
             }
