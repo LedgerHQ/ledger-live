@@ -1,20 +1,25 @@
 // @flow
 import React from "react";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
 import styled from "styled-components";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { layout, space } from "styled-system";
-type Props = {
+
+type OwnProps = {
   width?: number,
   minHeight?: number,
   barHeight?: number,
   full?: boolean,
   mt?: any,
-  status?: "loading" | "loaded",
   children?: React$Node,
   show?: boolean,
+};
+
+type Props = {
+  ...OwnProps,
+  alwaysShowSkeletons: boolean,
 };
 
 const Wrapper: ThemedComponent<{}> = styled.div`
@@ -32,6 +37,7 @@ const Item: ThemedComponent<{}> = styled.div.attrs(({ state }) => ({
   display: block;
   grid-column: 1/2;
   grid-row: 1/2;
+  min-width: ${p => (p.width ? p.width + "px" : "auto")};
 
   &.skeleton-enter {
     opacity: 0;
@@ -91,23 +97,38 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const Skeleton = ({ width, barHeight, minHeight, full, children, status, mt, show }: Props) => {
-  const alwaysShowSkeletons = useSelector(alwaysShowSkeletonsSelector);
-  const isSkeletonVisible = show || alwaysShowSkeletons;
-  const content = isSkeletonVisible ?? (isSkeletonVisible || !children) ? "" : children;
-  const key = content ? "content" : "holder";
+const mapStateToProps = state => ({
+  alwaysShowSkeletons: alwaysShowSkeletonsSelector(state),
+});
 
-  return (
-    <Wrapper minHeight={minHeight} full={full} mt={mt}>
-      <TransitionGroup component={null}>
-        <CSSTransition in appear key={key} timeout={1000} classNames="skeleton">
-          <Item full={full} width={width} minHeight={barHeight || minHeight}>
-            {content}
-          </Item>
-        </CSSTransition>
-      </TransitionGroup>
-    </Wrapper>
-  );
-};
+class Skeleton extends React.PureComponent<Props> {
+  render() {
+    const {
+      width,
+      barHeight,
+      minHeight,
+      full,
+      children,
+      mt,
+      show,
+      alwaysShowSkeletons,
+    } = this.props;
+    const isSkeletonVisible: boolean = show || alwaysShowSkeletons;
+    const content = isSkeletonVisible ?? (isSkeletonVisible || !children) ? "" : children;
+    const key = content ? "content" : "holder";
 
-export default Skeleton;
+    return (
+      <Wrapper minHeight={minHeight} full={full} mt={mt}>
+        <TransitionGroup component={null}>
+          <CSSTransition in appear key={key} timeout={1000} classNames="skeleton">
+            <Item full={full} width={width} minHeight={barHeight || minHeight}>
+              {content}
+            </Item>
+          </CSSTransition>
+        </TransitionGroup>
+      </Wrapper>
+    );
+  }
+}
+
+export default (connect(mapStateToProps)(Skeleton): React$ComponentType<OwnProps>);

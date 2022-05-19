@@ -1,3 +1,5 @@
+const path = require("path");
+
 function bold(str) {
   return "\033[1m" + str + "\033[0;0m";
 }
@@ -9,7 +11,7 @@ module.exports = () => {
     if (
       !resolution?.filePath ||
       moduleName.startsWith(".") ||
-      moduleName.startsWith("/")
+      path.isAbsolute("/")
     ) {
       return;
     }
