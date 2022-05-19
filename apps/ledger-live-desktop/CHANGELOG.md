@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.41.4-nightly.1
+
+### Patch Changes
+
+- 1735fdd30: bugfix - market page lag issue during navigation fixed + removal of duplicated breadcrumb on market details page
+
 ## 2.41.4-nightly.0
 
 ### Patch Changes
