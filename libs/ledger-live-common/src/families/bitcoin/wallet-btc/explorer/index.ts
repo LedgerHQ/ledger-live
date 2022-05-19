@@ -54,6 +54,8 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
     const client = axios.create(clientParams);
     this.underlyingClient = client;
     // 3 retries per request
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    /* @ts-expect-error https://github.com/softonic/axios-retry/issues/159 */
     axiosRetry(client, {
       retries: 3,
       retryCondition: (e) =>
