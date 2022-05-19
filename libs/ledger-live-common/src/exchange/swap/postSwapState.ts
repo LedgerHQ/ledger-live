@@ -1,12 +1,12 @@
+import { getEnv } from "../../env";
 import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
-import type { PostSwapAccepted, PostSwapCancelled } from "./types";
-import { getEnv } from "../../env";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
+import type { PostSwapAccepted, PostSwapCancelled } from "./types";
 
 export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
-  swapId,
+  swapId = "",
   transactionId,
 }) => {
   if (getEnv("MOCK"))
@@ -23,7 +23,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
 
 export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
-  swapId,
+  swapId = "",
 }) => {
   if (getEnv("MOCK")) return mockPostSwapCancelled({ provider, swapId });
 
