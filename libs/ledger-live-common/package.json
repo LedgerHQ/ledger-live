@@ -68,6 +68,7 @@
     "@crypto-com/chain-jslib": "0.0.19",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
+    "@hashgraph/sdk": "^2.10.1",
     "@ledgerhq/compressjs": "1.3.2",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
