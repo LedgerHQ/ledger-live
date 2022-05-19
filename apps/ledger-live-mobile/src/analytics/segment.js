@@ -22,6 +22,7 @@ import {
   lastSeenDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
+import { satisfactionSelector } from "../reducers/ratings";
 import type { State } from "../reducers";
 
 const sessionId = uuid();
@@ -37,6 +38,7 @@ const extraProperties = store => {
   const language = languageSelector(state);
   const region = localeSelector(state);
   const devices = knownDevicesSelector(state);
+  const satisfaction = satisfactionSelector(state);
 
   const lastDevice =
     lastSeenDeviceSelector(state) || devices[devices.length - 1];
@@ -61,6 +63,7 @@ const extraProperties = store => {
     sessionId,
     devicesCount: devices.length,
     ...deviceInfo,
+    ...(satisfaction && { satisfaction }),
   };
 };
 
