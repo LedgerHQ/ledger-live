@@ -4,18 +4,21 @@ set -e
 cd $(dirname $0)
 
 targets="\
-operationDetails \
-accountActions \
-TransactionConfirmFields \
-AccountHeader \
-AccountBodyHeader \
-AccountSubHeader \
-SendAmountFields \
-screens \
-SendRowsCustom \
-SendRowsFee \
-AccountBalanceSummaryFooter \
-SubAccountList \
+operationDetails.js \
+accountActions.js \
+TransactionConfirmFields.js \
+AccountHeader.js \
+AccountBodyHeader.js \
+AccountSubHeader.js \
+SendAmountFields.js \
+screens.js \
+SendRowsCustom.js \
+SendRowsFee.js \
+AccountBalanceSummaryFooter.js \
+SubAccountList.js \
+Confirmation.js \
+ConnectDevice.js \
+NoAssociatedAccounts.js
 "
 
 cd ../src

@@ -163,4 +163,8 @@ export const urls = {
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
   },
+  hedera: {
+    supportArticleLink:
+      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+  },
 };
