@@ -110,6 +110,6 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop-mono.yml",
               inputs: {
-                ref: "${{ github.event.push != '' ? github.ref_name : steps.ref.outputs.ref }}"
+                ref: "${{ github.event.push != '' && github.ref_name || steps.ref.outputs.ref }}"
               }
             });
