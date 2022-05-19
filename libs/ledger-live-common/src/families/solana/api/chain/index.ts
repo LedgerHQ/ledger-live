@@ -1,17 +1,18 @@
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  Token,
   TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddress,
+  getMinimumBalanceForRentExemptAccount,
 } from "@solana/spl-token";
 import {
   Connection,
-  FeeCalculator,
   FetchMiddleware,
+  Message,
   PublicKey,
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
 } from "@solana/web3.js";
+import { getEnv } from "../../../../env";
 import { Awaited } from "../../logic";
 
 export type Config = {
@@ -21,9 +22,9 @@ export type Config = {
 export type ChainAPI = Readonly<{
   getBalance: (address: string) => Promise<number>;
 
-  getRecentBlockhash: () => Promise<string>;
+  getLatestBlockhash: () => Promise<string>;
 
-  getTxFeeCalculator: () => Promise<FeeCalculator>;
+  getFeeForMessage: (message: Message) => Promise<number>;
 
   getBalanceAndContext: (
     address: string
@@ -56,9 +57,9 @@ export type ChainAPI = Readonly<{
     opts?: SignaturesForAddressOptions
   ) => ReturnType<Connection["getSignaturesForAddress"]>;
 
-  getParsedConfirmedTransactions: (
+  getParsedTransactions: (
     signatures: string[]
-  ) => ReturnType<Connection["getParsedConfirmedTransactions"]>;
+  ) => ReturnType<Connection["getParsedTransactions"]>;
 
   getAccountInfo: (
     address: string
@@ -97,6 +98,9 @@ export function getChainAPI(
     return new Connection(config.endpoint, {
       commitment: "finalized",
       fetchMiddleware,
+      confirmTransactionInitialTimeout: getEnv(
+        "SOLANA_TX_CONFIRMATION_TIMEOUT"
+      ),
     });
   };
 
@@ -104,15 +108,15 @@ export function getChainAPI(
     getBalance: (address: string) =>
       connection().getBalance(new PublicKey(address)),
 
-    getRecentBlockhash: () =>
+    getLatestBlockhash: () =>
       connection()
-        .getRecentBlockhash()
+        .getLatestBlockhash()
         .then((r) => r.blockhash),
 
-    getTxFeeCalculator: () =>
+    getFeeForMessage: (msg: Message) =>
       connection()
-        .getRecentBlockhash()
-        .then((r) => r.feeCalculator),
+        .getFeeForMessage(msg)
+        .then((r) => r.value),
 
     getBalanceAndContext: (address: string) =>
       connection().getBalanceAndContext(new PublicKey(address)),
@@ -161,8 +165,8 @@ export function getChainAPI(
       opts?: SignaturesForAddressOptions
     ) => connection().getSignaturesForAddress(new PublicKey(address), opts),
 
-    getParsedConfirmedTransactions: (signatures: string[]) =>
-      connection().getParsedConfirmedTransactions(signatures),
+    getParsedTransactions: (signatures: string[]) =>
+      connection().getParsedTransactions(signatures),
 
     getAccountInfo: (address: string) =>
       connection()
@@ -175,16 +179,15 @@ export function getChainAPI(
       });
     },
 
-    findAssocTokenAccAddress: (owner: string, mint: string) =>
-      Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
+    findAssocTokenAccAddress: (owner: string, mint: string) => {
+      return getAssociatedTokenAddress(
         new PublicKey(mint),
         new PublicKey(owner)
-      ).then((r) => r.toBase58()),
+      ).then((r) => r.toBase58());
+    },
 
     getAssocTokenAccMinNativeBalance: () =>
-      Token.getMinBalanceRentForExemptAccount(connection()),
+      getMinimumBalanceForRentExemptAccount(connection()),
 
     getMinimumBalanceForRentExemption: (dataLength: number) =>
       connection().getMinimumBalanceForRentExemption(dataLength),

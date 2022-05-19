@@ -21,7 +21,7 @@ _Write a clear and concise description of what this pull request is about and wh
 
 - [ ] **Test coverage**: _Did you write any tests to cover the changes introduced by this pull request?_
 - [ ] **Atomic delivery**: _Is this pull request standalone? In order words, does it depend on nothing else?_
-- [ ] **Breaking changes**: _Does this pull request contain breaking changes of any kind? If so, please explain why._
+- [ ] **No breaking changes**: _Does this pull request contain breaking changes of any kind? If so, please explain why._
 
 ### 📸 Demo
 

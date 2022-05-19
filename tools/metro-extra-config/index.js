@@ -8,8 +8,8 @@
 /* eslint-disable no-console */
 
 const path = require("path");
-const defaultSourceExts =
-  require("metro-config/src/defaults/defaults").sourceExts;
+const defaultSourceExts = require("metro-config/src/defaults/defaults")
+  .sourceExts;
 const { makeMetroConfig } = require("@rnx-kit/metro-config");
 const MetroSymlinksResolver = require("@rnx-kit/metro-resolver-symlinks");
 const resolve = require("metro-resolver").resolve;
@@ -32,7 +32,7 @@ function forceDependency(moduleName, filters, nodeModulesPaths) {
   return null;
 }
 
-module.exports = function (options = {}, config = {}) {
+module.exports = function(options = {}, config = {}) {
   const {
     // Root of the project
     projectRoot,
@@ -151,7 +151,7 @@ module.exports = function (options = {}, config = {}) {
                 platform,
               });
             }
-            if (resolution.startsWith("/")) {
+            if (path.isAbsolute(resolution)) {
               return {
                 filePath: resolution,
                 type: "sourceFile",

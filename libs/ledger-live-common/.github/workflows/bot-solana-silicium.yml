@@ -66,6 +66,7 @@ jobs:
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
           SLACK_CHANNEL: ci-sol-ll
           BOT_FILTER_FAMILY: solana
+          SOLANA_TX_CONFIRMATION_TIMEOUT: 100000
         run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 120
       - name: Run coverage
