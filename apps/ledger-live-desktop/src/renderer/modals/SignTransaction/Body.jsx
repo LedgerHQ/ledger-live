@@ -2,11 +2,9 @@
 
 import React, { useCallback, useState } from "react";
 import { BigNumber } from "bignumber.js";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import type { TFunction } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import { Trans, withTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { useSelector } from "reselect";
+import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/types/index";
 import type { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
@@ -14,11 +12,8 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
@@ -27,14 +22,14 @@ import type { St, StepId } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/logger/logger";
 
-type OwnProps = {|
+type Props = {|
   stepId: StepId,
   onChangeStepId: StepId => void,
   onClose: () => void,
   params: {
     canEditFees: boolean,
     useApp?: string,
-    account: ?AccountLike,
+    account: AccountLike,
     transactionData: PlatformTransaction,
     onResult: (signedOperation: SignedOperation) => void,
     onCancel: (reason: any) => void,
@@ -46,38 +41,25 @@ type OwnProps = {|
   setError: (error?: Error) => void,
 |};
 
-type StateProps = {|
-  t: TFunction,
-  device: ?Device,
-  accounts: Account[],
-  closeModal: string => void,
-  openModal: (string, any) => void,
-  updateAccountWithUpdater: (string, (Account) => Account) => void,
-|};
-
-type Props = {|
-  ...OwnProps,
-  ...StateProps,
-|};
-
-const createSteps = (canEditFees = false): St[] => {
+function useSteps(canEditFees = false): St[] {
+  const { t } = useTranslation();
   const steps = [
     {
       id: "summary",
-      label: <Trans i18nKey="send.steps.summary.title" />,
+      label: t("send.steps.summary.title"),
       component: StepSummary,
       footer: StepSummaryFooter,
       onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
     },
     {
       id: "device",
-      label: <Trans i18nKey="send.steps.device.title" />,
+      label: t("send.steps.device.title"),
       component: StepConnectDevice,
       onBack: ({ transitionTo }) => transitionTo("summary"),
     },
     {
       id: "confirmation",
-      label: <Trans i18nKey="send.steps.confirmation.title" />,
+      label: t("send.steps.confirmation.title"),
       excludeFromBreadcrumb: true,
       component: StepConfirmation,
       footer: StepConfirmationFooter,
@@ -92,14 +74,14 @@ const createSteps = (canEditFees = false): St[] => {
     ? [
         {
           id: "amount",
-          label: <Trans i18nKey="send.steps.amount.title" />,
+          label: t("send.steps.amount.title"),
           component: StepAmount,
           footer: StepAmountFooter,
         },
         ...steps,
       ]
     : steps;
-};
+}
 
 const STATUS_KEYS_IGNORE = ["recipient", "gasLimit"];
 
@@ -112,33 +94,15 @@ function getStatusError(status, type = "errors"): ?Error {
   return firstKey ? status[type][firstKey] : null;
 }
 
-const mapStateToProps = createStructuredSelector({
-  device: getCurrentDevice,
-  accounts: accountsSelector,
-});
+export default function Body({ onChangeStepId, onClose, setError, stepId, params }: Props) {
+  const device = useSelector(getCurrentDevice);
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
-const mapDispatchToProps = {
-  closeModal,
-  openModal,
-  updateAccountWithUpdater,
-};
-
-const Body = ({
-  t,
-  device,
-  openModal,
-  closeModal,
-  onChangeStepId,
-  onClose,
-  setError,
-  stepId,
-  params,
-  accounts,
-}: Props) => {
   const { canEditFees, transactionData } = params;
 
   const openedFromAccount = !!params.account;
-  const [steps] = useState(() => createSteps(canEditFees));
+  const steps = useSteps(canEditFees);
 
   const {
     transaction,
@@ -172,8 +136,8 @@ const Body = ({
   const [transactionError, setTransactionError] = useState(null);
 
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_SIGN_TRANSACTION");
-  }, [closeModal]);
+    dispatch(closeModal("MODAL_SIGN_TRANSACTION"));
+  }, [dispatch]);
 
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount: ?Account) => {
@@ -237,7 +201,7 @@ const Body = ({
     warning,
     status,
     bridgePending,
-    openModal,
+    openModal: dispatch(openModal()),
     onClose,
     closeModal: handleCloseModal,
     onChangeAccount: handleChangeAccount,
@@ -257,11 +221,4 @@ const Body = ({
       <Track onUnmount event="CloseModalSignTransaction" />
     </Stepper>
   );
-};
-
-const m: React$ComponentType<OwnProps> = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTranslation(),
-)(Body);
-
-export default m;
+}

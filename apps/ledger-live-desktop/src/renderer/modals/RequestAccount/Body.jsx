@@ -1,21 +1,17 @@
 // @flow
 
 import React, { useCallback, useMemo } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import type { TFunction } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import { withTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listSupportedCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurrency";
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
-import { closeModal, openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import { closeModal } from "~/renderer/actions/modals";
 import { ModalBody } from "~/renderer/components/Modal";
 import { makeRe } from "@ledgerhq/live-common/lib/platform/filters";
 
-type OwnProps = {|
+type Props = {|
   onClose: () => void,
   params: {
     currencies?: string[],
@@ -26,36 +22,17 @@ type OwnProps = {|
   },
 |};
 
-type StateProps = {|
-  t: TFunction,
-  accounts: Account[],
-  closeModal: string => void,
-  openModal: (string, any) => void,
-|};
-
-type Props = {|
-  ...OwnProps,
-  ...StateProps,
-|};
-
-const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector,
-});
-
-const mapDispatchToProps = {
-  closeModal,
-  openModal,
-};
-
-const Body = ({ t, openModal, closeModal, onClose, params }: Props) => {
+export default function Body({ onClose, params }: Props) {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { allowAddAccount, currencies, includeTokens } = params;
 
   const selectAccount = useCallback(
     (account, parentAccount) => {
       params.onResult(account, parentAccount);
-      closeModal("MODAL_REQUEST_ACCOUNT");
+      dispatch(closeModal("MODAL_REQUEST_ACCOUNT"));
     },
-    [params, closeModal],
+    [params, dispatch],
   );
 
   const cryptoCurrencies = useMemo(() => {
@@ -98,11 +75,4 @@ const Body = ({ t, openModal, closeModal, onClose, params }: Props) => {
       )}
     />
   );
-};
-
-const m: React$ComponentType<OwnProps> = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTranslation(),
-)(Body);
-
-export default m;
+}

@@ -266,7 +266,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
       if (
         (account.type === "TokenAccount"
-          ? parentAccount.currency.family
+          ? parentAccount?.currency.family
           : account.currency.family) !== platformTransaction.family
       ) {
         throw new Error("Transaction family not matching account currency family");
