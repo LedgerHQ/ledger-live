@@ -1,14 +1,20 @@
 import {
-  Connection,
-  PublicKey,
-  SystemProgram,
-  Transaction,
+  createAssociatedTokenAccountInstruction,
+  createTransferCheckedInstruction,
+  getAssociatedTokenAddress,
+} from "@solana/spl-token";
+import {
   ConfirmedSignatureInfo,
-  ParsedConfirmedTransaction,
-  TransactionInstruction,
+  Connection,
+  ParsedTransactionWithMeta,
+  PublicKey,
   StakeProgram,
+  SystemProgram,
+  TransactionInstruction,
 } from "@solana/web3.js";
 import { chunk } from "lodash";
+import { ChainAPI } from ".";
+import { Awaited } from "../../logic";
 import {
   StakeCreateAccountCommand,
   StakeDelegateCommand,
@@ -19,23 +25,16 @@ import {
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
+import { drainSeqAsyncGen } from "../../utils";
 import {
-  TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  Token,
-} from "@solana/spl-token";
-import {
-  tryParseAsTokenAccount,
   parseTokenAccountInfo,
+  tryParseAsTokenAccount,
   tryParseAsVoteAccount,
 } from "./account";
-import { TokenAccountInfo } from "./account/token";
-import { drainSeqAsyncGen } from "../../utils";
-import { Awaited } from "../../logic";
-import { ChainAPI } from ".";
-import { VoteAccountInfo } from "./account/vote";
 import { parseStakeAccountInfo } from "./account/parser";
 import { StakeAccountInfo } from "./account/stake";
+import { TokenAccountInfo } from "./account/token";
+import { VoteAccountInfo } from "./account/vote";
 
 const MEMO_PROGRAM_ID = "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr";
 
@@ -77,7 +76,7 @@ export function toStakeAccountWithInfo(
 }
 
 export type TransactionDescriptor = {
-  parsed: ParsedConfirmedTransaction;
+  parsed: ParsedTransactionWithMeta;
   info: ConfirmedSignatureInfo;
 };
 
@@ -97,7 +96,7 @@ async function* getTransactionsBatched(
   const batchSize = 100;
 
   for (const signaturesInfoBatch of chunk(signatures, batchSize)) {
-    const transactions = await api.getParsedConfirmedTransactions(
+    const transactions = await api.getParsedTransactions(
       signaturesInfoBatch.map((tx) => tx.signature)
     );
     const txsDetails = transactions.reduce((acc, tx, index) => {
@@ -187,25 +186,21 @@ export const buildTokenTransferInstructions = (
 
   if (recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
     instructions.push(
-      Token.createAssociatedTokenAccountInstruction(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        mintPubkey,
+      createAssociatedTokenAccountInstruction(
+        ownerPubkey,
         destinationPubkey,
-        new PublicKey(recipientDescriptor.walletAddress),
-        ownerPubkey
+        ownerPubkey,
+        mintPubkey
       )
     );
   }
 
   instructions.push(
-    Token.createTransferCheckedInstruction(
-      TOKEN_PROGRAM_ID,
+    createTransferCheckedInstruction(
       new PublicKey(ownerAssociatedTokenAccountAddress),
       mintPubkey,
       destinationPubkey,
       ownerPubkey,
-      [],
       amount,
       mintDecimals
     )
@@ -224,20 +219,6 @@ export const buildTokenTransferInstructions = (
   return instructions;
 };
 
-export const addSignatureToTransaction = ({
-  tx,
-  address,
-  signature,
-}: {
-  tx: Transaction;
-  address: string;
-  signature: Buffer;
-}): Transaction => {
-  tx.addSignature(new PublicKey(address), signature);
-
-  return tx;
-};
-
 export async function findAssociatedTokenAccountPubkey(
   ownerAddress: string,
   mintAddress: string
@@ -245,12 +226,7 @@ export async function findAssociatedTokenAccountPubkey(
   const ownerPubKey = new PublicKey(ownerAddress);
   const mintPubkey = new PublicKey(mintAddress);
 
-  return Token.getAssociatedTokenAddress(
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
-    mintPubkey,
-    ownerPubKey
-  );
+  return getAssociatedTokenAddress(mintPubkey, ownerPubKey);
 }
 
 export const getMaybeTokenAccount = async (
@@ -310,13 +286,11 @@ export function buildCreateAssociatedTokenAccountInstruction({
   const associatedTokenAccPubkey = new PublicKey(associatedTokenAccountAddress);
 
   const instructions: TransactionInstruction[] = [
-    Token.createAssociatedTokenAccountInstruction(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      mintPubkey,
+    createAssociatedTokenAccountInstruction(
+      ownerPubKey,
       associatedTokenAccPubkey,
       ownerPubKey,
-      ownerPubKey
+      mintPubkey
     ),
   ];
 
