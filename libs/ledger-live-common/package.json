@@ -17,7 +17,7 @@
     "watch": "bash ./scripts/watch-ts.sh",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
-    "lint": "eslint src",
+    "lint": "eslint src --quiet",
     "lint:fix": "pnpm lint --fix",
     "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",

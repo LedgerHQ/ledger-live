@@ -39,7 +39,7 @@
     "build:storybook": "build-storybook -s ./src",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache --quiet",
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui test:react"

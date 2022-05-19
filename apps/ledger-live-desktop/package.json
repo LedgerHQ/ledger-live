@@ -16,7 +16,7 @@
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
     "build": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
-    "lint": "pnpm prettier:check && eslint src tools static --ext .js,.json,.ts,.tsx",
+    "lint": "pnpm prettier:check && eslint src tools static --ext .js,.json,.ts,.tsx --quiet",
     "lint:fix": "eslint src tools static --ext .js,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools}/**/*.{js,json}\"",
     "prettier:check": "prettier -c \"{src,tools}/**/*.{js,json}\"",
