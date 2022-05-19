@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { listTokens, listSupportedCurrencies } from "../currencies";
 import { Currency } from "../types";
 
-export function useCurrencies(includeTokens = true): Currency[] {
+export function useCurrencies(includeTokens = false): Currency[] {
   return useMemo(() => {
     const currencies = listSupportedCurrencies();
 

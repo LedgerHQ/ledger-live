@@ -1,8 +1,11 @@
 // @flow
 import * as remote from "@electron/remote";
-import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  addPendingOperation,
+  flattenAccounts,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
@@ -12,8 +15,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import {
+  useListPlatformAccounts,
+  useListPlatformCurrencies,
+  usePlatformUrl,
+} from "@ledgerhq/live-common/platform/react";
+import {
   accountToPlatformAccount,
-  currencyToPlatformCurrency,
   getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/platform/converters";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
@@ -26,7 +33,7 @@ import {
   deserializePlatformTransaction,
   serializePlatformAccount,
   serializePlatformSignedTransaction,
-} from "@ledgerhq/live-common/platform/serializers"
+} from "@ledgerhq/live-common/platform/serializers";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewTag } from "electron";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -88,45 +95,28 @@ type Props = {
   config?: WebPlatformPlayerConfig,
 };
 
-const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
+export default function WebPlatformPlayer({ manifest, onClose, inputs, config }: Props) {
   const theme = useTheme("colors.palette");
 
   const targetRef: { current: null | WebviewTag } = useRef(null);
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
-  const currencies = useMemo(() => listSupportedCurrencies(), []);
+  const accounts = flattenAccounts(useSelector(accountsSelector));
   const { pushToast } = useToasts();
   const { t } = useTranslation();
 
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  const url = useMemo(() => {
-    const urlObj = new URL(manifest.url.toString());
+  const url = usePlatformUrl(
+    manifest,
+    {
+      background: theme.background.paper,
+      text: theme.text.shade100,
+    },
+    inputs,
+  );
 
-    if (inputs) {
-      for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
-          urlObj.searchParams.set(key, inputs[key]);
-        }
-      }
-    }
-
-    urlObj.searchParams.set("backgroundColor", theme.background.paper);
-    urlObj.searchParams.set("textColor", theme.text.shade100);
-    if (manifest.params) {
-      urlObj.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-
-    return urlObj;
-  }, [manifest.url, theme, inputs, manifest.params]);
-
-  const listAccounts = useCallback(() => {
-    return accounts.map(account => serializePlatformAccount(accountToPlatformAccount(account)));
-  }, [accounts]);
-
-  const listCurrencies = useCallback(() => {
-    return currencies.map(currencyToPlatformCurrency);
-  }, [currencies]);
+  const listAccounts = useListPlatformAccounts(accounts);
+  const listCurrencies = useListPlatformCurrencies();
 
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
@@ -215,13 +205,22 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
   );
 
   const requestAccount = useCallback(
-    ({ currencies, allowAddAccount }: { currencies?: string[], allowAddAccount?: boolean }) => {
+    ({
+      currencies,
+      allowAddAccount,
+      includeTokens,
+    }: {
+      currencies?: string[],
+      allowAddAccount?: boolean,
+      includeTokens?: boolean,
+    }) => {
       tracking.platformRequestAccountRequested(manifest);
       return new Promise((resolve, reject) =>
         dispatch(
           openModal("MODAL_REQUEST_ACCOUNT", {
             currencies,
             allowAddAccount,
+            includeTokens,
             onResult: account => {
               tracking.platformRequestAccountSuccess(manifest);
               /**
@@ -233,7 +232,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
                * FIXME: this overall handling of created accounts could be improved and might not handle "onCancel"
                */
               //
-              resolve(account ? serializePlatformAccount(accountToPlatformAccount(account)) : {});
+              resolve(serializePlatformAccount(accountToPlatformAccount(account, accounts)));
             },
             onCancel: error => {
               tracking.platformRequestAccountFail(manifest);
@@ -243,7 +242,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         ),
       );
     },
-    [manifest, dispatch],
+    [manifest, dispatch, accounts],
   );
 
   const signTransaction = useCallback(
@@ -262,7 +261,14 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
 
       if (!account) return null;
 
-      if (account.currency.family !== platformTransaction.family) {
+      const parentAccount =
+        account.type === "TokenAccount" ? accounts.find(a => a.id === account.parentId) : undefined;
+
+      if (
+        (account.type === "TokenAccount"
+          ? parentAccount.currency.family
+          : account.currency.family) !== platformTransaction.family
+      ) {
         throw new Error("Transaction family not matching account currency family");
       }
 
@@ -280,7 +286,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
             transactionData: liveTx,
             useApp: params.useApp,
             account,
-            parentAccount: null,
+            parentAccount,
             onResult: signedOperation => {
               tracking.platformSignTransactionRequested(manifest);
               resolve(serializePlatformSignedTransaction(signedOperation));
@@ -566,6 +572,4 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       </Wrapper>
     </Container>
   );
-};
-
-export default WebPlatformPlayer;
+}
