@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
+import { getExchangeRates } from "..";
+import { Transaction } from "../../../generated/types";
+import { Exchange, ExchangeRate } from "../types";
+import { pickExchangeRate } from "../utils";
 import {
   OnNoRatesCallback,
   SetExchangeRateCallback,
   SwapSelectorStateType,
 } from "./useSwapTransaction";
-import { getExchangeRates } from "..";
-import { Exchange, ExchangeRate } from "../types";
-import { pickExchangeRate } from "../utils";
-import { Transaction } from "../../../generated/types";
 
 export type RatesReducerState = {
   status?: string | null;
@@ -82,16 +82,26 @@ export const useProviderRates = ({
             undefined,
             toCurrency
           );
+
           if (abort) return;
           if (rates.length === 0) {
             onNoRates && onNoRates({ fromState, toState });
           }
+
+          /**
+           * FIXME
+           * need to handle multiple different errors
+           * example: one partner proposes the quote but with a "minAmount" and
+           * another one does not propose the quote
+           */
+
           // Discard bad provider rates
           let rateError: Error | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
             return rate.error ? acc : [...acc, rate];
           }, []);
+
           if (rates.length === 0 && rateError) {
             // If all the rates are in error
             dispatchRates({ type: "error", payload: rateError });
