@@ -56,7 +56,7 @@ The scripts that are defined inside the root [`/package.json`](https://github.co
 ```sh
 # This command will first build all the local dependencies needed in the right order.
 # Only then it will attempt to build the `Ledger Live Desktop` app.
-pnpm lld:build
+pnpm build:lld
 ```
 
 ### Aliases
