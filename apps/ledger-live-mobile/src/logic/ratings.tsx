@@ -27,7 +27,7 @@ export type RatingsHappyMoment = {
     route_name: string,
     /** In milliseconds, delay before triggering the rating flow */
     timer: number,
-    /** Wether the rating flow is triggered when entering or when leaving the screen */
+    /** Whether the rating flow is triggered when entering or when leaving the screen */
     type: "on_enter" | "on_leave",
 };
 
@@ -40,9 +40,9 @@ export type RatingsDataOfUser = {
     numberOfAppStartsSinceLastCrash?: number,
     /** If set, we will not prompt the rating flow again before this date unless the user triggers it manually from the settings */
     dateOfNextAllowedRequest?: Date,
-    /** Wether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
+    /** Whether or not the user clicked on the "Not now" cta from the Enjoy step of the ratings flow */
     alreadyClosedFromEnjoyStep?: boolean,
-    /** Wether or not the user already rated the app */
+    /** Whether or not the user already rated the app */
     alreadyRated?: boolean,
     /** If true, we will not prompt the rating flow again unless the user triggers it manually from the settings */
     doNotAskAgain?: boolean,
