@@ -64,8 +64,10 @@ export function useListPlatformAccounts(
   );
 }
 
-export function usePlatformCurrencies(): PlatformCurrency[] {
-  const currencies = useCurrencies();
+export function usePlatformCurrencies(
+  includeTokens = false
+): PlatformCurrency[] {
+  const currencies = useCurrencies(includeTokens);
 
   return useMemo(() => {
     return currencies
@@ -75,7 +77,8 @@ export function usePlatformCurrencies(): PlatformCurrency[] {
 }
 
 export function useListPlatformCurrencies(): ListPlatformCurrency {
-  const currencies = usePlatformCurrencies();
+  const currencies = usePlatformCurrencies(true);
+  console.log("!!!", currencies);
 
   return useCallback(
     (filters?: CurrencyFilters) => {
