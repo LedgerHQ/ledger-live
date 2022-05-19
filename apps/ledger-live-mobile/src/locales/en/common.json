@@ -872,21 +872,16 @@
       "exploreWithoutADevice": "Explore without a device",
       "buyALedgerNow": "Buy a Ledger now",
       "0": {
-        "title": "One place for all your crypto needs",
-        "desc": "Monitor, buy, sell, swap, grow and manage your assets securely and get the best crypto insights"
+        "title": "Secure all your crypto assets."
       },
       "1": {
-        "title": "Not your keys, not your crypto",
-        "desc": "Securing your assets with a Hardware wallet is the best and only way to own and secure your crypto assets"
+        "title": "Keep an eye on the markets."
       },
       "2": {
-        "title": "Reclaim power over your money",
-        "desc": "The Ledger Nano X keeps your coins offline and protected. Combine it to Ledger Live app for maximum security and control over your crypto",
-        "cta": "Begin your Journey"
+        "title": "Discover apps and learn about web3."
       },
       "3": {
-        "title": "One place for all your crypto needs",
-        "desc": "Monitor, buy, sell, swap, grow and manage your assets securely and get the best crypto insights"
+        "title": "Keep your crypto & NFTs secured."
       }
     },
     "stepLanguage": {

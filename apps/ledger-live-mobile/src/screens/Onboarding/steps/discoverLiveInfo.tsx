@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
@@ -41,6 +41,7 @@ const Item = ({
 }) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { colors } = useTheme();
   const { t } = useTranslation();
 
   const buyLedger = useCallback(() => {
@@ -62,7 +63,7 @@ const Item = ({
   }, [navigation]);
 
   return (
-    <Flex flex={1} backgroundColor={`neutral.c20`}>
+    <Flex flex={1} backgroundColor={`background.main`}>
       <Svg width="100%" height={102} preserveAspectRatio="xMinYMin slice">
         <Defs>
           <LinearGradient
@@ -73,8 +74,12 @@ const Item = ({
             y2="100%"
             gradientUnits="userSpaceOnUse"
           >
-            <Stop offset="0%" stopOpacity={1} stopColor="black" />
-            <Stop offset="100%" stopOpacity={0} stopColor="black" />
+            <Stop offset="0%" stopOpacity={1} stopColor={colors.neutral.c00} />
+            <Stop
+              offset="100%"
+              stopOpacity={0}
+              stopColor={colors.neutral.c00}
+            />
           </LinearGradient>
         </Defs>
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
