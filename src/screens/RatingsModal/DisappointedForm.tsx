@@ -4,6 +4,9 @@ import { WebView } from "react-native-webview";
 import styled from "styled-components/native";
 import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
+import getWindowDimensions from "../../logic/getWindowDimensions";
+
+const { height } = getWindowDimensions();
 
 const injectedJavascript = `
 const submitInterval = setInterval(addListenerOnFormSubmitButton, 100);
@@ -77,7 +80,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   );
 
   return (
-    <Flex flex={1} height={400}>
+    <Flex flex={1} height={height * (4 / 5)}>
       <TrackScreen
         category="Review"
         name="page_viewed"
@@ -86,7 +89,7 @@ const DisappointedForm = ({ setStep }: Props) => {
         source={ratingsHappyMoment?.route_name}
         params={ratingsFeatureParams}
       />
-      <Flex flex={1} borderRadius={24} marginTop={5} overflow="hidden">
+      <Flex flex={1} borderRadius={16} overflow="hidden">
         <StyledWebview
           source={{ uri: ratingsFeatureParams?.typeform_url }}
           originWhitelist={["*"]}

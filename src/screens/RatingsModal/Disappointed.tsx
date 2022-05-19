@@ -58,6 +58,7 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         color="neutral.c100"
         textAlign="center"
         mt={7}
+        lineHeight="34.8px"
       >
         <Trans i18nKey="ratings.disappointed.title" />
       </Text>
@@ -67,6 +68,7 @@ const Disappointed = ({ closeModal, setStep }: Props) => {
         color="neutral.c70"
         textAlign="center"
         my={6}
+        lineHeight="23.8px"
       >
         <Trans i18nKey="ratings.disappointed.description" />
       </Text>

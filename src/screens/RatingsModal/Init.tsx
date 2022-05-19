@@ -94,6 +94,7 @@ const Init = ({ closeModal, setStep }: Props) => {
         fontWeight="semiBold"
         color="neutral.c100"
         textAlign="center"
+        lineHeight="34.8px"
       >
         <Trans i18nKey="ratings.init.title" />
       </Text>
@@ -103,6 +104,7 @@ const Init = ({ closeModal, setStep }: Props) => {
         color="neutral.c70"
         textAlign="center"
         my={6}
+        lineHeight="23.8px"
       >
         <Trans i18nKey="ratings.init.description" />
       </Text>

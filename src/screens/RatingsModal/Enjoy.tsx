@@ -6,6 +6,7 @@ import styled from "styled-components/native";
 import { urls } from "../../config/urls";
 import { track, TrackScreen } from "../../analytics";
 import useRatings from "../../logic/ratings";
+import Love from "../../icons/Love";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -71,11 +72,14 @@ const Enjoy = ({ closeModal }: Props) => {
         source={ratingsHappyMoment?.route_name}
         params={ratingsFeatureParams}
       />
+      <Love />
       <Text
         variant="h4"
         fontWeight="semiBold"
         color="neutral.c100"
         textAlign="center"
+        lineHeight="34.8px"
+        mt={7}
       >
         <Trans i18nKey="ratings.enjoy.title" />
       </Text>
@@ -85,6 +89,7 @@ const Enjoy = ({ closeModal }: Props) => {
         color="neutral.c70"
         textAlign="center"
         my={6}
+        lineHeight="23.8px"
       >
         <Trans i18nKey="ratings.enjoy.description" />
       </Text>

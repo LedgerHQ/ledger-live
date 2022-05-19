@@ -41,6 +41,7 @@ const DisappointedDone = ({ closeModal }: Props) => {
         fontWeight="semiBold"
         color="neutral.c100"
         textAlign="center"
+        lineHeight="34.8px"
       >
         <Trans i18nKey="ratings.disappointedDone.title" />
       </Text>
@@ -50,6 +51,7 @@ const DisappointedDone = ({ closeModal }: Props) => {
         color="neutral.c70"
         textAlign="center"
         mt={6}
+        lineHeight="23.8px"
       >
         <Trans i18nKey="ratings.disappointedDone.description" />
       </Text>
