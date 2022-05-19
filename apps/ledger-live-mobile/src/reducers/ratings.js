@@ -5,7 +5,7 @@ import type { State } from ".";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 
 export type RatingsState = {
-  /** Boolean indicating wether the ratings flow modal is opened or closed */
+  /** Boolean indicating whether the ratings flow modal is opened or closed */
   isRatingsModalOpen: boolean,
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
   currentRouteName?: string,
