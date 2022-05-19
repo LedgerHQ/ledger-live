@@ -3,15 +3,20 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import nanoS from "../assets/nanoS";
-import nanoSP from "../assets/nanoSP";
-import nanoX from "../assets/nanoX";
-import { ScreenName } from "../../../const";
+import nanoSSvg from "../assets/nanoS";
+import nanoSPSvg from "../assets/nanoSP";
+import nanoXSvg from "../assets/nanoX";
+import { ScreenName, NavigatorName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import ChoiceCard from "../../../components/ChoiceCard";
 
-const devices = [nanoX, nanoSP, nanoS];
+const nanoX = { SvgDevice: nanoXSvg, id: "nanoX" };
+const nanoS = { SvgDevice: nanoSSvg, id: "nanoS" };
+const nanoSP = { SvgDevice: nanoSPSvg, id: "nanoSP" };
+const nanoFTS = { SvgDevice: nanoXSvg, id: "nanoFTS" };
+
+const devices = [nanoX, nanoSP, nanoS, nanoFTS];
 
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation();
@@ -19,11 +24,20 @@ function OnboardingStepDeviceSelection() {
   const { colors } = useTheme();
 
   const next = (deviceModelId: string) => {
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(ScreenName.OnboardingUseCase, {
-      deviceModelId,
-    });
+    if (deviceModelId === "nanoFTS") {
+      // TODO: fix navigation typescript by adding a type def RootStackParamList to the createStackNavigator
+      // See: https://reactnavigation.org/docs/typescript/#type-checking-the-navigator
+      // @ts-ignore next-line
+      navigation.navigate(NavigatorName.SyncOnboarding, {
+        screen: ScreenName.SyncOnboardingWelcome,
+      });
+    } else {
+      // TODO: FIX @react-navigation/native using Typescript
+      // @ts-ignore next-line
+      navigation.navigate(ScreenName.OnboardingUseCase, {
+        deviceModelId,
+      });
+    }
   };
 
   return (
@@ -32,18 +46,18 @@ function OnboardingStepDeviceSelection() {
       title={t("onboarding.stepSelectDevice.title")}
     >
       <StyledStatusBar barStyle="dark-content" />
-      {devices.map(Device => (
+      {devices.map(device => (
         <ChoiceCard
-          key={Device.id}
+          key={device.id}
           event="Onboarding Device - Selection"
-          eventProperties={{ id: Device.id }}
-          testID={`Onboarding Device - Selection|${Device.id}`}
-          onPress={() => next(Device.id)}
-          subTitle={t(`onboarding.stepSelectDevice.${Device.id}`)}
+          eventProperties={{ id: device.id }}
+          testID={`Onboarding Device - Selection|${device.id}`}
+          onPress={() => next(device.id)}
+          subTitle={t(`onboarding.stepSelectDevice.${device.id}`)}
           subTitleProps={{ variant: "h2", color: "neutral.c100" }}
           title="Ledger"
           titleProps={{ variant: "small", color: "neutral.c70" }}
-          Image={<Device fill={colors.neutral.c100} height={80} />}
+          Image={<device.SvgDevice fill={colors.neutral.c100} height={80} />}
         />
       ))}
       <TrackScreen category="Onboarding" name="SelectDevice" />
