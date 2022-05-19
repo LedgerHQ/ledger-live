@@ -261,11 +261,11 @@
     },
     "DisconnectedDevice": {
       "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try selecting it again."
+      "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "DisconnectedDeviceDuringOperation": {
       "title": "Device disconnected",
-      "description": "Ledger Live could not connect to your device. Please try selecting it again."
+      "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",
