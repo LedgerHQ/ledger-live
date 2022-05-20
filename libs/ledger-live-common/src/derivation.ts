@@ -167,6 +167,10 @@ const modes = Object.freeze({
   hederaBip44: {
     overridesDerivation: "44/3030",
   },
+  cardano: {
+    purpose: 1852,
+    overridesDerivation: "1852'/1815'/<account>'/<node>/<address>",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -183,6 +187,8 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   polkadot: ["polkadotbip44"],
   filecoin: ["filecoin"],
   hedera: ["hederaBip44"],
+  cardano: ["cardano"],
+  cardano_testnet: ["cardano"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -343,12 +349,16 @@ const disableBIP44 = {
   polkadot: true,
   solana: true,
   hedera: true,
+  cardano: true,
+  cardano_testnet: true,
 };
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
+  cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
