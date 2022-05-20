@@ -33,9 +33,9 @@ Array [
     "xpub": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
   },
   Object {
-    "balance": "274844",
+    "balance": "237874",
     "cosmosResources": Object {
-      "delegatedBalance": "87500",
+      "delegatedBalance": "107500",
       "withdrawAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
     },
     "currencyId": "cosmos",
@@ -52,7 +52,7 @@ Array [
     "index": 1,
     "name": "Cosmos 2",
     "nfts": undefined,
-    "operationsCount": 17,
+    "operationsCount": 20,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -812,6 +812,32 @@ Array [
     Object {
       "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
       "blockHash": null,
+      "blockHeight": "10549023",
+      "contract": undefined,
+      "extra": Object {
+        "cosmosSourceValidator": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "9999",
+          },
+        ],
+      },
+      "fee": "17329",
+      "hash": "27EAF06BFAF8E210012BFF2DEC2E30C6AE26C215C615B2875F8CEE3C6EF0F23E",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-27EAF06BFAF8E210012BFF2DEC2E30C6AE26C215C615B2875F8CEE3C6EF0F23E-REDELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 7,
+      "type": "REDELEGATE",
+      "value": "17329",
+    },
+    Object {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
       "blockHeight": "10348199",
       "contract": undefined,
       "extra": Object {
@@ -856,6 +882,31 @@ Array [
       "transactionSequenceNumber": 71,
       "type": "IN",
       "value": "1000",
+    },
+    Object {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
+      "blockHeight": "10549011",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
+            "amount": "10000",
+          },
+        ],
+      },
+      "fee": "8871",
+      "hash": "610979D00D99FBD7A5FBA8DE73F157A15F8D07297C27E20700E66AD6CF4A2734",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-610979D00D99FBD7A5FBA8DE73F157A15F8D07297C27E20700E66AD6CF4A2734-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 6,
+      "type": "DELEGATE",
+      "value": "8871",
     },
     Object {
       "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
@@ -1121,6 +1172,31 @@ Array [
       "transactionSequenceNumber": 28,
       "type": "IN",
       "value": "100000",
+    },
+    Object {
+      "accountId": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:",
+      "blockHash": null,
+      "blockHeight": "10548998",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+            "amount": "10000",
+          },
+        ],
+      },
+      "fee": "10906",
+      "hash": "F25B81ED8878F6B9B3B79BD4C1CD3667FDC4167572D9B606EAE3D0542BC0259B",
+      "id": "js:2:cosmos:cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5:-F25B81ED8878F6B9B3B79BD4C1CD3667FDC4167572D9B606EAE3D0542BC0259B-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 5,
+      "type": "DELEGATE",
+      "value": "11042",
     },
   ],
   Array [

@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: master
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.GH_PAT }}
       - name: set git user
@@ -44,6 +44,6 @@ jobs:
       - name: push
         run: |
           git push origin hotfix
-          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base master --head hotfix
+          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base main --head hotfix
         env:
           GITHUB_TOKEN: ${{ github.token }}

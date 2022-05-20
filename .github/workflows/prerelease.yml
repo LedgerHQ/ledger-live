@@ -9,12 +9,6 @@ on:
       ref:
         description: the branch to prerelease from
         required: true
-  workflow_run:
-    workflows:
-      - "Create release"
-    types:
-      - "completed"
-
 jobs:
   prerelease:
     name: Prerelease
@@ -23,18 +17,17 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event.push != '' }}
+        if: ${{ github.event_name == 'push' }}
       - uses: actions/checkout@v3
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
         with:
-          ref: ${{ github.event.inputs.ref || "release" }}
+          ref: ${{ github.event.inputs.ref || 'release' }}
           token: ${{ secrets.GH_PAT }}
-
       - name: set ref
         id: ref
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
         run: |
-          echo "::set-output name=ref::${{ github.event.inputs.ref || "release" }}"
+          echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
       - name: set git user
         run: |
@@ -65,17 +58,17 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == "release" }}
+        if: ${{ github.ref_name == 'release' }}
         run: |
           git add .
           git commit -m ":rocket: prerelease"
       - name: commit (from hotfix branch)
-        if: ${{ github.ref_name == "hotfix" }}
+        if: ${{ github.ref_name == 'hotfix' }}
         run: |
           git add .
           git commit -m ":fire: hotfix prerelease"
       - name: commit (from ${{ steps.ref.outputs.ref }} branch)
-        if: ${{ github.ref_name != "release" || github.ref_name != "hotfix" }}
+        if: ${{ github.ref_name != 'release' || github.ref_name != 'hotfix' }}
         run: |
           git add .
           git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease"
@@ -86,11 +79,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes (push event)
-        if: ${{ github.event.push != '' }}
+        if: ${{ github.event_name == 'push' }}
         run: |
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
         run: |
           git push origin ${{ steps.ref.outputs.ref }} --follow-tags
 
@@ -110,6 +103,6 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop-mono.yml",
               inputs: {
-                ref: "${{ github.event.push != '' ? github.ref_name : steps.ref.outputs.ref }}"
+                ref: "${{ github.event.push != '' && github.ref_name || steps.ref.outputs.ref }}"
               }
             });
