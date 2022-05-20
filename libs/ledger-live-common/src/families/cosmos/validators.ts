@@ -43,6 +43,7 @@ const cacheValidators = makeLRUCache(
         return {
           validatorAddress: validator.operator_address,
           name: validator.description.moniker,
+          tokens: parseFloat(validator.tokens),
           votingPower:
             parseFloat(validator.tokens) /
             (rewardState.actualBondedRatio * rewardState.totalSupply * 1000000),
@@ -67,6 +68,7 @@ const cacheValidators = makeLRUCache(
         return {
           validatorAddress: validator.operator_address,
           name: validator.description.moniker,
+          tokens: parseFloat(validator.tokens),
           votingPower:
             parseFloat(validator.tokens) /
             (rewardState.actualBondedRatio * rewardState.totalSupply * 1000000),

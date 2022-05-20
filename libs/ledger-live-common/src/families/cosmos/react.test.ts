@@ -17,6 +17,7 @@ import type {
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
+import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -182,6 +183,14 @@ describe("cosmos/react", () => {
         hooks.useSortedValidators("Nodeasy.com", validators, delegations)
       );
       expect(searchResult.current.length).toBe(1);
+    });
+  });
+  describe("reorderValidators", () => {
+    it("should return a list of Validators with Ledger first", () => {
+      const { result } = renderHook(() =>
+        hooks.useLedgerFirstShuffledValidatorsCosmos()
+      );
+      expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
     });
   });
 });

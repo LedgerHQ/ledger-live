@@ -37,7 +37,9 @@ const solana: AppSpec<Transaction> = {
         const transaction = bridge.createTransaction(account);
         const sibling = pickSiblings(siblings);
         const recipient = sibling.freshAddress;
-        const amount = account.balance.div(1.9 + 0.2 * Math.random());
+        const amount = account.spendableBalance
+          .div(1.9 + 0.2 * Math.random())
+          .integerValue();
         return {
           transaction,
           updates: [{ recipient }, { amount }, maybeTransferMemo()],
@@ -64,7 +66,7 @@ const solana: AppSpec<Transaction> = {
       },
       test: (input) => {
         const { account } = input;
-        expect(account.balance.toNumber()).toBe(0);
+        expect(account.spendableBalance.toNumber()).toBe(0);
         expectCorrectBalanceChange(input);
         expectCorrectMemo(input);
       },
@@ -83,7 +85,7 @@ const solana: AppSpec<Transaction> = {
           "already enough delegations"
         );
 
-        invariant(account.balance.gte(3000000), "not enough balance");
+        invariant(account.spendableBalance.gte(3000000), "not enough balance");
 
         const { validators } = getCurrentSolanaPreloadData(account.currency);
 
@@ -148,7 +150,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(account.balance.gt(0), "not enough balance");
+        invariant(account.spendableBalance.gt(0), "not enough balance");
         const { solanaResources } = account;
 
         if (solanaResources === undefined) {
@@ -210,7 +212,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(account.balance.gt(0), "not enough balance");
+        invariant(account.spendableBalance.gt(0), "not enough balance");
         const { solanaResources } = account;
 
         if (solanaResources === undefined) {
@@ -272,7 +274,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(account.balance.gt(0), "not enough balance");
+        invariant(account.spendableBalance.gt(0), "not enough balance");
         const { solanaResources } = account;
 
         if (solanaResources === undefined) {
@@ -341,7 +343,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(account.balance.gt(0), "not enough balance");
+        invariant(account.spendableBalance.gt(0), "not enough balance");
         const { solanaResources } = account;
 
         if (solanaResources === undefined) {
@@ -410,7 +412,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeWithdrawTransaction,
       transaction: ({ account, bridge }) => {
-        invariant(account.balance.gt(0), "not enough balance");
+        invariant(account.spendableBalance.gt(0), "not enough balance");
         const { solanaResources } = account;
 
         if (solanaResources === undefined) {
