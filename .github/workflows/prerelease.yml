@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
       - name: set ref
         id: ref
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run' }}
         run: |
           echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
@@ -58,7 +58,7 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == 'release' || steps.ref.outputs.ref == "release" }}
+        if: ${{ github.ref_name == 'release' || steps.ref.outputs.ref == 'release' }}
         run: |
           git add . &&
           git commit -m ":rocket: release prerelease" ||
