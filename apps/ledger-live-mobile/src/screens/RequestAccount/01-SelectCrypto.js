@@ -6,12 +6,10 @@ import type {
   CryptoCurrency,
   AccountLike,
 } from "@ledgerhq/live-common/types/index";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "@react-navigation/native";
+import { useCurrencies } from "@ledgerhq/live-common/currencies/react";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -30,6 +28,7 @@ type Props = {
 type RouteParams = {
   currencies: string[],
   allowAddAccount?: boolean,
+  includeTokens?: boolean,
   accounts: AccountLike[],
 };
 
@@ -48,13 +47,13 @@ export default function RequestAccountsSelectCrypto({
   route,
 }: Props) {
   const { colors } = useTheme();
-  const { currencies } = route.params;
+  const { currencies, includeTokens } = route.params;
+  const allCurrencies = useCurrencies(includeTokens);
 
   const cryptoCurrencies = useMemo(
-    () => currencies.map(findCryptoCurrencyById).filter(Boolean),
-    [currencies],
+    () => allCurrencies.filter(c => currencies.includes(c.id)),
+    [currencies, allCurrencies],
   );
-
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
   const onPressCurrency = (currency: CryptoCurrency) => {

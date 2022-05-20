@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { Currency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
@@ -16,8 +17,8 @@ import StepHeader from "../StepHeader";
 
 type Route = {
   params: ?{
-    currency: *,
-    token?: *,
+    currency: Currency,
+    token?: TokenCurrency,
     returnToSwap?: boolean,
     analyticsPropertyFlow?: string,
   },
@@ -28,9 +29,9 @@ const totalSteps = "3";
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const currency = route && route.params && route.params.currency;
-  const token = route && route.params && route.params.token;
-  const returnToSwap = route && route.params && route.params.returnToSwap;
+  const currency = route.params?.currency;
+  const token = route.params?.token;
+  const returnToSwap = route.params?.returnToSwap;
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
