@@ -6,7 +6,7 @@ import type {
   Device,
 } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
-import { TransportStatusError, DisconnectedDevice } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { track } from "../../analytics";
