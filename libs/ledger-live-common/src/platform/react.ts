@@ -78,7 +78,6 @@ export function usePlatformCurrencies(
 
 export function useListPlatformCurrencies(): ListPlatformCurrency {
   const currencies = usePlatformCurrencies(true);
-  console.log("!!!", currencies);
 
   return useCallback(
     (filters?: CurrencyFilters) => {

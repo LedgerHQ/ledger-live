@@ -14,44 +14,38 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
-
 import { JSONRPCRequest } from "json-rpc-2.0";
-
-import type {
+import { useCurrencies } from "@ledgerhq/live-common/lib/currencies/react";
+import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/rawTypes";
-
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import {
-  listCryptoCurrencies,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies/index";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/index";
+import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
-import {
-  accountToPlatformAccount,
-  currencyToPlatformCurrency,
-} from "@ledgerhq/live-common/lib/platform/converters";
+import { accountToPlatformAccount } from "@ledgerhq/live-common/lib/platform/converters";
 import {
   serializePlatformAccount,
   deserializePlatformTransaction,
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
+import {
+  useListPlatformAccounts,
+  useListPlatformCurrencies,
+  usePlatformUrl,
+} from "@ledgerhq/live-common/lib/platform/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
-
 import * as tracking from "./tracking";
 
 type Props = {
@@ -106,58 +100,38 @@ const InfoPanelButton = ({
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = useSelector(accountsSelector);
-  const currencies = useMemo(() => listCryptoCurrencies(), []);
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
-  const uri = useMemo(() => {
-    const url = new URL(manifest.url);
-
-    if (inputs) {
-      for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
-          url.searchParams.set(key, inputs[key]);
-        }
-      }
-    }
-
-    url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
-    url.searchParams.set("textColor", new Color(theme.colors.text).hex());
-    url.searchParams.set("loadDate", loadDate.valueOf().toString());
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-    return url;
-  }, [manifest.url, manifest.params, loadDate, theme, inputs]);
-
-  const navigation = useNavigation();
-
-  const listAccounts = useCallback(
-    () =>
-      accounts.map(account =>
-        serializePlatformAccount(accountToPlatformAccount(account)),
-      ),
-    [accounts],
+  const uri = usePlatformUrl(
+    manifest,
+    {
+      background: new Color(theme.colors.card).hex(),
+      text: new Color(theme.colors.text).hex(),
+      loadDate,
+    },
+    inputs,
   );
 
-  const listCurrencies = useCallback(
-    // TODO: use type ListCurrenciesParams from LedgerLiveApiSdk
-    () => currencies.map(currencyToPlatformCurrency),
-    [currencies],
-  );
+  const listAccounts = useListPlatformAccounts(accounts);
+  const currencies = useCurrencies();
+  const listCurrencies = useListPlatformCurrencies();
 
   const requestAccount = useCallback(
     ({
       currencies: currencyIds = [],
-      allowAddAccount,
+      allowAddAccount = true,
+      includeTokens,
     }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
     // }: RequestAccountParams) =>
     {
       currencies?: string[],
       allowAddAccount?: boolean,
+      includeTokens?: boolean,
     }) =>
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
@@ -213,6 +187,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               currencies: currenciesDiff,
               currency,
               allowAddAccount,
+              includeTokens,
               onSuccess: account => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
