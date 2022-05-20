@@ -30,6 +30,7 @@ import {
   fromNFTRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
+import { fromCardanoResourceRaw } from "./families/cardano/serialization";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -369,6 +370,15 @@ export function patchAccount(
     account.elrondResources !== updatedRaw.elrondResources
   ) {
     next.elrondResources = fromElrondResourcesRaw(updatedRaw.elrondResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.cardanoResources &&
+    // @ts-expect-error check if this is valid for deep equal check
+    account.cardanoResources !== updatedRaw.cardanoResources
+  ) {
+    next.cardanoResources = fromCardanoResourceRaw(updatedRaw.cardanoResources);
     changed = true;
   }
 
