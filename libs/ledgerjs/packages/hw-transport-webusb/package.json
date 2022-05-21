@@ -36,10 +36,11 @@
   },
   "scripts": {
     "flow": "flow",
-    "clean": "bash ../../script/clean.sh",
-    "build": "bash ../../script/build.sh",
-    "watch": "bash ../../script/watch.sh",
-    "doc": "bash ../../script/doc.sh",
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"

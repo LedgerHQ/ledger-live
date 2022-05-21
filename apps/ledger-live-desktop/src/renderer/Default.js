@@ -229,7 +229,7 @@ export default function Default() {
                     <ToastOverlay />
                   </Box>
 
-                  {__PRERELEASE__ ? <NightlyLayer /> : null}
+                  {__PRERELEASE__ && __CHANNEL__ !== "next" ? <NightlyLayer /> : null}
 
                   <DeviceBusyIndicator />
                   <KeyboardContent sequence="BJBJBJ">

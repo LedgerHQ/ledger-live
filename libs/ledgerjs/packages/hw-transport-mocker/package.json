@@ -29,9 +29,10 @@
     "@ledgerhq/logs": "workspace:^"
   },
   "scripts": {
-    "clean": "bash ../../script/clean.sh",
-    "build": "bash ../../script/build.sh",
-    "watch": "bash ../../script/watch.sh",
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
