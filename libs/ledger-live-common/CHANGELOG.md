@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-nightly.1
+
+### Patch Changes
+
+- 9a86fe231: Fix the click on browse assets button on the market screen
+
 ## 22.2.0-nightly.0
 
 ### Minor Changes

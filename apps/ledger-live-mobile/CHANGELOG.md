@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.1.2-nightly.1
+
+### Patch Changes
+
+- 9a86fe231: Fix the click on browse assets button on the market screen
+- 54dbab04f: Fix Ledger logo glitch
+- Updated dependencies [9a86fe231]
+  - @ledgerhq/live-common@22.2.0-nightly.1
+
 ## 3.1.2-nightly.0
 
 ### Patch Changes
