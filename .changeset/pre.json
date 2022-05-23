@@ -70,5 +70,18 @@
     "native-modules-tools": "1.0.0",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "chatty-melons-shop",
+    "cuddly-lamps-yawn",
+    "green-games-kick",
+    "green-suits-move",
+    "late-zebras-hug",
+    "lemon-adults-double",
+    "mean-bananas-flash",
+    "nine-coins-rule",
+    "quick-hairs-obey",
+    "quiet-coats-hang",
+    "shy-bears-reflect",
+    "swift-parrots-enjoy"
+  ]
 }
