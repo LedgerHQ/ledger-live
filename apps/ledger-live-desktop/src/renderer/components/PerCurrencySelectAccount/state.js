@@ -143,8 +143,6 @@ export function useCurrencyAccountSelect({
     }
   }, [availableAccounts, accountId]);
 
-  console.log({ availableAccounts, account, currency, subAccount });
-
   return {
     availableAccounts,
     currency,
