@@ -167,6 +167,9 @@ const modes = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  stacks: {
+    overridesDerivation: "44'/5757'/0'/0/<account>",
+  },
   solanaMain: {
     isNonIterable: true,
     overridesDerivation: "44'/501'",
@@ -199,6 +202,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   filecoin: ["gliflegacy", "glif"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
+  stacks: ["stacks"],
 };
 
 const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
@@ -365,6 +369,7 @@ const disableBIP44 = {
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  stacks: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
