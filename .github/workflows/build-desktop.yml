@@ -146,7 +146,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: [ledger-live, macos]
+    runs-on: macos-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
