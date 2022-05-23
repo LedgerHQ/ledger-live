@@ -1,8 +1,10 @@
 import React from "react";
+import { FlatList } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { AccountLike } from "@ledgerhq/live-common/lib/types";
 
-import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyAccountGraphCard from "../../components/ReadOnlyAccountGraphCard";
 import ReadOnlyFabActions from "../../components/ReadOnlyFabActions";
 import { TrackScreen } from "../../analytics";
@@ -58,19 +60,32 @@ function ReadOnlyAccount({ navigation, route }: Props) {
     unit: { code: "ETH", magnitude: 18, name: "ether" },
   };
 
+  const data = [
+    <Box mx={6} my={6}>
+      <ReadOnlyAccountGraphCard
+        account={account}
+        valueChange={{ percentage: 0, value: 0 }}
+      />
+    </Box>,
+    <Box py={3}>
+      <ReadOnlyFabActions />
+    </Box>,
+    <Box mx={6} mt={8}>
+      {/* Gradient box here */}
+    </Box>,
+  ];
+
   return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       {analytics}
-      <Box mx={6} my={6}>
-        <ReadOnlyAccountGraphCard
-          account={account}
-          valueChange={{ percentage: 0, value: 0 }}
-        />
-      </Box>
-      <Box py={3} mb={8}>
-        <ReadOnlyFabActions />
-      </Box>
-    </TabBarSafeAreaView>
+      <FlatList
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+        data={data}
+        renderItem={({ item }: any) => item}
+        keyExtractor={(_: any, index: any) => String(index)}
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
   );
 }
 
