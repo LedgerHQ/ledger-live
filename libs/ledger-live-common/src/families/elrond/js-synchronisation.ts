@@ -1,4 +1,4 @@
-import type { Account, TokenAccount } from "../../types";
+import type { TokenAccount } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
