@@ -834,6 +834,11 @@
       }
     }
   },
+  "postBuyDevice": {
+    "headerTitle": "Purchase successful",
+    "title": "Congratulations",
+    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation.",
+  },
   "discover": {
     "title": "Discover",
     "desc": "Explore the world of web3 included in Ledger Live",
