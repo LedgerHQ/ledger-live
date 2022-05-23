@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-next.1
+
+### Patch Changes
+
+- 04ad3813d: Add missing condition in Account page to check if account type before using isNFTActive helper. Also adds typing and unit tests to all NFT related helpers from live-common.
+
 ## 22.2.0-next.0
 
 ### Minor Changes
