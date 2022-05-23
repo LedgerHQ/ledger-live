@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
       - name: set ref
         id: ref
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run' }}
         run: |
           echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
@@ -58,20 +58,23 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == 'release' }}
+        if: ${{ github.ref_name == 'release' || steps.ref.outputs.ref == 'release' }}
         run: |
-          git add .
-          git commit -m ":rocket: prerelease"
+          git add . &&
+          git commit -m ":rocket: release prerelease" ||
+          echo ""
       - name: commit (from hotfix branch)
         if: ${{ github.ref_name == 'hotfix' }}
         run: |
-          git add .
-          git commit -m ":fire: hotfix prerelease"
-      - name: commit (from ${{ steps.ref.outputs.ref }} branch)
+          git add . &&
+          git commit -m ":fire: hotfix prerelease" ||
+          echo ""
+      - name: commit (from ${{ steps.ref.outputs.ref }} branch) workflow dispatch
         if: ${{ github.ref_name != 'release' || github.ref_name != 'hotfix' }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease"
+          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease" ||
+          echo ""
 
       - name: publish prerelease
         run: pnpm changeset publish
