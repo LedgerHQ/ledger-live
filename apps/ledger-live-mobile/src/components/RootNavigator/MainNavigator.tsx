@@ -74,9 +74,7 @@ export default function MainNavigator({
             // NB The default behaviour is not reset route params, leading to always having the same
             // search query or preselected tab after the first time (ie from Swap/Sell)
             // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-            navigation.navigate(NavigatorName.Portfolio, {
-              screen: ScreenName.Portfolio,
-            });
+            navigation.navigate(NavigatorName.Portfolio);
           },
         })}
       />

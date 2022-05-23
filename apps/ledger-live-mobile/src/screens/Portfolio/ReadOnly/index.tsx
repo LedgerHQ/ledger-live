@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -13,42 +13,34 @@ import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
 import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
-import styled, { useTheme } from "styled-components/native";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import styled from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
-import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { Currency } from "@ledgerhq/live-common/lib/types";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { accountsSelector } from "../../reducers/accounts";
+import { useRefreshAccountsOrdering } from "../../../actions/general";
+import { accountsSelector } from "../../../reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
-  carouselVisibilitySelector,
-} from "../../reducers/settings";
-import { usePortfolio } from "../../actions/portfolio";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+  readOnlyModeEnabledSelector,
+} from "../../../reducers/settings";
+import { usePortfolio } from "../../../actions/portfolio";
+import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 
-import GraphCardContainer from "./GraphCardContainer";
-import Carousel from "../../components/Carousel";
-import Header from "./Header";
-import TrackScreen from "../../analytics/TrackScreen";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
-import RequireTerms from "../../components/RequireTerms";
-import { NavigatorName } from "../../const";
-import FabActions from "../../components/FabActions";
-import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import AddAssetsCard from "./AddAssetsCard";
-import Assets from "./Assets";
-import { PortfolioHistoryList } from "./PortfolioHistory";
-import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useProviders } from "../Swap/SwapEntry";
-import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
-import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
+import GraphCardContainer from "../GraphCardContainer";
+import Header from "../Header";
+import TrackScreen from "../../../analytics/TrackScreen";
+import { NavigatorName } from "../../../const";
+import Assets from "../Assets";
+import { useProviders } from "../../Swap/SwapEntry";
+import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
+import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+} from "../../../components/TabBar/TabBarSafeAreaView";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BIG_NANO,
+} from "../../../components/BuyDeviceBanner";
 
-export { default as PortfolioTabIcon } from "./TabIcon";
+export { default as PortfolioTabIcon } from "../TabIcon";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -130,27 +122,22 @@ const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
-  const carouselVisibility = useSelector(carouselVisibilitySelector);
-  const showCarousel = useMemo(
-    () => Object.values(carouselVisibility).some(Boolean),
-    [carouselVisibility],
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const [readOnlyAccounts] = useState([]);
+  const trueAccounts = useSelector(accountsSelector);
+
+  const accounts = useMemo(
+    () => (readOnlyModeEnabled ? trueAccounts : readOnlyAccounts),
+    [readOnlyAccounts, readOnlyModeEnabled, trueAccounts],
   );
-  const accounts = useSelector(accountsSelector);
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
-  const [isAddModalOpened, setAddModalOpened] = useState(false);
-  const { colors } = useTheme();
-  const openAddModal = useCallback(() => setAddModalOpened(true), [
-    setAddModalOpened,
-  ]);
   useProviders();
 
-  const closeAddModal = useCallback(() => setAddModalOpened(false), [
-    setAddModalOpened,
-  ]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
@@ -168,18 +155,22 @@ function PortfolioScreen({ navigation }: Props) {
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
     accounts,
   ]);
-  const [showAssets, assetsToDisplay] = useMemo(
+  const [, assetsToDisplay] = useMemo(
     () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
     [accounts],
   );
 
+  const bannerEventProperties = useMemo(
+    () => ({
+      banner: "You'll need a nano",
+      button: "Buy a device",
+      drawer: "transfer",
+    }),
+    [],
+  );
+
   const data = useMemo(
     () => [
-      !showAssets && (
-        <Box mx={6} mt={3}>
-          <AddAssetsCard />
-        </Box>
-      ),
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -188,78 +179,33 @@ function PortfolioScreen({ navigation }: Props) {
           showGraphCard={accounts.length > 0}
         />
       </Box>,
-      ...(accounts.length > 0
-        ? [
-            <Box mt={6}>
-              <FabActions areAccountsEmpty={areAccountsEmpty} />
-            </Box>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
-            <SectionContainer>
-              <SectionTitle
-                title={t("distribution.title")}
-                navigation={navigation}
-                navigatorName={NavigatorName.PortfolioAccounts}
-                containerProps={{ mb: "9px" }}
-              />
-              <Assets
-                balanceHistory={portfolio.balanceHistory}
-                assets={assetsToDisplay}
-              />
-              {accounts.length < maxAssetsToDisplay && (
-                <>
-                  <Flex
-                    mt={6}
-                    p={4}
-                    border={`1px dashed ${colors.neutral.c40}`}
-                    borderRadius={4}
-                  >
-                    <TextLink
-                      onPress={openAddModal}
-                      Icon={PlusMedium}
-                      iconPosition={"left"}
-                      type={"color"}
-                    >
-                      {t("distribution.moreAssets")}
-                    </TextLink>
-                  </Flex>
-                  <AddAccountsModal
-                    navigation={navigation}
-                    isOpened={isAddModalOpened}
-                    onClose={closeAddModal}
-                  />
-                </>
-              )}
-            </SectionContainer>,
-          ]
-        : []),
-      ...(showCarousel
-        ? [
-            <SectionContainer px={0} minHeight={175}>
-              <SectionTitle
-                title={t("portfolio.recommended.title")}
-                containerProps={{ mb: 7, mx: 6 }}
-              />
-              <Carousel cardsVisibility={carouselVisibility} />
-            </SectionContainer>,
-          ]
-        : []),
-      ...(showAssets
-        ? [
-            <SectionContainer px={0} mb={8}>
-              <SectionTitle
-                title={t("analytics.operations.title")}
-                containerProps={{ mx: 6 }}
-              />
-              <PortfolioHistoryList navigation={navigation} />
-            </SectionContainer>,
-          ]
-        : []),
+      <SectionContainer>
+        <SectionTitle
+          title={t("distribution.title")}
+          navigation={navigation}
+          navigatorName={NavigatorName.PortfolioAccounts}
+          containerProps={{ mb: "9px" }}
+        />
+        <Assets
+          balanceHistory={portfolio.balanceHistory}
+          assets={assetsToDisplay}
+        />
+      </SectionContainer>,
+      <BuyDeviceBanner
+        style={{
+          marginHorizontal: 16,
+          marginTop: 36,
+          paddingTop: 13.5,
+          paddingBottom: 13.5,
+        }}
+        buttonLabel={t("buyDevice.bannerButtonTitle")}
+        buttonSize="small"
+        event="button_clicked"
+        eventProperties={bannerEventProperties}
+        {...IMAGE_PROPS_BIG_NANO}
+      />,
     ],
     [
-      showAssets,
       onPortfolioCardLayout,
       counterValueCurrency,
       portfolio,
@@ -268,18 +214,12 @@ function PortfolioScreen({ navigation }: Props) {
       t,
       navigation,
       assetsToDisplay,
-      colors.neutral.c40,
-      openAddModal,
-      isAddModalOpened,
-      closeAddModal,
-      showCarousel,
-      carouselVisibility,
+      bannerEventProperties,
     ],
   );
 
   return (
     <>
-      <FirmwareUpdateBanner />
       <TabBarSafeAreaView>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
@@ -309,7 +249,6 @@ function PortfolioScreen({ navigation }: Props) {
             accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
           }
         />
-        <MigrateAccountsBanner />
       </TabBarSafeAreaView>
     </>
   );

@@ -1,18 +1,12 @@
 import React, { useCallback } from "react";
-import {
-  Image,
-  ImageStyle,
-  PixelRatio,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Image, PixelRatio } from "react-native";
+import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import Button from "./wrappedUi/Button";
 import { ScreenName } from "../const";
+import ForceTheme from "./theme/ForceTheme";
 
 import imgSource from "../images/illustration/Shared/_NanoXTop.png";
 
@@ -68,61 +62,78 @@ export default function BuyDeviceBanner({
   const handleOnPress = useCallback(() => {
     navigate(ScreenName.BuyDeviceScreen);
   }, [navigate]);
+  const handleSetupCtaOnPress = useCallback(() => {
+    navigate(ScreenName.OnboardingDeviceSelection);
+  }, [navigate]);
 
   const imgScale = imageScale / PixelRatio.get();
 
   return (
-    <Container style={style}>
-      <Flex flexDirection="column" alignItems="flex-start">
-        {topLeft || (
-          <Flex flexDirection="column" width="80%">
-            <Text
-              variant="h5"
-              fontWeight="semiBold"
-              color="constant.black"
-              mb={3}
+    <>
+      <Container style={style}>
+        <Flex flexDirection="column" alignItems="flex-start">
+          {topLeft || (
+            <Flex flexDirection="column" width="80%">
+              <Text
+                variant="h5"
+                fontWeight="semiBold"
+                color="constant.black"
+                mb={3}
+              >
+                {t("buyDevice.bannerTitle")}
+              </Text>
+              <Text
+                variant="paragraph"
+                fontWeight="medium"
+                color="constant.black"
+                mb="20px"
+              >
+                {t("buyDevice.bannerSubtitle")}
+              </Text>
+            </Flex>
+          )}
+          <ForceTheme selectedPalette={"light"}>
+            <Button
+              onPress={handleOnPress}
+              size={buttonSize}
+              event={event}
+              eventProperties={eventProperties}
+              type="main"
+              flexShrink={0}
             >
-              {t("buyDevice.bannerTitle")}
-            </Text>
-            <Text
-              variant="paragraph"
-              fontWeight="medium"
-              color="constant.black"
-              mb="20px"
-            >
-              {t("buyDevice.bannerSubtitle")}
-            </Text>
-          </Flex>
-        )}
-        <Button
-          onPress={handleOnPress}
-          size={buttonSize}
-          event={event}
-          eventProperties={eventProperties}
-          type="main"
-          flexShrink={0}
+              {buttonLabel ?? t("buyDevice.bannerButtonTitle")}
+            </Button>
+          </ForceTheme>
+        </Flex>
+        <Flex flex={1} />
+        <Flex
+          position="absolute"
+          right={0}
+          bottom={0}
+          borderRadius={2}
+          overflow="hidden"
+          imageContainerStyle={imageContainerStyle}
         >
-          {buttonLabel ?? t("buyDevice.bannerButtonTitle")}
-        </Button>
+          <Image
+            resizeMode="contain"
+            style={[
+              { height: 394 * imgScale, width: 242 * imgScale },
+              imageStyle,
+            ]}
+            source={imgSource}
+          />
+        </Flex>
+      </Container>
+      <Flex alignItems="center" justifyContent="center" mt={24} mx="auto">
+        <Link
+          type="color"
+          Icon={Icons.ArrowRightMedium}
+          iconPosition="right"
+          onPress={handleSetupCtaOnPress}
+        >
+          {t("buyDevice.setupCta")}
+        </Link>
       </Flex>
-      <Flex flex={1} />
-      <Flex
-        position="absolute"
-        right={0}
-        bottom={0}
-        borderRadius={2}
-        overflow="hidden"
-        imageContainerStyle={imageContainerStyle}
-      >
-        <Image
-          resizeMode="contain"
-          style={[
-            { height: 394 * imgScale, width: 242 * imgScale },
-            imageStyle,
-          ]}
-          source={imgSource}
-        />
-      </Flex>
-    </Container>
+    </>
   );
 }

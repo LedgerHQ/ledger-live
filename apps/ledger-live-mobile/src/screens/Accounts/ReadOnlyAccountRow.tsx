@@ -39,10 +39,10 @@ const AccountRow = ({ navigation, currency }: Props) => {
     magnitude: 2,
   };
 
-  const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+  // const tag =
+  //   account.derivationMode !== undefined &&
+  //   account.derivationMode !== null &&
+  //   getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
 
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),

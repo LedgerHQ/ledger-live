@@ -8,12 +8,11 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/lib/currencies";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Trans, useTranslation } from "react-i18next";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
+import { accountsSelector } from "../../reducers/accounts";
 import TrackScreen from "../../analytics/TrackScreen";
 
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -29,8 +28,6 @@ const listSupportedTokens = () =>
 
 function Accounts({ navigation }: Props) {
   const accounts = useSelector(accountsSelector);
-
-  const { t } = useTranslation();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
