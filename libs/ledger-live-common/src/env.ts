@@ -105,6 +105,16 @@ const envDefinitions = {
     def: 200,
     desc: "Limit of operation that Horizon will fetch per page",
   },
+  API_OSMOSIS_INDEXER: {
+    def: "http://localhost:4444",
+    parser: stringParser,
+    desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
+  },
+  API_OSMOSIS_NODE: {
+    def: "http://localhost:5555",
+    parser: stringParser,
+    desc: "Endpoint for Osmosis Node",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
