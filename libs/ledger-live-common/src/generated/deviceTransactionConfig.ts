@@ -16,6 +16,8 @@ import filecoin from "../families/filecoin/deviceTransactionConfig";
 
 import hedera from "../families/hedera/deviceTransactionConfig";
 
+import osmosis from "../families/osmosis/deviceTransactionConfig";
+
 import polkadot from "../families/polkadot/deviceTransactionConfig";
 
 import ripple from "../families/ripple/deviceTransactionConfig";
@@ -39,6 +41,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  osmosis,
   polkadot,
   ripple,
   solana,
