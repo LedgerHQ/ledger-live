@@ -18,6 +18,8 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
+import { Transaction as osmosisTransaction } from "../families/osmosis/types";
+import { TransactionRaw as osmosisTransactionRaw } from "../families/osmosis/types";
 import { Transaction as polkadotTransaction } from "../families/polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "../families/polkadot/types";
 import { Transaction as rippleTransaction } from "../families/ripple/types";
@@ -42,6 +44,7 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | neoTransaction
+  | osmosisTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
@@ -59,6 +62,7 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | neoTransactionRaw
+  | osmosisTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
