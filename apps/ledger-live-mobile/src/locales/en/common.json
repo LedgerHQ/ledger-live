@@ -815,6 +815,7 @@
     "bannerButtonTitle2": "Buy a device"
   },
   "postBuyDevice": {
+    "headerTitle": "Purchase successful",
     "title": "Congratulations",
     "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation.",
   },
