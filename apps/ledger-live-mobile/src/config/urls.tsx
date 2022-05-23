@@ -78,7 +78,8 @@ export const urls = {
   algorandStaking:
     "https://support.ledger.com/hc/en-us/articles/360015897740?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=algorand",
   polkadotStaking:
-    "https://support.ledger.com/hc/en-us/articles/360018131260-Earning-Polkadot-DOT-bonding-rewards?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
+    "https://support.ledger.com/hc/en-us/articles/360019187260?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=polkadot",
+  elrondStaking: "https://everstake.one/elrond",
   swap: {
     info:
       "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",

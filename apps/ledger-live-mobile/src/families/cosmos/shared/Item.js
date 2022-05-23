@@ -71,7 +71,7 @@ function Item({
 
         <LText style={styles.subText} color="grey" numberOfLines={1}>
           <Trans
-            i18nKey="cosmos.delegation.flow.steps.validator.estYield"
+            i18nKey="cosmos.delegation.flow.steps.validator.apr"
             values={{
               amount: estimatedYearlyRewardsRate
                 ? Number(100 * estimatedYearlyRewardsRate).toFixed(2)

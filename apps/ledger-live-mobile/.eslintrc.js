@@ -84,7 +84,7 @@ module.exports = {
     "eslint-comments/no-unlimited-disable": "warn",
     "eslint-comments/no-unused-disable": "warn",
     "react-native/no-inline-styles": "warn",
-    "react/jsx-fragments": "warn",
+    "react/jsx-fragments": 0,
     "react/no-deprecated": "warn",
     "prettier/prettier": "error",
   },

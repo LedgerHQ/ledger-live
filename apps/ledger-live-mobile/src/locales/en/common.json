@@ -3428,6 +3428,24 @@
     }
   },
   "elrond": {
+    "info": {
+      "available": {
+        "title": "EGLD available",
+        "description": "This amount can be transferred."
+      },
+      "delegated": {
+        "title": "Staked assets",
+        "description": "Staked assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism."
+      },
+      "undelegating": {
+        "title": "Pending Withdrawals",
+        "description": "Unstaked assets are subject to a 10-day unbonding period, before being able to be withdrawn."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
+      }
+    },
     "account": {
       "subHeader": {
         "cardTitle": "Powered by Elrond",
@@ -3438,6 +3456,180 @@
         "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
         "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
         "website": "The Internet Scale Blockchain"
+      }
+    },
+    "delegation": {
+      "delegationEarn": "Stake your EGLD to secure the network and capture your share of the rewards.",
+      "info": "What is staking and how does it work?",
+      "claimRewards": "Claim rewards",
+      "claimAvailableRewards": "Claim {{amount}}",
+      "header": "My Stake",
+      "Amount": "Amount",
+      "noRewards": "No rewards available",
+      "delegate": "Restake",
+      "undelegate": "Unstake",
+      "reward": "Claim rewards",
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "validator": "Delegate assets",
+        "amountSubTitle": "Amount to stake",
+        "summary": "Summary",
+        "verification": "Verification",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "You can earn rewards by staking your EGLD assets to a Staking Provider.",
+            "steps": {
+              "0": "You keep ownership of staked assets.",
+              "1": "Assets will be available 10 days after Unstaking.",
+              "2": "Stake using your Ledger device."
+            },
+            "warning": {
+              "description": "Choose your Staking Provider wisely: currently, the only risk is of not getting rewards due to various reasons, therefore you should select a provider based on Reliability, Communication and Economics."
+            },
+            "cta": "Continue"
+          },
+          "validator": {
+            "validators": "Staking Providers",
+            "myDelegations": "My Stake",
+            "cta": "Continue",
+            "apr": "APR: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validator found for <0>{{search}}</0>",
+            "currentAmount": "(+ <0>{{amount}}</0>)"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
+            "insufficientDelegation": "Your total staking amout must be at least 1 {{label}} per Staking Provider.",
+            "wrongUndelegations": "The remaining amount of staked {{label}} should either be 0 or above 1 {{label}} per Staking Provider.",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "Your account balance will be updated once the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      },
+      "drawer": {
+        "status": "Status",
+        "rewards": "Rewards",
+        "active": "Active",
+        "inactive": "Inactive",
+        "completionDate": "Completion date",
+        "redelegatedFrom": "Redelegated from"
+      }
+    },
+    "claimRewards": {
+      "stepperHeader": {
+        "validator": "Select reward to collect",
+        "method": "Claim rewards",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "method": {
+            "youEarned": "You earned",
+            "byDelegationAssetsTo": "by staking assets to",
+            "claimRewards": "Claim Rewards",
+            "reDelegateRewards": "Stake Rewards",
+            "claimRewardsInfo": "They will be claimed now and added to your available balance.",
+            "reDelegateRewardsInfo": "They will be claimed now and automatically staked to the same Staking Provider.",
+            "compoundOrCashIn": "Stake Rewards or Claim Rewards?",
+            "claimRewardsTooltip": "Rewards will be added to the available balance",
+            "reDelegateRewardsTooltip": "Rewards will be added to the staked amount",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully claimed your rewards. They were added to your available balance.",
+              "titleCompound": "Your rewards were staked to the same Staking Provider.",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "undelegation": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to unstake",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "allAssetsUsed": "All assets unstaked"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully unstaked your assets",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    },
+    "withdraw": {
+      "stepperHeader": {
+        "validator": "Select reward to collect",
+        "method": "Claim rewards",
+        "summary": "Summary",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "method": {
+            "youEarned": "You unstaked",
+            "byDelegationAssetsTo": "from",
+            "withdrawInfo": "They will be claimed now and added to your available balance.",
+            "withdrawTooltip": "Withdrawals will be added to the available balance",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully claimed your rewards. They were added to your available balance.",
+              "titleCompound": "Your rewards were staked to the Staking Provider.",
+              "text": "Your account balance will be updated when the network confirms the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
       }
     }
   },
@@ -3877,7 +4069,8 @@
     "actions": {
       "redelegate": "Redelegate",
       "collectRewards": "Collect rewards",
-      "undelegate": "Undelegate"
+      "undelegate": "Undelegate",
+      "withdraw": "Withdraw"
     }
   },
   "ValidateOnDevice": {
