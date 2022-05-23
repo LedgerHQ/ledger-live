@@ -27,7 +27,7 @@ const DisappointedDone = ({ closeModal }: Props) => {
   }, [ratingsFeatureParams, ratingsHappyMoment?.route_name]);
 
   return (
-    <Flex flex={1} alignItems="center" justifyContent="center">
+    <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>
       <TrackScreen
         category="Review"
         name="page_viewed"

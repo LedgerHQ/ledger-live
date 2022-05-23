@@ -3,10 +3,10 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Duration } from "date-fns";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
-import { accountsCountSelector } from "../reducers/accounts";
+import { accountsSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsCurrentRouteNameSelector,
@@ -87,8 +87,10 @@ const useRatings = () => {
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
-  const accountsCount: number = useSelector(accountsCountSelector);
+  const accounts: Account[] = useSelector(accountsSelector);
   const currAppLanguage = useSelector(languageSelector);
+
+  const accountsWithAmountCount = useMemo(() => accounts.filter(account => account).length, [accounts]);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -123,7 +125,7 @@ const useRatings = () => {
     // minimum accounts number criteria
     const minimumAccountsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_accounts_number;
-    if (minimumAccountsNumber && accountsCount < minimumAccountsNumber) {
+    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
       return false;
     }
 
@@ -162,7 +164,7 @@ const useRatings = () => {
   }, [
     currAppLanguage,
     ratingsDataOfUser,
-    accountsCount,
+    accountsWithAmountCount,
     ratingsFeature?.params?.conditions?.minimum_accounts_number,
     ratingsFeature?.params?.conditions?.minimum_app_starts_number,
     ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
