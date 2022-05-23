@@ -3274,6 +3274,54 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  acala: {
+     type: "CryptoCurrency",
+     id: "acala",
+     coinType: 787,
+     name: "Acala",
+     managerAppName: "Acala",
+     ticker: "ACA",
+     scheme: "acala",
+     color: "#645AFF",
+     family: "acala",
+     units: [
+       {
+         name: "ACA",
+         code: "ACA",
+         magnitude: 12,
+       }
+     ],
+     explorerViews: [
+       {
+         tx: "https://acala.subscan.io/tx/$hash",
+         address: "https://acala.subscan.io/account/$address",
+       }
+     ]
+   },
+   karura: {
+     type: "CryptoCurrency",
+     id: "karura",
+     coinType: 686,
+     name: "Karura",
+     managerAppName: "Karura",
+     ticker: "KAR",
+     scheme: "karura",
+     color: "#ff4c3b",
+     family: "karura",
+     units: [
+       {
+         name: "KAR",
+         code: "KAR",
+         magnitude: 12,
+       }
+     ],
+     explorerViews: [
+       {
+         tx: "https://karura.subscan.io/tx/$hash",
+         address: "https://karura.subscan.io/account/$address",
+       }
+     ]
+   },
 };
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
