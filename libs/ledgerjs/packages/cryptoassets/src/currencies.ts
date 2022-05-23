@@ -2008,6 +2008,46 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  plcultima: {
+    type: "CryptoCurrency",
+    id: "plcultima",
+    coinType: 780,
+    name: "PLC Ultima",
+    managerAppName: "PLC Ultima",
+    ticker: "PLCU",
+    scheme: "plcultima",
+    color: "#002488",
+    family: "bitcoin",
+    blockAvgTime: 90,
+    bitcoinLikeInfo: {
+      P2PKH: 0xC80528,
+      P2SH: 0xC80529,
+      XPUBVersion: 0x0488b21e,
+    },
+    units: [
+      {
+        name: "PLCU",
+        code: "PLCU",
+        magnitude: 8,
+      },
+      {
+        name: "mPLCU",
+        code: "mPLCU",
+        magnitude: 5,
+      },
+      {
+        name: "satoshi",
+        code: "satoshi",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://plcultima.info/tx/$hash",
+        address: "https://plcultima.info/address/$address",
+      },
+    ],
+  },
   poa: {
     type: "CryptoCurrency",
     id: "poa",
