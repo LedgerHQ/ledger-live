@@ -13,6 +13,8 @@ import { addBackgroundEvent } from "../src/actions/appstate";
 import { store } from "../src/context/LedgerStore";
 import { BackgroundEvent } from "../src/reducers/appstate";
 
+const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+
 /**
  * This task is not able to touch UI, but it will allow us to complete tasks
  * even when the device goes to the background. We don't have access to hooks
@@ -96,7 +98,7 @@ const BackgroundRunnerService = async ({
       } else {
         emitEvent({ type: "confirmPin" });
         // We're waiting forever condition that make getDeviceInfo work
-        waitForOnlineDevice(5 * 60 * 1000).subscribe({
+        waitForOnlineDevice(FIVE_MINUTES_IN_MS).subscribe({
           error: onError,
           complete: onFirmwareUpdated,
         });

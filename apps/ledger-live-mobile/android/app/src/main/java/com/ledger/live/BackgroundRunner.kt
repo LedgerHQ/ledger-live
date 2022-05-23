@@ -19,9 +19,6 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
         return "BackgroundRunner"
     }
 
-    /**
-     * TODO Rewrite the notification life cycle code
-     */
     private fun createOrUpdateNotification(progress: Int, message: String, requiresUserInput: Boolean) {
         val intent = Intent(context, MainActivity::class.java)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
