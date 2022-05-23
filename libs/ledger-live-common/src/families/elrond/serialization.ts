@@ -1,13 +1,15 @@
 import type { ElrondResourcesRaw, ElrondResources } from "./types";
 export function toElrondResourcesRaw(r: ElrondResources): ElrondResourcesRaw {
-  const { nonce } = r;
+  const { nonce, delegations } = r;
   return {
     nonce,
+    delegations,
   };
 }
 export function fromElrondResourcesRaw(r: ElrondResourcesRaw): ElrondResources {
-  const { nonce } = r;
+  const { nonce, delegations } = r;
   return {
     nonce,
+    delegations,
   };
 }

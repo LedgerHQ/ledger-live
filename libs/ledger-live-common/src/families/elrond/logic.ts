@@ -1,6 +1,9 @@
-import type { Account } from "../../types";
+import type { Account, SubAccount } from "../../types";
 import type { Transaction } from "./types";
 import * as bech32 from "bech32";
+import BigNumber from "bignumber.js";
+import { buildTransaction } from "./js-buildTransaction";
+import getEstimatedFees from "./js-getFeesForTransaction";
 
 /**
  * The human-readable-part of the bech32 addresses.
@@ -65,4 +68,36 @@ export const getNonce = (a: Account): number => {
       : 0
   );
   return nonce;
+};
+
+export const computeTransactionValue = async (
+  t: Transaction,
+  a: Account,
+  ta: SubAccount | null
+): Promise<{
+  amount: BigNumber;
+  totalSpent: BigNumber;
+  estimatedFees: BigNumber;
+}> => {
+  let amount, totalSpent;
+
+  await buildTransaction(a, ta, t);
+
+  const estimatedFees = await getEstimatedFees(t);
+
+  if (ta) {
+    amount = t.useAllAmount ? ta.balance : t.amount;
+
+    totalSpent = amount;
+  } else {
+    totalSpent = t.useAllAmount
+      ? a.balance
+      : new BigNumber(t.amount).plus(estimatedFees);
+
+    amount = t.useAllAmount
+      ? a.balance.minus(estimatedFees)
+      : new BigNumber(t.amount);
+  }
+
+  return { amount, totalSpent, estimatedFees };
 };

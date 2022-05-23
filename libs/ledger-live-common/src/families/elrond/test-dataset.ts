@@ -52,6 +52,7 @@ const elrond: CurrenciesData<Transaction> = {
             amount: "100000000",
             mode: "send",
             fees: null,
+            gasLimit: 0,
           }),
           expectedStatus: {
             amount: new BigNumber("100000000"),
@@ -69,6 +70,7 @@ const elrond: CurrenciesData<Transaction> = {
             amount: "100000000",
             mode: "send",
             fees: null,
+            gasLimit: 0,
           }),
           expectedStatus: {
             errors: {
@@ -86,6 +88,7 @@ const elrond: CurrenciesData<Transaction> = {
             amount: "1000000000000000000000000",
             mode: "send",
             fees: null,
+            gasLimit: 0,
           }),
           expectedStatus: {
             errors: {

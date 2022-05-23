@@ -4,6 +4,8 @@ import { getMainAccount } from "../../account";
 import type { Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
 import getEstimatedFees from "./js-getFeesForTransaction";
+import { GAS } from "./constants";
+import { ElrondEncodeTransaction } from "./encode";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -19,22 +21,61 @@ const estimateMaxSpendable = async ({
   parentAccount: Account | null | undefined;
   transaction: Transaction | null | undefined;
 }): Promise<BigNumber> => {
-  const a = getMainAccount(account, parentAccount);
-  const t = {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const tx = {
     ...createTransaction(),
+    subAccountId: account.type === "Account" ? null : account.id,
     ...transaction,
-    amount: a.spendableBalance,
   };
-  const fees = await getEstimatedFees({
-    a,
-    t,
-  });
 
-  if (fees.gt(a.spendableBalance)) {
+  const tokenAccount =
+    tx.subAccountId &&
+    mainAccount.subAccounts &&
+    mainAccount.subAccounts.find((ta) => ta.id === tx.subAccountId);
+
+  if (tokenAccount) {
+    return tokenAccount.balance;
+  }
+
+  switch (tx?.mode) {
+    case "reDelegateRewards":
+      tx.gasLimit = GAS.DELEGATE;
+
+      tx.data = ElrondEncodeTransaction.reDelegateRewards();
+      break;
+    case "withdraw":
+      tx.gasLimit = GAS.DELEGATE;
+
+      tx.data = ElrondEncodeTransaction.withdraw();
+      break;
+    case "unDelegate":
+      tx.gasLimit = GAS.DELEGATE;
+
+      tx.data = ElrondEncodeTransaction.unDelegate(tx);
+      break;
+    case "delegate":
+      tx.gasLimit = GAS.DELEGATE;
+
+      tx.data = ElrondEncodeTransaction.delegate();
+      break;
+
+    case "claimRewards":
+      tx.gasLimit = GAS.CLAIM;
+
+      tx.data = ElrondEncodeTransaction.claimRewards();
+      break;
+
+    default:
+      break;
+  }
+
+  const fees = await getEstimatedFees(tx);
+
+  if (fees.gt(mainAccount.balance)) {
     return new BigNumber(0);
   }
 
-  return a.spendableBalance.minus(fees);
+  return mainAccount.spendableBalance.minus(fees);
 };
 
 export default estimateMaxSpendable;
