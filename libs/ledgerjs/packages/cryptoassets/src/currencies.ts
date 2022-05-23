@@ -3274,6 +3274,28 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  bifrost: {
+    type: "CryptoCurrency",
+    id: "bifrost",
+    coinType: 788,
+    name: "Bifrost",
+    managerAppName: "Bifrost",
+    ticker: "BNC",
+    scheme: "bifrost",
+    color: "#5a25f0",
+    family: "bifrost",
+    units: [
+      {
+        name: "BNC",
+        code: "BNC",
+        magnitude: 12,
+      },
+    ],
+    explorerViews: [{
+      address: "https://bifrost.subscan.io/account/$address",
+      tx: "https://bifrost.subscan.io/extrinsic/$hash",
+    }],
+  },
 };
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
 const cryptocurrenciesByTicker: Record<string, CryptoCurrency> = {};
@@ -3331,8 +3353,8 @@ export function listCryptoCurrencies(
       ? cryptocurrenciesArray
       : prodCryptoArray
     : withDevCrypto
-    ? cryptocurrenciesArrayWithoutTerminated
-    : prodCryptoArrayWithoutTerminated;
+      ? cryptocurrenciesArrayWithoutTerminated
+      : prodCryptoArrayWithoutTerminated;
 }
 
 /**
