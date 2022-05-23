@@ -121,6 +121,11 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks-node-api.mainnet.stacks.co", // FIXME Stacks - Set the correct value for ledger proxy
+    desc: "Stacks API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
