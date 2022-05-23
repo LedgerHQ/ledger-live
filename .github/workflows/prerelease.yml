@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - "release"
+      - "releases/**"
       - "hotfix"
   workflow_dispatch:
     inputs:
@@ -58,19 +59,19 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == 'release' || steps.ref.outputs.ref == 'release' }}
+        if: ${{ startsWith(github.ref_name, 'release') || startsWith(steps.ref.outputs.ref, 'release') }}
         run: |
           git add . &&
           git commit -m ":rocket: release prerelease" ||
           echo ""
       - name: commit (from hotfix branch)
-        if: ${{ github.ref_name == 'hotfix' }}
+        if: ${{ startsWith(steps.ref.outputs.ref, 'hotfix') }}
         run: |
           git add . &&
           git commit -m ":fire: hotfix prerelease" ||
           echo ""
       - name: commit (from ${{ steps.ref.outputs.ref }} branch) workflow dispatch
-        if: ${{ github.ref_name != 'release' || github.ref_name != 'hotfix' }}
+        if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
           git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease" ||
