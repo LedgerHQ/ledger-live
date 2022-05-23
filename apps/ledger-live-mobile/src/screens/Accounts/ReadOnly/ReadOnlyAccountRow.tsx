@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import { Flex, Text, ProgressLoader } from "@ledgerhq/native-ui";
+import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "styled-components/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
