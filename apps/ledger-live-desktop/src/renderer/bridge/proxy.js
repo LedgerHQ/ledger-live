@@ -1,5 +1,5 @@
-/* eslint-disable flowtype/generic-spacing */
 // @flow
+/* eslint-disable flowtype/generic-spacing */
 
 import { BigNumber } from "bignumber.js";
 import { map, tap } from "rxjs/operators";
