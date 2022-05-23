@@ -1,17 +1,21 @@
-import type { Exchange, GetExchangeRates } from "./types";
-import type { Transaction } from "../../types";
-import { getAccountCurrency, getAccountUnit } from "../../account";
-import type { Unit, TokenCurrency, CryptoCurrency } from "../../types";
-import { formatCurrencyUnit } from "../../currencies";
-import { mockGetExchangeRates } from "./mock";
-import network from "../../network";
-import { getSwapAPIError, getSwapAPIBaseURL } from "./";
-import { getEnv } from "../../env";
 import { BigNumber } from "bignumber.js";
+import { getAccountCurrency, getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+import { getEnv } from "../../env";
 import {
-  SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooHigh,
+  SwapExchangeRateAmountTooLow,
 } from "../../errors";
+import network from "../../network";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Transaction,
+  Unit,
+} from "../../types";
+import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { mockGetExchangeRates } from "./mock";
+import type { Exchange, GetExchangeRates } from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -36,6 +40,7 @@ const getExchangeRates: GetExchangeRates = async (
     from,
     to,
     amountFrom: apiAmount.toString(),
+    providers: usesV3 ? getAvailableProviders() : undefined,
   };
   const res = await network({
     method: "POST",

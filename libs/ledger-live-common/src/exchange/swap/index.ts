@@ -92,6 +92,8 @@ const getProviderConfig = (providerName: string): SwapProviderConfig => {
   return res;
 };
 
+export const getAvailableProviders = (): string[] => Object.keys(swapProviders);
+
 const USStates = {
   AL: "Alabama",
   AK: "Alaska",

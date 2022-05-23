@@ -34,11 +34,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -99,6 +99,7 @@
     "@taquito/utils": "stablelib",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
+    "@types/qs": "^6.9.7",
     "@walletconnect/client": "1.7.3",
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-filecoin": "^0.11.2",
@@ -144,6 +145,7 @@
     "object-hash": "^2.2.0",
     "performance-now": "^2.1.0",
     "prando": "^6.0.1",
+    "qs": "^6.10.1",
     "redux": "^4.1.2",
     "reselect": "^4.1.5",
     "ripemd160": "^2.0.2",
