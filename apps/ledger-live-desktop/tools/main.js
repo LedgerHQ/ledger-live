@@ -12,9 +12,11 @@ const {
   processNativeModules,
   copyFolderRecursivelySync,
   buildWebpackExternals,
+  esBuildExternalsPlugin,
 } = require("native-modules-tools");
 const path = require("path");
 const { prerelease } = require("semver");
+const { esbuild, NodeExternalsPlugin } = require("esbuild-utils");
 
 const lldRoot = path.resolve(__dirname, "..");
 const pkg = require("./../package.json");
@@ -86,6 +88,7 @@ const buildRendererEnv = (mode, config) => {
     __SENTRY_URL__: JSON.stringify(SENTRY_URL || null),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
+    "process.env.NODE_ENV": JSON.stringify(mode),
   };
 
   return env;
@@ -224,25 +227,6 @@ const build = async argv => {
       path.join(lldRoot, "node_modules"),
     );
   }
-  const mainConfig = buildMainConfig("production", bundles.main, argv, mappedNativeModules);
-  const preloaderConfig = buildMainConfig(
-    "production",
-    bundles.preloader,
-    argv,
-    mappedNativeModules,
-  );
-  const webviewPreloaderConfig = buildMainConfig(
-    "production",
-    bundles.webviewPreloader,
-    argv,
-    mappedNativeModules,
-  );
-  const rendererConfig = buildRendererConfig("production", bundles.renderer, argv);
-
-  const mainWorker = new WebpackWorker("main", mainConfig);
-  const rendererWorker = new WebpackWorker("renderer", rendererConfig);
-  const preloaderWorker = new WebpackWorker("preloader", preloaderConfig);
-  const webviewPreloaderWorker = new WebpackWorker("preloader", webviewPreloaderConfig);
 
   try {
     await processReleaseNotes();
@@ -250,19 +234,32 @@ const build = async argv => {
     console.log(error);
   }
 
+  const mainConfig = require("./config/main.esbuild");
+
   await Promise.all([
-    mainWorker.bundle(),
-    preloaderWorker.bundle(),
-    webviewPreloaderWorker.bundle(),
-  ])
-    .then(() => rendererWorker.bundle())
-    .catch(err => {
-      if (err instanceof Error) {
-        throw err;
-      }
-      console.error(err.compilation.errors);
-      throw new Error("Build failed.");
-    });
+    esbuild.build({
+      ...mainConfig,
+      define: buildMainEnv("production", null, argv),
+      plugins: [
+        ...(mainConfig.plugins || []),
+        ...(!mappedNativeModules
+          ? [NodeExternalsPlugin]
+          : [esBuildExternalsPlugin(mappedNativeModules)]),
+      ],
+    }),
+    esbuild.build({
+      ...require("./config/preloader.esbuild"),
+      define: buildMainEnv("production", null, argv),
+    }),
+    esbuild.build({
+      ...require("./config/webviewPreloader.esbuild"),
+      define: buildMainEnv("production", null, argv),
+    }),
+    esbuild.build({
+      ...require("./config/renderer.esbuild"),
+      define: buildRendererEnv("production"),
+    }),
+  ]);
 };
 
 yargs

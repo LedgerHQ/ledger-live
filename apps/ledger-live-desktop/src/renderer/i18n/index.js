@@ -1,11 +1,17 @@
-const context = require.context("../../../static/i18n", true, /\.(json)$/);
+import * as translationsImports from "../../../static/i18n/**/*.json";
 
-const regexp = /\.\/([a-z]{2})\/(.+).json/;
+const { default: translationsArray, filenames } = translationsImports;
 
-const locales = context.keys().reduce((files, filename) => {
+const regexp = /\.\/static\/i18n\/([a-z]{2})\/(.+).json$/;
+
+const translations = filenames.reduce((acc, filename, index) => {
   const lang = filename.match(regexp);
-  files[lang[1]] = { [lang[2]]: context(filename) };
-  return files;
+  return {
+    ...acc,
+    [lang[1]]: {
+      [lang[2]]: translationsArray[index],
+    },
+  };
 }, {});
 
-export default locales;
+export default translations;

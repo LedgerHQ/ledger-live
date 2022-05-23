@@ -177,8 +177,12 @@ async function installExtensions() {
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
   const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload)),
-  ).catch(console.log);
+    extensions.map(name =>
+      installer.default(installer[name], {
+        loadExtensionOptions: { allowFileAccess: true, forceDownload },
+      }),
+    ),
+  ).catch(console.error);
 }
 
 function clearSessionCache(session) {

@@ -7,6 +7,7 @@ import StepPaste, { StepPasteFooter } from "./steps/StepPaste";
 import StepConfirm, { StepConfirmFooter } from "./steps/StepConfirm";
 import type { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
+// $FlowFixMe
 import { disconnect } from "~/renderer/screens/WalletConnect/Provider";
 
 type OwnProps = {|
