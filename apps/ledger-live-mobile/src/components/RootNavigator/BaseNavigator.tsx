@@ -78,6 +78,7 @@ import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Learn from "../../screens/Learn";
 import ManagerMain from "../../screens/Manager/Manager";
+import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -105,6 +106,14 @@ export default function BaseNavigator() {
         name={ScreenName.BuyDeviceScreen}
         component={BuyDeviceScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostBuyDeviceScreen}
+        component={PostBuyDeviceScreen}
+        options={{
+          title: t("postBuyDevice.headerTitle"),
+          headerLeft: null,
+        }}
       />
       <Stack.Screen
         name={NavigatorName.Settings}
