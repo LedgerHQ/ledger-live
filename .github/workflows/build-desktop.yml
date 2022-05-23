@@ -21,7 +21,7 @@ concurrency:
 jobs:
   start-runner:
     name: "start ec2 instance"
-    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@monorepo-setup
+    uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
       instance-type: c5.4xlarge
     secrets:
@@ -31,7 +31,7 @@ jobs:
     name: "stop ec2 instance"
     if: ${{ always() && needs.start-runner.result == 'success' }}
     needs: [start-runner, build-desktop-app-linux]
-    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@monorepo-setup
+    uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
     with:
       label: ${{ needs.start-runner.outputs.label }}
       ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
@@ -74,12 +74,12 @@ jobs:
           ./tools/g++-5.4/install.sh
       - name: install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: build the app
@@ -123,12 +123,12 @@ jobs:
       - name: install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
         shell: bash
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: build the app
@@ -146,7 +146,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: [ledger-live, macos]
+    runs-on: macos-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -176,12 +176,12 @@ jobs:
         run: |
           eval "$(rbenv init - bash)"
           pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" -frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@monorepo-setup
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: set beta name
-        uses: ledgerhq/ledger-live/tools/actions/change-product-name@monorepo-setup
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
       - name: build the app

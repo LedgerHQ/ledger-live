@@ -2,7 +2,7 @@ name: Version or Release
 on:
   push:
     branches:
-      - monorepo-setup
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

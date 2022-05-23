@@ -134,7 +134,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   xpubLearnMore:
     "https://support.ledger.com/hc/en-us/articles/360011069619?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=edit_account",
-
+  ledgerValidator: "https://www.ledger.com/staking",
   // Banners
   banners: {
     blackfriday:
@@ -214,5 +214,9 @@ export const urls = {
     staking: "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
     recipient_info: "https://support.ledger.com",
     ledgerByFigmentTC: "https://drive.google.com/file/d/1vlIh2gTwtbMon8_bzFQGjCLhTUqS5uQc",
+  },
+  hedera: {
+    supportArticleLink:
+      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
 };

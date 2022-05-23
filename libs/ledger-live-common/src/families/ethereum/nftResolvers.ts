@@ -28,7 +28,7 @@ export const nftMetadata: NftResolvers["nftMetadata"] = async ({
         tokenId,
         ...metadata,
       },
-    };
+    } as NFTMetadataResponse;
   }
 
   const currency = getCryptoCurrencyById(currencyId);

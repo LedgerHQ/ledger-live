@@ -16,7 +16,7 @@ export default (app: Probot) => {
     await octokit.actions.createWorkflowDispatch({
       ...context.repo(),
       workflow_id: "generate-screenshots.yml",
-      ref: "monorepo-setup",
+      ref: "develop",
       inputs: {
         number: `${data.number}`,
         login: `${payload.issue.user.login}`,
@@ -39,7 +39,7 @@ export default (app: Probot) => {
 
     if (!isBranchValid) {
       body = `@${login}
-      Unfortunately this branch name (**${branch}**) does not follow the [CONTRIBUTING.MD](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md) conventions and will be closed automatically.
+      Unfortunately this branch name (**${branch}**) does not follow the [CONTRIBUTING.MD](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) conventions and will be closed automatically.
       Feel free to reopen this PR once you have browsed through the guidelines.
       `;
 

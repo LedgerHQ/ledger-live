@@ -1,7 +1,7 @@
 <!--
 Thank you for your contribution! 👍
 
-Please make sure to read the [Contributing guidelines](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md) if you have not already.
+Please make sure to read the [Contributing guidelines](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) if you have not already.
 
 Disclaimer: Pull Requests that do not comply with the rules will be arbitrarily closed.
 -->
@@ -21,7 +21,7 @@ _Write a clear and concise description of what this pull request is about and wh
 
 - [ ] **Test coverage**: _Did you write any tests to cover the changes introduced by this pull request?_
 - [ ] **Atomic delivery**: _Is this pull request standalone? In order words, does it depend on nothing else?_
-- [ ] **Breaking changes**: _Does this pull request contain breaking changes of any kind? If so, please explain why._
+- [ ] **No breaking changes**: _Does this pull request contain breaking changes of any kind? If so, please explain why._
 
 ### 📸 Demo
 
@@ -32,7 +32,7 @@ _Write a clear and concise description of what this pull request is about and wh
 
 ### 🚀 Expectations to reach
 
-_Please make sure you follow these [**Important Steps**](https://github.com/LedgerHQ/ledger-live/blob/monorepo-setup/CONTRIBUTING.md#important-steps)._
+_Please make sure you follow these [**Important Steps**](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md#important-steps)._
 
 _Pull Requests must pass the CI and be internally validated in order to be merged._
 
