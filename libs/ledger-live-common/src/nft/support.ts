@@ -1,4 +1,4 @@
-import { Transaction, CryptoCurrency, ProtoNFT } from "../types";
+import { Transaction, CryptoCurrency, ProtoNFT, NFTStandard } from "../types";
 import { getEnv } from "../env";
 
 export const isNftTransaction = (
@@ -17,17 +17,16 @@ export function isNFTActive(
   return getEnv("NFT_CURRENCIES").split(",").includes(currency?.id);
 }
 
-const nftCapabilities = {
+const nftCapabilities: Record<string, NFTStandard[]> = {
   hasQuantity: ["ERC1155"],
 };
 
 type NFTCapabilty = keyof typeof nftCapabilities;
-type NFTStandards = typeof nftCapabilities[NFTCapabilty];
 
 export const getNftCapabilities = (
   nft: ProtoNFT | undefined | null
 ): Record<NFTCapabilty, boolean> =>
-  (Object.entries(nftCapabilities) as [NFTCapabilty, NFTStandards][]).reduce(
+  (Object.entries(nftCapabilities) as [NFTCapabilty, NFTStandard[]][]).reduce(
     (acc, [capability, standards]) => ({
       ...acc,
       [capability]: nft?.standard ? standards.includes(nft.standard) : false,
