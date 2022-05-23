@@ -1,4 +1,7 @@
-import { extractOnboardingState } from "./extractOnboardingState";
+import {
+  extractOnboardingState,
+  OnboardingStep,
+} from "./extractOnboardingState";
 
 describe("@hw/extractOnboardingState", () => {
   describe("extractOnboardingState", () => {
@@ -31,83 +34,52 @@ describe("@hw/extractOnboardingState", () => {
         flagsBytes = Buffer.from([0, 0, 0, 0]);
       });
 
-      describe("and the user is recovering a seed", () => {
+      describe("and the user is on the welcome screen", () => {
         beforeEach(() => {
-          flagsBytes[2] = 1 << 7;
+          flagsBytes[3] = 0;
         });
 
-        it("should return a device state that is recovering a seed", () => {
+        it("should return an onboarding step that is set at the welcome screen", () => {
           const onboardingState = extractOnboardingState(flagsBytes);
 
           expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.isRecoveringSeed).toBe(true);
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.welcomeScreen
+          );
+        });
+      });
+
+      describe("and the user is choosing what kind of setup they want", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 1;
         });
 
-        describe("and the seed phrase type is set to X words", () => {
-          it("should return a device state with the correct seed phrase type", () => {
-            const byte3 = flagsBytes[2];
+        it("should return an onboarding step that is set at the setup choice", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
 
-            // 24-words
-            flagsBytes[2] = byte3 | (0 << 5);
-            let onboardingState = extractOnboardingState(flagsBytes);
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.setupChoice
+          );
+        });
+      });
 
-            expect(onboardingState).not.toBeNull();
-            expect(onboardingState?.isRecoveringSeed).toBe(true);
-            expect(onboardingState?.seedPhraseType).toBe("24-words");
+      describe("and the user is setting their pin", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 2;
+        });
 
-            // 18-words
-            flagsBytes[2] = byte3 | (1 << 5);
-            onboardingState = extractOnboardingState(flagsBytes);
+        it("should return an onboarding step that is set at setting the pin", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
 
-            expect(onboardingState).not.toBeNull();
-            expect(onboardingState?.isRecoveringSeed).toBe(true);
-            expect(onboardingState?.seedPhraseType).toBe("18-words");
-
-            // 12-words
-            flagsBytes[2] = byte3 | (2 << 5);
-            onboardingState = extractOnboardingState(flagsBytes);
-
-            expect(onboardingState).not.toBeNull();
-            expect(onboardingState?.isRecoveringSeed).toBe(true);
-            expect(onboardingState?.seedPhraseType).toBe("12-words");
-          });
-
-          describe("and the user is confirming (seed recovery) the seed word i", () => {
-            beforeEach(() => {
-              // 24-words seed
-              flagsBytes[2] |= 0 << 5;
-              // Confirming words
-              flagsBytes[3] |= 1;
-            });
-
-            it("should return a device state with the index of the current seed word being confirmed", () => {
-              const byte3 = flagsBytes[2];
-              for (let wordIndex = 0; wordIndex < 24; wordIndex++) {
-                flagsBytes[2] = byte3 | wordIndex;
-
-                const onboardingState = extractOnboardingState(flagsBytes);
-                expect(onboardingState?.isRecoveringSeed).toBe(true);
-                expect(onboardingState?.seedPhraseType).toBe("24-words");
-                expect(onboardingState?.isConfirmingSeedWords).toBe(true);
-                expect(onboardingState?.currentSeedWordIndex).toBe(wordIndex);
-              }
-            });
-          });
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.pin
+          );
         });
       });
 
       describe("and the user is generating a new seed", () => {
-        beforeEach(() => {
-          flagsBytes[2] = 0 << 7;
-        });
-
-        it("should return a device state that is generating a new seed", () => {
-          const onboardingState = extractOnboardingState(flagsBytes);
-
-          expect(onboardingState).not.toBeNull();
-          expect(onboardingState?.isRecoveringSeed).toBe(false);
-        });
-
         describe("and the seed phrase type is set to 24 words", () => {
           beforeEach(() => {
             // 24-words seed
@@ -118,14 +90,21 @@ describe("@hw/extractOnboardingState", () => {
             const onboardingState = extractOnboardingState(flagsBytes);
 
             expect(onboardingState).not.toBeNull();
-            expect(onboardingState?.isRecoveringSeed).toBe(false);
             expect(onboardingState?.seedPhraseType).toBe("24-words");
           });
 
           describe("and the user is writing the seed word i", () => {
             beforeEach(() => {
-              // Writing words
-              flagsBytes[3] |= 0;
+              flagsBytes[3] = 3;
+            });
+
+            it("should return an onboarding step that is set at writting the seed phrase", () => {
+              const onboardingState = extractOnboardingState(flagsBytes);
+
+              expect(onboardingState).not.toBeNull();
+              expect(onboardingState?.currentOnboardingStep).toBe(
+                OnboardingStep.newDevice
+              );
             });
 
             it("should return a device state with the index of the current seed word being written", () => {
@@ -134,9 +113,8 @@ describe("@hw/extractOnboardingState", () => {
                 flagsBytes[2] = byte3 | wordIndex;
 
                 const onboardingState = extractOnboardingState(flagsBytes);
-                expect(onboardingState?.isRecoveringSeed).toBe(false);
-                expect(onboardingState?.seedPhraseType).toBe("24-words");
-                expect(onboardingState?.isConfirmingSeedWords).toBe(false);
+
+                expect(onboardingState).not.toBeNull();
                 expect(onboardingState?.currentSeedWordIndex).toBe(wordIndex);
               }
             });
@@ -144,8 +122,16 @@ describe("@hw/extractOnboardingState", () => {
 
           describe("and the user is confirming the seed word i", () => {
             beforeEach(() => {
-              // Confirming words
-              flagsBytes[3] |= 1;
+              flagsBytes[3] = 4;
+            });
+
+            it("should return an onboarding step that is set at confirming the seed phrase", () => {
+              const onboardingState = extractOnboardingState(flagsBytes);
+
+              expect(onboardingState).not.toBeNull();
+              expect(onboardingState?.currentOnboardingStep).toBe(
+                OnboardingStep.newDeviceConfirming
+              );
             });
 
             it("should return a device state with the index of the current seed word being confirmed", () => {
@@ -154,13 +140,101 @@ describe("@hw/extractOnboardingState", () => {
                 flagsBytes[2] = byte3 | wordIndex;
 
                 const onboardingState = extractOnboardingState(flagsBytes);
-                expect(onboardingState?.isRecoveringSeed).toBe(false);
-                expect(onboardingState?.seedPhraseType).toBe("24-words");
-                expect(onboardingState?.isConfirmingSeedWords).toBe(true);
+
+                expect(onboardingState).not.toBeNull();
                 expect(onboardingState?.currentSeedWordIndex).toBe(wordIndex);
               }
             });
           });
+        });
+      });
+
+      describe("and the user is recovering a seed", () => {
+        describe("and the seed phrase type is set to X words", () => {
+          it("should return a device state with the correct seed phrase type", () => {
+            const byte3 = flagsBytes[2];
+
+            // 24-words
+            flagsBytes[2] = byte3 | (0 << 5);
+            let onboardingState = extractOnboardingState(flagsBytes);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.seedPhraseType).toBe("24-words");
+
+            // 18-words
+            flagsBytes[2] = byte3 | (1 << 5);
+            onboardingState = extractOnboardingState(flagsBytes);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.seedPhraseType).toBe("18-words");
+
+            // 12-words
+            flagsBytes[2] = byte3 | (2 << 5);
+            onboardingState = extractOnboardingState(flagsBytes);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.seedPhraseType).toBe("12-words");
+          });
+
+          describe("and the user is confirming (seed recovery) the seed word i", () => {
+            beforeEach(() => {
+              // 24-words seed
+              flagsBytes[2] |= 0 << 5;
+
+              flagsBytes[3] = 5;
+            });
+
+            it("should return an onboarding step that is set at confirming the restored seed phrase", () => {
+              const onboardingState = extractOnboardingState(flagsBytes);
+
+              expect(onboardingState).not.toBeNull();
+              expect(onboardingState?.currentOnboardingStep).toBe(
+                OnboardingStep.restoreSeed
+              );
+            });
+
+            it("should return a device state with the index of the current seed word being confirmed", () => {
+              const byte3 = flagsBytes[2];
+              for (let wordIndex = 0; wordIndex < 24; wordIndex++) {
+                flagsBytes[2] = byte3 | wordIndex;
+
+                const onboardingState = extractOnboardingState(flagsBytes);
+
+                expect(onboardingState).not.toBeNull();
+                expect(onboardingState?.currentSeedWordIndex).toBe(wordIndex);
+              }
+            });
+          });
+        });
+      });
+
+      describe("and the user is on the safety warning screen", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 6;
+        });
+
+        it("should return an onboarding step that is set at the safety warning screen", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.safetyWarning
+          );
+        });
+      });
+
+      describe("and the user finished the onboarding process", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 7;
+        });
+
+        it("should return an onboarding step that is set at ready", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.ready
+          );
         });
       });
     });

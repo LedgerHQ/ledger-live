@@ -2,17 +2,37 @@ const onboardingFlagsBytesLength = 4;
 
 const onboardedMask = 0x04;
 const inRecoveryModeMask = 0x01;
-const recoveringSeedPathMask = 0x80;
 const seedPhraseTypeMask = 0x60;
 const seedPhraseTypeFlagOffset = 5;
 const currentSeedWordIndexMask = 0x1f;
-const confirmingSeedWordsMask = 0x01;
 
 export type SeedPhraseType = "24-words" | "18-words" | "12-words";
-const fromFlagToSeedPhraseType = new Map<number, SeedPhraseType>([
+const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
   [0, "24-words"],
   [1, "18-words"],
   [2, "12-words"],
+]);
+
+export enum OnboardingStep {
+  welcomeScreen = "WELCOME_SCREEN",
+  setupChoice = "SETUP_CHOICE",
+  pin = "PIN",
+  newDevice = "NEW_DEVICE", // path "new device" & currentSeedWordIndex available
+  newDeviceConfirming = "NEW_DEVICE_CONFIRMING", // path "new device" & currentSeedWordIndex available
+  restoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
+  safetyWarning = "SAFETY WARNING",
+  ready = "READY",
+}
+
+const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
+  [0, OnboardingStep.welcomeScreen],
+  [1, OnboardingStep.setupChoice],
+  [2, OnboardingStep.pin],
+  [3, OnboardingStep.newDevice],
+  [4, OnboardingStep.newDeviceConfirming],
+  [5, OnboardingStep.restoreSeed],
+  [6, OnboardingStep.safetyWarning],
+  [7, OnboardingStep.ready],
 ]);
 
 export type OnboardingState = {
@@ -20,11 +40,10 @@ export type OnboardingState = {
   isOnboarded: boolean;
   // In normal mode otherwise
   isInRecoveryMode: boolean;
-  // Generating a new seed otherwise
-  isRecoveringSeed: boolean;
-  // Writing seed words otherwise
-  isConfirmingSeedWords: boolean;
+
   seedPhraseType: SeedPhraseType;
+
+  currentOnboardingStep: OnboardingStep;
   currentSeedWordIndex: number;
 };
 
@@ -37,16 +56,21 @@ export const extractOnboardingState = (
 
   const isOnboarded = !!(flagsBytes[0] & onboardedMask);
   const isInRecoveryMode = !!(flagsBytes[0] & inRecoveryModeMask);
-  const isRecoveringSeed = !!(flagsBytes[2] & recoveringSeedPathMask);
-  const isConfirmingSeedWords = !!(flagsBytes[3] & confirmingSeedWordsMask);
 
-  const seedPhraseTypeFlag =
+  const seedPhraseTypeBits =
     (flagsBytes[2] & seedPhraseTypeMask) >> seedPhraseTypeFlagOffset;
-  const seedPhraseType = fromFlagToSeedPhraseType.get(seedPhraseTypeFlag);
+  const seedPhraseType = fromBitsToSeedPhraseType.get(seedPhraseTypeBits);
 
   if (!seedPhraseType) {
-    // FIXME: what do we do in case of flags errors ? It could happen after an update
-    // on the flags and no update on live-common for ex
+    return null;
+  }
+
+  const currentOnboardingStepBits = flagsBytes[3];
+  const currentOnboardingStep = fromBitsToOnboardingStep.get(
+    currentOnboardingStepBits
+  );
+
+  if (!currentOnboardingStep) {
     return null;
   }
 
@@ -55,9 +79,8 @@ export const extractOnboardingState = (
   return {
     isOnboarded,
     isInRecoveryMode,
-    isRecoveringSeed,
-    isConfirmingSeedWords,
     seedPhraseType,
+    currentOnboardingStep,
     currentSeedWordIndex,
   };
 };
