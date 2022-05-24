@@ -16,6 +16,7 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import { CosmosDelegationInfo } from "../../cosmos/types";
 
 const receive = makeAccountBridgeReceive();
 
@@ -28,6 +29,7 @@ export const createTransaction = (): Transaction => ({
   fees: new BigNumber(0),
   gas: null,
   memo: null,
+  validators: [] as CosmosDelegationInfo[],
 });
 
 export const updateTransaction = (t, patch) => ({ ...t, ...patch });

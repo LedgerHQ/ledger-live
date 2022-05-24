@@ -230,6 +230,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",

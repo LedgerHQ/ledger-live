@@ -36,6 +36,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : null,
     gas: tr.gas ? new BigNumber(tr.gas) : null,
     memo: tr.memo,
+    validators: tr.validators
+      ? tr.validators.map((v) => ({ ...v, amount: new BigNumber(v.amount) }))
+      : [],
   };
 };
 
@@ -48,6 +51,9 @@ export const toTransactionRaw = (tr: Transaction): TransactionRaw => {
     fees: tr.fees?.toString() || null,
     gas: tr.gas ? tr.gas.toString() : null,
     memo: tr.memo,
+    validators: tr.validators
+      ? tr.validators.map((v) => ({ ...v, amount: v.amount.toString() }))
+      : [],
   };
 };
 
