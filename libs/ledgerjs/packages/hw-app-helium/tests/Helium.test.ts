@@ -28,6 +28,7 @@ test("getVersion", async () => {
 
 const bobB58 = "13M8dUbxymE3xtiAXszRkGMmezMhBS8Li7wEsMojLdb4Sdxc4wc";
 const aliceB58 = "148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3";
+const susanB58 = "139Qksd9iF2UBoV4tckS3z4Dw5135t5bKdQ8gubmD2a27AQpdfC";
 
 const DERIVATION = "44'/904'/0'/0'/0'";
 
@@ -62,26 +63,29 @@ test("getAddress with display", async () => {
 test("signPaymentV2 with no memo", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
-        => e00800003a0a000000000000000000000000000000010000000000000000019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4
-        <= 0a2101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c386929512250a21019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4100a20012a40af3c1a3986f42ac448755d70bfff65f583f8ab019db2a666a2a5c7ca03f3d1549acece8d935c2f9362438a348d1120f9a8648dcda35f84a028106788cf90a0009000
+        => e00800004200e1f50500000000b88800000000000019000000000000000001351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c38692950000000000000000
+        <= 0a21011a7cb93f11c575248e8c381aefce9af49154960321856511343eb98c135f25e812280a2101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c38692951080c2d72f18b8910220192a407a59cc2dc8e340d65a38ee7baf4dd03b5be7d02cf2b4a0ff7c21ce07a01c73543b93a5a2d36811bd11d09205696bacea8250a7ff404cabdecb3bbbd0f7a152069000
     `)
   );
   const helium = new Helium(transport);
-  const payee = Address.fromB58(aliceB58);
-  const payer = Address.fromB58(bobB58);
+  const payee = Address.fromB58(bobB58);
+  const payer = Address.fromB58(susanB58);
+
   const txnToSign = new PaymentV2({
-    payments: [{ amount: 10, payee }],
-    nonce: 1,
+    fee: 35000,
+    payments: [{ amount: 100000000, payee }],
+    nonce: 25,
     payer,
   });
+
   const { signature, txn } = await helium.signPaymentV2(txnToSign);
   const expectedSig =
-    "af3c1a3986f42ac448755d70bfff65f583f8ab019db2a666a2a5c7ca03f3d1549acece8d935c2f9362438a348d1120f9a8648dcda35f84a028106788cf90a000";
+    "7a59cc2dc8e340d65a38ee7baf4dd03b5be7d02cf2b4a0ff7c21ce07a01c73543b93a5a2d36811bd11d09205696bacea8250a7ff404cabdecb3bbbd0f7a15206";
   expect(signature.toString("hex")).toEqual(expectedSig);
-  expect(txn.payments[0].amount).toBe(10);
-  expect(txn.nonce).toBe(1);
-  expect(txn.payer?.b58).toBe(bobB58);
-  expect(txn.payments[0].payee?.b58).toBe(aliceB58);
+  expect(txn.payments[0].amount).toBe(100000000);
+  expect(txn.nonce).toBe(25);
+  expect(txn.payer?.b58).toBe(susanB58);
+  expect(txn.payments[0].payee?.b58).toBe(bobB58);
   expect(Buffer.from(txn.signature as Uint8Array).toString("hex")).toBe(
     expectedSig
   );
@@ -90,27 +94,31 @@ test("signPaymentV2 with no memo", async () => {
 test("signPaymentV2 with a memo", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
-        => e00800003e0a000000000000000000000000000000010000000000000000019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4796f6c6f
-        <= 0a2101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c3869295122a0a21019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4100a18ca93a20320012a409eae8e4b40fd6d93ef0adfd38bd0faa4484a9bca00f85d7ec1440dbf9bedde471691c35fdfd3e1a219cd87b7f8b83eac24eed16499cdaaaab6c46d6edd7dce0a9000
+        => e00800004200e1f50500000000b88800000000000019000000000000000001351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c3869295796f6c6f00000000
+        <= 0a21011a7cb93f11c575248e8c381aefce9af49154960321856511343eb98c135f25e8122e0a2101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c38692951080c2d72f18f9deb1fb0618b8910220192a4058fa1c5c51c617fdb656ec9547b80eaa586df3219b0518eba88b2bf385e790179659ce52957957e01a73e3e490e43d6e535f74520dccf3141d4862b7f357cf0f9000
     `)
   );
   const helium = new Helium(transport);
-  const payee = Address.fromB58(aliceB58);
-  const payer = Address.fromB58(bobB58);
+  const payee = Address.fromB58(bobB58);
+  const payer = Address.fromB58(susanB58);
+  const memo = "eW9sbwAAAA=";
+
   const txnToSign = new PaymentV2({
-    payments: [{ amount: 10, payee, memo: "yolo" }],
-    nonce: 1,
+    fee: 35000,
+    payments: [{ amount: 100000000, payee, memo }],
+    nonce: 25,
     payer,
   });
+
   const { signature, txn } = await helium.signPaymentV2(txnToSign);
   const expectedSig =
-    "9eae8e4b40fd6d93ef0adfd38bd0faa4484a9bca00f85d7ec1440dbf9bedde471691c35fdfd3e1a219cd87b7f8b83eac24eed16499cdaaaab6c46d6edd7dce0a";
+    "58fa1c5c51c617fdb656ec9547b80eaa586df3219b0518eba88b2bf385e790179659ce52957957e01a73e3e490e43d6e535f74520dccf3141d4862b7f357cf0f";
   expect(signature.toString("hex")).toEqual(expectedSig);
-  expect(txn.payments[0].amount).toBe(10);
-  expect(txn.nonce).toBe(1);
-  expect(txn.payer?.b58).toBe(bobB58);
-  expect(txn.payments[0].payee?.b58).toBe(aliceB58);
-  expect(txn.payments[0].memo).toBe("yolo");
+  expect(txn.payments[0].amount).toBe(100000000);
+  expect(txn.nonce).toBe(25);
+  expect(txn.payer?.b58).toBe(susanB58);
+  expect(txn.payments[0].payee?.b58).toBe(bobB58);
+  expect(txn.payments[0].memo).toBe(memo);
   expect(Buffer.from(txn.signature as Uint8Array).toString("hex")).toBe(
     expectedSig
   );
@@ -119,29 +127,30 @@ test("signPaymentV2 with a memo", async () => {
 test("signTokenBurnV1", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
-        => e00c00003b0a00000000000000000000000000000001000000000000006100019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4
-        <= 0a2101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c38692951221019c659d723cc1e810a72e78f7deaf4736a87f10ef8fcfc80100b53327e7ee49a4180a20012a40a6231956f9382ad38ccbca517a6225dfb50df64e5c9fb4372e773feb4f50a995cc4f458c8235fcf41cefa45d906988dd0e93d73b4b6464979a98d59e56cb890730009000
+        => e00c0000420100000000000000b888000000000000180000000000000030000000000000000001351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c3869295
+        <= 0a21011a7cb93f11c575248e8c381aefce9af49154960321856511343eb98c135f25e8122101351a71c22fefec2231936ad2826b217ece39d9f77fc6c49639926299c3869295180120182a4029823f91d145f51d34b7aeede70f35ec7c75d317280492ba6c7ece66647264b55ba4589686d1ddd29ce68f1de45e868eac498a8ba4fef865114990615587450d30b8910238309000
     `)
   );
   const helium = new Helium(transport);
-  const payee = Address.fromB58(aliceB58);
-  const payer = Address.fromB58(bobB58);
+  const payee = Address.fromB58(bobB58);
+  const payer = Address.fromB58(susanB58);
   const txnToSign = new TokenBurnV1({
-    amount: 10,
-    nonce: 1,
+    amount: 1,
+    fee: 35000,
+    memo: "MA==",
+    nonce: 24,
     payee,
     payer,
-    memo: "a",
   });
   const { signature, txn } = await helium.signTokenBurnV1(txnToSign);
   const expectedSig =
-    "a6231956f9382ad38ccbca517a6225dfb50df64e5c9fb4372e773feb4f50a995cc4f458c8235fcf41cefa45d906988dd0e93d73b4b6464979a98d59e56cb8907";
+    "29823f91d145f51d34b7aeede70f35ec7c75d317280492ba6c7ece66647264b55ba4589686d1ddd29ce68f1de45e868eac498a8ba4fef865114990615587450d";
   expect(signature.toString("hex")).toEqual(expectedSig);
-  expect(txn.amount).toBe(10);
-  expect(txn.nonce).toBe(1);
-  expect(txn.memo).toBe("a");
-  expect(txn.payer?.b58).toBe(bobB58);
-  expect(txn.payee?.b58).toBe(aliceB58);
+  expect(txn.amount).toBe(1);
+  expect(txn.nonce).toBe(24);
+  expect(txn.memo).toBe("MA==");
+  expect(txn.payer?.b58).toBe(susanB58);
+  expect(txn.payee?.b58).toBe(bobB58);
   expect(Buffer.from(txn.signature as Uint8Array).toString("hex")).toBe(
     expectedSig
   );
