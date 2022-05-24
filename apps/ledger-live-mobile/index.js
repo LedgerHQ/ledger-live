@@ -21,6 +21,7 @@ import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import VersionNumber from "react-native-version-number";
 
+import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
@@ -117,3 +118,7 @@ logReport.logReportInit();
 const AppWithSentry = Sentry.wrap(App);
 
 AppRegistry.registerComponent("ledgerlivemobile", () => AppWithSentry);
+AppRegistry.registerHeadlessTask(
+  "BackgroundRunnerService",
+  () => BackgroundRunnerService,
+);

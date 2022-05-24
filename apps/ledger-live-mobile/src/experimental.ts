@@ -1,4 +1,3 @@
-// @flow
 import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,12 +10,14 @@ import {
 import type { EnvName } from "@ledgerhq/live-common/lib/env";
 
 import logger from "./logger";
+import { FeatureId } from "@ledgerhq/live-common/lib/types";
 
 export type FeatureCommon = {
   name: EnvName,
   title: string,
   description: string,
   shadow?: boolean,
+  rolloutFeatureFlag?: FeatureId,
 };
 
 export type FeatureToggle = {
@@ -36,6 +37,7 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
+
 
 export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
@@ -90,7 +92,7 @@ export const experimentalFeatures: Feature[] = [
         },
       ]
     : []),
-];
+] as Feature[];
 
 export const developerFeatures: Feature[] = [
   {
@@ -114,7 +116,7 @@ export const getStorageEnv = async () => {
     const maybeData = await AsyncStorage.getItem(storageKey);
     return maybeData ? JSON.parse(maybeData) : {};
   } catch (error) {
-    logger.critical(error);
+    logger.critical(error as Error);
     return {};
   }
 };
@@ -125,7 +127,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
     envs[key] = val;
     await AsyncStorage.setItem(storageKey, JSON.stringify(envs));
   } catch (error) {
-    logger.critical(error);
+    logger.critical(error as Error);
   }
 };
 
@@ -142,15 +144,15 @@ export const enabledExperimentalFeatures = (): string[] =>
 
   /* eslint-disable guard-for-in */
   for (const k in envs) {
-    setEnvUnsafe(k, envs[k]);
+    setEnvUnsafe(k as EnvName, envs[k]);
   }
 
   for (const k in Config) {
-    setEnvUnsafe(k, Config[k]);
+    setEnvUnsafe(k as EnvName, Config[k]);
   }
   /* eslint-enable guard-for-in */
 
-  const saveEnvs = async (name, value) => {
+  const saveEnvs = async (name: EnvName, value: string) => {
     if (
       [...experimentalFeatures, ...developerFeatures].find(
         f => f.name === name,
@@ -182,3 +184,4 @@ export function useExperimental(): boolean {
 
   return state;
 }
+
