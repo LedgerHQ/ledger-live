@@ -1,6 +1,5 @@
 import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -14,8 +13,6 @@ import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
 
 type Props = {
-  account: AccountLike;
-  parentAccount?: Account;
   navigation: any;
   route: { params: RouteParams };
 };
@@ -48,7 +45,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     ({ item }: { item: CosmosValidatorItem }) => (
       <ValidatorRow account={account} validator={item} onPress={onItemPress} />
     ),
-    [onItemPress],
+    [onItemPress, account],
   );
 
   return (
