@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.1.2-llmnext.1
+
+### Patch Changes
+
+- 3cd734f8: Add firmware update feature for Android via OTG USB
+- Updated dependencies [3cd734f8]
+  - @ledgerhq/react-native-hid@6.28.3-llmnext.0
+
 ## 3.1.2-llmnext.0
 
 ### Patch Changes
