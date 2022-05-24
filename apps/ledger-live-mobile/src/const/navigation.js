@@ -171,6 +171,7 @@ export const ScreenName = {
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
+  CosmosDelegationValidatorSelect: "CosmosDelegationValidatorSelect",
   CosmosDelegationAmount: "CosmosDelegationAmount",
   CosmosDelegationSelectDevice: "CosmosDelegationSelectDevice",
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",

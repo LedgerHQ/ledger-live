@@ -3246,6 +3246,9 @@
       "redelegate": "Redelegate",
       "reward": "Claim rewards",
       "estYield": "Est. yield",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "iDelegate": "I delegate",
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",
@@ -3908,6 +3911,7 @@
     },
     "name": "Name",
     "votes": "Votes",
+    "validator": "Validator",
     "infoWording": {
       "freeze": "Frozen tokens are locked for a period of 3 days.",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",

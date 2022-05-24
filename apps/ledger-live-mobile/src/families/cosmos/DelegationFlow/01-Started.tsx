@@ -1,9 +1,9 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { Alert, Button, Flex } from "@ledgerhq/native-ui";
+import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 
@@ -17,16 +17,17 @@ import EarnLight from "../../../images/illustration/Light/_003.png";
 import EarnDark from "../../../images/illustration/Dark/_003.png";
 
 type RouteParams = {
-  accountId: string,
+  accountId: string;
 };
 
 type Props = {
-  navigation: any,
-  route: { params: RouteParams },
+  navigation: any;
+  route: { params: RouteParams };
 };
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CosmosDelegationValidator, {
       ...route.params,
@@ -51,9 +52,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
             size={150}
           />
         </Flex>
-        <LText semiBold style={styles.description}>
+        <Text fontWeight="semiBold" style={styles.description}>
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.description" />
-        </LText>
+        </Text>
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
@@ -61,40 +62,27 @@ export default function DelegationStarted({ navigation, route }: Props) {
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.1" />,
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
           ].map(wording => (
-            <LText
-              semiBold
-              style={[styles.bulletItem, { color: colors.black }]}
-            >
-              {wording}
-            </LText>
+            <LText semiBold>{wording}</LText>
           ))}
         />
-        <View style={[styles.howDelegationWorks, { borderColor: colors.live }]}>
+        <View style={[styles.howDelegationWorks]}>
           <ExternalLink
             event="DelegationStartedHowDelegationWorks"
             onPress={howDelegationWorks}
             text={<Trans i18nKey="delegation.howDelegationWorks" />}
-            ltextProps={{
-              secondary: true,
-            }}
           />
         </View>
       </NavigationScrollView>
-      <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
-        <View style={styles.warning}>
+      <View style={[styles.footer]}>
+        <View>
           <Alert
             type="info"
-            title={
-              <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
-            }
+            title={t(
+              "cosmos.delegation.flow.steps.starter.warning.description",
+            )}
           />
         </View>
-        <Button
-          event="DelegationStartedBtn"
-          onPress={onNext}
-          type="main"
-          mt={6}
-        >
+        <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

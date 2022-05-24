@@ -1,20 +1,18 @@
-// @flow
-import React, { useMemo } from "react";
-import { Platform } from "react-native";
-import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
-import {
-  getStackNavigatorConfig,
-  defaultNavigationOptions,
-} from "../../../navigation/navigatorConfig";
+import { createStackNavigator } from "@react-navigation/stack";
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
-import DelegationStarted from "./01-Started";
-import DelegationSelectValidator from "./02-SelectValidator";
-import DelegationAmount from "../shared/02-SelectAmount";
-import SelectDevice from "../../../screens/SelectDevice";
+import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
 import ConnectDevice from "../../../screens/ConnectDevice";
+import SelectDevice from "../../../screens/SelectDevice";
+import DelegationAmount from "../shared/02-SelectAmount";
+import DelegationStarted from "./01-Started";
+import SelectValidator from "./SelectValidator";
+import DelegationSummary from "./02-Summary";
 import DelegationValidationError from "./04-ValidationError";
 import DelegationValidationSuccess from "./04-ValidationSuccess";
 
@@ -38,36 +36,47 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationStarted}
         component={DelegationStarted}
         options={{
-          title: t("cosmos.delegation.stepperHeader.starter"),
+          headerTitle: () => (
+            <StepHeader title={t("delegation.started.title")} />
+          ),
         }}
       />
       <Stack.Screen
         name={ScreenName.CosmosDelegationValidator}
-        component={DelegationSelectValidator}
+        component={DelegationSummary}
         options={{
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.validator")}
-              subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
+              title={t("delegation.summaryTitle")}
+              subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps,
               })}
             />
           ),
-          headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
-          gestureEnabled: false,
         }}
       />
+
+      <Stack.Screen
+        name={ScreenName.CosmosDelegationValidatorSelect}
+        component={SelectValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader title={t("delegation.selectValidatorTitle")} />
+          ),
+        }}
+      />
+
       <Stack.Screen
         name={ScreenName.CosmosDelegationAmount}
         component={DelegationAmount}
-        options={({ route }) => ({
+        options={({
+          route,
+        }: {
+          route: { params: { validator: CosmosValidatorItem } };
+        }) => ({
           headerRight: null,
           headerTitle: () => (
             <StepHeader
@@ -80,6 +89,7 @@ function DelegationFlow() {
           ),
         })}
       />
+
       <Stack.Screen
         name={ScreenName.CosmosDelegationSelectDevice}
         component={SelectDevice}
@@ -95,11 +105,12 @@ function DelegationFlow() {
           ),
         }}
       />
+
       <Stack.Screen
         name={ScreenName.CosmosDelegationConnectDevice}
         component={ConnectDevice}
         options={{
-          headerLeft: null,
+          headerLeft: undefined,
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
@@ -124,8 +135,8 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationValidationSuccess}
         component={DelegationValidationSuccess}
         options={{
-          headerLeft: null,
-          headerRight: null,
+          headerLeft: undefined,
+          headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
         }}
