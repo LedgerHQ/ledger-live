@@ -5,7 +5,7 @@ import React from "react";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import { DeviceTransactionField } from "@ledgerhq/live-common/lib/transaction";
-
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
 
 const addressStyle = {
   wordBreak: "break-all",
@@ -13,7 +13,13 @@ const addressStyle = {
   maxWidth: "70%",
 };
 
-const FilecoinField = ({ transaction, field }: { transaction: Transaction, field: DeviceTransactionField }) => {
+const FilecoinField = ({
+  transaction,
+  field,
+}: {
+  transaction: Transaction,
+  field: DeviceTransactionField,
+}) => {
   invariant(transaction.family === "filecoin", "filecoin transaction");
 
   return (
