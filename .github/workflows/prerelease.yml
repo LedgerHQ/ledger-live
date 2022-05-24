@@ -23,7 +23,9 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event.push != '' }}
+        if: ${{ github.event_name == 'push' }}
+        with:
+          token: ${{ secrets.GH_PAT }}
       - uses: actions/checkout@v3
         if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
         with:
