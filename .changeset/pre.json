@@ -71,9 +71,11 @@
     "pnpm-utils": "1.0.0"
   },
   "changesets": [
+    "blue-zebras-happen",
     "chatty-melons-shop",
     "cuddly-lamps-yawn",
     "dull-spies-switch",
+    "forty-sloths-brush",
     "green-games-kick",
     "green-suits-move",
     "late-zebras-hug",

@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.2.0-llmnext.2
+
+### Minor Changes
+
+- becfc06f: LIVE-1751 Solana staking on LLM
+- d63570a3: Rework Cosmos delegation flow
+
 ## 3.1.2-llmnext.1
 
 ### Patch Changes
