@@ -1,7 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
-import { Unit, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { Unit, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { Flex, Text, Transitions } from "@ledgerhq/native-ui";
 
@@ -49,11 +48,11 @@ const GraphCardHeader = ({
 };
 
 type Props = {
-  account: AccountLike;
+  currency: CryptoCurrency;
   valueChange: ValueChange;
 };
 
-function ReadOnlyAccountGraphCard({ account, valueChange }: Props) {
+function ReadOnlyAccountGraphCard({ currency, valueChange }: Props) {
   const { colors } = useTheme();
   const mapCryptoValue = useCallback(d => d.value || 0, []);
 
@@ -141,7 +140,7 @@ function ReadOnlyAccountGraphCard({ account, valueChange }: Props) {
       borderRadius={8}
     >
       <GraphCardHeader
-        cryptoCurrencyUnit={getAccountUnit(account)}
+        cryptoCurrencyUnit={currency.units[0]}
         valueChange={valueChange}
       />
       <Flex height={120} alignItems="center" justifyContent="center">
