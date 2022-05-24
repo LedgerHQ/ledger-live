@@ -3706,6 +3706,10 @@
     "cta": "Enter Ledger app"
   },
   "families": {
+    "cardano": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
