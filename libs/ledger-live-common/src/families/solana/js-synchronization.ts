@@ -37,11 +37,12 @@ import {
   uniqBy,
   flow,
   sortBy,
+  sum,
 } from "lodash/fp";
 import { parseQuiet } from "./api/chain/program";
 import {
   InflationReward,
-  ParsedConfirmedTransactionMeta,
+  ParsedTransactionMeta,
   ParsedMessageAccount,
   ParsedTransaction,
   StakeActivationData,
@@ -73,7 +74,6 @@ export const getAccountShapeWithAPI = async (
   const {
     blockHeight,
     balance: mainAccBalance,
-    spendableBalance: mainAccSpendableBalance,
     tokenAccounts: onChaintokenAccounts,
     stakes: onChainStakes,
   } = await getAccount(mainAccAddress, api);
@@ -212,8 +212,20 @@ export const getAccountShapeWithAPI = async (
     api
   );
 
+  const lastOpSeqNumber =
+    mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0;
+  const newOpsCount = newMainAccTxs.length;
+
   const newMainAccOps = newMainAccTxs
-    .map((tx) => txToMainAccOperation(tx, mainAccountId, mainAccAddress))
+    .map((tx, i) =>
+      txToMainAccOperation(
+        tx,
+        mainAccountId,
+        mainAccAddress,
+        // transactions are ordered by date (0'th - most recent tx)
+        lastOpSeqNumber + newOpsCount - i
+      )
+    )
     .filter((op): op is Operation => op !== undefined);
 
   const mainAccTotalOperations = mergeOps(
@@ -221,14 +233,16 @@ export const getAccountShapeWithAPI = async (
     newMainAccOps
   );
 
+  const totalStakedBalance = sum(stakes.map((s) => s.stakeAccBalance));
+
   const shape: Partial<Account> = {
     // uncomment when tokens are supported
     // subAccounts as undefined makes TokenList disappear in desktop
     //subAccounts: nextSubAccs,
     id: mainAccountId,
     blockHeight,
-    balance: mainAccBalance,
-    spendableBalance: mainAccSpendableBalance,
+    balance: mainAccBalance.plus(totalStakedBalance),
+    spendableBalance: mainAccBalance,
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
     solanaResources: {
@@ -315,7 +329,8 @@ function patchedSubAcc({
 function txToMainAccOperation(
   tx: TransactionDescriptor,
   accountId: string,
-  accountAddress: string
+  accountAddress: string,
+  txSeqNumber: number
 ): Operation | undefined {
   if (!tx.info.blockTime || !tx.parsed.meta) {
     return undefined;
@@ -392,6 +407,7 @@ function txToMainAccOperation(
     date: txDate,
     value: opValue,
     fee: opFee,
+    transactionSequenceNumber: txSeqNumber,
   };
 }
 
@@ -551,7 +567,7 @@ function getTokenSendersRecipients({
   meta,
   accounts,
 }: {
-  meta: ParsedConfirmedTransactionMeta;
+  meta: ParsedTransactionMeta;
   accounts: ParsedMessageAccount[];
 }) {
   const { preTokenBalances, postTokenBalances } = meta;
@@ -625,7 +641,6 @@ async function getAccount(
   api: ChainAPI
 ): Promise<{
   balance: BigNumber;
-  spendableBalance: BigNumber;
   blockHeight: number;
   tokenAccounts: ParsedOnChainTokenAccountWithInfo[];
   stakes: {
@@ -682,7 +697,6 @@ async function getAccount(
 
   return {
     balance,
-    spendableBalance: balance,
     blockHeight,
     tokenAccounts,
     stakes,

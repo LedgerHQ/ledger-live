@@ -291,7 +291,7 @@ the key of a non-normal path with verify=false, the new app would
 return an error, whereas the old app would return the key.
 
 See
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#get_extended_pubkey>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#get_extended_pubkey
 
 If format bech32m is used, we'll not use old, because it doesn't
 support it.
@@ -310,7 +310,7 @@ This class implements the same interface as BtcOld (formerly
 named Btc), but interacts with Bitcoin hardware app version 2+
 which uses a totally new APDU protocol. This new
 protocol is documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md
 
 Since the interface must remain compatible with BtcOld, the methods
 of this class are quite clunky, because it needs to adapt legacy
@@ -326,7 +326,7 @@ a much cleaner implementation.
 
 This is a new method that allow users to get an xpub at a standard path.
 Standard paths are described at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#description>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#description
 
 This boils down to paths (N=0 for Bitcoin, N=1 for Testnet):
 M/44'/N'/x'/\*\*
@@ -617,7 +617,7 @@ and calls an abstract method to do the actual work.
 Calculates a taproot output key from an internal key. This output key will be
 used as witness program in a taproot output. The internal key is tweaked
 according to recommendation in BIP341:
-<https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#cite_ref-22-0>
+https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#cite_ref-22-0
 
 #### Parameters
 
@@ -628,7 +628,7 @@ Returns **[Buffer](https://nodejs.org/api/buffer.html)** The output key
 ### AppClient
 
 This class encapsulates the APDU protocol documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md
 
 #### Parameters
 
@@ -666,7 +666,7 @@ The reason for this is the limited amount of memory available to the app,
 so it can't always store the full psbt in memory.
 
 The signing process is documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#sign_psbt>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md#sign_psbt
 
 #### Parameters
 
@@ -676,7 +676,7 @@ The signing process is documented at
 
 This class implements the merkle tree used by Ledger Bitcoin app v2+,
 which is documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/merkle.md>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/merkle.md
 
 #### Parameters
 
@@ -686,7 +686,7 @@ which is documented at
 ### MerkleMap
 
 This implements "Merkelized Maps", documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/merkle.md#merkleized-maps>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/merkle.md#merkleized-maps
 
 A merkelized map consist of two merkle trees, one for the keys of
 a map and one for the values of the same map, thus the two merkle
@@ -706,7 +706,7 @@ how to construct output scripts from keys. A "Wallet Policy" consists
 of a "Descriptor Template" and a list of "keys". A key is basically
 a serialized BIP32 extended public key with some added derivation path
 information. This is documented at
-<https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/wallet.md>
+https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/wallet.md
 
 #### Parameters
 
@@ -716,9 +716,9 @@ information. This is documented at
 ### extract
 
 This implements the "Transaction Extractor" role of BIP370 (PSBTv2
-<https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki#transaction-extractor>). However
+https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki#transaction-extractor). However
 the role is partially documented in BIP174 (PSBTv0
-<https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki#transaction-extractor>).
+https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki#transaction-extractor).
 
 #### Parameters
 
@@ -729,9 +729,9 @@ Returns **[Buffer](https://nodejs.org/api/buffer.html)**
 ### finalize
 
 This roughly implements the "input finalizer" role of BIP370 (PSBTv2
-<https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki>). However
+https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki). However
 the role is documented in BIP174 (PSBTv0
-<https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki>).
+https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki).
 
 Verify that all inputs have a signature, and set inputFinalScriptwitness
 and/or inputFinalScriptSig depending on the type of the spent outputs. Clean
@@ -762,7 +762,7 @@ without actually knowing why. I think we should remove them too.
 
 Writes a script push operation to buf, which looks different
 depending on the size of the data. See
-<https://en.bitcoin.it/wiki/Script#Constants>
+https://en.bitcoin.it/wiki/Script#Constants
 
 #### Parameters
 
@@ -772,8 +772,8 @@ depending on the size of the data. See
 ### PsbtV2
 
 Implements Partially Signed Bitcoin Transaction version 2, BIP370, as
-documented at <https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki>
-and <https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki>
+documented at https://github.com/bitcoin/bips/blob/master/bip-0370.mediawiki
+and https://github.com/bitcoin/bips/blob/master/bip-0174.mediawiki
 
 A psbt is a data structure that can carry all relevant information about a
 transaction through all stages of the signing process. From constructing an
