@@ -1539,7 +1539,7 @@ importers:
     specifiers:
       '@helium/address': ^4.0.0
       '@helium/proto': ^1.5.0
-      '@helium/transactions': ^3.62.0
+      '@helium/transactions': ^4.1.0
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
@@ -1552,6 +1552,7 @@ importers:
       bip32-path: ^0.4.2
       documentation: 13.2.4
       jest: ^27.4.7
+      long: ^5.2.0
       rimraf: '*'
       source-map-support: '*'
       ts-jest: ^27.1.2
@@ -1560,12 +1561,13 @@ importers:
     dependencies:
       '@helium/address': 4.2.0
       '@helium/proto': 1.5.0
-      '@helium/transactions': 3.62.0
+      '@helium/transactions': 4.3.1
       '@ledgerhq/errors': link:../errors
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
       bignumber.js: 9.0.2
       bip32-path: 0.4.2
+      long: 5.2.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker': link:../hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../hw-transport-node-speculos
@@ -8154,12 +8156,12 @@ packages:
       multiformats: 9.6.5
     dev: false
 
-  /@helium/crypto/3.60.0:
-    resolution: {integrity: sha512-zvDshfSv9wv0PAmmKvZPFP9pnNmR6Q7ZAy+WuGpCD3AxuWv9fiODgKATVuTMhV/QXkkxI+5t8TbGUjTOxsXAmA==}
+  /@helium/address/4.3.1:
+    resolution: {integrity: sha512-5f24ncoR3uOQgzFEtU2+YsHZTXW3+WYEBVdMVQEc5Hkou0bOTAOjVJZNhMqpIWLRzQXto2NOrDVIWXcFqqYnkg==}
     dependencies:
-      bs58: 4.0.1
-      create-hash: 1.2.0
-      libsodium-wrappers: 0.7.10
+      bs58: 5.0.0
+      js-sha256: 0.9.0
+      multiformats: 9.6.5
     dev: false
 
   /@helium/proto/1.5.0:
@@ -8168,10 +8170,10 @@ packages:
       protobufjs: 6.11.2
     dev: false
 
-  /@helium/transactions/3.62.0:
-    resolution: {integrity: sha512-akmgI7GjW2WLMrT97HJCwSPn9Pz7Rj7p7OoDgoh3XVHLMhTHQbo23yT8lVvVrfNEh9KR3HJXsutOy5xn957yhQ==}
+  /@helium/transactions/4.3.1:
+    resolution: {integrity: sha512-acH0gDLrC/aTDtM4Jljd8xdQCzITWVNBsGvyTClfrS5dRos++A9wisvCx/VwUyl3w9x/NNU/+V5q8Is6fPJtJw==}
     dependencies:
-      '@helium/crypto': 3.60.0
+      '@helium/address': 4.3.1
       '@helium/proto': 1.5.0
       '@types/libsodium-wrappers': 0.7.9
       long: 4.0.0
@@ -9327,6 +9329,7 @@ packages:
   /@mapbox/node-pre-gyp/1.0.9:
     resolution: {integrity: sha512-aDF3S3rK9Q2gey/WAttUlISduDItz5BU3306M9Eyv6/oS40aMprnopshtlKTykxRNIBEZuRMaZAnbrQ4QtKGyw==}
     hasBin: true
+    requiresBuild: true
     dependencies:
       detect-libc: 2.0.1
       https-proxy-agent: 5.0.1
@@ -17726,6 +17729,7 @@ packages:
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
+    requiresBuild: true
 
   /abort-controller/3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -18242,6 +18246,7 @@ packages:
 
   /aproba/2.0.0:
     resolution: {integrity: sha512-lYe4Gx7QT+MKGbDsA+Z+he/Wtef0BiwDOlK/XkBrdfsh9J/jPPXbX0tE9x9cl27Tmu5gg3QUbUrQYa/y+KOHPQ==}
+    requiresBuild: true
 
   /arch/2.2.0:
     resolution: {integrity: sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==}
@@ -18260,6 +18265,7 @@ packages:
   /are-we-there-yet/2.0.0:
     resolution: {integrity: sha512-Ci/qENmwHnsYo9xKIcUJN5LeDKdJ6R1Z1j9V/J5wyq8nh/mYPEpIKJbBZXtZjG04HiK7zV/p6Vs9952MrMeUIw==}
     engines: {node: '>=10'}
+    requiresBuild: true
     dependencies:
       delegates: 1.0.0
       readable-stream: 3.6.0
@@ -18638,14 +18644,14 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -18661,7 +18667,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -18676,14 +18682,14 @@ packages:
   /axios/0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -20532,7 +20538,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -21340,6 +21346,7 @@ packages:
   /color-support/1.1.3:
     resolution: {integrity: sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==}
     hasBin: true
+    requiresBuild: true
 
   /color/3.2.1:
     resolution: {integrity: sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==}
@@ -22851,7 +22858,7 @@ packages:
     dev: true
 
   /decamelize/1.2.0:
-    resolution: {integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=}
+    resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
 
   /decamelize/4.0.0:
@@ -23132,6 +23139,7 @@ packages:
   /detect-libc/2.0.1:
     resolution: {integrity: sha512-463v3ZeIrcWtdgIg6vI6XUncguvr2TnGl4SzDXinkt9mSLpBJKXT3mW6xT3VQdDN11+WVs29pgvivTc4Lp8v+w==}
     engines: {node: '>=8'}
+    requiresBuild: true
 
   /detect-newline/2.1.0:
     resolution: {integrity: sha1-9B8cEL5LAOh7XxPaaAdZ8sW/0+I=}
@@ -27203,6 +27211,15 @@ packages:
       tabbable: 5.3.2
     dev: false
 
+  /follow-redirects/1.15.0:
+    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   /follow-redirects/1.15.0_debug@4.3.2:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
     engines: {node: '>=4.0'}
@@ -27224,7 +27241,8 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4_supports-color@6.1.0
+    dev: false
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
@@ -27805,6 +27823,7 @@ packages:
   /gauge/3.0.2:
     resolution: {integrity: sha512-+5J6MS/5XksCuXq++uFRsnUd7Ovu1XenbeuIuNRJxYWjgQbPuFhT14lAvsWfqfAmnwluf1OwMjz39HjfLPci0Q==}
     engines: {node: '>=10'}
+    requiresBuild: true
     dependencies:
       aproba: 2.0.0
       color-support: 1.1.3
@@ -29067,7 +29086,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -34055,6 +34074,10 @@ packages:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
     dev: false
 
+  /long/5.2.0:
+    resolution: {integrity: sha512-9RTUNjK60eJbx3uz+TEGF7fUr29ZDxR5QzXcyDpeSfeH28S9ycINflOgOlppit5U+4kNTe83KQnMEerw7GmE8w==}
+    dev: false
+
   /longest-streak/2.0.4:
     resolution: {integrity: sha512-vM6rUVCVUJJt33bnmHiZEvr7wPT78ztX7rojL+LW51bHtLh6HTjx84LA5W4+oa6aKEJA7jJu5LR6vQRBpA5DVg==}
     dev: true
@@ -36058,6 +36081,7 @@ packages:
     resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
     engines: {node: '>=6'}
     hasBin: true
+    requiresBuild: true
     dependencies:
       abbrev: 1.1.1
 
@@ -38371,7 +38395,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha1-mEcocL8igTL8vdhoEputEsPAKeM=}
