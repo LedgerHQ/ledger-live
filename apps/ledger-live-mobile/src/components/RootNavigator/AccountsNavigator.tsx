@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
+import { useSelector } from "react-redux";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { ScreenName } from "../../const";
 import Accounts from "../../screens/Accounts";
 import Account from "../../screens/Account";
@@ -12,18 +14,20 @@ import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeader
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
+import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.Accounts}
-        component={Accounts}
+        component={readOnlyModeEnabled ? ReadOnlyAccounts : Accounts}
         options={{
           headerShown: false,
         }}

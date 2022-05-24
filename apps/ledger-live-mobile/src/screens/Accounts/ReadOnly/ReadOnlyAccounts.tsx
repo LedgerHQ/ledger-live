@@ -11,11 +11,11 @@ import {
 import { Flex } from "@ledgerhq/native-ui";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { accountsSelector } from "../../reducers/accounts";
-import TrackScreen from "../../analytics/TrackScreen";
+import { useRefreshAccountsOrdering } from "../../../actions/general";
+import { accountsSelector } from "../../../reducers/accounts";
+import TrackScreen from "../../../analytics/TrackScreen";
 
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import ReadOnlyAccountRow from "./ReadOnlyAccountRow";
 
 type Props = {
@@ -49,7 +49,6 @@ function Accounts({ navigation }: Props) {
       })),
     [sortedCryptoCurrencies],
   );
-  console.log("accounts list", assets);
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (

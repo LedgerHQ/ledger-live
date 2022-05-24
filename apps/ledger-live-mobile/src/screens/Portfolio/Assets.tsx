@@ -13,7 +13,7 @@ type ListProps = {
 const AssetsList = ({ balanceHistory, assets }: ListProps) => {
   const navigation = useNavigation();
   const portfolioValue = useMemo(
-    () => balanceHistory?.length > 0 ? balanceHistory[balanceHistory.length - 1].value : 0,
+    () => balanceHistory[balanceHistory.length - 1].value,
     [balanceHistory],
   );
   const renderItem = useCallback(
