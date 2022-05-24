@@ -223,6 +223,6 @@ This part of the repository contains the transport libraries that will be used t
 
 For a smooth and quick integration:
 - See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and 
-- Go on Discord to chat with developper support and the developper community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Connect your app channel](https://discord.com/channels/885256081289379850/907623611454619758).
+- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Connect your app channel](https://discord.com/channels/885256081289379850/907623611454619758).
 
 ---
