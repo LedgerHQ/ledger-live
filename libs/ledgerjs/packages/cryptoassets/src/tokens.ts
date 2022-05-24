@@ -7,6 +7,7 @@ import bep20tokens from "../data/bep20";
 import polygonTokens from "../data/polygon-erc20";
 import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
+import stellarTokens from "../data/stellar";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];
@@ -24,6 +25,7 @@ addTokens(trc20tokens.map(convertTRONTokens("trc20")));
 addTokens(bep20tokens.map(convertBEP20));
 addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
+addTokens(stellarTokens.map(convertStellarTokens));
 //addTokens(spltokens.map(convertSplTokens));
 type TokensListOptions = {
   withDelisted: boolean;
@@ -367,6 +369,33 @@ function convertSplTokens([
         name,
         code: symbol,
         magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertStellarTokens([
+  assetCode,
+  assetIssuer,
+  assetType,
+  name,
+  precision,
+  enableCountervalues,
+]): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id: `stellar/asset/${assetCode}:${assetIssuer}`,
+    contractAddress: assetIssuer,
+    parentCurrency: getCryptoCurrencyById("stellar"),
+    tokenType: assetType,
+    name,
+    ticker: assetCode,
+    disableCountervalue: !enableCountervalues,
+    units: [
+      {
+        name,
+        code: assetCode,
+        magnitude: precision,
       },
     ],
   };
