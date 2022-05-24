@@ -18,14 +18,16 @@ import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import { useCurrencies } from "@ledgerhq/live-common/lib/currencies/react";
 import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/rawTypes";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies/index";
+import {
+  findCryptoCurrencyById,
+  listCurrencies,
+} from "@ledgerhq/live-common/lib/currencies";
 import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/lib/platform/converters";
@@ -118,8 +120,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   );
 
   const listAccounts = useListPlatformAccounts(accounts);
-  const currencies = useCurrencies();
-  const listCurrencies = useListPlatformCurrencies();
+  const listPlatformCurrencies = useListPlatformCurrencies();
 
   const requestAccount = useCallback(
     ({
@@ -136,14 +137,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
 
+        const allCurrencies = listCurrencies(includeTokens);
         // handle no curencies selected case
-        const cryptoCurrencies =
-          currencyIds.length > 0 ? currencyIds : currencies.map(({ id }) => id);
+        const cryptoCurrencyIds =
+          currencyIds.length > 0
+            ? currencyIds
+            : allCurrencies.map(({ id }) => id);
 
-        const foundAccounts =
-          cryptoCurrencies && cryptoCurrencies.length
-            ? accounts.filter(a => cryptoCurrencies.includes(a.currency.id))
-            : accounts;
+        const foundAccounts = cryptoCurrencyIds?.length
+          ? accounts.filter(a => cryptoCurrencyIds.includes(a.currency.id))
+          : accounts;
 
         // @TODO replace with correct error
         if (foundAccounts.length <= 0 && !allowAddAccount) {
@@ -162,14 +165,18 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         //   return;
         // }
 
+        const currencies = allCurrencies.filter(c =>
+          cryptoCurrencyIds.includes(c.id),
+        );
+
         // list of queried cryptoCurrencies with one or more accounts -> used in case of not allowAddAccount and multiple accounts selectable
         const currenciesDiff = allowAddAccount
-          ? cryptoCurrencies
+          ? cryptoCurrencyIds
           : foundAccounts
               .map(a => a.currency.id)
               .filter(
                 (c, i, arr) =>
-                  cryptoCurrencies.includes(c) && i === arr.indexOf(c),
+                  cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
               );
 
         // if single currency available redirect to select account directly
@@ -184,7 +191,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
             params: {
-              currencies: currenciesDiff,
+              currencies,
               currency,
               allowAddAccount,
               includeTokens,
@@ -204,8 +211,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectCrypto,
             params: {
-              currencies: currenciesDiff,
+              currencies,
               allowAddAccount,
+              includeTokens,
               onSuccess: account => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
@@ -220,7 +228,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           });
         }
       }),
-    [manifest, accounts, currencies, navigation],
+    [manifest, accounts, navigation],
   );
 
   const receiveOnAccount = useCallback(
@@ -376,7 +384,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
-      "currency.list": listCurrencies,
+      "currency.list": listPlatformCurrencies,
       "account.request": requestAccount,
       "account.receive": receiveOnAccount,
       "transaction.sign": signTransaction,
@@ -384,7 +392,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }),
     [
       listAccounts,
-      listCurrencies,
+      listPlatformCurrencies,
       requestAccount,
       receiveOnAccount,
       signTransaction,
