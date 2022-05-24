@@ -3,6 +3,7 @@ import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "../../types/transaction";
+import { CosmosDelegationInfo, CosmosDelegationInfoRaw } from "../cosmos/types";
 
 export type Transaction = TransactionCommon & {
   family: "osmosis";
@@ -10,6 +11,7 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null;
   gas: BigNumber | null | undefined;
   memo: string | null | undefined;
+  validators: CosmosDelegationInfo[];
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -18,6 +20,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string | null;
   gas: string | null | undefined;
   memo: string | null | undefined;
+  validators: CosmosDelegationInfoRaw[];
 };
 
 export type StatusErrorMap = {

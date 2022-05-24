@@ -4,6 +4,7 @@ import type { Transaction } from "./types";
 
 import getEstimatedFees, { getEstimatedGas } from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
+import { CosmosDelegationInfo } from "../cosmos/types";
 
 const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
 
@@ -21,6 +22,7 @@ export const createTransaction = (): Transaction => ({
   fees: null,
   gas: null,
   memo: null,
+  validators: [] as CosmosDelegationInfo[],
 });
 
 /**

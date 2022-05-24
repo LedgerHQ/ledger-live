@@ -99,14 +99,20 @@ const signOperation = ({
         const accountId = account.id;
 
         const fee = transaction.fees || new BigNumber(DEFAULT_FEES);
-        const extra = { memo: transaction.memo || "" };
-        const type: OperationType = "OUT";
+        const extra = { memo: transaction.memo || {} };
+        const type: OperationType =
+          transaction.mode === "delegate" ? "DELEGATE" : "OUT";
+
         const senders: string[] = [];
         const recipients: string[] = [];
 
         if (transaction.mode === "send") {
           senders.push(account.freshAddress);
           recipients.push(transaction.recipient);
+        } else if (transaction.mode === "delegate") {
+          Object.assign(extra, {
+            validators: transaction.validators,
+          });
         } else {
           throw new Error("Unsupported transaction type");
         }
