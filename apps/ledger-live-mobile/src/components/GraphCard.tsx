@@ -23,6 +23,7 @@ type Props = {
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
+  hideAnalyticsButton?: boolean;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -44,6 +45,7 @@ function GraphCard({
   portfolio,
   counterValueCurrency,
   areAccountsEmpty,
+  hideAnalyticsButton,
 }: Props) {
   const { t } = useTranslation();
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
@@ -153,7 +155,7 @@ function GraphCard({
             </>
           )}
         </Flex>
-        {!areAccountsEmpty ? (
+        {!areAccountsEmpty && !hideAnalyticsButton ? (
           <Flex>
             <TouchableOpacity onPress={onPieChartButtonpress}>
               <BoxedIcon

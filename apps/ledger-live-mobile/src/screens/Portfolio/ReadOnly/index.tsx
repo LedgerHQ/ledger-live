@@ -13,14 +13,19 @@ import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
 import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
+import {
+  isCurrencySupported,
+  listSupportedCurrencies,
+  listTokens,
+  useCurrenciesByMarketcap,
+} from "@ledgerhq/live-common/lib/currencies";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
-import { accountsSelector } from "../../../reducers/accounts";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
-  readOnlyModeEnabledSelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../actions/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
@@ -121,16 +126,28 @@ const SectionTitle = ({
 const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-
-  const [readOnlyAccounts] = useState([]);
-  const trueAccounts = useSelector(accountsSelector);
-
-  const accounts = useMemo(
-    () => (readOnlyModeEnabled ? trueAccounts : readOnlyAccounts),
-    [readOnlyAccounts, readOnlyModeEnabled, trueAccounts],
+  const listSupportedTokens = useCallback(
+    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
+    [],
   );
+  const cryptoCurrencies = useMemo(
+    () => listSupportedCurrencies().concat(listSupportedTokens()),
+    [listSupportedTokens],
+  );
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const accounts = useMemo(
+    () =>
+      [] || sortedCryptoCurrencies.slice(0, 10).map((currency, i) => ({
+        balance: 0,
+        currency,
+        id: i,
+        type: "Account",
+      })),
+    [sortedCryptoCurrencies],
+  );
+
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
@@ -152,9 +169,7 @@ function PortfolioScreen({ navigation }: Props) {
     setGraphCardEndPosition(y + height / 2);
   }, []);
 
-  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
-    accounts,
-  ]);
+  const [areAccountsEmpty] = useState(true);
   const [, assetsToDisplay] = useMemo(
     () => [accounts.length > 0, accounts.slice(0, maxAssetsToDisplay)],
     [accounts],
@@ -176,7 +191,7 @@ function PortfolioScreen({ navigation }: Props) {
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
           areAccountsEmpty={areAccountsEmpty}
-          showGraphCard={accounts.length > 0}
+          showGraphCard
         />
       </Box>,
       <SectionContainer>
@@ -187,14 +202,76 @@ function PortfolioScreen({ navigation }: Props) {
           containerProps={{ mb: "9px" }}
         />
         <Assets
-          balanceHistory={portfolio.balanceHistory}
+          // balanceHistory={portfolio.balanceHistory}
           assets={assetsToDisplay}
         />
       </SectionContainer>,
+      <Flex
+        flex={1}
+        mx={6}
+        borderRadius={8}
+        overflow="hidden"
+      >
+        <Svg style={{ position: "absolute" }} preserveAspectRatio="xMinYMin slice">
+          <Defs>
+            <LinearGradient
+              id="myGradient"
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+              gradientUnits="userSpaceOnUse"
+            >
+              <Stop
+                offset="0%"
+                stopOpacity={1}
+                stopColor={colors.neutral.c30}
+              />
+              <Stop
+                offset="100%"
+                stopOpacity={0}
+                stopColor={colors.neutral.c30}
+              />
+            </LinearGradient>
+          </Defs>
+          <Rect
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="url(#myGradient)"
+          />
+        </Svg>
+        <Flex
+          flex={1}
+          px={48}
+          py={60}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text
+            variant="large"
+            fontWeight="semiBold"
+            color="neutral.c100"
+            textAlign="center"
+          >
+            You don't have any transactions
+          </Text>
+          <Text
+            variant="small"
+            fontWeight="medium"
+            color="neutral.c70"
+            textAlign="center"
+            mt={3}
+          >
+            You'll need a device in order to buy or receive [NAME OF ASSET]
+          </Text>
+        </Flex>
+      </Flex>,
       <BuyDeviceBanner
         style={{
           marginHorizontal: 16,
-          marginTop: 36,
+          marginTop: 40,
           paddingTop: 13.5,
           paddingBottom: 13.5,
         }}
