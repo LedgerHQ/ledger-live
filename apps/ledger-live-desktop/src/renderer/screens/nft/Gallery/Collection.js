@@ -11,7 +11,7 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { openModal } from "~/renderer/actions/modals";
 import styled from "styled-components";
 import useOnScreen from "../useOnScreen";
-import Image from "~/renderer/screens/nft/Image";
+import Media from "~/renderer/components/Nft/Media";
 import IconSend from "~/renderer/icons/Send";
 import TokensList from "./TokensList";
 import Spinner from "~/renderer/components/Spinner";
@@ -19,9 +19,9 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import OperationsList from "~/renderer/components/OperationsList";
-import CollectionName from "../CollectionName";
+import CollectionName from "~/renderer/components/Nft/CollectionName";
 import GridListToggle from "./GridListToggle";
-import Skeleton from "../Skeleton";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
 
 const SpinnerContainer: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -54,12 +54,8 @@ const Collection = () => {
     account.nfts,
     collectionAddress,
   ]);
-
-  const { status, metadata } = useNftMetadata(
-    nfts[0]?.contract,
-    nfts[0]?.tokenId,
-    account.currency.id,
-  );
+  const [nft] = nfts;
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, account.currency.id);
   const show = useMemo(() => status === "loading", [status]);
 
   const onSend = useCallback(() => {
@@ -100,7 +96,7 @@ const Collection = () => {
     <>
       <Box horizontal alignItems="center" mb={6}>
         <Skeleton width={40} minHeight={40} show={show}>
-          <Image size={40} nft={metadata} />
+          <Media size={40} metadata={metadata} tokenId={nft?.tokenId} mediaFormat="preview" />
         </Skeleton>
         <Box flex={1} ml={3}>
           <Skeleton width={93} barHeight={6} minHeight={24} show={show}>

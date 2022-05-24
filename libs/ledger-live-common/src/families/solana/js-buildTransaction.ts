@@ -1,7 +1,6 @@
 import type { Account } from "../../types";
 import type { Command, Transaction } from "./types";
 import {
-  addSignatureToTransaction,
   buildTransferInstructions,
   buildTokenTransferInstructions,
   buildCreateAssociatedTokenAccountInstruction,
@@ -23,10 +22,12 @@ export const buildTransactionWithAPI = async (
   account: Account,
   transaction: Transaction,
   api: ChainAPI
-): Promise<readonly [Buffer, (signature: Buffer) => Buffer]> => {
+): Promise<
+  readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]
+> => {
   const instructions = buildInstructions(transaction);
 
-  const recentBlockhash = await api.getRecentBlockhash();
+  const recentBlockhash = await api.getLatestBlockhash();
 
   const feePayer = new PublicKey(account.freshAddress);
 
@@ -38,15 +39,12 @@ export const buildTransactionWithAPI = async (
   tx.add(...instructions);
 
   return [
-    tx.compileMessage().serialize(),
+    tx,
     (signature: Buffer) => {
-      return addSignatureToTransaction({
-        tx,
-        address: account.freshAddress,
-        signature,
-      }).serialize();
+      tx.addSignature(new PublicKey(account.freshAddress), signature);
+      return tx;
     },
-  ] as const;
+  ];
 };
 
 function buildInstructions(tx: Transaction): TransactionInstruction[] {
