@@ -43,6 +43,10 @@ const createTransaction = (): Transaction => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
+  operationType: "payment",
+  assetCode: "",
+  assetIssuer: "",
+  assetType: "",
 });
 
 const updateTransaction = (t, patch) => {

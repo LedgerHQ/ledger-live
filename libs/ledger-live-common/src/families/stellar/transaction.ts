@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { getAssetCodeIssuer } from "./logic";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
@@ -33,6 +34,8 @@ export const formatTransaction = (
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
+  const [assetCode, assetIssuer] = getAssetCodeIssuer(tr);
+
   return {
     ...common,
     family: tr.family,
@@ -43,14 +46,21 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: new BigNumber(networkInfo.fees),
+      baseFee: new BigNumber(networkInfo.baseFee),
       baseReserve: new BigNumber(networkInfo.baseReserve),
+      networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
+    operationType: tr.operationType,
+    assetCode,
+    assetIssuer,
+    assetType: tr.assetType,
   };
 };
 
 const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;
+  const [assetCode, assetIssuer] = getAssetCodeIssuer(t);
   return {
     ...common,
     family: t.family,
@@ -61,8 +71,14 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: networkInfo.fees.toString(),
+      baseFee: networkInfo.baseFee.toString(),
       baseReserve: networkInfo.baseReserve.toString(),
+      networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
+    operationType: t.operationType,
+    assetCode,
+    assetIssuer,
+    assetType: t.assetType,
   };
 };
 

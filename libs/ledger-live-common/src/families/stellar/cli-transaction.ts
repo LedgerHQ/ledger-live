@@ -1,5 +1,10 @@
 import invariant from "invariant";
-import type { Transaction, AccountLike } from "../../types";
+import type {
+  Transaction,
+  AccountLike,
+  Account,
+  AccountLikeArray,
+} from "../../types";
 const options = [
   {
     name: "fee",
@@ -35,7 +40,29 @@ function inferTransactions(
   });
 }
 
+function inferAccounts(
+  account: Account,
+  opts: Record<string, any>
+): AccountLikeArray {
+  invariant(account.currency.family === "stellar", "stellar family");
+
+  if (opts.subAccountId) {
+    const assetSubAccount = account.subAccounts?.find(
+      (a) => a.id === opts.subAccountId
+    );
+
+    if (!assetSubAccount) {
+      throw new Error(`${opts.subAccountId} asset not found`);
+    }
+
+    return [assetSubAccount];
+  }
+
+  return [account];
+}
+
 export default {
   options,
+  inferAccounts,
   inferTransactions,
 };

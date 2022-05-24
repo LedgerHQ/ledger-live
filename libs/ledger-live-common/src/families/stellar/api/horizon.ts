@@ -12,14 +12,24 @@ import type { NetworkInfo } from "../types";
 import {
   getAccountSpendableBalance,
   rawOperationsToOperations,
+  getReservedBalance,
 } from "../logic";
 import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
+import type { BalanceAsset } from "../types";
+import { NetworkCongestionLevel } from "../types";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
+const TRESHOLD_LOW = 0.5;
+const TRESHOLD_MEDIUM = 0.75;
 const currency = getCryptoCurrencyById("stellar");
 const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
+
+// Constants
+export const BASE_RESERVE = 0.5;
+export const BASE_RESERVE_MIN_COUNT = 2;
+export const MIN_BALANCE = 1;
 
 StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
 
@@ -46,16 +56,39 @@ const getFormattedAmount = (amount: BigNumber) => {
     .toString(10);
 };
 
-export const fetchBaseFee = async (): Promise<number> => {
-  let baseFee;
+export const fetchBaseFee = async (): Promise<{
+  baseFee: number;
+  recommendedFee: number;
+  networkCongestionLevel: NetworkCongestionLevel;
+}> => {
+  const baseFee = StellarSdk.BASE_FEE || FALLBACK_BASE_FEE;
+  let recommendedFee = baseFee;
+  let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
 
   try {
-    baseFee = await server.fetchBaseFee();
+    const feeStats = await server.feeStats();
+    const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
+    recommendedFee = Number(feeStats.fee_charged.mode);
+
+    if (
+      ledgerCapacityUsage > TRESHOLD_LOW &&
+      ledgerCapacityUsage <= TRESHOLD_MEDIUM
+    ) {
+      networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
+    } else if (ledgerCapacityUsage > TRESHOLD_MEDIUM) {
+      networkCongestionLevel = NetworkCongestionLevel.HIGH;
+    } else {
+      networkCongestionLevel = NetworkCongestionLevel.LOW;
+    }
   } catch (e) {
-    baseFee = FALLBACK_BASE_FEE;
+    // do nothing, will use defaults
   }
 
-  return baseFee;
+  return {
+    baseFee,
+    recommendedFee,
+    networkCongestionLevel,
+  };
 };
 
 /**
@@ -70,14 +103,19 @@ export const fetchAccount = async (
   blockHeight?: number;
   balance: BigNumber;
   spendableBalance: BigNumber;
+  assets: BalanceAsset[];
 }> => {
   let account: typeof AccountRecord = {};
   let balance: Record<string, any> = {};
+  let assets: BalanceAsset[] = [];
 
   try {
     account = await server.accounts().accountId(addr).call();
-    balance = account.balances.find((balance) => {
+    balance = account.balances?.find((balance) => {
       return balance.asset_type === "native";
+    });
+    assets = account.balances?.filter((balance) => {
+      return balance.asset_type !== "native";
     });
   } catch (e) {
     balance.balance = "0";
@@ -97,6 +135,7 @@ export const fetchAccount = async (
     blockHeight: account.sequence ? Number(account.sequence) : undefined,
     balance: formattedBalance,
     spendableBalance,
+    assets,
   };
 };
 
@@ -105,16 +144,23 @@ export const fetchAccount = async (
  *
  * @param {string} accountId
  * @param {string} addr
- * @param {number} startAt - blockHeight after which you fetch this op (included)
+ * @param {string} order - "desc" or "asc" order of returned records
+ * @param {string} cursor - point to start fetching records
  *
  * @return {Operation[]}
  */
-export const fetchOperations = async (
-  accountId: string,
-  addr: string,
-  startAt = 0
-): Promise<Operation[]> => {
-  if (!addr || !addr.length) {
+export const fetchOperations = async ({
+  accountId,
+  addr,
+  order,
+  cursor,
+}: {
+  accountId: string;
+  addr: string;
+  order: "asc" | "desc";
+  cursor: string;
+}): Promise<Operation[]> => {
+  if (!addr) {
     return [];
   }
 
@@ -125,10 +171,11 @@ export const fetchOperations = async (
     rawOperations = await server
       .operations()
       .forAccount(addr)
-      .join("transactions")
-      .includeFailed(true)
       .limit(LIMIT)
-      .cursor(startAt)
+      .order(order)
+      .cursor(cursor)
+      .includeFailed(true)
+      .join("transactions")
       .call();
   } catch (e: any) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
@@ -175,6 +222,7 @@ export const fetchOperations = async (
 
   return operations;
 };
+
 export const fetchAccountNetworkInfo = async (
   account: Account
 ): Promise<NetworkInfo> => {
@@ -183,25 +231,24 @@ export const fetchAccountNetworkInfo = async (
       .accounts()
       .accountId(account.freshAddress)
       .call();
-    const numberOfEntries = extendedAccount.subentry_count;
-    const ledger = await server
-      .ledgers()
-      .ledger(extendedAccount.last_modified_ledger)
-      .call();
-    const baseReserve = new BigNumber(
-      (ledger.base_reserve_in_stroops * (2 + numberOfEntries)).toString()
-    );
-    const fees = new BigNumber(ledger.base_fee_in_stroops.toString());
+    const baseReserve = getReservedBalance(extendedAccount);
+    const { recommendedFee, networkCongestionLevel, baseFee } =
+      await fetchBaseFee();
+
     return {
       family: "stellar",
-      fees,
+      fees: new BigNumber(recommendedFee.toString()),
+      baseFee: new BigNumber(baseFee.toString()),
       baseReserve,
+      networkCongestionLevel,
     };
   } catch (error) {
     return {
       family: "stellar",
       fees: new BigNumber(0),
+      baseFee: new BigNumber(0),
       baseReserve: new BigNumber(0),
+      networkCongestionLevel: undefined,
     };
   }
 };
@@ -238,15 +285,29 @@ export const broadcastTransaction = async (
   return res.hash;
 };
 
-export const buildPaymentOperation = (
-  destination: string,
-  amount: BigNumber
-): any => {
+export const buildPaymentOperation = ({
+  destination,
+  amount,
+  assetCode,
+  assetIssuer,
+}: {
+  destination: string;
+  amount: BigNumber;
+  assetCode: string | undefined;
+  assetIssuer: string | undefined;
+}): any => {
   const formattedAmount = getFormattedAmount(amount);
+  // Non-native assets should always have asset code and asset issuer. If an
+  // asset doesn't have both, we assume it is native asset.
+  const asset =
+    assetCode && assetIssuer
+      ? new StellarSdk.Asset(assetCode, assetIssuer)
+      : StellarSdk.Asset.native();
   return StellarSdk.Operation.payment({
     destination: destination,
     amount: formattedAmount,
-    asset: StellarSdk.Asset.native(),
+    asset,
+    withMuxing: true,
   });
 };
 
@@ -261,6 +322,15 @@ export const buildCreateAccountOperation = (
   });
 };
 
+export const buildChangeTrustOperation = (
+  assetCode: string,
+  assetIssuer: string
+): any => {
+  return StellarSdk.Operation.changeTrust({
+    asset: new StellarSdk.Asset(assetCode, assetIssuer),
+  });
+};
+
 export const buildTransactionBuilder = (
   source: typeof StellarSdk.Account,
   fee: BigNumber
@@ -272,7 +342,9 @@ export const buildTransactionBuilder = (
   });
 };
 
-export const loadAccount = async (addr: string): Promise<any> => {
+export const loadAccount = async (
+  addr: string
+): Promise<AccountRecord | null> => {
   if (!addr || !addr.length) {
     return null;
   }

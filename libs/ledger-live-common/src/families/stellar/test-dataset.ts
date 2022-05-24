@@ -109,11 +109,16 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                operationType: "payment",
+                assetCode: "",
+                assetIssuer: "",
+                assetType: "",
               }),
               expectedStatus: {
                 errors: {
@@ -164,11 +169,16 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
+                  baseFee: "100",
                   baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
+                operationType: "payment",
+                assetCode: "",
+                assetIssuer: "",
+                assetType: "",
               }),
               expectedStatus: (account) => ({
                 errors: {},

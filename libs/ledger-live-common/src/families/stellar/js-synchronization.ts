@@ -1,10 +1,34 @@
+import { BigNumber } from "bignumber.js";
+import type { Operation, TokenAccount } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
+import { buildSubAccounts } from "./tokens";
 
-const getAccountShape: GetAccountShape = async (info) => {
-  const { address, initialAccount, currency, derivationMode } = info;
+const getOldAssetOperations = (
+  subAccounts?: TokenAccount[]
+):
+  | {
+      [tokenId: string]: Operation[];
+    }
+  | undefined => {
+  return subAccounts?.reduce((result, tokenAccount) => {
+    if (result[tokenAccount.id]) {
+      result[tokenAccount.id] = [
+        ...result[tokenAccount.id],
+        ...(tokenAccount.operations || []),
+      ];
+    } else {
+      result[tokenAccount.id] = tokenAccount.operations || [];
+    }
+
+    return result;
+  }, {});
+};
+
+const getAccountShape: GetAccountShape = async (info, syncConfig) => {
+  const { address, currency, initialAccount, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -12,23 +36,77 @@ const getAccountShape: GetAccountShape = async (info) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 0;
-  const { blockHeight, balance, spendableBalance } = await fetchAccount(
+  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(
     address
   );
-  const newOperations = await fetchOperations(accountId, address, startAt);
-  const operations = mergeOps(oldOperations, newOperations);
+
+  const oldNativeOps = initialAccount?.operations || [];
+  // Creating a map of asset operations
+  const oldAssetOps =
+    getOldAssetOperations(initialAccount?.subAccounts as TokenAccount[]) || [];
+  const oldOperations = [
+    ...oldNativeOps,
+    ...Object.values(oldAssetOps).reduce(
+      (result, ops) => [...result, ...ops],
+      []
+    ),
+  ];
+
+  const oldNativeOpsLastPagingToken = oldNativeOps[0]?.extra?.pagingToken || 0;
+  // Find the last cursor/paging token for every asset's last op
+  const oldAssetOpsLastPagingTokens = Object.values(oldAssetOps).reduce(
+    (result: string[], ops) => [...result, ops[0]?.extra?.pagingToken || 0],
+    []
+  );
+  // Find the last paging token from all
+  const lastPagingToken = BigNumber.max(
+    oldNativeOpsLastPagingToken,
+    ...oldAssetOpsLastPagingTokens,
+    0
+  ).toString();
+
+  const newOperations =
+    (await fetchOperations({
+      accountId,
+      addr: address,
+      order: "asc",
+      cursor: lastPagingToken,
+    })) || [];
+
+  const allOperations = mergeOps(oldOperations, newOperations);
+
+  const nativeOperations: Operation[] = [];
+  const assetOperations: Operation[] = [];
+
+  allOperations.forEach((op) => {
+    // change_trust operations
+    if (op.type === "OPT_IN" || op.type === "OPT_OUT") {
+      nativeOperations.push(op);
+    } else if (op?.extra?.assetCode && op?.extra?.assetIssuer) {
+      assetOperations.push(op);
+    } else {
+      nativeOperations.push(op);
+    }
+  });
+
+  const subAccounts =
+    buildSubAccounts({
+      currency,
+      accountId,
+      assets,
+      syncConfig,
+      operations: assetOperations,
+    }) || [];
+
   const shape = {
     id: accountId,
     balance,
     spendableBalance,
-    operationsCount: operations.length,
+    operationsCount: nativeOperations.length,
     blockHeight,
+    subAccounts,
   };
-  return { ...shape, operations };
+  return { ...shape, operations: nativeOperations };
 };
 
 export const sync = makeSync({ getAccountShape });

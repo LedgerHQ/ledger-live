@@ -3,26 +3,44 @@ import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 
-const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-    useGrouping: false,
-  }) + " XLM";
+const expectedAmount = ({ account, status, transaction }) => {
+  if (transaction.assetCode && transaction.assetIssuer) {
+    const amount = formatCurrencyUnit(account.unit, status.amount, {
+      disableRounding: true,
+      useGrouping: false,
+    });
+
+    return `${amount} ${transaction.assetCode}@${truncateAddress(
+      transaction.assetIssuer,
+      3,
+      4
+    )}`;
+  }
+
+  return (
+    formatCurrencyUnit(account.unit, status.amount, {
+      disableRounding: true,
+      useGrouping: false,
+    }) + " XLM"
+  );
+};
+
+const truncateAddress = (stellarAddress: string, start = 6, end = 6) =>
+  `${stellarAddress.slice(0, start)}..${stellarAddress.slice(-end)}`;
 
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Starting Balance",
+      title: "Review",
       button: "Rr",
-      expectedValue: expectedAmount,
     },
     {
-      title: "Send",
+      title: "Memo Text",
       button: "Rr",
-      expectedValue: expectedAmount,
+      expectedValue: ({ transaction }) => transaction.memoValue || "",
     },
     {
-      title: "Fee",
+      title: "Max Fee",
       button: "Rr",
       expectedValue: ({ account, status }) =>
         formatCurrencyUnit(account.unit, status.estimatedFees, {
@@ -30,9 +48,48 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
         }) + " XLM",
     },
     {
+      title: "Sequence Num",
+      button: "Rr",
+    },
+    {
+      title: "Tx Source",
+      button: "Rr",
+      expectedValue: ({ account }) => truncateAddress(account.freshAddress),
+    },
+    {
+      title: "Operation Type",
+      button: "Rr",
+      // Operation type can be Payment (or Create Account) or Change Trust.
+      // Create Account type is coming from operation, not transaction.
+      // Testing in `specs.ts`.
+    },
+    {
+      title: "Change Trust",
+      button: "Rr",
+      expectedValue: ({ transaction }) =>
+        `${transaction.assetCode || ""}@${truncateAddress(
+          transaction.assetIssuer || "",
+          3,
+          4
+        )}`,
+    },
+    {
+      title: "Send",
+      button: "Rr",
+      expectedValue: expectedAmount,
+    },
+    {
       title: "Destination",
       button: "Rr",
       expectedValue: ({ transaction }) => transaction.recipient,
+    },
+    {
+      title: "Finalize",
+      button: "LRlr",
+    },
+    {
+      title: "Starting Balance",
+      button: "Rr",
     },
     {
       title: "Create Account",
@@ -40,31 +97,16 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Memo",
-      button: "Rr",
-      expectedValue: ({ transaction }) => transaction.memoValue || "[none]",
-    },
-    {
       title: "Network",
       button: "Rr",
-      expectedValue: () => "Public",
     },
     {
-      title: "Time Bounds",
+      title: "Valid Before (UTC)",
       button: "Rr",
     },
     {
-      title: "Tx Source",
+      title: "Valid After (UTC)",
       button: "Rr",
-      expectedValue: ({ account }) => account.freshAddress,
-    },
-    {
-      title: "Review",
-      button: "Rr",
-    },
-    {
-      title: "Finalize",
-      button: "LRlr",
     },
   ],
 });
