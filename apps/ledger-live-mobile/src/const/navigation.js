@@ -1,6 +1,8 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
+import PostBuyDeviceSetupNanoWallScreen from "../screens/PostBuyDeviceSetupNanoWallScreen";
+
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -352,6 +354,7 @@ export const ScreenName = {
   SolanaEditMemo: "SolanaEditMemo",
 
   BuyDeviceScreen: "BuyDeviceScreen",
+  PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",

@@ -79,6 +79,8 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Learn from "../../screens/Learn";
 import ManagerMain from "../../screens/Manager/Manager";
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnlyAccounts";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -89,6 +91,7 @@ export default function BaseNavigator() {
   );
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const learn = useFeature("learn");
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions()
 
   return (
     <Stack.Navigator
@@ -107,6 +110,12 @@ export default function BaseNavigator() {
         component={BuyDeviceScreen}
         options={{ headerShown: false }}
       />
+        <Stack.Screen
+        name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
+        options={{ headerShown: false, presentation: 'transparentModal' }}
+      />
+
       <Stack.Screen
         name={NavigatorName.Settings}
         component={SettingsNavigator}
@@ -134,6 +143,7 @@ export default function BaseNavigator() {
           headerStyle: styles.headerNoShadow,
           title: route.params.name,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       {learn?.enabled ? (
         <Stack.Screen

@@ -65,6 +65,7 @@ export default {
     black: "hsla(0, 0%, 0%, 1)",
   },
   background: {
-    main: "hsla(0, 0%, 10%, 1)",
+    main: "hsla(270, 5%, 7%, 1)",
+    drawer: "hsla(260, 5%, 12%, 1)",
   },
 };

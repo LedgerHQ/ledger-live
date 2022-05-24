@@ -66,5 +66,6 @@ export default {
   },
   background: {
     main: "hsla(0, 0%, 100%, 1)",
+    drawer: "hsla(0, 0%, 100%, 1)",
   },
 };

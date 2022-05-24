@@ -815,6 +815,11 @@
     "bannerButtonTitle2": "Buy a device",
     "setupCta": "I already have a device, set it up"
   },
+  "postBuyDeviceSetupNanoWall": {
+    "title": "Have you receive your device ?",
+    "desc": "Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim geht's messti de Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo eget Gal.",
+    "cta": "Setup my device",
+  },
   "discover": {
     "title": "Discover",
     "desc": "Explore the world of web3 included in Ledger Live",

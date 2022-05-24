@@ -219,6 +219,11 @@ export const setLastConnectedDevice = (device: Device) => ({
   payload: device,
 });
 
+export const setHasOrderedNano = (enabled: boolean) => ({
+  type: "SET_ORDERED_NANO",
+  enabled,
+});
+
 type PortfolioRangeOption = {
   key: PortfolioRange,
   value: string,
