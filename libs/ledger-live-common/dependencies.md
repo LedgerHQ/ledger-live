@@ -16,6 +16,8 @@ yarn upgrade-interactive -i --latest
 |@celo/wallet-ledger     | Celo coin integration          | monthly                          |
 |@cosmjs/amino           | Cosmos coin integration        | monthly                          |
 |@cosmjs/crypto          | Cosmos coin integration        | monthly                          |
+|@cosmjs/ledger-amino    | Osmosis coin integration       | TBD, planning to remove soon     |
+|@cosmjs/stargate        | Osmosis coin integration       | added direct due to pnpm hoisting|
 |@cosmjs/proto-signing   | Cosmos coin integration        | monthly                          |
 |@cosmjs/stargate        | Cosmos coin integration        | monthly                          |
 |@crypto-com/chain-jslib | Crypto.com coin integration    | monthly                          |
@@ -42,6 +44,7 @@ yarn upgrade-interactive -i --latest
 |@ledgerhq/json-bignumber| workaround for Ledger explorers who don't give String in some API | stable                               |
 |@ledgerhq/live-app-sdk  | utils for live apps feature    | ???                              |
 |@ledgerhq/logs          | logs                           | weekly                           |
+|long                    | Osmosis coin integration       | added direct due to pnpm hoisting|
 |@polkadot/types         | Polkadot coin integration      | monthly                          |
 |@polkadot/types-known   | Polkadot coin integration      | monthly                          |
 |@solana/spl-token       | Solana coin integration        | monthly                          |
