@@ -1,5 +1,4 @@
 import { CryptoCurrency } from "@ledgerhq/cryptoassets";
-import { shuffle } from "lodash/fp";
 import { useMemo } from "react";
 import { useObservable } from "../../observable";
 import {
@@ -7,8 +6,6 @@ import {
   getSolanaPreloadData,
 } from "./js-preload-data";
 import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "./types";
-import { LEDGER_VALIDATOR_ADDRESS, swap } from "./utils";
-import { ValidatorsAppValidator } from "./validator-app";
 
 export function useSolanaPreloadData(
   currency: CryptoCurrency
@@ -19,11 +16,11 @@ export function useSolanaPreloadData(
   );
 }
 
-export function useLedgerFirstShuffledValidators(currency: CryptoCurrency) {
+export function useValidators(currency: CryptoCurrency) {
   const data = useSolanaPreloadData(currency);
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? []);
+    return data?.validators ?? [];
   }, [data]);
 }
 
@@ -61,21 +58,4 @@ export function useSolanaStakesWithMeta(
       },
     };
   });
-}
-
-function reorderValidators(
-  validators: ValidatorsAppValidator[]
-): ValidatorsAppValidator[] {
-  const shuffledValidators = shuffle(validators);
-
-  // move Ledger validator to the first position
-  const ledgerValidatorIdx = shuffledValidators.findIndex(
-    (v) => v.voteAccount === LEDGER_VALIDATOR_ADDRESS
-  );
-
-  if (ledgerValidatorIdx !== -1) {
-    swap(shuffledValidators, ledgerValidatorIdx, 0);
-  }
-
-  return shuffledValidators;
 }

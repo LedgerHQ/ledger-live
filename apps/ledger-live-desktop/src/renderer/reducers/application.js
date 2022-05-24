@@ -1,7 +1,7 @@
 // @flow
 
 import { handleActions } from "redux-actions";
-import { getSystemLocale } from "~/helpers/systemLocale";
+import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getLanguages } from "~/config/languages";
 import type { LangAndRegion } from "~/renderer/reducers/settings";
 
@@ -18,14 +18,14 @@ export type ApplicationState = {
   },
 };
 
-const { language, region } = getSystemLocale();
+const { language, region } = getParsedSystemLocale();
 const languages = getLanguages();
 const osLangSupported = languages.includes(language);
 
 const state: ApplicationState = {
   osDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
   osLanguage: {
-    language: osLangSupported ? language : "en",
+    language: osLangSupported && language != null ? language : "en",
     region: osLangSupported ? region : "US",
     useSystem: true,
   },

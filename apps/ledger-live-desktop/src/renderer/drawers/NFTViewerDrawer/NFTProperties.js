@@ -3,10 +3,10 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import Text from "~/renderer/components/Text";
-import Skeleton from "~/renderer/screens/nft/Skeleton";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useTranslation } from "react-i18next";
 
-import type { NFT, NFTMetadata } from "@ledgerhq/live-common/lib/types";
+import type { NFTMetadata } from "@ledgerhq/live-common/lib/types";
 
 const NFTProperty = styled.div`
   display: inline-flex;
@@ -32,14 +32,14 @@ const Separator = styled.div`
 `;
 
 type NFTPropertiesProps = {
-  nft: NFT,
   metadata: NFTMetadata,
   status: string,
 };
 
-export function NFTProperties({ nft, metadata, status }: NFTPropertiesProps) {
+export function NFTProperties({ metadata, status }: NFTPropertiesProps) {
   const { t } = useTranslation();
   const showSkeleton = useMemo(() => status === "loading", [status]);
+
   if (!metadata?.properties?.length) return null;
 
   return (

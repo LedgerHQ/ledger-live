@@ -68,12 +68,15 @@ function PortfolioHeader({
   const notificationsCount = allIds.length - seenIds.length;
 
   const TopLeftStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      currentPositionY.value,
-      [graphCardEndPosition - 30, graphCardEndPosition],
-      [1, 0],
-      Extrapolate.CLAMP,
-    );
+    const opacity =
+      currentPositionY.value === 0
+        ? 1
+        : interpolate(
+            currentPositionY.value,
+            [graphCardEndPosition - 30, graphCardEndPosition],
+            [1, 0],
+            Extrapolate.CLAMP,
+          );
 
     return {
       opacity,

@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: master
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.GH_PAT }}
       - name: set git user
@@ -46,7 +46,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: push changes
         run: |
-          git push origin master --follow-tags
+          git push origin main --follow-tags
       - name: check if desktop versions are different
         id: desktop-changed
         run: |
@@ -67,7 +67,7 @@ jobs:
               ref: "main",
               workflow_id: "release-desktop-mono.yml",
               inputs: {
-                branch: "master"
+                branch: "main"
               }
             });
       - uses: actions/github-script@v6
@@ -82,6 +82,6 @@ jobs:
               ref: "main",
               workflow_id: "release-mobile-mono.yml",
               inputs: {
-                ref: "master"
+                ref: "main"
               }
             });

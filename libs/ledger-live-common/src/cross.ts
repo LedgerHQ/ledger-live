@@ -271,7 +271,7 @@ export function accountToAccountData({
   index,
   balance,
 }: Account): AccountData {
-  return {
+  const res: AccountData = {
     id,
     name,
     seedIdentifier,
@@ -281,6 +281,8 @@ export function accountToAccountData({
     index,
     balance: balance.toString(),
   };
+
+  return res;
 }
 // reverse the account data to an account.
 // this restore the essential data of an account and the result of the fields
@@ -358,5 +360,6 @@ export const accountDataToAccount = ({
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
+
   return account;
 };
