@@ -83,10 +83,10 @@ const signOperation = ({
           const tokenIdentifier = tokenAccount.id.split("+")[1];
           const token = findTokenById(`${tokenIdentifier}`);
 
-          if (token?.ticker && token.id && token.ledgerSignature) {
+          if (token?.name && token.id && token.ledgerSignature) {
             const collectionIdentifierHex = token.id.split("/")[2];
             await elrond.provideESDTInfo(
-              token.ticker,
+              token.name,
               collectionIdentifierHex,
               token?.units[0].magnitude,
               CHAIN_ID,
