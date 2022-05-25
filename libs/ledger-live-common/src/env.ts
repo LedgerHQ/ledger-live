@@ -106,12 +106,12 @@ const envDefinitions = {
     desc: "Limit of operation that Horizon will fetch per page",
   },
   API_OSMOSIS_INDEXER: {
-    def: "http://localhost:4444",
+    def: "https://osmosis.coin.ledger.com/indexer",
     parser: stringParser,
     desc: "Endpoint for Transaction Explorer/Indexer for Osmosis",
   },
   API_OSMOSIS_NODE: {
-    def: "http://localhost:5555",
+    def: "https://osmosis.coin.ledger.com/node",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
