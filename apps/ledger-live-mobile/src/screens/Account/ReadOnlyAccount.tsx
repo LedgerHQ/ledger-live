@@ -9,6 +9,9 @@ import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView"
 import ReadOnlyAccountGraphCard from "../../components/ReadOnlyAccountGraphCard";
 import ReadOnlyFabActions from "../../components/ReadOnlyFabActions";
 import GradientContainer from "../../components/GradientContainer";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_BIG_NANO,
+} from "../../components/BuyDeviceBanner";
 import { TrackScreen } from "../../analytics";
 
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -72,6 +75,20 @@ function ReadOnlyAccount({ route }: Props) {
           </Text>
         </Flex>
       </GradientContainer>
+    </Box>,
+    <Box mt={8}>
+      <BuyDeviceBanner
+        style={{
+          marginHorizontal: 16,
+          marginTop: 40,
+          paddingTop: 13.5,
+          paddingBottom: 13.5,
+        }}
+        buttonLabel={t("buyDevice.bannerButtonTitle")}
+        buttonSize="small"
+        event="button_clicked"
+        {...IMAGE_PROPS_BIG_NANO}
+      />
     </Box>,
   ];
 
