@@ -37,6 +37,28 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
   - Android NDK 21.4.7075529 (in case this doc is outdated, check the version specified as `ndkVersion` in `android/build.gradle`)
   - CMake 3.10.2
 
+### M1 users
+
+For developers using a macos on M1 architecture, there might be some issues when installing pods.
+First of all, all these tools must be in x86_64 architecture and not arm64.
+
+- node 14 (x86_64)
+- ruby (default ruby from mac is a universal package and works fine)
+- ffi (as stated in [RN Setup Guide](https://reactnative.dev/docs/environment-setup) in the section "Note for Mac M1 Users")
+  - `sudo arch -x86_64 gem install ffi`
+
+
+To find out which version is installed:
+
+```bash
+which <tool> # eg: node
+# echoes: the path to the tool
+file path/to/tool 
+# echoes: some/path/node: Mach-O 64-bit executable x86_64
+```
+
+
+
 ## Scripts
 
 > Reminder: all commands should be run at the root of the monorepository
