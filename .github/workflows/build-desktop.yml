@@ -76,6 +76,7 @@ jobs:
           ./tools/g++-5.4/install.sh
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+        id: build-desktop
         with:
           os: linux
 
@@ -87,8 +88,8 @@ jobs:
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
@@ -120,6 +121,7 @@ jobs:
           ./tools/g++-5.4/install.sh
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+        id: build-desktop
         with:
           os: linux
 
@@ -131,8 +133,8 @@ jobs:
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-linux-x86_64.AppImage
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-linux-x86_64.AppImage
+          name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
@@ -156,6 +158,7 @@ jobs:
           git config user.name "Team Live"
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+        id: build-desktop
         with:
           os: win
 
@@ -169,8 +172,8 @@ jobs:
       - name: upload windows
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-win-x64.exe
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-win-x64.exe
+          name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
@@ -189,6 +192,7 @@ jobs:
           git config user.name "Team Live"
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
+        id: build-desktop
         with:
           os: mac
 
@@ -203,5 +207,5 @@ jobs:
       - name: upload macOS app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-mac.dmg
-          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.version.outputs.name }}-${{ steps.version.outputs.version }}-mac.dmg
+          name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
+          path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
