@@ -71,7 +71,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
           paddingBottom: TAB_BAR_SAFE_HEIGHT,
         }}
         ListFooterComponent={
-          <GradientContainer containerStyle={{ marginHorizontal: 16 }}>
+          <GradientContainer containerStyle={{ width: "100%" }}>
             <Flex p={6} alignItems="center" justifyContent="center">
               <Text
                 variant="large"
