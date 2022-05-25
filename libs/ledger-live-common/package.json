@@ -34,11 +34,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -63,12 +63,15 @@
     "@celo/wallet-ledger": "^1.5.2",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
+    "@cosmjs/launchpad": "^0.26.5",
+    "@cosmjs/ledger-amino": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-com/chain-jslib": "0.0.19",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
     "@hashgraph/sdk": "^2.10.1",
+    "@keplr-wallet/cosmos": "^0.9.16",
     "@ledgerhq/compressjs": "1.3.2",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
@@ -197,6 +200,7 @@
     "glob": "^7.2.0",
     "jest": "^27.5.1",
     "jest-file-snapshot": "^0.5.0",
+    "long": "^4.0.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",
