@@ -9,7 +9,7 @@ import type { Transaction } from "./types";
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    cardano: {
+    cardano_testnet: {
       scanAccounts: [cardanoScanAccount1],
       accounts: [
         {
