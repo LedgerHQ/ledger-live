@@ -363,6 +363,20 @@ const linkingOptions = {
   },
 };
 
+const linkingOptionsOnboarding = {
+  ...linkingOptions,
+  config: {
+    screens: {
+      [NavigatorName.Base]: {
+        initialRouteName: NavigatorName.Main,
+        screens: {
+          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+        },
+      },
+    },
+  },
+};
+
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -370,11 +384,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
 
   const linking = useMemo(
     () => ({
-      ...linkingOptions,
-      enabled:
-        hasCompletedOnboarding &&
-        wcContext.initDone &&
-        !wcContext.session.session,
+      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+      enabled: wcContext.initDone && !wcContext.session.session,
     }),
     [hasCompletedOnboarding, wcContext.initDone, wcContext.session.session],
   );
