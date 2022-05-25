@@ -9,14 +9,29 @@ export type IconBoxListItemProps = Omit<BaseListItemProps, "bullet"> & {
 
 export type IconBoxListProps = Omit<BaseListProps, "items"> & {
   items: IconBoxListItemProps[];
+  iconVariants?: "outlined" | "plain";
+  iconShapes?: "square" | "circle";
 };
 
-export default function IconBoxList({ items, ...props }: IconBoxListProps): React.ReactElement {
+export default function IconBoxList({
+  items,
+  iconVariants,
+  iconShapes,
+  ...props
+}: IconBoxListProps): React.ReactElement {
   const iconBoxItems = useMemo(
     () =>
       items.map((item) => ({
         ...item,
-        bullet: <IconBox Icon={item.Icon} boxSize={48} iconSize={20} />,
+        bullet: (
+          <IconBox
+            shape={iconShapes}
+            variant={iconVariants}
+            Icon={item.Icon}
+            boxSize={48}
+            iconSize={20}
+          />
+        ),
       })),
     [items],
   );
