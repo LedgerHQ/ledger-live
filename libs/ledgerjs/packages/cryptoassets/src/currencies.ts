@@ -2866,6 +2866,29 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  xxnetwork: {
+    type: "CryptoCurrency",
+    id: "xxnetwork",
+    coinType: 1955,
+    name: "xxnetwork",
+    managerAppName: "xxnetwork",
+    ticker: "XX",
+    scheme: "xxnetwork",
+    color: "#0DB9CB",
+    family: "xxnetwork",
+    units: [
+      {
+        name: "XX",
+        code: "XX",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.xx.network/#/explorer/account/$address",
+      },
+    ],
+  },
   zcash: {
     type: "CryptoCurrency",
     id: "zcash",
