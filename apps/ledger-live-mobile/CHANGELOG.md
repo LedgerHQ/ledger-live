@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.1.2-nightly.2
+
+### Patch Changes
+
+- 61116f39f: Disable React Navigation Sentry integration
+
 ## 3.1.2-nightly.1
 
 ### Patch Changes
