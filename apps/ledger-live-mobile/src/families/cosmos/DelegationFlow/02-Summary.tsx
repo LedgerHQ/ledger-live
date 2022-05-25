@@ -1,19 +1,19 @@
 import {
   getAccountCurrency,
   getAccountUnit,
-  getMainAccount
+  getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import {
   formatCurrencyUnit,
-  getCurrencyColor
+  getCurrencyColor,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import {
   CosmosValidatorItem,
-  Transaction
+  Transaction,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 import { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -26,7 +26,7 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from "react";
 import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
@@ -43,7 +43,6 @@ import { ScreenName } from "../../../const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
-
 
 type Props = {
   navigation: any;
@@ -78,6 +77,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const {
     transaction,
     updateTransaction,
+    setTransaction,
     status,
     bridgePending,
     bridgeError,
@@ -113,9 +113,28 @@ export default function DelegationSummary({ navigation, route }: Props) {
     if (tmpTransaction) {
       updateTransaction(_ => tmpTransaction);
     }
-  }, [route.params, updateTransaction]);
 
-
+    if (
+      chosenValidator.validatorAddress !== transaction.validators[0].address
+    ) {
+      setTransaction(
+        bridge.updateTransaction(transaction, {
+          validators: [
+            {
+              address: chosenValidator.validatorAddress,
+              amount: transaction.amount,
+            },
+          ],
+        }),
+      );
+    }
+  }, [
+    route.params,
+    updateTransaction,
+    bridge,
+    setTransaction,
+    chosenValidator,
+  ]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -189,9 +208,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -226,7 +243,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
                   }}
                 >
                   <ValidatorImage
-                  isLedger={chosenValidator.validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+                    isLedger={
+                      chosenValidator.validatorAddress ===
+                      LEDGER_VALIDATOR_ADDRESS
+                    }
                     name={
                       chosenValidator?.name ?? chosenValidator?.validatorAddress
                     }
@@ -284,7 +304,7 @@ const styles = StyleSheet.create({
   },
   delegatingAccount: {
     paddingTop: 26,
-    alignItems: "center"
+    alignItems: "center",
   },
   accountBalanceTag: {
     marginTop: 8,
