@@ -812,7 +812,8 @@
     "bannerTitle2": "You'll need a Nano to trade",
     "bannerSubtitle": "with a Ledger Device",
     "bannerButtonTitle": "Discover the Nano",
-    "bannerButtonTitle2": "Buy a device"
+    "bannerButtonTitle2": "Buy a device",
+    "setupCta": "I already have a device, set it up"
   },
   "discover": {
     "title": "Discover",
@@ -1794,7 +1795,13 @@
       }
     },
     "noResultsFound": "No asset found",
-    "noResultsDesc": "Please verify the spelling and try again"
+    "noResultsDesc": "Please verify the spelling and try again",
+    "readOnly": {
+      "moreCrypto": {
+        "title": "+ more than 6000 others",
+        "subtitle": "Ledger supports more than 6000 coins and tokens"
+      }
+    }
   },
   "distribution": {
     "header": "Asset allocation",

@@ -1,48 +1,23 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import {
-  Account,
-  Currency,
-  TokenAccount,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, ProgressLoader } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import { ensureContrast } from "../../colors";
-import { ScreenName } from "../../const";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import CounterValue from "../../../components/CounterValue";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import { ensureContrast } from "../../../colors";
+import { ScreenName } from "../../../const";
 
 type Props = {
   currency: Currency;
   navigation: any;
 };
 
-const AccountRow = ({ navigation, currency }: Props) => {
+const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   const { colors } = useTheme();
 
-  //   const currency = getAccountCurrency(account);
-  //   const name = getAccountName(account);
-  //   const unit = getAccountUnit(account);
-  const name = "BTC";
-  const unit = {
-    name: "BTC",
-    code: "BTC",
-    magnitude: 2,
-  };
-
-  const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+  const { name, units, id } = currency;
 
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -50,27 +25,35 @@ const AccountRow = ({ navigation, currency }: Props) => {
   );
 
   const onAccountPress = useCallback(() => {
-    navigation.navigate(ScreenName.Account, { accountId: "BTC" });
-  }, [navigation]);
+    navigation.navigate(ScreenName.Account, { currencyId: id });
+  }, [navigation, id]);
 
   return (
     <TouchableOpacity onPress={onAccountPress}>
       <Flex flexDirection="row" pt={6} pb={6}>
         <Flex pr={4}>
-          <Flex
-            bg={color}
-            width={"32px"}
-            height={"32px"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            borderRadius={32}
+          <ProgressLoader
+            strokeWidth={2}
+            mainColor={color}
+            secondaryColor={colors.neutral.c40}
+            progress={0}
+            radius={22}
           >
-            <CurrencyIcon
-              currency={currency}
-              size={20}
-              color={colors.constant.white}
-            />
-          </Flex>
+            <Flex
+              bg={color}
+              width={"32px"}
+              height={"32px"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              borderRadius={32}
+            >
+              <CurrencyIcon
+                currency={currency}
+                size={20}
+                color={colors.constant.white}
+              />
+            </Flex>
+          </ProgressLoader>
         </Flex>
         <Flex flex={1} justifyContent="center">
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
@@ -104,7 +87,7 @@ const AccountRow = ({ navigation, currency }: Props) => {
           </Flex>
           <Flex flexDirection="row" justifyContent="space-between">
             <Text variant="body" fontWeight="medium" color="neutral.c70">
-              <CurrencyUnitValue showCode unit={unit} value={0} />
+              <CurrencyUnitValue showCode unit={units[0]} value={0} />
             </Text>
           </Flex>
         </Flex>
@@ -113,4 +96,4 @@ const AccountRow = ({ navigation, currency }: Props) => {
   );
 };
 
-export default React.memo<Props>(AccountRow);
+export default React.memo<Props>(ReadOnlyAccountRow);
