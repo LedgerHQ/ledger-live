@@ -8,7 +8,7 @@ Disclaimer: Pull Requests that do not comply with the rules will be arbitrarily 
 
 ### ❓ Context
 
-- **Impacted projects**: [e.g. `live-desktop`, `@ledgerhq/live-common`]
+- **Impacted projects**:
   <!--
     If your PR is linked to a Github issue, post it below.
     For Ledger employees, post a link to the JIRA ticket if relevant.
