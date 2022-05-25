@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+
 import Button from "../components/wrappedUi/Button";
 import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
@@ -91,83 +93,110 @@ export default function BuyDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
+  const isDuringOnboarding = () => {
+    const routes = navigation.getState().routes;
+    const prevRoute = routes[routes.length - 2];
+
+    return prevRoute?.name === ScreenName.OnboardingDoYouHaveALedgerDevice;
+  };
+
   return (
     <StyledSafeAreaView>
       <Flex
         flexDirection="row"
-        justifyContent="space-between"
         alignItems="center"
+        justifyContent="space-between"
         width="100%"
-        height={48}
-        mb={-60}
+        background={colors.background.main}
         zIndex={1}
         p={6}
-        pt={9}
       >
-        <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-          <Icons.ArrowLeftMedium size="24px" />
-        </TouchableOpacity>
+        {isDuringOnboarding() ? (
+          <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
+            <Icons.ArrowLeftMedium size="24px" />
+          </TouchableOpacity>
+        ) : (
+          <Flex width={24} />
+        )}
+        <Text variant="h3" lineHeight="18" uppercase>
+          {t("buyDevice.title")}
+        </Text>
+        {isDuringOnboarding() ? (
+          <Flex width={24} />
+        ) : (
+          <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
+            <Icons.CloseMedium size="24px" />
+          </TouchableOpacity>
+        )}
       </Flex>
-      <Flex height={240} width="100%" position="relative" overflow="hidden">
-        {videoMounted && (
-          <Video
-            disableFocus
-            source={theme === "light" ? sourceLight : sourceDark}
+      <ScrollView>
+        <Flex
+          height={240}
+          my={-50}
+          width="100%"
+          position="relative"
+          overflow="hidden"
+        >
+          {videoMounted && (
+            <Video
+              disableFocus
+              source={theme === "light" ? sourceLight : sourceDark}
+              style={{
+                ...videoStyle,
+                backgroundColor: colors.background.main,
+                transform: [{ scale: 1.4 }],
+              }}
+              muted
+              resizeMode={"cover"}
+            />
+          )}
+          <Flex
             style={{
               ...videoStyle,
-              backgroundColor: colors.background.main,
-              transform: [{ scale: 1.5 }],
+              opacity: 0.1,
             }}
-            muted
-            resizeMode={"cover"}
+            bg="background.main"
           />
-        )}
-        <Flex
-          style={{
-            ...videoStyle,
-            opacity: 0.1,
-          }}
-          bg="background.main"
-        />
-      </Flex>
-      <Flex flex={1} p={6} pt={6}>
-        <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
-          <Text textAlign="center" variant="h2">
-            {t("buyDevice.title")}
-          </Text>
-          <Text px={6} textAlign="center" variant="body">
-            {t("buyDevice.desc")}
-          </Text>
         </Flex>
-        <IconBoxList
-          flex={1}
-          items={items.map(item => ({
-            ...item,
-            title: t(item.title),
-            description: t(item.desc),
-          }))}
-        />
-      </Flex>
-      <Button
-        mx={6}
-        my={4}
-        type="main"
-        outline={false}
-        event="BuyDeviceScreen - Buy Ledger"
-        onPress={buyLedger}
-        size="large"
-      >
-        {t("buyDevice.cta")}
-      </Button>
-      <Flex px={6} pt={0} pb={5}>
-        <TextLink
-          type="color"
-          onPress={setupDevice}
-          Icon={Icons.ArrowRightMedium}
-          iconPosition="right"
+        <Flex p={6} pt={6}>
+          <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
+            <Text px={6} textAlign="center" variant="large">
+              {t("buyDevice.desc")}
+            </Text>
+          </Flex>
+          <IconBoxList
+            iconVariants="plain"
+            iconShapes="circle"
+            items={items.map(item => ({
+              ...item,
+              title: t(item.title),
+              description: t(item.desc),
+            }))}
+          />
+        </Flex>
+      </ScrollView>
+      <Flex borderTopColor="neutral.c40" borderTopWidth={1}>
+        <Button
+          mx={6}
+          my={6}
+          type="main"
+          outline={false}
+          event="BuyDeviceScreen - Buy Ledger"
+          onPress={buyLedger}
+          size="large"
         >
-          {t("buyDevice.footer")}
-        </TextLink>
+          {t("buyDevice.cta")}
+        </Button>
+        <Flex px={6} pt={0} pb={5}>
+          <TextLink
+            type="color"
+            onPress={setupDevice}
+            Icon={Icons.ArrowRightMedium}
+            iconPosition="right"
+          >
+            {t("buyDevice.footer")}
+          </TextLink>
+        </Flex>
       </Flex>
     </StyledSafeAreaView>
   );
