@@ -7,10 +7,10 @@ inputs:
 outputs:
   version:
     description: "package.json version"
-    value: ${{ steps.version.outputs.version }}
+    value: ${{ steps.post-version.outputs.version }}
   name:
     description: "package.json name"
-    value: ${{ steps.version.outputs.name }}
+    value: ${{ steps.post-version.outputs.name }}
 
 runs:
   using: "composite"
