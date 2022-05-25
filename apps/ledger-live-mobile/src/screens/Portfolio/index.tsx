@@ -45,6 +45,9 @@ import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../components/TabBar/TabBarSafeAreaView";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -68,13 +71,6 @@ const StyledTouchableOpacity = proxyStyled.TouchableOpacity.attrs({
   py: 5,
   my: -5,
 })``;
-
-const ContentContainer = styled(SafeAreaView).attrs({
-  /** This view doesn't touch the bottom of the screen https://github.com/th3rdwave/react-native-safe-area-context#edges */
-  edges: ["top", "left", "right"],
-})`
-  flex: 1;
-`;
 
 const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   mt: 9,
@@ -285,7 +281,7 @@ function PortfolioScreen({ navigation }: Props) {
   return (
     <>
       <FirmwareUpdateBanner />
-      <ContentContainer>
+      <TabBarSafeAreaView>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -305,6 +301,7 @@ function PortfolioScreen({ navigation }: Props) {
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{ flex: 1, position: "relative" }}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
@@ -314,7 +311,7 @@ function PortfolioScreen({ navigation }: Props) {
           }
         />
         <MigrateAccountsBanner />
-      </ContentContainer>
+      </TabBarSafeAreaView>
     </>
   );
 }
