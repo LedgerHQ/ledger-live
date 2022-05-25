@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
@@ -29,16 +29,25 @@ export default function PlatformStartExchange({
 }) {
   const [device, setDevice] = useState(null);
 
+  const onClose = useCallback(() => {
+    navigation.pop();
+  }, [navigation]);
+
+  const onResult = useCallback(
+    result => {
+      route.params.onResult({ ...result, device });
+    },
+    [device, route.params],
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       <DeviceActionModal
         device={device}
         action={action}
-        onClose={() => navigation.pop()}
-        onResult={result => {
-          route.params.onResult({ ...result, device });
-        }}
+        onClose={onClose}
+        onResult={onResult}
         request={route.params.request}
       />
     </SafeAreaView>

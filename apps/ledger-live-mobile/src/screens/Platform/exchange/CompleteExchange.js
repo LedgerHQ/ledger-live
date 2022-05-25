@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
@@ -74,6 +74,29 @@ export default function PlatformCompleteExchange({
     }
   }, [onResult, error]);
 
+  const onClose = useCallback(() => {
+    navigation.pop();
+  }, [navigation]);
+
+  const onCompleteExchange = useCallback(
+    ({ completeExchangeResult, completeExchangeError }) => {
+      if (completeExchangeError) {
+        setError(completeExchangeError);
+      } else {
+        setTransaction(completeExchangeResult);
+      }
+    },
+    [],
+  );
+
+  const onSign = useCallback(({ signedOperation, transactionSignError }) => {
+    if (transactionSignError) {
+      setError(transactionSignError);
+    } else {
+      setSignedOperation(signedOperation);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.root}>
       {!transaction ? (
@@ -81,14 +104,8 @@ export default function PlatformCompleteExchange({
           key="completeExchange"
           device={device}
           action={exchangeAction}
-          onClose={() => navigation.pop()}
-          onResult={({ completeExchangeResult, completeExchangeError }) => {
-            if (completeExchangeError) {
-              setError(completeExchangeError);
-            } else {
-              setTransaction(completeExchangeResult);
-            }
-          }}
+          onClose={onClose}
+          onResult={onCompleteExchange}
           request={request}
         />
       ) : (
@@ -96,14 +113,8 @@ export default function PlatformCompleteExchange({
           key="sign"
           device={device}
           action={sendAction}
-          onClose={() => navigation.pop()}
-          onResult={({ signedOperation, transactionSignError }) => {
-            if (transactionSignError) {
-              setError(transactionSignError);
-            } else {
-              setSignedOperation(signedOperation);
-            }
-          }}
+          onClose={onClose}
+          onResult={onSign}
           request={{
             tokenCurrency,
             parentAccount,
