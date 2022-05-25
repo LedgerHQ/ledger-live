@@ -3,7 +3,10 @@ import { FlatList } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import {
+  getCryptoCurrencyById,
+  getTokenById,
+} from "@ledgerhq/live-common/lib/currencies";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyAccountGraphCard from "../../components/ReadOnlyAccountGraphCard";
@@ -18,6 +21,7 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type RouteParams = {
   currencyId: string;
+  currencyType: "CryptoCurrency" | "TokenCurrency";
 };
 
 type Props = {
@@ -30,8 +34,12 @@ const analytics = (
 );
 
 function ReadOnlyAccount({ route }: Props) {
-  const { currencyId } = route.params;
-  const currency = getCryptoCurrencyById(currencyId);
+  const { currencyId, currencyType } = route.params;
+
+  const currency =
+    currencyType === "CryptoCurrency"
+      ? getCryptoCurrencyById(currencyId)
+      : getTokenById(currencyId);
   const { t } = useTranslation();
 
   const data = [

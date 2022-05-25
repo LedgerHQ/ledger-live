@@ -18,7 +18,7 @@ type Props = {
 const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   const { colors } = useTheme();
 
-  const { name, units, id } = currency;
+  const { name, units, id, type } = currency;
 
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -26,7 +26,10 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   );
 
   const onAccountPress = useCallback(() => {
-    navigation.navigate(ScreenName.Account, { currencyId: id });
+    navigation.navigate(ScreenName.Account, {
+      currencyId: id,
+      currencyType: type,
+    });
   }, [navigation, id]);
 
   return (

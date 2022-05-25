@@ -1,7 +1,10 @@
 import React from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import {
+  getCryptoCurrencyById,
+  getTokenById,
+} from "@ledgerhq/live-common/lib/currencies";
 import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
@@ -9,8 +12,11 @@ import { scrollToTop } from "../../navigation/utils";
 
 export default function AccountHeaderTitle() {
   const route: any = useRoute();
-  const { currencyId } = route.params;
-  const currency = getCryptoCurrencyById(currencyId);
+  const { currencyId, currencyType } = route.params;
+  const currency =
+    currencyType === "CryptoCurrency"
+      ? getCryptoCurrencyById(currencyId)
+      : getTokenById(currencyId);
 
   if (!currency) return null;
 
