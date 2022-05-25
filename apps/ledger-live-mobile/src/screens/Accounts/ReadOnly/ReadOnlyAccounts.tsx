@@ -79,7 +79,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
                 color="neutral.c100"
                 textAlign="center"
               >
-                + more than 6000 others
+                {t("accounts.readOnly.moreCrypto.title")}
               </Text>
               <Text
                 variant="small"
@@ -88,7 +88,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
                 textAlign="center"
                 mt={3}
               >
-                Ledger supports more than 6000 coins and tokens
+                {t("accounts.readOnly.moreCrypto.subtitle")}
               </Text>
             </Flex>
           </GradientContainer>
