@@ -16,7 +16,6 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useRefreshAccountsOrdering } from "../../actions/general";
