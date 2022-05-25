@@ -55,11 +55,13 @@ runs:
       env:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
+      shell: bash
     - name: make local version push
       if: github.event_name == 'push'
       env:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
+      shell: bash
     - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
       id: post-version
       with:
