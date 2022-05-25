@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, ProgressLoader } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
@@ -32,20 +32,28 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
     <TouchableOpacity onPress={onAccountPress}>
       <Flex flexDirection="row" pt={6} pb={6}>
         <Flex pr={4}>
-          <Flex
-            bg={color}
-            width={"32px"}
-            height={"32px"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            borderRadius={32}
+          <ProgressLoader
+            strokeWidth={2}
+            mainColor={color}
+            secondaryColor={colors.neutral.c40}
+            progress={0}
+            radius={22}
           >
-            <CurrencyIcon
-              currency={currency}
-              size={20}
-              color={colors.constant.white}
-            />
-          </Flex>
+            <Flex
+              bg={color}
+              width={"32px"}
+              height={"32px"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              borderRadius={32}
+            >
+              <CurrencyIcon
+                currency={currency}
+                size={20}
+                color={colors.constant.white}
+              />
+            </Flex>
+          </ProgressLoader>
         </Flex>
         <Flex flex={1} justifyContent="center">
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
