@@ -10,7 +10,6 @@ import { analyticsEnabledSelector, hasOrderedNanoSelector } from "../../../reduc
 import Track from "../../../analytics/Track";
 
 const HasOrderedNanoRow = () => {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasOrderedNano: boolean = useSelector(hasOrderedNanoSelector);
 
@@ -19,7 +18,7 @@ const HasOrderedNanoRow = () => {
       <SettingsRow
         event="HasOrderedNanoRowRow"
         title="HasOrderedNano mode"
-        desc="Toggle readonly mode for testing, relaunch to refresh topbar"
+        desc="Toggle HasOrderedNano mode for testing"
       >
         <Switch
           checked={hasOrderedNano}

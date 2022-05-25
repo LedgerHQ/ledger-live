@@ -1,34 +1,21 @@
-import React, {
-  useMemo,
-  useContext,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useNavigation } from "@react-navigation/native";
+import React from "react";
 import { useSelector } from "react-redux";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import BuyDeviceScreen from "../screens/BuyDeviceScreen";
-import { useTranslation } from "react-i18next";
 import PostBuyDeviceSetupNanoWallScreen from "../screens/PostBuyDeviceSetupNanoWallScreen";
-import { TransitionPresets } from "@react-navigation/stack";
 
 /**
- * Wrap a function in this hook to decide whether or not currency values
- * should be hidden when discreet mode is enabled.
+ * Get options to spread in a Stack.Screen you want to have a wall preventing
+ * to access it when you are in a read only mode or "ordered a nano" mode.
  */
 export const useNoNanoBuyNanoWallScreenOptions = () => {
-  const { t } = useTranslation();
-
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
-  console.log("wrapper1", readOnlyModeEnabled, hasOrderedNano);
-
-  if (true) {
+  if (hasOrderedNano) {
     return {
       component: PostBuyDeviceSetupNanoWallScreen,
       options: {
@@ -42,7 +29,6 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
       },
     };
   }
-
   if (readOnlyModeEnabled) {
     return {
       component: BuyDeviceScreen,

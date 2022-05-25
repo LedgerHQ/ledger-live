@@ -91,7 +91,7 @@ export default function BaseNavigator() {
   );
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const learn = useFeature("learn");
-  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions()
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -110,12 +110,11 @@ export default function BaseNavigator() {
         component={BuyDeviceScreen}
         options={{ headerShown: false }}
       />
-        <Stack.Screen
+      <Stack.Screen
         name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
         component={PostBuyDeviceSetupNanoWallScreen}
-        options={{ headerShown: false, presentation: 'transparentModal' }}
+        options={{ headerShown: false, presentation: "transparentModal" }}
       />
-
       <Stack.Screen
         name={NavigatorName.Settings}
         component={SettingsNavigator}

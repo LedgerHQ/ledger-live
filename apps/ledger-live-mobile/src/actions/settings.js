@@ -220,7 +220,7 @@ export const setLastConnectedDevice = (device: Device) => ({
 });
 
 export const setHasOrderedNano = (enabled: boolean) => ({
-  type: "SET_ORDERED_NANO",
+  type: "SET_HAS_ORDERED_NANO",
   enabled,
 });
 
