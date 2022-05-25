@@ -15,7 +15,7 @@ import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import Graph from "./Graph";
+import Graph from "../icons/Graph";
 import FormatDate from "./FormatDate";
 
 type Props = {
@@ -23,7 +23,6 @@ type Props = {
   portfolio: Portfolio;
   counterValueCurrency: Currency;
   useCounterValue?: boolean;
-  hideAnalyticsButton?: boolean;
 };
 
 const Placeholder = styled(Flex).attrs({
@@ -45,7 +44,6 @@ function GraphCard({
   portfolio,
   counterValueCurrency,
   areAccountsEmpty,
-  hideAnalyticsButton,
 }: Props) {
   const { t } = useTranslation();
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
@@ -155,7 +153,7 @@ function GraphCard({
             </>
           )}
         </Flex>
-        {!areAccountsEmpty && !hideAnalyticsButton ? (
+        {!areAccountsEmpty ? (
           <Flex>
             <TouchableOpacity onPress={onPieChartButtonpress}>
               <BoxedIcon
@@ -172,23 +170,9 @@ function GraphCard({
       </Flex>
 
       <Graph
-        isInteractive={isAvailable}
-        isLoading={!isAvailable}
-        height={100}
         width={getWindowDimensions().width - 32}
-        color={colors.primary.c80}
-        data={balanceHistory}
-        onItemHover={setHoverItem}
-        mapValue={mapGraphValue}
+        color={colors.neutral.c40}
       />
-      <Flex mt={25} px={6} pb={6}>
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          activeBg="background.main"
-          onChange={updateTimeRange}
-          labels={rangesLabels}
-        />
-      </Flex>
     </Flex>
   );
 }

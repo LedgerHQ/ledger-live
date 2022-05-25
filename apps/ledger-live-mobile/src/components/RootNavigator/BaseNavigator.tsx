@@ -490,7 +490,10 @@ export default function BaseNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: t("send.scan.title"),
           headerRight: () => (
-            <HeaderRightClose color={colors.white} preferDismiss={false} />
+            <HeaderRightClose
+              color={colors.constant.white}
+              preferDismiss={false}
+            />
           ),
           headerLeft: null,
         }}

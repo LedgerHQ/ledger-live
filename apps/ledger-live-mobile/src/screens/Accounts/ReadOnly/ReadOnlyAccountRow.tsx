@@ -19,11 +19,6 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
 
   const { name, units, id } = currency;
 
-  // const tag =
-  //   account.derivationMode !== undefined &&
-  //   account.derivationMode !== null &&
-  //   getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
-
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
     [colors, currency],

@@ -33,7 +33,6 @@ const GraphCardContainer = ({
       {showGraphCard && (
         <GraphCard
           areAccountsEmpty={false}
-          hideAnalyticsButton
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
         />

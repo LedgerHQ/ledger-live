@@ -8,7 +8,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "@react-navigation/native";
 
 import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
@@ -20,7 +19,6 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/lib/currencies";
-import { useRefreshAccountsOrdering } from "../../../actions/general";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
@@ -122,7 +120,6 @@ const SectionTitle = ({
 };
 
 const maxAssetsToDisplay = 5;
-const maxReadOnlyCryptoCurrencies = 10;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
@@ -136,7 +133,7 @@ function PortfolioScreen({ navigation }: Props) {
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const topCryptoCurrencies = useMemo(
-    () => sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies),
+    () => sortedCryptoCurrencies.slice(0, maxAssetsToDisplay),
     [sortedCryptoCurrencies],
   );
 
@@ -146,9 +143,6 @@ function PortfolioScreen({ navigation }: Props) {
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
   useProviders();
-
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  useFocusEffect(refreshAccountsOrdering);
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

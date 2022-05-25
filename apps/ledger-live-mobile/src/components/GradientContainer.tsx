@@ -17,7 +17,7 @@ export default function GradientContainer({
   const { colors } = useTheme();
 
   return (
-    <Flex flex={1} borderRadius={8} overflow="hidden" style={containerStyle}>
+    <Flex borderRadius={8} overflow="hidden" style={containerStyle}>
       <Svg
         style={{ position: "absolute" }}
         preserveAspectRatio="xMinYMin slice"

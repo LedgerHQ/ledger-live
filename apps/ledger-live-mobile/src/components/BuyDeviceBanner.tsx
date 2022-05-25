@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Button from "./wrappedUi/Button";
-import { ScreenName } from "../const";
+import { NavigatorName, ScreenName } from "../const";
 import ForceTheme from "./theme/ForceTheme";
 
 import imgSource from "../images/illustration/Shared/_NanoXTop.png";
@@ -63,7 +63,12 @@ export default function BuyDeviceBanner({
     navigate(ScreenName.BuyDeviceScreen);
   }, [navigate]);
   const handleSetupCtaOnPress = useCallback(() => {
-    navigate(ScreenName.OnboardingDeviceSelection);
+    navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: {
+        screen: ScreenName.OnboardingDeviceSelection,
+      },
+    });
   }, [navigate]);
 
   const imgScale = imageScale / PixelRatio.get();
