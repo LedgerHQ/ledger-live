@@ -59,4 +59,5 @@ setSupportedCurrencies([
   "solana",
   "celo",
   "hedera",
+  "osmosis",
 ]);
