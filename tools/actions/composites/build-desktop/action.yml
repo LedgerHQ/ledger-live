@@ -4,6 +4,14 @@ inputs:
   os:
     description: "name of the os <mac | linux | win>"
     required: true
+outputs:
+  version:
+    description: "package.json version"
+    value: ${{ steps.version.outputs.version }}
+  name:
+    description: "package.json name"
+    value: ${{ steps.version.outputs.name }}
+
 runs:
   using: "composite"
   steps:
