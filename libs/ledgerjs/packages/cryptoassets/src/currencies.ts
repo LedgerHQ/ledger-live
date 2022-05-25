@@ -2630,6 +2630,31 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  ton: {
+    type: "CryptoCurrency",
+    id: "ton",
+    coinType: 607,
+    name: "TON",
+    managerAppName: "TON",
+    ticker: "TON",
+    scheme: "ton",
+    color: "#049DEA",
+    family: "ton",
+    blockAvgTime: 6,
+    units: [
+      {
+        name: "TON",
+        code: "TON",
+        magnitude: 9,
+      },
+      {
+        name: "nanoTON",
+        code: "nanoTON",
+        magnitude: 0,
+      }
+    ],
+    explorerViews: [],
+  },  
   tomo: {
     type: "CryptoCurrency",
     id: "tomo",
