@@ -137,7 +137,7 @@ export function useCurrencyAccountSelect({
     if (!accountId && availableAccounts.length > 0) {
       setState(currState => ({
         ...currState,
-        accountId: availableAccounts[0].account.id,
+        accountId: availableAccounts[0].account?.id,
         subAccountId: availableAccounts[0].subAccount ? availableAccounts[0].subAccount.id : null,
       }));
     }
