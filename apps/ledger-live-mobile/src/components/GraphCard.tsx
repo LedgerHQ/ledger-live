@@ -15,7 +15,7 @@ import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import Graph from "../icons/Graph";
+import Graph from "./Graph";
 import FormatDate from "./FormatDate";
 
 type Props = {
@@ -170,9 +170,23 @@ function GraphCard({
       </Flex>
 
       <Graph
+        isInteractive={isAvailable}
+        isLoading={!isAvailable}
+        height={100}
         width={getWindowDimensions().width - 32}
-        color={colors.neutral.c40}
+        color={colors.primary.c80}
+        data={balanceHistory}
+        onItemHover={setHoverItem}
+        mapValue={mapGraphValue}
       />
+      <Flex mt={25} px={6} pb={6}>
+        <GraphTabs
+          activeIndex={activeRangeIndex}
+          activeBg="background.main"
+          onChange={updateTimeRange}
+          labels={rangesLabels}
+        />
+      </Flex>
     </Flex>
   );
 }

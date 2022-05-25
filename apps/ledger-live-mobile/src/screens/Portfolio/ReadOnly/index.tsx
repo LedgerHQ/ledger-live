@@ -26,7 +26,7 @@ import {
 import { usePortfolio } from "../../../actions/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
 
-import GraphCardContainer from "../GraphCardContainer";
+import ReadOnlyGraphCard from "./ReadOnlyGraphCard";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName } from "../../../const";
@@ -167,12 +167,7 @@ function PortfolioScreen({ navigation }: Props) {
   const data = useMemo(
     () => [
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          areAccountsEmpty={areAccountsEmpty}
-          showGraphCard
-        />
+        <ReadOnlyGraphCard counterValueCurrency={counterValueCurrency} />
       </Box>,
       <SectionContainer>
         <SectionTitle
