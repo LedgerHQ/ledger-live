@@ -192,3 +192,15 @@ src
 ## Localization / Translations
 
 Translations from English to other languages are handled internally so it is not possible to directly contribute to them, however if you spot a bug (e.g. a wrong variable name) or any issue in translation files, feel free to report a bug to Ledger's support team and it will be taken care of.
+
+---
+
+## Are you adding the support of a blockchain to Ledger Live?
+
+This part of the repository is where you will add the support of your blockchain for the desktop app. 
+
+For a smooth and quick integration:
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
+- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+
+---

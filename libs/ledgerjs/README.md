@@ -205,3 +205,24 @@ pnpm clean:ljs && pnpm build:ljs && pnpm doc:ljs && pnpm publish --filter="./lib
 ```
 
 then, go to [/releases](https://github.com/LedgerHQ/ledger-live/releases) and create a release with change logs.
+
+
+---
+
+## Are you adding the support of a blockchain to Ledger Live?
+
+This part of the repository is where you will add your blockchain to the cryptoasset library. 
+
+For a smooth and quick integration:
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
+- Go on Discord to chat with developper support and the developper community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+
+## Are you adding Ledger device support to your web/mobile/desktop application?
+
+This part of the repository contains the transport libraries that will be used to establish the communication between your app and Ledger devices.
+
+For a smooth and quick integration:
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and 
+- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Connect your app channel](https://discord.com/channels/885256081289379850/907623611454619758).
+
+---
