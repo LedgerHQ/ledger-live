@@ -16,7 +16,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  is-org-member:
+    name: "Check Org Member"
+    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
+    with:
+      username: ${{ github.actor }}
+      organisation: ledgerhq
+    secrets:
+      token: ${{ secrets.COMMON_READ_ORG }}
+
   start-runner:
+    needs: [is-org-member]
+    if: ${{ needs.is-org-member.outputs.is-org-member }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -37,7 +48,8 @@ jobs:
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    needs: start-runner
+    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    needs: [is-org-member, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -49,18 +61,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
-          # repository: ${{github.event.pull_request.head.repo.full_name}}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      # - name: Cache pnpm modules
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: ~/.pnpm-store
-      #     key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -111,6 +115,73 @@ jobs:
       #   id: post-version
       #   with:
       #     path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: upload Android app
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.version.outputs.version }}-release
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
+
+  build-mobile-app-android-external:
+    name: "Build Ledger Live Mobile (Android)"
+    if: ${{ !needs.is-org-member.outputs.is-org-member }}
+    needs: [is-org-member]
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: bump npm
+        run: npm i -g npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+        env:
+          ImageOS: ubuntu20
+      - name: setup JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.6
+      - name: install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      - uses: ledgerhq/actions/packages/get-package-infos@main
+        id: version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: set beta name
+        uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      # - name: Get short SHA
+      #   id: slug
+      #   run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+      # - name: make local version
+      #   run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: build the app
+        env:
+          ANDROID_KEYSTORE_PASS: staging
+          ANDROID_KEY_ALIAS: staging
+          ANDROID_KEY_PASS: staging
+          NODE_OPTIONS: "--max-old-space-size=7168"
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+        run: pnpm build:llm
       - name: upload Android app
         uses: actions/upload-artifact@v3
         with:
