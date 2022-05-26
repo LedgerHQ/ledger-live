@@ -121,6 +121,7 @@ const SelectAccountAndCurrency = ({
               accounts={availableAccounts}
               value={{ account, subAccount }}
               onChange={setAccount}
+              data-test-id="select-account-dropdown"
             />
           </FormContent>
           <FormContent>

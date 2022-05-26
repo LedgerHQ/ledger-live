@@ -6,7 +6,7 @@ import { Layout } from "../models/Layout";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH"});
 
 let continueTest = false;
 
@@ -24,7 +24,7 @@ test.beforeAll(async ({ request }) => {
 });
 
 // Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
-test.skip("Live App", async ({ page }) => {
+test("Live App", async ({ page }) => {
   // Don't run test if server is not running
   if (!continueTest) return;
 
@@ -33,9 +33,7 @@ test.skip("Live App", async ({ page }) => {
 
   await test.step("Navigate to catalog", async () => {
     await discoverPage.navigateToCatalog();
-    // expect(await page.screenshot()).toMatchSnapshot({
-    //   name: "catalog.png",
-    // });
+    await expect.soft(page).toHaveScreenshot("catalog.png")
   });
 
   await test.step("Open Test App", async () => {
@@ -44,6 +42,7 @@ test.skip("Live App", async ({ page }) => {
     // expect(await page.screenshot()).toMatchSnapshot({
     //   name: "open-test-app.png",
     // });
+    await expect.soft(page).toHaveScreenshot("open-test-app.png")
   });
 
   await test.step("Accept Live App Disclaimer", async () => {
@@ -53,6 +52,7 @@ test.skip("Live App", async ({ page }) => {
     // expect(await page.screenshot()).toMatchSnapshot({
     //   name: "live-disclaimer-accepted.png",
     // });
+    await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png")
   });
 
   await test.step("List all accounts", async () => {

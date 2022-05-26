@@ -13,13 +13,12 @@ export class DiscoverPage {
   readonly selectAccountDropdown: Locator;
   readonly selectBtcAccount: Locator;
   readonly modalContinueButton: Locator;
-  readonly sidebar: Locator;
   readonly disclaimerCheckbox: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.discoverMenuButton = page.locator("data-test-id=drawer-catalog-button");
-    this.testAppCatalogItem = page.locator("#platform-catalog-app-playwright-test-live-app");
+    this.testAppCatalogItem = page.locator("#platform-catalog-app-dummy-live-app");
     this.liveAppDisclaimerContinueButton = page.locator("button:has-text('Continue')");
     this.disclaimerText = page.locator("text=External Application");
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
