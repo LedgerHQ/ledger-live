@@ -1,3 +1,4 @@
+import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
 const onboardingFlagsBytesLength = 4;
 
 const onboardedMask = 0x04;
@@ -47,11 +48,11 @@ export type OnboardingState = {
   currentSeedWordIndex: number;
 };
 
-export const extractOnboardingState = (
-  flagsBytes: Buffer
-): OnboardingState | null => {
+export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
   if (!flagsBytes || flagsBytes.length < onboardingFlagsBytesLength) {
-    return null;
+    throw new DeviceExtractOnboardingStateError(
+      "Incorrect onboarding flags bytes"
+    );
   }
 
   const isOnboarded = !!(flagsBytes[0] & onboardedMask);
@@ -62,7 +63,9 @@ export const extractOnboardingState = (
   const seedPhraseType = fromBitsToSeedPhraseType.get(seedPhraseTypeBits);
 
   if (!seedPhraseType) {
-    return null;
+    throw new DeviceExtractOnboardingStateError(
+      "Incorrect onboarding bits for the seed phrase type"
+    );
   }
 
   const currentOnboardingStepBits = flagsBytes[3];
@@ -71,7 +74,9 @@ export const extractOnboardingState = (
   );
 
   if (!currentOnboardingStep) {
-    return null;
+    throw new DeviceExtractOnboardingStateError(
+      "Incorrect onboarding bits for the current onboarding step"
+    );
   }
 
   const currentSeedWordIndex = flagsBytes[2] & currentSeedWordIndexMask;

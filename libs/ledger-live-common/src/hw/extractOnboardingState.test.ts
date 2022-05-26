@@ -5,6 +5,15 @@ import {
 
 describe("@hw/extractOnboardingState", () => {
   describe("extractOnboardingState", () => {
+    describe("When the flag bytes are incorrect", () => {
+      it("should throw an error", () => {
+        const incompleteFlagsBytes = Buffer.from([0, 0]);
+        // DeviceExtractOnboardingStateError is not of type Error,
+        // so cannot check in toThrow(DeviceExtractOnboardingStateError)
+        expect(() => extractOnboardingState(incompleteFlagsBytes)).toThrow();
+      });
+    });
+
     describe("When the device is onboarded", () => {
       it("should return a device state that is onboarded", () => {
         const flagsBytes = Buffer.from([1 << 2, 0, 0, 0]);
