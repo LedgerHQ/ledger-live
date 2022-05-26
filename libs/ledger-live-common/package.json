@@ -55,12 +55,9 @@
     "https": false
   },
   "dependencies": {
-    "@celo/base": "^1.5.2",
-    "@celo/connect": "^1.5.2",
-    "@celo/contractkit": "^1.5.2",
-    "@celo/utils": "^1.5.2",
-    "@celo/wallet-base": "^1.5.2",
-    "@celo/wallet-ledger": "^1.5.2",
+    "@celo/contractkit": "^2.0.0",
+    "@celo/wallet-base": "^2.0.0",
+    "@celo/wallet-ledger": "^2.0.0",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",

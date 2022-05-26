@@ -27,6 +27,7 @@ import {
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromCeloResourcesRaw,
   fromNFTRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
@@ -385,6 +386,15 @@ export function patchAccount(
 
   if (updatedRaw.solanaResources) {
     next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.celoResources &&
+    // @ts-expect-error check if this is valid for deep equal check
+    account.celoResources !== updatedRaw.celoResources
+  ) {
+    next.celoResources = fromCeloResourcesRaw(updatedRaw.celoResources);
     changed = true;
   }
 

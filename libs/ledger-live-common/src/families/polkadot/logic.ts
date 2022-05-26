@@ -107,7 +107,7 @@ export const hasPendingOperationType = (
 };
 
 /**
- * Retyrns true if has reached the maximum of unlocking slots
+ * Returns true if has reached the maximum of unlocking slots
  *
  * @param {Account} a
  */
