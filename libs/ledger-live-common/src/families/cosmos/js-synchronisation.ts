@@ -7,7 +7,7 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
-import { getAccountInfo } from "./api/Cosmos";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
@@ -184,7 +184,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     redelegations,
     unbondings,
     withdrawAddress,
-  } = await getAccountInfo(xpubOrAddress, currency);
+  } = await defaultCosmosAPI.getAccountInfo(xpubOrAddress, currency);
 
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);

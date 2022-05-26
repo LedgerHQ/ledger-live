@@ -9,7 +9,7 @@ import {
 } from "../js-transaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
-import { broadcast } from "../api/sdk";
+import { osmosisAPI } from "../api/sdk";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 const preload = () => Promise.resolve({});
 const hydrate = (): void => {};
@@ -31,7 +31,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
-  broadcast,
+  broadcast: osmosisAPI.broadcast,
 };
 
 export default { currencyBridge, accountBridge };

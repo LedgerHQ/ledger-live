@@ -1,26 +1,15 @@
 import type { BigNumber } from "bignumber.js";
-import type {
-  TransactionCommon,
-  TransactionCommonRaw,
-} from "../../types/transaction";
-import { CosmosDelegationInfo, CosmosDelegationInfoRaw } from "../cosmos/types";
+import {
+  CosmosLikeTransaction,
+  CosmosLikeTransactionRaw,
+} from "../cosmos/types";
 
-export type Transaction = TransactionCommon & {
+export type Transaction = CosmosLikeTransaction & {
   family: "osmosis";
-  mode: string;
-  fees: BigNumber | null;
-  gas: BigNumber | null | undefined;
-  memo: string | null | undefined;
-  validators: CosmosDelegationInfo[];
 };
 
-export type TransactionRaw = TransactionCommonRaw & {
+export type TransactionRaw = CosmosLikeTransactionRaw & {
   family: "osmosis";
-  mode: string;
-  fees: string | null;
-  gas: string | null | undefined;
-  memo: string | null | undefined;
-  validators: CosmosDelegationInfoRaw[];
 };
 
 export type StatusErrorMap = {
