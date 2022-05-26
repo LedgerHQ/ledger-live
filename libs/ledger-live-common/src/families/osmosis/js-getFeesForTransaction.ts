@@ -1,7 +1,16 @@
 import { BigNumber } from "bignumber.js";
+import { CosmosOperationMode } from "../cosmos/types";
 
-// Default gas for Osmosis
-export const DEFAULT_GAS = 100000;
+const gasForTransaction: {
+  [Key in CosmosOperationMode]: number;
+} = {
+  send: 100000,
+  delegate: 250000,
+  undelegate: 250000,
+  redelegate: 250000,
+  claimReward: 140000,
+  claimRewardCompound: 140000, // TODO - verify this value
+};
 
 // Default fees in uosmo
 // Dear future developer working on this file, if fees become non-zero
@@ -20,8 +29,17 @@ const getEstimatedFees = async (): Promise<BigNumber> => {
 /**
  * Fetch the gas for a transaction
  */
-export const getEstimatedGas = async (): Promise<BigNumber> => {
-  return new BigNumber(DEFAULT_GAS);
+export const getEstimatedGas = async (
+  mode: CosmosOperationMode
+): Promise<BigNumber> => {
+  const estimatedGas = gasForTransaction[mode];
+  if (!estimatedGas) {
+    throw new Error(
+      `Estimated gas for the operation mode ${mode} is undefined`
+    );
+  }
+
+  return new BigNumber(estimatedGas);
 };
 
 export default getEstimatedFees;

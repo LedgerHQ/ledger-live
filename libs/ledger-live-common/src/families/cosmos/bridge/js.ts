@@ -9,7 +9,7 @@ import { AccountBridge, CurrencyBridge, CryptoCurrency } from "../../../types";
 import type { CosmosValidatorItem, Transaction } from "../types";
 import { getValidators, hydrateValidators } from "../validators";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { broadcast } from "../api/Cosmos";
+import { defaultCosmosAPI } from "../api/Cosmos";
 import {
   asSafeCosmosPreloadData,
   setCosmosPreloadData,
@@ -56,7 +56,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
-  broadcast,
+  broadcast: defaultCosmosAPI.broadcast,
 };
 
 export default {

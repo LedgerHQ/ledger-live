@@ -30,6 +30,11 @@ export const createTransaction = (): Transaction => ({
   gas: null,
   memo: null,
   validators: [] as CosmosDelegationInfo[],
+  cosmosSourceValidator: null,
+  networkInfo: {
+    family: "osmosis",
+    fees: new BigNumber(0),
+  },
 });
 
 export const updateTransaction = (t, patch) => ({ ...t, ...patch });

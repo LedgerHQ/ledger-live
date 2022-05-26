@@ -1,63 +1,15 @@
-import { encodeAccountId } from "../../account";
-import {
-  makeSync,
-  makeScanAccounts,
-  GetAccountShape,
-  mergeOps,
-} from "../../bridge/jsHelpers";
-import { getAccount, getOperations } from "./api";
+import { makeSync, makeScanAccounts } from "../../bridge/jsHelpers";
+import { CosmosAccount } from "../cosmos/js-synchronisation";
+import { osmosisAPI } from "./api/sdk";
 
-const getAccountShape: GetAccountShape = async (info) => {
-  const { address, initialAccount, currency, derivationMode } = info;
-  const oldOperations = initialAccount?.operations || [];
+const account = new CosmosAccount({
+  api: osmosisAPI,
+  accountPubPrefix: "osmospub", // TODO - verify this is the correct account public key prefix.
+  accountAddressPrefix: "osmos",
+});
 
-  const accountId = encodeAccountId({
-    type: "js",
-    version: "2",
-    currencyId: currency.id,
-    xpubOrAddress: address,
-    derivationMode,
-  });
+export const scanAccounts = makeScanAccounts({
+  getAccountShape: account.getAccountShape,
+});
 
-  const { blockHeight, balance } = await getAccount(address);
-
-  let operations = oldOperations;
-
-  // For indexer efficiency reasons, only fetch new operations starting from the datetime
-  // of the last operation previously fetched
-  let lastOperationDate: Date | null = null;
-  if (operations.length > 0) {
-    operations.forEach((o) => {
-      if (o.date != null) {
-        if (lastOperationDate !== null) {
-          if (o.date.valueOf() > lastOperationDate.valueOf()) {
-            lastOperationDate = o.date;
-          }
-        } else {
-          lastOperationDate = o.date;
-        }
-      }
-    });
-  }
-
-  const newOperations = await getOperations(
-    accountId,
-    address,
-    lastOperationDate
-  );
-
-  // Merge new operations with the previously synced ones
-  operations = mergeOps(operations, newOperations);
-
-  const shape = {
-    id: accountId,
-    balance,
-    spendableBalance: balance,
-    operationsCount: operations.length,
-    blockHeight,
-  };
-  return { ...shape, operations };
-};
-
-export const scanAccounts = makeScanAccounts({ getAccountShape });
-export const sync = makeSync({ getAccountShape });
+export const sync = makeSync({ getAccountShape: account.getAccountShape });
