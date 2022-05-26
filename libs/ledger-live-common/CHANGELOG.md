@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-nightly.2
+
+### Minor Changes
+
+- 89e82ed79: Crypto Icons - Add support for Abachi tokens icons
+
 ## 22.2.0-nightly.1
 
 ### Patch Changes

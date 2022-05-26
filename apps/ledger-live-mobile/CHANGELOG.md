@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.1.4-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [89e82ed79]
+- Updated dependencies [f686ec781]
+  - @ledgerhq/live-common@22.2.0-nightly.2
+  - @ledgerhq/native-ui@0.7.18-nightly.0
+
 ## 3.1.2-nightly.2
 
 ### Patch Changes
