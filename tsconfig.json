@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
-    "allowJs": true,
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
