@@ -18,6 +18,7 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
+import { withdrawableBalance } from "@ledgerhq/live-common/lib/families/celo/logic";
 
 const Wrapper: ThemedComponent<*> = styled(Box).attrs(() => ({
   horizontal: true,
@@ -64,19 +65,26 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
 
-  const { spendableBalance: _spendableBalance } = account;
+  if (!account.celoResources) return null;
+
+  const { spendableBalance: _spendableBalance, celoResources } = account;
+  const { lockedBalance: _lockedBalance } = celoResources;
+
+  const _withdrawableBalance = withdrawableBalance(account);
 
   const unit = getAccountUnit(account);
 
   const formatConfig = {
-    disableRounding: true,
+    disableRounding: false,
     alwaysShowSign: false,
     showCode: true,
     discreet,
     locale,
   };
 
-  const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
+  const formattedSpendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
+  const formattedLockedBalance = formatCurrencyUnit(unit, _lockedBalance, formatConfig);
+  const formattedWithdrawableBalance = formatCurrencyUnit(unit, _withdrawableBalance, formatConfig);
 
   return (
     <Wrapper>
@@ -90,9 +98,39 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
           </TitleWrapper>
         </ToolTip>
         <AmountValue>
-          <Discreet>{spendableBalance}</Discreet>
+          <Discreet>{formattedSpendableBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
+      {_lockedBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="celo.lockedTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="celo.lockedBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{formattedLockedBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
+      {_withdrawableBalance.gt(0) && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="celo.withdrawableTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="celo.withdrawableBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{formattedWithdrawableBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
     </Wrapper>
   );
 };
