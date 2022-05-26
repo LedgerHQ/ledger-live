@@ -34,7 +34,7 @@
     "@ledgerhq/hw-transport-mocker": "6.24.1",
     "@ledgerhq/hw-transport-node-hid": "6.24.1",
     "@ledgerhq/hw-transport-node-speculos": "6.24.1",
-    "@ledgerhq/live-common": "22.0.0",
+    "@ledgerhq/live-common": "file:.yalc/@ledgerhq/live-common",
     "@ledgerhq/logs": "6.10.0",
     "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",

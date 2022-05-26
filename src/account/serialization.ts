@@ -55,6 +55,10 @@ import {
 } from "../families/solana/serialization";
 
 import {
+  toCeloResourcesRaw,
+  fromCeloResourcesRaw,
+} from "../families/celo/serialization";
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -75,6 +79,7 @@ export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toCeloResourcesRaw, fromCeloResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -715,6 +720,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     elrondResources,
     cryptoOrgResources,
     solanaResources,
+    celoResources,
     nfts,
   } = rawAccount;
   const subAccounts =
@@ -840,6 +846,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.solanaResources = fromSolanaResourcesRaw(solanaResources);
   }
 
+  if (celoResources) {
+    res.celoResources = fromCeloResourcesRaw(celoResources);
+  }
+
   return res;
 }
 export function toAccountRaw({
@@ -879,6 +889,7 @@ export function toAccountRaw({
   elrondResources,
   cryptoOrgResources,
   solanaResources,
+  celoResources,
   nfts,
 }: Account): AccountRaw {
   const res: AccountRaw = {
@@ -962,6 +973,10 @@ export function toAccountRaw({
 
   if (solanaResources) {
     res.solanaResources = toSolanaResourcesRaw(solanaResources);
+  }
+
+  if (celoResources) {
+    res.celoResources = toCeloResourcesRaw(celoResources);
   }
 
   return res;

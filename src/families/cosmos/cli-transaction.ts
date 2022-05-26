@@ -13,7 +13,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, deletage, undelegate",
+    desc: "mode of transaction: send, delegate, undelegate",
   },
   {
     name: "fees",
