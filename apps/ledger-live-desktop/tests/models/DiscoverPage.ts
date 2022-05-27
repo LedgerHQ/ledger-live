@@ -123,7 +123,7 @@ export class DiscoverPage {
 
   async letLiveAppLoad() {
     /* 
-      This is cheeky. Basically it's pausing execution for 1 second.
+      Pauses execution for 1 second.
       The main reason is that it is tricky to wait for internal elements in the iframe
       and the without a short pause after each Live App action the screenshots are very 
       flaky. Adding a 1 second wait is not good practice but it will fix flakiness and it
