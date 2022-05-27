@@ -2,13 +2,14 @@ import React, { useEffect, useState, useCallback } from "react";
 import type { ReactElement } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
 import type { OnboardingState } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
 import { OnboardingStep } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
+import styled, { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import Alert from "../../components/Alert";
 
 const pollingPeriodMs = 1000;
 
@@ -17,12 +18,16 @@ type Props = StackScreenProps<
   "SyncOnboardingWelcome"
 >;
 
+const AlertView = styled.View`
+  padding: 20px 10px 0 10px;
+`;
+
 export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
   const [stepIndex, setStepIndex] = useState<number>(0);
 
-  const { onboardingState } = useOnboardingStatePolling({ device, pollingPeriodMs });
+  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({ device, pollingPeriodMs });
 
   const { pairedDevice } = route.params; 
 
@@ -117,6 +122,21 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
   }, [onboardingState, device]); 
 
   return (
+    <>
+    {allowedError ? (
+      <AlertView>
+        <Alert title="Allowed error during onboarding" type="warning">
+          {allowedError.message}
+        </Alert>
+      </AlertView>
+    ) : null}
+    {fatalError ? (
+      <AlertView>
+        <Alert title="Fatal error during onboarding" type="error">
+          {fatalError.message}
+        </Alert>
+      </AlertView>
+    ) : null}
     <Flex
       justifyContent="center"
       alignItems="center"
@@ -131,5 +151,6 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
         </Text>
       ))}
     </Flex>
+    </>
   );
 };
