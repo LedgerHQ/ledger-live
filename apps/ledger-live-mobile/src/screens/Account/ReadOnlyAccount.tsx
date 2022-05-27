@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -32,10 +32,13 @@ type Props = {
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
 
-  const currency =
-    currencyType === "CryptoCurrency"
-      ? getCryptoCurrencyById(currencyId)
-      : getTokenById(currencyId);
+  const currency = useMemo(
+    () =>
+      currencyType === "CryptoCurrency"
+        ? getCryptoCurrencyById(currencyId)
+        : getTokenById(currencyId),
+    [currencyType, currencyId],
+  );
   const { t } = useTranslation();
 
   const data = [

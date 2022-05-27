@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import styled from "styled-components/native";
@@ -28,10 +28,13 @@ const IconContainer = styled(View)`
 function AccountHeaderTitle() {
   const route: any = useRoute();
   const { currencyId, currencyType } = route.params;
-  const currency =
-    currencyType === "CryptoCurrency"
-      ? getCryptoCurrencyById(currencyId)
-      : getTokenById(currencyId);
+  const currency = useMemo(
+    () =>
+      currencyType === "CryptoCurrency"
+        ? getCryptoCurrencyById(currencyId)
+        : getTokenById(currencyId),
+    [currencyType, currencyId],
+  );
 
   if (!currency) return null;
 
