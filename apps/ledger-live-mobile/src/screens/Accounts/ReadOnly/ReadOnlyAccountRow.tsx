@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import { Flex, Text, ProgressLoader } from "@ledgerhq/native-ui";
+import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "styled-components/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
@@ -17,7 +18,7 @@ type Props = {
 const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   const { colors } = useTheme();
 
-  const { name, units, id } = currency;
+  const { name, units, id, type } = currency;
 
   const color = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -25,8 +26,11 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   );
 
   const onAccountPress = useCallback(() => {
-    navigation.navigate(ScreenName.Account, { currencyId: id });
-  }, [navigation, id]);
+    navigation.navigate(ScreenName.Account, {
+      currencyId: id,
+      currencyType: type,
+    });
+  }, [navigation, id, type]);
 
   return (
     <TouchableOpacity onPress={onAccountPress}>

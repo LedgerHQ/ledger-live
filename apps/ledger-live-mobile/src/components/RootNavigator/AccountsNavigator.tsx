@@ -16,6 +16,10 @@ import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 
+import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnlyAccountHeaderRight";
+import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnlyAccountHeaderTitle";
+import ReadOnlyAccount from "../../screens/Account/ReadOnlyAccount";
+
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
@@ -34,10 +38,20 @@ export default function AccountsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={/* readOnlyModeEnabled ? ReadOnlyAccount : */ Account}
+        component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
         options={{
-          headerTitle: () => <AccountHeaderTitle />,
-          headerRight: () => <AccountHeaderRight />,
+          headerTitle: () =>
+            readOnlyModeEnabled ? (
+              <ReadOnlyAccountHeaderTitle />
+            ) : (
+              <AccountHeaderTitle />
+            ),
+          headerRight: () =>
+            readOnlyModeEnabled ? (
+              <ReadOnlyAccountHeaderRight />
+            ) : (
+              <AccountHeaderRight />
+            ),
         }}
       />
       <Stack.Screen

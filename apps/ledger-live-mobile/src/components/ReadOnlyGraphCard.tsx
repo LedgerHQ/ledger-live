@@ -1,24 +1,23 @@
 import React, { memo } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import DiscreetModeButton from "../../../components/DiscreetModeButton";
+import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
-import getWindowDimensions from "../../../logic/getWindowDimensions";
-import Graph from "../../../icons/Graph";
+import getWindowDimensions from "../logic/getWindowDimensions";
+import Graph from "../icons/Graph";
+import { withDiscreetMode } from "../context/DiscreetModeContext";
+import DiscreetModeButton from "./DiscreetModeButton";
+import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
   counterValueCurrency: Currency;
+  headerText: JSX.Element | string;
 };
 
-function GraphCard({ counterValueCurrency }: Props) {
-  const { t } = useTranslation();
-
-  const unit = counterValueCurrency.units[0];
-
+function ReadOnlyGraphCard({ counterValueCurrency, headerText }: Props) {
   const { colors } = useTheme();
+
+  const counterValueUnit = counterValueCurrency.units[0];
 
   return (
     <Flex bg={"neutral.c30"} borderRadius={2}>
@@ -37,7 +36,7 @@ function GraphCard({ counterValueCurrency }: Props) {
               textTransform={"uppercase"}
               mr={2}
             >
-              {t("tabs.portfolio")}
+              {headerText}
             </Text>
             <DiscreetModeButton size={20} />
           </Flex>
@@ -52,7 +51,7 @@ function GraphCard({ counterValueCurrency }: Props) {
                 adjustsFontSizeToFit
               >
                 <CurrencyUnitValue
-                  unit={unit}
+                  unit={counterValueUnit}
                   value={0}
                   joinFragmentsSeparator=" "
                 />
@@ -70,4 +69,4 @@ function GraphCard({ counterValueCurrency }: Props) {
   );
 }
 
-export default withDiscreetMode(memo<Props>(GraphCard));
+export default memo(withDiscreetMode(ReadOnlyGraphCard));
