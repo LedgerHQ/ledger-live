@@ -36,6 +36,8 @@ import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProv
 import { PlatformAppProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
 import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
 
+import { cryptoWaitReady } from "@ledgerhq/live-common/lib/reactNative";
+
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -435,6 +437,17 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   );
 };
 
+function InitPolkadot({ children }) {
+  const [initialized, setInitialized] = React.useState(false);
+  useEffect(() => {
+    cryptoWaitReady()
+      .catch(error => logger.critical(error))
+      .then(() => setInitialized(true));
+  }, []);
+
+  return initialized ? children : null;
+}
+
 export default class Root extends Component<
   { importDataString?: string },
   { appState: * },
@@ -496,11 +509,13 @@ export default class Root extends Component<
                                               <SnackbarContainer />
                                               <NftMetadataProvider>
                                                 <MarketDataProvider>
-                                                  <App
-                                                    importDataString={
-                                                      importDataString
-                                                    }
-                                                  />
+                                                  <InitPolkadot>
+                                                    <App
+                                                      importDataString={
+                                                        importDataString
+                                                      }
+                                                    />
+                                                  </InitPolkadot>
                                                 </MarketDataProvider>
                                               </NftMetadataProvider>
                                             </NotificationsProvider>
