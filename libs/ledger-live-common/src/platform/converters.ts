@@ -1,6 +1,6 @@
 import byFamily from "../generated/platformAdapter";
 import { getParentAccount, isTokenAccount, isSubAccount } from "../account";
-import { AccountLike, Transaction } from "../types";
+import { Account, AccountLike, Transaction } from "../types";
 import {
   PlatformAccount,
   PlatformCurrency,
@@ -12,11 +12,9 @@ import {
 
 export function accountToPlatformAccount(
   account: AccountLike,
-  accounts: AccountLike[]
+  parentAccount?: Account
 ): PlatformAccount {
   if (isSubAccount(account)) {
-    const parentAccount = getParentAccount(account, accounts);
-
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }

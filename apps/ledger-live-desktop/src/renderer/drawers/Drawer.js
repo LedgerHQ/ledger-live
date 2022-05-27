@@ -30,8 +30,9 @@ const Bar = styled.div.attrs(props => ({
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
-  padding: 62px 0 15px 15px;
-  ${p => p.theme.overflow.y};
+  padding: 62px 0px 15px 15px;
+  overflow-x: hidden;
+  overflow-y: auto;
 `;
 
 export const Drawer = () => {
@@ -77,7 +78,7 @@ export const Drawer = () => {
             >
               {s => (
                 <Bar state={s} index={index}>
-                  <Component onClose={onRequestClose} {...props} />
+                  <Component onClose={state.options.onRequestClose || onRequestClose} {...props} />
                 </Bar>
               )}
             </Transition>

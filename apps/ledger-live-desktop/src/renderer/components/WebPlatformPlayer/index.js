@@ -46,6 +46,7 @@ import * as tracking from "./tracking";
 import TopBar from "./TopBar";
 
 import type { TopBarConfig } from "./type";
+import { selectAccountAndCurrency } from "~/renderer/drawers/DataSelector/logic";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -200,6 +201,25 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
   );
 
   const requestAccount = useCallback(
+    async ({
+      currencies,
+      allowAddAccount,
+      includeTokens,
+    }: {
+      currencies?: string[],
+      allowAddAccount?: boolean,
+      includeTokens?: boolean,
+    }) => {
+      tracking.platformRequestAccountRequested(manifest);
+      const { account, parentAccount } = await selectAccountAndCurrency(currencies, includeTokens);
+
+      return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
+    },
+    [manifest],
+  );
+
+  /*
+  const requestAccount = useCallback(
     ({
       currencies,
       allowAddAccount,
@@ -218,14 +238,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
             includeTokens,
             onResult: account => {
               tracking.platformRequestAccountSuccess(manifest);
-              /**
-               * If account does not exist, it means one (or multiple) account(s) have been created
-               * In this case, to notify the user of the API that an account has been created,
-               * and that he should refetch the accounts list, we return an empty object
-               * (that will be deserialized as an empty Account object in the SDK)
-               *
-               * FIXME: this overall handling of created accounts could be improved and might not handle "onCancel"
-               */
               //
               resolve(serializePlatformAccount(accountToPlatformAccount(account, accounts)));
             },
@@ -240,6 +252,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
     [manifest, dispatch, accounts],
   );
 
+  */
   const signTransaction = useCallback(
     ({
       accountId,
