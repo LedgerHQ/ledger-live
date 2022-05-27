@@ -121,7 +121,7 @@ jobs:
         run: pnpm desktop test:jest
       - name: Run playwright tests [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- DEBUG=pw:webserver pnpm desktop test:playwright
         shell: bash
       - name: Run playwright tests
         if: matrix.os != 'ubuntu-latest'
