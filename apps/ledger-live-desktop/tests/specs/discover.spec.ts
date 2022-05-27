@@ -6,7 +6,7 @@ import { Layout } from "../models/Layout";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH"});
+test.use({ userdata: "1AccountBTC1AccountETH" });
 
 let continueTest = false;
 
@@ -33,7 +33,7 @@ test("Live App", async ({ page }) => {
 
   await test.step("Navigate to catalog", async () => {
     await discoverPage.navigateToCatalog();
-    await expect.soft(page).toHaveScreenshot("catalog.png")
+    await expect.soft(page).toHaveScreenshot("catalog.png");
   });
 
   await test.step("Open Test App", async () => {
@@ -42,7 +42,7 @@ test("Live App", async ({ page }) => {
     // expect(await page.screenshot()).toMatchSnapshot({
     //   name: "open-test-app.png",
     // });
-    await expect.soft(page).toHaveScreenshot("open-test-app.png")
+    await expect.soft(page).toHaveScreenshot("open-test-app.png");
   });
 
   await test.step("Accept Live App Disclaimer", async () => {
@@ -52,7 +52,7 @@ test("Live App", async ({ page }) => {
     // expect(await page.screenshot()).toMatchSnapshot({
     //   name: "live-disclaimer-accepted.png",
     // });
-    await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png")
+    await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
   await test.step("List all accounts", async () => {
@@ -65,30 +65,37 @@ test("Live App", async ({ page }) => {
   await test.step("Request Account modal - open", async () => {
     await discoverPage.requestAccount();
     await discoverPage.waitForSelectAccountModalToBeVisible();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "live-app-request-account-modal-1.png",
-    });
+    // expect.soft(await page.screenshot()).toMatchSnapshot({
+    //   name: "live-app-request-account-modal-1.png",
+    // });
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-1.png");
+
   });
 
   await test.step("Request Account - account dropdown", async () => {
     await discoverPage.openAccountDropdown();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "live-app-request-account-modal-2.png",
-    });
+    // expect.soft(await page.screenshot()).toMatchSnapshot({
+    //   name: "live-app-request-account-modal-2.png",
+    // });
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-2.png");
+
   });
 
   await test.step("Request Account - select BTC", async () => {
     await discoverPage.selectAccount();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "live-app-request-account-modal-3.png",
-    });
+    // expect.soft(await page.screenshot()).toMatchSnapshot({
+    //   name: "live-app-request-account-modal-3.png",
+    // });
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-3.png");
   });
 
   await test.step("Request Account - single account output", async () => {
     await discoverPage.exitModal();
     await discoverPage.letLiveAppLoad();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "live-app-request-single-account-output.png",
-    });
+    // expect.soft(await page.screenshot()).toMatchSnapshot({
+    //   name: "live-app-request-single-account-output.png",
+    // });
+    await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
+
   });
 });

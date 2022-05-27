@@ -25,11 +25,8 @@ export class DiscoverPage {
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.modal = page.locator("data-test-id=modal-container");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
-
-    // FIXME: the bellow select dropdown at src/renderer/components/SelectAccountAndCurrency.js
-    //        is tricky to grab a hold of (subtree intercepts pointer events), need to find a
-    //        way of grabbing these custom elements
-    this.selectAccountDropdown = page.locator("//*[@data-test-id='select-account-dropdown']/div");
+    // this.selectAccountDropdown = page.locator("//*[@data-test-id='select-account-dropdown']/div");
+    this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
     this.selectBtcAccount = page.locator("text=Bitcoin (BTC)");
     this.modalContinueButton = page.locator("button:has-text('Continue')");
     this.disclaimerCheckbox = page.locator("#dismiss-disclaimer");
