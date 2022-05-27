@@ -5,9 +5,7 @@ import { FirmwareInfo } from "../types/manager";
  * Retrieve targetId and firmware version from device
  */
 
-export default async function getVersion(
-  transport: Transport
-): Promise<FirmwareInfo> {
+export default async function getVersion(transport: Transport): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
   const data = res.slice(0, res.length - 2);
   let i = 0;
@@ -35,8 +33,11 @@ export default async function getVersion(
   let mcuVersion = "";
   let mcuBlVersion: string | undefined;
   let seVersion: string | undefined;
+  let bootloaderVersion: string | undefined;
+  let hardwareVersion: number | undefined;
   let mcuTargetId: number | undefined;
   let seTargetId: number | undefined;
+  let languageId: number | undefined;
 
   const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
 
@@ -68,15 +69,29 @@ export default async function getVersion(
 
     // if SE: mcu version
     const mcuVersionLength = data[i++];
-    let mcuVersionBuf: Buffer = Buffer.from(
-      data.slice(i, i + mcuVersionLength)
-    );
+    let mcuVersionBuf: Buffer = Buffer.from(data.slice(i, i + mcuVersionLength));
     i += mcuVersionLength;
 
     if (mcuVersionBuf[mcuVersionBuf.length - 1] === 0) {
       mcuVersionBuf = mcuVersionBuf.slice(0, mcuVersionBuf.length - 1);
     }
     mcuVersion = mcuVersionBuf.toString();
+
+    const bootloaderVersionLength = data[i++];
+    let bootloaderVersionBuf: Buffer = Buffer.from(data.slice(i, i + bootloaderVersionLength));
+    i += bootloaderVersionLength;
+
+    if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
+       bootloaderVersionBuf = bootloaderVersionBuf.slice(0, bootloaderVersionBuf.length - 1);
+    }
+    bootloaderVersion = bootloaderVersionBuf.toString();
+
+    const hardwareVersionLength = data[i++];
+    hardwareVersion = data.slice(i, i + hardwareVersionLength).readUIntBE(0, 1); // ?? string? number?
+    i += hardwareVersionLength;
+
+    const languageIdLength = data[i++];
+    languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
   }
 
   return {
@@ -89,5 +104,8 @@ export default async function getVersion(
     mcuTargetId,
     seTargetId,
     flags,
+    bootloaderVersion,
+    hardwareVersion,
+    languageId,
   };
 }
