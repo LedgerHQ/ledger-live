@@ -4,37 +4,13 @@ import type { StackScreenProps } from "@react-navigation/stack";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import type { OnboardingState } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
-import {
-  extractOnboardingState,
-} from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
+import { OnboardingStep } from "@ledgerhq/live-common/lib/hw/extractOnboardingState";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { from, of, Subscription, throwError, timer } from "rxjs";
-import {
-  mergeMap,
-  concatMap,
-  delayWhen,
-  map,
-  tap,
-  retryWhen,
-} from "rxjs/operators";
-import getVersion from "@ledgerhq/live-common/lib/hw/getVersion";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import { TransportStatusError } from "@ledgerhq/errors";
-import type { FirmwareInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 
-// FIXME: Define an initial onboarding state - or cannot have an initial state in our use case ?
-const initialOnboardingState: OnboardingState = {
-  isOnboarded: false,
-  isInRecoveryMode: false,
-  isRecoveringSeed: false,
-  isConfirmingSeedWords: false,
-  seedPhraseType: "24-words",
-  currentSeedWordIndex: 0,
-};
-
-const pollingFrequencyMs = 1000;
+const pollingPeriodMs = 1000;
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
@@ -44,29 +20,25 @@ type Props = StackScreenProps<
 export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
-  const [onboardingState, setOnboardingState] = useState<OnboardingState>(
-    initialOnboardingState,
-  );
   const [stepIndex, setStepIndex] = useState<number>(0);
 
-  const { pairedDevice } = route.params;
+  const { onboardingState } = useOnboardingStatePolling({ device, pollingPeriodMs });
 
-  // WIP: only for demo
-  const onboardingSteps = [
-    "Pairing device",
-    "Setting up pin",
-    `Writing seed words ${
-      !onboardingState.isConfirmingSeedWords &&
-      onboardingState.currentSeedWordIndex > 0
-        ? onboardingState.currentSeedWordIndex + 1
-        : ""
-    }`,
-    `Confirming seed words ${
-      onboardingState.isConfirmingSeedWords
-        ? onboardingState.currentSeedWordIndex + 1
-        : ""
-    }`,
-  ];
+  const { pairedDevice } = route.params; 
+
+  // When reaching the synchronized onboarding, the device could already
+  // be BLE paired to the phone and at the same time not known by LLM,
+  // it does not matter.
+  // So as long as the device is not onboarded, the LLM will ask for a pairing.
+  useEffect(() => {
+    console.log("SyncOnboarding: navigate to pairDevices");
+
+    // @ts-expect-error navigation issue
+    navigation.navigate(ScreenName.PairDevices, {
+      onlySelectDeviceWithoutFullAppPairing: true,
+      onDoneNavigateTo: ScreenName.SyncOnboardingWelcome,
+    });
+  }, [navigation]);
 
   const handleOnPaired = useCallback((pairedDevice: Device) => {
     console.log(
@@ -84,128 +56,65 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
     }
   }, [pairedDevice, handleOnPaired]);
 
-  // Polls device state to update the onboarding state
-  useEffect(() => {
-    let onboardingStatePollingSubscription: Subscription;
-
-    if (device) {
-      console.log(
-        `SyncOnboarding: 🧑‍💻 new device: ${JSON.stringify(device)}`,
-      );
-
-      onboardingStatePollingSubscription = timer(0, pollingFrequencyMs)
-        .pipe(
-          tap(i => {
-            console.log(`SyncOnboarding: ▶️ Polling ${i}`);
-          }),
-          concatMap(() =>
-            withDevice(device.deviceId)(t => from(getVersion(t))),
-          ),
-          retryWhen(errors =>
-            errors.pipe(
-              mergeMap(error => {
-                // Transport error: retry polling
-                if (
-                  error &&
-                  error instanceof TransportStatusError &&
-                  // @ts-expect-error TransportStatusError is not a class
-                  error.statusCode === 0x6d06
-                ) {
-                  console.log(
-                    `SyncOnboarding: 0x6d06 error 🔨 ${JSON.stringify(error)}`,
-                  );
-                  return of(error);
-                }
-                // Disconnection error: retry polling
-                if (
-                  error &&
-                  error instanceof Error &&
-                  error.name === "DisconnectedDevice"
-                ) {
-                  console.log(
-                    `SyncOnboarding: disconnection error 🔌 ${JSON.stringify(
-                      error,
-                    )}`,
-                  );
-                  return of(error);
-                }
-
-                console.log(
-                  `SyncOnboarding: 💥 Error ${error} -> ${JSON.stringify(
-                    error,
-                  )}`,
-                );
-                return throwError(error);
-              }),
-              tap(() => console.log("Going to retry in 🕐️ ...")),
-              delayWhen(() => timer(pollingFrequencyMs)),
-              tap(() => console.log("Retrying 🏃️ !")),
-            ),
-          ),
-          map((deviceVersion: FirmwareInfo) =>
-            extractOnboardingState(deviceVersion.flags),
-          ),
-        )
-        .subscribe({
-          next: (onboardingState: OnboardingState | null) => {
-            console.log(
-              `SyncOnboarding: device version info ${JSON.stringify(
-                onboardingState,
-              )}`,
-            );
-            // FIXME: if null -> initialState ? What should be the initialOnboardingState ?
-            // Does not update the state if it could not be extracted from the flags
-            if (onboardingState) {
-              setOnboardingState(onboardingState);
-            }
-          },
-          error: error =>
-            console.log(
-              `SyncOnboarding: error ending polling ${error} -> ${JSON.stringify(
-                { error },
-              )}`,
-            ),
-        });
-    }
-
-    return () => {
-      console.log("SyncOnboarding: cleaning up polling 🧹");
-      onboardingStatePollingSubscription?.unsubscribe();
-    };
-  }, [device]);
+  // WIP: only for demo
+  const onboardingSteps = [
+    "Pairing device",
+    "Welcome Page",
+    "Setup choice",
+    "Setting up pin",
+    `Writing seed words ${
+      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.newDevice
+        ? onboardingState.currentSeedWordIndex + 1
+        : ""
+    }`,
+    `Confirming seed words ${
+      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.newDeviceConfirming
+        ? onboardingState.currentSeedWordIndex + 1
+        : ""
+    }`,
+    "Safety Warning",
+    "Ready ?"
+  ];
 
   // Updates UI step index from the onboarding state
   useEffect(() => {
     if (!device) {
       // No device is paired yet
       setStepIndex(0);
-    } else if (onboardingState.isConfirmingSeedWords) {
-      setStepIndex(3);
+      return;
     }
-    // TODO: cheating - add PIN step once fw has been updated
-    else if (
-      onboardingState.currentSeedWordIndex === 0 &&
-      !onboardingState.isConfirmingSeedWords
-    ) {
-      setStepIndex(1);
-    } else {
-      setStepIndex(2);
+
+    // No change if the onboardingState is null
+    if (!onboardingState) {
+      return;
     }
-  }, [onboardingState, device]);
-
-  // When reaching the synchronized onboarding, the device could already
-  // be BLE paired to the phone and at the same time not known by LLM,
-  // it does not matter.
-  // So as long as the device is not onboarded, the LLM will ask for a pairing.
-  useEffect(() => {
-    console.log("SyncOnboarding: navigate to pairDevices");
-
-    // @ts-expect-error navigation issue
-    navigation.navigate(ScreenName.PairDevices, {
-      onlySelectDeviceWithoutFullAppPairing: true,
-      onDoneNavigateTo: ScreenName.SyncOnboardingWelcome,
-    });
-  }, [navigation]);
+    
+    switch(onboardingState?.currentOnboardingStep) {
+      case OnboardingStep.welcomeScreen:
+        setStepIndex(1);
+        break;
+      case OnboardingStep.setupChoice:
+        setStepIndex(2);
+        break;
+      case OnboardingStep.pin:
+        setStepIndex(3);
+        break;
+      case OnboardingStep.newDevice:
+        setStepIndex(4);
+        break;
+      case OnboardingStep.newDeviceConfirming:
+        setStepIndex(5);
+        break;
+      case OnboardingStep.safetyWarning:
+        setStepIndex(6);
+        break;
+      case OnboardingStep.ready:
+        setStepIndex(7);
+        break;
+      default:
+        setStepIndex(0);
+    }
+  }, [onboardingState, device]); 
 
   return (
     <Flex
