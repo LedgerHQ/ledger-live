@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.0-llmnext.4
+
+### Patch Changes
+
+- cb5814f3: Temporarily remove some device action error tracking due to it causing a crash on iOS while offline
+
 ## 3.2.0-llmnext.3
 
 ### Minor Changes
