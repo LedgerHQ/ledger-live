@@ -29,10 +29,6 @@ type Props = {
   route: { params: RouteParams };
 };
 
-const analytics = (
-  <TrackScreen category="Account" currency={"bitcoin"} operationsSize={0} />
-);
-
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
 
@@ -102,7 +98,7 @@ function ReadOnlyAccount({ route }: Props) {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
-      {analytics}
+      <TrackScreen category="Account" currency={currency} operationsSize={0} />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
