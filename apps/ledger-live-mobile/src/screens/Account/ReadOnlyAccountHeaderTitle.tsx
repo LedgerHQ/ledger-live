@@ -1,6 +1,7 @@
 import React, { memo } from "react";
-import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
+import { TouchableWithoutFeedback, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
+import styled from "styled-components/native";
 import {
   getCryptoCurrencyById,
   getTokenById,
@@ -9,6 +10,20 @@ import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { scrollToTop } from "../../navigation/utils";
+
+const HeaderContainer = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  margin-left: 32px;
+  margin-right: 32px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+`;
+
+const IconContainer = styled(View)`
+  margin-right: 8px;
+  justify-content: center;
+`;
 
 function AccountHeaderTitle() {
   const route: any = useRoute();
@@ -22,33 +37,16 @@ function AccountHeaderTitle() {
 
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <View style={styles.headerContainer}>
-        <View style={styles.iconContainer}>
+      <HeaderContainer>
+        <IconContainer>
           <ParentCurrencyIcon size={32} currency={currency} />
-        </View>
+        </IconContainer>
         <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} pr={8}>
           {currency.name}
         </Text>
-      </View>
+      </HeaderContainer>
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 16,
-    paddingRight: 32,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 32,
-    paddingVertical: 5,
-  },
-  iconContainer: {
-    marginRight: 8,
-    justifyContent: "center",
-  },
-});
 
 export default memo(AccountHeaderTitle);
