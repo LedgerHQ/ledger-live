@@ -32,6 +32,9 @@ export type DeviceInfo = {
   mcuTargetId?: number;
   seTargetId?: number;
   onboarded?: boolean;
+  bootloaderVersion?: string;
+  hardwareVersion?: number;
+  languageId?: number;
 };
 export type DeviceModelInfo = {
   modelId: DeviceModelId;
@@ -83,6 +86,9 @@ export type FirmwareInfo = {
   mcuTargetId?: number;
   seTargetId?: number;
   flags: Buffer;
+  bootloaderVersion?: string;
+  hardwareVersion?: number;
+  languageId?: number;
 };
 type BaseFirmware = {
   id: Id;
