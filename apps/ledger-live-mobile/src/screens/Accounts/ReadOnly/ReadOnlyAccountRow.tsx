@@ -30,7 +30,7 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
       currencyId: id,
       currencyType: type,
     });
-  }, [navigation, id]);
+  }, [navigation, id, type]);
 
   return (
     <TouchableOpacity onPress={onAccountPress}>
