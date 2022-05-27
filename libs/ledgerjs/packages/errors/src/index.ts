@@ -54,6 +54,9 @@ export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
   "DisconnectedDeviceDuringOperation"
 );
+export const DeviceOnboardingStatePollingError = createCustomErrorClass(
+  "DeviceOnboardingStatePollingError"
+);
 export const DeviceExtractOnboardingStateError = createCustomErrorClass(
   "DeviceExtractOnboardingStateError"
 );
