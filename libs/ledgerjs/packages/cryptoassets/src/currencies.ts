@@ -2065,6 +2065,30 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  polkadex: {
+    type: "CryptoCurrency",
+    id: "polkadex",
+    coinType: 799,
+    name: "Polkadex",
+    managerAppName: "Polkadex",
+    ticker: "PDEX",
+    scheme: "polkadex",
+    color: "#E6007A",
+    family: "polkadex",
+    units: [
+      {
+        name: "PDEX",
+        code: "PDEX",
+        magnitude: 12,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://polkadex.subscan.io/account/$address",
+        tx: "https://polkadex.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
   polygon: {
     type: "CryptoCurrency",
     id: "polygon",
