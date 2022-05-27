@@ -298,11 +298,16 @@ const useBridgeTransaction = (
   };
 };
 
-let globalOnBridgeError: null | ((error: any) => void) = null;
+type GlobalBridgeErrorFn = null | ((error: any) => void);
+
+let globalOnBridgeError: GlobalBridgeErrorFn = null;
 
 // allows to globally set a bridge error catch function in order to log it / report to sentry / ...
-export function setGlobalOnBridgeError(f: null | ((error: any) => void)): void {
+export function setGlobalOnBridgeError(f: GlobalBridgeErrorFn): void {
   globalOnBridgeError = f;
+}
+export function getGlobalOnBridgeError(): GlobalBridgeErrorFn {
+  return globalOnBridgeError;
 }
 
 export default useBridgeTransaction;
