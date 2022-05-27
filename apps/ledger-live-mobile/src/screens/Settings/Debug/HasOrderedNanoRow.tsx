@@ -8,10 +8,12 @@ import SettingsRow from "../../../components/SettingsRow";
 import { setAnalytics, setHasOrderedNano } from "../../../actions/settings";
 import { analyticsEnabledSelector, hasOrderedNanoSelector } from "../../../reducers/settings";
 import Track from "../../../analytics/Track";
+import { useReboot } from "../../../context/Reboot";
 
 const HasOrderedNanoRow = () => {
   const dispatch = useDispatch();
   const hasOrderedNano: boolean = useSelector(hasOrderedNanoSelector);
+  const reboot = useReboot();
 
   return (
     <>
@@ -22,7 +24,10 @@ const HasOrderedNanoRow = () => {
       >
         <Switch
           checked={hasOrderedNano}
-          onChange={value => dispatch(setHasOrderedNano(value))}
+          onChange={value => {
+            dispatch(setHasOrderedNano(value))
+            reboot();
+          }}
         />
       </SettingsRow>
     </>

@@ -16,8 +16,6 @@ export default function DiscoverNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  console.log("readOnlyModeEnabled", readOnlyModeEnabled)
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
