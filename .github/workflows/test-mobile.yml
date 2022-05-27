@@ -25,7 +25,7 @@ jobs:
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
-      - uses: actions/setup-node@v3fdsfs
+      - uses: actions/setup-node@v3
         with:
           node-version: 14
           # cache: pnpm
@@ -52,49 +52,34 @@ jobs:
 
     runs-on: macos-latest
     steps:
-      - name: Checkout PR
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
         with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+          version: latest
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6 # Not needed with a .ruby-version file
+          ruby-version: 2.7
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install applesimutils
         run: |
           brew tap wix/brew
           brew install applesimutils
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          cache: "yarn"
-      - name: Has hash commit deps
-        uses: ledgerhq/actions/packages/has-hash-commit-deps@main
-        id: has-hash-commit-deps
-        with:
-          workspace: ${{ github.workspace }}
-      - name: Install dependencies without network concurrency
-        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'true' }}
-        env:
-          JOBS: max
-        run: yarn --prefer-offline --frozen-lockfile --network-timeout 100000 --network-concurrency 1
-      - name: Install dependencies with network concurrency
-        if: ${{ steps.has-hash-commit-deps.outputs.has-hash-commit-deps == 'false' }}
-        env:
-          JOBS: max
-        run: yarn --prefer-offline --frozen-lockfile --network-timeout 100000
+      - name: Bump npm to latest
+        run: npm i -g npm
+      - name: Install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Rebuild detox
-        run: yarn detox clean-framework-cache && yarn detox build-framework-cache
+        run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
       - name: Build iOS app for Detox test run
-        env:
-          NODE_OPTIONS: "--max-old-space-size=7168"
-        run: yarn e2e:build -c ios.staging
+        run: pnpm mobile e2e:build -c ios.staging
       - name: Test iOS app
         timeout-minutes: 15
-        run: yarn e2e:test -c ios.staging --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
+        run: pnpm mobile e2e:test -c ios.staging --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v2
