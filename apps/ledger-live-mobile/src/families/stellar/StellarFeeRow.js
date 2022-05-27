@@ -6,7 +6,6 @@ import {
   Linking,
   TouchableOpacity,
   SafeAreaView,
-  Text,
 } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { Trans } from "react-i18next";

@@ -49,13 +49,7 @@ const StellarNetworkField = ({ field }: FieldComponentProps) => (
   </TransactionConfirmField>
 );
 
-const StellarAssetCodeField = ({
-  transaction,
-  field,
-}: {
-  transaction: Transaction,
-  field: FieldComponentProps,
-}) => {
+const StellarAssetCodeField = ({ transaction, field }: FieldComponentProps) => {
   invariant(transaction.family === "stellar", "stellar transaction");
 
   return (
@@ -67,13 +61,7 @@ const StellarAssetCodeField = ({
   );
 };
 
-const StellarAssetIssuerField = ({
-  transaction,
-  field,
-}: {
-  transaction: Transaction,
-  field: FieldComponentProps,
-}) => {
+const StellarAssetIssuerField = ({ transaction, field }: FieldComponentProps) => {
   invariant(transaction.family === "stellar", "stellar transaction");
 
   return (

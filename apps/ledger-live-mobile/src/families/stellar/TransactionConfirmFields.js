@@ -2,9 +2,9 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import { Trans } from "react-i18next";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
-import { Trans } from "react-i18next";
 
 type Props = {
   transaction: Transaction,

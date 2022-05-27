@@ -1,3 +1,4 @@
+// @flow
 import React from "react";
 import { Trans } from "react-i18next";
 import {
@@ -8,6 +9,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 
 type OperationDetailsExtraProps = {
   extra: { [key: string]: any },
@@ -15,7 +17,7 @@ type OperationDetailsExtraProps = {
   account: Account,
 };
 
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   return (
     <>
       {Object.keys(extra).map(key => {

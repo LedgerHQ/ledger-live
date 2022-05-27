@@ -10,7 +10,7 @@ import {
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { TokenCurrency, SubAccount, Account } from "../../types";
+import { TokenCurrency, SubAccount } from "../../types";
 
 const currency = getCryptoCurrencyById("stellar");
 const minAmountCutoff = parseCurrencyUnit(currency.units[0], "0.1");
@@ -36,8 +36,7 @@ const stellar: AppSpec<Transaction> = {
     {
       name: "move ~50% XLM",
       maxRun: 2,
-      transaction: (props) => {
-        const { account, siblings, bridge, maxSpendable } = props;
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
 
         const transaction = bridge.createTransaction(account);

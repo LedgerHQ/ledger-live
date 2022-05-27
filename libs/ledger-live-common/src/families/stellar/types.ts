@@ -85,3 +85,9 @@ export type RawOperation = ServerApi.OperationRecord & {
   account?: string;
   transaction_successful: boolean;
 };
+
+export type Signer = {
+  weight: number;
+  key: string;
+  type: string;
+};

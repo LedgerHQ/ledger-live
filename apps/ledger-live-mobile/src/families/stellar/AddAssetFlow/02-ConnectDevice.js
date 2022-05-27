@@ -30,10 +30,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
-  invariant(
-    account,
-    "account is required",
-  );
+  invariant(account, "account is required");
 
   const mainAccount = getMainAccount(account, undefined);
 

@@ -17,7 +17,7 @@ import {
 import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
-import { NetworkCongestionLevel } from "../types";
+import { NetworkCongestionLevel, Signer } from "../types";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
@@ -260,7 +260,7 @@ export const fetchSequence = async (a: Account): Promise<BigNumber> => {
     : new BigNumber(0);
 };
 
-export const fetchSigners = async (a: Account) => {
+export const fetchSigners = async (a: Account): Promise<Signer[]> => {
   try {
     const extendedAccount = await server
       .accounts()

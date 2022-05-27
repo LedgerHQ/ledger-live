@@ -135,7 +135,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
     [navigation, route.params, bridge, transaction],
   );
 
-  const subAccounts = mainAccount.subAccounts || [];
   const options = listTokensForCryptoCurrency(mainAccount.currency);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
@@ -154,7 +153,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         renderItem={({ item }: { item: TokenCurrency }) => (
           <Row
             item={item}
-            disabled={subAccounts.some(
+            disabled={(mainAccount.subAccounts || []).some(
               (sub: SubAccount) =>
                 sub.type === "TokenAccount" &&
                 sub.token &&
@@ -167,7 +166,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
       />
     ),
-    [subAccounts, onNext, openModal],
+    [mainAccount.subAccounts, onNext, openModal],
   );
 
   return (

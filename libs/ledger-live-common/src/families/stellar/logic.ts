@@ -137,13 +137,15 @@ export const getOperationType = (
   }
 };
 
-export const getAssetCodeIssuer = (tr: Transaction | TransactionRaw) => {
+export const getAssetCodeIssuer = (
+  tr: Transaction | TransactionRaw
+): string[] => {
   if (tr.subAccountId) {
     const assetString = tr.subAccountId.split("+")[1];
     return assetString.split(":");
   }
 
-  return [tr.assetCode, tr.assetIssuer];
+  return [tr.assetCode || "", tr.assetIssuer || ""];
 };
 
 const getRecipients = (operation): string[] => {
