@@ -97,6 +97,7 @@ function ReadOnlyAccount({ route }: Props) {
   ];
 
   const renderItem = useCallback(({ item }: any) => item, []);
+  const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
@@ -105,7 +106,7 @@ function ReadOnlyAccount({ route }: Props) {
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={renderItem}
-        keyExtractor={(_: any, index: any) => String(index)}
+        keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
