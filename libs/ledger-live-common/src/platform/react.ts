@@ -18,6 +18,7 @@ import {
   PlatformCurrency,
   AppManifest,
 } from "./types";
+import { getParentAccount } from "../account";
 
 export function usePlatformUrl(
   manifest: AppManifest,
@@ -54,9 +55,11 @@ export function useListPlatformAccounts(
 ): ListPlatformAccount {
   return useCallback(
     (filters: AccountFilters = {}) => {
-      const platformAccounts = accounts.map((account) =>
-        accountToPlatformAccount(account, accounts)
-      );
+      const platformAccounts = accounts.map((account) => {
+        const parentAccount = getParentAccount(account, accounts);
+
+        return accountToPlatformAccount(account, parentAccount);
+      });
 
       return filterPlatformAccounts(platformAccounts, filters);
     },
