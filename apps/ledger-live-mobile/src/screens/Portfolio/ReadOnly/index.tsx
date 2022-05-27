@@ -22,6 +22,8 @@ import {
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
+  hasOrderedNanoSelector,
+  carouselVisibilitySelector,
 } from "../../../reducers/settings";
 import { usePortfolio } from "../../../actions/portfolio";
 import globalSyncRefreshControl from "../../../components/globalSyncRefreshControl";
@@ -39,7 +41,9 @@ import TabBarSafeAreaView, {
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
+  IMAGE_PROPS_SMALL_NANO_BOX,
 } from "../../../components/BuyDeviceBanner";
+import Carousel from "../../../components/Carousel";
 
 export { default as PortfolioTabIcon } from "../TabIcon";
 
@@ -123,6 +127,13 @@ const maxAssetsToDisplay = 5;
 
 function PortfolioScreen({ navigation }: Props) {
   const { t } = useTranslation();
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+  const carouselVisibility = useSelector(carouselVisibilitySelector);
+  const showCarousel = useMemo(
+    () => Object.values(carouselVisibility).some(Boolean),
+    [carouselVisibility],
+  );
+  console.log("hasOrderedNano", hasOrderedNano);
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
@@ -166,12 +177,40 @@ function PortfolioScreen({ navigation }: Props) {
 
   const data = useMemo(
     () => [
+      hasOrderedNano && (
+        <Box mx={6} mb={5} mt={6}>
+          <BuyDeviceBanner
+            variant={"setup"}
+            topLeft={
+              <Text
+                color="primary.c40"
+                uppercase
+                mb={3}
+                fontSize="11px"
+                fontWeight="semiBold"
+              >
+                {t("postBuyDeviceSetupNanoWall.bannerTitle")}
+              </Text>
+            }
+            style={{ paddingTop: 13.5, paddingBottom: 13.5 }}
+            buttonLabel={t("postBuyDeviceSetupNanoWall.bannerCta")}
+            buttonSize="small"
+            event="button_clicked"
+            {...IMAGE_PROPS_SMALL_NANO_BOX}
+          />
+        </Box>
+      ),
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
         <ReadOnlyGraphCard
           counterValueCurrency={counterValueCurrency}
           headerText={t("tabs.portfolio")}
         />
       </Box>,
+      showCarousel && hasOrderedNano && (
+        <Box mt={6}>
+          <Carousel cardsVisibility={carouselVisibility} />
+        </Box>
+      ),
       <SectionContainer>
         <SectionTitle
           title={t("distribution.title")}
@@ -181,18 +220,20 @@ function PortfolioScreen({ navigation }: Props) {
         />
         <ReadOnlyAssets assets={assetsToDisplay} />
       </SectionContainer>,
-      <BuyDeviceBanner
-        style={{
-          marginHorizontal: 16,
-          marginTop: 40,
-          paddingTop: 13.5,
-          paddingBottom: 13.5,
-        }}
-        buttonLabel={t("buyDevice.bannerButtonTitle")}
-        buttonSize="small"
-        event="button_clicked"
-        {...IMAGE_PROPS_BIG_NANO}
-      />,
+      !hasOrderedNano && (
+        <BuyDeviceBanner
+          style={{
+            marginHorizontal: 16,
+            marginTop: 40,
+            paddingTop: 13.5,
+            paddingBottom: 13.5,
+          }}
+          buttonLabel={t("buyDevice.bannerButtonTitle")}
+          buttonSize="small"
+          event="button_clicked"
+          {...IMAGE_PROPS_BIG_NANO}
+        />
+      ),
     ],
     [
       onPortfolioCardLayout,

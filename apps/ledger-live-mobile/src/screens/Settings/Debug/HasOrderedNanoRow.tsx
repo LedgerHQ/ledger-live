@@ -26,7 +26,6 @@ const HasOrderedNanoRow = () => {
           checked={hasOrderedNano}
           onChange={value => {
             dispatch(setHasOrderedNano(value))
-            reboot();
           }}
         />
       </SettingsRow>

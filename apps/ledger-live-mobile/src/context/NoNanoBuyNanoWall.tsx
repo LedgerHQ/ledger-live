@@ -26,6 +26,10 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
         transparentCard: true,
         cardStyle: { opacity: 1 },
         gestureEnabled: true,
+        headerTitle: null,
+        headerRight: null,
+        headerBackTitleVisible: false,
+        title: null,
       },
     };
   }

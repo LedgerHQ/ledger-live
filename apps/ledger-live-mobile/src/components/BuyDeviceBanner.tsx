@@ -8,7 +8,8 @@ import Button from "./wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
 import ForceTheme from "./theme/ForceTheme";
 
-import imgSource from "../images/illustration/Shared/_NanoXTop.png";
+import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
+import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
 
 type Props = {
   topLeft?: JSX.Element | null;
@@ -20,11 +21,11 @@ type Props = {
   imageScale?: number;
   imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
+  variant?: "buy" | "setup";
 };
 
 const Container = styled(Flex).attrs({
   backgroundColor: "constant.purple",
-  borderRadius: "8px",
   padding: 16,
   flexDirection: "row",
   alignItems: "flex-start",
@@ -46,6 +47,14 @@ export const IMAGE_PROPS_SMALL_NANO = {
   },
 };
 
+/** Preset props for a small nano image */
+export const IMAGE_PROPS_SMALL_NANO_BOX = {
+  imageScale: 1.8,
+  imageStyle: {
+    bottom: -65,
+  },
+};
+
 export default function BuyDeviceBanner({
   topLeft,
   buttonLabel,
@@ -56,6 +65,7 @@ export default function BuyDeviceBanner({
   imageScale = 1.4,
   imageContainerStyle,
   imageStyle,
+  variant,
 }: Props) {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
@@ -75,7 +85,7 @@ export default function BuyDeviceBanner({
 
   return (
     <>
-      <Container style={style}>
+      <Container borderRadius={2} style={style}>
         <Flex flexDirection="column" alignItems="flex-start">
           {topLeft || (
             <Flex flexDirection="column" width="80%">
@@ -99,7 +109,9 @@ export default function BuyDeviceBanner({
           )}
           <ForceTheme selectedPalette={"light"}>
             <Button
-              onPress={handleOnPress}
+              onPress={
+                variant === "setup" ? handleSetupCtaOnPress : handleOnPress
+              }
               size={buttonSize}
               event={event}
               eventProperties={eventProperties}
@@ -125,20 +137,22 @@ export default function BuyDeviceBanner({
               { height: 394 * imgScale, width: 242 * imgScale },
               imageStyle,
             ]}
-            source={imgSource}
+            source={variant === "setup" ? setupImgSource : buyImgSource}
           />
         </Flex>
       </Container>
-      <Flex alignItems="center" justifyContent="center" mt={24} mx="auto">
-        <Link
-          type="color"
-          Icon={Icons.ArrowRightMedium}
-          iconPosition="right"
-          onPress={handleSetupCtaOnPress}
-        >
-          {t("buyDevice.setupCta")}
-        </Link>
-      </Flex>
+      {variant !== "setup" && (
+        <Flex alignItems="center" justifyContent="center" mt={24} mx="auto">
+          <Link
+            type="color"
+            Icon={Icons.ArrowRightMedium}
+            iconPosition="right"
+            onPress={handleSetupCtaOnPress}
+          >
+            {t("buyDevice.setupCta")}
+          </Link>
+        </Flex>
+      )}
     </>
   );
 }
