@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -96,13 +96,15 @@ function ReadOnlyAccount({ route }: Props) {
     </Box>,
   ];
 
+  const renderItem = useCallback(({ item }: any) => item, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen category="Account" currency={currency} operationsSize={0} />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
-        renderItem={({ item }: any) => item}
+        renderItem={renderItem}
         keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
       />
