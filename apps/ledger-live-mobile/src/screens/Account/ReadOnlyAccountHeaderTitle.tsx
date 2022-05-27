@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -10,7 +10,7 @@ import { Text } from "@ledgerhq/native-ui";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 import { scrollToTop } from "../../navigation/utils";
 
-export default function AccountHeaderTitle() {
+function AccountHeaderTitle() {
   const route: any = useRoute();
   const { currencyId, currencyType } = route.params;
   const currency =
@@ -50,3 +50,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default memo(AccountHeaderTitle);
