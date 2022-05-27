@@ -30,6 +30,7 @@ import { getEnv } from "../env";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
 import {
+  LanguagePackage,
   Application,
   ApplicationVersion,
   Category,
@@ -203,6 +204,28 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   }
 
   return best;
+};
+
+const getLanguagePackages = async (
+  device_version: number,
+  current_se_firmware_final_version: number
+): Promise<LanguagePackage[]> => {
+  console.log({ device_version, current_se_firmware_final_version });
+  const { data }: { data: LanguagePackage[] } = await network({
+    method: "POST",
+    url: URL.format({
+      // TODO use the production key 
+      pathname: `https://appstore.api.aws.stg.ldg-tech.com//api/language-packages`,
+      query: {
+        livecommonversion,
+      },
+    }),
+    data: {
+      device_version,
+      current_se_firmware_final_version,
+    },
+  });
+  return data;
 };
 
 const getLatestFirmware: (arg0: {
@@ -528,6 +551,7 @@ const API = {
   listInstalledApps,
   listCategories,
   getMcus,
+  getLanguagePackages,
   getLatestFirmware,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,
