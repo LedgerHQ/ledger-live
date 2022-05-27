@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
+import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,17 +8,20 @@ import {
   getCryptoCurrencyById,
   getTokenById,
 } from "@ledgerhq/live-common/lib/currencies";
+import { Currency } from "@ledgerhq/live-common/lib/types";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import ReadOnlyAccountGraphCard from "../../components/ReadOnlyAccountGraphCard";
+import ReadOnlyGraphCard from "../../components/ReadOnlyGraphCard";
 import ReadOnlyFabActions from "../../components/ReadOnlyFabActions";
 import GradientContainer from "../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../components/BuyDeviceBanner";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { TrackScreen } from "../../analytics";
 
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { counterValueCurrencySelector } from "../reducers/settings";
 
 type RouteParams = {
   currencyId: string;
@@ -32,7 +36,7 @@ type Props = {
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
 
-  const currency = useMemo(
+  const currency: Currency = useMemo(
     () =>
       currencyType === "CryptoCurrency"
         ? getCryptoCurrencyById(currencyId)
@@ -41,11 +45,21 @@ function ReadOnlyAccount({ route }: Props) {
   );
   const { t } = useTranslation();
 
+  const counterValueCurrency: Currency = useSelector(
+    counterValueCurrencySelector,
+  );
+
   const data = [
     <Box mx={6} my={6}>
-      <ReadOnlyAccountGraphCard
-        currency={currency}
-        valueChange={{ percentage: 0, value: 0 }}
+      <ReadOnlyGraphCard
+        counterValueCurrency={counterValueCurrency}
+        headerText={
+          <CurrencyUnitValue
+            unit={currency.units[0]}
+            value={0}
+            joinFragmentsSeparator=" "
+          />
+        }
       />
     </Box>,
     <Box py={3}>
