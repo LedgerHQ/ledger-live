@@ -71,6 +71,7 @@
     "live-github-bot": "1.0.0"
   },
   "changesets": [
+    "calm-pets-sleep",
     "chatty-melons-shop",
     "cuddly-lamps-yawn",
     "green-games-kick",

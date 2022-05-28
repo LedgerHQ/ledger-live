@@ -1,5 +1,11 @@
 # @ledgerhq/live-cli
 
+## 21.33.0-nightly.3
+
+### Patch Changes
+
+- 994a1da8f: fix verify flag for getAddress CLI command
+
 ## 21.33.0-nightly.2
 
 ### Patch Changes
