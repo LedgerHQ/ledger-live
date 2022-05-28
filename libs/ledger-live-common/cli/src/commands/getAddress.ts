@@ -53,6 +53,7 @@ export default {
               currency,
               path: arg.path as string,
               derivationMode: asDerivationMode(arg.derivationMode || ""),
+              verify: arg.verify,
             })
           )
         );
