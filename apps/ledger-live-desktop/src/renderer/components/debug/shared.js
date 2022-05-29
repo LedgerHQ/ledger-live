@@ -5,13 +5,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
 
-const MockedGlobalStyle = createGlobalStyle`
-  *, :before, :after {
-    caret-color: transparent !important;
-    transition-property: none !important;
-    animation: none !important;
-  }
-`;
+const MockedGlobalStyle = createGlobalStyle``;
 
 const Item: ThemedComponent<{}> = styled(Text)`
   color: white;

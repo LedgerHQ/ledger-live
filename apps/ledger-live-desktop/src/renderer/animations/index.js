@@ -10,6 +10,7 @@ const Animation = ({
   loop = true,
   autoplay = true,
   rendererSettings = { preserveAspectRatio: "xMidYMin" },
+  isPaused = false,
   isStopped = false,
 }: {
   animation: Object,
@@ -25,11 +26,11 @@ const Animation = ({
     ariaRole="animation"
     height={height}
     width={width}
-    isPaused={!!process.env.PLAYWRIGHT_RUN}
-    isStopped={isStopped || !!process.env.PLAYWRIGHT_RUN}
+    isPaused={isPaused}
+    isStopped={isStopped}
     options={{
-      loop: process.env.PLAYWRIGHT_RUN ? false : loop,
-      autoplay: process.env.PLAYWRIGHT_RUN ? false : autoplay,
+      loop: loop,
+      autoplay: autoplay,
       animationData: animation,
       rendererSettings,
     }}
