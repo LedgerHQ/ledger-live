@@ -22,44 +22,42 @@ export function AnimatedWave({ height, color }: Props) {
             V 0
             Z"
       >
-        {!process.env.PLAYWRIGHT_RUN ? (
-          <animate
-            repeatCount="indefinite"
-            attributeName="d"
-            dur="21s"
-            values="
-              M0 277
-              C 473,383
-                822,60
-                1920,216
+        <animate
+          repeatCount="indefinite"
+          attributeName="d"
+          dur="21s"
+          values="
+            M0 277
+            C 473,383
+              822,60
+              1920,216
 
-              V 0
-              H 0
-              V 0
-              Z;
+            V 0
+            H 0
+            V 0
+            Z;
 
-              M0 277
-              C 473,060
-                1222,383
-                1920,236
+            M0 277
+            C 473,060
+              1222,383
+              1920,236
 
-              V 0
-              H 0
-              V 0
-              Z;
+            V 0
+            H 0
+            V 0
+            Z;
 
-              M0 277
-              C 473,383
-                822,60
-                1920,216
+            M0 277
+            C 473,383
+              822,60
+              1920,216
 
-              V 0
-              H 0
-              V 0
-              Z;
-              "
-          />
-        ) : null}
+            V 0
+            H 0
+            V 0
+            Z;
+            "
+        />
       </path>
     </svg>
   );
