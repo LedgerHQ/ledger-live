@@ -1,9 +1,8 @@
 import { expect } from "@playwright/test";
-
-import test from "../fixtures/common";
-import { MarketPage } from "../models/MarketPage";
-import { Layout } from "../models/Layout";
-import { MarketCoinPage } from "../models/MarketCoinPage";
+import test from "../../fixtures/common";
+import { MarketPage } from "../../models/MarketPage";
+import { Layout } from "../../models/Layout";
+import { MarketCoinPage } from "../../models/MarketCoinPage";
 
 test.use({ userdata: "skip-onboarding" });
 

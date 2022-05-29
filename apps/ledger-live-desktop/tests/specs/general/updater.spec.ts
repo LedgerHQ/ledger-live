@@ -1,8 +1,8 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../models/Layout";
-import { SettingsPage } from "../models/SettingsPage";
-import { AppUpdater } from "../models/AppUpdater";
+import { Layout } from "../../models/Layout";
+import { SettingsPage } from "../../models/SettingsPage";
+import { AppUpdater } from "../../models/AppUpdater";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel",
@@ -16,7 +16,6 @@ test("Updater", async ({ page }) => {
 
   await test.step("[idle] state should not be visible", async () => {
     expect(await layout.appUpdateBanner.isHidden()).toBe(true);
-
 
     await page.evaluate(() => {
       document.body.style.overflow = "hidden";
