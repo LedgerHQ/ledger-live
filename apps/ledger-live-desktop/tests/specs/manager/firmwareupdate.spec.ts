@@ -21,46 +21,34 @@ test("Firmware Update", async ({ page }) => {
 
   await test.step("Open firmware update modal", async () => {
     await managerPage.openFirmwareUpdateModal();
-    expect.soft(await firmwareUpdateModal.container.screenshot()).toMatchSnapshot({
-      name: "firmware-update-button.png",
-    });
+    await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("firmware-update-button.png");
   });
 
   await test.step("Firmware update changelog", async () => {
     await firmwareUpdateModal.tickCheckbox();
-    expect.soft(await firmwareUpdateModal.container.screenshot()).toMatchSnapshot({
-      name: "modal-checkbox.png",
-    });
+    await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("modal-checkbox.png");
   });
 
   await test.step("MCU download step", async () => {
     await firmwareUpdateModal.continue();
     await firmwareUpdateModal.downloadProgress.waitFor({ state: "visible" });
-    expect.soft(await firmwareUpdateModal.container.screenshot()).toMatchSnapshot({
-      name: "download-mcu-progress.png",
-    });
+    await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("download-mcu-progress.png");
   });
 
   await test.step("MCU flash step", async () => {
     await deviceAction.complete(); // .complete() install full firmware -> flash mcu
     await firmwareUpdateModal.flashProgress.waitFor({ state: "visible" });
-    expect.soft(await firmwareUpdateModal.container.screenshot()).toMatchSnapshot({
-      name: "flash-mcu-progress.png",
-    });
+    await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-progress.png");
   });
 
   await test.step("Firmware update done", async () => {
     await deviceAction.complete(); // .complete() flash mcu -> completed
     await firmwareUpdateModal.updateDone.waitFor({ state: "visible" });
-    expect.soft(await firmwareUpdateModal.container.screenshot()).toMatchSnapshot({
-      name: "flash-mcu-done.png",
-    });
+    await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("flash-mcu-done.png");
   });
 
   await test.step("Modal is closed", async () => {
     await firmwareUpdateModal.close();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "modal-closed.png",
-    });
+    await expect.soft(page).toHaveScreenshot("modal-closed.png");
   });
 });
