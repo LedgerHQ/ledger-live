@@ -1,6 +1,7 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../models/Layout";
+import { Drawer } from "../../models/Drawer";
 import { SendModal } from "../../models/SendModal";
 import { ReceiveModal } from "../../models/ReceiveModal";
 import { PortfolioPage } from "../../models/PortfolioPage";
@@ -10,6 +11,7 @@ test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
 test("Layout", async ({ page }) => {
   const layout = new Layout(page);
+  const drawer = new Drawer(page);
   const sendModal = new SendModal(page);
   const receiveModal = new ReceiveModal(page);
   const portfolioPage = new PortfolioPage(page);
@@ -18,32 +20,31 @@ test("Layout", async ({ page }) => {
   await test.step("can open send modal", async () => {
     await layout.openSendModal();
     await sendModal.container.waitFor({ state: "visible" });
-    expect.soft(await page.screenshot()).toMatchSnapshot("send-modal.png");
+    await expect.soft(sendModal.container).toHaveScreenshot("send-modal.png");
     await sendModal.close();
   });
 
   await test.step("can open receive modal", async () => {
     await layout.openReceiveModal();
     await receiveModal.container.waitFor({ state: "visible" });
-    expect.soft(await page.screenshot()).toMatchSnapshot("receive-modal.png");
+    await expect.soft(sendModal.container).toHaveScreenshot("receive-modal.png");
     await receiveModal.close();
   });
 
   await test.step("go to accounts", async () => {
     await layout.goToAccounts();
-    expect.soft(await page.screenshot()).toMatchSnapshot("accounts.png");
+    await expect.soft(page).toHaveScreenshot("accounts.png");
   });
 
   await test.step("go to discover", async () => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
-    // FIXME: We need a way to ensure icons & images are rendered when we take a screenshot or retry
-    // expect(await page.screenshot()).toMatchSnapshot("discover.png");
+    await expect(page).toHaveScreenshot("discover.png");
   });
 
   await test.step("go to buy / sell cryto", async () => {
     await layout.goToBuyCrypto();
-    expect.soft(await page.screenshot()).toMatchSnapshot("buy-sell.png");
+    await expect.soft(page).toHaveScreenshot("buy-sell.png");
   });
 
   await test.step("go to experimental features", async () => {
@@ -52,7 +53,7 @@ test("Layout", async ({ page }) => {
     await settingsPage.enableDevMode();
     await layout.goToPortfolio();
     await layout.drawerExperimentalButton.click();
-    expect.soft(await page.screenshot()).toMatchSnapshot("experimental-features.png");
+    await expect.soft(page).toHaveScreenshot("experimental-features.png");
   });
 
   await test.step("shows a starred account, and can access the page", async () => {
@@ -65,12 +66,12 @@ test("Layout", async ({ page }) => {
   await test.step("can toggle discreet mode", async () => {
     await layout.goToPortfolio(); // FIXME: remove this line when LL-8899 is fixed
     await layout.toggleDiscreetMode();
-    expect.soft(await page.screenshot()).toMatchSnapshot("discreet-mode.png");
+    await expect.soft(page).toHaveScreenshot("discreet-mode.png", { mask: [page.locator('canvas')] });
   });
 
   await test.step("can collapse the main sidebar", async () => {
     await layout.drawerCollapseButton.click();
-    expect.soft(await page.screenshot()).toMatchSnapshot("collapse-sidebar.png");
+    await expect.soft(page).toHaveScreenshot("collapse-sidebar.png", { mask: [page.locator('canvas')] });
   });
 
   await test.step("shows the carousel and can dismiss it", async () => {
@@ -78,11 +79,11 @@ test("Layout", async ({ page }) => {
     await portfolioPage.carousel.waitFor({ state: "visible" });
     await portfolioPage.carouselCloseButton.click();
     await portfolioPage.carouselConfirmButton.click();
-    expect.soft(await page.screenshot()).toMatchSnapshot("dismiss-carousel.png");
+    await expect.soft(page).toHaveScreenshot("dismiss-carousel.png", { mask: [page.locator('canvas')] });
   });
 
   await test.step("can display the help modal", async () => {
     await layout.topbarHelpButton.click();
-    expect.soft(await page.screenshot()).toMatchSnapshot("help-drawer.png");
+    await expect.soft(drawer.content).toHaveScreenshot("help-drawer.png");
   });
 });
