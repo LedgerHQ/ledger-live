@@ -15,7 +15,7 @@ test("Manager", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManager();
     await managerPage.firmwareUpdateButton.waitFor({ state: "visible" });
-    await expect(page).toHaveScreenshot("manager-app-catalog.png")
+    await expect(page).toHaveScreenshot("manager-app-catalog.png");
   });
 
   await test.step("can install an app", async () => {
