@@ -1,7 +1,7 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { DiscoverPage } from "../models/DiscoverPage";
-import { Layout } from "../models/Layout";
+import { DiscoverPage } from "../../models/DiscoverPage";
+import { Layout } from "../../models/Layout";
 
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";

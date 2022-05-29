@@ -1,15 +1,15 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { AccountsPage } from "../models/AccountsPage";
-import { AddAccountModal } from "../models/AddAccountModal";
-import { ReceiveModal } from "../models/ReceiveModal";
-import { Layout } from "../models/Layout";
-import { DeviceAction } from "../models/DeviceAction";
-import { PortfolioPage } from "../models/PortfolioPage";
+import { AccountsPage } from "../../models/AccountsPage";
+import { AddAccountModal } from "../../models/AddAccountModal";
+import { ReceiveModal } from "../../models/ReceiveModal";
+import { Layout } from "../../models/Layout";
+import { DeviceAction } from "../../models/DeviceAction";
+import { PortfolioPage } from "../../models/PortfolioPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-test.skip("subAccounts", async ({ page }) => {
+test("subAccounts", async ({ page }) => {
   const addAccountModal = new AddAccountModal(page);
   const accountsPage = new AccountsPage(page);
   const receiveModal = new ReceiveModal(page);
@@ -21,9 +21,7 @@ test.skip("subAccounts", async ({ page }) => {
   await test.step("should find token in the currencies list", async () => {
     await portfolioPage.openAddAccountModal();
     await addAccountModal.select("chainlink");
-    expect
-      .soft(await addAccountModal.container.screenshot())
-      .toMatchSnapshot("subAccount-noParent.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("subAccount-noParent.png");
   });
 
   await test.step("should scan parent", async () => {
@@ -34,9 +32,7 @@ test.skip("subAccounts", async ({ page }) => {
   });
 
   await test.step("should add parent", async () => {
-    expect
-      .soft(await addAccountModal.container.screenshot())
-      .toMatchSnapshot("parent-addAccount-result.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("parent-addAccount-result.png");
     await addAccountModal.addAccounts();
     await addAccountModal.done();
   });
@@ -46,18 +42,18 @@ test.skip("subAccounts", async ({ page }) => {
     await layout.goToAccounts();
     await accountsPage.openAddAccountModal();
     await addAccountModal.select("must");
-    expect.soft(await addAccountModal.container.screenshot()).toMatchSnapshot("parent-exists.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("parent-exists.png");
   });
 
   await test.step("should receive on parent", async () => {
     await receiveModal.continue();
-    expect.soft(await addAccountModal.container.screenshot()).toMatchSnapshot("select-parent.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("select-parent.png");
     await receiveModal.continue();
   });
 
   await test.step("should show parent address", async () => {
     await receiveModal.skipDevice();
-    expect.soft(await addAccountModal.container.screenshot()).toMatchSnapshot("parent-address.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("parent-address.png");
     await receiveModal.continue();
     await receiveModal.continue();
   });
@@ -67,22 +63,18 @@ test.skip("subAccounts", async ({ page }) => {
     await layout.goToAccounts();
     await accountsPage.openAddAccountModal();
     await addAccountModal.select("usd coin");
-    expect
-      .soft(await addAccountModal.container.screenshot())
-      .toMatchSnapshot("subAccount-exist.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("subAccount-exist.png");
   });
 
   await test.step("should receive on subAccount", async () => {
     await receiveModal.continue();
-    expect.soft(await addAccountModal.container.screenshot()).toMatchSnapshot("select-account.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("select-account.png");
   });
 
   await test.step("should show subAccount address", async () => {
     await receiveModal.continue();
     await receiveModal.skipDevice();
-    expect
-      .soft(await addAccountModal.container.screenshot())
-      .toMatchSnapshot("subAccount-address.png");
+    await expect.soft(addAccountModal.container).toHaveScreenshot("subAccount-address.png");
     await receiveModal.continue();
     await receiveModal.continue();
   });

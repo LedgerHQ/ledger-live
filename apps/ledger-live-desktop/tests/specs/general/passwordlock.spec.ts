@@ -1,9 +1,9 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../models/Layout";
-import { Modal } from "../models/Modal";
-import { PasswordlockModal } from "../models/PasswordlockModal";
-import { LockscreenPage } from "../models/LockscreenPage";
+import { Layout } from "../../models/Layout";
+import { Modal } from "../../models/Modal";
+import { PasswordlockModal } from "../../models/PasswordlockModal";
+import { LockscreenPage } from "../../models/LockscreenPage";
 import * as fs from "fs";
 
 test.use({ userdata: "skip-onboarding" });
