@@ -15,45 +15,33 @@ test("Manager", async ({ page }) => {
     await layout.goToManager();
     await deviceAction.accessManager();
     await managerPage.firmwareUpdateButton.waitFor({ state: "visible" });
-    // expect(await page.screenshot()).toMatchSnapshot({
-    //   name: "manager-app-catalog.png",
-    // }); FIXME: flaky on slow machines
+    await expect(page).toHaveScreenshot("manager-app-catalog.png")
   });
 
   await test.step("can install an app", async () => {
     await managerPage.installApp("Tron");
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "manager-install-tron.png",
-    });
+    await expect.soft(page).toHaveScreenshot("manager-install-tron.png");
   });
 
   await test.step("can access installed apps tab", async () => {
     await managerPage.goToInstalledAppTab();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "manager-installed-apps.png",
-    });
+    await expect.soft(page).toHaveScreenshot("manager-installed-apps.png");
   });
 
   await test.step("can uninstall an app", async () => {
     await managerPage.uninstallApp("Tron");
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "manager-uninstall-tron.png",
-    });
+    await expect.soft(page).toHaveScreenshot("manager-uninstall-tron.png");
   });
 
   await test.step("can update all apps", async () => {
     await managerPage.goToCatalogTab();
     await managerPage.updateAllApps();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "manager-updateAll.png",
-    });
+    await expect.soft(page).toHaveScreenshot("manager-updateAll.png");
   });
 
   await test.step("can uninstall all apps", async () => {
     await managerPage.goToInstalledAppTab();
     await managerPage.uninstallAllApps();
-    expect.soft(await page.screenshot()).toMatchSnapshot({
-      name: "manager-uninstallAll.png",
-    });
+    await expect.soft(page).toHaveScreenshot("manager-uninstallAll.png");
   });
 });
