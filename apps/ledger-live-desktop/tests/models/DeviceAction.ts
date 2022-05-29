@@ -94,7 +94,7 @@ export class DeviceAction {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "complete" });
     });
-  };
+  }
 
   async initiateSwap() {
     await this.page.evaluate(() => {
@@ -105,6 +105,7 @@ export class DeviceAction {
       );
     });
 
+    await this.loader.waitFor({ state: "visible" });
     await this.loader.waitFor({ state: "detached" });
     await this.swapSummary.waitFor({ state: "visible" });
   }
