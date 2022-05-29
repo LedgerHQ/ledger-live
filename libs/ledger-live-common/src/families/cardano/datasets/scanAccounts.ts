@@ -1,6 +1,7 @@
-export const cardanoScanAccount1 = {
-  name: "cardano_testnet seed 1",
-  apdus: `
+export const cardanoScanAccounts = [
+  {
+    name: "cardano_testnet seed 1",
+    apdus: `
   => d700000000
   <= 040001009000
   => d71101002d0000058000073c8000071780000000000000000000000022058000073c80000717800000000000000200000000
@@ -18,4 +19,5 @@ export const cardanoScanAccount1 = {
   => d71000000d038000073c8000071780000001
   <= c909babb895030f654d6c3d4434c0f230c4eb76a5efef6d893462de29b08744ac2687891f45bb164e052076ea432f0dfc4279c458d665cd64dfa6744d435a0039000
   `,
-};
+  },
+];
