@@ -22,7 +22,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   await test.step("Open password lock modal", async () => {
     await layout.goToSettings();
     await passwordlockModal.toggle();
-    expect.soft(await passwordlockModal.container.screenshot()).toMatchSnapshot(
+    await expect.soft(passwordlockModal.container).toHaveScreenshot(
       "set-passwordlock-modal.png",
     );
   });
@@ -30,16 +30,16 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   await test.step("Enable password lock", async () => {
     await passwordlockModal.enablePassword("password", "password");
     expect(await layout.topbarLockButton).toBeVisible();
-    expect.soft(await page.screenshot()).toMatchSnapshot("passwordlock-enabled.png");
+    await expect.soft(page).toHaveScreenshot("passwordlock-enabled.png");
   });
 
   await test.step("User data should be encrypted", async () => {
-    expect(typeof getUserdata().data.accounts).toBe("string");
+    expect.poll(() => typeof getUserdata().data.accounts).toBe("string");
   });
 
   await test.step("Open change password modal", async () => {
     await passwordlockModal.openChangePasswordModal();
-    expect.soft(await passwordlockModal.container.screenshot()).toMatchSnapshot(
+    await expect.soft(passwordlockModal.container).toHaveScreenshot(
       "changepassword-modal.png",
     );
   });
@@ -52,12 +52,12 @@ test("Enable password lock", async ({ page, userdataFile }) => {
     await layout.lockApp();
     expect(await lockscreenPage.container).toBeVisible();
     expect(await layout.logo).toBeVisible();
-    expect.soft(await page.screenshot()).toMatchSnapshot("app-locked.png");
+    await expect.soft(page).toHaveScreenshot("app-locked.png");
   });
 
   await test.step("I lost my password", async () => {
     await lockscreenPage.lostPassword();
-    expect.soft(await modal.container.screenshot()).toMatchSnapshot("lockscreen-reset-app-modal.png");
+    await expect.soft(modal.container).toHaveScreenshot("lockscreen-reset-app-modal.png");
     await modal.cancel();
   });
 
@@ -65,26 +65,26 @@ test("Enable password lock", async ({ page, userdataFile }) => {
     await lockscreenPage.login("wrong");
     expect(await layout.inputError).toBeVisible();
     await page.waitForTimeout(400); // weird 0.4s css transition on error message
-    expect.soft(await page.screenshot()).toMatchSnapshot("lockscreen-wrong-password.png");
+    await expect.soft(page).toHaveScreenshot("lockscreen-wrong-password.png");
   });
 
   await test.step("Unlock with correct password", async () => {
     await lockscreenPage.login("newpassword");
     expect(await lockscreenPage.container).toBeHidden();
-    expect.soft(await page.screenshot()).toMatchSnapshot("lockscreen-unlocked.png");
+    await expect.soft(page).toHaveScreenshot("lockscreen-unlocked.png");
     expect(await layout.topbarLockButton).toBeVisible();
   });
 
   await test.step("Open disable password lock modal", async () => {
     await passwordlockModal.toggle();
-    expect.soft(await modal.container.screenshot()).toMatchSnapshot("disablepassword-modal.png");
+    await expect.soft(modal.container).toHaveScreenshot("disablepassword-modal.png");
   });
 
   await test.step("Disable password lock: Set wrong password", async () => {
     await passwordlockModal.disablePassword("password");
     expect(await layout.inputError).toBeVisible();
     expect(await layout.topbarLockButton).toBeVisible();
-    expect.soft(await modal.container.screenshot()).toMatchSnapshot(
+    await expect.soft(modal.container).toHaveScreenshot(
       "passwordlock-disable-bad-password.png",
     );
   });
@@ -92,10 +92,10 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   await test.step("Disable password lock: Set correct password", async () => {
     await passwordlockModal.disablePassword("newpassword");
     expect(await layout.topbarLockButton).toBeHidden();
-    expect.soft(await page.screenshot()).toMatchSnapshot("passwordlock-disabled.png");
+    await expect.soft(page).toHaveScreenshot("passwordlock-disabled.png");
   });
 
   await test.step("User data shouldn't be encrypted", async () => {
-    expect(typeof getUserdata().data.accounts).toBe("object");
+    expect.poll(() => typeof getUserdata().data.accounts).toBe("object");
   });
 });

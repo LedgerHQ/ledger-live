@@ -11,26 +11,26 @@ test("Settings", async ({ page }) => {
 
   await test.step("go to settings", async () => {
     await layout.goToSettings();
-    // expect(await page.screenshot()).toMatchSnapshot("settings-general-page.png"); FIXME: flaky on slow machines
+    await expect(page).toHaveScreenshot("settings-general-page.png");
   });
 
   await test.step("go to settings -> accounts", async () => {
     await settingsPage.goToAccountsTab();
-    expect.soft(await page.screenshot()).toMatchSnapshot("settings-accounts-page.png");
+    await expect.soft(page).toHaveScreenshot("settings-accounts-page.png");
   });
 
   await test.step("go to settings -> about", async () => {
     await settingsPage.goToAboutTab();
-    expect.soft(await page.screenshot()).toMatchSnapshot("settings-about-page.png");
+    await expect.soft(page).toHaveScreenshot("settings-about-page.png");
   });
 
   await test.step("go to settings -> help", async () => {
     await settingsPage.goToHelpTab();
-    expect.soft(await page.screenshot()).toMatchSnapshot("settings-help-page.png");
+    await expect.soft(page).toHaveScreenshot("settings-help-page.png");
   });
 
   await test.step("go to settings -> experimental", async () => {
     await settingsPage.goToExperimentalTab();
-    expect.soft(await page.screenshot()).toMatchSnapshot("settings-experimental-page.png");
+    await expect.soft(page).toHaveScreenshot("settings-experimental-page.png");
   });
 });
