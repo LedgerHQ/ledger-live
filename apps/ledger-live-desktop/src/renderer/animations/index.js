@@ -19,6 +19,7 @@ const Animation = ({
   loop?: boolean,
   autoplay?: boolean,
   rendererSettings?: *,
+  isPaused?: boolean,
   isStopped?: boolean,
 }) => (
   <Lottie
