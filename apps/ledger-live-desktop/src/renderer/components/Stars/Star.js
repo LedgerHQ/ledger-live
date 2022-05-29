@@ -12,8 +12,6 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
 import { track } from "~/renderer/analytics/segment";
 
-const disableAnimation = process.env.PLAYWRIGHT_RUN;
-
 type Props = {
   accountId: string,
   parentId?: string,
@@ -40,19 +38,11 @@ export default function Star({ accountId, parentId, yellow, rounded }: Props) {
   return (
     <MaybeButtonWrapper filled={isAccountStarred} rounded={rounded}>
       <StarWrapper id="account-star-button" onClick={toggleStar} tabIndex="-1" rounded={rounded}>
-        {disableAnimation ? (
-          <StarIcon
-            yellow={yellow}
-            filled={isAccountStarred}
-            className={isAccountStarred ? "entered" : ""}
-          />
-        ) : (
-          <Transition in={isAccountStarred} timeout={isAccountStarred ? startBurstTiming : 0}>
-            {className => (
-              <StarIcon yellow={yellow} filled={isAccountStarred} className={className} />
-            )}
-          </Transition>
-        )}
+        <Transition in={isAccountStarred} timeout={isAccountStarred ? startBurstTiming : 0}>
+          {className => (
+            <StarIcon yellow={yellow} filled={isAccountStarred} className={className} />
+          )}
+        </Transition>
       </StarWrapper>
     </MaybeButtonWrapper>
   );
