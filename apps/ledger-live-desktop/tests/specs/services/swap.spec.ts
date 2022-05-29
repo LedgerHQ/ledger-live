@@ -1,8 +1,8 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SwapPage } from "../models/SwapPage";
-import { DeviceAction } from "../models/DeviceAction";
-import { Layout } from "../models/Layout";
+import { SwapPage } from "../../models/SwapPage";
+import { DeviceAction } from "../../models/DeviceAction";
+import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 

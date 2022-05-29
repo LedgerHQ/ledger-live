@@ -1,9 +1,9 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { ManagerPage } from "../models/ManagerPage";
-import { FirmwareUpdateModal } from "../models/FirmwareUpdateModal";
-import { DeviceAction } from "../models/DeviceAction";
-import { Layout } from "../models/Layout";
+import { ManagerPage } from "../../models/ManagerPage";
+import { FirmwareUpdateModal } from "../../models/FirmwareUpdateModal";
+import { DeviceAction } from "../../models/DeviceAction";
+import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 

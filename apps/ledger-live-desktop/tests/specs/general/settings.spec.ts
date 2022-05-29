@@ -1,7 +1,7 @@
-import test from "../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { SettingsPage } from "../models/SettingsPage";
-import { Layout } from "../models/Layout";
+import { SettingsPage } from "../../models/SettingsPage";
+import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
