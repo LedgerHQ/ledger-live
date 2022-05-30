@@ -62,7 +62,7 @@ const defaultWindowOptions = {
 };
 
 export const loadWindow = async () => {
-  let url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
+  const url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
   if (mainWindow) {
     /** Making the following variables easily accessible to the renderer thread:
      * - theme
