@@ -133,7 +133,7 @@ describe("cosmos/react", () => {
         ).validatorAddress
       ).toBe(delegations[0].validatorAddress);
     });
-    it("should find delegation by cosmosSourceValidator field and return as value for redelegate", async () => {
+    it("should find delegation by sourceValidator field and return as value for redelegate", async () => {
       const { account, transaction, prepare } = setup();
       await prepare();
       invariant(
@@ -142,7 +142,7 @@ describe("cosmos/react", () => {
       );
       const delegations =
         (account.cosmosResources as CosmosResources).delegations || [];
-      const cosmosSourceValidator =
+      const sourceValidator =
         delegations[delegations.length - 1].validatorAddress;
       const newTx = {
         ...transaction,
@@ -151,7 +151,7 @@ describe("cosmos/react", () => {
           address: validatorAddress,
           amount,
         })),
-        cosmosSourceValidator,
+        sourceValidator,
       };
       const { result } = renderHook(() =>
         hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
@@ -161,7 +161,7 @@ describe("cosmos/react", () => {
           (result.current.value as CosmosMappedDelegation)
             .validator as CosmosValidatorItem
         ).validatorAddress
-      ).toBe(cosmosSourceValidator);
+      ).toBe(sourceValidator);
     });
   });
   describe("useSortedValidators", () => {

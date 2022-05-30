@@ -124,7 +124,7 @@ export type CosmosOperationRaw = OperationRaw & {
 };
 export type CosmosExtraTxInfo = {
   validators?: CosmosDelegationInfo[];
-  cosmosSourceValidator?: string | null | undefined;
+  sourceValidator?: string | null | undefined;
   validator?: CosmosDelegationInfo;
 };
 
@@ -145,7 +145,7 @@ export type CosmosLikeTransaction = TransactionCommon & {
   gas: BigNumber | null | undefined;
   memo: string | null | undefined;
   validators: CosmosDelegationInfo[];
-  cosmosSourceValidator: string | null | undefined;
+  sourceValidator: string | null | undefined;
 };
 
 export type Transaction = CosmosLikeTransaction & {
@@ -161,7 +161,7 @@ export type CosmosLikeTransactionRaw = TransactionCommonRaw & {
   gas: string | null | undefined;
   memo: string | null | undefined;
   validators: CosmosDelegationInfoRaw[];
-  cosmosSourceValidator: string | null | undefined;
+  sourceValidator: string | null | undefined;
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {

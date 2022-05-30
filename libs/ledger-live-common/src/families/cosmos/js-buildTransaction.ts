@@ -100,7 +100,7 @@ export const buildTransaction = async (
 
     case "redelegate":
       if (
-        !transaction.cosmosSourceValidator ||
+        !transaction.sourceValidator ||
         !transaction.validators ||
         transaction.validators.length < 1 ||
         !transaction.validators[0].address ||
@@ -111,7 +111,7 @@ export const buildTransaction = async (
         msg.push({
           typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
           value: {
-            validatorSrcAddress: transaction.cosmosSourceValidator,
+            validatorSrcAddress: transaction.sourceValidator,
             delegatorAddress: account.freshAddress,
             validatorDstAddress: transaction.validators[0].address,
             amount: {

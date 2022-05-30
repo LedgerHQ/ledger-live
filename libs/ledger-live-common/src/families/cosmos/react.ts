@@ -75,12 +75,12 @@ export function useCosmosDelegationsQuerySelector(
     switch (transaction.mode) {
       case "redelegate":
         invariant(
-          transaction.cosmosSourceValidator,
-          "cosmos: cosmosSourceValidator is required"
+          transaction.sourceValidator,
+          "cosmos: sourceValidator is required"
         );
         return options.find(
           ({ validatorAddress }) =>
-            validatorAddress === transaction.cosmosSourceValidator
+            validatorAddress === transaction.sourceValidator
         );
 
       default:
@@ -159,9 +159,7 @@ export function useMappedExtraOperationDetails({
     validator: extra.validator
       ? mapDelegationInfo([extra.validator], validators, unit)[0]
       : undefined,
-    cosmosSourceValidator: extra.cosmosSourceValidator
-      ? extra.cosmosSourceValidator
-      : undefined,
+    sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
   };
 }
 

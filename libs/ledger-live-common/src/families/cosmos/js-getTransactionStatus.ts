@@ -298,17 +298,17 @@ export class CosmosTransactionStatusManager {
         redelegations.some((redelegation) => {
           const dstValidator = redelegation.validatorDstAddress;
           return (
-            dstValidator === t.cosmosSourceValidator &&
+            dstValidator === t.sourceValidator &&
             redelegation.completionDate > new Date()
           );
         })
       )
         return new CosmosRedelegationInProgress();
-      if (t.cosmosSourceValidator === t.validators[0].address)
+      if (t.sourceValidator === t.validators[0].address)
         return new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
-    return this.isDelegable(a, t.cosmosSourceValidator, t.validators[0].amount);
+    return this.isDelegable(a, t.sourceValidator, t.validators[0].amount);
   };
 
   private isDelegable = (

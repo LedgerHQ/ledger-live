@@ -135,7 +135,7 @@ const signOperation = ({
 
         if (transaction.mode === "redelegate") {
           Object.assign(extra, {
-            cosmosSourceValidator: transaction.cosmosSourceValidator,
+            sourceValidator: transaction.sourceValidator,
           });
         }
 
