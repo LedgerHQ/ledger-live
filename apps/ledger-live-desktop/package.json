@@ -219,7 +219,6 @@
     "prebuild-install": "^7.0.0",
     "prettier": "^1.19.1",
     "react-refresh": "^0.11.0",
-    "serve": "^13.0.2",
     "style-loader": "^1.2.1",
     "typescript": "^4.4.4",
     "unused-webpack-plugin": "^2.4.0",
