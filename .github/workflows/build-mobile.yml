@@ -120,7 +120,7 @@ jobs:
       - name: upload Android app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.post-version.outputs.version }}-release.apk
+          name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
   build-mobile-app-android-external:
@@ -193,7 +193,7 @@ jobs:
       - name: upload Android app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.post-version.outputs.version }}-release.apk
+          name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
   build-mobile-app-ios:
