@@ -3,13 +3,37 @@ import {
   CosmosLikeTransaction,
   CosmosLikeTransactionRaw,
 } from "../cosmos/types";
+import type { Operation, OperationRaw } from "../../types/operation";
+import { CosmosDelegationInfo, CosmosDelegationInfoRaw } from "../cosmos/types";
+
+export type OsmosisOperation = Operation & {
+  extra: OsmosisExtraTxInfo;
+};
+export type OsmosisOperationRaw = OperationRaw & {
+  extra: OsmosisExtraTxInfo;
+};
+export type OsmosisExtraTxInfo = {
+  validators?: CosmosDelegationInfo[];
+  osmosisSourceValidator?: string | null | undefined;
+  validator?: CosmosDelegationInfo;
+};
 
 export type Transaction = CosmosLikeTransaction & {
   family: "osmosis";
+  mode: string;
+  fees: BigNumber | null;
+  gas: BigNumber | null | undefined;
+  memo: string | null | undefined;
+  validators: CosmosDelegationInfo[];
 };
 
 export type TransactionRaw = CosmosLikeTransactionRaw & {
   family: "osmosis";
+  mode: string;
+  fees: string | null;
+  gas: string | null | undefined;
+  memo: string | null | undefined;
+  validators: CosmosDelegationInfoRaw[];
 };
 
 export type StatusErrorMap = {

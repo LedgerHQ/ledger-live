@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
-
 import getEstimatedFees, { getEstimatedGas } from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import { CosmosDelegationInfo } from "../cosmos/types";
@@ -39,7 +38,18 @@ export const createTransaction = (): Transaction => ({
 export const updateTransaction = (
   t: Transaction,
   patch: Partial<Transaction>
-) => ({ ...t, ...patch });
+): Transaction => {
+  if ("mode" in patch && patch.mode !== t.mode) {
+    return { ...t, ...patch, gas: null, fees: null };
+  }
+  if (
+    "validators" in patch &&
+    patch.validators?.length !== t.validators.length
+  ) {
+    return { ...t, ...patch, gas: null, fees: null };
+  }
+  return { ...t, ...patch };
+};
 
 /**
  * Prepare transaction before checking status
@@ -48,22 +58,29 @@ export const updateTransaction = (
  * @param {Transaction} t
  */
 export const prepareTransaction = async (account: Account, t: Transaction) => {
-  let fees = t.fees;
-  let memo = t.memo;
-  let gas = t.gas;
+  let { fees, memo, gas, amount } = t;
+  const { mode } = t;
 
   fees = await getEstimatedFees();
+  gas = await getEstimatedGas(mode);
 
-  if (t.mode === "send") {
+  if (mode === "send") {
     t.amount = t.useAllAmount
       ? await estimateMaxSpendable({ account, parentAccount: null })
-      : t.amount;
-
-    gas = await getEstimatedGas(t.mode);
+      : amount;
   }
 
-  if (t.mode !== "send" && !memo) {
+  if (mode !== "send" && !memo) {
     memo = "Ledger Live";
+  }
+
+  if (mode === "delegate" && amount.eq(0)) {
+    const validatorAmount = t.validators.reduce(
+      (old, current) => old.plus(current.amount),
+      new BigNumber(0)
+    );
+    amount = validatorAmount;
+    t = { ...t, amount, gas };
   }
 
   if (t.memo !== memo || !sameFees(t.fees, fees)) {

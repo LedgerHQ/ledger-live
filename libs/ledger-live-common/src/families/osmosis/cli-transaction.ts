@@ -1,7 +1,11 @@
-import BigNumber from "bignumber.js";
+import { from, Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
+import { BigNumber } from "bignumber.js";
+import { getValidators } from "../cosmos/validators";
+import { getCryptoCurrencyById } from "../../currencies";
 
 import type {
   Transaction,
@@ -18,18 +22,28 @@ const options = [
     desc: "mode of transaction: send, delegate, undelegate",
   },
   {
+    name: "fees",
+    type: String,
+    desc: "how much fees",
+  },
+  {
+    name: "gasLimit",
+    type: String,
+    desc: "how much gasLimit. default is estimated with the recipient",
+  },
+  {
     name: "memo",
     type: String,
     desc: "add a memo to a transaction",
   },
   {
-    name: "osmosValidator",
+    name: "osmosisValidator",
     type: String,
     multiple: true,
     desc: "address of recipient validator that will receive the delegate",
   },
   {
-    name: "osmosAmountValidator",
+    name: "osmosisAmountValidator",
     type: String,
     multiple: true,
     desc: "Amount that the validator will receive",
@@ -54,10 +68,10 @@ function inferTransactions(
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "osmosis", "osmosis family");
-    const validatorsAddresses: string[] = opts["osmosValidator"] || [];
+    const validatorsAddresses: string[] = opts["osmosisValidator"] || [];
 
     const validatorsAmounts: BigNumber[] = (
-      opts["osmosAmountValidator"] || []
+      opts["osmosisAmountValidator"] || []
     ).map((value) => {
       return inferAmount(account, value);
     });
@@ -75,6 +89,7 @@ function inferTransactions(
       family: "osmosis",
       mode: opts.mode || "send",
       fees: opts.fees ? inferAmount(account, opts.fees) : null,
+      gas: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       memo: opts.memo,
       validators: validators,
       // TODO - we should change this key to "sourceValidator" to make it more generic
@@ -83,8 +98,45 @@ function inferTransactions(
   });
 }
 
+const osmosisValidatorsFormatters = {
+  json: (list) => JSON.stringify(list),
+  default: (list) =>
+    list
+      .map(
+        (v) =>
+          `${v.validatorAddress} "${v.name}" ${v.votingPower} ${v.commission} ${v.estimatedYearlyRewardsRate}`
+      )
+      .join("\n"),
+};
+
+const osmosisValidators = {
+  args: [
+    {
+      name: "format",
+      desc: Object.keys(osmosisValidatorsFormatters).join(" | "),
+      type: String,
+    },
+  ],
+  job: ({
+    format,
+  }: Partial<{
+    format: string;
+  }>): Observable<string> =>
+    from(getValidators(getCryptoCurrencyById("osmo"))).pipe(
+      map((validators) => {
+        const f =
+          (format && osmosisValidatorsFormatters[format]) ||
+          osmosisValidatorsFormatters.default;
+        return f(validators);
+      })
+    ),
+};
+
 export default {
   options,
   inferAccounts,
   inferTransactions,
+  commands: {
+    osmosisValidators,
+  },
 };
