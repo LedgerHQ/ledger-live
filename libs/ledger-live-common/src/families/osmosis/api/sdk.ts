@@ -152,6 +152,22 @@ export class OsmosisAPI extends CosmosAPI {
           // for context on how we determine if a "send" transaction is IN or OUT.
           transactionType
         ) {
+          // case OsmosisAccountTransactionTypeEnum.Delegate: {
+          //   const ttt = accountTransactions[i];
+
+          //   if (
+          //     attributes.amount &&
+          //     attributes.amount.indexOf(currency.units[1].code) != -1
+          //   ) {
+          //     op.type = "DELEGATE";
+          //     op.value = new BigNumber(fees);
+          //     op.extra.validators.push({
+          //       address: attributes.validator,
+          //       amount: attributes.amount.replace(currency.units[1].code, ""),
+          //     });
+          //   }
+          //   break;
+          // }
           case OsmosisAccountTransactionTypeEnum.Send: {
             // Check sub array exists. Sub array contains transactions messages. If there isn't one, skip
             if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
