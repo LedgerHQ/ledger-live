@@ -74,6 +74,7 @@
     "@formatjs/intl-locale": "^2.4.46",
     "@formatjs/intl-numberformat": "^7.4.2",
     "@formatjs/intl-pluralrules": "^4.3.2",
+    "@jest/reporters": "^28.1.0",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
