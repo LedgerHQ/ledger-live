@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Transaction } from "./types";
+import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { DeviceTransactionField } from "../../transaction";
 import type { Account, AccountLike, TransactionStatus } from "../../types";
@@ -30,12 +30,13 @@ export type ExtraDeviceTransactionField =
 
 const getSendFields = ({
   totalSpent,
+  account,
   source,
 }: {
   totalSpent: BigNumber;
+  account: AccountLike;
   source: string;
 }) => {
-  const currency = getCryptoCurrencyById("osmo");
   const fields: OsmosisTransactionFieldType[] = [];
 
   fields.push({
@@ -48,9 +49,9 @@ const getSendFields = ({
     fields.push({
       type: "text",
       label: "Amount",
-      value: formatCurrencyUnit(currency.units[0], totalSpent, {
-        //TODO improve this by using formatCurrencyUnit like Cosmos does. Meaning: dynamically pick uosmo or OSMO
+      value: formatCurrencyUnit(getAccountUnit(account), totalSpent, {
         showCode: true,
+        disableRounding: true,
       }),
     });
   }
@@ -74,7 +75,7 @@ function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
-  const { mode, memo } = transaction;
+  const { mode, memo, validators } = transaction;
 
   let fields: Array<OsmosisTransactionFieldType> = [];
   const mainAccount = getMainAccount(account, parentAccount);
@@ -84,6 +85,7 @@ function getDeviceTransactionConfig({
     case "send":
       fields = getSendFields({
         totalSpent,
+        account,
         source,
       });
       break;
@@ -97,6 +99,34 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "cosmos.delegateValidators",
         label: "Validators",
+      });
+      break;
+
+    case "redelegate":
+      fields.push({
+        type: "text",
+        label: "Type",
+        value: "Redelegate",
+      });
+      fields.push({
+        type: "text",
+        label: "Amount",
+        value: formatCurrencyUnit(
+          getAccountUnit(account),
+          validators[0].amount,
+          {
+            showCode: true,
+            disableRounding: true,
+          }
+        ),
+      });
+      fields.push({
+        type: "osmosis.validatorName",
+        label: "Validator Dest",
+      });
+      fields.push({
+        type: "osmosis.sourceValidatorName",
+        label: "Validator Source",
       });
       break;
 

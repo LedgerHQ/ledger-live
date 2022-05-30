@@ -37,6 +37,11 @@ const options = [
     desc: "add a memo to a transaction",
   },
   {
+    name: "sourceValidator",
+    type: String,
+    desc: "for redelegate, add a source validator",
+  },
+  {
     name: "osmosisValidator",
     type: String,
     multiple: true,
@@ -92,8 +97,7 @@ function inferTransactions(
       gas: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       memo: opts.memo,
       validators: validators,
-      // TODO - we should change this key to "sourceValidator" to make it more generic
-      cosmosSourceValidator: opts.cosmosSourceValidator,
+      sourceValidator: opts.sourceValidator,
     } as Transaction;
   });
 }
