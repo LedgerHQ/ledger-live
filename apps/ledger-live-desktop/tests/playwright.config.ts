@@ -20,7 +20,7 @@ const config: PlaywrightTestConfig = {
     trace: process.env.CI ? "retain-on-failure" : "off", // FIXME: traceview doesn't seem to work
   },
   // webServer: {
-  //   command: "npx serve -l 3001",
+  //   command: "serve -l 3001",
   //   port: 3001,
   //   timeout: 120 * 1000,
   //   reuseExistingServer: !process.env.CI,
