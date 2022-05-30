@@ -143,7 +143,7 @@ class MenuList extends PureComponent<*, *> {
 }
 class Select extends PureComponent<Props> {
   componentDidMount() {
-    if (this.ref && this.props.autoFocus && !process.env.PLAYWRIGHT_RUN) {
+    if (this.ref && this.props.autoFocus) {
       // $FlowFixMe
       this.timeout = requestAnimationFrame(() => this.ref.focus());
     }
@@ -223,7 +223,7 @@ class Select extends PureComponent<Props> {
       <Comp
         {...props}
         ref={c => (this.ref = c)}
-        autoFocus={autoFocus && !process.env.PLAYWRIGHT_RUN}
+        autoFocus={autoFocus}
         value={value}
         maxMenuHeight={rowHeight * 4.5}
         classNamePrefix="select"

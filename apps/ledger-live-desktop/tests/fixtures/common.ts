@@ -103,7 +103,6 @@ const test = base.extend<TestFixtures>({
 
     // app is loaded
     expect(await page.title()).toBe("Ledger Live");
-    await page.waitForSelector("#__app__ready__", { state: "attached" });
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
