@@ -15,7 +15,7 @@
 
 `ledger-live` is a **monorepository** whose purpose is to centralize all the JavaScript code related to the [**Leger Live**](https://www.ledger.com/ledger-live) applications in one place.
 
-[**Leger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
+[**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
 ## Installation
 
@@ -56,7 +56,7 @@ The scripts that are defined inside the root [`/package.json`](https://github.co
 ```sh
 # This command will first build all the local dependencies needed in the right order.
 # Only then it will attempt to build the `Ledger Live Desktop` app.
-pnpm lld:build
+pnpm build:lld
 ```
 
 ### Aliases

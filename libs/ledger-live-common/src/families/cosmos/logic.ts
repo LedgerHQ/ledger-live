@@ -13,7 +13,7 @@ import type {
   CosmosRedelegation,
   CosmosMappedRedelegation,
 } from "./types";
-import type { Unit, Account } from "../../types";
+import type { Unit, Account, Transaction } from "../../types";
 import { calculateFees } from "./js-prepareTransaction";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
@@ -99,16 +99,21 @@ export function mapRedelegations(
 export const mapDelegationInfo = (
   delegations: CosmosDelegationInfo[],
   validators: CosmosValidatorItem[],
-  unit: Unit
+  unit: Unit,
+  transaction?: Transaction
 ): CosmosMappedDelegationInfo[] => {
   return delegations.map((d) => ({
     ...d,
     validator: validators.find((v) => v.validatorAddress === d.address),
-    formattedAmount: formatCurrencyUnit(unit, d.amount, {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    }),
+    formattedAmount: formatCurrencyUnit(
+      unit,
+      transaction ? transaction.amount : d.amount,
+      {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }
+    ),
   }));
 };
 export const formatValue = (value: BigNumber, unit: Unit): number =>

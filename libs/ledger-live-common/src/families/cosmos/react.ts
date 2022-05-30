@@ -23,6 +23,7 @@ import {
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
+import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
 export function useCosmosPreloadData(): CosmosPreloadData {
   const [state, setState] = useState(getCurrentCosmosPreloadData);
@@ -162,4 +163,36 @@ export function useMappedExtraOperationDetails({
       ? extra.cosmosSourceValidator
       : undefined,
   };
+}
+
+export function useLedgerFirstShuffledValidatorsCosmos() {
+  const data = useCosmosPreloadData();
+
+  return useMemo(() => {
+    return reorderValidators(data?.validators ?? []);
+  }, [data]);
+}
+
+function reorderValidators(
+  validators: CosmosValidatorItem[]
+): CosmosValidatorItem[] {
+  const sortedValidators = validators
+    .filter((validator) => validator.commission !== 1.0)
+    .sort((a, b) => b.votingPower - a.votingPower);
+
+  // move Ledger validator to the first position
+  const ledgerValidator = sortedValidators.find(
+    (v) => v.validatorAddress === LEDGER_VALIDATOR_ADDRESS
+  );
+
+  if (ledgerValidator) {
+    const sortedValidatorsLedgerFirst = sortedValidators.filter(
+      (v) => v.validatorAddress !== LEDGER_VALIDATOR_ADDRESS
+    );
+    sortedValidatorsLedgerFirst.unshift(ledgerValidator);
+
+    return sortedValidatorsLedgerFirst;
+  }
+
+  return sortedValidators;
 }

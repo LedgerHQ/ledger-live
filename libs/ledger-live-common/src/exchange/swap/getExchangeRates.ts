@@ -71,30 +71,34 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
 
-    // NB Allows us to simply multiply satoshi values from/to
-    const magnitudeAwareRate = (
-      tradeMethod === "fixed"
-        ? new BigNumber(maybeRate)
-        : new BigNumber(amountTo).div(amountFrom)
-    ).div(new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude));
+    const payoutNetworkFees = new BigNumber(maybePayoutNetworkFees || 0);
 
-    const payoutNetworkFees = new BigNumber(maybePayoutNetworkFees || 0).times(
+    const magnitudeAwarePayoutNetworkFees = payoutNetworkFees.times(
       new BigNumber(10).pow(unitTo.magnitude)
     );
 
-    const toAmount = new BigNumber(amountTo)
-      .times(new BigNumber(10).pow(unitTo.magnitude))
-      .minus(payoutNetworkFees); // Nb no longer need to break it down on UI
+    const rate = maybeRate
+      ? new BigNumber(maybeRate)
+      : new BigNumber(amountTo).minus(payoutNetworkFees).div(amountFrom);
 
-    const rate =
-      maybeRate || new BigNumber(amountTo).div(new BigNumber(amountFrom));
+    // NB Allows us to simply multiply satoshi values from/to
+    const magnitudeAwareRate = rate.div(
+      new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude)
+    );
+
+    const toAmount = new BigNumber(amountTo).minus(payoutNetworkFees);
+
+    const magnitudeAwareToAmount = toAmount.times(
+      new BigNumber(10).pow(unitTo.magnitude)
+    );
+    // Nb no longer need to break it down on UI
 
     const out = {
       magnitudeAwareRate,
       provider,
       rate,
       rateId,
-      toAmount,
+      toAmount: magnitudeAwareToAmount,
       tradeMethod,
     };
 
@@ -103,7 +107,7 @@ const getExchangeRates: GetExchangeRates = async (
     } else {
       return {
         ...out,
-        payoutNetworkFees,
+        payoutNetworkFees: magnitudeAwarePayoutNetworkFees,
       };
     }
   });
