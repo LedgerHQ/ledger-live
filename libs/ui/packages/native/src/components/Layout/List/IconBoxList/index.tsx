@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import List, { BaseListItemProps, BaseListProps } from "../List";
-import { IconBox } from "../../../Icon";
 import { IconType } from "../../../Icon/type";
+import BoxedIcon from "../../../Icon/BoxedIcon";
 
 export type IconBoxListItemProps = Omit<BaseListItemProps, "bullet"> & {
   Icon: IconType;
@@ -24,11 +24,12 @@ export default function IconBoxList({
       items.map((item) => ({
         ...item,
         bullet: (
-          <IconBox
-            shape={iconShapes}
-            variant={iconVariants}
+          <BoxedIcon
+            variant={iconShapes}
+            iconColor={iconVariants === "plain" ? "primary.c70" : undefined}
+            backgroundColor={iconVariants === "plain" ? "primary.c10" : undefined}
+            borderColor={iconVariants === "plain" ? "transparent" : undefined}
             Icon={item.Icon}
-            boxSize={48}
             iconSize={20}
           />
         ),
