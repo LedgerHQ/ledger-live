@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
-import { from, of, throwError, Observable, Subscription } from "rxjs";
-import { map, tap, catchError, repeat, first } from "rxjs/operators";
+import {
+  from,
+  of,
+  throwError,
+  Observable,
+  Subscription,
+  TimeoutError,
+} from "rxjs";
+import { map, catchError, repeat, first, timeout } from "rxjs/operators";
 import getVersion from "../../hw/getVersion";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Device } from "../../hw/actions/types";
@@ -114,9 +121,8 @@ export const onboardingStatePolling = ({
       const getOnboardingStateOnce =
         (): Observable<OnboardingStatePollingResult> =>
           withDevice(deviceId)((t) => from(getVersion(t))).pipe(
-            // Could have a timeout:
-            // timeout({ each: 1000, with: () => throwError(() => new CustomTimeoutError()) });
-            // But what value compared to pollingPeriodMs and what type of error ?
+            // TODO: choose timeout ms value. For now = polling period
+            timeout(pollingPeriodMs), // Throws a TimeoutError
             first(),
             catchError((error: any) => {
               if (isAllowedOnboardingStatePollingError(error)) {
@@ -199,16 +205,19 @@ export const onboardingStatePolling = ({
       }, delayMs);
     });
 
-  return getDelayedOnboardingStateOnce.pipe(
-    tap(() => console.log("oi FINISHED")),
-    repeat(),
-    tap(() => console.log("oi REPEAT"))
-  );
+  return getDelayedOnboardingStateOnce.pipe(repeat());
 };
 
+// TODO: decide which errors are allowed
 export const isAllowedOnboardingStatePollingError = (
   error: Error | any
 ): boolean => {
+  // Timeout error thrown by rxjs's timeout
+  if (error && error instanceof TimeoutError) {
+    console.log(`SyncOnboarding: timeout error ⌛️ ${JSON.stringify(error)}`);
+    return true;
+  }
+
   // Transport error: retry polling
   if (
     error &&

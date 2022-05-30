@@ -154,6 +154,8 @@ describe("useOnboardingStatePolling", () => {
       );
 
       await act(async () => {
+        jest.advanceTimersByTime(1);
+        await waitForNextUpdate();
         jest.advanceTimersByTime(pollingPeriodMs + 1);
         await waitForNextUpdate();
       });
