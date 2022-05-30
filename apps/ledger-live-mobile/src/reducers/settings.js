@@ -75,6 +75,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasInstalledAnyApp: boolean,
   readOnlyModeEnabled: boolean,
+  hasOrderedNano: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   graphCountervalueFirst: boolean,
@@ -115,6 +116,7 @@ export const INITIAL_STATE: SettingsState = {
   hasInstalledAnyApp: true,
   // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   readOnlyModeEnabled: true,
+  hasOrderedNano: false,
   experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
@@ -398,6 +400,10 @@ const handlers: Object = {
     ...state,
     lastConnectedDevice,
   }),
+  SET_HAS_ORDERED_NANO: (state, action) => ({
+    ...state,
+    hasOrderedNano: action.enabled,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -588,3 +594,6 @@ export const starredMarketCoinsSelector = (state: State) =>
 
 export const lastConnectedDeviceSelector = (state: State) =>
   state.settings.lastConnectedDevice;
+
+export const hasOrderedNanoSelector = (state: State) =>
+  state.settings.hasOrderedNano;
