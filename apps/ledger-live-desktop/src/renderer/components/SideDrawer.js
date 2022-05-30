@@ -211,11 +211,11 @@ export function SideDrawer({
           {state => (
             <DrawerContainer className="sidedrawer" state={state} ref={focusTrapElem} tabIndex="-1">
               <DrawerContent
-                data-test-id="drawer-content"
                 {...props}
                 isOpened={isOpen}
                 state={state}
                 direction={direction}
+                data-test-id="drawer-content"
               >
                 {onRequestClose || onRequestBack || title ? (
                   <Box
