@@ -17,6 +17,20 @@
 
 [**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
+We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turborepo.org/docs/features/remote-caching). For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
+
+## Contributing
+
+Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
+
+Each separate project may also contain specific guidelines inside their own folder.
+
+In the meantime here are some important highlights:
+
+- Follow the git workflow, prefix your branches and do not create unneeded merge commits.
+- Be mindful when creating Pull Requests, specify the reason of the change clearly and write tests if needed.
+- Ledger Applications are mostly accepting bugfix contributions. For features we may reject them based on the fact that they do not fit our roadmap or our long-term goals.
+
 ## Installation
 
 In order to interact with any package contained in this repository you will need to install the following:
@@ -41,66 +55,26 @@ pnpm i
 
 ## Usage
 
-**Important: All the commands should be run at the root of the monorepo.**
-
-### Tools
-
-We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turborepo.org/docs/features/remote-caching).
-
-For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
-
-### Root scripts
-
-The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file will use _turborepo_ under the hood and automatically perform needed tasks before running the action.
+**Important: All the commands should be run at the root of the monorepo.** The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json).
 
 ```sh
-# This command will first build all the local dependencies needed in the right order.
-# Only then it will attempt to build the `Ledger Live Desktop` app.
+# Keep your project updated with upcoming dependencies change
+pnpm i
+
+# This command build all local dependencies to build the `Ledger Live Desktop` app.
 pnpm build:lld
+# Run the desktop app in dev mode
+pnpm dev:lld
+
+# This command build all local dependencies to build the `Ledger Live Mobile` app.
+pnpm build:llm
+# Run the mobile app server for development
+pnpm dev:llm
+# deploy on simulator / phone
+pnpm mobile android # / ios
 ```
 
-### Aliases
-
-To run nested scripts which are not covered at the root, you should **not** change your working directory.
-Every package has an **alias** defined (see application or library tables or check out the [`package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file) that you can use as a prefix when running the script from the root.
-
-```sh
-# `pnpm desktop` is one of the shorthands written to to avoid changing the working directory.
-
-# The following command will run the nested `test` script.
-# `test` is defined inside the `./apps/ledger-live-desktop/package.json` file.
-pnpm desktop test
-```
-
-**Note that when using these kind of scripts you will have to make sure that the dependencies are built beforehand.**
-
-### Scoping
-
-You can scope any _pnpm_ or _turborepo_ based script by using the `--filter` flag.
-
-**This is a very powerful feature that you should look into if you are a frequent contributor.**
-
-Please check out the [_pnpm_](https://pnpm.io/filtering) or [_turborepo_](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit _pnpm_ being a bit more powerful).
-
-Here are some examples:
-
-```sh
-# Install all the dependencies needed for the packages under ./libs
-pnpm i -F "{libs/**}..."
-# Run lint only on packages that have been changed compared to origin/develop
-pnpm lint --filter=[origin/develop]
-# Test every package that has been changed since the last commit excluding the applications
-pnpm run test --continue --filter="!./apps/*" --filter="...[HEAD~1]"
-# Run typechecks for the Ledger Live Mobile project
-pnpm typecheck --filter="live-mobile"
-```
-
-## Documentation
-
-Each project folder has a `README.md` file which contains basic documentation.
-It includes background info about the project and how to setup, run and build it.
-
-Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
+For more commands, please open the `README.md` of each project.
 
 ## Structure
 
@@ -110,12 +84,12 @@ The sub-packages are (roughly) split into three categories.
 
 The applications are user-facing programs which depend on one or more libraries.
 
-<details><summary><b>Ledger Live Applications</b></summary>
+<details open><summary><b>Ledger Live Applications</b></summary>
 <br/>
 <p>
 
-| Name                                                                                                            | Alias          | Download                                                                                                                                                         |
-| --------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name                                                                                                     | Alias          | Download                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [**Ledger Live Desktop**](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop) | `pnpm desktop` | [Website](https://www.ledger.com/ledger-live/download)                                                                                                           |
 | [**Ledger Live Mobile**](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)   | `pnpm mobile`  | [Android](https://play.google.com/store/apps/details?id=com.ledger.live&hl=fr&gl=US) / [iOS](https://apps.apple.com/fr/app/ledger-live-web3-wallet/id1361671700) |
 
@@ -131,10 +105,10 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 <br/>
 <p>
 
-| Name                                                                                                                                                                | Alias                          | Umbrella                                                                              | Package                                                                                                                                                       |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [**@ledgerhq/ledger-live-common**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)                                             | `pnpm common`                  | -----                                                                                 |
-| ----                                                                                                                                                                | -----                          | -----                                                                                 | -------                                                                                                                                                       |
+| Name                                                                                                                                                         | Alias                          | Umbrella                                                                       | Package                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [**@ledgerhq/ledger-live-common**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)                                             | `pnpm common`                  | -----                                                                          |
+| ----                                                                                                                                                         | -----                          | -----                                                                          | -------                                                                                                                                                       |
 | [**@ledgerhq/cryptoassets**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/cryptoassets)                                       | `pnpm ljs:cryoptoassets`       | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/cryptoassets.svg)](https://www.npmjs.com/package/@ledgerhq/cryptoassets)                                       |
 | [**@ledgerhq/devices**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/devices)                                                 | `pnpm ljs:devices`             | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/devices.svg)](https://www.npmjs.com/package/@ledgerhq/devices)                                                 |
 | [**@ledgerhq/errors**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/errors)                                                   | `pnpm ljs:errors`              | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/errors.svg)](https://www.npmjs.com/package/@ledgerhq/errors)                                                   |
@@ -167,7 +141,7 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 | [**@ledgerhq/types-cryptoassets**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-cryptoassets)                           | `pnpm ljs:types-cryptoassets`  | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-cryptoassets.svg)](https://www.npmjs.com/package/@ledgerhq/types-cryptoassets)                           |
 | [**@ledgerhq/types-devices**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-devices)                                     | `pnpm ljs:types-devices`       | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-devices.svg)](https://www.npmjs.com/package/@ledgerhq/types-devices)                                     |
 | [**@ledgerhq/types-live**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/types-live)                                           | `pnpm ljs:types-live`          | [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs) | [![npm](https://img.shields.io/npm/v/@ledgerhq/types-live.svg)](https://www.npmjs.com/package/@ledgerhq/types-live)                                           |
-| ----                                                                                                                                                                | -----                          | -----                                                                                 | -------                                                                                                                                                       |
+| ----                                                                                                                                                         | -----                          | -----                                                                          | -------                                                                                                                                                       |
 | [**@ledgerhq/icons-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons)                                                        | `pnpm ui:icons`                | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/icons-ui.svg)](https://www.npmjs.com/package/@ledgerhq/icons-ui)                                               |
 | [**@ledgerhq/native-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native)                                                      | `pnpm ui:native`               | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui.svg)](https://www.npmjs.com/package/@ledgerhq/native-ui)                                             |
 | [**@ledgerhq/react-ui**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react)                                                        | `pnpm ui:react`                | [ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui)             | [![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui.svg)](https://www.npmjs.com/package/@ledgerhq/react-ui)                                               |
@@ -182,17 +156,12 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 
 A tool can be a github action, a shell script or a piece of JavaScript code that is used throughout this repository.
 
-## Contributing
+## Documentation
 
-Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
+Each project folder has a `README.md` file which contains basic documentation.
+It includes background info about the project and how to setup, run and build it.
 
-Each separate project may also contain specific guidelines inside their own folder.
-
-In the meantime here are some important highlights:
-
-- Follow the git workflow, prefix your branches and do not create unneeded merge commits.
-- Be mindful when creating Pull Requests, specify the reason of the change clearly and write tests if needed.
-- Ledger Applications are mostly accepting bugfix contributions. For features we may reject them based on the fact that they do not fit our roadmap or our long-term goals.
+Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
 
 ## Nightly Releases
 
