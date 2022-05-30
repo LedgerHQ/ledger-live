@@ -101,7 +101,15 @@ const signOperation = ({
         const fee = transaction.fees || new BigNumber(DEFAULT_FEES);
         const extra = { memo: transaction.memo || {} };
         const type: OperationType =
-          transaction.mode === "delegate" ? "DELEGATE" : "OUT";
+          transaction.mode === "undelegate"
+            ? "UNDELEGATE"
+            : transaction.mode === "delegate"
+            ? "DELEGATE"
+            : transaction.mode === "redelegate"
+            ? "REDELEGATE"
+            : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
+            ? "REWARD"
+            : "OUT";
 
         const senders: string[] = [];
         const recipients: string[] = [];
@@ -113,6 +121,8 @@ const signOperation = ({
           Object.assign(extra, {
             validators: transaction.validators,
           });
+        } else if (type === "UNDELEGATE") {
+          // do nothing
         } else {
           throw new Error("Unsupported transaction type");
         }
