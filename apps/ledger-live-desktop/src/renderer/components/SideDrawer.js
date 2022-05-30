@@ -210,7 +210,13 @@ export function SideDrawer({
         >
           {state => (
             <DrawerContainer className="sidedrawer" state={state} ref={focusTrapElem} tabIndex="-1">
-              <DrawerContent data-test-id="drawer-content" {...props} isOpened={isOpen} state={state} direction={direction}>
+              <DrawerContent
+                data-test-id="drawer-content"
+                {...props}
+                isOpened={isOpen}
+                state={state}
+                direction={direction}
+              >
                 {onRequestClose || onRequestBack || title ? (
                   <Box
                     horizontal
@@ -222,7 +228,11 @@ export function SideDrawer({
                     style={{ zIndex: 200 }}
                   >
                     {onRequestBack ? (
-                      <Button onClick={onRequestBack} className="sidedrawer-close" data-test-id="drawer-close-button">
+                      <Button
+                        onClick={onRequestBack}
+                        className="sidedrawer-close"
+                        data-test-id="drawer-close-button"
+                      >
                         <IconAngleLeft size={12} />
                         <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
                           <Trans i18nKey="common.back" />
