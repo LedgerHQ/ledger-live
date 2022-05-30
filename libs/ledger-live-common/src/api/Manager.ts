@@ -208,11 +208,10 @@ const getLanguagePackages = async (
   device_version: number,
   current_se_firmware_final_version: number
 ): Promise<LanguagePackage[]> => {
-  console.log({ device_version, current_se_firmware_final_version });
   const { data }: { data: LanguagePackage[] } = await network({
     method: "POST",
     url: URL.format({
-      // TODO use the production key 
+      // TODO use the production key
       pathname: `https://appstore.api.aws.stg.ldg-tech.com//api/language-packages`,
       query: {
         livecommonversion,
@@ -361,8 +360,8 @@ const getDeviceVersion: (
         target_id: targetId,
       },
     }).catch((error) => {
-      const status = // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
-        error && (error.status || (error.response && error.response.status));
+      const status =
+        error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
 
       if (status === 404) {
         throw new FirmwareNotRecognized(
