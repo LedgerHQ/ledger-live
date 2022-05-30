@@ -789,7 +789,7 @@ Array [
       "blockHeight": "10450729",
       "contract": undefined,
       "extra": Object {
-        "cosmosSourceValidator": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
+        "sourceValidator": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
         "validators": Array [
           Object {
             "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
@@ -815,7 +815,7 @@ Array [
       "blockHeight": "10549023",
       "contract": undefined,
       "extra": Object {
-        "cosmosSourceValidator": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
+        "sourceValidator": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
         "validators": Array [
           Object {
             "address": "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",

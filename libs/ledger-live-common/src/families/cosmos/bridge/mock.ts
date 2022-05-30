@@ -40,7 +40,7 @@ const createTransaction = (): Transaction => ({
   gas: null,
   memo: null,
   validators: [],
-  cosmosSourceValidator: null,
+  sourceValidator: null,
   networkInfo: null,
   useAllAmount: false,
 });

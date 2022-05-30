@@ -34,7 +34,7 @@ export const calculateFees: CacheRes<
         ? transaction.validators.map((v) => v.address).join("-")
         : ""
     }_${transaction.memo ? transaction.memo.toString() : ""}_${
-      transaction.cosmosSourceValidator ? transaction.cosmosSourceValidator : ""
+      transaction.sourceValidator ? transaction.sourceValidator : ""
     }`
 );
 

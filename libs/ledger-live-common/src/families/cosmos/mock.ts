@@ -193,7 +193,7 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
       address: toDelegation.validatorAddress,
       amount,
     },
-    cosmosSourceValidator: fromDelegation.validatorAddress,
+    sourceValidator: fromDelegation.validatorAddress,
   };
   const delegations = cosmosResources.delegations
     .filter(

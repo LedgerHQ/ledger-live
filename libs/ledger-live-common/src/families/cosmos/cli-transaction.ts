@@ -31,7 +31,7 @@ const options = [
     desc: "add a memo to a transaction",
   },
   {
-    name: "cosmosSourceValidator",
+    name: "sourceValidator",
     type: String,
     desc: "for redelegate, add a source validator",
   },
@@ -81,7 +81,7 @@ function inferTransactions(
       fees: opts.fees ? inferAmount(account, opts.fees) : null,
       gas: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       validators: validators,
-      cosmosSourceValidator: opts.cosmosSourceValidator,
+      sourceValidator: opts.sourceValidator,
     } as CosmosTransaction;
   });
 }

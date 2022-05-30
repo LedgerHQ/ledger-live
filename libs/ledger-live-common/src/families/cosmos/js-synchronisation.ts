@@ -122,7 +122,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
                 address: attributes.destination_validator,
                 amount: attributes.amount.replace(currency.units[1].code, ""),
               });
-              op.extra.cosmosSourceValidator = attributes.source_validator;
+              op.extra.sourceValidator = attributes.source_validator;
             }
             break;
 
