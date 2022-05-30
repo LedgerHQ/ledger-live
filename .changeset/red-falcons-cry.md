@@ -3,4 +3,4 @@
 "@ledgerhq/native-ui": minor
 ---
 
-Update design on upsell modal in mobile app. Also add new variants and shape to IconBox components in native UI.
+Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
