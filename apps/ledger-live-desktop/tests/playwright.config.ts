@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
     port: 3001,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
-    cwd: "tests/utils/dummy-app-build",
+    cwd: "utils/dummy-app-build",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
