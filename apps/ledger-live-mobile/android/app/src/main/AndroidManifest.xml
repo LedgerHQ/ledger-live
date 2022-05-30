@@ -63,6 +63,7 @@
       </activity>
       <activity android:taskAffinity="" android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
         android:exported="true"/>
+      <meta-data android:name="io.sentry.anr.timeout-interval-millis" android:value="10000" />
     </application>
 
 </manifest>
