@@ -106,6 +106,7 @@ export default function BaseNavigator() {
         name={ScreenName.BuyDeviceScreen}
         component={BuyDeviceScreen}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
@@ -478,7 +479,6 @@ export default function BaseNavigator() {
           headerTitle: () => <AccountHeaderTitle />,
           headerRight: () => <AccountHeaderRight />,
         })}
-        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}

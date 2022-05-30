@@ -133,7 +133,6 @@ function PortfolioScreen({ navigation }: Props) {
     () => Object.values(carouselVisibility).some(Boolean),
     [carouselVisibility],
   );
-  console.log("hasOrderedNano", hasOrderedNano);
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],

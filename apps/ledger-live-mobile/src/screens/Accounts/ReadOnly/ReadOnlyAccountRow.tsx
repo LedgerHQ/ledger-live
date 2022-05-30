@@ -8,7 +8,7 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import { ensureContrast } from "../../../colors";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 
 type Props = {
   currency: Currency;
@@ -26,9 +26,15 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
   );
 
   const onAccountPress = useCallback(() => {
-    navigation.navigate(ScreenName.Account, {
-      currencyId: id,
-      currencyType: type,
+    navigation.navigate(NavigatorName.Portfolio, {
+      screen: NavigatorName.PortfolioAccounts,
+      params: {
+        screen: ScreenName.Account,
+        params: {
+          currencyId: id,
+          currencyType: type,
+        },
+      },
     });
   }, [navigation, id, type]);
 
