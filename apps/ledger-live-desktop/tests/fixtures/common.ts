@@ -53,7 +53,6 @@ const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
-        PATH: process.env.PATH
       },
       env,
     );
