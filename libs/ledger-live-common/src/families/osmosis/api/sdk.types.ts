@@ -3,6 +3,7 @@ export const OsmosisAccountTransactionTypeEnum = {
   // for help on these types.
   Send: "send",
   MultiSend: "multisend",
+  Delegate: "delegate",
 };
 
 export const OsmosisCurrency = "uosmo";
