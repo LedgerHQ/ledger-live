@@ -13,12 +13,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 
 import Button from "../components/wrappedUi/Button";
 import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
+import { hasCompletedOnboardingSelector } from "../reducers/settings";
 
 const hitSlop = {
   bottom: 10,
@@ -73,6 +75,7 @@ export default function BuyDeviceScreen() {
   const navigation = useNavigation();
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -93,13 +96,6 @@ export default function BuyDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
-  const isDuringOnboarding = () => {
-    const routes = navigation.getState().routes;
-    const prevRoute = routes[routes.length - 2];
-
-    return prevRoute?.name === ScreenName.OnboardingDoYouHaveALedgerDevice;
-  };
-
   return (
     <StyledSafeAreaView>
       <Flex
@@ -111,22 +107,22 @@ export default function BuyDeviceScreen() {
         zIndex={1}
         p={6}
       >
-        {isDuringOnboarding() ? (
+        {hasCompletedOnboarding ? (
+          <Flex width={24} />
+        ) : (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
             <Icons.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
-        ) : (
-          <Flex width={24} />
         )}
         <Text variant="h3" lineHeight="18" uppercase>
           {t("buyDevice.title")}
         </Text>
-        {isDuringOnboarding() ? (
-          <Flex width={24} />
-        ) : (
+        {hasCompletedOnboarding ? (
           <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
             <Icons.CloseMedium size="24px" />
           </TouchableOpacity>
+        ) : (
+          <Flex width={24} />
         )}
       </Flex>
       <ScrollView>
