@@ -49,8 +49,6 @@ const AccountRow = ({
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
 
-  console.log("unit", currency.units);
-
   const tag =
     account.derivationMode !== undefined &&
     account.derivationMode !== null &&
