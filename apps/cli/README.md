@@ -1,10 +1,68 @@
-## ledger-live CLI tools
+# ledger-live CLI
 
 > Please be advised this software is experimental and shall not create any obligation for Ledger to continue to develop, offer, support or repair any of its features. The software is provided “as is.” Ledger shall not be liable for any damages whatsoever including loss of profits or data, business interruption arising from using the software.
 
-```
-Ledger Live @ https://github.com/LedgerHQ/ledger-live-common
+This package wraps functionality from `@ledgerhq/live-common` into a suite of tools that can be used directly from the terminal
 
+# Usage
+
+## Install the CLI
+
+```bash
+npm i --global @ledgerhq/live-cli
+```
+
+## Run commands
+
+Jump to the [documentation](#Documentation) for more informations on the available commands
+
+```bash
+ledger-live <commands>
+```
+
+# Development
+
+## Setup
+
+### Requirements
+
+- [NodeJS](https://nodejs.org) `lts/fermium` (v14.x)
+- [PnPm](https://pnpm.io) (v7.x)
+- [Python](https://www.python.org/) (v3.5+)
+- On Linux: `sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev`
+
+## Install
+
+> Reminder: all commands should be run at the root of the monorepository
+
+```bash
+# install dependencies
+pnpm i
+```
+
+## Dev
+```bash
+# launch a watch mode on the source files and recompiles on the fly
+pnpm dev:cli 
+```
+
+## Run
+
+```bash
+# run a command of the cli
+pnpm run:cli <command>
+```
+
+## Build
+
+```bash
+# build the cli for publishing
+pnpm build:cli
+```
+
+# Documentation
+
+```
 Usage: ledger-live <command> ...
 
 Usage: ledger-live cosmosValidators
