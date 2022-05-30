@@ -105,7 +105,6 @@ export class DeviceAction {
       );
     });
 
-    await this.loader.waitFor({ state: "visible" });
     await this.loader.waitFor({ state: "detached" });
     await this.swapSummary.waitFor({ state: "visible" });
   }
