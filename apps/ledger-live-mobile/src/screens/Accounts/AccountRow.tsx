@@ -22,11 +22,11 @@ import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
-import CurrencyIcon from "../../components/CurrencyIcon";
 import { ensureContrast } from "../../colors";
 import Delta from "../../components/Delta";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
+import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
 
 type Props = {
   account: Account | TokenAccount;
@@ -141,20 +141,7 @@ const AccountRow = ({
             progress={portfolioPercentage}
             radius={22}
           >
-            <Flex
-              bg={color}
-              width={"32px"}
-              height={"32px"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              borderRadius={32}
-            >
-              <CurrencyIcon
-                currency={currency}
-                size={20}
-                color={colors.constant.white}
-              />
-            </Flex>
+            <ParentCurrencyIcon currency={currency} size={32} />
           </ProgressLoader>
         </Flex>
         <Flex flex={1} justifyContent="center">

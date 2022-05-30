@@ -6,9 +6,9 @@ import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "styled-components/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
-import CurrencyIcon from "../../../components/CurrencyIcon";
 import { ensureContrast } from "../../../colors";
 import { NavigatorName, ScreenName } from "../../../const";
+import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 
 type Props = {
   currency: Currency;
@@ -49,20 +49,7 @@ const ReadOnlyAccountRow = ({ navigation, currency }: Props) => {
             progress={0}
             radius={22}
           >
-            <Flex
-              bg={color}
-              width={"32px"}
-              height={"32px"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              borderRadius={32}
-            >
-              <CurrencyIcon
-                currency={currency}
-                size={20}
-                color={colors.constant.white}
-              />
-            </Flex>
+            <ParentCurrencyIcon currency={currency} size={32} />
           </ProgressLoader>
         </Flex>
         <Flex flex={1} justifyContent="center">

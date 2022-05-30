@@ -1,24 +1,16 @@
-import React, { useCallback, useEffect } from "react";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import styled from "styled-components/native";
+import React, { useCallback } from "react";
+import { Text, Box } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Button from "../components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "../const";
-import { completeOnboarding, setReadOnlyMode } from "../actions/settings";
-import { useDispatch } from "react-redux";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
 
-const StyledSafeAreaView = styled(SafeAreaView)`
-  background-color: ${({ theme }) => theme.colors.background.main};
-`;
-
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
 
@@ -41,6 +33,7 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         justifyContent: "flex-end",
       }}
     >
+      {/* A transparent clickable overlay filling the remaining space on the screen */}
       <Pressable
         style={[
           StyleSheet.absoluteFill,
