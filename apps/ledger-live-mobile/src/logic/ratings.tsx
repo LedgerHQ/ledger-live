@@ -90,7 +90,7 @@ const useRatings = () => {
   const accounts: Account[] = useSelector(accountsSelector);
   const currAppLanguage = useSelector(languageSelector);
 
-  const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance).length, [accounts]);
+  const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
