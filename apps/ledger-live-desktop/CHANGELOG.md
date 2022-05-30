@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.42.0-llmnext.1
+
+### Minor Changes
+
+- b054eb4d: Fix wrong cosmos validator at summary step
+
 ## 2.42.0-llmnext.0
 
 ### Minor Changes
