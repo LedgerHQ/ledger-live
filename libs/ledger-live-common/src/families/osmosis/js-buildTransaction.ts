@@ -4,6 +4,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { cosmos } from "@keplr-wallet/cosmos";
 import { AminoMsg, AminoSignResponse } from "@cosmjs/amino";
 import {
+  MsgBeginRedelegate,
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
@@ -11,6 +12,7 @@ import {
   AminoMsgSend,
   AminoMsgDelegate,
   AminoMsgUndelegate,
+  AminoMsgBeginRedelegate,
 } from "@cosmjs/stargate";
 import Long from "long";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
@@ -102,6 +104,45 @@ export const buildTransaction = async (
           });
           break;
         }
+      }
+      break;
+
+    case "redelegate":
+      if (
+        transaction.sourceValidator &&
+        transaction.validators &&
+        transaction.validators.length > 0 &&
+        transaction.validators[0].address &&
+        transaction.validators[0].amount.gt(0)
+      ) {
+        const validator = transaction.validators[0];
+        const aminoMsg: AminoMsgBeginRedelegate = {
+          type: "cosmos-sdk/MsgBeginRedelegate",
+          value: {
+            delegator_address: account.freshAddress,
+            validator_src_address: transaction.sourceValidator,
+            validator_dst_address: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: validator.amount.toString(),
+            },
+          },
+        };
+        aminoMsgs.push(aminoMsg);
+
+        // PROTO MESSAGE
+        protoMsgs.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+          value: MsgBeginRedelegate.encode({
+            delegatorAddress: account.freshAddress,
+            validatorSrcAddress: transaction.sourceValidator,
+            validatorDstAddress: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: validator.amount.toString(),
+            },
+          }).finish(),
+        });
       }
       break;
 

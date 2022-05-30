@@ -1,6 +1,5 @@
-import { BigNumber } from "bignumber.js";
 import type { Operation } from "../../types";
-import { OsmosisExtraTxInfo } from "./types";
+import { fromOperationExtraRaw, toOperationExtraRaw } from "../cosmos/account";
 
 function formatOperationSpecifics(op: Operation): string {
   const { memo, validators } = op.extra;
@@ -16,40 +15,6 @@ function formatOperationSpecifics(op: Operation): string {
     str += `\n    Memo: ${memo}`;
   }
   return str;
-}
-
-// TODO verify if this is actually used
-export function fromOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-): OsmosisExtraTxInfo | Record<string, any> | null | undefined {
-  if (extra && extra.validators) {
-    return {
-      ...extra,
-      validators: extra.validators.map((o) => ({
-        ...o,
-        amount: new BigNumber(o.amount),
-      })),
-    };
-  }
-
-  return extra;
-}
-
-// TODO verify if this is actually used
-export function toOperationExtraRaw(
-  extra: Record<string, any> | null | undefined
-): OsmosisExtraTxInfo | Record<string, any> | null | undefined {
-  if (extra && extra.validators) {
-    return {
-      ...extra,
-      validators: extra.validators.map((o) => ({
-        ...o,
-        amount: o.amount.toString(),
-      })),
-    };
-  }
-
-  return extra;
 }
 
 export default {

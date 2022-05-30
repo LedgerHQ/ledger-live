@@ -117,14 +117,18 @@ const signOperation = ({
         if (transaction.mode === "send") {
           senders.push(account.freshAddress);
           recipients.push(transaction.recipient);
-        } else if (transaction.mode === "delegate") {
+        }
+
+        if (transaction.mode === "redelegate") {
+          Object.assign(extra, {
+            sourceValidator: transaction.sourceValidator,
+          });
+        }
+
+        if (transaction.mode !== "send") {
           Object.assign(extra, {
             validators: transaction.validators,
           });
-        } else if (type === "UNDELEGATE") {
-          // do nothing
-        } else {
-          throw new Error("Unsupported transaction type");
         }
 
         // build optimistic operation
