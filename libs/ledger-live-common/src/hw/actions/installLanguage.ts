@@ -1,4 +1,12 @@
-import { concat, of, EMPTY, interval, Observable, TimeoutError, throwError } from "rxjs";
+import {
+  concat,
+  of,
+  EMPTY,
+  interval,
+  Observable,
+  TimeoutError,
+  throwError,
+} from "rxjs";
 import {
   scan,
   debounce,
@@ -9,16 +17,22 @@ import {
   distinctUntilChanged,
   timeout,
 } from "rxjs/operators";
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "../../types/manager";
 import { useReplaySubject } from "../../observable";
-import type { InstallLanguageEvent, InstallLanguageRequest } from "../installLanguage";
+import type {
+  InstallLanguageEvent,
+  InstallLanguageRequest,
+} from "../installLanguage";
 import type { Action, Device } from "./types";
 import isEqual from "lodash/isEqual";
 import { ConnectManagerTimeout } from "../../errors";
 import { currentMode } from "./app";
-import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+} from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Language } from "../../types/languages";
 
@@ -36,7 +50,10 @@ type State = {
 };
 
 // there's no result for this device action
-type InstallLanguageAction = Omit<Action<Language, State, undefined>, "mapResult">;
+type InstallLanguageAction = Omit<
+  Action<Language, State, undefined>,
+  "mapResult"
+>;
 
 type Event =
   | InstallLanguageEvent
@@ -48,7 +65,6 @@ type Event =
       type: "deviceChange";
       device: Device | null | undefined;
     };
-
 
 const getInitialState = (device?: Device | null | undefined): State => ({
   isLoading: !!device,
@@ -74,7 +90,12 @@ const reducer = (state: State, e: Event): State => {
         isLoading: false,
       };
     case "appDetected":
-      return { ...state, unresponsive: false, requestQuitApp: true, isLoading: false };
+      return {
+        ...state,
+        unresponsive: false,
+        requestQuitApp: true,
+        isLoading: false,
+      };
     case "devicePermissionRequested":
       return {
         ...state,
@@ -155,7 +176,9 @@ const implementations = {
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
             catchError((err) => {
-              const productName = getDeviceModel(pollingOnDevice.modelId).productName;
+              const productName = getDeviceModel(
+                pollingOnDevice.modelId
+              ).productName;
               return err instanceof TimeoutError
                 ? of({
                     type: "error",
@@ -243,7 +266,9 @@ const implementations = {
     }).pipe(distinctUntilChanged(isEqual)),
 };
 export const createAction = (
-  installLanuageExec: (arg0: InstallLanguageRequest) => Observable<InstallLanguageEvent>
+  installLanuageExec: (
+    arg0: InstallLanguageRequest
+  ) => Observable<InstallLanguageEvent>
 ): InstallLanguageAction => {
   const installLanguage = (device, language: Language) => {
     return concat(
@@ -267,7 +292,10 @@ export const createAction = (
     );
   };
 
-  const useHook = (device: Device | null | undefined, language: Language): State => {
+  const useHook = (
+    device: Device | null | undefined,
+    language: Language
+  ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);
     useEffect(() => {
