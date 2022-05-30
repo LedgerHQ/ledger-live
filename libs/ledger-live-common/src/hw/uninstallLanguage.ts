@@ -1,6 +1,9 @@
 import { Observable, from, of, throwError, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
+import {
+  DeviceOnDashboardExpected,
+  TransportStatusError,
+} from "@ledgerhq/errors";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -22,7 +25,10 @@ export type UninstallLanguageEvent =
       type: "languageUninstalled";
     };
 
-const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<UninstallLanguageEvent> =>
+const attemptToQuitApp = (
+  transport,
+  appAndVersion?: AppAndVersion
+): Observable<UninstallLanguageEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
@@ -45,7 +51,6 @@ export default function unstallLanguage({
   deviceId,
   language,
 }: UninstallLanguageRequest): Observable<UninstallLanguageEvent> {
-  debugger;
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable<UninstallLanguageEvent>((subscriber) => {
@@ -82,10 +87,14 @@ export default function unstallLanguage({
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&
                   e instanceof TransportStatusError &&
-                  // @ts-expect-error typescript not checking agains the instanceof
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    // @ts-expect-error typescript not checking agains the instanceof
+                    e.statusCode
+                  ))
               ) {
-                let quitAppObservable = from(getAppAndVersion(transport)).pipe(
+                const quitAppObservable = from(
+                  getAppAndVersion(transport)
+                ).pipe(
                   concatMap((appAndVersion) => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)

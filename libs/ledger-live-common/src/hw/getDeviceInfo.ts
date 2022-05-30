@@ -60,7 +60,7 @@ export default async function getDeviceInfo(
     flags,
     bootloaderVersion,
     hardwareVersion,
-    languageId
+    languageId,
   } = res;
   const isOSU = rawVersion.includes("-osu");
   const version = rawVersion.replace("-osu", "");
@@ -105,6 +105,6 @@ export default async function getDeviceInfo(
     onboarded,
     bootloaderVersion,
     hardwareVersion,
-    languageId
+    languageId,
   };
 }

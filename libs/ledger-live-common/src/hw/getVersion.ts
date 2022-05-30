@@ -5,7 +5,9 @@ import { FirmwareInfo } from "../types/manager";
  * Retrieve targetId and firmware version from device
  */
 
-export default async function getVersion(transport: Transport): Promise<FirmwareInfo> {
+export default async function getVersion(
+  transport: Transport
+): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
   const data = res.slice(0, res.length - 2);
   let i = 0;
@@ -69,7 +71,9 @@ export default async function getVersion(transport: Transport): Promise<Firmware
 
     // if SE: mcu version
     const mcuVersionLength = data[i++];
-    let mcuVersionBuf: Buffer = Buffer.from(data.slice(i, i + mcuVersionLength));
+    let mcuVersionBuf: Buffer = Buffer.from(
+      data.slice(i, i + mcuVersionLength)
+    );
     i += mcuVersionLength;
 
     if (mcuVersionBuf[mcuVersionBuf.length - 1] === 0) {
@@ -78,11 +82,16 @@ export default async function getVersion(transport: Transport): Promise<Firmware
     mcuVersion = mcuVersionBuf.toString();
 
     const bootloaderVersionLength = data[i++];
-    let bootloaderVersionBuf: Buffer = Buffer.from(data.slice(i, i + bootloaderVersionLength));
+    let bootloaderVersionBuf: Buffer = Buffer.from(
+      data.slice(i, i + bootloaderVersionLength)
+    );
     i += bootloaderVersionLength;
 
     if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
-       bootloaderVersionBuf = bootloaderVersionBuf.slice(0, bootloaderVersionBuf.length - 1);
+      bootloaderVersionBuf = bootloaderVersionBuf.slice(
+        0,
+        bootloaderVersionBuf.length - 1
+      );
     }
     bootloaderVersion = bootloaderVersionBuf.toString();
 
