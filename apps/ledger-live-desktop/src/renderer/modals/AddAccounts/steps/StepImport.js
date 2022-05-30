@@ -343,7 +343,7 @@ class StepImport extends PureComponent<StepProps, { showAllCreatedAccounts: bool
           })}
 
           {scanStatus === "scanning" ? (
-            <LoadingRow data-test-id="add-accounts-sync-loader">
+            <LoadingRow>
               <Spinner color="palette.text.shade60" size={16} />
               <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
                 {t("common.sync.syncing")}
