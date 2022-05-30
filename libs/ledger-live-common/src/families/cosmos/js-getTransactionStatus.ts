@@ -28,15 +28,22 @@ import {
   getMaxEstimatedBalance,
 } from "./logic";
 import invariant from "invariant";
-import { defaultCosmosAPI } from "./api/Cosmos";
+import { CosmosAPI, defaultCosmosAPI } from "./api/Cosmos";
 
 export class CosmosTransactionStatusManager {
+  protected _api: CosmosAPI = defaultCosmosAPI;
   protected _validatorOperatorAddressPrefix = "cosmosvaloper";
 
-  constructor(options?: { validatorOperatorAddressPrefix?: string }) {
+  constructor(options?: {
+    api?: CosmosAPI;
+    validatorOperatorAddressPrefix?: string;
+  }) {
     if (options?.validatorOperatorAddressPrefix) {
       this._validatorOperatorAddressPrefix =
         options.validatorOperatorAddressPrefix;
+    }
+    if (options?.api) {
+      this._api = options.api;
     }
   }
 
@@ -213,7 +220,7 @@ export class CosmosTransactionStatusManager {
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
-      if (!(await defaultCosmosAPI.isValidRecipent(t.recipient))) {
+      if (!(await this._api.isValidRecipent(t.recipient))) {
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
         });

@@ -59,7 +59,7 @@ export const prepareTransaction = async (account: Account, t: Transaction) => {
       ? await estimateMaxSpendable({ account, parentAccount: null })
       : t.amount;
 
-    gas = await getEstimatedGas();
+    gas = await getEstimatedGas(t.mode);
   }
 
   if (t.mode !== "send" && !memo) {

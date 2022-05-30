@@ -3,8 +3,15 @@ import { Transaction } from "./types";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { cosmos } from "@keplr-wallet/cosmos";
 import { AminoMsg, AminoSignResponse } from "@cosmjs/amino";
-import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { AminoMsgSend, AminoMsgDelegate } from "@cosmjs/stargate";
+import {
+  MsgDelegate,
+  MsgUndelegate,
+} from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import {
+  AminoMsgSend,
+  AminoMsgDelegate,
+  AminoMsgUndelegate,
+} from "@cosmjs/stargate";
 import Long from "long";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
@@ -90,6 +97,41 @@ export const buildTransaction = async (
               amount: {
                 denom: account.currency.units[1].code,
                 amount: transaction.amount.toString(),
+              },
+            }).finish(),
+          });
+          break;
+        }
+      }
+      break;
+
+    case "undelegate":
+      if (transaction.validators && transaction.validators.length > 0) {
+        const validator = transaction.validators[0];
+        if (validator && validator.address /*&& transaction.amount.gt(0)*/) {
+          //todo this should not be gt0, but the minimum required by osmosis to stake
+          const aminoMsg: AminoMsgUndelegate = {
+            type: "cosmos-sdk/MsgUndelegate",
+            value: {
+              delegator_address: account.freshAddress,
+              validator_address: validator.address,
+              amount: {
+                denom: account.currency.units[1].code,
+                amount: validator.amount.toString(),
+              },
+            },
+          };
+          aminoMsgs.push(aminoMsg);
+
+          // PROTO MESSAGE
+          protoMsgs.push({
+            typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
+            value: MsgUndelegate.encode({
+              delegatorAddress: account.freshAddress,
+              validatorAddress: validator.address,
+              amount: {
+                denom: account.currency.units[1].code,
+                amount: validator.amount.toString(),
               },
             }).finish(),
           });
