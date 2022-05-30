@@ -7,33 +7,38 @@ const seedPhraseTypeMask = 0x60;
 const seedPhraseTypeFlagOffset = 5;
 const currentSeedWordIndexMask = 0x1f;
 
-export type SeedPhraseType = "24-words" | "18-words" | "12-words";
+export enum SeedPhraseType {
+  Twelve = "12-words",
+  Eighteen = "18-words",
+  TwentyFour = "24-words",
+}
+
 const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
-  [0, "24-words"],
-  [1, "18-words"],
-  [2, "12-words"],
+  [0, SeedPhraseType.TwentyFour],
+  [1, SeedPhraseType.Eighteen],
+  [2, SeedPhraseType.Twelve],
 ]);
 
 export enum OnboardingStep {
-  welcomeScreen = "WELCOME_SCREEN",
-  setupChoice = "SETUP_CHOICE",
-  pin = "PIN",
-  newDevice = "NEW_DEVICE", // path "new device" & currentSeedWordIndex available
-  newDeviceConfirming = "NEW_DEVICE_CONFIRMING", // path "new device" & currentSeedWordIndex available
-  restoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
-  safetyWarning = "SAFETY WARNING",
-  ready = "READY",
+  WelcomeScreen = "WELCOME_SCREEN",
+  SetupChoice = "SETUP_CHOICE",
+  Pin = "PIN",
+  NewDevice = "NEW_DEVICE", // path "new device" & currentSeedWordIndex available
+  NewDeviceConfirming = "NEW_DEVICE_CONFIRMING", // path "new device" & currentSeedWordIndex available
+  RestoreSeed = "RESTORE_SEED", // path "restore seed" & currentSeedWordIndex available
+  SafetyWarning = "SAFETY WARNING",
+  Ready = "READY",
 }
 
 const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
-  [0, OnboardingStep.welcomeScreen],
-  [1, OnboardingStep.setupChoice],
-  [2, OnboardingStep.pin],
-  [3, OnboardingStep.newDevice],
-  [4, OnboardingStep.newDeviceConfirming],
-  [5, OnboardingStep.restoreSeed],
-  [6, OnboardingStep.safetyWarning],
-  [7, OnboardingStep.ready],
+  [0, OnboardingStep.WelcomeScreen],
+  [1, OnboardingStep.SetupChoice],
+  [2, OnboardingStep.Pin],
+  [3, OnboardingStep.NewDevice],
+  [4, OnboardingStep.NewDeviceConfirming],
+  [5, OnboardingStep.RestoreSeed],
+  [6, OnboardingStep.SafetyWarning],
+  [7, OnboardingStep.Ready],
 ]);
 
 export type OnboardingState = {

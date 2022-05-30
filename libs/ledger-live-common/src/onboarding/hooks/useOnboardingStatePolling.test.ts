@@ -55,9 +55,9 @@ describe("useOnboardingStatePolling", () => {
     anOnboardingState = {
       isOnboarded: false,
       isInRecoveryMode: false,
-      seedPhraseType: "24-words" as SeedPhraseType,
+      seedPhraseType: SeedPhraseType.TwentyFour,
       currentSeedWordIndex: 0,
-      currentOnboardingStep: OnboardingStep.newDevice,
+      currentOnboardingStep: OnboardingStep.NewDevice,
     };
   });
 
@@ -144,7 +144,7 @@ describe("useOnboardingStatePolling", () => {
         .mockReturnValueOnce(anOnboardingState)
         .mockReturnValue({
           ...anOnboardingState,
-          currentOnboardingStep: OnboardingStep.newDevice,
+          currentOnboardingStep: OnboardingStep.NewDevice,
         });
 
       const device = aDevice;

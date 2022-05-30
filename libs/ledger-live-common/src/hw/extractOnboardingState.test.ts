@@ -53,7 +53,7 @@ describe("@hw/extractOnboardingState", () => {
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.welcomeScreen
+            OnboardingStep.WelcomeScreen
           );
         });
       });
@@ -68,7 +68,7 @@ describe("@hw/extractOnboardingState", () => {
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.setupChoice
+            OnboardingStep.SetupChoice
           );
         });
       });
@@ -83,7 +83,7 @@ describe("@hw/extractOnboardingState", () => {
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.pin
+            OnboardingStep.Pin
           );
         });
       });
@@ -112,7 +112,7 @@ describe("@hw/extractOnboardingState", () => {
 
               expect(onboardingState).not.toBeNull();
               expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.newDevice
+                OnboardingStep.NewDevice
               );
             });
 
@@ -139,7 +139,7 @@ describe("@hw/extractOnboardingState", () => {
 
               expect(onboardingState).not.toBeNull();
               expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.newDeviceConfirming
+                OnboardingStep.NewDeviceConfirming
               );
             });
 
@@ -198,7 +198,7 @@ describe("@hw/extractOnboardingState", () => {
 
               expect(onboardingState).not.toBeNull();
               expect(onboardingState?.currentOnboardingStep).toBe(
-                OnboardingStep.restoreSeed
+                OnboardingStep.RestoreSeed
               );
             });
 
@@ -227,7 +227,7 @@ describe("@hw/extractOnboardingState", () => {
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.safetyWarning
+            OnboardingStep.SafetyWarning
           );
         });
       });
@@ -242,7 +242,7 @@ describe("@hw/extractOnboardingState", () => {
 
           expect(onboardingState).not.toBeNull();
           expect(onboardingState?.currentOnboardingStep).toBe(
-            OnboardingStep.ready
+            OnboardingStep.Ready
           );
         });
       });

@@ -68,12 +68,12 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
     "Setup choice",
     "Setting up pin",
     `Writing seed words ${
-      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.newDevice
+      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.NewDevice
         ? onboardingState.currentSeedWordIndex + 1
         : ""
     }`,
     `Confirming seed words ${
-      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.newDeviceConfirming
+      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.NewDeviceConfirming
         ? onboardingState.currentSeedWordIndex + 1
         : ""
     }`,
@@ -95,25 +95,25 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
     }
     
     switch(onboardingState?.currentOnboardingStep) {
-      case OnboardingStep.welcomeScreen:
+      case OnboardingStep.WelcomeScreen:
         setStepIndex(1);
         break;
-      case OnboardingStep.setupChoice:
+      case OnboardingStep.SetupChoice:
         setStepIndex(2);
         break;
-      case OnboardingStep.pin:
+      case OnboardingStep.Pin:
         setStepIndex(3);
         break;
-      case OnboardingStep.newDevice:
+      case OnboardingStep.NewDevice:
         setStepIndex(4);
         break;
-      case OnboardingStep.newDeviceConfirming:
+      case OnboardingStep.NewDeviceConfirming:
         setStepIndex(5);
         break;
-      case OnboardingStep.safetyWarning:
+      case OnboardingStep.SafetyWarning:
         setStepIndex(6);
         break;
-      case OnboardingStep.ready:
+      case OnboardingStep.Ready:
         setStepIndex(7);
         break;
       default:
