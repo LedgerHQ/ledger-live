@@ -15,7 +15,7 @@ export type LanguagePackage = {
 };
 
 export const languageIds: { [key in Language]: number } = {
-    english: 0x00,
-    french: 0x01,
-    spanish: 0x02,
+  english: 0x00,
+  french: 0x01,
+  spanish: 0x02,
 };

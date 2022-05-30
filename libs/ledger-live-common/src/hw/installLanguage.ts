@@ -1,6 +1,10 @@
 import { Observable, from, of, throwError, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { DeviceOnDashboardExpected, TransportError, TransportStatusError } from "@ledgerhq/errors";
+import {
+  DeviceOnDashboardExpected,
+  TransportError,
+  TransportStatusError,
+} from "@ledgerhq/errors";
 
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
@@ -17,34 +21,38 @@ import { isDashboardName } from "./isDashboardName";
 
 export type InstallLanguageEvent =
   | {
-    type: "appDetected";
-  }
+      type: "appDetected";
+    }
   | {
-    type: "unresponsiveDevice";
-  }
+      type: "unresponsiveDevice";
+    }
   | {
-    type: "progress";
-    progress: number;
-  }
+      type: "progress";
+      progress: number;
+    }
   | {
-    type: "devicePermissionRequested";
-  } | {
-    type: "languageInstalled";
-  };
+      type: "devicePermissionRequested";
+    }
+  | {
+      type: "languageInstalled";
+    };
 
-const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<InstallLanguageEvent> =>
+const attemptToQuitApp = (
+  transport,
+  appAndVersion?: AppAndVersion
+): Observable<InstallLanguageEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
-      concatMap(() =>
-        of(<InstallLanguageEvent>{
-          type: "unresponsiveDevice",
-        })
-      ),
-      catchError((e) => throwError(e))
-    )
+        concatMap(() =>
+          of(<InstallLanguageEvent>{
+            type: "unresponsiveDevice",
+          })
+        ),
+        catchError((e) => throwError(e))
+      )
     : of({
-      type: "appDetected",
-    });
+        type: "appDetected",
+      });
 
 export type InstallLanguageRequest = {
   deviceId: string;
@@ -55,7 +63,6 @@ export default function installLanguage({
   deviceId,
   language,
 }: InstallLanguageRequest): Observable<InstallLanguageEvent> {
-  debugger;
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable<InstallLanguageEvent>((subscriber) => {
@@ -70,7 +77,10 @@ export default function installLanguage({
             mergeMap(async (deviceInfo) => {
               timeoutSub.unsubscribe();
 
-              const deviceVersion = await ManagerAPI.getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo));
+              const deviceVersion = await ManagerAPI.getDeviceVersion(
+                deviceInfo.targetId,
+                getProviderId(deviceInfo)
+              );
 
               const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
                 version: deviceInfo.version,
@@ -78,11 +88,19 @@ export default function installLanguage({
                 provider: getProviderId(deviceInfo),
               });
 
-              const languages = await ManagerAPI.getLanguagePackages(deviceVersion.id, seFirmwareVersion.id);
+              const languages = await ManagerAPI.getLanguagePackages(
+                deviceVersion.id,
+                seFirmwareVersion.id
+              );
 
-              const packs: LanguagePackage[] = languages.filter((l: any) => l.language === language);
+              const packs: LanguagePackage[] = languages.filter(
+                (l: any) => l.language === language
+              );
 
-              if (!packs.length) return subscriber.error(new Error(`No language ${language} found`));
+              if (!packs.length)
+                return subscriber.error(
+                  new Error(`No language ${language} found`)
+                );
               const pack = packs[1];
 
               const { apdu_install_url } = pack;
@@ -113,19 +131,25 @@ export default function installLanguage({
               for (let i = 0; i < apdus.length; i++) {
                 if (apdus[i].startsWith("e030")) {
                   subscriber.next({
-                    type: "devicePermissionRequested"
+                    type: "devicePermissionRequested",
                   });
                 }
 
-                const response = await transport.exchange(Buffer.from(apdus[i], "hex"));
+                const response = await transport.exchange(
+                  Buffer.from(apdus[i], "hex")
+                );
                 const status = response.readUInt16BE(response.length - 2);
                 const statusStr = status.toString(16);
 
                 // Some error handling
                 if (status === 0x5501) {
-                  return subscriber.error(new LanguageInstallRefusedOnDevice(statusStr));
+                  return subscriber.error(
+                    new LanguageInstallRefusedOnDevice(statusStr)
+                  );
                 } else if (status !== 0x9000) {
-                  return subscriber.error(new TransportError("Unexpected device response", statusStr));
+                  return subscriber.error(
+                    new TransportError("Unexpected device response", statusStr)
+                  );
                 }
 
                 subscriber.next({
@@ -135,7 +159,7 @@ export default function installLanguage({
               }
 
               subscriber.next({
-                type: "languageInstalled"
+                type: "languageInstalled",
               });
 
               subscriber.complete();
@@ -145,23 +169,27 @@ export default function installLanguage({
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&
                   e instanceof TransportStatusError &&
-                  // @ts-expect-error typescript not checking agains the instanceof
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
+                    // @ts-expect-error typescript not checking agains the instanceof
+                    e.statusCode
+                  ))
               ) {
-                let quitAppObservable = from(getAppAndVersion(transport)).pipe(
+                const quitAppObservable = from(
+                  getAppAndVersion(transport)
+                ).pipe(
                   concatMap((appAndVersion) => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of<InstallLanguageEvent>({
-                        type: "appDetected",
-                      });
+                          type: "appDetected",
+                        });
                   })
                 );
 
                 quitAppObservable.subscribe(
-                  event => subscriber.next(event),
-                  error => subscriber.error(error)
-                )
+                  (event) => subscriber.next(event),
+                  (error) => subscriber.error(error)
+                );
               }
 
               subscriber.error(e);
