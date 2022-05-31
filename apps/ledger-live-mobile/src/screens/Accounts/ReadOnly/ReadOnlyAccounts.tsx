@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { FlatList, TouchableOpacity } from "react-native";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { FlatList } from "react-native";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -21,6 +21,8 @@ import GradientContainer from "../../../components/GradientContainer";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
+import AccountsNavigationHeader from "../AccountsNavigationHeader";
+import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -53,7 +55,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
   const search = params?.search;
 
   const renderItem = useCallback(
-    ({ item }: { item: Account | TokenAccount }) => (
+    ({ item }: { item: CryptoCurrency }) => (
       <ReadOnlyAccountRow navigation={navigation} currency={item} />
     ),
     [navigation],
@@ -65,7 +67,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
         data={items}
         renderItem={renderItem}
         keyExtractor={(i: any) => i.id}
-        ListEmptyComponent={<NoAccounts />}
+        ListEmptyComponent={<NoAccounts navigation={navigation} />}
         contentContainerStyle={{
           paddingHorizontal: 16,
           paddingBottom: TAB_BAR_SAFE_HEIGHT,
@@ -131,24 +133,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <Flex p={6} flexDirection="row" alignItems="center">
-          <Box mr={3}>
-            <TouchableOpacity onPress={navigation.goBack}>
-              <Icons.ArrowLeftMedium size={24} />
-            </TouchableOpacity>
-          </Box>
-          <Flex
-            height={30}
-            flexDirection="column"
-            justifyContent="center"
-            mt={4}
-            mb={3}
-            flex={1}
-          >
-            <Text variant="h1">{t("distribution.title")}</Text>
-          </Flex>
-        </Flex>
-
+        <AccountsNavigationHeader readOnly/>
         <FilteredSearchBar
           list={accounts}
           inputWrapperStyle={{
