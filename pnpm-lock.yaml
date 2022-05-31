@@ -908,6 +908,7 @@ importers:
       eth-sig-util: 3.0.1
       ethereumjs-abi: ^0.6.8
       ethereumjs-util: ^7.1.4
+      events: ^3.3.0
       expect: ^27.4.6
       fs: ^0.0.1-security
       generic-pool: ^3.8.2
@@ -1036,6 +1037,7 @@ importers:
       eth-sig-util: 3.0.1
       ethereumjs-abi: 0.6.8
       ethereumjs-util: 7.1.4
+      events: 3.3.0
       expect: 27.5.1
       generic-pool: 3.8.2
       invariant: 2.2.4
@@ -18645,7 +18647,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
     dev: false
@@ -22851,7 +22853,7 @@ packages:
     dev: true
 
   /decamelize/1.2.0:
-    resolution: {integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=}
+    resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
 
   /decamelize/4.0.0:
@@ -27201,16 +27203,6 @@ packages:
     resolution: {integrity: sha512-gBEuXOPNOKPrLdZpMFUSTyIo1eT2NSZRrwZ9r/0Jqw5tmT3Yvxfmu8KBHw8xW2XQkw6E/JoG+OlEq7UDtSUNgw==}
     dependencies:
       tabbable: 5.3.2
-    dev: false
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
     dev: false
 
   /follow-redirects/1.15.0_debug@4.3.2:
