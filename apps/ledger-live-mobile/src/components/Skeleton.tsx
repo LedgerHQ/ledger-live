@@ -1,6 +1,6 @@
-import { useTheme } from "@react-navigation/native";
-import React, { memo, ReactElement, useEffect, useMemo, useRef } from "react";
+import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
 import { Animated } from "react-native";
+import { useTheme } from "@react-navigation/native";
 
 type Props = {
   style?: any;

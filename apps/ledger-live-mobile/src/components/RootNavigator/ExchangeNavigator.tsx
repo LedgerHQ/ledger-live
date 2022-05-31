@@ -1,12 +1,12 @@
-import { Text } from "@ledgerhq/native-ui";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React, { useMemo } from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
-import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
-import Buy from "../../screens/Exchange/Buy";
 import Sell from "../../screens/Exchange/Sell";
+import Buy from "../../screens/Exchange/Buy";
+import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
 
 type TabLabelProps = {
   focused: boolean;

@@ -1,94 +1,96 @@
 /* eslint-disable import/no-unresolved */
 // @flow
-import { NotEnoughBalance } from "@ledgerhq/errors";
+import "./polyfill";
+import "./live-common-setup";
+import "../e2e/e2e-bridge-setup";
+import "react-native-gesture-handler";
+import React, {
+  Component,
+  useCallback,
+  useContext,
+  useMemo,
+  useEffect,
+} from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Linking,
+  Appearance,
+  AppState,
+} from "react-native";
+import SplashScreen from "react-native-splash-screen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { I18nextProvider } from "react-i18next";
+import { NavigationContainer } from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
-import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
+import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
+import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
+
 import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
 import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import { GlobalCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/GlobalCatalogProvider";
 import { RampCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
-import { log } from "@ledgerhq/logs";
-import { NavigationContainer } from "@react-navigation/native";
-import * as Sentry from "@sentry/react-native";
-import React, {
-  Component,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-} from "react";
-import { I18nextProvider } from "react-i18next";
-import {
-  Appearance,
-  AppState,
-  Linking,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import SplashScreen from "react-native-splash-screen";
-import { connect, useDispatch, useSelector } from "react-redux";
-import "../e2e/e2e-bridge-setup";
-import { useTrackingPairs } from "./actions/general";
-import { setOsTheme } from "./actions/settings";
-import HookAnalytics from "./analytics/HookAnalytics";
-import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
-import SyncNewAccounts from "./bridge/SyncNewAccounts";
-import { darkTheme, lightTheme } from "./colors";
-import AdjustProvider from "./components/AdjustProvider";
-import AnalyticsConsole from "./components/AnalyticsConsole";
-import CounterValuesProvider from "./components/CounterValuesProvider";
-import useDBSaveEffect from "./components/DBSave";
-// $FlowFixMe
-import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
-// $FlowFixMe
-import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
-import HookSentry from "./components/HookSentry";
-import LoadingApp from "./components/LoadingApp";
-import NavBarColorHandler from "./components/NavBarColorHandler";
-import RootNavigator from "./components/RootNavigator";
-import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
-import StyledStatusBar from "./components/StyledStatusBar";
-import ThemeDebug from "./components/ThemeDebug";
-import useAppStateListener from "./components/useAppStateListener";
-import { NavigatorName, ScreenName } from "./const";
-import AuthPass from "./context/AuthPass";
-import ButtonUseTouchable from "./context/ButtonUseTouchable";
-import LedgerStoreProvider from "./context/LedgerStore";
-import LocaleProvider, { i18n } from "./context/Locale";
-import RebootProvider from "./context/Reboot";
-import { saveAccounts, saveBle, saveCountervalues, saveSettings } from "./db";
-import "./live-common-setup";
+
 import logger from "./logger";
-import "./polyfill";
-import type { State } from "./reducers";
-import { exportSelector as accountsExportSelector } from "./reducers/accounts";
-import { exportSelector as bleSelector } from "./reducers/ble";
+import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
   osThemeSelector,
   themeSelector,
 } from "./reducers/settings";
-import { isReadyRef, navigationRef } from "./rootnavigation";
-// $FlowFixMe
-import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
-import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
-import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
+import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { exportSelector as bleSelector } from "./reducers/ble";
+import LocaleProvider, { i18n } from "./context/Locale";
+import RebootProvider from "./context/Reboot";
+import ButtonUseTouchable from "./context/ButtonUseTouchable";
+import AuthPass from "./context/AuthPass";
+import LedgerStoreProvider from "./context/LedgerStore";
+import LoadingApp from "./components/LoadingApp";
+import StyledStatusBar from "./components/StyledStatusBar";
+import AnalyticsConsole from "./components/AnalyticsConsole";
+import ThemeDebug from "./components/ThemeDebug";
+import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
+import useDBSaveEffect from "./components/DBSave";
+import useAppStateListener from "./components/useAppStateListener";
+import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
-import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import WalletConnectProvider, {
   // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
+import HookAnalytics from "./analytics/HookAnalytics";
+import HookSentry from "./components/HookSentry";
+import RootNavigator from "./components/RootNavigator";
+import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
+import CounterValuesProvider from "./components/CounterValuesProvider";
+import type { State } from "./reducers";
+import { navigationRef, isReadyRef } from "./rootnavigation";
+import { useTrackingPairs } from "./actions/general";
+import { ScreenName, NavigatorName } from "./const";
+import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
+import { lightTheme, darkTheme } from "./colors";
+import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
+import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
+import NavBarColorHandler from "./components/NavBarColorHandler";
+import { setOsTheme } from "./actions/settings";
+// $FlowFixMe
+import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
+// $FlowFixMe
+import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
 // $FlowFixMe
 import StyleProvider from "./StyleProvider";
+// $FlowFixMe
+import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
+import AdjustProvider from "./components/AdjustProvider";
 
 const themes = {
   light: lightTheme,

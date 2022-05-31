@@ -1,22 +1,24 @@
 /* @flow */
+import React, { useCallback, useMemo } from "react";
+import { Trans } from "react-i18next";
+import { View, StyleSheet } from "react-native";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
-  getMainAccount
+  getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import React, { useCallback, useMemo } from "react";
-import { Trans } from "react-i18next";
-import { StyleSheet, View } from "react-native";
-import { withTheme } from "../../colors";
-import Button from "../../components/Button";
+import { ScreenName, NavigatorName } from "../../const";
+
 import LText from "../../components/LText";
-import { NavigatorName, ScreenName } from "../../const";
-import Exchange from "../../icons/Exchange";
+import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
+import Exchange from "../../icons/Exchange";
 import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
+
+import { withTheme } from "../../colors";
 
 type Props = {
   account: AccountLike,

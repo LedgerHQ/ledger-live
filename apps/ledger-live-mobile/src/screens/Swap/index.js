@@ -1,23 +1,9 @@
 // @flow
 
-import {
-  accountWithMandatoryTokens,
-  flattenAccounts,
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import { useSwapTransaction } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import {
-  CurrenciesStatus,
-  getSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/exchange/swap/logic";
-import type {
-  ExchangeRate,
-  SwapTransaction,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { useTheme } from "@react-navigation/native";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
+import { ScrollView, StyleSheet, View, Keyboard } from "react-native";
+
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -28,29 +14,49 @@ import type {
   AccountLike,
   TokenAccount,
 } from "@ledgerhq/live-common/lib/types/account";
-import { useTheme } from "@react-navigation/native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+
+import type {
+  ExchangeRate,
+  SwapTransaction,
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+
+import { useSwapTransaction } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+
+import {
+  CurrenciesStatus,
+  getSupportedCurrencies,
+} from "@ledgerhq/live-common/lib/exchange/swap/logic";
+
 import { Trans } from "react-i18next";
-import { Keyboard, ScrollView, StyleSheet, View } from "react-native";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import {
+  accountWithMandatoryTokens,
+  flattenAccounts,
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import { useDispatch, useSelector } from "react-redux";
-import { swapAcceptProvider } from "../../actions/settings";
-import { Track, TrackScreen } from "../../analytics";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
+import AccountAmountRow from "./FormSelection/AccountAmountRow";
 import Button from "../../components/Button";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Switch from "../../components/Switch";
-import { NavigatorName, ScreenName } from "../../const";
-import Info from "../../icons/Info";
 import { accountsSelector } from "../../reducers/accounts";
+
+import { NavigatorName, ScreenName } from "../../const";
+import KeyboardView from "../../components/KeyboardView";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import Info from "../../icons/Info";
+import RatesSection from "./FormSelection/RatesSection";
 import { swapAcceptedProvidersSelector } from "../../reducers/settings";
 import Confirmation from "./Confirmation";
+import { swapAcceptProvider } from "../../actions/settings";
 import Connect from "./Connect";
+import { Track, TrackScreen } from "../../analytics";
 import DisclaimerModal from "./DisclaimerModal";
-import AccountAmountRow from "./FormSelection/AccountAmountRow";
-import RatesSection from "./FormSelection/RatesSection";
 
 export type SwapRouteParams = {
   swap: SwapDataType,

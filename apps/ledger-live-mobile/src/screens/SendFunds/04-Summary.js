@@ -1,40 +1,40 @@
 /* @flow */
-import { NotEnoughGas } from "@ledgerhq/errors";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import { useTheme } from "@react-navigation/native";
-import React, { Component, useCallback, useEffect, useState } from "react";
-import { Trans } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import React, { useState, useCallback, Component, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import {
+  getMainAccount,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
+import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
+import { NotEnoughGas } from "@ledgerhq/errors";
+import { useTheme } from "@react-navigation/native";
+import { accountScreenSelector } from "../../reducers/accounts";
+import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
-import Alert from "../../components/Alert";
+import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
 import Button from "../../components/Button";
-import ConfirmationModal from "../../components/ConfirmationModal";
 import LText from "../../components/LText";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import SectionSeparator from "../../components/SectionSeparator";
+import Alert from "../../components/Alert";
+import TranslatedError from "../../components/TranslatedError";
 import SendRowsCustom from "../../components/SendRowsCustom";
 import SendRowsFee from "../../components/SendRowsFee";
-import TranslatedError from "../../components/TranslatedError";
-import { NavigatorName, ScreenName } from "../../const";
-import AlertTriangle from "../../icons/AlertTriangle";
-import Info from "../../icons/Info";
-import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { isCurrencySupported } from "../Exchange/coinifyConfig";
-import SummaryAmountSection from "./SummaryAmountSection";
 import SummaryFromSection from "./SummaryFromSection";
-import SummaryNft from "./SummaryNft";
 import SummaryToSection from "./SummaryToSection";
+import SummaryAmountSection from "./SummaryAmountSection";
+import SummaryNft from "./SummaryNft";
 import SummaryTotalSection from "./SummaryTotalSection";
+import SectionSeparator from "../../components/SectionSeparator";
+import AlertTriangle from "../../icons/AlertTriangle";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
+import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
+import { isCurrencySupported } from "../Exchange/coinifyConfig";
 
 const forceInset = { bottom: "always" };
 

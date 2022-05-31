@@ -1,19 +1,21 @@
 // @flow
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import React, { useCallback } from "react";
+import { Trans } from "react-i18next";
+import { StyleSheet, View, FlatList } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
+import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+
 import { useTheme } from "@react-navigation/native";
-import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
-import { FlatList, StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import { track, TrackScreen } from "../../analytics";
-import CurrencyRow from "../../components/CurrencyRow";
+import { track } from "../../analytics/segment";
+import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import KeyboardView from "../../components/KeyboardView";
+import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { NavigatorName, ScreenName } from "../../const";
 import { useRampCatalogCurrencies } from "./hooks";

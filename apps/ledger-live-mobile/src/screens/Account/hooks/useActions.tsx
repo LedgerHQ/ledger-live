@@ -1,18 +1,18 @@
+import React, { useMemo } from "react";
+import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
-  getAccountSpendableBalance,
   getMainAccount,
+  getAccountSpendableBalance,
 } from "@ledgerhq/live-common/lib/account";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { Icons } from "@ledgerhq/native-ui";
-import React, { useMemo } from "react";
-import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
+import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../../const";
-import perFamilyAccountActions from "../../../generated/accountActions";
-import WalletConnect from "../../../icons/WalletConnect";
 // eslint-disable-next-line import/named
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import perFamilyAccountActions from "../../../generated/accountActions";
+import WalletConnect from "../../../icons/WalletConnect";
 
 type Props = {
   account: AccountLike;

@@ -1,5 +1,9 @@
 // @flow
 
+import React, { useEffect, useMemo, useState } from "react";
+import { View, StyleSheet } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useTheme } from "@react-navigation/native";
 import {
   currenciesByMarketcap,
   findCryptoCurrencyByKeyword,
@@ -9,13 +13,9 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import { useTheme } from "@react-navigation/native";
-import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import BigSpinner from "../../icons/BigSpinner";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import { useRampCatalogCurrencies } from "./hooks";
 import SelectAccountCurrency from "./SelectAccountCurrency";
 

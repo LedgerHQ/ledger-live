@@ -1,24 +1,28 @@
 /* @flow */
 
-import { accountWithMandatoryTokens } from "@ledgerhq/live-common/lib/account/helpers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { Button, Icons } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
+import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../analytics";
-import AccountCard from "../../components/AccountCard";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import KeyboardView from "../../components/KeyboardView";
-import LText from "../../components/LText";
-import { NavigatorName, ScreenName } from "../../const";
-import type { SearchResult } from "../../helpers/formatAccountSearchResults";
-import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
-import InfoIcon from "../../icons/Info";
+import { accountWithMandatoryTokens } from "@ledgerhq/live-common/lib/account/helpers";
+import { useTheme } from "@react-navigation/native";
+import { Button, Icons } from "@ledgerhq/native-ui";
 import { accountsSelector } from "../../reducers/accounts";
+import { TrackScreen } from "../../analytics";
+import LText from "../../components/LText";
+import FilteredSearchBar from "../../components/FilteredSearchBar";
+import AccountCard from "../../components/AccountCard";
+import KeyboardView from "../../components/KeyboardView";
+import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
+import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+import InfoIcon from "../../icons/Info";
+import { NavigatorName, ScreenName } from "../../const";
 import { getAccountTuplesForCurrency } from "./hooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];

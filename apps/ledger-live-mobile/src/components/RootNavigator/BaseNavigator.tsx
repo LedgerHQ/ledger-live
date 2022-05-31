@@ -1,81 +1,83 @@
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import React, { useMemo } from "react";
 import {
-  CardStyleInterpolators,
   createStackNavigator,
+  CardStyleInterpolators,
   TransitionPresets,
 } from "@react-navigation/stack";
-import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "../../const";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import styles from "../../navigation/styles";
-import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import Account from "../../screens/Account";
-import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
-import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
-import EditDeviceName from "../../screens/EditDeviceName";
-import ProviderList from "../../screens/Exchange/ProviderList";
-import ProviderView from "../../screens/Exchange/ProviderView";
-import ScreenHeader from "../../screens/Exchange/ScreenHeader";
-import Learn from "../../screens/Learn";
-import ManagerMain from "../../screens/Manager/Manager";
-import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import OperationDetails, {
   BackButton,
   CloseButton,
 } from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
-import PlatformApp from "../../screens/Platform/App";
-import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
+import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
+import WalletConnectScan from "../../screens/WalletConnect/Scan";
+import WalletConnectConnect from "../../screens/WalletConnect/Connect";
+import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
+import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
+import Main from "./MainNavigator";
+import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+import SettingsNavigator from "./SettingsNavigator";
+import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
+import SendFundsNavigator from "./SendFundsNavigator";
+import SignMessageNavigator from "./SignMessageNavigator";
+import SignTransactionNavigator from "./SignTransactionNavigator";
+import FreezeNavigator from "./FreezeNavigator";
+import UnfreezeNavigator from "./UnfreezeNavigator";
+import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
+import AddAccountsNavigator from "./AddAccountsNavigator";
+import ExchangeNavigator from "./ExchangeNavigator";
+import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
+import AccountSettingsNavigator from "./AccountSettingsNavigator";
+import ImportAccountsNavigator from "./ImportAccountsNavigator";
+import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
+import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
+import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
+import SwapNavigator from "./SwapNavigator";
+import LendingNavigator from "./LendingNavigator";
+import LendingInfoNavigator from "./LendingInfoNavigator";
+import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
+import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
+import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
+import NotificationCenterNavigator from "./NotificationCenterNavigator";
+import AnalyticsNavigator from "./AnalyticsNavigator";
+import NftNavigator from "./NftNavigator";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import Account from "../../screens/Account";
+import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
+import styles from "../../navigation/styles";
+import HeaderRightClose from "../HeaderRightClose";
+import StepHeader from "../StepHeader";
+import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
+import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
+import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
+import RequestAccountNavigator from "./RequestAccountNavigator";
+import VerifyAccount from "../../screens/VerifyAccount";
+import PlatformApp from "../../screens/Platform/App";
+import AccountsNavigator from "./AccountsNavigator";
+
+import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
 import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccountScreen";
 import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
-import VerifyAccount from "../../screens/VerifyAccount";
-import WalletConnectConnect from "../../screens/WalletConnect/Connect";
-import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
-import WalletConnectScan from "../../screens/WalletConnect/Scan";
-import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
-import HeaderRightClose from "../HeaderRightClose";
-import StepHeader from "../StepHeader";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import AccountsNavigator from "./AccountsNavigator";
-import AddAccountsNavigator from "./AddAccountsNavigator";
-import AnalyticsNavigator from "./AnalyticsNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
-import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import ExchangeNavigator from "./ExchangeNavigator";
+
+import ProviderList from "../../screens/Exchange/ProviderList";
+import ProviderView from "../../screens/Exchange/ProviderView";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
-import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
-import FreezeNavigator from "./FreezeNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
-import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
-import LendingInfoNavigator from "./LendingInfoNavigator";
-import LendingNavigator from "./LendingNavigator";
-import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
-import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
-import Main from "./MainNavigator";
-import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
-import NftNavigator from "./NftNavigator";
-import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import RequestAccountNavigator from "./RequestAccountNavigator";
-import SendFundsNavigator from "./SendFundsNavigator";
-import SettingsNavigator from "./SettingsNavigator";
-import SignMessageNavigator from "./SignMessageNavigator";
-import SignTransactionNavigator from "./SignTransactionNavigator";
-import SwapNavigator from "./SwapNavigator";
-import UnfreezeNavigator from "./UnfreezeNavigator";
+
+import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import Learn from "../../screens/Learn";
+import ManagerMain from "../../screens/Manager/Manager";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();

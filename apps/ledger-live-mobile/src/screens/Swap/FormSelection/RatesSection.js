@@ -1,39 +1,42 @@
 // @flow
 
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import type {
-  ExchangeRate,
-  SwapTransaction,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type {
-  Account,
-  AccountLikeArray,
-  CryptoCurrency,
-  TokenAccount,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { BigNumber } from "bignumber.js";
+
+import {
+  getAccountUnit,
+  getAccountName,
+  getAccountCurrency,
+} from "@ledgerhq/live-common/lib/account";
+
+import type {
+  Account,
+  TokenAccount,
+  AccountLikeArray,
+  TokenCurrency,
+  CryptoCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import type {
+  SwapTransaction,
+  ExchangeRate,
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import type { SwapRouteParams } from "..";
-import Button from "../../../components/Button";
-import CurrencyIcon from "../../../components/CurrencyIcon";
+
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import LText from "../../../components/LText";
 import { NavigatorName, ScreenName } from "../../../const";
-import Lock from "../../../icons/Lock";
+import GenericInputLink from "./GenericInputLink";
 import Changelly from "../../../icons/swap/Changelly";
 import Wyre from "../../../icons/swap/Wyre";
+import Lock from "../../../icons/Lock";
 import Unlock from "../../../icons/Unlock";
-import GenericInputLink from "./GenericInputLink";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import LText from "../../../components/LText";
+import Button from "../../../components/Button";
 
 export const providerIcons = {
   changelly: Changelly,

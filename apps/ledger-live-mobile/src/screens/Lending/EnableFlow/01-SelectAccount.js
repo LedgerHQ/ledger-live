@@ -1,42 +1,43 @@
 /* @flow */
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useState, useEffect } from "react";
+import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import type {
   Account,
   AccountLike,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
+
+import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import {
+  getAccountName,
+  getAccountCurrency,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account/helpers";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import React, { useCallback, useEffect, useState } from "react";
-import { Trans } from "react-i18next";
-import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
+import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";
-import Alert from "../../../components/Alert";
-import Card from "../../../components/Card";
-import Circle from "../../../components/Circle";
-import ConfirmationModal from "../../../components/ConfirmationModal";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import { ScreenName, NavigatorName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
+import LText from "../../../components/LText";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
-import LText from "../../../components/LText";
-import { urls } from "../../../config/urls";
-import { NavigatorName, ScreenName } from "../../../const";
-import CheckCircle from "../../../icons/CheckCircle";
-import Info from "../../../icons/Info";
-import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
+import Alert from "../../../components/Alert";
 import LendingWarnings from "../shared/LendingWarnings";
+import Card from "../../../components/Card";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import CheckCircle from "../../../icons/CheckCircle";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import Circle from "../../../components/Circle";
+import Info from "../../../icons/Info";
+import { urls } from "../../../config/urls";
+import { localeSelector } from "../../../reducers/settings";
 
 const SEARCH_KEYS = [
   "account.name",

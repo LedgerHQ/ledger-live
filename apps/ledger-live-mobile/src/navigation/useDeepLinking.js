@@ -1,8 +1,8 @@
 // @flow
-import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { useNavigation } from "@react-navigation/native";
 import { useCallback, useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import { NavigatorName, ScreenName } from "../const";
 
 function getSettingsScreen(pathname) {

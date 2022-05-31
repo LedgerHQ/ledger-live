@@ -1,27 +1,32 @@
+import React, { memo, useMemo } from "react";
+
+import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
 import {
   filterRampCatalogEntries,
   getAllSupportedCryptoCurrencyIds,
 } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+
 import {
-  Account,
   AccountLike,
+  Account,
   CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
+
 import { Icons } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
-import React, { memo, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { NavigatorName, ScreenName } from "../const";
-import { accountsCountSelector } from "../reducers/accounts";
+
 import {
   readOnlyModeEnabledSelector,
   swapSelectableCurrenciesSelector,
 } from "../reducers/settings";
-import useActions from "../screens/Account/hooks/useActions";
+import { accountsCountSelector } from "../reducers/accounts";
+import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
+import useActions from "../screens/Account/hooks/useActions";
 
 type FabAccountActionsProps = {
   account: AccountLike;
