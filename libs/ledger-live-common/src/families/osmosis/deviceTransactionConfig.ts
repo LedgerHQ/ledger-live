@@ -4,6 +4,11 @@ import { formatCurrencyUnit } from "../../currencies";
 import type { DeviceTransactionField } from "../../transaction";
 import type { TransactionStatus } from "../../types";
 
+export type ExtraDeviceTransactionField = {
+  type: "osmosis.extendedAmount";
+  label: string;
+};
+
 function getDeviceTransactionConfig({
   transaction,
   status: { estimatedFees, totalSpent },
@@ -15,7 +20,7 @@ function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
-    type: "amount",
+    type: "osmosis.extendedAmount",
     label: "Amount",
   });
 
@@ -39,6 +44,7 @@ function getDeviceTransactionConfig({
     label: "Total",
     value: formatCurrencyUnit(currency.units[0], totalSpent, {
       showCode: true,
+      disableRounding: true,
     }),
   });
 

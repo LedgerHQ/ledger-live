@@ -51,6 +51,7 @@ export default {
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_osmosis } from "../families/osmosis/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "../families/polkadot/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
@@ -58,6 +59,7 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from 
 export type ExtraDeviceTransactionField =
 | ExtraDeviceTransactionField_cosmos
 | ExtraDeviceTransactionField_filecoin
+| ExtraDeviceTransactionField_osmosis
 | ExtraDeviceTransactionField_polkadot
 | ExtraDeviceTransactionField_stellar
 | ExtraDeviceTransactionField_tezos
