@@ -15,7 +15,7 @@ import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvid
 
 // const defaultURL = urls.buyNanoX;
 const defaultURL =
-  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=f75e14afa4723d02d7b736f4786cbfcc73176f6f6bc65d786081e68f9360c1bf&preview_theme_id=129396441276&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
+  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=f75e14afa4723d02d7b736f4786cbfcc73176f6f6bc65d786081e68f9360c1bf&preview_theme_id=129527414972&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
 
 const PurchaseDevice = () => {
   const { t } = useTranslation();
