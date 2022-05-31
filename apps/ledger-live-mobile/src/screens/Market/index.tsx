@@ -155,7 +155,6 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
           {
             label: t(`market.filters.order.topGainers`),
             requestParam: {
-              limit: 100,
               ids: [],
               starred: [],
               orderBy: "market_cap",
@@ -173,7 +172,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "asc",
               orderBy: "market_cap",
               top100: false,
-              limit: 20
+              limit: 20,
             },
             value: "market_cap_asc",
           },
@@ -183,7 +182,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "desc",
               orderBy: "market_cap",
               top100: false,
-              limit: 20
+              limit: 20,
             },
             value: "market_cap_desc",
           },
@@ -282,7 +281,7 @@ export default function Market({ navigation }: { navigation: any }) {
   );
 
   useEffect(() => {
-    if (!isConnected) setIsLoading(false); 
+    if (!isConnected) setIsLoading(false);
   }, [isConnected]);
 
   useEffect(() => {
@@ -300,16 +299,6 @@ export default function Market({ navigation }: { navigation: any }) {
       });
     }
   }, [initialTop100, refresh]);
-
-  const listData = useMemo(
-    () =>
-      top100
-        ? marketData?.sort(
-            (a, b) => b.priceChangePercentage - a.priceChangePercentage,
-          )
-        : marketData,
-    [marketData, top100],
-  );
 
   const renderItems = useCallback(
     ({ item, index }) => (
@@ -335,61 +324,63 @@ export default function Market({ navigation }: { navigation: any }) {
 
   const renderEmptyComponent = useCallback(
     () =>
-        search ? ( // shows up in case of no search results
-          <Flex
-            flex={1}
-            flexDirection="column"
-            alignItems="stretch"
-            p="4"
-            mt={70}
-          >
-              <Flex alignItems="center">
-                <Illustration
-                  size={164}
-                  lightSource={noResultIllustration.light}
-                  darkSource={noResultIllustration.dark}
-                />
-              </Flex>
-              <Text textAlign="center" variant="h4" my={3}>
-                {t("market.warnings.noCryptosFound")}
-              </Text>
-              <Text textAlign="center" variant="body" color="neutral.c70">
-                <Trans
-                  i18nKey="market.warnings.noSearchResultsFor"
-                  values={{ search }}
-                >
-                  <Text fontWeight="bold" variant="body" color="neutral.c70">
-                    {""}
-                  </Text>
-                </Trans>
-              </Text>
-              <Button mt={8} onPress={resetSearch} type="main">
-                {t("market.warnings.browseAssets")}
-              </Button>
-            </Flex>
-          ) : !isConnected ? ( // shows up in case of network down
-            <Flex
-              flex={1}
-              flexDirection="column"
-              alignItems="stretch"
-              p="4"
-              mt={70}
-            >
-              <Flex alignItems="center">
-                <Illustration
-                  size={164}
-                  lightSource={noNetworkIllustration.light}
-                  darkSource={noNetworkIllustration.dark}
-                />
-              </Flex>
-              <Text textAlign="center" variant="h4" my={3}>
-                {t("errors.NetworkDown.title")}
-              </Text>
-              <Text textAlign="center" variant="body" color="neutral.c70">
-                  {t("errors.NetworkDown.description")}
-              </Text>
+      search ? ( // shows up in case of no search results
+        <Flex
+          flex={1}
+          flexDirection="column"
+          alignItems="stretch"
+          p="4"
+          mt={70}
+        >
+          <Flex alignItems="center">
+            <Illustration
+              size={164}
+              lightSource={noResultIllustration.light}
+              darkSource={noResultIllustration.dark}
+            />
           </Flex>
-      ): <InfiniteLoader size={30} />, // shows up in case loading is ongoing
+          <Text textAlign="center" variant="h4" my={3}>
+            {t("market.warnings.noCryptosFound")}
+          </Text>
+          <Text textAlign="center" variant="body" color="neutral.c70">
+            <Trans
+              i18nKey="market.warnings.noSearchResultsFor"
+              values={{ search }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c70">
+                {""}
+              </Text>
+            </Trans>
+          </Text>
+          <Button mt={8} onPress={resetSearch} type="main">
+            {t("market.warnings.browseAssets")}
+          </Button>
+        </Flex>
+      ) : !isConnected ? ( // shows up in case of network down
+        <Flex
+          flex={1}
+          flexDirection="column"
+          alignItems="stretch"
+          p="4"
+          mt={70}
+        >
+          <Flex alignItems="center">
+            <Illustration
+              size={164}
+              lightSource={noNetworkIllustration.light}
+              darkSource={noNetworkIllustration.dark}
+            />
+          </Flex>
+          <Text textAlign="center" variant="h4" my={3}>
+            {t("errors.NetworkDown.title")}
+          </Text>
+          <Text textAlign="center" variant="body" color="neutral.c70">
+            {t("errors.NetworkDown.description")}
+          </Text>
+        </Flex>
+      ) : (
+        <InfiniteLoader size={30} />
+      ), // shows up in case loading is ongoing
     [error, isLoading, resetSearch, search, t],
   );
 
@@ -461,7 +452,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
       <FlatList
         contentContainerStyle={{ paddingHorizontal: 16 }}
-        data={listData}
+        data={marketData}
         renderItem={renderItems}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
