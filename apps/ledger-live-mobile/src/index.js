@@ -425,8 +425,11 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
            *  - checking that a manifest exists
            *  - adding "name" search param
            * */
-          const manifest = filteredManifests.find(m => m.id === platform);
+          const manifest = filteredManifests.find(
+            m => m.id.toLowerCase() === platform.toLowerCase(),
+          );
           if (!manifest) return undefined;
+          url.pathname = `/${manifest.id}`;
           url.searchParams.set("name", manifest.name);
           return getStateFromPath(url.href?.split("://")[1], config);
         }
