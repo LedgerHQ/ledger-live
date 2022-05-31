@@ -34,7 +34,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
-const sourceDark = require("../../assets/videos/NanoX_LL_black.mp4");
+const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
 const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [
