@@ -1,8 +1,10 @@
 import React, { memo, useCallback, useState } from "react";
 import { Flex, Icons } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
@@ -12,17 +14,20 @@ import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { NavigatorName, ScreenName } from "../../const";
 import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvider";
+import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
+import { urls } from "../../config/urls";
 
-// const defaultURL = urls.buyNanoX;
-const defaultURL =
-  "https://ledgerstore-dev.myshopify.com/products/ledger-nano-x/?_ab=0&_fd=0&_sc=1&key=f75e14afa4723d02d7b736f4786cbfcc73176f6f6bc65d786081e68f9360c1bf&preview_theme_id=129527414972&utm_medium=self_referral&utm_source=ledger_live_mobile&utm_content=onboarding";
+const defaultURL = urls.buyNanoX;
 
 const PurchaseDevice = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const buyDeviceFromLive = useFeature("buyDeviceFromLive");
+
   const [isURLDrawerOpen, setURLDrawerOpen] = useState(false);
   const [isMessageDrawerOpen, setMessageDrawerOpen] = useState(false);
-  const [url, setUrl] = useState(defaultURL);
+  const [url, setUrl] = useState(buyDeviceFromLive?.params?.url || defaultURL);
   const [message, setMessage] = useState<PurchaseMessage | null>(null);
 
   const handleBack = useCallback(() => {
@@ -47,9 +52,19 @@ const PurchaseDevice = () => {
         currency: data.value?.currency,
       },
     });
-    // TODO: Dispatch redux event if data.type === "ledgerLiveOrderSuccess" in
-    // order to update UI
   }, []);
+
+  const handleOnboardingStates = useCallback(
+    (data: PurchaseMessage) => {
+      if (data.type === "ledgerLiveOrderSuccess") {
+        dispatch(setReadOnlyMode(true));
+        dispatch(completeOnboarding());
+        // TODO: dispatch this when Reborn is merged
+        // dispatch(hasOrderedNano(true));
+      }
+    },
+    [dispatch],
+  );
 
   const handleMessage = useCallback(
     (event: WebViewMessageEvent) => {
@@ -59,12 +74,13 @@ const PurchaseDevice = () => {
           setMessage(data);
           setMessageDrawerOpen(true);
           handleAdjustTracking(data);
+          handleOnboardingStates(data);
         } catch (error) {
           logger.critical(error as Error);
         }
       }
     },
-    [handleAdjustTracking],
+    [handleAdjustTracking, handleOnboardingStates],
   );
 
   return (

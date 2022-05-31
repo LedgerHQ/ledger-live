@@ -9,6 +9,9 @@ export const defaultFeatures: DefaultFeatures = {
   },
   buyDeviceFromLive: {
     enabled: false,
+    params: {
+      url: null,
+    },
   },
   ratings: {
     enabled: false,
