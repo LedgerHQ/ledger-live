@@ -65,6 +65,16 @@ platform :ios do
     )
   end
 
+  desc "private: set app store connect api key"
+  private_lane :set_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["APPLECONNECT_API_KEY_ID"],
+      issuer_id: ENV["APPLECONNECT_API_ISSUER_ID"],
+      key_content: ENV["APPLECONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+  end
+
   desc "private: setup ci for iOS build"
   private_lane :setup_ios_ci do
     create_keychain(
@@ -75,13 +85,7 @@ platform :ios do
       timeout: 3600,
       lock_when_sleeps: false
     )
-
-    app_store_connect_api_key(
-      key_id: ENV["APPLECONNECT_API_KEY_ID"],
-      issuer_id: ENV["APPLECONNECT_API_ISSUER_ID"],
-      key_content: ENV["APPLECONNECT_API_KEY_CONTENT"],
-      is_key_content_base64: true
-    )
+    set_api_key
   end
 
   desc "buid for deployment (app-store or ad-hoc)"
@@ -102,6 +106,14 @@ platform :ios do
       :PROVISIONING_PROFILE_SPECIFIER => MY_PROFILE,
       :DEVELOPMENT_TEAM => MY_TEAM,
     }
+
+    build_number = latest_testflight_build_number(
+      version: trim_version_number(package["version"])
+    )
+
+    increment_build_number({
+      build_number: build_number + 1
+    })
 
     if (options[:ci])
       match(
