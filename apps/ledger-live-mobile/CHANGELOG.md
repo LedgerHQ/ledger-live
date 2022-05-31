@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.2.0-nightly.1
+
+### Minor Changes
+
+- 8ea9c2deb: LLM: increase to iOS 13 minimum
+
+### Patch Changes
+
+- Updated dependencies [899aa3300]
+- Updated dependencies [b688a592d]
+  - @ledgerhq/live-common@22.2.0-nightly.3
+
 ## 3.1.4-nightly.0
 
 ### Patch Changes

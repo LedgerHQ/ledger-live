@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 22.2.0-nightly.3
+
+### Minor Changes
+
+- 899aa3300: Use of the maxSpendable for bot testing instead of amount balance
+
+### Patch Changes
+
+- b688a592d: fix swap rate formula
+
 ## 22.2.0-nightly.2
 
 ### Minor Changes
