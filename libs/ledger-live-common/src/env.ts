@@ -166,7 +166,7 @@ const envDefinitions = {
     desc: "Cardano API url",
   },
   CARDANO_TESTNET_API_ENDPOINT: {
-    def: "",
+    def: "https://apitestnet.typhonwallet.io/api/ledger",
     parser: stringParser,
     desc: "Cardano API url",
   },
