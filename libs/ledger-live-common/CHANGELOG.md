@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-llmnext.1
+
+### Patch Changes
+
+- a26ee3f54: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+
 ## 22.2.0-llmnext.0
 
 ### Minor Changes

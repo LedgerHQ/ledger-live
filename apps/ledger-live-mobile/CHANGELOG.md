@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.2.0-llmnext.5
+
+### Patch Changes
+
+- a26ee3f54: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- Updated dependencies [a26ee3f54]
+  - @ledgerhq/live-common@22.2.0-llmnext.1
+
 ## 3.2.0-llmnext.4
 
 ### Patch Changes

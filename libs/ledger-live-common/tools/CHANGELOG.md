@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.1.1-llmnext.1
+
+### Patch Changes
+
+- Updated dependencies [a26ee3f54]
+  - @ledgerhq/live-common@22.2.0-llmnext.1
+
 ## 0.1.1-llmnext.0
 
 ### Patch Changes
