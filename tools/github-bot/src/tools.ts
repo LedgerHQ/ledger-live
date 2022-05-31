@@ -1,7 +1,7 @@
 import { Probot } from "probot";
 
 export const isValidBranchName = (branch: string): boolean =>
-  /^(feat|support|bugfix|releases)\/.+/.test(branch) ||
+  /^(feat|support|bugfix)\/.+/.test(branch) ||
   ["release", "hotfix"].includes(branch);
 
 export const isValidUser = (user: string): boolean =>
