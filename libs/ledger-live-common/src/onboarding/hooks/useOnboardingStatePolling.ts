@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import {
   from,
+  merge,
+  partition,
   of,
   throwError,
   Observable,
@@ -116,85 +118,101 @@ export const onboardingStatePolling = ({
 
   // Could just be a boolean: firstRun ?
   let i = 0;
-  // getDelayedOnboardingStateOnce
-  const getDelayedOnboardingStateOnce: Observable<OnboardingStatePollingResult> =
+
+  const delayedOnboardingStateOnce$: Observable<OnboardingStatePollingResult> =
     new Observable((subscriber) => {
       console.log(`SyncOnboarding: ▶️ Polling from Observable ${i}`);
       const delayMs = i > 0 ? pollingPeriodMs : 0;
       console.log(`SyncOnboarding: polling delayed by ${delayMs} ms`);
       i++;
 
-      const getOnboardingStateOnce =
-        (): Observable<OnboardingStatePollingResult> =>
-          withDevice(deviceId)((t) => from(getVersion(t))).pipe(
-            // TODO: choose timeout ms value. For now = polling period
-            timeout(pollingPeriodMs), // Throws a TimeoutError
-            first(),
-            catchError((error: any) => {
-              if (isAllowedOnboardingStatePollingError(error)) {
-                // Pushes the error to the next step to be processed (no retry from the beginning)
-                return of(error);
-              }
+      const getOnboardingStateOnce = () => {
+        const firmwareInfoOrAllowedError$ = withDevice(deviceId)((t) =>
+          from(getVersion(t))
+        ).pipe(
+          // TODO: choose timeout ms value. For now = polling period
+          timeout(pollingPeriodMs), // Throws a TimeoutError
+          first(),
+          catchError((error: any) => {
+            if (isAllowedOnboardingStatePollingError(error)) {
+              // Pushes the error to the next step to be processed (no retry from the beginning)
+              return of(error);
+            }
 
+            console.log(
+              `SyncOnboarding: 💥 Fatal Error ${error} -> ${JSON.stringify(
+                error
+              )}`
+            );
+            return throwError(error);
+          })
+        );
+
+        // If an error is catched previously, and this error is "allowed",
+        // the value from the observable is not a FirmwareInfo but an Error
+        const [firmwareInfo$, allowedError$] = partition(
+          firmwareInfoOrAllowedError$,
+          (value) => !!value?.flags
+        );
+
+        // Handles the case of a FirmwareInfo value
+        const onboardingStateFromFirmwareInfo$ = firmwareInfo$.pipe(
+          map((firmwareInfo: FirmwareInfo) => {
+            console.log(
+              `SyncOnboarding: ♧ MAP got firmwareInfo: ${JSON.stringify(
+                firmwareInfo
+              )}`
+            );
+
+            let onboardingState: OnboardingState | null = null;
+
+            try {
+              onboardingState = extractOnboardingState(firmwareInfo.flags);
+            } catch (error) {
               console.log(
-                `SyncOnboarding: 💥 Fatal Error ${error} -> ${JSON.stringify(
+                `SyncOnboarding: extract onboarding error ${JSON.stringify(
                   error
                 )}`
               );
-              return throwError(error);
-            }),
-            map((deviceVersionOrAllowedError: FirmwareInfo | Error) => {
-              // TODO: better safe guard function ?
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              if (deviceVersionOrAllowedError?.flags) {
-                console.log(
-                  `SyncOnboarding: ♧ MAP got firmwareInfo: ${JSON.stringify(
-                    deviceVersionOrAllowedError
-                  )}`
-                );
-
-                let onboardingState: OnboardingState | null = null;
-
-                try {
-                  onboardingState = extractOnboardingState(
-                    (deviceVersionOrAllowedError as FirmwareInfo).flags
-                  );
-                } catch (error) {
-                  console.log(
-                    `SyncOnboarding: extract onboarding error ${JSON.stringify(
-                      error
-                    )}`
-                  );
-                  if (error instanceof DeviceExtractOnboardingStateError) {
-                    return {
-                      onboardingState: null,
-                      allowedError:
-                        error as typeof DeviceExtractOnboardingStateError,
-                    };
-                  } else {
-                    return {
-                      onboardingState: null,
-                      allowedError: new DeviceOnboardingStatePollingError(
-                        "SyncOnboarding: Unknown error while extracting the onboarding state"
-                      ),
-                    };
-                  }
-                }
-                return { onboardingState, allowedError: null };
+              if (error instanceof DeviceExtractOnboardingStateError) {
+                return {
+                  onboardingState: null,
+                  allowedError:
+                    error as typeof DeviceExtractOnboardingStateError,
+                };
+              } else {
+                return {
+                  onboardingState: null,
+                  allowedError: new DeviceOnboardingStatePollingError(
+                    "SyncOnboarding: Unknown error while extracting the onboarding state"
+                  ),
+                };
               }
+            }
+            return { onboardingState, allowedError: null };
+          })
+        );
 
-              console.log(
-                `SyncOnboarding: ♧ MAP got accepted error: ${JSON.stringify(
-                  deviceVersionOrAllowedError
-                )}`
-              );
-              return {
-                onboardingState: null,
-                allowedError: deviceVersionOrAllowedError as Error,
-              };
-            })
-          );
+        // Handles the case of an (allowed) Error value
+        const onboardingStateFromAllowedError$ = allowedError$.pipe(
+          map((allowedError: Error) => {
+            console.log(
+              `SyncOnboarding: ♧ MAP got accepted error: ${JSON.stringify(
+                allowedError
+              )}`
+            );
+            return {
+              onboardingState: null,
+              allowedError: allowedError,
+            };
+          })
+        );
+
+        return merge(
+          onboardingStateFromFirmwareInfo$,
+          onboardingStateFromAllowedError$
+        );
+      };
 
       // Delays the fetch of the onboarding state
       setTimeout(() => {
@@ -205,13 +223,12 @@ export const onboardingStatePolling = ({
           error: (error: any) => {
             subscriber.error(error);
           },
-          // Import for repeat()
           complete: () => subscriber.complete(),
         });
       }, delayMs);
     });
 
-  return getDelayedOnboardingStateOnce.pipe(repeat());
+  return delayedOnboardingStateOnce$.pipe(repeat());
 };
 
 // TODO: decide which errors are allowed
