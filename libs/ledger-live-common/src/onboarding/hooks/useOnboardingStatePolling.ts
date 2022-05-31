@@ -37,9 +37,11 @@ export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
 export const useOnboardingStatePolling = ({
   device,
   pollingPeriodMs,
+  stopPolling = false,
 }: {
   device: Device | null;
   pollingPeriodMs: number;
+  stopPolling?: boolean;
 }): UseOnboardingStatePollingResult => {
   const [onboardingStatePollingResult, setOnboardingStatePollingResult] =
     useState<OnboardingStatePollingResult>({
@@ -52,7 +54,9 @@ export const useOnboardingStatePolling = ({
   useEffect(() => {
     let onboardingStatePollingSubscription: Subscription;
 
-    if (device) {
+    // If stopPolling is updated and set to true, the useEffect hook will call its
+    // cleanup function (return) and the polling won't restart with the below condition
+    if (device && !stopPolling) {
       console.log(
         `SyncOnboarding: 🧑‍💻 new device: ${JSON.stringify(device)}`
       );
@@ -67,10 +71,12 @@ export const useOnboardingStatePolling = ({
               onboardingStatePollingResult
             )}`
           );
-          // FIXME: if null -> initialState ? What should be the initialOnboardingState ?
+
           // Does not update the state if it could not be extracted from the flags
           if (onboardingStatePollingResult) {
-            console.log("SETTING THE ONBOARDING STATE POLLING RESULT");
+            console.log(
+              "SyncOnboarding: onboarding state from polling is not null"
+            );
             setOnboardingStatePollingResult(onboardingStatePollingResult);
           }
         },
@@ -93,7 +99,7 @@ export const useOnboardingStatePolling = ({
       console.log("SyncOnboarding: cleaning up polling 🧹");
       onboardingStatePollingSubscription?.unsubscribe();
     };
-  }, [device, pollingPeriodMs, setOnboardingStatePollingResult]);
+  }, [device, pollingPeriodMs, setOnboardingStatePollingResult, stopPolling]);
 
   return { ...onboardingStatePollingResult, fatalError };
 };

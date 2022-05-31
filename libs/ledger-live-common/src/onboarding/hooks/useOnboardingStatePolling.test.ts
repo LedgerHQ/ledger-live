@@ -185,12 +185,58 @@ describe("useOnboardingStatePolling", () => {
         await waitForNextUpdate();
       });
 
-      // advanceTimersByTime + waitForNextUpdate makes the polling to run more than 1 time
+      // Another run of the polling could have started between the waitForNextUpdate()
+      // and the advanceTimersByTime(pollingPeriodMs), so more than 2 calls could have happened
       expect(mockedGetVersion.mock.calls.length).toBeGreaterThanOrEqual(2);
 
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
+    });
+
+    describe("and when the hook consumer stops the polling", () => {
+      it("should stop the polling and stop fetching the device onboarding state", async () => {
+        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+        const device = aDevice;
+        let stopPolling = false;
+
+        const { result, waitForNextUpdate, rerender } = renderHook(() =>
+          useOnboardingStatePolling({ device, pollingPeriodMs, stopPolling })
+        );
+
+        await act(async () => {
+          jest.advanceTimersByTime(1);
+          await waitForNextUpdate();
+        });
+
+        // Everything is normal on the first run
+        expect(mockedGetVersion).toHaveBeenCalledTimes(1);
+        expect(result.current.fatalError).toBeNull();
+        expect(result.current.allowedError).toBeNull();
+        expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+        // The consumer stops the polling
+        stopPolling = true;
+        rerender({ device, pollingPeriodMs, stopPolling });
+        // If another run of the polling started, it will max terminated in pollingPeriodMs
+        jest.advanceTimersByTime(pollingPeriodMs);
+        mockedGetVersion.mockClear();
+        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+
+        await act(async () => {
+          // Waits as long as we want
+          jest.advanceTimersByTime(10 * pollingPeriodMs);
+        });
+
+        // No polling should occur
+        expect(mockedGetVersion).toHaveBeenCalledTimes(0);
+        // And the state should stay the same
+        expect(result.current.fatalError).toBeNull();
+        expect(result.current.allowedError).toBeNull();
+        expect(result.current.onboardingState).toEqual(anOnboardingState);
+      });
     });
   });
 });
