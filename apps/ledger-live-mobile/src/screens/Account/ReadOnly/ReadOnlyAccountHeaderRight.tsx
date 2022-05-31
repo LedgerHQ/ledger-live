@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { FiltersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 
-import Touchable from "../../components/Touchable";
-import { ScreenName } from "../../const";
+import Touchable from "../../../components/Touchable";
+import { ScreenName } from "../../../const";
 
 export default function AccountHeaderRight() {
   const { navigate } = useNavigation();

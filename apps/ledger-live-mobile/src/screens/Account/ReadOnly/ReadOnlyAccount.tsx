@@ -10,17 +10,17 @@ import {
 } from "@ledgerhq/live-common/lib/currencies";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import ReadOnlyGraphCard from "../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../components/ReadOnlyFabActions";
-import GradientContainer from "../../components/GradientContainer";
+import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
+import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
+import ReadOnlyFabActions from "../../../components/ReadOnlyFabActions";
+import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
-} from "../../components/BuyDeviceBanner";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import { TrackScreen } from "../../analytics";
+} from "../../../components/BuyDeviceBanner";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import { TrackScreen } from "../../../analytics";
 
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import { counterValueCurrencySelector } from "../reducers/settings";
 
 type RouteParams = {

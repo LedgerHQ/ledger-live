@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -44,8 +44,8 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_SMALL_NANO_BOX,
 } from "../../../components/BuyDeviceBanner";
 import Carousel from "../../../components/Carousel";
-
-export { default as PortfolioTabIcon } from "../TabIcon";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { Currency } from "@ledgerhq/live-common/lib/types";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
