@@ -10,7 +10,7 @@ import type {
   SignOperationEvent,
 } from "../../types";
 
-import { open, close } from "../../hw";
+import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
 
 import { buildTransaction } from "./js-buildTransaction";
@@ -155,96 +155,98 @@ const signOperation = ({
   deviceId: string;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  new Observable((o) => {
-    async function main() {
-      const transport = await open(deviceId);
-      try {
-        o.next({ type: "device-signature-requested" });
+  withDevice(deviceId)(
+    (transport) =>
+      new Observable((o) => {
+        async function main() {
+          o.next({ type: "device-signature-requested" });
 
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
+
+          const unsignedTransaction = await buildTransaction(
+            account,
+            transaction
+          );
+
+          const accountPubKey = getExtendedPublicKeyFromHex(
+            account.xpub as string
+          );
+
+          const rawInputs = unsignedTransaction.getInputs();
+          const ledgerAppInputs = rawInputs.map((i) =>
+            prepareLedgerInput(i, account.index)
+          );
+
+          const rawOutptus = unsignedTransaction.getOutputs();
+          const ledgerAppOutputs = rawOutptus.map((o) =>
+            prepareLedgerOutput(o, account.index)
+          );
+
+          const auxiliaryDataHashHex =
+            unsignedTransaction.getAuxiliaryDataHashHex();
+
+          const networkParams = getNetworkParameters(account.currency.id);
+          const network =
+            networkParams.networkId === Networks.Mainnet.networkId
+              ? Networks.Mainnet
+              : Networks.Testnet;
+
+          const trxOptions: SignTransactionRequest = {
+            signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
+            tx: {
+              network,
+              inputs: ledgerAppInputs,
+              outputs: ledgerAppOutputs,
+              certificates: [],
+              withdrawals: [],
+              fee: unsignedTransaction.getFee().toString(),
+              ttl: unsignedTransaction.getTTL()?.toString(),
+              validityIntervalStart: null,
+              auxiliaryData: auxiliaryDataHashHex
+                ? {
+                    type: TxAuxiliaryDataType.ARBITRARY_HASH,
+                    params: {
+                      hashHex: auxiliaryDataHashHex,
+                    },
+                  }
+                : null,
+            },
+            additionalWitnessPaths: [],
+          };
+
+          // Sign by device
+          const appAda = new Ada(transport);
+          const r = await appAda.signTransaction(trxOptions);
+          const signed = signTx(
+            unsignedTransaction,
+            accountPubKey,
+            r.witnesses
+          );
+
+          o.next({ type: "device-signature-granted" });
+
+          const operation = buildOptimisticOperation(
+            account,
+            unsignedTransaction,
+            transaction
+          );
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: signed.payload,
+              expirationDate: null,
+            } as SignedOperation,
+          });
         }
-
-        const unsignedTransaction = await buildTransaction(
-          account,
-          transaction
+        main().then(
+          () => o.complete(),
+          (e) => o.error(e)
         );
-
-        const accountPubKey = getExtendedPublicKeyFromHex(
-          account.xpub as string
-        );
-
-        const rawInputs = unsignedTransaction.getInputs();
-        const ledgerAppInputs = rawInputs.map((i) =>
-          prepareLedgerInput(i, account.index)
-        );
-
-        const rawOutptus = unsignedTransaction.getOutputs();
-        const ledgerAppOutputs = rawOutptus.map((o) =>
-          prepareLedgerOutput(o, account.index)
-        );
-
-        const auxiliaryDataHashHex =
-          unsignedTransaction.getAuxiliaryDataHashHex();
-
-        const networkParams = getNetworkParameters(account.currency.id);
-        const network =
-          networkParams.networkId === Networks.Mainnet.networkId
-            ? Networks.Mainnet
-            : Networks.Testnet;
-
-        const trxOptions: SignTransactionRequest = {
-          signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
-          tx: {
-            network,
-            inputs: ledgerAppInputs,
-            outputs: ledgerAppOutputs,
-            certificates: [],
-            withdrawals: [],
-            fee: unsignedTransaction.getFee().toString(),
-            ttl: unsignedTransaction.getTTL()?.toString(),
-            validityIntervalStart: null,
-            auxiliaryData: auxiliaryDataHashHex
-              ? {
-                  type: TxAuxiliaryDataType.ARBITRARY_HASH,
-                  params: {
-                    hashHex: auxiliaryDataHashHex,
-                  },
-                }
-              : null,
-          },
-          additionalWitnessPaths: [],
-        };
-
-        // Sign by device
-        const appAda = new Ada(transport);
-        const r = await appAda.signTransaction(trxOptions);
-        const signed = signTx(unsignedTransaction, accountPubKey, r.witnesses);
-
-        o.next({ type: "device-signature-granted" });
-
-        const operation = buildOptimisticOperation(
-          account,
-          unsignedTransaction,
-          transaction
-        );
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: signed.payload,
-            expirationDate: null,
-          } as SignedOperation,
-        });
-      } finally {
-        close(transport, deviceId);
-      }
-    }
-    main().then(
-      () => o.complete(),
-      (e) => o.error(e)
-    );
-  });
+      })
+  );
 
 export default signOperation;
