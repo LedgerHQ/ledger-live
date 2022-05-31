@@ -1,4 +1,3 @@
-import "@polkadot/wasm-crypto/initOnlyAsm";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 
 let loadingPromise: null | Promise<boolean>;
