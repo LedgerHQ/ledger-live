@@ -1,19 +1,17 @@
-// @flow
-import React, { useCallback, useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import completeExchange from "@ledgerhq/live-common/lib/exchange/platform/completeExchange";
+import { Exchange } from "@ledgerhq/live-common/lib/exchange/platform/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/completeExchange";
 import { createAction as txCreateAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import completeExchange from "@ledgerhq/live-common/lib/exchange/platform/completeExchange";
-import type {
-  Account,
-  Transaction,
-  Operation,
-} from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useBroadcast } from "../../../components/useBroadcast";
+import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import type {
+  Operation, Transaction
+} from "@ledgerhq/live-common/lib/types";
+import React, { useCallback, useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import DeviceActionModal from "../../../components/DeviceActionModal";
+import { useBroadcast } from "../../../components/useBroadcast";
 
 type Result = {
   operation?: Operation,
@@ -26,18 +24,13 @@ export default function PlatformCompleteExchange({
   },
   navigation,
 }: {
-  navigation: *,
+  navigation: any,
   route: {
     params: {
       request: {
         exchangeType: number,
         provider: string,
-        exchange: {
-          fromAccount: Account,
-          fromParentAccount: Account,
-          toAccount: Account,
-          toParentAccount: Account,
-        },
+        exchange: Exchange,
         transaction: Transaction,
         binaryPayload: string,
         signature: string,

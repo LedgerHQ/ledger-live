@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";

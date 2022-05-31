@@ -1,11 +1,10 @@
-// @flow
+import startExchange from "@ledgerhq/live-common/lib/exchange/platform/startExchange";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/startExchange";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/startExchange";
-import startExchange from "@ledgerhq/live-common/lib/exchange/platform/startExchange";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { SafeAreaView } from "react-native-safe-area-context";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import SelectDevice from "../../../components/SelectDevice";
 
@@ -19,7 +18,7 @@ export default function PlatformStartExchange({
   navigation,
   route,
 }: {
-  navigation: *,
+  navigation: any,
   route: {
     params: {
       request: { exchangeType: number },
@@ -27,7 +26,7 @@ export default function PlatformStartExchange({
     },
   },
 }) {
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<Device>();
 
   const onClose = useCallback(() => {
     navigation.pop();
