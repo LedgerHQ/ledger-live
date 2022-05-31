@@ -5,6 +5,7 @@ import {
   Text,
   IconBoxList,
   Link as TextLink,
+  ScrollListContainer,
 } from "@ledgerhq/native-ui";
 import Video from "react-native-video";
 import styled, { useTheme } from "styled-components/native";
@@ -12,7 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 
 import Button from "../components/wrappedUi/Button";
@@ -125,7 +125,7 @@ export default function BuyDeviceScreen() {
           <Flex width={24} />
         )}
       </Flex>
-      <ScrollView>
+      <ScrollListContainer>
         <Flex
           height={240}
           my={-50}
@@ -170,7 +170,7 @@ export default function BuyDeviceScreen() {
             }))}
           />
         </Flex>
-      </ScrollView>
+      </ScrollListContainer>
       <Flex borderTopColor="neutral.c40" borderTopWidth={1}>
         <Button
           mx={6}
