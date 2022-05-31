@@ -14,10 +14,7 @@ type Result = {
   device: Device,
 };
 
-export default function PlatformStartExchange({
-  navigation,
-  route,
-}: {
+type Props = {
   navigation: any,
   route: {
     params: {
@@ -25,7 +22,12 @@ export default function PlatformStartExchange({
       onResult: (result: Result) => void,
     },
   },
-}) {
+};
+
+const PlatformStartExchange: React.FC<Props> = ({
+  navigation,
+  route,
+}) => {
   const [device, setDevice] = useState<Device>();
 
   const onClose = useCallback(() => {
@@ -61,3 +63,5 @@ const styles = StyleSheet.create({
     padding: 32,
   },
 });
+
+export default PlatformStartExchange;

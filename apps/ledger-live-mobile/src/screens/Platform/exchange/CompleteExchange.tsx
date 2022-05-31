@@ -18,12 +18,7 @@ type Result = {
   error?: Error,
 };
 
-export default function PlatformCompleteExchange({
-  route: {
-    params: { request, onResult, device },
-  },
-  navigation,
-}: {
+type Props = {
   navigation: any,
   route: {
     params: {
@@ -40,7 +35,14 @@ export default function PlatformCompleteExchange({
       onResult: (result: Result) => void,
     },
   },
-}) {
+};
+
+const PlatformCompleteExchange: React.FC<Props> = ({
+  route: {
+    params: { request, onResult, device },
+  },
+  navigation,
+}) => {
   const {
     fromAccount: account,
     fromParentAccount: parentAccount,
@@ -130,3 +132,5 @@ const styles = StyleSheet.create({
     padding: 32,
   },
 });
+
+export default PlatformCompleteExchange;
