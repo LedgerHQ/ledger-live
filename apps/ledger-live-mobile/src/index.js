@@ -19,11 +19,15 @@ import {
   Linking,
   Appearance,
   AppState,
+  Platform,
 } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  getStateFromPath,
+  NavigationContainer,
+} from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -34,7 +38,10 @@ import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
 import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
 import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { PlatformAppProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import {
+  PlatformAppProvider,
+  usePlatformApp,
+} from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
 import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
 
 import logger from "./logger";
@@ -91,6 +98,7 @@ import StyleProvider from "./StyleProvider";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
+import { useFilteredManifests } from "./screens/Platform/shared";
 
 const themes = {
   light: lightTheme,
@@ -238,6 +246,11 @@ const linkingOptions = {
            */
           [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
           [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+          /**
+           * @params ?platform: string
+           * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+           */
+          [ScreenName.PlatformApp]: "discover/:platform?",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
             screens: {
@@ -269,14 +282,15 @@ const linkingOptions = {
                 },
               },
               [NavigatorName.Discover]: {
-                screens: {
-                  /**
-                   * @params ?platform: string
-                   * ie: "ledgerlive://discover" will open the catalog
-                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
-                   */
-                  [ScreenName.PlatformCatalog]: "discover/:platform?",
-                },
+                screens:
+                  Platform.OS !== "ios"
+                    ? {}
+                    : {
+                        /**
+                         * ie: "ledgerlive://discover_catalog" will open the catalog
+                         */
+                        [ScreenName.PlatformCatalog]: "discover_catalog",
+                      },
               },
               [NavigatorName.Manager]: {
                 screens: {
@@ -383,13 +397,48 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
+  const platformAppState = usePlatformApp();
+  const filteredManifests = useFilteredManifests();
 
   const linking = useMemo(
     () => ({
-      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
-      enabled: wcContext.initDone && !wcContext.session.session,
+      ...linkingOptions,
+      enabled:
+        hasCompletedOnboarding &&
+        wcContext.initDone &&
+        !wcContext.session.session,
+      getStateFromPath: (path, config) => {
+        const url = new URL(`ledgerlive://${path}`);
+        const { hostname, pathname } = url;
+        const platform = pathname.split("/")[1];
+        if (hostname === "discover") {
+          if (!platform) {
+            /**
+             * "ledgerlive://discover" is an alias for
+             * "ledgerlive://discover_catalog"
+             * */
+            url.hostname = "discover_catalog";
+            return getStateFromPath(url.href?.split("://")[1], config);
+          }
+          /**
+           * Upstream validation of "ledgerlive://:platform?" :
+           *  - checking that a manifest exists
+           *  - adding "name" search param
+           * */
+          const manifest = filteredManifests.find(m => m.id === platform);
+          if (!manifest) return undefined;
+          url.searchParams.set("name", manifest.name);
+          return getStateFromPath(url.href?.split("://")[1], config);
+        }
+        return getStateFromPath(path, config);
+      },
     }),
-    [hasCompletedOnboarding, wcContext.initDone, wcContext.session.session],
+    [
+      hasCompletedOnboarding,
+      wcContext.initDone,
+      wcContext.session.session,
+      filteredManifests,
+    ],
   );
 
   const [isReady, setIsReady] = React.useState(false);
@@ -398,8 +447,24 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
     if (!wcContext.initDone) {
       return;
     }
+    if (
+      platformAppState.isLoading &&
+      !platformAppState.lastUpdateTime &&
+      !platformAppState.error
+    )
+      /**
+       * Ensure that the list of manifests has been loaded once so that the
+       * deep linking logic to platform apps works in the scenario where the app
+       * was not previously running.
+       *  */
+      return;
     setIsReady(true);
-  }, [wcContext.initDone]);
+  }, [
+    wcContext.initDone,
+    platformAppState.isLoading,
+    platformAppState.lastUpdateTime,
+    platformAppState.error,
+  ]);
 
   React.useEffect(
     () => () => {
