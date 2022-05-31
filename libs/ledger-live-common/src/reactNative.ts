@@ -1,6 +1,11 @@
+// Uses Asm.js version of @polkadot/util-crypto
+// See: https://polkadot.js.org/docs/util-crypto/FAQ/#i-dont-have-wasm-available-in-my-environment
+import "@polkadot/wasm-crypto/initOnlyAsm";
+
 import * as icons from "./data/icons/reactNative";
 import * as flags from "./data/flags/reactNative";
 import type { CryptoCurrency, TokenCurrency } from "./types";
+
 type Icon = React.ComponentType<{
   size: number;
   color: string;

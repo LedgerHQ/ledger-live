@@ -88,7 +88,7 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -96,11 +96,13 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      # - name: Get short SHA
-      #   id: slug
-      #   run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
-      # - name: make local version
-      #   run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+      - name: make local version
+        env:
+          VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+        run: cd apps/ledger-live-mobile && npm version $VERSION
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -111,14 +113,14 @@ jobs:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: pnpm build:llm
-      # - uses: ledgerhq/actions/get-package-infos@main
-      #   id: post-version
-      #   with:
-      #     path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: upload Android app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-release
+          name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
   build-mobile-app-android-external:
@@ -159,7 +161,7 @@ jobs:
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ledgerhq/actions/packages/get-package-infos@main
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -167,11 +169,13 @@ jobs:
         uses: ledgerhq/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-      # - name: Get short SHA
-      #   id: slug
-      #   run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
-      # - name: make local version
-      #   run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+      - name: make local version
+        env:
+          VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+        run: cd apps/ledger-live-mobile && npm version $VERSION
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -182,10 +186,14 @@ jobs:
           TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: pnpm build:llm
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: upload Android app
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.version.outputs.version }}-release
+          name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
 
   build-mobile-app-ios:
