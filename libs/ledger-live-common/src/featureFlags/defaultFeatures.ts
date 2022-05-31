@@ -11,6 +11,7 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
     params: {
       url: null,
+      debug: false,
     },
   },
   ratings: {

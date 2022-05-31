@@ -99,21 +99,27 @@ const PurchaseDevice = () => {
             zIndex={1}
           >
             <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
-            <Button Icon={Icons.FiltersMedium} onPress={handleOpenDrawer} />
+            {buyDeviceFromLive?.params?.debug && (
+              <Button Icon={Icons.FiltersMedium} onPress={handleOpenDrawer} />
+            )}
           </Flex>
         )}
       />
-      <DebugMessageDrawer
-        isOpen={isMessageDrawerOpen}
-        message={message}
-        onClose={() => setMessageDrawerOpen(false)}
-      />
-      <DebugURLDrawer
-        isOpen={isURLDrawerOpen}
-        value={url}
-        onClose={() => setURLDrawerOpen(false)}
-        onChange={setUrl}
-      />
+      {buyDeviceFromLive?.params?.debug && (
+        <DebugMessageDrawer
+          isOpen={isMessageDrawerOpen}
+          message={message}
+          onClose={() => setMessageDrawerOpen(false)}
+        />
+      )}
+      {buyDeviceFromLive?.params?.debug && (
+        <DebugURLDrawer
+          isOpen={isURLDrawerOpen}
+          value={url}
+          onClose={() => setURLDrawerOpen(false)}
+          onChange={setUrl}
+        />
+      )}
     </>
   );
 };
