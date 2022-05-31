@@ -1,5 +1,6 @@
 import {
-  CARDANO_TESTNET_CURRENCY_ID,
+  CARDANO_COIN_TYPE,
+  CARDANO_PURPOSE,
   STAKING_ADDRESS_INDEX,
   TTL_GAP,
 } from "./constants";
@@ -33,6 +34,7 @@ import { getNetworkParameters } from "./networks";
 import { CryptoCurrency, OperationType } from "../../types";
 import groupBy from "lodash/groupBy";
 import { APITransaction } from "./api/api-types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -40,7 +42,9 @@ import { APITransaction } from "./api/api-types";
  * @param {string} path
  */
 export function getBipPathFromString(path: string): BipPath {
-  const regEx = new RegExp(/^1852'\/1815'\/(\d*)'\/([012])\/(\d*)/);
+  const regEx = new RegExp(
+    `^${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/(\\d*)'/([012])/(\\d*)`
+  );
   const result = path.match(regEx);
   if (result == null) {
     throw new Error("Invalid derivation path");
@@ -65,8 +69,8 @@ export function getBipPath({
   index: number;
 }): BipPath {
   return {
-    purpose: 1852,
-    coin: 1815,
+    purpose: CARDANO_PURPOSE,
+    coin: CARDANO_COIN_TYPE,
     account,
     chain,
     index,
@@ -85,7 +89,7 @@ export function getBipPathString({
   chain: number;
   index: number;
 }): string {
-  return `1852'/1815'/${account}'/${chain}/${index}`;
+  return `${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/${account}'/${chain}/${index}`;
 }
 
 export function getExtendedPublicKeyFromHex(keyHex: string): Bip32PublicKey {
@@ -379,7 +383,7 @@ export function getOperationType({
 }
 
 export function isTestnet(currency: CryptoCurrency): boolean {
-  return currency.id === CARDANO_TESTNET_CURRENCY_ID;
+  return getCryptoCurrencyById(currency.id).isTestnetFor ? true : false;
 }
 
 export function getAccountChange(
