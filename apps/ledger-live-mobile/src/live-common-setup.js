@@ -60,6 +60,7 @@ setSupportedCurrencies([
   "ethereum_goerli",
   "cosmos_testnet",
   "elrond",
+  "cardano",
 ]);
 
 if (Config.VERBOSE) {

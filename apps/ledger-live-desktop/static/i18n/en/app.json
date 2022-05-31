@@ -4343,6 +4343,9 @@
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum {{amount}} ADA required"
     }
   },
   "cryptoOrg": {
