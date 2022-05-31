@@ -20,15 +20,13 @@ import {
   getBipPathString,
   getMemoFromTx,
   getOperationType,
-  mergeTokens,
 } from "./logic";
 import { encodeOperationId } from "../../operation";
-import { getOperations } from "./api/getOperations";
 import { getNetworkParameters } from "./networks";
 import { getNetworkInfo } from "./api/getNetworkInfo";
-import { buildSubAccounts } from "./buildSubAccounts";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
+import { getTransactions } from "./api/getTransactions";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -161,7 +159,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     blockHeight,
     externalCredentials,
     internalCredentials,
-  } = await getOperations(
+  } = await getTransactions(
     xpub,
     accountIndex,
     initialAccount,
@@ -177,15 +175,15 @@ export const getAccountShape: GetAccountShape = async (info) => {
     return finalMap;
   }, {} as Record<string, PaymentCredential>);
 
-  const stableOperationsIds: Record<string, Operation> = {};
+  const stableOperationsByIds: Record<string, Operation> = {};
   (initialAccount?.operations || []).forEach((o) => {
     if ((o.blockHeight as number) < syncFromBlockHeight) {
-      stableOperationsIds[o.hash] = o;
+      stableOperationsByIds[o.hash] = o;
     }
   });
 
   const stableUtxos = (initialAccount?.cardanoResources?.utxos || []).filter(
-    (u) => stableOperationsIds[u.hash]
+    (u) => stableOperationsByIds[u.hash]
   );
 
   const utxos = syncUtxos(newTransactions, stableUtxos, accountCredentialsMap);
@@ -193,22 +191,23 @@ export const getAccountShape: GetAccountShape = async (info) => {
     (total, u) => total.plus(u.amount),
     new BigNumber(0)
   );
-  const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
-  const subAccounts = buildSubAccounts({
-    initialAccount,
-    parentAccountId: accountId,
-    parentCurrency: currency,
-    newTransactions,
-    tokens: tokenBalance,
-    accountCredentialsMap,
-  });
+  // const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
+  // const subAccounts = buildSubAccounts({
+  //   initialAccount,
+  //   parentAccountId: accountId,
+  //   parentCurrency: currency,
+  //   newTransactions,
+  //   tokens: tokenBalance,
+  //   accountCredentialsMap,
+  // });
+  const subAccounts = [];
 
   const newOperations = newTransactions.map((t) =>
     mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts)
   );
 
   const operations = mergeOps(
-    Object.values(stableOperationsIds),
+    Object.values(stableOperationsByIds),
     newOperations
   );
 
