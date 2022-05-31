@@ -17,7 +17,16 @@
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
-import { decodeTxInfo } from "./utils";
+import {
+  makeTypeEntryStructBuffer,
+  decodeTxInfo,
+  intAsHexBytes,
+  destructTypeFromString,
+  hexBuffer,
+  maybeHexBuffer,
+  makeRecursiveFieldStructImplem,
+  EIP712_TYPE_ENCODERS,
+} from "./utils";
 // NB: these are temporary import for the deprecated fallback mechanism
 import { LedgerEthTransactionResolution, LoadConfig } from "./services/types";
 import ledgerService from "./services/ledger";
@@ -25,6 +34,12 @@ import {
   EthAppNftNotSupported,
   EthAppPleaseEnableContractData,
 } from "./errors";
+import {
+  EIP712Message,
+  EIP712MessageTypes,
+  EIP712MessageTypesEntry,
+  StructFieldData,
+} from "./types";
 
 export type StarkQuantizationType =
   | "eth"
@@ -56,17 +71,6 @@ function splitPath(path: string): number[] {
   return result;
 }
 
-function hexBuffer(str: string): Buffer {
-  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
-}
-
-function maybeHexBuffer(
-  str: string | null | undefined
-): Buffer | null | undefined {
-  if (!str) return null;
-  return hexBuffer(str);
-}
-
 const remapTransactionRelatedErrors = (e) => {
   if (e && e.statusCode === 0x6a80) {
     return new EthAppPleaseEnableContractData(
@@ -76,6 +80,7 @@ const remapTransactionRelatedErrors = (e) => {
 
   return e;
 };
+
 /**
  * Ethereum API
  *
@@ -107,6 +112,7 @@ export default class Eth {
         "signTransaction",
         "signPersonalMessage",
         "getAppConfiguration",
+        "signEIP712Message",
         "signEIP712HashedMessage",
         "starkGetPublicKey",
         "starkSignOrder",
@@ -456,6 +462,199 @@ export default class Eth {
           s,
         };
       });
+  }
+
+  async signEIP712Message(
+    path: string,
+    jsonMessage: EIP712Message,
+    fullImplem = false
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x0c,
+      P1 = 0x00,
+      P2_v0 = 0x00,
+      P2_full = 0x01,
+    }
+    const { primaryType, types, domain, message } = jsonMessage;
+
+    const typeEntries = Object.entries(types) as [
+      keyof EIP712MessageTypes,
+      EIP712MessageTypesEntry[]
+    ][];
+    // Looping on all types entries and fields to send structures' definitions
+    for (const [typeName, entries] of typeEntries) {
+      await this.EIP712SendStructDef("name", typeName as string);
+
+      for (const { name, type } of entries) {
+        const typeEntryBuffer = makeTypeEntryStructBuffer({ name, type });
+        await this.EIP712SendStructDef("field", typeEntryBuffer);
+      }
+    }
+
+    // Create the recursion that should pass on each entry
+    // of the domain fields and primaryType fields
+    const recursiveFieldStructImplem = makeRecursiveFieldStructImplem(
+      this,
+      types
+    );
+
+    // Looping on all domain type entries and fields to send
+    // structures' implementations
+    const domainName = "EIP712Domain";
+    await this.EIP712SendStructImplem("root", domainName);
+    const domainTypeFields = types[domainName];
+    for (const { name, type } of domainTypeFields) {
+      const domainFieldValue = domain[name];
+      await recursiveFieldStructImplem(
+        destructTypeFromString(type as string),
+        domainFieldValue
+      );
+    }
+
+    // Looping on all primaryType type entries and fields to send
+    // structures' implementations
+    await this.EIP712SendStructImplem("root", primaryType);
+    const primaryTypeFields = types[primaryType];
+    for (const { name, type } of primaryTypeFields) {
+      const primaryTypeValue = message[name];
+      await recursiveFieldStructImplem(
+        destructTypeFromString(type as string),
+        primaryTypeValue
+      );
+    }
+
+    // Sending the final signature.
+    // NO, I HAVE NO IDEA HOW THAT WORKS.
+    const paths = splitPath(path);
+    const signatureBuffer = Buffer.alloc(1 + paths.length * 4);
+    signatureBuffer[0] = paths.length;
+    paths.forEach((element, index) => {
+      signatureBuffer.writeUInt32BE(element, 1 + 4 * index);
+    });
+
+    return this.transport
+      .send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1,
+        fullImplem ? APDU_FIELDS.P2_v0 : APDU_FIELDS.P2_full,
+        signatureBuffer
+      )
+      .then((response) => {
+        const v = response[0];
+        const r = response.slice(1, 1 + 32).toString("hex");
+        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
+
+        return {
+          v,
+          r,
+          s,
+        };
+      });
+  }
+
+  EIP712SendStructDef(
+    structType: "name" | "field",
+    value: string | Buffer
+  ): Promise<Buffer> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x1a,
+      P1_complete = 0x00,
+      P1_partial = 0x01,
+      P2_name = 0x00,
+      P2_field = 0xff,
+    }
+    const data =
+      structType === "name" && typeof value === "string"
+        ? Buffer.from(value, "utf-8")
+        : (value as Buffer);
+
+    return this.transport.send(
+      APDU_FIELDS.CLA,
+      APDU_FIELDS.INS,
+      APDU_FIELDS.P1_complete,
+      structType === "name" ? APDU_FIELDS.P2_name : APDU_FIELDS.P2_field,
+      data
+    );
+  }
+
+  async EIP712SendStructImplem(
+    structType: "root" | "array" | "field",
+    value: string | number | StructFieldData
+  ): Promise<Buffer | void> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x1c,
+      P1_complete = 0x00,
+      P1_partial = 0x01,
+      P2_root = 0x00,
+      P2_array = 0x0f,
+      P2_field = 0xff,
+    }
+
+    if (structType === "root") {
+      return this.transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1_complete,
+        APDU_FIELDS.P2_root,
+        Buffer.from(value as string, "utf-8")
+      );
+    }
+
+    if (structType === "array") {
+      return this.transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        APDU_FIELDS.P1_complete,
+        APDU_FIELDS.P2_array,
+        Buffer.from(intAsHexBytes(value as number, 1), "hex")
+      );
+    }
+
+    if (structType === "field") {
+      const { data: rawData, type, sizeInBits } = value as StructFieldData;
+      const encodedData: Buffer | null = EIP712_TYPE_ENCODERS[
+        type.toUpperCase()
+      ]?.(rawData, sizeInBits);
+
+      if (encodedData) {
+        // const dataLengthPer16Bits = (encodedData.length & 0xff00) >> 8;
+        const dataLengthPer16Bits = Math.floor(encodedData.length / 256);
+        // const dataLengthModulo16Bits = encodedData.length & 0xff;
+        const dataLengthModulo16Bits = encodedData.length % 256;
+
+        const data = Buffer.concat([
+          Buffer.from(intAsHexBytes(dataLengthPer16Bits, 1), "hex"),
+          Buffer.from(intAsHexBytes(dataLengthModulo16Bits, 1), "hex"),
+          encodedData,
+        ]);
+
+        const bufferSlices = new Array(Math.ceil(data.length / 256))
+          .fill(null)
+          .map((_, i) => data.slice(i * 255, (i + 1) * 255));
+
+        for (const bufferSlice of bufferSlices) {
+          await this.transport.send(
+            APDU_FIELDS.CLA,
+            APDU_FIELDS.INS,
+            bufferSlice !== bufferSlices[bufferSlices.length - 1]
+              ? APDU_FIELDS.P1_partial
+              : APDU_FIELDS.P1_complete,
+            APDU_FIELDS.P2_field,
+            bufferSlice
+          );
+        }
+      }
+    }
+
+    return Promise.resolve();
   }
 
   /**
