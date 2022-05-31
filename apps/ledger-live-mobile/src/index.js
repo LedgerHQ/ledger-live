@@ -235,6 +235,7 @@ const linkingOptions = {
            * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
            */
           [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
             screens: {
@@ -362,6 +363,20 @@ const linkingOptions = {
   },
 };
 
+const linkingOptionsOnboarding = {
+  ...linkingOptions,
+  config: {
+    screens: {
+      [NavigatorName.Base]: {
+        initialRouteName: NavigatorName.Main,
+        screens: {
+          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+        },
+      },
+    },
+  },
+};
+
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -369,11 +384,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
 
   const linking = useMemo(
     () => ({
-      ...linkingOptions,
-      enabled:
-        hasCompletedOnboarding &&
-        wcContext.initDone &&
-        !wcContext.session.session,
+      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+      enabled: wcContext.initDone && !wcContext.session.session,
     }),
     [hasCompletedOnboarding, wcContext.initDone, wcContext.session.session],
   );
