@@ -1,4 +1,4 @@
-import { from } from "rxjs";
+import { from, TimeoutError } from "rxjs";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
@@ -83,6 +83,7 @@ describe("useOnboardingStatePolling", () => {
 
       await act(async () => {
         jest.advanceTimersByTime(1);
+        // Waits for the hook update as we don't know how much time it should take
         await waitForNextUpdate();
       });
 
@@ -95,25 +96,49 @@ describe("useOnboardingStatePolling", () => {
   });
 
   describe("When an error occurs during polling", () => {
-    it("should return a null onboarding state and keep track of the error", async () => {
-      mockedGetVersion.mockRejectedValue(new Error("Unknown error"));
+    describe("and the error is thrown before the defined timeout", () => {
+      it("should update the onboarding state to null and keep track of the error (here fatal error)", async () => {
+        mockedGetVersion.mockRejectedValue(new Error("Unknown error"));
 
-      const device = aDevice;
+        const device = aDevice;
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
+        const { result, waitForNextUpdate } = renderHook(() =>
+          useOnboardingStatePolling({ device, pollingPeriodMs })
+        );
 
-      await act(async () => {
-        jest.advanceTimersByTime(1);
-        await waitForNextUpdate();
+        await act(async () => {
+          jest.advanceTimersByTime(1);
+          await waitForNextUpdate();
+        });
+
+        expect(result.current.onboardingState).toBeNull();
+        expect(result.current.allowedError).toBeNull();
+        expect(result.current.fatalError).toBeInstanceOf(
+          DeviceOnboardingStatePollingError
+        );
       });
+    });
 
-      expect(result.current.onboardingState).toBeNull();
-      expect(result.current.allowedError).toBeNull();
-      expect(result.current.fatalError).toBeInstanceOf(
-        DeviceOnboardingStatePollingError
-      );
+    describe("and when a timeout occurred before the error (or the fetch took too long)", () => {
+      it("should update the allowed error value to notify the consumer", async () => {
+        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
+        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+        const device = aDevice;
+
+        const { result } = renderHook(() =>
+          useOnboardingStatePolling({ device, pollingPeriodMs })
+        );
+
+        await act(async () => {
+          // Waits more than the timeout
+          jest.advanceTimersByTime(pollingPeriodMs + 1);
+        });
+
+        expect(result.current.allowedError).toBeInstanceOf(TimeoutError);
+        expect(result.current.fatalError).toBeNull();
+        expect(result.current.onboardingState).toBeNull();
+      });
     });
   });
 
