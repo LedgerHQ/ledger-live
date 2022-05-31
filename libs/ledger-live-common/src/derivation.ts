@@ -162,6 +162,7 @@ const modes = Object.freeze({
   // glif normal derivation
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
+    startsAt: 1,
   },
   solanaMain: {
     isNonIterable: true,
