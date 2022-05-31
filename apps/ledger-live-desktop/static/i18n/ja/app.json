@@ -122,7 +122,8 @@
     },
     "exchange": "取引",
     "info": "情報",
-    "connectDevice": "デバイスを接続"
+    "connectDevice": "デバイスを接続",
+    "selectCurrencyEmptyOption": "暗号資産なし"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<1>私は</1><0>利用規約</0><1>を読み、内容に同意しました。</1>"
       },
       "steps": {
-        "title": "ステップ <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "プロトコルを許可するため、アカウントを承認",
           "subtitle2": "次回以降のレンディングの流れ。",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "資産はいつでも引き出すことができます。",
           "description": "資産と獲得した利息の一部または全部を、Ledgerアカウントから直接いつでも引き出すことができます。"
-        }
+        },
+        "title": "ステップ <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "ギャラリーを見る",
       "seeMore": "他のコレクションを見る",
       "seeAll": "すべてのコレクションを見る",
-      "seeLess": "表示を減らす"
+      "seeLess": "表示を減らす",
+      "placeholder": "NFTを追加するには、 {{currency}}アドレスにNFTを送付してください。"
     },
     "gallery": {
       "title": "すべてのNFT",
@@ -1609,7 +1611,7 @@
         "not_supported": "サードパーティのウォレットが必要です",
         "addAccount": "アカウント追加",
         "addAccountTooltip": "{{appName}} アカウントを追加",
-        "addAccountWarn": "アプリのアップデート完了までお待ちください。",
+        "addAccountWarn": "処理が完了するまでお待ちください",
         "learnMore": "詳細はこちら",
         "learnMoreTooltip": "{{appName}} についての詳細",
         "removeTooltip": "{{appName}} をアンインストール",
@@ -2127,9 +2129,14 @@
               "cta": "詳細を表示"
             },
             "broadcastError": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          },
+          "amount": {
+            "title": "数量"
           }
         }
-      }
+      },
+      "commission": "コミッション",
+      "totalStake": "合計ステーキング量"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "現在のデリゲート",
             "newDelegation": "新しいデリゲート",
             "chooseValidator": "バリデーターを選ぶ",
-            "warning": "新しいバリゲータに変更したい場合は、再デリゲートするまで<0>21日間</0> 待機しなりません。"
+            "warning": "新しいバリゲータに変更したい場合は、再デリゲートするまで<0>21日間</0> 待機しなりません。",
+            "amountLabel": "再デリゲート額"
           },
           "device": {
             "title": "デバイス"
@@ -2570,11 +2578,11 @@
       }
     },
     "delegation": {
-      "totalStake": "Total Stake",
+      "totalStake": "合計ステーキング量",
       "commission": "Commission",
       "delegate": "Add",
       "listHeader": "Delegations",
-      "availableBalance": "Available balance",
+      "availableBalance": "引き出し可能",
       "active": "Active",
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
@@ -3520,12 +3528,6 @@
     "connected": "接続しました！",
     "backToPortfolio": "ポートフォリオに戻る",
     "steps": {
-      "entry": {
-        "title": "USB接続のトラブルシューティング",
-        "desc": "デバイスとの接続に問題があるようです。デバイスが正常に接続されるまで、いろいろな解決策を1つずつ試しましょう！",
-        "cta": "問題を解決する！",
-        "back": "戻る"
-      },
       "1": {
         "windows": {
           "title": "Ledger Liveを管理者として実行する",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "デバイスのアップデート手順に従ってください。",
           "somethingElse": "その他"
         }
+      },
+      "entry": {
+        "title": "USB接続のトラブルシューティング",
+        "desc": "デバイスとの接続に問題があるようです。デバイスが正常に接続されるまで、いろいろな解決策を1つずつ試しましょう！",
+        "cta": "問題を解決する！",
+        "back": "戻る"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "利用可能なトークン数を超えています。"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "今後のトランザクション手数料に十分な残高を確保してください"
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "前回のトランザクションはまだ処理されていません。しばらく待ってから、トランザクション履歴を確認した上でもう一度やり直してください。"
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "今後のトランザクション手数料に十分な残高を確保してください"
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "Memo",
     "memoPlaceholder": "任意",
     "memoWarningText": "Memoを使用する場合は、送付先とMemoのタイプをしっかりと確認してください。"
+  },
+  "hedera": {
+    "name": "Hedera",
+    "createHederaAccountHelp": {
+      "text": "Hederaアカウントの作成方法については、",
+      "link": "こちらのサポート記事をご参照ください。"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "{{name}}アドレスがLedgerデバイス上で確認できません。リスクを理解した上で、自己責任でご利用ください。"
+    }
   }
 }
