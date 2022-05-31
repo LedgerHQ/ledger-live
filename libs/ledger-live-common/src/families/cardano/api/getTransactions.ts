@@ -183,7 +183,7 @@ async function getSyncedTransactionsByChain(
   };
 }
 
-export async function getOperations(
+export async function getTransactions(
   xpub: string,
   accountIndex: number,
   initialAccount: Account | undefined,
