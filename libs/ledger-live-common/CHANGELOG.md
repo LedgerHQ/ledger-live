@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-next.2
+
+### Minor Changes
+
+- 9dadffa88: Update cosmos snapshot
+
 ## 22.2.0-next.1
 
 ### Patch Changes

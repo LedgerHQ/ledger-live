@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.1.2-next.1",
+  "version": "3.1.2-next.2",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
