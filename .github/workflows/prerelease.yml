@@ -19,6 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' }}
+        with:
+          token: ${{ secrets.GH_PAT }}
       - uses: actions/checkout@v3
         if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
         with:
@@ -51,6 +53,12 @@ jobs:
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." --frozen-lockfile
       - name: build libs
@@ -95,6 +103,12 @@ jobs:
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -109,4 +123,17 @@ jobs:
               inputs: {
                 ref: "${{ github.event.push != '' && github.ref_name || steps.ref.outputs.ref }}"
               }
+            });
+
+      - uses: actions/github-script@v6
+        name: trigger prerelease build of mobile
+        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "release-mobile.yml",
             });

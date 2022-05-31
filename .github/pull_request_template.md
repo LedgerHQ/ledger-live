@@ -1,33 +1,29 @@
 <!--
 Thank you for your contribution! 👍
-
-Please make sure to read the [Contributing guidelines](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) if you have not already.
-
+Please make sure to read CONTRIBUTING.md if you have not already.
 Disclaimer: Pull Requests that do not comply with the rules will be arbitrarily closed.
 -->
 
+_Replace this text by a clear and concise description of what this pull request is about and why it is needed._
+
 ### ❓ Context
 
-- **Impacted projects**:
-  <!--
-    If your PR is linked to a Github issue, post it below.
-    For Ledger employees, post a link to the JIRA ticket if relevant.
-  -->
-- **Linked resource(s)**:
+- **Impacted projects**: ` ` <!-- precise end user projects impacted -->
+- **Linked resource(s)**: ` ` <!-- attach any ticket number if relevant (JIRA / Github issue number) -->
 
-_Write a clear and concise description of what this pull request is about and why it is needed._
 
 ### ✅ Checklist
 
-- [ ] **Test coverage**: _Did you write any tests to cover the changes introduced by this pull request?_
-- [ ] **Atomic delivery**: _Is this pull request standalone? In order words, does it depend on nothing else?_
-- [ ] **No breaking changes**: _Does this pull request contain breaking changes of any kind? If so, please explain why._
+- [ ] **Test coverage**. <!-- Are your changes covered by tests? Features must be tested. bugfixes must bring the test that would have detected the bug. -->
+- [ ] **Atomic delivery**. <!-- Is this pull request standalone? In order words, does it depend on nothing else? Please explain if not checked. -->
+- [ ] **No breaking changes**. <!-- If there are breaking changes, please explain why. -->
 
 ### 📸 Demo
 
 <!--
-  If relevant, add screenshots or video recordings to demonstrate the changes.
-  For libraries, you can add a code sample.
+For visual features, please attach screenshots or video recordings to demonstrate the changes.
+For libraries, you can add a code sample.
+For bugfixes, you can drop this section.
 -->
 
 ### 🚀 Expectations to reach

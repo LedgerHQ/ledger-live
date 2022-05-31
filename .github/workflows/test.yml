@@ -65,8 +65,13 @@ jobs:
           npm --version
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
-      - name: Build and Test affected libraries
+      - name: Build and Test affected libraries (Pull Request)
+        if: ${{ github.event_name != 'push' }}
         run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]"
+        shell: bash
+      - name: Build and Test affected libraries (Pull Request)
+        if: ${{ github.event_name == 'push' }}
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter=[HEAD^1]
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
