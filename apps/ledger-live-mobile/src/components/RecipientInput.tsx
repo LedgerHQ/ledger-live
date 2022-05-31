@@ -31,7 +31,7 @@ type Props = TextInputProps & {
   onPaste?: () => void;
 };
 
-const RecipientInput = ({ ref, onPaste, ...props }: Props) => {
+const RecipientInput = React.forwardRef(({ onPaste, ...props }: Props, ref) => {
   const { t } = useTranslation();
 
   return (
@@ -48,6 +48,6 @@ const RecipientInput = ({ ref, onPaste, ...props }: Props) => {
       {...props}
     />
   );
-};
+});
 
 export default RecipientInput;

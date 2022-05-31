@@ -79,7 +79,7 @@ export function filterAnnouncements(
         if (
           apps &&
           apps.length &&
-          !lastSeenDevice.apps.some(({ name }) => apps.includes(name))
+          !lastSeenDevice?.apps?.some(({ name }) => apps.includes(name))
         )
           return false;
       }
