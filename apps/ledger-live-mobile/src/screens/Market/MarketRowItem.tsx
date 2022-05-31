@@ -72,8 +72,9 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         flexDirection="column"
         justifyContent="center"
         alignItems="flex-start"
+        flex={1}
       >
-        <Text variant="large" fontWeight="semiBold">
+        <Text variant="large" fontWeight="semiBold" numberOfLines={1}>
           {name}
         </Text>
         <Flex flexDirection="row" alignItems="center">
@@ -107,7 +108,6 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         flexDirection="column"
         justifyContent="center"
         alignItems="flex-end"
-        flex={1}
       >
         <Text variant="large" fontWeight="semiBold">
           {counterValueFormatter({
@@ -121,7 +121,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         {priceChangePercentage !== null && !isNaN(priceChangePercentage) ? (
           <DeltaVariation percent value={priceChangePercentage} />
         ) : (
-          <Text variant="body" height="50px" width="50px" color="neutral.c70">
+          <Text variant="body" color="neutral.c70">
             {" "}
             -
           </Text>

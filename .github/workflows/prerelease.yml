@@ -3,18 +3,13 @@ on:
   push:
     branches:
       - "release"
+      - "releases/**"
       - "hotfix"
   workflow_dispatch:
     inputs:
       ref:
         description: the branch to prerelease from
         required: true
-  workflow_run:
-    workflows:
-      - "Create release"
-    types:
-      - "completed"
-
 jobs:
   prerelease:
     name: Prerelease
@@ -23,18 +18,19 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
-        if: ${{ github.event.push != '' }}
-      - uses: actions/checkout@v3
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'push' }}
         with:
-          ref: ${{ github.event.inputs.ref || "release" }}
           token: ${{ secrets.GH_PAT }}
-
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        with:
+          ref: ${{ github.event.inputs.ref || 'release' }}
+          token: ${{ secrets.GH_PAT }}
       - name: set ref
         id: ref
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run' }}
         run: |
-          echo "::set-output name=ref::${{ github.event.inputs.ref || "release" }}"
+          echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
       - name: set git user
         run: |
@@ -57,6 +53,12 @@ jobs:
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." --frozen-lockfile
       - name: build libs
@@ -65,20 +67,23 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ github.ref_name == "release" }}
+        if: ${{ startsWith(github.ref_name, 'release') || startsWith(steps.ref.outputs.ref, 'release') }}
         run: |
-          git add .
-          git commit -m ":rocket: prerelease"
+          git add . &&
+          git commit -m ":rocket: release prerelease" ||
+          echo ""
       - name: commit (from hotfix branch)
-        if: ${{ github.ref_name == "hotfix" }}
+        if: ${{ startsWith(steps.ref.outputs.ref, 'hotfix') }}
+        run: |
+          git add . &&
+          git commit -m ":fire: hotfix prerelease" ||
+          echo ""
+      - name: commit (from ${{ steps.ref.outputs.ref }} branch) workflow dispatch
+        if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
-          git commit -m ":fire: hotfix prerelease"
-      - name: commit (from ${{ steps.ref.outputs.ref }} branch)
-        if: ${{ github.ref_name != "release" || github.ref_name != "hotfix" }}
-        run: |
-          git add .
-          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease"
+          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease" ||
+          echo ""
 
       - name: publish prerelease
         run: pnpm changeset publish
@@ -86,11 +91,11 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: push changes (push event)
-        if: ${{ github.event.push != '' }}
+        if: ${{ github.event_name == 'push' }}
         run: |
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
-        if: ${{ github.event.workflow_dispatch != '' || github.event.workflow_run != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
         run: |
           git push origin ${{ steps.ref.outputs.ref }} --follow-tags
 
@@ -98,6 +103,12 @@ jobs:
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
+
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -110,6 +121,19 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop-mono.yml",
               inputs: {
-                ref: "${{ github.event.push != '' ? github.ref_name : steps.ref.outputs.ref }}"
+                ref: "${{ github.event.push != '' && github.ref_name || steps.ref.outputs.ref }}"
               }
+            });
+
+      - uses: actions/github-script@v6
+        name: trigger prerelease build of mobile
+        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "release-mobile-mono.yml",
             });

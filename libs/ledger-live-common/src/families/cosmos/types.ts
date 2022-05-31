@@ -71,6 +71,7 @@ export type CosmosValidatorItem = {
   commission: number;
   // value from 0.0 to 1.0 (normalized percentage)
   estimatedYearlyRewardsRate: number; // value from 0.0 to 1.0 (normalized percentage)
+  tokens: number;
 };
 export type CosmosRewardsState = {
   targetBondedRatio: number;

@@ -2,7 +2,7 @@ import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { TokenAccount } from "../../types/account";
 import { StakeMeta } from "./api/chain/account/stake";
-import { SolanaStake } from "./types";
+import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
@@ -53,8 +53,6 @@ export function toSubAccMint(subAcc: TokenAccount): string {
 export function tokenIsListedOnLedger(mint: string): boolean {
   return findTokenById(toTokenId(mint))?.type === "TokenCurrency";
 }
-
-type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
 
 export function stakeActions(stake: SolanaStake): StakeAction[] {
   const actions: StakeAction[] = [];

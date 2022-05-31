@@ -1,0 +1,81 @@
+name: Bot 'Hedera'
+on:
+  push:
+    branches:
+      - family/hedera
+
+jobs:
+  start-runner:
+    name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance (Linux)"
+    needs: [start-runner, run-bot]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
+    if: ${{ always() }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  run-bot:
+    needs: [start-runner]
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v2
+      - name: Retrieving coin apps
+        uses: actions/checkout@v2
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.PAT }}
+          path: coin-apps
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.x
+      - name: install yarn
+        run: npm i -g yarn
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: kill apt-get
+        run: sudo killall -w apt-get apt || echo OK
+      - name: Install linux deps
+        run: sudo apt-get install -y libusb-1.0-0-dev jq
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile
+          yarn ci-setup-cli
+      - name: BOT
+        env:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
+          DEBUG_HTTP_RESPONSE: "1"
+          SEED: ${{ secrets.SEED4 }}
+          VERBOSE_FILE: bot-tests.txt
+          GITHUB_SHA: ${GITHUB_SHA}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+          SLACK_CHANNEL: ci-hbar-ll
+          BOT_FILTER_FAMILY: hedera
+          EXPERIMENTAL_CURRENCIES: hedera
+        run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        timeout-minutes: 120
+      - name: Run coverage
+        if: failure() || success()
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: bot-tests.txt
+          path: bot-tests.txt

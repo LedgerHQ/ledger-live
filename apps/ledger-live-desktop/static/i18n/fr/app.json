@@ -122,7 +122,8 @@
     },
     "exchange": "Échanger",
     "info": "Informations",
-    "connectDevice": "Connectez votre appareil"
+    "connectDevice": "Connectez votre appareil",
+    "selectCurrencyEmptyOption": "Aucun crypto-actif"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<1>J'ai lu et accepte les </1><0>Conditions d'utilisation</0><1>.</1>"
       },
       "steps": {
-        "title": "Étape <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "Approuver un compte pour permettre au protocole de",
           "subtitle2": "traiter vos futurs prêts",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "Retirer des actifs à tout moment",
           "description": "Vous pouvez retirer vos actifs et les intérêts perçus en partie ou totalité à tout moment depuis votre compte Ledger Live."
-        }
+        },
+        "title": "Étape <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "Voir la galerie",
       "seeMore": "Voir plus de collections",
       "seeAll": "Voir toutes les collections",
-      "seeLess": "Voir moins"
+      "seeLess": "Voir moins",
+      "placeholder": "Pour ajouter des NFT, il vous suffit de les recevoir sur votre adresse {{currency}}."
     },
     "gallery": {
       "title": "Tous les NFT",
@@ -1609,7 +1611,7 @@
         "not_supported": "Wallet externe requis",
         "addAccount": "Ajouter un compte",
         "addAccountTooltip": "Ajouter un compte {{appName}}",
-        "addAccountWarn": "Merci d'attendre que les mises à jour soient terminées",
+        "addAccountWarn": "Veuillez attendre la fin du chargement",
         "learnMore": "En savoir plus",
         "learnMoreTooltip": "En savoir plus sur {{appName}}",
         "removeTooltip": "Désinstaller {{appName}}",
@@ -2127,9 +2129,14 @@
               "cta": "Voir les détails"
             },
             "broadcastError": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
+          },
+          "amount": {
+            "title": "Montant"
           }
         }
-      }
+      },
+      "commission": "Commission",
+      "totalStake": "Stake total"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "Délégation en cours",
             "newDelegation": "Nouvelle délégation",
             "chooseValidator": "Choisir un validateur",
-            "warning": " Si vous changez à nouveau d'avis, vous devrez attendre <0>21 jours</0> pour redéléguer depuis le nouveau validateur."
+            "warning": " Si vous changez à nouveau d'avis, vous devrez attendre <0>21 jours</0> pour redéléguer depuis le nouveau validateur.",
+            "amountLabel": "Montant à redéléguer"
           },
           "device": {
             "title": "Appareil"
@@ -2574,7 +2582,7 @@
       "commission": "Commission",
       "delegate": "Ajouter",
       "listHeader": "Délégations",
-      "availableBalance": "Solde disponible",
+      "availableBalance": "Disponible au retrait",
       "active": "Actif",
       "activeTooltip": "Montant actif générant des récompenses",
       "inactiveTooltip": "Montant inactif ne générant pas de récompenses",
@@ -3520,12 +3528,6 @@
     "connected": "Connecté",
     "backToPortfolio": "Retour au Portefeuille",
     "steps": {
-      "entry": {
-        "title": "Dépanner la connexion USB",
-        "desc": "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu'à ce que votre appareil se connecte.",
-        "cta": "Réparer",
-        "back": "Retour"
-      },
       "1": {
         "windows": {
           "title": "Exécuter Ledger Live en tant qu'administrateur",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "Follow device update instructions",
           "somethingElse": "Autre"
         }
+      },
+      "entry": {
+        "title": "Dépanner la connexion USB",
+        "desc": "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu'à ce que votre appareil se connecte.",
+        "cta": "Réparer",
+        "back": "Retour"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "Nombre de tokens disponibles insuffisant"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "Votre transaction précédente n’a pas encore été traitée. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "Mémo",
     "memoPlaceholder": "Facultatif",
     "memoWarningText": "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations avec le destinataire."
+  },
+  "hedera": {
+    "name": "Hedera",
+    "createHederaAccountHelp": {
+      "text": "Consultez cet article d’assistance pour",
+      "link": "découvrir comment créer un compte Hedera"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Votre adresse {{name}} n’a pas été confirmée sur votre appareil Ledger. Il est risqué de l’utiliser."
+    }
   }
 }

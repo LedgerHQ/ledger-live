@@ -4,7 +4,7 @@ description: Generate Jira diff between two version of the repo
 inputs:
   base:
     required: false
-    default: master
+    default: main
     description: previous /ref|commit|branch/ to compare with current
   current:
     required: false
@@ -24,5 +24,5 @@ outputs:
     description: formatted url
 
 runs:
-  using: 'node12'
-  main: 'build/index.js'
+  using: "node12"
+  main: "build/index.js"
