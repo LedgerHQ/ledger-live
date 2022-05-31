@@ -1,15 +1,9 @@
 import type { BigNumber } from "bignumber.js";
+import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
 } from "../../types/transaction";
-import { types as TyphonTypes } from "@stricahq/typhonjs";
-
-// for legacy
-export type CoreStatics = Record<any, any>;
-export type CoreAccountSpecifics = Record<any, any>;
-export type CoreOperationSpecifics = Record<any, any>;
-export type CoreCurrencySpecifics = Record<any, any>;
 
 export enum PaymentChain {
   external = 0,
@@ -26,16 +20,16 @@ export enum NetworkId {
 }
 
 export type BipPath = {
-  purpose: 1852;
-  coin: 1815;
+  purpose: number;
+  coin: number;
   account: number;
   chain: PaymentChain | StakeChain;
   index: number;
 };
 
 export type BipPathRaw = {
-  purpose: 1852;
-  coin: 1815;
+  purpose: number;
+  coin: number;
   account: number;
   chain: PaymentChain | StakeChain;
   index: number;
@@ -182,5 +176,3 @@ export type CardanoLikeNetworkParameters = {
 export type CardanoPreloadData = {
   protocolParams: ProtocolParams;
 };
-
-export const reflect = (_declare: unknown): void => {};

@@ -27,8 +27,8 @@ const cardano: AppSpec<Transaction> = {
         const transaction = bridge.createTransaction(account);
 
         const updates = [
-          { amount: new BigNumber(account.balance.dividedBy(2)).dp(0, 1) },
           { recipient },
+          { amount: new BigNumber(account.balance.dividedBy(2)).dp(0, 1) },
         ];
 
         return {
@@ -50,7 +50,7 @@ const cardano: AppSpec<Transaction> = {
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
-        const updates = [{ useAllAmount: true }, { recipient }];
+        const updates = [{ recipient }, { useAllAmount: true }];
 
         return {
           transaction,
