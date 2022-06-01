@@ -474,6 +474,35 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  okc: {
+    type: "CryptoCurrency",
+    id: "okc",
+    coinType: 60,
+    name: "OKC",
+    managerAppName: "OKXChain",
+    ticker: "OKT",
+    scheme: "okc",
+    color: "#000000",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      chainId: 66,
+      networkId: 66,
+    },
+    units: [
+      {
+        name: "OKT",
+        code: "OKT",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.oklink.com/okc/tx/$hash",
+        address: "https://www.oklink.com/okc/address/$address",
+        token: "https://www.oklink.com/okc/tokenAddr/$contractAddress",
+      },
+    ],
+  },
   callisto: {
     type: "CryptoCurrency",
     id: "callisto",
