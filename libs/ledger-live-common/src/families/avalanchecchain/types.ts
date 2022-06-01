@@ -1,19 +1,14 @@
+import { BigNumber } from "bignumber.js";
 import type {
     TransactionCommon,
     TransactionCommonRaw,
 } from "../../types/transaction";
 
-export type NetworkInfo = {
-    family: "avalanchecchain";
-};
-export type NetworkInfoRaw = {
-    family: "avalanchecchain";
-};
 export type Transaction = TransactionCommon & {
     family: "avalanchecchain";
-    memo: "",
+    fees: BigNumber | null;
 };
 export type TransactionRaw = TransactionCommonRaw & {
     family: "avalanchecchain";
-    memo: ""
+    fees: string | null;
 };
