@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-desktop-app:
+  test-mobile-app:
     name: "Ledger Live Mobile Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

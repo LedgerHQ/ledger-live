@@ -1,4 +1,4 @@
-name: Prerelease
+name: "[Release](Prerelease) Publish packages and apps"
 on:
   push:
     branches:

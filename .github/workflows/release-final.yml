@@ -1,9 +1,9 @@
-name: Release
+name: "[Release] Publish packages and apps"
 on:
   workflow_dispatch:
   workflow_run:
     workflows:
-      - "Prepare Release"
+      - "[Release] Prepare for releasing"
     types:
       - "completed"
 

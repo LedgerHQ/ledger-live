@@ -1,4 +1,4 @@
-name: Prepare Hotfix
+name: "[Release](Hotfix) Prepare for releasing"
 
 on:
   workflow_dispatch:
