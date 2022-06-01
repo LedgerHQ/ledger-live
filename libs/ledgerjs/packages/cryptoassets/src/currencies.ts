@@ -230,16 +230,16 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  avalanche: {
+  avalanchecchain: {
     type: "CryptoCurrency",
-    id: "avalanche",
-    coinType: 9000,
-    name: "Avalanche",
+    id: "avalanchecchain",
+    coinType: 60,
+    name: "Avalanche (C-Chain)",
     managerAppName: "Avalanche",
     ticker: "AVAX",
-    scheme: "avalanche",
+    scheme: "avalanchecchain",
     color: "#E84142",
-    family: "avalanche",
+    family: "avalanchecchain",
     units: [
       {
         name: "AVAX",
@@ -258,6 +258,30 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
+  },
+  avalanchepchain: {
+    type: "CryptoCurrency",
+    id: "avalanchepchain",
+    coinType: 9000,
+    name: "Avalanche (P-Chain)",
+    managerAppName: "Avalanche",
+    ticker: "AVAX",
+    scheme: "avalanchepchain",
+    color: "#E84142",
+    family: "avalanchepchain",
+    units: [
+      {
+        name: "AVAX",
+        code: "AVAX",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-xp.avax.network/tx/$hash",
+        address: "https://explorer-xp.avax.network/address/$address",
+      }
+    ]
   },
   banano: {
     type: "CryptoCurrency",

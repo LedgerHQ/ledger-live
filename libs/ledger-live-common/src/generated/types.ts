@@ -1,5 +1,9 @@
 import { Transaction as algorandTransaction } from "../families/algorand/types";
 import { TransactionRaw as algorandTransactionRaw } from "../families/algorand/types";
+import { Transaction as avalanchecchainTransaction } from "../families/avalanchecchain/types";
+import { TransactionRaw as avalanchecchainTransactionRaw } from "../families/avalanchecchain/types";
+import { Transaction as avalanchepchainTransaction } from "../families/avalanchepchain/types";
+import { TransactionRaw as avalanchepchainTransactionRaw } from "../families/avalanchepchain/types";
 import { Transaction as bitcoinTransaction } from "../families/bitcoin/types";
 import { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
 import { Transaction as celoTransaction } from "../families/celo/types";
@@ -33,6 +37,8 @@ import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 
 export type Transaction =
   | algorandTransaction
+  | avalanchecchainTransaction
+  | avalanchepchainTransaction
   | bitcoinTransaction
   | celoTransaction
   | cosmosTransaction
@@ -50,6 +56,8 @@ export type Transaction =
   | tronTransaction
 export type TransactionRaw =
   | algorandTransactionRaw
+  | avalanchecchainTransactionRaw
+  | avalanchepchainTransactionRaw
   | bitcoinTransactionRaw
   | celoTransactionRaw
   | cosmosTransactionRaw

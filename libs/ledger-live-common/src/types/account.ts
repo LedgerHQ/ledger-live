@@ -16,6 +16,10 @@ import type {
   AlgorandResourcesRaw,
 } from "../families/algorand/types";
 import type {
+  AvalanchePChainResources,
+  AvalanchePChainResourcesRaw,
+} from "../families/avalanchepchain/types";
+import type {
   PolkadotResources,
   PolkadotResourcesRaw,
 } from "../families/polkadot/types";
@@ -209,6 +213,7 @@ export type Account = {
   tronResources?: TronResources;
   cosmosResources?: CosmosResources;
   algorandResources?: AlgorandResources;
+  avalanchePChainResources?: AvalanchePChainResources;
   polkadotResources?: PolkadotResources;
   tezosResources?: TezosResources;
   elrondResources?: ElrondResources;
@@ -299,6 +304,7 @@ export type AccountRaw = {
   tronResources?: TronResourcesRaw;
   cosmosResources?: CosmosResourcesRaw;
   algorandResources?: AlgorandResourcesRaw;
+  avalanchePChainResources?: AvalanchePChainResourcesRaw;
   polkadotResources?: PolkadotResourcesRaw;
   elrondResources?: ElrondResourcesRaw;
   tezosResources?: TezosResourcesRaw;

@@ -40,6 +40,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
+  API_AVALANCHE_INDEXER: {
+    def: "http://localhost:4444",
+    parser: stringParser,
+    desc: "Explorer API for avalanche"
+  },
+  API_AVALANCHE_NODE: {
+    def: "http://localhost:5555",
+    parser: stringParser,
+    desc: "Node endpoint for avalanche"
+  },
   API_CELO_INDEXER: {
     def: "https://celo.coin.ledger.com/indexer/",
     parser: stringParser,
