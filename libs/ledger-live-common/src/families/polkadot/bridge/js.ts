@@ -15,6 +15,7 @@ import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import signOperation from "../js-signOperation";
+import { loadPolkadotCrypto } from "../polkadot-crypto";
 const receive = makeAccountBridgeReceive();
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -28,6 +29,7 @@ const broadcast = async ({
 }: {
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
+  await loadPolkadotCrypto();
   const hash = await submitExtrinsic(signature);
   return patchOperationWithHash(operation, hash);
 };

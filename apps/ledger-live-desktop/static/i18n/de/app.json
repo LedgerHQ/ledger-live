@@ -122,7 +122,8 @@
     },
     "exchange": "Umtauschen",
     "info": "Informationen",
-    "connectDevice": "Verbinden Sie Ihr Gerät"
+    "connectDevice": "Verbinden Sie Ihr Gerät",
+    "selectCurrencyEmptyOption": "Kein Krypto-Wert"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<1>Ich habe die </1><0>Nutzungsbedingungen gelesen und bin damit einverstanden</0><1>.</1>"
       },
       "steps": {
-        "title": "Schritt <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "Genehmigen Sie ein Konto, um dem Protokoll zu erlauben,",
           "subtitle2": "zukünftige Kredite zu verarbeiten.",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "Vermögenswerte jederzeit abheben",
           "description": "Sie können Ihr Vermögen und die erwirtschafteten Zinsen jederzeit ganz oder teilweise direkt von Ihrem Ledger-Konto abheben."
-        }
+        },
+        "title": "Schritt <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "Galerie ansehen",
       "seeMore": "Weitere Sammlungen ansehen",
       "seeAll": "Alle Sammlungen anzeigen",
-      "seeLess": "Weniger anzeigen"
+      "seeLess": "Weniger anzeigen",
+      "placeholder": "Um Token hinzuzufügen, senden Sie sie einfach an Ihre {{currency}}-Adresse."
     },
     "gallery": {
       "title": "Alle NFT",
@@ -1609,7 +1611,7 @@
         "not_supported": "Wallet von Drittanbietern erforderlich",
         "addAccount": "Konto hinzufügen",
         "addAccountTooltip": "Konto {{appName}} hinzufügen",
-        "addAccountWarn": "Bitte warten Sie, bis die App-Updates abgeschlossen sind",
+        "addAccountWarn": "Bitte warten Sie, bis die Verarbeitung beendet ist",
         "learnMore": "Mehr erfahren",
         "learnMoreTooltip": "Erfahren Sie mehr über {{appName}}",
         "removeTooltip": "{{appName}} deinstallieren",
@@ -2127,9 +2129,14 @@
               "cta": "Details anzeigen"
             },
             "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+          },
+          "amount": {
+            "title": "Betrag"
           }
         }
-      }
+      },
+      "commission": "Provision",
+      "totalStake": "Staking-Gesamtbetrag"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "Aktuelle Delegierung",
             "newDelegation": "Neue Übertragung",
             "chooseValidator": "Wählen Sie einen Validator",
-            "warning": "Sie müssen <0>21 Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern"
+            "warning": "Sie müssen <0>21 Tage</0> warten, um vom neuen Validator neu zu delegieren, wenn Sie Ihre Meinung wieder ändern",
+            "amountLabel": "Erneut zu delegierender Betrag"
           },
           "device": {
             "title": "Gerät"
@@ -2570,11 +2578,11 @@
       }
     },
     "delegation": {
-      "totalStake": "Summe Stake",
+      "totalStake": "Staking-Gesamtbetrag",
       "commission": "Kommission",
       "delegate": "Hinzufügen",
       "listHeader": "Delegierungen",
-      "availableBalance": "Verfügbares Guthaben",
+      "availableBalance": "Auszahlbar",
       "active": "Aktiv",
       "activeTooltip": "Aktive Beträge generieren Belohnungen",
       "inactiveTooltip": "Inaktive Beträge generieren keine Belohnungen",
@@ -3520,12 +3528,6 @@
     "connected": "Verbunden!",
     "backToPortfolio": "Zurück zum Portfolio",
     "steps": {
-      "entry": {
-        "title": "Fehlerbehebung bei der USB-Verbindung",
-        "desc": "Es scheint ein Problem beim Verbinden mit Ihrem Gerät zu geben. Keine Sorge, Sie können verschiedene Lösungen nacheinander ausprobieren, bis Ihr Gerät eine Verbindung herstellt!",
-        "cta": "Bringen wir es in Ordnung!",
-        "back": "Zurückgehen"
-      },
       "1": {
         "windows": {
           "title": "Starten Sie Ledger Live als Administrator",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "Folgen Sie den Anweisungen zum Geräte-Update",
           "somethingElse": "Etwas anderes"
         }
+      },
+      "entry": {
+        "title": "Fehlerbehebung bei der USB-Verbindung",
+        "desc": "Es scheint ein Problem beim Verbinden mit Ihrem Gerät zu geben. Keine Sorge, Sie können verschiedene Lösungen nacheinander ausprobieren, bis Ihr Gerät eine Verbindung herstellt!",
+        "cta": "Bringen wir es in Ordnung!",
+        "back": "Zurückgehen"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "Sie haben die Anzahl der verfügbaren Token überschritten"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "Stellen Sie sicher, dass Ihr Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "Ihre vorherige Transaktion wurde noch nicht verarbeitet. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "Stellen Sie sicher, dass Ihr Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "Memo",
     "memoPlaceholder": "Optional",
     "memoWarningText": "Wenn Sie ein Memo verwenden, prüfen Sie die Informationen sorgfältig mit dem Empfänger"
+  },
+  "hedera": {
+    "name": "Hedera",
+    "createHederaAccountHelp": {
+      "text": "In diesem Supportartikel erhalten Sie weitere Informationen zum Thema",
+      "link": "Erstellen eines Hedera-Kontos"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Ihre {{name}}-Adresse kann auf Ihrem Ledger-Gerät nicht bestätigt werden. Nutzung auf eigenes Risiko."
+    }
   }
 }

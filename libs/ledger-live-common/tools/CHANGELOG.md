@@ -1,28 +1,6 @@
 # live-common-tools
 
-## 0.1.1-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [899aa3300]
-- Updated dependencies [b688a592d]
-  - @ledgerhq/live-common@22.2.0-nightly.3
-
-## 0.1.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [89e82ed79]
-  - @ledgerhq/live-common@22.2.0-nightly.2
-
-## 0.1.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [9a86fe231]
-  - @ledgerhq/live-common@22.2.0-nightly.1
-
-## 0.1.1-nightly.0
+## 0.1.1
 
 ### Patch Changes
 
@@ -32,19 +10,32 @@
 - Updated dependencies [3f816efba]
 - Updated dependencies [f2574d25d]
 - Updated dependencies [f913f6fdb]
-- Updated dependencies [403ea8efe]
-  - @ledgerhq/live-common@22.2.0-nightly.0
+- Updated dependencies [9dadffa88]
+- Updated dependencies [04ad3813d]
+  - @ledgerhq/live-common@22.2.0
 
-## 0.1.1-nightly.0
+## 0.1.1-next.2
 
 ### Patch Changes
 
-- 47252169a: add dummy changesets
-- Updated dependencies [47252169a]
-  - @ledgerhq/live-common@22.0.4-nightly.0
-  - @ledgerhq/cryptoassets@6.28.3-nightly.0
-  - @ledgerhq/hw-transport@6.27.2-nightly.0
-  - @ledgerhq/hw-transport-http@6.27.2-nightly.0
-  - @ledgerhq/hw-transport-web-ble@6.27.2-nightly.0
-  - @ledgerhq/hw-transport-webhid@6.27.2-nightly.0
-  - @ledgerhq/hw-transport-webusb@6.27.2-nightly.0
+- Updated dependencies [9dadffa88]
+  - @ledgerhq/live-common@22.2.0-next.2
+
+## 0.1.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [04ad3813d]
+  - @ledgerhq/live-common@22.2.0-next.1
+
+## 0.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [e0c18707]
+- Updated dependencies [ee44ffb1]
+- Updated dependencies [0252fab7]
+- Updated dependencies [3f816efb]
+- Updated dependencies [f2574d25]
+- Updated dependencies [f913f6fd]
+  - @ledgerhq/live-common@22.2.0-next.0
