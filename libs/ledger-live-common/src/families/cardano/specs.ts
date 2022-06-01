@@ -21,7 +21,7 @@ const cardano: AppSpec<Transaction> = {
       name: "move ~50%",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "balance is too low");
+        invariant(maxSpendable.gt(1000), "balance is too low");
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
@@ -45,7 +45,8 @@ const cardano: AppSpec<Transaction> = {
     {
       name: "send max",
       maxRun: 1,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(1000), "balance is too low");
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
