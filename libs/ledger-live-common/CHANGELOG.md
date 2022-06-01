@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 22.2.1-nightly.0
+
+### Patch Changes
+
+- 09648db7f: refactor of the top perfs filter
+- 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- 71ad84023: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+
 ## 22.2.0
 
 ### Minor Changes

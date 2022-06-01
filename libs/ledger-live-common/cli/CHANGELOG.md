@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 21.33.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [09648db7f]
+- Updated dependencies [0f59cfc10]
+- Updated dependencies [71ad84023]
+  - @ledgerhq/live-common@22.2.1-nightly.0
+
 ## 21.33.0
 
 ### Minor Changes

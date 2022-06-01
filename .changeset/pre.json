@@ -72,16 +72,10 @@
   },
   "changesets": [
     "calm-pets-sleep",
-    "chatty-melons-shop",
-    "cuddly-lamps-yawn",
-    "green-games-kick",
-    "green-suits-move",
-    "late-zebras-hug",
+    "empty-taxis-grin",
+    "flat-kings-cover",
     "lazy-pants-travel",
-    "lemon-adults-double",
     "lucky-rockets-drum",
-    "mean-bananas-flash",
-    "nine-coins-rule",
     "quick-hairs-obey",
     "quiet-coats-hang",
     "shy-bears-reflect",
@@ -89,6 +83,7 @@
     "swift-parrots-enjoy",
     "weak-beans-fix",
     "wet-news-agree",
+    "wild-goats-arrive",
     "wild-papayas-bow"
   ]
 }
