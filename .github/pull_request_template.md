@@ -8,15 +8,14 @@ _Replace this text by a clear and concise description of what this pull request 
 
 ### ❓ Context
 
-- **Impacted projects**: ` ` <!-- precise end user projects impacted -->
-- **Linked resource(s)**: ` ` <!-- attach any ticket number if relevant (JIRA / Github issue number) -->
-
+- **Impacted projects**: `` <!-- The list of end user projects impacted by the change. -->
+- **Linked resource(s)**: `` <!-- Attach any ticket number if relevant. (JIRA / Github issue number) -->
 
 ### ✅ Checklist
 
-- [ ] **Test coverage**. <!-- Are your changes covered by tests? Features must be tested. bugfixes must bring the test that would have detected the bug. -->
-- [ ] **Atomic delivery**. <!-- Is this pull request standalone? In order words, does it depend on nothing else? Please explain if not checked. -->
-- [ ] **No breaking changes**. <!-- If there are breaking changes, please explain why. -->
+- [ ] **Test coverage** <!-- Are your changes covered by tests? Features must be tested, bugfixes must include a test that would have detected the issue. -->
+- [ ] **Atomic delivery** <!-- Is this pull request standalone? In order words, does it depend on nothing else? Please explain if not checked. -->
+- [ ] **No breaking changes** <!-- If there are breaking changes, please explain why. -->
 
 ### 📸 Demo
 
