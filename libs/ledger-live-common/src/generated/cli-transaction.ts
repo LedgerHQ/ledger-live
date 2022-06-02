@@ -1,5 +1,7 @@
 import algorand from "../families/algorand/cli-transaction";
 
+import avalanchecchain from "../families/avalanchecchain/cli-transaction";
+
 import bitcoin from "../families/bitcoin/cli-transaction";
 
 import celo from "../families/celo/cli-transaction";
@@ -31,6 +33,7 @@ import tron from "../families/tron/cli-transaction";
 
 export default {
   algorand,
+  avalanchecchain,
   bitcoin,
   celo,
   cosmos,
