@@ -35,6 +35,7 @@ import {
 } from "./logic";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 import { getNetworkParameters } from "./networks";
+import { MEMO_LABEL } from "./constants";
 
 const buildOptimisticOperation = (
   account: Account,
@@ -76,6 +77,16 @@ const buildOptimisticOperation = (
     fees: transaction.getFee(),
   });
   const transactionHash = transaction.getTransactionHash().toString("hex");
+  const auxiliaryData = transaction.getAuxiliaryData();
+  let memo;
+  if (auxiliaryData) {
+    const memoMetadata = auxiliaryData.metadata.find(
+      (m) => m.label === MEMO_LABEL
+    );
+    if (memoMetadata && Array.isArray(memoMetadata.data)) {
+      memo = memoMetadata.data.join(", ");
+    }
+  }
 
   const op: Operation = {
     id: encodeOperationId(account.id, transactionHash, opType),
@@ -89,7 +100,9 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map((o) => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      memo,
+    },
   };
 
   const tokenAccount = t.subAccountId
