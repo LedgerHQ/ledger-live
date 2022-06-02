@@ -43,7 +43,7 @@ const fetchOperations = async (
  * @param address - "P-avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn"
  * @returns avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn
  */
-const removeChainPrefix = (address) => address.split('-')[1]
+const removeChainPrefix = (address) => address.split('-')[1];
 
 const convertTransactionToOperation = (transaction, accountId): Operation => {
     const type = getOperationType(transaction.type);
