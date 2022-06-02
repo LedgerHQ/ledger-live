@@ -1,6 +1,7 @@
 import {
   CARDANO_COIN_TYPE,
   CARDANO_PURPOSE,
+  MEMO_LABEL,
   STAKING_ADDRESS_INDEX,
   TTL_GAP,
 } from "./constants";
@@ -428,7 +429,9 @@ export function getAccountChange(
 
 export function getMemoFromTx(tx: APITransaction): string | undefined {
   let memo;
-  const metadataValue = tx.metadata?.data.find((m) => m.label === "674");
+  const metadataValue = tx.metadata?.data.find(
+    (m) => m.label === MEMO_LABEL.toString()
+  );
   if (metadataValue) {
     try {
       const parsedValue = JSON.parse(metadataValue.value);
