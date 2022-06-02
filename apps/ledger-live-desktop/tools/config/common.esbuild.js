@@ -1,5 +1,5 @@
 const path = require("path");
-const { AliasPlugin, StripFlowPlugin, ImportGlobPlugin } = require("esbuild-utils");
+const { AliasPlugin, StripFlowPlugin } = require("esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 const srcFolder = path.resolve(rootFolder, "src");
@@ -20,7 +20,6 @@ module.exports = {
       "~": srcFolder,
     }),
     StripFlowPlugin(/.jsx?$/),
-    ImportGlobPlugin(),
   ],
   loader: {
     ".woff": "file",
