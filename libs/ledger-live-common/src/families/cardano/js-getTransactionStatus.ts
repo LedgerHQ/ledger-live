@@ -15,6 +15,7 @@ import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
+import { buildTransaction } from "./js-buildTransaction";
 
 const getTransactionStatus = async (
   a: Account,
@@ -96,6 +97,18 @@ const getTransactionStatus = async (
     totalSpent.gt(a.balance)
   ) {
     errors.amount = new NotEnoughBalance();
+  } else {
+    try {
+      await buildTransaction(a, t);
+    } catch (e: any) {
+      if (
+        e.message.toLowerCase() === "not enough ada" ||
+        e.message.toLowerCase() === "not enough tokens"
+      ) {
+        errors.amount = new NotEnoughBalance();
+      }
+      throw e;
+    }
   }
 
   return Promise.resolve({
