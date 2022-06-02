@@ -38,8 +38,12 @@ const estimateMaxSpendable = async ({
     amount: new BigNumber(0),
     useAllAmount: true,
   };
-
-  const typhonTransaction = await buildTransaction(a, t);
+  let typhonTransaction;
+  try {
+    typhonTransaction = await buildTransaction(a, t);
+  } catch (error) {
+    return new BigNumber(0);
+  }
   const transactionAmount = typhonTransaction
     .getOutputs()
     .filter(

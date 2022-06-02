@@ -7,7 +7,6 @@ import {
 } from "@stricahq/typhonjs";
 
 import { buildTransaction } from "./js-buildTransaction";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 
 /**
  * Create an empty transaction
@@ -47,14 +46,8 @@ export const prepareTransaction = async (
   let transaction;
   try {
     transaction = await buildTransaction(a, t);
-  } catch (error: any) {
-    if (
-      error.message.toLowerCase() === "not enough ada" ||
-      error.message.toLowerCase() === "not enough tokens"
-    ) {
-      throw new NotEnoughBalance();
-    }
-    throw error;
+  } catch (error) {
+    return { ...t, fees: new BigNumber(0), amount: new BigNumber(0) };
   }
 
   const transactionFees = transaction.getFee();

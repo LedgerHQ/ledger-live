@@ -16,7 +16,6 @@ const dataset: DatasetTest<Transaction> = {
           raw: cardanoRawAccount1,
           transactions: [
             {
-              //TODO: verify this test
               name: "amount less then minimum",
               transaction: fromTransactionRaw({
                 family: "cardano",
