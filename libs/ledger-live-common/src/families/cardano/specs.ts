@@ -16,6 +16,7 @@ const cardano: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "CardanoADA",
   },
+  testTimeout: 2 * 60 * 1000,
   mutations: [
     {
       name: "move ~50%",
