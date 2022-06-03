@@ -8,6 +8,11 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
+import { parseCurrencyUnit } from "../../currencies";
+
+const currency = getCryptoCurrencyById("ripple");
+const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
+const minBalanceRequiredForMaxSend = parseCurrencyUnit(currency.units[0], "1");
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
@@ -22,8 +27,8 @@ const cardano: AppSpec<Transaction> = {
       name: "move ~50%",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(1000), "balance is too low");
-        const sibling = pickSiblings(siblings, 4);
+        invariant(maxSpendable.gt(minBalanceRequired), "balance is too low");
+        const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
@@ -49,8 +54,8 @@ const cardano: AppSpec<Transaction> = {
       name: "send max",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(1000), "balance is too low");
-        const sibling = pickSiblings(siblings, 4);
+        invariant(maxSpendable.gt(minBalanceRequiredForMaxSend), "balance is too low");
+        const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
