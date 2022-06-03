@@ -1,13 +1,13 @@
 import expect from "expect";
 import type { AppSpec } from "../../bot/types";
-import type { Transaction } from "./types";
+import type { CardanoResources, Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
-
-//TODO: need to run the test and update mutations as required after speculos flow in working condition
+import { utils as TyphonUtils } from "@stricahq/typhonjs";
+import { mergeTokens } from "./logic";
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
@@ -29,6 +29,7 @@ const cardano: AppSpec<Transaction> = {
         const updates = [
           { recipient },
           { amount: new BigNumber(account.balance.dividedBy(2)).dp(0, 1) },
+          { memo: "LedgerLiveBot" },
         ];
 
         return {
@@ -36,10 +37,11 @@ const cardano: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }): void => {
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
-        );
+      test: ({ operation, transaction }): void => {
+        expect(operation.extra).toEqual({
+          memo: transaction.memo,
+        });
+        expect(operation.value).toEqual(transaction.amount);
       },
     },
     {
@@ -57,10 +59,20 @@ const cardano: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }): void => {
-        //TODO: add additional test to check operation amount
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(operation.value).toString()
+      test: ({ accountBeforeTransaction, operation }): void => {
+        const cardanoResources =
+          accountBeforeTransaction.cardanoResources as CardanoResources;
+        const utxoTokens = cardanoResources.utxos.map((u) => u.tokens).flat();
+        const tokenBalance = mergeTokens(utxoTokens);
+        const requiredAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
+          tokenBalance,
+          new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
+          false
+        );
+        expect(operation.value).toEqual(
+          accountBeforeTransaction.balance
+            .minus(operation.fee)
+            .minus(requiredAdaForTokens)
         );
       },
     },
