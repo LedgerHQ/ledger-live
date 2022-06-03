@@ -132,7 +132,7 @@ export class OsmosisAPI extends CosmosAPI {
       url: `${indexerEndpoint}/transactions_search/`,
       data: {
         network: "osmosis",
-        type: ["begin_redelegate"],
+        // type: ["begin_redelegate"],       // if no type is specified, all transaction types will be returned
         account: [address],
         before_time: now,
         after_time: startDate !== null ? startDate.toISOString() : null,
