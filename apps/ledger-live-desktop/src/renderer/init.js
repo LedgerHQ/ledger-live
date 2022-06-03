@@ -7,7 +7,8 @@ import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import i18n from "i18next";
-import { remote, webFrame, ipcRenderer } from "electron";
+import { webFrame, ipcRenderer } from "electron";
+import * as remote from "@electron/remote";
 import { render } from "react-dom";
 import moment from "moment";
 import each from "lodash/each";

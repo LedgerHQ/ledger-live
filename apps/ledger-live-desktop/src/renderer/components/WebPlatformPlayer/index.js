@@ -1,5 +1,6 @@
 // @flow
-import { remote, WebviewTag, shell } from "electron";
+import { WebviewTag, shell } from "electron";
+import * as remote from "@electron/remote";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";

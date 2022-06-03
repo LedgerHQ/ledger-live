@@ -1,5 +1,7 @@
 appId: com.ledger.live
 
+beforePack: scripts/beforePack.js
+
 protocols:
   name: Ledger Live
   schemes:
@@ -8,8 +10,13 @@ protocols:
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
   category: public.app-category.wallet
+  # singleArchFiles: "**/*"
   target:
-    - dmg
+    - target: dmg
+      arch:
+        # - x64
+        # - arm64
+        - universal
 
 linux:
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
@@ -46,5 +53,31 @@ files:
     to: "node_modules"
     filter:
       - "**/*"
+      # We are excluding files because in order to produce universal apps (merge the asar),
+      # each flavour of the app need to have the same exact files as the others.
+      #
+      # Sometimes packages provide prebuilt binaries for only selected archs.
+      # It results in compilation artifacts beeing unique between the archs and this causes bundle errors.
+      #
+      # See: https://github.com/electron/universal/issues/41
+      #
+      # Default exclusion list
+      - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+      - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+      - "!**/node_modules/*.d.ts"
+      - "!**/node_modules/.bin"
+      - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+      - "!.editorconfig"
+      - "!**/._*"
+      - "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+      - "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}"
+      - "!**/{appveyor.yml,.travis.yml,circle.yml}"
+      - "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+      # Custom exclusion list
+      - "!**/Makefile"
+      - "!**/*.{gyp,gypi,mk,Makefile}"
+      - "!**/build/**/*"
+      - "**/build/**/*.{js,cjs,mjs}"
+      - "**/*.node"
   # Exclude files
   - "!node_modules"
