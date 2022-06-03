@@ -1,4 +1,8 @@
 // @flow
+
+require("@electron/remote/main").initialize();
+
+/* eslint-disable import/first */
 import "./setup";
 import { app, Menu, ipcMain } from "electron";
 import menu from "./menu";
@@ -13,8 +17,7 @@ import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import logger from "~/logger";
-
-require("@electron/remote/main").initialize();
+/* eslint-enable import/first */
 
 app.allowRendererProcessReuse = false;
 
