@@ -56,7 +56,10 @@ const cardano: AppSpec<Transaction> = {
       name: "send max",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minBalanceRequiredForMaxSend), "balance is too low");
+        invariant(
+          maxSpendable.gt(minBalanceRequiredForMaxSend),
+          "balance is too low"
+        );
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
