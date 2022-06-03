@@ -41,7 +41,9 @@ const cardano: AppSpec<Transaction> = {
         expect(operation.extra).toEqual({
           memo: transaction.memo,
         });
-        expect(operation.value).toEqual(transaction.amount);
+        expect(transaction.amount).toEqual(
+          operation.value.minus(operation.fee)
+        );
       },
     },
     {
@@ -64,15 +66,17 @@ const cardano: AppSpec<Transaction> = {
           accountBeforeTransaction.cardanoResources as CardanoResources;
         const utxoTokens = cardanoResources.utxos.map((u) => u.tokens).flat();
         const tokenBalance = mergeTokens(utxoTokens);
-        const requiredAdaForTokens = TyphonUtils.calculateMinUtxoAmount(
-          tokenBalance,
-          new BigNumber(cardanoResources.protocolParams.lovelacePerUtxoWord),
-          false
-        );
+        const requiredAdaForTokens = tokenBalance.length
+          ? TyphonUtils.calculateMinUtxoAmount(
+              tokenBalance,
+              new BigNumber(
+                cardanoResources.protocolParams.lovelacePerUtxoWord
+              ),
+              false
+            )
+          : new BigNumber(0);
         expect(operation.value).toEqual(
-          accountBeforeTransaction.balance
-            .minus(operation.fee)
-            .minus(requiredAdaForTokens)
+          accountBeforeTransaction.balance.minus(requiredAdaForTokens)
         );
       },
     },
