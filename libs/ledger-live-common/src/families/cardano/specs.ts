@@ -10,7 +10,7 @@ import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { mergeTokens } from "./logic";
 import { parseCurrencyUnit } from "../../currencies";
 
-const currency = getCryptoCurrencyById("ripple");
+const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
 const minBalanceRequiredForMaxSend = parseCurrencyUnit(currency.units[0], "1");
 
