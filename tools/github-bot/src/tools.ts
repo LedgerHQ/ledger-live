@@ -14,6 +14,7 @@ export const isValidBody = (body: string | null): boolean => {
     "_Replace this text by a clear and concise description of what this pull request is about and why it is needed._";
 
   const requiredHeadings = [
+    "### 📝 Description",
     "### ❓ Context",
     "### ✅ Checklist",
     "### 🚀 Expectations to reach",
