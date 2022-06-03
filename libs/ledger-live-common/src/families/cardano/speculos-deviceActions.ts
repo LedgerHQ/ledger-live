@@ -23,6 +23,10 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: "Rr",
     },
     {
+      title: "Auxiliary data hash",
+      button: "LRlr",
+    },
+    {
       title: "Send to address",
       button: "LRlr",
       ignoreAssertionFailure: true,
@@ -45,7 +49,6 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Transaction TTL",
       button: "LRlr",
-      //TODO: expectedValue TTL from builtTransaction
     },
     {
       title: "...",
