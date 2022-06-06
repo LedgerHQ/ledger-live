@@ -1,5 +1,3 @@
-import { fromTransactionRaw } from "./transaction";
-
 import type { AccountRaw, DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
