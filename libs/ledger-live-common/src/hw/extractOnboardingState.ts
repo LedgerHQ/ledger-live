@@ -60,8 +60,8 @@ export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
     );
   }
 
-  const isOnboarded = !!(flagsBytes[0] & onboardedMask);
-  const isInRecoveryMode = !!(flagsBytes[0] & inRecoveryModeMask);
+  const isOnboarded = Boolean(flagsBytes[0] & onboardedMask);
+  const isInRecoveryMode = Boolean(flagsBytes[0] & inRecoveryModeMask);
 
   const seedPhraseTypeBits =
     (flagsBytes[2] & seedPhraseTypeMask) >> seedPhraseTypeFlagOffset;
