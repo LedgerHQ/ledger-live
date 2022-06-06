@@ -1,4 +1,4 @@
-name: "[Bot] Staging Explorer 'Ethereum'"
+name: "[Bot](Staging) 'Ethereum'"
 on:
   schedule:
     - cron: 0 8,12,16 * * 1-5
