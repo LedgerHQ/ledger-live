@@ -464,6 +464,37 @@ export default class Eth {
       });
   }
 
+  /**
+   * Sign an EIP-721 formatted message following the specification here:
+   * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
+   @example
+   eth.signEIP721Message("44'/60'/0'/0/0", {
+      domain: {
+        chainId: 69,
+        name: "Da Domain",
+        verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+        version: "1"
+      },
+      types: {
+        "EIP712Domain": [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" }
+          ],
+        "Test": [
+          { name: "contents", type: "string" }
+        ]
+      },
+      primaryType: "Test",
+      message: {contents: "Hello, Bob!"},
+    })
+   * 
+   * @param {String} path derivationPath
+   * @param {Object} jsonMessage message to sign
+   * @param {Boolean} fullImplem use the legacy implementation
+   * @returns {Promise}
+   */
   async signEIP712Message(
     path: string,
     jsonMessage: EIP712Message,
@@ -529,7 +560,6 @@ export default class Eth {
     }
 
     // Sending the final signature.
-    // NO, I HAVE NO IDEA HOW THAT WORKS.
     const paths = splitPath(path);
     const signatureBuffer = Buffer.alloc(1 + paths.length * 4);
     signatureBuffer[0] = paths.length;
@@ -558,6 +588,14 @@ export default class Eth {
       });
   }
 
+  /**
+   * This method is used to send the message definition with all its types.
+   * This method should be used before the EIP712SendStructImplem one
+   *
+   * @param {String} structType
+   * @param {String|Buffer} value
+   * @returns {Promise<void>}
+   */
   EIP712SendStructDef(
     structType: "name" | "field",
     value: string | Buffer
@@ -584,6 +622,23 @@ export default class Eth {
     );
   }
 
+  /**
+   * This method provides a trusted new display name to use for the upcoming field.
+   * This method should be used after the EIP712SendStructDef one.
+   *
+   * If the method describes an empty name (length of 0), the upcoming field will be taken
+   * into account but won’t be shown on the device.
+   *
+   * The signature is computed on :
+   * json key length || json key || display name length || display name
+   *
+   * signed by the following secp256k1 public key:
+   * 0482bbf2f34f367b2e5bc21847b6566f21f0976b22d3388a9a5e446ac62d25cf725b62a2555b2dd464a4da0ab2f4d506820543af1d242470b1b1a969a27578f353
+   *
+   * @param {String} structType "root" | "array" | "field"
+   * @param {string | number | StructFieldData} value
+   * @returns {Promise<Buffer | void>}
+   */
   async EIP712SendStructImplem(
     structType: "root" | "array" | "field",
     value: string | number | StructFieldData
