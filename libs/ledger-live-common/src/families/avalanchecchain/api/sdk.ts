@@ -7,9 +7,6 @@ import { encodeOperationId } from "../../../operation";
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
 
-const getNodeUrl = (): string =>
-    `${getEnv("API_AVALANCHE_NODE")}`;
-
 /**
  * Fetch operation list from indexer
  */
