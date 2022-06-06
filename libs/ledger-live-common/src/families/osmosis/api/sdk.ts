@@ -75,7 +75,7 @@ const convertTransactionToOperation = (
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getOperationValue(
+export function getOperationValue(
   eventContent: OsmosisSendEventContent,
   type: string,
   fee: BigNumber
