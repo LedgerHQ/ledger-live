@@ -17,6 +17,8 @@ import {
   TransportStatusError,
   DeviceOnboardingStatePollingError,
   DeviceExtractOnboardingStateError,
+  DisconnectedDevice,
+  CantOpenDevice,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "../../types/manager";
 import {
@@ -232,36 +234,33 @@ export const onboardingStatePolling = ({
 };
 
 // TODO: decide which errors are allowed
-export const isAllowedOnboardingStatePollingError = (
-  error: Error | any
-): boolean => {
+export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
   // Timeout error thrown by rxjs's timeout
   if (error && error instanceof TimeoutError) {
     console.log(`SyncOnboarding: timeout error ⌛️ ${JSON.stringify(error)}`);
     return true;
   }
 
-  // Transport error: retry polling
-  if (
-    error &&
-    error instanceof TransportStatusError
-    // error.statusCode === 0x6d06
-  ) {
-    console.log(`SyncOnboarding: 0x6d06 error 🔨 ${JSON.stringify(error)}`);
-    return true;
-  }
-  // Disconnection error: retry polling
-  if (error && error instanceof Error && error.name === "DisconnectedDevice") {
+  if (error && error instanceof DisconnectedDevice) {
     console.log(
       `SyncOnboarding: disconnection error 🔌 ${JSON.stringify(error)}`
     );
     return true;
   }
 
-  if (error && error instanceof Error && error.name === "CantOpenDevice") {
+  if (error && error instanceof CantOpenDevice) {
     console.log(
       `SyncOnboarding: cannot open device error 🔌 ${JSON.stringify(error)}`
     );
+    return true;
+  }
+
+  if (
+    error &&
+    error instanceof TransportStatusError
+    // error.statusCode === 0x6d06
+  ) {
+    console.log(`SyncOnboarding: 0x6d06 error 🔨 ${JSON.stringify(error)}`);
     return true;
   }
 
