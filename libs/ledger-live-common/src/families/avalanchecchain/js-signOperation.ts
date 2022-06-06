@@ -44,7 +44,7 @@ const signOperation = ({
                         bnToUnpaddedBuffer(new BN(account.currency.ethereumLikeInfo?.chainId as number)),
                         Buffer.from([]),
                         Buffer.from([])
-                    ])
+                    ]);
 
                     o.next({ type: "device-signature-requested" });
 
@@ -99,7 +99,7 @@ const buildOptimisticOperation = (
     transaction: Transaction,
 ): Operation => {
     const type = "OUT";
-    const fee = transaction.fees ?? new BigNumber(0)
+    const fee = transaction.fees ?? new BigNumber(0);
     const value = new BigNumber(transaction.amount).plus(fee);
 
     const operation: Operation = {

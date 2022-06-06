@@ -12,9 +12,6 @@ import type { AddressBatch } from "../types";
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
 
-const getNodeUrl = (): string =>
-    `${getEnv("API_AVALANCHE_NODE")}`;
-
 export const binTools = BinTools.getInstance();
 const INDEX_RANGE = 20;
 const SCAN_RANGE = 80;
@@ -82,7 +79,7 @@ const getOperationType = (type: string): OperationType => {
     }
 };
 
-export const getOperations = async (hdKey: any, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
+export const getOperations = async (hdKey, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
     const usedKeys = await getUsedKeys(hdKey, () => { });
 
     const operations = await fetchOperations(usedKeys, blockStartHeight);
@@ -93,7 +90,7 @@ export const getOperations = async (hdKey: any, blockStartHeight: number, accoun
 
 const getPChainOperations = ({ type }) => type === P_IMPORT || type === P_EXPORT;
 
-export const getAccount = async (hdKey: any) => {
+export const getAccount = async (hdKey) => {
     const balance = await fetchBalances(hdKey);
 
     return {
@@ -130,8 +127,6 @@ export const fetchBalances = async (hdKey) => {
 const getUsedKeys = async (hdKey, batchFunction) => {
     let allAddressesAreUnused = false;
     let index = 0;
-
-    const keyPair = new AVMKeyPair("avax", "P");
     let allNonChangeAddresses: string[] = [];
 
     while (!allAddressesAreUnused || index < SCAN_RANGE) {
@@ -146,7 +141,6 @@ const getUsedKeys = async (hdKey, batchFunction) => {
             const changeChild = hdKey.deriveChild(1).deriveChild(index + i);
 
             const publicKeyHash = AVMKeyPair.addressFromPublicKey(child.publicKey);
-
             const changePublicKeyHash = AVMKeyPair.addressFromPublicKey(changeChild.publicKey);
             const address = binTools.addressToString("avax", "P", publicKeyHash);
             const changeAddress = binTools.addressToString("avax", "P", changePublicKeyHash);

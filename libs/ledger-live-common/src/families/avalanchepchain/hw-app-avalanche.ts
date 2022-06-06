@@ -7,8 +7,7 @@ const CLA = 0x80;
 const INS = {
     GET_ADDRESS: 0x02,
     GET_EXTENDED_PUBLIC_KEY: 0x03
-}
-const AVAX_HRP = "avax";
+};
 const AVAX_BIP32_PREFIX = "m/44'/9000'/0'";
 
 export default class Avalanche {
@@ -70,7 +69,7 @@ export default class Avalanche {
         const p2 = 0x00;
 
         const result = await this.transport.send(CLA, INS.GET_ADDRESS, p1, p2, buffer);
-        const address = bech32.encode(AVAX_HRP, bech32.toWords(result.slice(0, -2)));
+        const address = bech32.encode("avax", bech32.toWords(result.slice(0, -2)));
 
         const { publicKey, chainCode } = await this.getPublicKey(display);
 
