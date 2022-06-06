@@ -10,7 +10,7 @@ import {
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
-} from "../src/utils";
+} from "../src/modules/EIP712/EIP712.utils";
 
 const getFilePath = (filename: string): string =>
   path.resolve(`./tests/sample-messages/${filename}`);
