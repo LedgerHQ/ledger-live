@@ -122,7 +122,8 @@
     },
     "exchange": "تداول",
     "info": "معلومات",
-    "connectDevice": "توصيل جهازك"
+    "connectDevice": "توصيل جهازك",
+    "selectCurrencyEmptyOption": "لا يوجد أصل مشفر"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<1>لقد قرأت ووافقت على </1><0>شروط الاستخدام</0><1>.</1>"
       },
       "steps": {
-        "title": "الخطوة <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "الموافقة على حساب للسماح للبروتوكول بـ",
           "subtitle2": "مباشرة القروض المستقبلية.",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "سحب الأصول في أي وقت",
           "description": "يمكنك سحب أصولك والفائدة المكتسبة في أي وقت، جزئيًا أو كليًا، مباشرة من حسابك في ليدجر (Ledger)."
-        }
+        },
+        "title": "الخطوة <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "شاهد المعرض",
       "seeMore": "شاهد المزيد من المجموعات",
       "seeAll": "شاهد جميع المجموعات",
-      "seeLess": "شاهد أقل"
+      "seeLess": "شاهد أقل",
+      "placeholder": "لإضافة NFTs، ببساطة أرسلها إلى عنوان {{currency}} الخاص بك."
     },
     "gallery": {
       "title": "جميع NFT (رموز غير قابلة للاستبدال)",
@@ -1609,7 +1611,7 @@
         "not_supported": "يتطلب محفظة طرف ثالث",
         "addAccount": "إضافة حساب",
         "addAccountTooltip": "إضافة حساب {{appName}}",
-        "addAccountWarn": "يُرجى الانتظار حتى انتهاء تحديثات التطبيق",
+        "addAccountWarn": "يرجى الانتظار حتى تنتهي المعالجة",
         "learnMore": "معرفة المزيد",
         "learnMoreTooltip": "معرفة المزيد عن {{appName}}",
         "removeTooltip": "إلغاء تثبيت {{appName}}",
@@ -2127,9 +2129,14 @@
               "cta": "عرض التفاصيل"
             },
             "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          },
+          "amount": {
+            "title": "المبلغ"
           }
         }
-      }
+      },
+      "commission": "العمولة",
+      "totalStake": "إجمالي الرهن"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "التفويض الحالي",
             "newDelegation": "تفويض جديد",
             "chooseValidator": "اختار مدقق",
-            "warning": "سيكون عليك الانتظار لمدة <0>21 يومًا</0> لإعادة التفويض من المدقق الجديد إذا غيرت رأيك مرة أخرى"
+            "warning": "سيكون عليك الانتظار لمدة <0>21 يومًا</0> لإعادة التفويض من المدقق الجديد إذا غيرت رأيك مرة أخرى",
+            "amountLabel": "المبلغ المراد إعادة تفويضه"
           },
           "device": {
             "title": "الجهاز"
@@ -2570,11 +2578,11 @@
       }
     },
     "delegation": {
-      "totalStake": "Total Stake",
+      "totalStake": "إجمالي التكديس",
       "commission": "Commission",
       "delegate": "Add",
       "listHeader": "Delegations",
-      "availableBalance": "Available balance",
+      "availableBalance": "قابل للسحب",
       "active": "Active",
       "activeTooltip": "Active amount generate rewards",
       "inactiveTooltip": "Inactive amount does not generate rewards",
@@ -3520,12 +3528,6 @@
     "connected": "تم الاتصال!",
     "backToPortfolio": "الرجوع إلى المحفظة الاستثمارية",
     "steps": {
-      "entry": {
-        "title": "استكشاف وحل مشكلات الUSB",
-        "desc": "يبدو أن هناك مشكلة في الاتصال بجهازك. لا تقلق، حيث يمكنك تجربة حلول مختلفة واحدًا بعد الآخر حتى يتصل جهازك!",
-        "cta": "لنقوم بإصلاحها!",
-        "back": "رجوع"
-      },
       "1": {
         "windows": {
           "title": "تشغيل Ledger Live كمسؤول",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "اتبع إرشادات تحديث الجهاز",
           "somethingElse": "شيء آخر"
         }
+      },
+      "entry": {
+        "title": "استكشاف وحل مشكلات الUSB",
+        "desc": "يبدو أن هناك مشكلة في الاتصال بجهازك. لا تقلق، حيث يمكنك تجربة حلول مختلفة واحدًا بعد الآخر حتى يتصل جهازك!",
+        "cta": "لنقوم بإصلاحها!",
+        "back": "رجوع"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "لقد تجاوزت عدد رموز التوكن المتاحة"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "ملاحظة",
     "memoPlaceholder": "اختياري",
     "memoWarningText": "عند استخدام الملاحظة، تحقق بعناية من المعلومات مع المستلم"
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "يرجي الرجوع إلى مقالة الدعم هذه لمعرفة",
+      "link": "كيفية إنشاء حساب Hedera"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
+    }
   }
 }
