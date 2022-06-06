@@ -629,6 +629,9 @@
     },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum {{amount}} ADA required"
     }
   },
   "bluetooth": {
