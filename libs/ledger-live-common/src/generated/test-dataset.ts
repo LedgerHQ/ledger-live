@@ -14,6 +14,8 @@ import filecoin from "../families/filecoin/test-dataset";
 
 import hedera from "../families/hedera/test-dataset";
 
+import osmosis from "../families/osmosis/test-dataset";
+
 import polkadot from "../families/polkadot/test-dataset";
 
 import ripple from "../families/ripple/test-dataset";
@@ -36,6 +38,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  osmosis,
   polkadot,
   ripple,
   solana,

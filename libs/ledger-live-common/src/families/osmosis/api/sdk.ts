@@ -72,7 +72,7 @@ function getOperationType(
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getOperationValue(
+export function getOperationValue(
   eventContent: OsmosisEventContent,
   type: string,
   fee: BigNumber
@@ -127,7 +127,7 @@ export const getMicroOsmoAmountCosmosType = (
 /**
  * Map a send transaction as returned by the indexer to a Ledger Live Operation
  */
-function convertTransactionToOperation(
+export function convertTransactionToOperation(
   accountId: string,
   addr: string,
   eventContent: OsmosisEventContent,

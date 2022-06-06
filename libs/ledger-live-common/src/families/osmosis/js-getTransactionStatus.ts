@@ -24,11 +24,17 @@ const getTransactionStatus = async (
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (!transaction.fees || transaction.fees.isNaN()) {
-    errors.fees = new FeeNotLoaded();
-    throw new Error("fees not loaded");
+  if (!transaction.recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!isValidAddress(account.currency.id, transaction.recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
+  if (!transaction.fees || transaction.fees.isNaN()) {
+    errors.fees = new FeeNotLoaded();
+  }
   const estimatedFees = transaction.fees || new BigNumber(DEFAULT_FEES);
 
   const amount = useAllAmount
@@ -47,14 +53,6 @@ const getTransactionStatus = async (
 
   if (!errors.amount && account.spendableBalance.lt(estimatedFees)) {
     errors.amount = new NotEnoughBalance();
-  }
-
-  if (!transaction.recipient) {
-    errors.recipient = new RecipientRequired();
-  } else if (!isValidAddress(account.currency.id, transaction.recipient)) {
-    errors.recipient = new InvalidAddress("", {
-      currencyName: account.currency.name,
-    });
   }
 
   return Promise.resolve({
