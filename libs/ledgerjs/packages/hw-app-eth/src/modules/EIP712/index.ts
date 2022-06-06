@@ -15,6 +15,8 @@ import {
 } from "./EIP712.utils";
 
 /**
+ * @ignore for the README
+ *
  * Factory to create the recursive function that will pass on each
  * field level and APDUs to describe its structure implementation
  *
@@ -85,6 +87,8 @@ const makeRecursiveFieldStructImplem = (
 };
 
 /**
+ * @ignore for the README
+ *
  * This method is used to send the message definition with all its types.
  * This method should be used before the EIP712SendStructImplem one
  *
@@ -121,6 +125,8 @@ const EIP712SendStructDef = (
 };
 
 /**
+ * @ignore for the README
+ *
  * This method provides a trusted new display name to use for the upcoming field.
  * This method should be used after the EIP712SendStructDef one.
  *
@@ -213,6 +219,8 @@ const EIP712SendStructImplem = async (
 };
 
 /**
+ * @ignore for the README
+ *
  * Sign an EIP-721 formatted message following the specification here:
  * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
  * @example
@@ -350,16 +358,17 @@ export const signEIP712Message = async (
 };
 
 /**
-  * Sign a prepared message following web3.eth.signTypedData specification. The host computes the domain separator and hashStruct(message)
-  * @example
-  eth.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
-  var v = result['v'] - 27;
-  v = v.toString(16);
-  if (v.length < 2) {
-    v = "0" + v;
-  }
-  console.log("Signature 0x" + result['r'] + result['s'] + v);
-  })
+ * @ignore for the README
+ * Sign a prepared message following web3.eth.signTypedData specification. The host computes the domain separator and hashStruct(message)
+ * @example
+ eth.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
+ var v = result['v'] - 27;
+ v = v.toString(16);
+ if (v.length < 2) {
+   v = "0" + v;
+ }
+ console.log("Signature 0x" + result['r'] + result['s'] + v);
+ })
  */
 export const signEIP712HashedMessage = (
   transport: Transport,

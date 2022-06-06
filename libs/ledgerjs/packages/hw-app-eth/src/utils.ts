@@ -104,6 +104,8 @@ export const decodeTxInfo = (rawTx: Buffer) => {
 };
 
 /**
+ * @ignore for the README
+ *
  * Helper to convert an integer as a hexadecimal string with the right amount of digits
  * to respect the number of bytes given as parameter
  *

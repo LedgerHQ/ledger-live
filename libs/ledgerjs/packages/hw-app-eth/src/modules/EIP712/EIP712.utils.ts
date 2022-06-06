@@ -2,6 +2,8 @@ import { hexBuffer, intAsHexBytes } from "../../utils";
 import { EIP712MessageTypesEntry } from "./EIP712.types";
 
 /**
+ * @ignore for the README
+ *
  * A Map of helpers to get the wanted binary value for
  * each type of array possible in a type definition
  */
@@ -11,6 +13,8 @@ enum EIP712_ARRAY_TYPE_VALUE {
 }
 
 /**
+ * @ignore for the README
+ *
  * A Map of helpers to get the id and size to return for each
  * type that can be used in EIP712
  */
@@ -52,6 +56,8 @@ export const EIP712_TYPE_PROPERTIES: Record<
 };
 
 /**
+ * @ignore for the README
+ *
  * A Map of encoders to transform a value to formatted buffer
  */
 export const EIP712_TYPE_ENCODERS = {
@@ -102,6 +108,8 @@ export const EIP712_TYPE_ENCODERS = {
 };
 
 /**
+ * @ignore for the README
+ *
  * Helper parsing an EIP712 Type name to return its type and size(s)
  * if it's an array or nested arrays
  *
@@ -141,6 +149,8 @@ export const destructTypeFromString = (
 };
 
 /**
+ * @ignore for the README
+ *
  * Helper to construct the hexadecimal ByteString for the description
  * of a field in an EIP712 Message
  *
@@ -176,6 +186,8 @@ export const constructTypeDescByteString = (
 };
 
 /**
+ * @ignore for the README
+ *
  * Helper to create the buffer to describe an EIP712 types' entry structure
  *
  * @param {EIP712MessageTypesEntry} entry
