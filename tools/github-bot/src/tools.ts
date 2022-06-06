@@ -20,7 +20,7 @@ export const isValidBody = (body: string | null): boolean => {
     "### 🚀 Expectations to reach",
   ];
 
-  const results = body.split("\r\n").reduce(
+  const results = body.split(/[\s]/).reduce(
     (acc, line) => {
       // Dummy description line has not been replaced.
       if (line === description) {
@@ -30,7 +30,9 @@ export const isValidBody = (body: string | null): boolean => {
         };
       }
 
-      const headingIndex = requiredHeadings.indexOf(line);
+      const headingIndex = requiredHeadings.findIndex((heading) =>
+        line.startsWith(heading)
+      );
       // Template required heading is still in the body.
       if (headingIndex > -1) {
         acc.matchHeadings[headingIndex] = true;
