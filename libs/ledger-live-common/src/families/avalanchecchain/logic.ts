@@ -1,5 +1,4 @@
 import BinTools from 'avalanche/dist/utils/bintools';
-import { Account } from '../../types';
 
 export const binTools = BinTools.getInstance();
 
