@@ -4,6 +4,8 @@ import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
 import { createTransaction, prepareTransaction, updateTransaction } from '../js-transaction';
 import getTransactionStatus from "../js-getTransactionStatus";
+import signOperation from '../js-signOperation';
+import broadcast from "../js-broadcast";
 
 const preload = () => Promise.resolve({});
 const hydrate = (): void => { };
@@ -12,14 +14,6 @@ const receive = makeAccountBridgeReceive();
 
 const estimateMaxSpendable = () => {
     throw new Error("estimateMaxSpendable not implemented");
-};
-
-const signOperation = () => {
-    throw new Error("signOperation not implemented");
-};
-
-const broadcast = () => {
-    throw new Error("broadcast not implemented");
 };
 
 const currencyBridge: CurrencyBridge = {
