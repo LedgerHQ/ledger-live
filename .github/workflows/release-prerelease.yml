@@ -114,7 +114,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "pre-desktop-mono.yml",
+              workflow_id: "pre-desktop.yml",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
               }
@@ -130,8 +130,5 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "release-mobile-mono.yml",
-              inputs: {
-                ref: "${{  github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
-              }
+              workflow_id: "release-mobile.yml",
             });

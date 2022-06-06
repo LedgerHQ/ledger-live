@@ -98,7 +98,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "nightly-desktop-mono.yml",
+              workflow_id: "nightly-desktop.yml",
             });
 
       - uses: actions/github-script@v6
@@ -111,5 +111,5 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "nightly-mobile-mono.yml",
+              workflow_id: "nightly-mobile.yml",
             });

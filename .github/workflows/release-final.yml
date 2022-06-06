@@ -65,7 +65,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "release-desktop-mono.yml",
+              workflow_id: "release-desktop.yml",
               inputs: {
                 branch: "main"
               }
@@ -80,7 +80,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "release-mobile-mono.yml",
+              workflow_id: "release-mobile.yml",
               inputs: {
                 ref: "main"
               }
