@@ -30,6 +30,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
@@ -44,6 +45,7 @@
     "command-line-args": "^5.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
@@ -52,7 +54,8 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
     "rxjs": "^6.6.7",
-    "winston": "^3.5.1"
+    "winston": "^3.5.1",
+    "ws": "^8.6.0"
   },
   "devDependencies": {
     "@types/command-line-args": "^5.2.0",
