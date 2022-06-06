@@ -29,6 +29,8 @@ export default (app: Probot) => {
     const { payload, octokit } = context;
     const repository = context.repo();
 
+    if (repository.repo !== "ledger-live") return;
+
     const branch = payload.pull_request.head.ref;
     const login = payload.pull_request.user.login;
 

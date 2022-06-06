@@ -20,7 +20,7 @@ export const isValidBody = (body: string | null): boolean => {
     "### 🚀 Expectations to reach",
   ];
 
-  const results = body.split(/[\s]/).reduce(
+  const results = body.split(/\r?\n/).reduce(
     (acc, line) => {
       // Dummy description line has not been replaced.
       if (line === description) {
