@@ -198,27 +198,29 @@ function esBuildExternalsPlugin(nativeModules) {
   return {
     name: "Externals Plugin (native-modules-tools)",
     setup(build) {
-      build.onResolve({ filter: /.*/ }, (args) => {
-        try {
-          const resolvedPath = require.resolve(args.path, {
-            paths: [args.resolveDir],
-          });
-          const realResolvedPath = fs.realpathSync(resolvedPath);
-          const resolvedRoot = findPackageRoot(realResolvedPath);
-          const nativeModule = nativeModules[resolvedRoot];
-          if (nativeModule) {
-            return {
-              path: args.path.replace(
-                new RegExp(`^${nativeModule.name}`),
-                nativeModule.name + "@" + nativeModule.version
-              ),
-              external: true,
-            };
+      Object.values(nativeModules).forEach((module) => {
+        build.onResolve({ filter: new RegExp(`^${module.name}`) }, (args) => {
+          try {
+            const resolvedPath = require.resolve(args.path, {
+              paths: [args.resolveDir],
+            });
+            const realResolvedPath = fs.realpathSync(resolvedPath);
+            const resolvedRoot = findPackageRoot(realResolvedPath);
+            const nativeModule = nativeModules[resolvedRoot];
+            if (nativeModule) {
+              return {
+                path: args.path.replace(
+                  new RegExp(`^${nativeModule.name}`),
+                  nativeModule.name + "@" + nativeModule.version
+                ),
+                external: true,
+              };
+            }
+          } catch (error) {
+            // swallow error
+            // console.error(error);
           }
-        } catch (error) {
-          // swallow error
-          // console.error(error);
-        }
+        });
       });
     },
   };
