@@ -23,8 +23,32 @@ export type EIP712MessageTypes = {
   [key: string]: EIP712MessageTypesEntry[];
 };
 
-export type StructFieldData = Required<{
-  data: unknown;
-  type: string;
-  sizeInBits: number | undefined;
-}>;
+export type StructDefData = Required<
+  | {
+      structType: "name";
+      value: string;
+    }
+  | {
+      structType: "field";
+      value: Buffer;
+    }
+>;
+
+export type StructImplemData = Required<
+  | {
+      structType: "root";
+      value: string;
+    }
+  | {
+      structType: "array";
+      value: number;
+    }
+  | {
+      structType: "field";
+      value: Required<{
+        data: unknown;
+        type: string;
+        sizeInBits: number | undefined;
+      }>;
+    }
+>;

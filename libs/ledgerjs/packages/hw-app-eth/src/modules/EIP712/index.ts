@@ -3,7 +3,8 @@ import {
   EIP712Message,
   EIP712MessageTypes,
   EIP712MessageTypesEntry,
-  StructFieldData,
+  StructDefData,
+  StructImplemData,
 } from "./EIP712.types";
 import { hexBuffer, intAsHexBytes, splitPath } from "../../utils";
 import {
@@ -48,7 +49,10 @@ const makeRecursiveFieldStructImplem = (
       !EIP712_TYPE_PROPERTIES[typeDescription?.name?.toUpperCase() || ""];
 
     if (Array.isArray(data) && typeof currSize !== "undefined") {
-      await EIP712SendStructImplem(transport, "array", data.length);
+      await EIP712SendStructImplem(transport, {
+        structType: "array",
+        value: data.length,
+      });
       for (const entry of data) {
         await recursiveFieldStructImplem([typeDescription, restSizes], entry);
       }
@@ -66,10 +70,13 @@ const makeRecursiveFieldStructImplem = (
         }
       }
     } else {
-      await EIP712SendStructImplem(transport, "field", {
-        data,
-        type: typeDescription?.name || "",
-        sizeInBits: typeDescription?.bits,
+      await EIP712SendStructImplem(transport, {
+        structType: "field",
+        value: {
+          data,
+          type: typeDescription?.name || "",
+          sizeInBits: typeDescription?.bits,
+        },
       });
     }
   };
@@ -87,8 +94,7 @@ const makeRecursiveFieldStructImplem = (
  */
 const EIP712SendStructDef = (
   transport: Transport,
-  structType: "name" | "field",
-  value: string | Buffer
+  structDef: StructDefData
 ): Promise<Buffer> => {
   enum APDU_FIELDS {
     CLA = 0xe0,
@@ -98,6 +104,8 @@ const EIP712SendStructDef = (
     P2_name = 0x00,
     P2_field = 0xff,
   }
+
+  const { structType, value } = structDef;
   const data =
     structType === "name" && typeof value === "string"
       ? Buffer.from(value, "utf-8")
@@ -131,8 +139,7 @@ const EIP712SendStructDef = (
  */
 const EIP712SendStructImplem = async (
   transport: Transport,
-  structType: "root" | "array" | "field",
-  value: string | number | StructFieldData
+  structImplem: StructImplemData
 ): Promise<Buffer | void> => {
   enum APDU_FIELDS {
     CLA = 0xe0,
@@ -144,13 +151,15 @@ const EIP712SendStructImplem = async (
     P2_field = 0xff,
   }
 
+  const { structType, value } = structImplem;
+
   if (structType === "root") {
     return transport.send(
       APDU_FIELDS.CLA,
       APDU_FIELDS.INS,
       APDU_FIELDS.P1_complete,
       APDU_FIELDS.P2_root,
-      Buffer.from(value as string, "utf-8")
+      Buffer.from(value, "utf-8")
     );
   }
 
@@ -160,12 +169,12 @@ const EIP712SendStructImplem = async (
       APDU_FIELDS.INS,
       APDU_FIELDS.P1_complete,
       APDU_FIELDS.P2_array,
-      Buffer.from(intAsHexBytes(value as number, 1), "hex")
+      Buffer.from(intAsHexBytes(value, 1), "hex")
     );
   }
 
   if (structType === "field") {
-    const { data: rawData, type, sizeInBits } = value as StructFieldData;
+    const { data: rawData, type, sizeInBits } = value;
     const encodedData: Buffer | null = EIP712_TYPE_ENCODERS[
       type.toUpperCase()
     ]?.(rawData, sizeInBits);
@@ -259,11 +268,17 @@ export const signEIP712Message = async (
   ][];
   // Looping on all types entries and fields to send structures' definitions
   for (const [typeName, entries] of typeEntries) {
-    await EIP712SendStructDef(transport, "name", typeName as string);
+    await EIP712SendStructDef(transport, {
+      structType: "name",
+      value: typeName as string,
+    });
 
     for (const { name, type } of entries) {
       const typeEntryBuffer = makeTypeEntryStructBuffer({ name, type });
-      await EIP712SendStructDef(transport, "field", typeEntryBuffer);
+      await EIP712SendStructDef(transport, {
+        structType: "field",
+        value: typeEntryBuffer,
+      });
     }
   }
 
@@ -277,7 +292,10 @@ export const signEIP712Message = async (
   // Looping on all domain type entries and fields to send
   // structures' implementations
   const domainName = "EIP712Domain";
-  await EIP712SendStructImplem(transport, "root", domainName);
+  await EIP712SendStructImplem(transport, {
+    structType: "root",
+    value: domainName,
+  });
   const domainTypeFields = types[domainName];
   for (const { name, type } of domainTypeFields) {
     const domainFieldValue = domain[name];
@@ -289,7 +307,10 @@ export const signEIP712Message = async (
 
   // Looping on all primaryType type entries and fields to send
   // structures' implementations
-  await EIP712SendStructImplem(transport, "root", primaryType);
+  await EIP712SendStructImplem(transport, {
+    structType: "root",
+    value: primaryType,
+  });
   const primaryTypeFields = types[primaryType];
   for (const { name, type } of primaryTypeFields) {
     const primaryTypeValue = message[name];
