@@ -39,6 +39,8 @@ export default (app: Probot) => {
     const isBranchValid = isValidBranchName(branch);
     const isBodyValid = isValidBody(payload.pull_request.body);
 
+    if (isBranchValid && isBodyValid) return;
+
     let body =
       `❌ @${login}\n\n` +
       "#### Unfortunately this PR does not comply with the [Contributing Conventions](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) and will be closed automatically.\n" +
