@@ -1,7 +1,7 @@
 import {
-  onboardingStatePolling,
+  getOnboardingStatePolling,
   OnboardingStatePollingResult,
-} from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
+} from "@ledgerhq/live-common/lib/hw/getOnboardingStatePolling";
 import { Observable } from "rxjs";
 import { deviceOpt } from "../scan";
 
@@ -23,7 +23,7 @@ export default {
     device: string;
     pollingPeriodMs: number;
   }>): Observable<OnboardingStatePollingResult | null> =>
-    onboardingStatePolling({
+    getOnboardingStatePolling({
       deviceId: device ?? "",
       pollingPeriodMs: pollingPeriodMs ?? 1000,
     }),
