@@ -354,6 +354,9 @@ export const ScreenName = {
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
+
+  // cardano
+  CardanoEditMemo: "CardanoEditMemo",
 };
 
 export const NavigatorName = {
