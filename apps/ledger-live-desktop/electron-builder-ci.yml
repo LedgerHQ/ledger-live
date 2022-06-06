@@ -1,11 +1,11 @@
 appId: com.ledger.live
 
-beforePack: scripts/beforePack.js
-
 protocols:
   name: Ledger Live
   schemes:
     - ledgerlive
+
+beforePack: scripts/beforePack.js
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
