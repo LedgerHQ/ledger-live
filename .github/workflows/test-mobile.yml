@@ -1,4 +1,4 @@
-name: Test Mobile App
+name: "[Test] Mobile App"
 
 on:
   push:

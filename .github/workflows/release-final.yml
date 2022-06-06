@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows:
-      - "[Release] Prepare for releasing"
+      - \[Release\] Prepare for releasing
     types:
       - "completed"
 
