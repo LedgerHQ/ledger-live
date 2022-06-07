@@ -66,5 +66,10 @@ export default {
   },
   background: {
     main: "hsla(0, 0%, 100%, 1)",
+    drawer: "hsla(0, 0%, 100%, 1)",
   },
+  effects: {
+    dropShadow: "hsla(0, 0%, 0%, 0.16)",
+    focus: "hsla(248, 100%, 85%, 1)"
+  }
 };

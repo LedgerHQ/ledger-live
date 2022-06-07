@@ -122,7 +122,8 @@
     },
     "exchange": "Takas et",
     "info": "Bilgi",
-    "connectDevice": "Cihazınızı bağlayın"
+    "connectDevice": "Cihazınızı bağlayın",
+    "selectCurrencyEmptyOption": "Kripto varlık yok"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<0>Kullanım Koşullarını</0><1> okudum ve kabul ediyorum.</1>"
       },
       "steps": {
-        "title": "Adım <0>{{step}}/{{total}}</0>",
         "1": {
           "subtitle": "Bir hesabı onaylayarak protokolün",
           "subtitle2": "gelecekteki kredileri işleme almasını sağlayın.",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "Varlıklarınızı istediğiniz zaman çekebilirsiniz",
           "description": "Varlıklarınızı ve kazandığınız faizi, kısmen veya tamamen, doğrudan Ledger hesabınızdan istediğiniz zaman çekebilirsiniz."
-        }
+        },
+        "title": "Adım <0>{{step}}/{{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "Galeriyi Göster",
       "seeMore": "Daha fazla koleksiyon göster",
       "seeAll": "Tüm koleksiyonları göster",
-      "seeLess": "Daha az göster"
+      "seeLess": "Daha az göster",
+      "placeholder": "Bir token eklemek için onu {{currency}} adresinize göndermeniz yeterlidir."
     },
     "gallery": {
       "title": "Tüm NFT'ler",
@@ -1609,7 +1611,7 @@
         "not_supported": "3. taraf cüzdan gerektirir",
         "addAccount": "Hesap ekle",
         "addAccountTooltip": "{{appName}} hesabı ekle",
-        "addAccountWarn": "Lütfen uygulama güncellemelerinin bitmesini bekleyin",
+        "addAccountWarn": "Lütfen işlemin sonlanmasını bekleyin",
         "learnMore": "Daha fazla bilgi",
         "learnMoreTooltip": "{{appName}} uygulaması hakkında daha fazla bilgi edinin",
         "removeTooltip": "{{appName}} Uygulamasını Kaldır",
@@ -2127,9 +2129,14 @@
               "cta": "Ayrıntıları göster"
             },
             "broadcastError": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          },
+          "amount": {
+            "title": "Tutar"
           }
         }
-      }
+      },
+      "commission": "Komisyon",
+      "totalStake": "Toplam Stake"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "Mevcut yetkili",
             "newDelegation": "Yeni yetkili",
             "chooseValidator": "Doğrulayıcı seçin",
-            "warning": "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>21 gün</0> beklemeniz gerekir"
+            "warning": "Fikrinizin tekrar değiştiği takdirde, yeni doğrulayıcının yetkisini başkasına devretmek için <0>21 gün</0> beklemeniz gerekir",
+            "amountLabel": "Yetkisi devredilecek tutar"
           },
           "device": {
             "title": "Cihaz"
@@ -2574,7 +2582,7 @@
       "commission": "Komisyon",
       "delegate": "Ekle",
       "listHeader": "Yetki devirleri",
-      "availableBalance": "Mevcut bakiye",
+      "availableBalance": "Çekilebilir bakiye",
       "active": "Aktif",
       "activeTooltip": "Aktif tutar, ödül üretmeye devam eder",
       "inactiveTooltip": "İnaktif tutar ödül üretmez",
@@ -3520,12 +3528,6 @@
     "connected": "Bağlandı!",
     "backToPortfolio": "Portföye geri dön",
     "steps": {
-      "entry": {
-        "title": "USB bağlantı sorunlarını giderme",
-        "desc": "Cihazınıza bağlanırken bir sorun var gibi görünüyor. Endişelenmeyin, cihazınız bağlanana kadar farklı çözümleri tek tek deneyebilirsiniz!",
-        "cta": "Haydi düzeltelim!",
-        "back": "Geri dön"
-      },
       "1": {
         "windows": {
           "title": "Ledger Live'ı Yönetici Olarak Çalıştırın",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "Cihaz güncelleme yönergelerini izleyin",
           "somethingElse": "Başka bir şey"
         }
+      },
+      "entry": {
+        "title": "USB bağlantı sorunlarını giderme",
+        "desc": "Cihazınıza bağlanırken bir sorun var gibi görünüyor. Endişelenmeyin, cihazınız bağlanana kadar farklı çözümleri tek tek deneyebilirsiniz!",
+        "cta": "Haydi düzeltelim!",
+        "back": "Geri dön"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "Mevcut token miktarını aştınız"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve ardından işlem geçmişini kontrol edip tekrar deneyin."
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "Memo",
     "memoPlaceholder": "İsteğe bağlı",
     "memoWarningText": "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "Bu destek makalesini inceleyerek",
+      "link": "Hedera hesabının nasıl oluşturulduğunu öğrenebilirsiniz"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    }
   }
 }

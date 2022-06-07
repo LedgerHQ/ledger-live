@@ -17,7 +17,11 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/lib/families/bitcoin/wallet-btc/crypto/secp256k1";
 import BluetoothTransport from "./react-native-hw-transport-ble";
+import { setGlobalOnBridgeError } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import "./experimental";
+import logger from "./logger";
+
+setGlobalOnBridgeError(e => logger.critical(e));
 
 setDeviceMode("polling");
 

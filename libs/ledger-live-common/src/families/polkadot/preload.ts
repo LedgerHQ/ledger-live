@@ -6,6 +6,7 @@ import { PRELOAD_MAX_AGE } from "./logic";
 import { getRegistry, getMinimumBondBalance } from "./cache";
 import type { PolkadotPreloadData, PolkadotValidator } from "./types";
 import { getStakingProgress, getValidators } from "./validators";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 let currentPolkadotPreloadedData: PolkadotPreloadData = {
   validators: [],
@@ -105,6 +106,7 @@ const shouldRefreshValidators = (previousState, currentState) => {
 };
 
 export const preload = async (): Promise<PolkadotPreloadData> => {
+  await loadPolkadotCrypto();
   await getRegistry(); // ensure registry is already in cache.
   const minimumBondBalance = await getMinimumBondBalance();
   const minimumBondBalanceStr = minimumBondBalance.toString();

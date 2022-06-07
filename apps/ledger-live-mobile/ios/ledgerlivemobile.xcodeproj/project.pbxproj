@@ -787,7 +787,7 @@
 					"$(SRCROOT)/../node_modules/@segment/analytics-react-native/ios/RNAnalytics",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /usr/lib/swift @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib/swift",
@@ -839,7 +839,7 @@
 					"$(SRCROOT)/../node_modules/@segment/analytics-react-native/ios/RNAnalytics",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /usr/lib/swift @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib/swift",
@@ -947,7 +947,7 @@
 					"$(SRCROOT)/../node_modules/@segment/analytics-react-native/ios/RNAnalytics",
 				);
 				INFOPLIST_FILE = ledgerlivemobile/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) /usr/lib/swift @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib/swift",
