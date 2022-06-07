@@ -447,3 +447,8 @@ export function getMemoFromTx(tx: APITransaction): string | undefined {
   }
   return memo;
 }
+
+export function isHexString(value: string): boolean {
+  const regExp = /^[0-9a-fA-F]+$/;
+  return regExp.test(value);
+}
