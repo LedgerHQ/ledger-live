@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.43.0-next.0
+
+### Minor Changes
+
+- 64c2fdb06: Filecoin integration in LLD and LLM
+
+### Patch Changes
+
+- Updated dependencies [09648db7f]
+- Updated dependencies [0f59cfc10]
+- Updated dependencies [899aa3300]
+- Updated dependencies [89e82ed79]
+- Updated dependencies [403ea8efe]
+- Updated dependencies [9a86fe231]
+- Updated dependencies [64c2fdb06]
+- Updated dependencies [f686ec781]
+- Updated dependencies [b688a592d]
+- Updated dependencies [71ad84023]
+- Updated dependencies [64c2fdb06]
+  - @ledgerhq/live-common@23.0.0-next.0
+  - @ledgerhq/react-ui@0.7.7-next.0
+
 ## 2.42.0
 
 ### Minor Changes

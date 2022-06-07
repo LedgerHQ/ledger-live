@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 23.0.0-next.0
+
+### Major Changes
+
+- 64c2fdb06: fix collision between bip44 and glif nomral derivation modes
+
+### Minor Changes
+
+- 899aa3300: Use of the maxSpendable for bot testing instead of amount balance
+- 89e82ed79: Crypto Icons - Add support for Abachi tokens icons
+- 403ea8efe: Update cosmos snapshot
+- 64c2fdb06: Filecoin integration in LLD and LLM
+
+### Patch Changes
+
+- 09648db7f: refactor of the top perfs filter
+- 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- 9a86fe231: Fix the click on browse assets button on the market screen
+- b688a592d: fix swap rate formula
+- 71ad84023: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+- Updated dependencies [c4be045f9]
+  - @ledgerhq/hw-app-eth@6.29.0-next.0
+
 ## 22.2.0
 
 ### Minor Changes
