@@ -6,8 +6,6 @@ import cosmos from "../../families/cosmos/bridge/mock";
 
 import ethereum from "../../families/ethereum/bridge/mock";
 
-import osmosis from "../../families/osmosis/bridge/mock";
-
 import ripple from "../../families/ripple/bridge/mock";
 
 import solana from "../../families/solana/bridge/mock";
@@ -16,13 +14,11 @@ import stellar from "../../families/stellar/bridge/mock";
 
 import tezos from "../../families/tezos/bridge/mock";
 
-
 export default {
   algorand,
   bitcoin,
   cosmos,
   ethereum,
-  osmosis,
   ripple,
   solana,
   stellar,
