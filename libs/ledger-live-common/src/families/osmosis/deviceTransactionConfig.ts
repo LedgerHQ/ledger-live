@@ -57,6 +57,30 @@ function getDeviceTransactionConfig({
       });
       break;
 
+    case "undelegate":
+      fields.push({
+        type: "text",
+        label: "Type",
+        value: "Undelegate",
+      });
+      fields.push({
+        type: "text",
+        label: "Amount",
+        value: formatCurrencyUnit(
+          getAccountUnit(account),
+          validators[0].amount,
+          {
+            showCode: true,
+            disableRounding: true,
+          }
+        ),
+      });
+      fields.push({
+        type: "osmosis.validatorName",
+        label: "Validator",
+      });
+      break;
+
     case "redelegate":
       fields.push({
         type: "text",

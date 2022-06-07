@@ -5,6 +5,7 @@ export const OsmosisTransactionTypeEnum = {
   MultiSend: "multisend",
   Delegate: "delegate",
   BeginRedelegate: "begin_redelegate",
+  Undelegate: "undelegate",
 };
 
 export const OsmosisCurrency = "uosmo";
