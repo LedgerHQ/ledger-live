@@ -56,7 +56,7 @@ const CheckTermOfUseUpdateModal = () => {
         </Link>
       </Alert>
       <Divider />
-      <Button type="main" outline={false} onPress={accept}>
+      <Button type="main" outline={false} onPress={accept as () => any}>
         {t("updatedTerms.cta")}
       </Button>
     </BottomDrawer>
