@@ -1,6 +1,11 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
-import { StyleSheet, View, SectionList, FlatList } from "react-native";
-import { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import {
+  StyleSheet,
+  View,
+  SectionList,
+  FlatList,
+  SectionBase,
+} from "react-native";
 import Animated, { Value, event } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -22,6 +27,7 @@ import {
 } from "@ledgerhq/live-common/lib/compound/logic";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
@@ -82,9 +88,9 @@ const AccountScreenInner = ({
   parentAccount,
 }: {
   account: AccountLike;
-  parentAccount: Account | undefined;
+  parentAccount: Account | undefined | null;
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const {
@@ -146,7 +152,6 @@ const AccountScreenInner = ({
           operation={item}
           account={account}
           parentAccount={parentAccount}
-          isFirst={index === 0}
           isLast={section.data.length - 1 === index}
         />
       );

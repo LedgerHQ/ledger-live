@@ -2,18 +2,17 @@ import React, { useCallback, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList } from "react-native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  Account,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/live-common/lib/types";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components";
+import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DebouncedFunc } from "lodash";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "../../const";
 import SubAccountRow from "../../components/SubAccountRow";
 import Touchable from "../../components/Touchable";
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
 
 type Props = {
   parentAccount: Account;
-  onAccountPress: (subAccount: SubAccount) => void;
+  onAccountPress: DebouncedFunc<(tokenAccount: TokenAccount) => void>;
   accountId: string;
   useCounterValue?: boolean;
 };
@@ -63,16 +62,16 @@ export default function SubAccountsList({
 }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
-  const { colors } = useTheme();
-  const navigation = useNavigation();
+  const { colors }: any = useTheme();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const subAccounts = listSubAccounts(parentAccount);
   const family = parentAccount.currency.family;
-  const specific = perFamilySubAccountList[family];
+  const specific =
+    perFamilySubAccountList[family as keyof typeof perFamilySubAccountList];
 
   const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
-  const ReceiveButton = specific && specific.ReceiveButton;
 
   const Placeholder = specific && specific.Placeholder;
 
@@ -108,16 +107,7 @@ export default function SubAccountsList({
         </Text>
       </View>
     ),
-    [
-      isToken,
-      hasSpecificTokenWording,
-      family,
-      subAccounts.length,
-      ReceiveButton,
-      accountId,
-      navigateToReceiveConnectDevice,
-      colors.live,
-    ],
+    [isToken, hasSpecificTokenWording, family, subAccounts.length],
   );
 
   const renderFooter = useCallback(() => {

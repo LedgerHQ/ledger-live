@@ -13,6 +13,7 @@ import {
   ArrowBottomMedium,
   DroprightMedium,
 } from "@ledgerhq/native-ui/assets/icons";
+import { StackNavigationProp } from "@react-navigation/stack";
 import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import NftCollectionRow from "../../components/Nft/NftCollectionRow";
@@ -30,9 +31,9 @@ type Props = {
 export default function NftCollectionsList({ account }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
-  const { colors } = useTheme();
+  const { colors }: any = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
   const { nfts } = account;
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);

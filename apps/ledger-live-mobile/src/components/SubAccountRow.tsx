@@ -17,6 +17,7 @@ import {
 import { createStructuredSelector } from "reselect";
 import { connect, useSelector } from "react-redux";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import { DebouncedFunc } from "lodash";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
@@ -28,7 +29,7 @@ import Delta from "./Delta";
 type Props = {
   account: SubAccount;
   parentAccount: Account;
-  onSubAccountPress: (subAccount: SubAccount) => any;
+  onSubAccountPress: DebouncedFunc<(tokenAccount: TokenAccount) => void>;
   onSubAccountLongPress: (tokenAccount: TokenAccount, account: Account) => any;
   useCounterValue?: boolean;
 };

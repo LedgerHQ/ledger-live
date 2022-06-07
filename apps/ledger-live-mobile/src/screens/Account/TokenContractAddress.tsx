@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback } from "react";
-import { StyleSheet, Linking, View } from "react-native";
+import { StyleSheet, Linking, View, ViewStyle } from "react-native";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -24,7 +24,7 @@ type Props = {
 const forceInset = { bottom: "always" };
 
 const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
-  const { colors } = useTheme();
+  const { colors }: any = useTheme();
 
   const currencyId = account ? account.token.name : token ? token.name : "";
 
@@ -65,7 +65,7 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
         <Button
           type="primary"
           title={<Trans i18nKey="account.tokens.viewInExplorer" />}
-          containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
+          containerStyle={[styles.buttonContainer, styles.buttonMarginLeft] as ViewStyle}
           event="GoToViewContractInExplorer"
           onPress={viewInExplorer}
           eventProperties={{

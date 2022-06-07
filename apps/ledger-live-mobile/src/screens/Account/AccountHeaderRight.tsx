@@ -3,13 +3,15 @@ import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FiltersMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
 export default function AccountHeaderRight() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 

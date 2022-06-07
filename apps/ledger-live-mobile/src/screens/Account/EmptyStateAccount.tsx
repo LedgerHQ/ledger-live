@@ -1,8 +1,7 @@
-/* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -20,10 +19,10 @@ import EmptyStateAccountIllu from "../../images/EmptyStateAccount";
 import { withTheme } from "../../colors";
 
 class EmptyStateAccount extends PureComponent<{
-  account: AccountLike,
-  parentAccount?: Account,
-  navigation: any,
-  colors: any,
+  account: AccountLike;
+  parentAccount?: Account;
+  navigation: any;
+  colors: any;
 }> {
   goToReceiveFunds = () => {
     const { navigation, account, parentAccount } = this.props;

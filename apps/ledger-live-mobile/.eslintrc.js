@@ -1,5 +1,6 @@
 module.exports = {
   root: true,
+  parser: "@typescript-eslint/parser",
   extends: [
     "@react-native-community",
     "airbnb",
@@ -13,7 +14,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["prettier", "detox"],
+  plugins: ["prettier", "detox", "@typescript-eslint"],
   rules: {
     "no-console": [
       "error",
@@ -21,7 +22,8 @@ module.exports = {
         allow: ["warn", "error"],
       },
     ],
-    "no-unused-vars": [
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
       "error",
       {
         argsIgnorePattern: "^_",

@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
@@ -14,7 +14,7 @@ import Alert from "../../components/Alert";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 type Props = {
-  account: AccountLike,
+  account: AccountLike;
 };
 
 const LendingBanners = ({ account }: Props) => {
@@ -100,7 +100,7 @@ const LendingBanners = ({ account }: Props) => {
   }
 
   return [lendingInfoBanner, lendingWarningBanner];
-}
+};
 
 const styles = StyleSheet.create({
   bannerBox: {

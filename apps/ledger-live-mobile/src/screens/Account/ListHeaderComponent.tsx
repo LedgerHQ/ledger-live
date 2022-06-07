@@ -2,12 +2,12 @@ import React, { ReactNode } from "react";
 import {
   isAccountEmpty,
   getMainAccount,
-  getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import {
   AccountLike,
   Account,
   Currency,
+  TokenAccount,
 } from "@ledgerhq/live-common/lib/types";
 import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
@@ -15,6 +15,7 @@ import { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types
 import { Box } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/lib/nft";
 
+import { DebouncedFunc } from "lodash";
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
@@ -29,12 +30,15 @@ import { FabAccountActions } from "../../components/FabActions";
 
 const renderAccountSummary = (
   account: AccountLike,
-  parentAccount: Account,
-  compoundSummary: CompoundAccountSummary,
+  parentAccount: Account | undefined | null,
+  compoundSummary: CompoundAccountSummary | undefined | null,
 ) => () => {
   const mainAccount = getMainAccount(account, parentAccount);
   const AccountBalanceSummaryFooter =
-    perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
+    perFamilyAccountBalanceSummaryFooter[
+      mainAccount.currency
+        .family as keyof typeof perFamilyAccountBalanceSummaryFooter
+    ];
 
   const footers = [];
 
@@ -61,7 +65,7 @@ const renderAccountSummary = (
 
 type Props = {
   account?: AccountLike;
-  parentAccount?: Account;
+  parentAccount?: Account | undefined | null;
   countervalueAvailable: boolean;
   useCounterValue: boolean;
   range: any;
@@ -69,9 +73,11 @@ type Props = {
   countervalueChange: ValueChange;
   cryptoChange: ValueChange;
   counterValueCurrency: Currency;
-  onAccountPress: () => void;
+  onAccountPress: DebouncedFunc<(tokenAccount: TokenAccount) => void>;
   onSwitchAccountCurrency: () => void;
-  compoundSummary?: CompoundAccountSummary;
+  compoundSummary?: CompoundAccountSummary | null;
+  isCollapsed?: boolean;
+  setIsCollapsed?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export function getListHeaderComponents({
@@ -99,13 +105,19 @@ export function getListHeaderComponents({
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = perFamilyAccountHeader[mainAccount.currency.family];
+  const AccountHeader =
+    perFamilyAccountHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountHeader
+    ];
   const AccountBodyHeader =
-    perFamilyAccountBodyHeader[mainAccount.currency.family];
+    perFamilyAccountBodyHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountBodyHeader
+    ];
 
   const AccountSubHeader =
-    perFamilyAccountSubHeader[mainAccount.currency.family];
-
+    perFamilyAccountSubHeader[
+      mainAccount.currency.family as keyof typeof perFamilyAccountSubHeader
+    ];
   const stickyHeaderIndices = empty ? [] : [4];
 
   return {
@@ -113,7 +125,10 @@ export function getListHeaderComponents({
       <Header accountId={account.id} />,
       !!AccountSubHeader && <AccountSubHeader />,
       !empty && !!AccountHeader && (
-        <AccountHeader account={account} parentAccount={parentAccount} />
+        <AccountHeader
+          account={account}
+          parentAccount={parentAccount || undefined}
+        />
       ),
       !empty && (
         <Box mx={6} my={6}>
@@ -133,9 +148,6 @@ export function getListHeaderComponents({
               compoundSummary,
             )}
             onSwitchAccountCurrency={onSwitchAccountCurrency}
-            countervalueChange={countervalueChange}
-            counterValueUnit={counterValueCurrency.units[0]}
-            cryptoCurrencyUnit={getAccountUnit(account)}
           />
         </Box>
       ),
@@ -144,7 +156,7 @@ export function getListHeaderComponents({
             <Box py={3} mb={8}>
               <FabAccountActions
                 account={account}
-                parentAccount={parentAccount}
+                parentAccount={parentAccount || undefined}
               />
             </Box>,
           ]
@@ -154,7 +166,7 @@ export function getListHeaderComponents({
         ? [
             <AccountBodyHeader
               account={account}
-              parentAccount={parentAccount}
+              parentAccount={parentAccount || undefined}
             />,
           ]
         : []),
