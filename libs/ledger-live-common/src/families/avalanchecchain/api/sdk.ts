@@ -3,6 +3,7 @@ import { getEnv } from "../../../env";
 import network from "../../../network";
 import { Operation, OperationType } from "../../../types";
 import { encodeOperationId } from "../../../operation";
+import { web3Client } from "./client";
 
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
@@ -25,12 +26,10 @@ const fetchOperations = async (
 const fetchAccountDetails = async (
     address: string
 ) => {
-    const { data } = await network({
-        method: "GET",
-        url: getIndexerUrl(`/address/${address}`)
-    })
+    const balance = await web3Client().eth.getBalance(address, "latest");
+    const blockHeight = await web3Client().eth.getBlockNumber();
 
-    return data;
+    return { balance, blockHeight };
 }
 
 const convertTransactionToOperation = (transaction, accountId): Operation => {
@@ -73,7 +72,7 @@ export const getOperations = async (accountId: string, address: string, blockSta
 }
 
 export const getAccount = async (address: string) => {
-    const { balance, height: blockHeight } = await fetchAccountDetails(address);
+    const { balance, blockHeight } = await fetchAccountDetails(address);
 
     return {
         balance: new BigNumber(balance),
