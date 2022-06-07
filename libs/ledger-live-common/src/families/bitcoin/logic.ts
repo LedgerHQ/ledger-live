@@ -68,7 +68,7 @@ export const isValidRecipient = async (params: {
 type UTXOStatus =
   | {
       excluded: true;
-      reason: "pickUnconfirmedRBF" | "pickPendingNonRBF" | "userExclusion";
+      reason: "pickPendingUtxo" | "userExclusion";
     }
   | {
       excluded: false;
@@ -77,16 +77,11 @@ export const getUTXOStatus = (
   utxo: BitcoinOutput,
   utxoStrategy: UtxoStrategy
 ): UTXOStatus => {
-  if (!utxoStrategy.pickUnconfirmedRBF && utxo.rbf && !utxo.blockHeight) {
+  if (!utxo.blockHeight && !utxo.isChange) {
+    // exclude pending and not change utxo
     return {
       excluded: true,
-      reason: "pickUnconfirmedRBF",
-    };
-  }
-  if (!utxo.rbf && !utxo.blockHeight) {
-    return {
-      excluded: true,
-      reason: "pickPendingNonRBF",
+      reason: "pickPendingUtxo",
     };
   }
   if (

@@ -53,7 +53,10 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
-const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
+const fromWalletUtxo = (
+  utxo: WalletOutput,
+  changeAddresses: Set<string>
+): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
     outputIndex: utxo.output_index,
@@ -61,7 +64,7 @@ const fromWalletUtxo = (utxo: WalletOutput): BitcoinOutput => {
     address: utxo.address,
     value: new BigNumber(utxo.value),
     rbf: utxo.rbf,
-    isChange: false, // wallet-btc limitation: doesn't provide it
+    isChange: changeAddresses.has(utxo.address),
   };
 };
 
@@ -349,7 +352,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const newUniqueOperations = deduplicateOperations(newOperations);
   const operations = mergeOps(oldOperations, newUniqueOperations);
   const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-  const utxos = rawUtxos.map(fromWalletUtxo);
+  const utxos = rawUtxos.map((utxo) => fromWalletUtxo(utxo, changeAddresses));
   return {
     id: accountId,
     xpub,
