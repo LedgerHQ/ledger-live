@@ -123,7 +123,7 @@ const HashContainer = styled.div`
 `;
 
 const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
-const getFloorPrice = async (nft: ProtoNFT, currency: Currency): Promise<number | null> => {
+const getFloorPrice = async (nft: ProtoNFT, currency: Currency): Promise<any> => {
   if (!FLOOR_PRICE_CURRENCIES.has(nft.currencyId)) {
     return null;
   }
@@ -145,7 +145,7 @@ const NFTAttribute = memo(
     separatorTop,
   }: {
     title: string,
-    value: string,
+    value: any,
     skeleton?: boolean,
     separatorBottom?: boolean,
     separatorTop?: boolean,
@@ -202,7 +202,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
     setFloorPriceLoading(true);
     getFloorPrice(nft, currency)
       .then(
-        result => {
+        (result: any) => {
           if (result) {
             setTicker(result.ticker);
             setFloorPrice(result.value);
