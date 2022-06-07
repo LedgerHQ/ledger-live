@@ -16,9 +16,9 @@ import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
 import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 
-import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnlyAccountHeaderRight";
-import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnlyAccountHeaderTitle";
-import ReadOnlyAccount from "../../screens/Account/ReadOnlyAccount";
+import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderRight";
+import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
+import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();

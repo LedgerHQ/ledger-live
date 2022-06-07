@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect, memo } from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
@@ -23,14 +23,13 @@ import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import { usePortfolio } from "../../actions/portfolio";
-import AddAccount from "./AddAccount";
-// import AccountOrder from "./AccountOrder";
 
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import Spinning from "../../components/Spinning";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import AccountsNavigationHeader from "./AccountsNavigationHeader";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -154,32 +153,7 @@ function Accounts({ navigation, route }: Props) {
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <Flex p={6} flexDirection="row" alignItems="center">
-          <Box mr={3}>
-            <TouchableOpacity onPress={navigation.goBack}>
-              <Icons.ArrowLeftMedium size={24} />
-            </TouchableOpacity>
-          </Box>
-          <Flex
-            height={30}
-            flexDirection="column"
-            justifyContent="center"
-            mt={4}
-            mb={3}
-            flex={1}
-          >
-            <Text variant="h1">{t("distribution.title")}</Text>
-          </Flex>
-          <Flex flexDirection="row" alignItems={"center"}>
-            {/**
-                <Box mr={7}>
-                    {!flattenedAccounts.length ? null : <AccountOrder />}
-                </Box>
-               */}
-
-            <AddAccount />
-          </Flex>
-        </Flex>
+        <AccountsNavigationHeader />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
             <Spinning clockwise>

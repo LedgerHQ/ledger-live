@@ -3,9 +3,10 @@ import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import { CryptoCurrency } from "@ledgerhq/live-common/src/types";
 
 type ListProps = {
-  assets: any;
+  assets: CryptoCurrency[];
 };
 
 const ReadOnlyAssetsList = ({ assets }: ListProps) => {

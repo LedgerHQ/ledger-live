@@ -8,8 +8,8 @@ import {
 } from "@ledgerhq/live-common/lib/currencies";
 import { Text } from "@ledgerhq/native-ui";
 
-import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import { scrollToTop } from "../../navigation/utils";
+import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
+import { scrollToTop } from "../../../navigation/utils";
 
 const HeaderContainer = styled(View)`
   flex-direction: row;
