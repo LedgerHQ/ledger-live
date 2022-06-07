@@ -189,6 +189,7 @@ module.exports = {
           options: {
             limit: 8192,
             fallback: require.resolve("file-loader"),
+            esModule: false,
           },
         },
       },
