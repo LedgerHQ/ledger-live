@@ -46,7 +46,7 @@ function getURLWhatIsThis(op: Operation): ?string {
   }
 }
 
-const redirectAddress = (currency: Currency, address: string) => () => {
+export const redirectAddress = (currency: Currency, address: string) => () => {
   /** $FlowFixMe */
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
@@ -59,7 +59,7 @@ type OperationDetailsDelegationProps = {
   delegations: Array<CosmosDelegationInfo>,
   account: Account,
   isTransactionField?: boolean,
-  cosmosValidators: CosmosValidatorItem[],
+  validators: CosmosValidatorItem[],
 };
 
 export const OperationDetailsDelegation = ({
@@ -69,12 +69,13 @@ export const OperationDetailsDelegation = ({
   delegations,
   account,
   isTransactionField,
-  cosmosValidators,
+  validators,
 }: OperationDetailsDelegationProps) => {
-  const mappedDelegationInfo = useMemo(
-    () => mapDelegationInfo(delegations, cosmosValidators, unit),
-    [delegations, cosmosValidators, unit],
-  );
+  const mappedDelegationInfo = useMemo(() => mapDelegationInfo(delegations, validators, unit), [
+    delegations,
+    validators,
+    unit,
+  ]);
 
   return (
     <OpDetailsSection>
@@ -145,7 +146,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           currency={currency}
           delegations={delegations}
           account={account}
-          cosmosValidators={cosmosValidators}
+          validators={cosmosValidators}
         />
       );
     }
@@ -348,7 +349,7 @@ const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
   );
 };
 
-const amountCellExtra: { [key: string]: ComponentType<any> } = {
+export const amountCellExtra: { [key: string]: ComponentType<any> } = {
   REDELEGATE: RedelegateAmountCell,
   UNDELEGATE: UndelegateAmountCell,
 };

@@ -716,7 +716,7 @@
     "frozenAssetsTooltip": "Frozen assets are used in the Tron voting process. This represents your total number of votes.",
     "bandwidthTooltip": "Freeze assets to gain bandwidth",
     "energyTooltip": "Freeze assets to gain energy",
-    "delegatedAssetsTooltip": "Delegated assets are used in the Cosmos voting process. This represents your total number of votes.",
+    "delegatedAssetsTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
     "undelegatingTooltip": "Undelegated assets are in a timelock of 21 days, before being available."
   },
   "exchange": {

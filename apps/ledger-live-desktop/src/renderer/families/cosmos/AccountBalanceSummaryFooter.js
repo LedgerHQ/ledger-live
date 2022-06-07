@@ -55,6 +55,64 @@ const AmountValue = styled(Text).attrs(() => ({
   color: "palette.text.shade100",
 }))``;
 
+export const AccountBalanceSummaryFooterComponent = ({
+  spendableBalance,
+  delegatedBalance,
+  unbondingBalance,
+  hasUnbondingBalance,
+}: {
+  spendableBalance: any,
+  delegatedBalance: any,
+  unbondingBalance: any,
+  hasUnbondingBalance?: boolean,
+}) => {
+  return (
+    <Wrapper>
+      <BalanceDetail>
+        <ToolTip content={<Trans i18nKey="account.availableBalanceTooltip" />}>
+          <TitleWrapper>
+            <Title>
+              <Trans i18nKey="account.availableBalance" />
+            </Title>
+            <InfoCircle size={13} />
+          </TitleWrapper>
+        </ToolTip>
+        <AmountValue>
+          <Discreet>{spendableBalance}</Discreet>
+        </AmountValue>
+      </BalanceDetail>
+      <BalanceDetail>
+        <ToolTip content={<Trans i18nKey="account.delegatedAssetsTooltip" />}>
+          <TitleWrapper>
+            <Title>
+              <Trans i18nKey="account.delegatedAssets" />
+            </Title>
+            <InfoCircle size={13} />
+          </TitleWrapper>
+        </ToolTip>
+        <AmountValue>
+          <Discreet>{delegatedBalance}</Discreet>
+        </AmountValue>
+      </BalanceDetail>
+      {hasUnbondingBalance && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="account.undelegatingTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="account.undelegating" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{unbondingBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
+    </Wrapper>
+  );
+};
+
 type Props = {
   account: any,
   countervalue: any,
@@ -88,49 +146,12 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   const unbondingBalance = formatCurrencyUnit(unit, _unbondingBalance, formatConfig);
 
   return (
-    <Wrapper>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.availableBalanceTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.availableBalance" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{spendableBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.delegatedAssetsTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.delegatedAssets" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{delegatedBalance}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      {_unbondingBalance.gt(0) && (
-        <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="account.undelegatingTooltip" />}>
-            <TitleWrapper>
-              <Title>
-                <Trans i18nKey="account.undelegating" />
-              </Title>
-              <InfoCircle size={13} />
-            </TitleWrapper>
-          </ToolTip>
-          <AmountValue>
-            <Discreet>{unbondingBalance}</Discreet>
-          </AmountValue>
-        </BalanceDetail>
-      )}
-    </Wrapper>
+    <AccountBalanceSummaryFooterComponent
+      spendableBalance={spendableBalance}
+      delegatedBalance={delegatedBalance}
+      unbondingBalance={unbondingBalance}
+      hasUnbondingBalance={_unbondingBalance.gt(0)}
+    />
   );
 };
 
