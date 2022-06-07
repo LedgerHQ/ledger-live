@@ -8,8 +8,9 @@ let web3: Web3;
 export const avalancheClient = () => {
     if (!avalanche) {
         const node = `${getEnv("API_AVALANCHE_NODE")}`;
-        //todo: use getENV
-        avalanche = new Avalanche("localhost", 5555, "http");
+        const url = new URL(node);
+
+        avalanche = new Avalanche(url.hostname, Number(url.port));
     }
 
     return avalanche;
