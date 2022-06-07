@@ -64,7 +64,6 @@ setSupportedCurrencies([
   "ethereum_goerli",
   "cosmos_testnet",
   "elrond",
-  "filecoin",
 ]);
 
 if (Config.VERBOSE) {

@@ -3720,6 +3720,10 @@
     "cta": "Continue"
   },
   "families": {
+    "cardano": {
+      "memoPlaceholder": "Optional",
+      "memo": "Memo"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {

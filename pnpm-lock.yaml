@@ -880,6 +880,7 @@ importers:
 
   libs/ledger-live-common:
     specifiers:
+      '@cardano-foundation/ledgerjs-hw-app-cardano': ^5.0.0
       '@celo/base': ^1.5.2
       '@celo/connect': ^1.5.2
       '@celo/contractkit': ^1.5.2
@@ -921,6 +922,8 @@ importers:
       '@polkadot/wasm-crypto': 6.0.1
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': ^1.41.4
+      '@stricahq/bip32ed25519': ^1.0.3
+      '@stricahq/typhonjs': ^1.1.3
       '@svgr/core': ^5.5.0
       '@taquito/ledger-signer': stablelib
       '@taquito/taquito': stablelib
@@ -1034,6 +1037,7 @@ importers:
       xstate: ^4.30.2
       zcash-bitcore-lib: ^0.13.20-rc3
     dependencies:
+      '@cardano-foundation/ledgerjs-hw-app-cardano': 5.0.0
       '@celo/base': 1.5.2
       '@celo/connect': 1.5.2
       '@celo/contractkit': 1.5.2
@@ -1075,6 +1079,8 @@ importers:
       '@polkadot/wasm-crypto': 6.0.1_@polkadot+util@9.1.1
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.4
+      '@stricahq/bip32ed25519': 1.0.4
+      '@stricahq/typhonjs': 1.1.3
       '@taquito/ledger-signer': 11.1.0-stablelib.0
       '@taquito/taquito': 11.1.0-stablelib.0
       '@taquito/utils': 11.1.0-stablelib.0
@@ -5633,6 +5639,17 @@ packages:
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@cardano-foundation/ledgerjs-hw-app-cardano/5.0.0:
+    resolution: {integrity: sha512-7hGGG1WqDnNCizg//UGBljDyM3qT9/MFdfH8vrnR3M1EQ34PzKgkqWlrQe245EwzHEpvOb7d7hjWvtrK8psNdQ==}
+    dependencies:
+      '@ledgerhq/hw-transport': 5.51.1
+      '@types/ledgerhq__hw-transport': 4.21.4
+      base-x: 3.0.9
+      bech32: 1.1.4
+      blake2: 4.1.1
+      int64-buffer: 1.0.1
+    dev: false
 
   /@celo/base/1.5.2:
     resolution: {integrity: sha512-KGf6Dl9E6D01vAfkgkjL2sG+zqAjspAogILIpWstljWdG5ifyA75jihrnDEHaMCoQS0KxHvTdP1XYS/GS6BEyQ==}
@@ -14984,6 +15001,37 @@ packages:
       - '@types/react'
     dev: true
 
+  /@stricahq/bip32ed25519/1.0.4:
+    resolution: {integrity: sha512-b+4+aTRF9QY19auN4oBmZxv/7lJIBPBfAIU9wOTzc9Wxb0ifWpVcM4qt+qZuRNlMQofSlSa6lUet6CwaNyDEuA==}
+    dependencies:
+      blakejs: 1.2.1
+      bn.js: 5.2.0
+      buffer: 6.0.3
+      chai: 4.3.6
+      elliptic: 6.5.4
+      hash.js: 1.1.7
+      pbkdf2: 3.1.2
+    dev: false
+
+  /@stricahq/cbors/1.0.0:
+    resolution: {integrity: sha512-Nt5puNsaVLmkE31yXYCJAmhgYn7ufs7gXRQcDS8ZnNmP9GuUfA9fCXbNUHT7K7UQgyi/dXolzr9R3q83+q250w==}
+    dependencies:
+      bignumber.js: 9.0.2
+      buffer: 6.0.3
+    dev: false
+
+  /@stricahq/typhonjs/1.1.3:
+    resolution: {integrity: sha512-yYDA1c1IvLPVgT40gucL2GGJ9NnsjymY13sSR3nWkusQiIaXZXXSnxhMf+Y4uKs2cImvCYdCGChfIB4iRYavLw==}
+    dependencies:
+      '@stricahq/cbors': 1.0.0
+      bech32: 2.0.0
+      bignumber.js: 9.0.2
+      blakejs: 1.2.1
+      bs58: 4.0.1
+      buffer: 6.0.3
+      lodash: 4.17.21
+    dev: false
+
   /@styled-system/background/5.1.2:
     resolution: {integrity: sha512-jtwH2C/U6ssuGSvwTN3ri/IyjdHb8W9X/g8Y0JLcrH02G+BW3OS8kZdHphF1/YyRklnrKrBT2ngwGUK6aqqV3A==}
     dependencies:
@@ -15813,6 +15861,12 @@ packages:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
       '@types/node': 17.0.32
+
+  /@types/ledgerhq__hw-transport/4.21.4:
+    resolution: {integrity: sha512-vep+6yZnGv6owAthIY0w3f72w4dJIb4+yE5PCHveInTlZE9wukvU6Wc5Eig0OUUxcdhTazzeZx1xUaNVLqyQSg==}
+    dependencies:
+      '@types/node': 17.0.32
+    dev: false
 
   /@types/libsodium-wrappers/0.7.9:
     resolution: {integrity: sha512-LisgKLlYQk19baQwjkBZZXdJL0KbeTpdEnrAfz5hQACbklCY0gVFnsKUyjfNWF1UQsCSjw93Sj5jSbiO8RPfdw==}
@@ -19663,6 +19717,10 @@ packages:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
     dev: false
 
+  /bech32/2.0.0:
+    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
+    dev: false
+
   /before-after-hook/2.2.2:
     resolution: {integrity: sha512-3pZEU3NT5BFUo/AD5ERPWOgQOCZITni6iavr5AUw5AUwQjMlI0kzu5btnyD39AF0gUEsDPwJT+oY1ORBJijPjQ==}
 
@@ -19856,6 +19914,14 @@ packages:
       node-addon-api: 3.2.1
       node-gyp-build: 4.4.0
       readable-stream: 3.6.0
+    dev: false
+
+  /blake2/4.1.1:
+    resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
+    engines: {node: '>= 8.0.0'}
+    requiresBuild: true
+    dependencies:
+      nan: 2.15.0
     dev: false
 
   /blake2b-wasm/2.4.0:
@@ -29406,6 +29472,11 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       through: 2.3.8
+
+  /int64-buffer/1.0.1:
+    resolution: {integrity: sha512-+3azY4pXrjAupJHU1V9uGERWlhoqNswJNji6aD/02xac7oxol508AsMC5lxKhEqyZeDFy3enq5OGWXF4u75hiw==}
+    engines: {node: '>= 4.5.0'}
+    dev: false
 
   /internal-ip/4.3.0:
     resolution: {integrity: sha512-S1zBo1D6zcsyuC6PMmY5+55YMILQ9av8lotMx447Bq6SAgo/sDK6y6uUKmuYhW7eacnIhFfsPmCNYdDzsnnDCg==}

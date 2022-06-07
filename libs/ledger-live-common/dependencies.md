@@ -106,3 +106,6 @@ yarn upgrade-interactive -i --latest
 |xstate                  | generic helper for React       | **TBD why it's needed.**         |
 |zcash-bitcore-lib       | Bitcoin coin integration       | monthly                          |
 |varuint-bitcoin         | Bitcoin coin integration       | monthly                          |
+|@stricahq/typhonjs      | Cardano coin integration       | monthly                          |
+|@stricahq/bip32ed25519  | Cardano coin integration       | stable                           |
+|@cardano-foundation/ledgerjs-hw-app-cardano| Cardano coin integration| stable               |

@@ -160,6 +160,16 @@ const envDefinitions = {
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
   },
+  CARDANO_API_ENDPOINT: {
+    def: "https://cardano.coin.ledger.com/api",
+    parser: stringParser,
+    desc: "Cardano API url",
+  },
+  CARDANO_TESTNET_API_ENDPOINT: {
+    def: "https://testnet-ledger.cardanoscan.io/api",
+    parser: stringParser,
+    desc: "Cardano API url",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,
