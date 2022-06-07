@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "22.1.0",
+  "version": "22.2.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
@@ -24,7 +24,6 @@
     "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
     "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-cli": "cd cli && pnpm test",
     "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
   },
   "files": [
