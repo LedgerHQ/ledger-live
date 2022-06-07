@@ -1,6 +1,6 @@
 /* @flow */
 import React from "react";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
 import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
@@ -10,7 +10,7 @@ import Supply from "../../../icons/Supply";
 import Withdraw from "../../../icons/Withdraw";
 
 type Props = {
-  account: AccountLike,
+  account: AccountLike;
 };
 
 export default function AccountActions({ account }: Props) {

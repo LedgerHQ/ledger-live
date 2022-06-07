@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { Platform } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -10,7 +9,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../../const";
-// eslint-disable-next-line import/named
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import { isCurrencySupported } from "../../Exchange/coinifyConfig";
@@ -28,8 +26,10 @@ export default function useActions({ account, parentAccount, colors }: Props) {
 
   const balance = getAccountSpendableBalance(account);
   const mainAccount = getMainAccount(account, parentAccount);
-  // @ts-expect-error issue in typing
-  const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
+  const decorators =
+    perFamilyAccountActions[
+      mainAccount?.currency?.family as keyof typeof perFamilyAccountActions
+    ];
 
   const isEthereum = currency.id === "ethereum";
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(

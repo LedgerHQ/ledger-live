@@ -47,7 +47,7 @@ const Footer = ({ renderAccountSummary }: FooterProps) => {
   return accountSummary ? (
     <Box
       flexDirection={"row"}
-      alignItemps={"center"}
+      alignItems={"center"}
       marginTop={5}
       overflow={"hidden"}
     >

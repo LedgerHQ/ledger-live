@@ -1,5 +1,4 @@
 import React from "react";
-import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -63,14 +62,14 @@ export default function CustomTabBar({
       >
         <TabBarShape color={colors.neutral.c30} />
       </Flex>
-      {state.routes.map((route, index) => {
+      {state.routes.map((route: any, index: number) => {
         const { options } = descriptors[route.key];
-        const label =
+        /* const label =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
             ? options.title
-            : route.name;
+            : route.name; */
         const Icon = options.tabBarIcon;
 
         const isFocused = state.index === index;
