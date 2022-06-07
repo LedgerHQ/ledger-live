@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 22.3.0-esbuild.0
+
+### Minor Changes
+
+- 899aa330: Use of the maxSpendable for bot testing instead of amount balance
+- 89e82ed7: Crypto Icons - Add support for Abachi tokens icons
+- 403ea8ef: Update cosmos snapshot
+
+### Patch Changes
+
+- 09648db7: refactor of the top perfs filter
+- 0f59cfc1: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- 9a86fe23: Fix the click on browse assets button on the market screen
+- b688a592: fix swap rate formula
+- 71ad8402: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+
 ## 22.2.0
 
 ### Minor Changes

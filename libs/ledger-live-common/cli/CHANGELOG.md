@@ -1,5 +1,20 @@
 # @ledgerhq/live-cli
 
+## 21.33.1-esbuild.0
+
+### Patch Changes
+
+- 994a1da8: fix verify flag for getAddress CLI command
+- Updated dependencies [09648db7]
+- Updated dependencies [0f59cfc1]
+- Updated dependencies [899aa330]
+- Updated dependencies [89e82ed7]
+- Updated dependencies [403ea8ef]
+- Updated dependencies [9a86fe23]
+- Updated dependencies [b688a592]
+- Updated dependencies [71ad8402]
+  - @ledgerhq/live-common@22.3.0-esbuild.0
+
 ## 21.33.0
 
 ### Minor Changes

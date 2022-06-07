@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.42.1-esbuild.0
+
+### Patch Changes
+
+- 03970b8c: Replace webpack with esbuild for production builds.
+- Updated dependencies [09648db7]
+- Updated dependencies [0f59cfc1]
+- Updated dependencies [899aa330]
+- Updated dependencies [89e82ed7]
+- Updated dependencies [403ea8ef]
+- Updated dependencies [9a86fe23]
+- Updated dependencies [f686ec78]
+- Updated dependencies [b688a592]
+- Updated dependencies [71ad8402]
+  - @ledgerhq/live-common@22.3.0-esbuild.0
+  - @ledgerhq/react-ui@0.7.7-esbuild.0
+
 ## 2.42.0
 
 ### Minor Changes
