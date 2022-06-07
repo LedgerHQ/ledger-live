@@ -27,7 +27,7 @@ if (parsed) {
   CHANNEL = parsed[0];
 }
 
-const { SENTRY_URL } = process.env;
+const SENTRY_URL = process.env?.SENTRY_URL;
 
 const GIT_REVISION = childProcess
   .execSync("git rev-parse --short HEAD")
@@ -132,7 +132,7 @@ const buildRendererConfig = (mode, config, argv) => {
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : undefined,
+    devtool: mode === "development" ? "eval-source-map" : "source-map",
     entry,
     plugins: [
       ...plugins,
@@ -156,7 +156,7 @@ const buildMainConfig = (mode, config, argv, mappedNativeModules) => {
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : undefined,
+    devtool: mode === "development" ? "eval-source-map" : "source-map",
     // In 'dev' mode, treat everything as an external module so we can rely on the node_modules folder.
     // In 'production' mode we exclude the native modules from the bundle.
     externals:

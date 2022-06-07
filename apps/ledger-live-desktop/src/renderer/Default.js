@@ -1,6 +1,7 @@
 // @flow
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
@@ -61,6 +62,23 @@ import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
 
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
+
+// in order to test sentry integration, we need the ability to test it out.
+const LetThisCrashForCrashTest = () => {
+  throw new Error("CrashTestRendering");
+};
+const LetMainSendCrashTest = () => {
+  useEffect(() => {
+    ipcRenderer.send("mainCrashTest");
+  }, []);
+  return null;
+};
+const LetInternalSendCrashTest = () => {
+  useEffect(() => {
+    ipcRenderer.send("internalCrashTest");
+  }, []);
+  return null;
+};
 
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
   position: sticky;
@@ -236,6 +254,15 @@ export default function Default() {
                   <DeviceBusyIndicator />
                   <KeyboardContent sequence="BJBJBJ">
                     <PerfIndicator />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_TEST">
+                    <LetThisCrashForCrashTest />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_MAIN">
+                    <LetMainSendCrashTest />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_INTERNAL">
+                    <LetInternalSendCrashTest />
                   </KeyboardContent>
                 </Route>
               </Switch>
