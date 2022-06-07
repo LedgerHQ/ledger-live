@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.43.0-next.1
+
+### Minor Changes
+
+- cefeff1d7: Display a modal at app launch to inform users terms of use got updated. Also refactor the way we assess terms update using date comparison instead of strict string equality.
+
 ## 2.43.0-next.0
 
 ### Minor Changes
