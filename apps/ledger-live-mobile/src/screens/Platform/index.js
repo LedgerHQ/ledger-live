@@ -22,6 +22,8 @@ import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import { useSelector } from "react-redux";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type RouteParams = {
   defaultAccount: ?AccountLike,
@@ -36,6 +38,7 @@ const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { manifests } = usePlatformApp();
   const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
@@ -70,7 +73,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
           name: manifest.name,
         });
 
-      if (!disclaimerDisabled) {
+      if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
           disableDisclaimer: () => setDisclaimerDisabled(),
           closeDisclaimer: () => setDisclaimerOpened(false),
@@ -83,7 +86,13 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
         openDApp();
       }
     },
-    [navigation, routeParams, setDisclaimerDisabled, disclaimerDisabled],
+    [
+      navigation,
+      routeParams,
+      setDisclaimerDisabled,
+      disclaimerDisabled,
+      readOnlyModeEnabled,
+    ],
   );
 
   useEffect(() => {
