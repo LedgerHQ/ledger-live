@@ -22,15 +22,10 @@ jobs:
         with:
           token: ${{ secrets.GH_PAT }}
       - uses: actions/checkout@v3
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
-          ref: ${{ github.event.inputs.ref || 'release' }}
+          ref: ${{ github.event.inputs.ref }}
           token: ${{ secrets.GH_PAT }}
-      - name: set ref
-        id: ref
-        if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run' }}
-        run: |
-          echo "::set-output name=ref::${{ github.event.inputs.ref || 'release' }}"
 
       - name: set git user
         run: |
@@ -67,22 +62,22 @@ jobs:
         run: pnpm changeset version
 
       - name: commit (from release branch)
-        if: ${{ startsWith(github.ref_name, 'release') || startsWith(steps.ref.outputs.ref, 'release') }}
+        if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
         run: |
           git add . &&
           git commit -m ":rocket: release prerelease" ||
           echo ""
       - name: commit (from hotfix branch)
-        if: ${{ startsWith(steps.ref.outputs.ref, 'hotfix') }}
+        if: ${{ startsWith(github.event.inputs.ref, 'hotfix') }}
         run: |
           git add . &&
           git commit -m ":fire: hotfix prerelease" ||
           echo ""
-      - name: commit (from ${{ steps.ref.outputs.ref }} branch) workflow dispatch
+      - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
         if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ steps.ref.outputs.ref }} prerelease" ||
+          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease" ||
           echo ""
 
       - name: publish prerelease
@@ -95,9 +90,9 @@ jobs:
         run: |
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
-        if: ${{ github.event_name == 'workflow_dispatch'|| github.event_name == 'workflow_run' }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          git push origin ${{ steps.ref.outputs.ref }} --follow-tags
+          git push origin ${{ github.event.inputs.ref }} --follow-tags
 
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -121,7 +116,7 @@ jobs:
               ref: "main",
               workflow_id: "pre-desktop-mono.yml",
               inputs: {
-                ref: "${{ github.event.push != '' && github.ref_name || steps.ref.outputs.ref }}"
+                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
               }
             });
 
@@ -136,4 +131,7 @@ jobs:
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "release-mobile-mono.yml",
+              inputs: {
+                ref: "${{  github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+              }
             });
