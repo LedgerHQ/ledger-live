@@ -12,10 +12,14 @@ import {
   hasLendEnabledAccountsSelector,
   accountsSelector,
 } from "../../reducers/accounts";
+import { hasOrderedNanoSelector } from "../../reducers/settings";
 import { Props as ModalProps } from "../BottomModal";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import TransferButton from "./TransferButton";
-import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
+import BuyDeviceBanner, {
+  IMAGE_PROPS_SMALL_NANO,
+  IMAGE_PROPS_SMALL_NANO_BOX,
+} from "../BuyDeviceBanner";
 import { useAnalytics } from "../../analytics";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
@@ -28,6 +32,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const accountsCount: number = useSelector(accountsCountSelector);
   const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const accounts = useSelector(accountsSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
     accounts,
   ]);
@@ -198,7 +203,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
       >
         {buttons}
       </ScrollView>
-      {readOnlyModeEnabled && (
+      {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner
           topLeft={
             <Text
@@ -217,6 +222,27 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           event="button_clicked"
           eventProperties={bannerEventProperties}
           {...IMAGE_PROPS_SMALL_NANO}
+        />
+      )}
+      {readOnlyModeEnabled && hasOrderedNano && (
+        <BuyDeviceBanner
+          variant={"setup"}
+          topLeft={
+            <Text
+              color="primary.c40"
+              uppercase
+              mb={3}
+              fontSize="11px"
+              fontWeight="semiBold"
+            >
+              {t("postBuyDeviceSetupNanoWall.bannerTitle")}
+            </Text>
+          }
+          style={{ paddingTop: 13.5, paddingBottom: 13.5 }}
+          buttonLabel={t("postBuyDeviceSetupNanoWall.bannerCta")}
+          buttonSize="small"
+          event="button_clicked"
+          {...IMAGE_PROPS_SMALL_NANO_BOX}
         />
       )}
     </Flex>
