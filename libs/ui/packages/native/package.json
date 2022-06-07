@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.7.17",
+  "version": "0.7.18-updater.0",
   "description": "Ledger Live - Mobile UI",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",

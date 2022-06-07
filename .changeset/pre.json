@@ -70,5 +70,23 @@
     "native-modules-tools": "1.0.0",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "calm-pets-sleep",
+    "cool-suits-divide",
+    "early-bikes-press",
+    "empty-taxis-grin",
+    "flat-kings-cover",
+    "forty-pants-remember",
+    "lazy-pants-travel",
+    "lucky-rockets-drum",
+    "quick-hairs-obey",
+    "quiet-coats-hang",
+    "shy-bears-reflect",
+    "strong-penguins-chew",
+    "swift-parrots-enjoy",
+    "weak-beans-fix",
+    "wet-news-agree",
+    "wild-goats-arrive",
+    "wild-papayas-bow"
+  ]
 }

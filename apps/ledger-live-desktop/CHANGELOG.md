@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.43.0-updater.0
+
+### Minor Changes
+
+- 6fe5dc788: update electron updater to latest version
+
+### Patch Changes
+
+- a6ef48763: test autoupdate
+- Updated dependencies [09648db7f]
+- Updated dependencies [0f59cfc10]
+- Updated dependencies [899aa3300]
+- Updated dependencies [89e82ed79]
+- Updated dependencies [403ea8efe]
+- Updated dependencies [9a86fe231]
+- Updated dependencies [f686ec781]
+- Updated dependencies [b688a592d]
+- Updated dependencies [71ad84023]
+  - @ledgerhq/live-common@22.3.0-updater.0
+  - @ledgerhq/react-ui@0.7.7-updater.0
+
 ## 2.42.0
 
 ### Minor Changes
