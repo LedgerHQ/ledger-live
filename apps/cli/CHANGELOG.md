@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 22.0.0-next.1
+
+### Minor Changes
+
+- 98ecc6272: First integration of Cardano (sync/send/receive)
+
+### Patch Changes
+
+- Updated dependencies [98ecc6272]
+  - @ledgerhq/live-common@23.0.0-next.1
+
 ## 22.0.0-next.0
 
 ### Major Changes

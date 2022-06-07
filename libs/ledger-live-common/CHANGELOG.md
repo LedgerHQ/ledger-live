@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.0.0-next.1
+
+### Minor Changes
+
+- 98ecc6272: First integration of Cardano (sync/send/receive)
+
 ## 23.0.0-next.0
 
 ### Major Changes
