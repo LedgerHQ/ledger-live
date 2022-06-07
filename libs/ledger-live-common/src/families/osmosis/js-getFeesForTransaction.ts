@@ -8,8 +8,8 @@ const gasForTransaction: {
   delegate: 250000,
   undelegate: 250000,
   redelegate: 350000,
-  claimReward: 140000,
-  claimRewardCompound: 140000, // TODO - verify this value
+  claimReward: 250000, // TODO, this should be 140000 but need to figure out correct gas calculation
+  claimRewardCompound: 350000, // TODO - verify this value
 };
 
 // Default fees in uosmo
@@ -37,6 +37,11 @@ export const getEstimatedGas = async (
     throw new Error(
       `Estimated gas for the operation mode ${mode} is undefined`
     );
+  }
+
+  if (mode === "claimReward") {
+    // TODO do proper gas calculation
+    // estimatedGas = estimatedGas * validators.length
   }
 
   return new BigNumber(estimatedGas);

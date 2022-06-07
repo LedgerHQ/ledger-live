@@ -13,6 +13,7 @@ import {
   AminoMsgDelegate,
   AminoMsgUndelegate,
   AminoMsgBeginRedelegate,
+  AminoMsgWithdrawDelegatorReward,
 } from "@cosmjs/stargate";
 import Long from "long";
 import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
@@ -25,6 +26,7 @@ import {
 } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 // import { Fee } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -102,7 +104,6 @@ export const buildTransaction = async (
               },
             }).finish(),
           });
-          break;
         }
       }
       break;
@@ -150,7 +151,7 @@ export const buildTransaction = async (
       if (transaction.validators && transaction.validators.length > 0) {
         const validator = transaction.validators[0];
         if (validator && validator.address /*&& transaction.amount.gt(0)*/) {
-          //todo this should not be gt0, but the minimum required by osmosis to stake
+          //todo verify what minimum is required by osmosis to undelegate
           const aminoMsg: AminoMsgUndelegate = {
             type: "cosmos-sdk/MsgUndelegate",
             value: {
@@ -176,9 +177,85 @@ export const buildTransaction = async (
               },
             }).finish(),
           });
-          break;
         }
       }
+      break;
+    case "claimReward":
+      if (
+        transaction.validators &&
+        transaction.validators.length > 0 &&
+        transaction.validators[0].address
+      ) {
+        const validator = transaction.validators[0];
+        const aminoMsg: AminoMsgWithdrawDelegatorReward = {
+          type: "cosmos-sdk/MsgWithdrawDelegationReward",
+          value: {
+            delegator_address: account.freshAddress,
+            validator_address: validator.address,
+          },
+        };
+        aminoMsgs.push(aminoMsg);
+
+        // PROTO MESSAGE
+        protoMsgs.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+          value: MsgWithdrawDelegatorReward.encode({
+            delegatorAddress: account.freshAddress,
+            validatorAddress: validator.address,
+          }).finish(),
+        });
+      }
+      break;
+    case "claimRewardCompound":
+      if (
+        transaction.validators &&
+        transaction.validators.length > 0 &&
+        transaction.validators[0].address &&
+        transaction.validators[0].amount.gt(0)
+      ) {
+        const validator = transaction.validators[0];
+        // AMINO MESSAGES
+        const aminoWithdrawRewardMsg: AminoMsgWithdrawDelegatorReward = {
+          type: "cosmos-sdk/MsgWithdrawDelegationReward",
+          value: {
+            delegator_address: account.freshAddress,
+            validator_address: validator.address,
+          },
+        };
+        const aminoDelegateMsg: AminoMsgDelegate = {
+          type: "cosmos-sdk/MsgDelegate",
+          value: {
+            delegator_address: account.freshAddress,
+            validator_address: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: validator.amount.toString(),
+            },
+          },
+        };
+        aminoMsgs.push(aminoWithdrawRewardMsg, aminoDelegateMsg);
+
+        // PROTO MESSAGES
+        protoMsgs.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+          value: MsgWithdrawDelegatorReward.encode({
+            delegatorAddress: account.freshAddress,
+            validatorAddress: validator.address,
+          }).finish(),
+        });
+        protoMsgs.push({
+          typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+          value: MsgDelegate.encode({
+            delegatorAddress: account.freshAddress,
+            validatorAddress: validator.address,
+            amount: {
+              denom: account.currency.units[1].code,
+              amount: validator.amount.toString(),
+            },
+          }).finish(),
+        });
+      }
+      break;
   }
   return { aminoMsgs, protoMsgs };
 };

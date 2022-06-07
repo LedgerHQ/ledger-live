@@ -88,6 +88,39 @@ function getDeviceTransactionConfig({
       });
       break;
 
+    case "claimReward":
+      fields.push({
+        type: "text",
+        label: "Type",
+        value: "Withdraw Reward",
+      });
+      fields.push({
+        type: "osmosis.validatorName",
+        label: "Validator",
+      });
+      break;
+
+    case "claimRewardCompound":
+      fields.push({
+        type: "text",
+        label: "Type",
+        value: "Withdraw Reward",
+      });
+      fields.push({
+        type: "osmosis.validatorName",
+        label: "Validator",
+      });
+      fields.push({
+        type: "text",
+        label: "Type",
+        value: "Delegate",
+      });
+      fields.push({
+        type: "osmosis.delegateValidators",
+        label: "Validators",
+      });
+      break;
+
     default:
       break;
   }
