@@ -6,7 +6,7 @@ const gasForTransaction: {
 } = {
   send: 100000,
   delegate: 250000,
-  undelegate: 250000,
+  undelegate: 350000,
   redelegate: 350000,
   claimReward: 250000, // TODO, this should be 140000 but need to figure out correct gas calculation
   claimRewardCompound: 350000, // TODO - verify this value
