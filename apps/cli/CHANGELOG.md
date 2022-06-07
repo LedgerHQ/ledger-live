@@ -1,5 +1,24 @@
 # @ledgerhq/live-cli
 
+## 22.0.0-updater.0
+
+### Major Changes
+
+- 77aa0a570: extracted live-cli to it's own module
+
+### Patch Changes
+
+- 994a1da8f: fix verify flag for getAddress CLI command
+- Updated dependencies [09648db7f]
+- Updated dependencies [0f59cfc10]
+- Updated dependencies [899aa3300]
+- Updated dependencies [89e82ed79]
+- Updated dependencies [403ea8efe]
+- Updated dependencies [9a86fe231]
+- Updated dependencies [b688a592d]
+- Updated dependencies [71ad84023]
+  - @ledgerhq/live-common@22.3.0-updater.0
+
 ## 21.33.0
 
 ### Minor Changes
