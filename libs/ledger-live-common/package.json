@@ -24,7 +24,6 @@
     "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
     "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-cli": "cd cli && pnpm test",
     "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
   },
   "files": [

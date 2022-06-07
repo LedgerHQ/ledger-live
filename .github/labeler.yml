@@ -19,6 +19,9 @@ tools:
 automation:
   - .github/**/*
 
+cli:
+  - apps/cli/**/*
+
 translations:
   - apps/ledger-live-desktop/static/i18n/**/*
   - apps/ledger-live-mobile/src/locales/**/*
