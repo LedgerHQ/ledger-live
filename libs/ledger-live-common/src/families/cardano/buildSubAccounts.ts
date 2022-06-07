@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { encodeOperationId } from "../../operation";
 import { Account, CryptoCurrency, Operation, TokenAccount } from "../../types";
 import { APITransaction } from "./api/api-types";
-import { getAccountChange, getMemoFromTx } from "./logic";
+import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
 import { PaymentCredential, Token } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { findTokenById } from "@ledgerhq/cryptoassets";
@@ -91,10 +91,14 @@ const mapTxToTokenAccountOperation = ({
         fee: new BigNumber(tx.fees),
         value: token.amount.absoluteValue(),
         senders: tx.inputs.map((i) =>
-          TyphonUtils.getAddressFromHex(i.address).getBech32()
+          isHexString(i.address)
+            ? TyphonUtils.getAddressFromHex(i.address).getBech32()
+            : i.address
         ),
         recipients: tx.outputs.map((o) =>
-          TyphonUtils.getAddressFromHex(o.address).getBech32()
+          isHexString(o.address)
+            ? TyphonUtils.getAddressFromHex(o.address).getBech32()
+            : o.address
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),

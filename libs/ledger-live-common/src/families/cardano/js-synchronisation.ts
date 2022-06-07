@@ -20,6 +20,7 @@ import {
   getBipPathString,
   getMemoFromTx,
   getOperationType,
+  isHexString,
 } from "./logic";
 import { encodeOperationId } from "../../operation";
 import { getNetworkParameters } from "./networks";
@@ -51,10 +52,14 @@ function mapTxToAccountOperation(
     fee: new BigNumber(tx.fees),
     value: accountChange.ada.absoluteValue(),
     senders: tx.inputs.map((i) =>
-      TyphonUtils.getAddressFromHex(i.address).getBech32()
+      isHexString(i.address)
+        ? TyphonUtils.getAddressFromHex(i.address).getBech32()
+        : i.address
     ),
     recipients: tx.outputs.map((o) =>
-      TyphonUtils.getAddressFromHex(o.address).getBech32()
+      isHexString(o.address)
+        ? TyphonUtils.getAddressFromHex(o.address).getBech32()
+        : o.address
     ),
     subOperations,
     blockHeight: tx.blockHeight,
