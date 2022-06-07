@@ -7,9 +7,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
 import buildTransaction from "./js-buildTransaction";
 import Avalanche from "./hw-app-avalanche";
-import { BN } from "avalanche";
 import { encodeOperationId } from "../../operation";
-import { bnToUnpaddedBuffer, rlp } from 'ethereumjs-util';
 
 const signOperation = ({
     account,
@@ -32,25 +30,13 @@ const signOperation = ({
 
                     const avalanche = new Avalanche(transport);
 
-                    const { tx, chainParams } = await buildTransaction(account, transaction);
-
-                    const rawUnsignedTx = rlp.encode([
-                        bnToUnpaddedBuffer(tx.nonce),
-                        bnToUnpaddedBuffer(tx.gasPrice),
-                        bnToUnpaddedBuffer(tx.gasLimit),
-                        tx.to !== undefined ? tx.to.buf : Buffer.from([]),
-                        bnToUnpaddedBuffer(tx.value),
-                        tx.data,
-                        bnToUnpaddedBuffer(new BN(account.currency.ethereumLikeInfo?.chainId as number)),
-                        Buffer.from([]),
-                        Buffer.from([])
-                    ]);
+                    const { tx, txBuffer, chainParams } = await buildTransaction(account, transaction);
 
                     o.next({ type: "device-signature-requested" });
 
                     const result = await avalanche.signTransaction(
                         account.freshAddressPath,
-                        rawUnsignedTx.toString('hex'),
+                        txBuffer.toString('hex'),
                     );
 
                     if (cancelled) return;

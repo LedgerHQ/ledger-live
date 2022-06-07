@@ -5,6 +5,7 @@ import { BN } from "avalanche";
 import EthereumjsCommon from '@ethereumjs/common';
 import { Transaction as EthTransaction } from '@ethereumjs/tx';
 import { web3Client } from "./api/client";
+import { bnToUnpaddedBuffer, rlp } from 'ethereumjs-util';
 
 const buildTransaction = async (account: Account, transaction: Transaction) => {
     const { amount } = transaction;
@@ -28,7 +29,19 @@ const buildTransaction = async (account: Account, transaction: Transaction) => {
         data: '0x',
     }, chainParams);
 
-    return { tx, chainParams };
+    const txBuffer = rlp.encode([
+        bnToUnpaddedBuffer(tx.nonce),
+        bnToUnpaddedBuffer(tx.gasPrice),
+        bnToUnpaddedBuffer(tx.gasLimit),
+        tx.to !== undefined ? tx.to.buf : Buffer.from([]),
+        bnToUnpaddedBuffer(tx.value),
+        tx.data,
+        bnToUnpaddedBuffer(new BN(account.currency.ethereumLikeInfo?.chainId as number)),
+        Buffer.from([]),
+        Buffer.from([])
+    ]);
+
+    return { tx, txBuffer, chainParams };
 };
 
 export default buildTransaction;
