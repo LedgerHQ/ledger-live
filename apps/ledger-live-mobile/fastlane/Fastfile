@@ -114,6 +114,7 @@ platform :ios do
 
     increment_build_number({
       build_number: build_number + 1
+      xcodeproj: XCODE_PROJECT
     })
 
     if (options[:ci])
