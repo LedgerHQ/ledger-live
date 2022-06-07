@@ -816,10 +816,10 @@
     "setupCta": "I already have a device, set it up"
   },
   "postBuyDeviceSetupNanoWall": {
-    "title": "Have you received your device ?",
-    "desc": "Once you receive your device, you can start its setup through Ledger Live !",
+    "title": "Have you received your device?",
+    "desc": "Once you receive your device, you can start its setup through Ledger Live!",
     "cta": "Setup my device",
-    "bannerTitle": "Received your device ?",
+    "bannerTitle": "Received your device?",
     "bannerCta": "Begin the setup",
     "continue": "Continue"
   },
