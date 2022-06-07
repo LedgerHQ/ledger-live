@@ -136,6 +136,8 @@ function DiscoverLiveInfo() {
           width: "100%",
           px: 7,
         }}
+        scrollViewProps={{ scrollEnabled: false }}
+        maxDurationOfTap={700}
       >
         {slidesImages.map((image, index) => (
           <Item
