@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 22.2.0-llmnext.2
+
+### Patch Changes
+
+- 16be6e5c0: Fixes a bug that was sometimes blocking the Send flow for Bitcoin and altcoins ('events' library updated to 3.x)
+
 ## 22.2.0-llmnext.1
 
 ### Patch Changes
