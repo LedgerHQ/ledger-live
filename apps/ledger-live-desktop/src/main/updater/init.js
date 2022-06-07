@@ -1,6 +1,6 @@
 // @flow
 import { app, BrowserWindow } from "electron";
-import { autoUpdater } from "@ledgerhq/electron-updater";
+import { autoUpdater } from "electron-updater";
 import logger from "~/logger";
 import { getMainWindow } from "~/main/window-lifecycle";
 import type { UpdateStatus } from "~/renderer/components/Updater/UpdaterContext";

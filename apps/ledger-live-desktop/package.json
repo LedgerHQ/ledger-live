@@ -44,7 +44,6 @@
   "dependencies": {
     "@electron/remote": "^1.2.1",
     "@ledgerhq/devices": "workspace:^",
-    "@ledgerhq/electron-updater": "^4.2.2",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
@@ -68,6 +67,7 @@
     "debug": "^4.3.3",
     "dotenv": "^8.2.0",
     "electron-context-menu": "^2.5.2",
+    "electron-updater": "^5.0.1",
     "ethereumjs-tx": "^2.1.2",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
