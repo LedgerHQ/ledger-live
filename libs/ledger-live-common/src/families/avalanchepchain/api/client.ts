@@ -1,14 +1,15 @@
 import Avalanche from "avalanche";
 import { getEnv } from "../../../env";
 
-let client: Avalanche
+let avalanche: Avalanche
 
 export const avalancheClient = () => {
-    if (!client) {
+    if (!avalanche) {
         const node = `${getEnv("API_AVALANCHE_NODE")}`;
-        //todo: use getENV
-        client = new Avalanche("localhost", 5555, "http");
+
+        const url = new URL(node);
+        avalanche = new Avalanche(url.hostname, Number(url.port));
     }
 
-    return client;
+    return avalanche;
 } 
