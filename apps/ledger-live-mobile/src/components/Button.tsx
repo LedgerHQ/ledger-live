@@ -3,7 +3,7 @@ import React, { useCallback, memo, useContext, useMemo } from "react";
 import { ViewStyle } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
-import type { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import { track } from "../analytics";
 

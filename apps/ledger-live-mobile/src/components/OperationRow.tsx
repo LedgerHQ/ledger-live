@@ -20,6 +20,7 @@ import {
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 
 import debounce from "lodash/debounce";
+import { StackNavigationProp } from "@react-navigation/stack";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 
@@ -91,7 +92,7 @@ export default function OperationRow({
   multipleAccounts,
   isLast,
 }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const goToOperationDetails = debounce(() => {
     const params = [
@@ -120,7 +121,9 @@ export default function OperationRow({
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
     const specific = mainAccount.currency.family
-      ? perFamilyOperationDetails[mainAccount.currency.family]
+      ? perFamilyOperationDetails[
+          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
+        ]
       : null;
 
     const SpecificAmountCell =

@@ -15,7 +15,7 @@ const Skeleton = ({
   children = <></>,
   animated = true,
 }: Props) => {
-  const { colors } = useTheme();
+  const { colors }: any = useTheme();
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {

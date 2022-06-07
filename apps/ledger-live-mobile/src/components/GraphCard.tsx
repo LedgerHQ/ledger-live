@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -49,7 +50,7 @@ function GraphCard({
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
   const item = balanceHistory[balanceHistory.length - 1];
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const onPieChartButtonpress = useCallback(() => {
     navigation.navigate(NavigatorName.Analytics);
@@ -63,7 +64,7 @@ function GraphCard({
 
   const updateTimeRange = useCallback(
     index => {
-      setTimeRange(timeRangeItems[index]);
+      setTimeRange(timeRangeItems[index as keyof typeof timeRangeItems]);
     },
     [setTimeRange, timeRangeItems],
   );
@@ -73,7 +74,7 @@ function GraphCard({
   const range = portfolio.range;
   const isAvailable = portfolio.balanceAvailable;
 
-  const rangesLabels = timeRangeItems.map(({ label }) => label);
+  const rangesLabels = timeRangeItems.map(({ label }: any) => label);
 
   const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
 

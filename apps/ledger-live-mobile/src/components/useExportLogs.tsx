@@ -20,6 +20,7 @@ export default function useExportLogs() {
         type: "application/json",
         filename: humanReadableName,
         url: `data:application/json;base64,${base64}`,
+        title: "",
       };
 
       try {

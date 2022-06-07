@@ -12,6 +12,7 @@ import { Linking } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
+import { StackNavigationProp } from "@react-navigation/stack";
 import ChoiceButton from "./ChoiceButton";
 import InfoModal from "./InfoModal";
 import Button from "./wrappedUi/Button";
@@ -58,12 +59,12 @@ function FabAccountButtonBar({
   parentAccount,
   ...props
 }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const [infoModalProps, setInfoModalProps] = useState<
     ActionButtonEventProps | undefined
   >();
-  const [isModalInfoOpened, setIsModalInfoOpened] = useState();
+  const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
   const onNavigate = useCallback(
     (name: string, options?: any) => {
@@ -85,7 +86,7 @@ function FabAccountButtonBar({
     (data: ActionButtonEventProps) => {
       const { navigationParams, confirmModalProps, linkUrl } = data;
       if (!confirmModalProps) {
-        setInfoModalProps();
+        setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
         } else if (navigationParams) {
@@ -105,7 +106,7 @@ function FabAccountButtonBar({
   }, [infoModalProps, onPress]);
 
   const onClose = useCallback(() => {
-    setIsModalInfoOpened();
+    setIsModalInfoOpened(undefined);
   }, []);
 
   const onChoiceSelect = useCallback(({ navigationParams, linkUrl }) => {
@@ -144,7 +145,15 @@ function FabAccountButtonBar({
             iconPosition={"left"}
             event={event}
             eventProperties={eventProperties}
-            type={type}
+            type={
+              type as
+                | "main"
+                | "color"
+                | "shade"
+                | "error"
+                | "default"
+                | undefined
+            }
             outline={outline}
             disabled={disabled}
             onPress={() => onPress(rest)}
