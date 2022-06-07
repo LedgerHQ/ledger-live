@@ -135,5 +135,5 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "release-mobile.yml",
+              workflow_id: "release-mobile-mono.yml",
             });

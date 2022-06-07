@@ -26,6 +26,82 @@ importers:
       pnpm-utils: link:tools/pnpm-utils
       turbo: 1.2.9
 
+  apps/cli:
+    specifiers:
+      '@ledgerhq/cryptoassets': workspace:^
+      '@ledgerhq/errors': workspace:^
+      '@ledgerhq/hw-app-btc': workspace:^
+      '@ledgerhq/hw-transport': workspace:^
+      '@ledgerhq/hw-transport-http': workspace:^
+      '@ledgerhq/hw-transport-mocker': workspace:^
+      '@ledgerhq/hw-transport-node-ble': workspace:^
+      '@ledgerhq/hw-transport-node-hid': workspace:^
+      '@ledgerhq/hw-transport-node-speculos': workspace:^
+      '@ledgerhq/live-common': workspace:^
+      '@ledgerhq/logs': workspace:^
+      '@types/command-line-args': ^5.2.0
+      '@types/lodash': ^4.14.177
+      '@types/node': ^17.0.15
+      '@walletconnect/client': ^1.7.1
+      asciichart: ^1.5.25
+      bignumber.js: ^9.0.1
+      bip39: ^3.0.4
+      body-parser: ^1.19.1
+      command-line-args: ^5.2.1
+      cors: ^2.8.5
+      express: ^4.17.2
+      invariant: ^2.2.4
+      lodash: ^4.17.21
+      lodash.product: ^18.9.19
+      qrcode-terminal: ^0.12.0
+      qrloop: ^1.2.0
+      react: ^17.0.2
+      react-dom: ^17.0.2
+      react-redux: ^7.2.6
+      rxjs: ^6.6.7
+      ts-node: ^10.4.0
+      typescript: ^4.5.5
+      winston: ^3.5.1
+      ws: ^8.6.0
+    dependencies:
+      '@ledgerhq/cryptoassets': link:../../libs/ledgerjs/packages/cryptoassets
+      '@ledgerhq/errors': link:../../libs/ledgerjs/packages/errors
+      '@ledgerhq/hw-app-btc': link:../../libs/ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-transport': link:../../libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/hw-transport-http': link:../../libs/ledgerjs/packages/hw-transport-http
+      '@ledgerhq/hw-transport-mocker': link:../../libs/ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/hw-transport-node-hid': link:../../libs/ledgerjs/packages/hw-transport-node-hid
+      '@ledgerhq/hw-transport-node-speculos': link:../../libs/ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/live-common': link:../../libs/ledger-live-common
+      '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
+      '@walletconnect/client': 1.7.8
+      asciichart: 1.5.25
+      bignumber.js: 9.0.2
+      bip39: 3.0.4
+      body-parser: 1.20.0
+      command-line-args: 5.2.1
+      cors: 2.8.5
+      express: 4.18.1
+      invariant: 2.2.4
+      lodash: 4.17.21
+      lodash.product: 18.9.19_lodash@4.17.21
+      qrcode-terminal: 0.12.0
+      qrloop: 1.2.0
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-redux: 7.2.8_sfoxds7t5ydpegc3knd667wn6m
+      rxjs: 6.6.7
+      winston: 3.7.2
+      ws: 8.6.0
+    optionalDependencies:
+      '@ledgerhq/hw-transport-node-ble': link:../../libs/ledgerjs/packages/hw-transport-node-ble
+    devDependencies:
+      '@types/command-line-args': 5.2.0
+      '@types/lodash': 4.14.182
+      '@types/node': 17.0.32
+      ts-node: 10.7.0_sm5zkxj4s52nbddwl76qwfh6ya
+      typescript: 4.6.4
+
   apps/ledger-live-desktop:
     specifiers:
       '@actions/core': ^1.6.0
@@ -1112,76 +1188,6 @@ importers:
       typescript: 4.6.4
       typescript-eslint-parser: 22.0.0_e4zyhrvfnqudwdx5bevnvkluy4
       ws: 7.5.7
-
-  libs/ledger-live-common/cli:
-    specifiers:
-      '@ledgerhq/cryptoassets': workspace:^
-      '@ledgerhq/errors': workspace:^
-      '@ledgerhq/hw-app-btc': workspace:^
-      '@ledgerhq/hw-transport-http': workspace:^
-      '@ledgerhq/hw-transport-mocker': workspace:^
-      '@ledgerhq/hw-transport-node-ble': workspace:^
-      '@ledgerhq/hw-transport-node-hid': workspace:^
-      '@ledgerhq/hw-transport-node-speculos': workspace:^
-      '@ledgerhq/live-common': workspace:^
-      '@ledgerhq/logs': workspace:^
-      '@types/command-line-args': ^5.2.0
-      '@types/lodash': ^4.14.177
-      '@types/node': ^17.0.15
-      '@walletconnect/client': ^1.7.1
-      asciichart: ^1.5.25
-      bignumber.js: ^9.0.1
-      bip39: ^3.0.4
-      body-parser: ^1.19.1
-      command-line-args: ^5.2.1
-      cors: ^2.8.5
-      express: ^4.17.2
-      lodash: ^4.17.21
-      lodash.product: ^18.9.19
-      qrcode-terminal: ^0.12.0
-      qrloop: ^1.2.0
-      react: ^17.0.2
-      react-dom: ^17.0.2
-      react-redux: ^7.2.6
-      rxjs: ^6.6.7
-      ts-node: ^10.4.0
-      typescript: ^4.5.5
-      winston: ^3.5.1
-    dependencies:
-      '@ledgerhq/cryptoassets': link:../../ledgerjs/packages/cryptoassets
-      '@ledgerhq/errors': link:../../ledgerjs/packages/errors
-      '@ledgerhq/hw-app-btc': link:../../ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-transport-http': link:../../ledgerjs/packages/hw-transport-http
-      '@ledgerhq/hw-transport-mocker': link:../../ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/hw-transport-node-hid': link:../../ledgerjs/packages/hw-transport-node-hid
-      '@ledgerhq/hw-transport-node-speculos': link:../../ledgerjs/packages/hw-transport-node-speculos
-      '@ledgerhq/live-common': link:..
-      '@ledgerhq/logs': link:../../ledgerjs/packages/logs
-      '@walletconnect/client': 1.7.8
-      asciichart: 1.5.25
-      bignumber.js: 9.0.2
-      bip39: 3.0.4
-      body-parser: 1.20.0
-      command-line-args: 5.2.1
-      cors: 2.8.5
-      express: 4.18.1
-      lodash: 4.17.21
-      lodash.product: 18.9.19_lodash@4.17.21
-      qrcode-terminal: 0.12.0
-      qrloop: 1.2.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-redux: 7.2.8_sfoxds7t5ydpegc3knd667wn6m
-      rxjs: 6.6.7
-      winston: 3.7.2
-    optionalDependencies:
-      '@ledgerhq/hw-transport-node-ble': link:../../ledgerjs/packages/hw-transport-node-ble
-    devDependencies:
-      '@types/command-line-args': 5.2.0
-      '@types/lodash': 4.14.182
-      '@types/node': 17.0.32
-      ts-node: 10.7.0_sm5zkxj4s52nbddwl76qwfh6ya
-      typescript: 4.6.4
 
   libs/ledger-live-common/tools:
     specifiers:
@@ -20860,7 +20866,7 @@ packages:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
 
   /charenc/0.0.2:
-    resolution: {integrity: sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc=}
+    resolution: {integrity: sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==}
 
   /chart.js/2.9.4:
     resolution: {integrity: sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==}
@@ -21326,7 +21332,7 @@ packages:
       color-name: 1.1.4
 
   /color-name/1.1.3:
-    resolution: {integrity: sha1-p9BVi9icQveV3UIyj3QIMcpTvCU=}
+    resolution: {integrity: sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==}
 
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
@@ -21551,7 +21557,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
+    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
 
   /concat-stream/1.5.2:
     resolution: {integrity: sha1-cIl4Yk2FavQaWnQd790mHadSwmY=}
@@ -24270,7 +24276,7 @@ packages:
     resolution: {integrity: sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=}
 
   /escape-string-regexp/1.0.5:
-    resolution: {integrity: sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=}
+    resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
 
   /escape-string-regexp/2.0.0:
@@ -27720,7 +27726,7 @@ packages:
       readable-stream: 2.3.7
 
   /fs.realpath/1.0.0:
-    resolution: {integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=}
+    resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
   /fs/0.0.1-security:
     resolution: {integrity: sha1-invTcYa23d84E/I4WLV+yq9eQdQ=}
@@ -29316,7 +29322,7 @@ packages:
     dev: true
 
   /inflight/1.0.6:
-    resolution: {integrity: sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk=}
+    resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
     dependencies:
       once: 1.4.0
       wrappy: 1.0.2
@@ -30127,7 +30133,7 @@ packages:
     dev: true
 
   /isexe/2.0.0:
-    resolution: {integrity: sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=}
+    resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
   /isobject/2.1.0:
     resolution: {integrity: sha1-8GVWEJaj8dou9GJy+BXIQNh+DIk=}
@@ -47726,7 +47732,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: true
 
   /ws/8.6.0_22kvxa7zeyivx4jp72v2w3pkvy:
     resolution: {integrity: sha512-AzmM3aH3gk0aX7/rZLYvjdvZooofDu3fFOzGqcSnQ1tOcTWwhM/o+q++E8mAyVVIyUdajrkzWUGftaVSDLn1bw==}
