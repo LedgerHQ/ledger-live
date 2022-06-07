@@ -34,11 +34,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -133,6 +133,7 @@
     "eth-sig-util": "3.0.1",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.4",
+    "events": "^3.3.0",
     "expect": "^27.4.6",
     "generic-pool": "^3.8.2",
     "invariant": "^2.2.2",
