@@ -5,6 +5,14 @@ import { encodeOperationId } from "../../../operation";
 import { Operation, OperationType } from "../../../types";
 import { CosmosAPI } from "../../cosmos/api/Cosmos";
 import {
+  OsmosisDistributionParams,
+  OsmosisEpochProvisions,
+  OsmosisEpochs,
+  OsmosisMintParams,
+  OsmosisPool,
+  OsmosisTotalSupply,
+} from "../OsmosisSupplyTypes";
+import {
   OsmosisAccountTransaction,
   OsmosisTransactionTypeEnum,
   OsmosisAmount,
@@ -316,6 +324,81 @@ export class OsmosisAPI extends CosmosAPI {
     }
 
     return operations;
+  };
+
+  queryMintParams = async (): Promise<OsmosisMintParams> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/osmosis/mint/v1beta1/params`,
+    });
+
+    // const {
+    //   mint_denom,
+    //   genesis_epoch_provisions,
+    //   epoch_identifier,
+    //   reduction_period_in_epochs,
+    //   reduction_factor,
+    //   distribution_proportions,
+    //   weighted_developer_rewards_receivers,
+    // } = data?.params;
+
+    // return {
+    //   mint_denom,
+    //   genesis_epoch_provisions,
+    //   epoch_identifier,
+    //   reduction_period_in_epochs,
+    //   reduction_factor,
+    //   distribution_proportions: {
+    //     ...distribution_proportions,
+    //   },
+    //   weighted_developer_rewards_receivers,
+    // };
+    return data?.params;
+  };
+
+  queryTotalSupply = async (
+    minDenomUnit: string
+  ): Promise<OsmosisTotalSupply> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/bank/v1beta1/supply/${minDenomUnit}`,
+    });
+    const { amount } = data;
+    return { ...amount };
+  };
+
+  queryEpochProvisions = async (): Promise<OsmosisEpochProvisions> => {
+    const { data: epochProvisions } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/osmosis/mint/v1beta1/epoch_provisions`,
+    });
+    return epochProvisions;
+  };
+
+  queryEpochs = async (): Promise<OsmosisEpochs> => {
+    const { data: epochs } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/osmosis/epochs/v1beta1/epochs`,
+    });
+    return epochs;
+  };
+
+  queryPool = async (): Promise<OsmosisPool> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/staking/v1beta1/pool`,
+    });
+    const { pool } = data;
+    return { ...pool };
+  };
+
+  queryDistributionParams = async (): Promise<OsmosisDistributionParams> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${this._defaultEndpoint}/cosmos/distribution/v1beta1/params`,
+    });
+    const { params } = data;
+    return { ...params };
   };
 }
 

@@ -12246,6 +12246,18 @@ packages:
       protobufjs: 6.11.2
     dev: true
 
+  /@keplr-wallet/types/0.10.5:
+    resolution: {integrity: sha512-CY1F+Rsfe2fs5uPioC1o80lKxQWsYHIwoILLptdebr2Sg1DjSuWVLHWScsB8EbBGm0LQQ9nQ+3LHklbsTNo2bw==}
+    dependencies:
+      '@cosmjs/launchpad': 0.24.1
+      '@cosmjs/proto-signing': 0.24.1
+      axios: 0.21.4
+      long: 4.0.0
+      secretjs: 0.17.5
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@keplr-wallet/types/0.9.12:
     resolution:
       {
@@ -12257,6 +12269,16 @@ packages:
       axios: 0.21.4
       long: 4.0.0
       secretjs: 0.17.5
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@keplr-wallet/unit/0.10.5:
+    resolution: {integrity: sha512-7rk8IskEzo3/rM89XsaLpkzWPcYjsNCl8lbKjkPEjQ5hbmz7g352YoE9L1EhjgT0zCHfop/yM2CP8e/hq8AIog==}
+    dependencies:
+      '@keplr-wallet/types': 0.10.5
+      big-integer: 1.6.51
+      utility-types: 3.10.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -24202,7 +24224,7 @@ packages:
         integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==,
       }
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -41009,7 +41031,7 @@ packages:
       pretty-format: 28.1.1
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_sihq2egcoz3xk6sc4vk74xvt4u
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -45941,24 +45963,6 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
-
-  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
-    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-core: 0.67.0_metro@0.67.0
-      metro-runtime: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-    transitivePeerDependencies:
-      - metro
 
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution:

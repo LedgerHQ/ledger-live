@@ -44,3 +44,17 @@ export type TransactionStatus = {
   amount: BigNumber;
   totalSpent: BigNumber;
 };
+
+export type OsmosisRewardsState = {
+  targetBondedRatio: number;
+  communityPoolCommission: number;
+  assumedTimePerBlock: number;
+  inflationRateChange: number;
+  inflationMaxRate: number;
+  inflationMinRate: number;
+  actualBondedRatio: number;
+  averageTimePerBlock: number;
+  totalSupply: number;
+  averageDailyFees: number;
+  currentValueInflation: number;
+};

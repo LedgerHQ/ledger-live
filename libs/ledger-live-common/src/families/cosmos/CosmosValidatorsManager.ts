@@ -32,6 +32,7 @@ export class CosmosValidatorsManager {
   protected _currency!: CryptoCurrency;
   protected _minDenom!: string;
   protected _endPoint: EnvValue<EnvName> | undefined;
+  protected _rewardsState: any | undefined;
 
   constructor(
     currency: CryptoCurrency,
@@ -39,6 +40,7 @@ export class CosmosValidatorsManager {
       // namespace?: string;
       // version?: string;
       endPoint?: EnvValue<EnvName>;
+      rewardsState?: any;
     }
   ) {
     this._currency = currency;
@@ -53,9 +55,12 @@ export class CosmosValidatorsManager {
     // }
     if (options?.endPoint) {
       this._endPoint = options.endPoint;
-
       // TODO this is a hack for now
       this._minDenom = currency.units[1].code; // this will be uosmo for Osmosis
+    }
+
+    if (options?.rewardsState) {
+      this._rewardsState = options.rewardsState;
     }
   }
 
@@ -115,6 +120,7 @@ export class CosmosValidatorsManager {
             ),
           };
         });
+        console.log("LOGGING VALIDATORS: ", data.validators);
         return validators;
       }
     },
@@ -123,7 +129,11 @@ export class CosmosValidatorsManager {
 
   getValidators = async (): Promise<CosmosValidatorItem[]> => {
     if (isStargate(this._currency)) {
-      const rewardsState = await this.getStargateRewardsState();
+      const rewardsState = this._rewardsState
+        ? await this._rewardsState()
+        : await this.getStargateRewardsState();
+
+      console.log("REWARDS STATE IS: ", rewardsState);
       // validators need the rewardsState ONLY to compute voting power as
       // percentage instead of raw uatoms amounts
       return await this.cacheValidators(rewardsState);

@@ -8,7 +8,7 @@ const gasForTransaction: {
   delegate: 250000,
   undelegate: 275000,
   redelegate: 350000,
-  claimReward: 250000, // TODO, this should be 140000 but need to figure out correct gas calculation
+  claimReward: 300000, // Per https://github.com/chainapsis/keplr-wallet/blob/8d45477df2b2393a90786a5c87f814302b878c3d/packages/extension/src/stores/root.tsx#L240
   claimRewardCompound: 350000, // TODO - verify this value
 };
 
