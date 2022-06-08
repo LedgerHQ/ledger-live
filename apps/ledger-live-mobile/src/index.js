@@ -250,7 +250,7 @@ const linkingOptions = {
            * @params ?platform: string
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
            */
-          [ScreenName.PlatformApp]: "discover/:platform?",
+          [ScreenName.PlatformApp]: "discover/:platform",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
             screens: {
@@ -285,9 +285,9 @@ const linkingOptions = {
                     ? {}
                     : {
                         /**
-                         * ie: "ledgerlive://discover_catalog" will open the catalog
+                         * ie: "ledgerlive://discover" will open the catalog
                          */
-                        [ScreenName.PlatformCatalog]: "discover_catalog",
+                        [ScreenName.PlatformCatalog]: "discover",
                       },
               },
               [NavigatorName.Manager]: {
@@ -409,17 +409,9 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
         const platform = pathname.split("/")[1];
-        if (hostname === "discover") {
-          if (!platform) {
-            /**
-             * "ledgerlive://discover" is an alias for
-             * "ledgerlive://discover_catalog"
-             * */
-            url.hostname = "discover_catalog";
-            return getStateFromPath(url.href?.split("://")[1], config);
-          }
+        if (hostname === "discover" && platform) {
           /**
-           * Upstream validation of "ledgerlive://:platform?" :
+           * Upstream validation of "ledgerlive://discover/:platform":
            *  - checking that a manifest exists
            *  - adding "name" search param
            * */
