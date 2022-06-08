@@ -274,9 +274,7 @@ const linkingOptions = {
               [NavigatorName.Market]: {
                 screens: {
                   /**
-                   * @params ?platform: string
-                   * ie: "ledgerlive://discover" will open the catalog
-                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                   * ie: "ledgerlive://market" will open the market screen
                    */
                   [ScreenName.MarketList]: "market",
                 },
