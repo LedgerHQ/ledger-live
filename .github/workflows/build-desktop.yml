@@ -74,6 +74,15 @@ jobs:
         run: |
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
