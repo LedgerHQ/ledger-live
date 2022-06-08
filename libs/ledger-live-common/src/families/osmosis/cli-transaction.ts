@@ -4,8 +4,7 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
-import { getValidators } from "../cosmos/validators";
-import { getCryptoCurrencyById } from "../../currencies";
+import osmosisValidatorsManager from "./validators";
 
 import type {
   Transaction,
@@ -126,7 +125,7 @@ const osmosisValidators = {
   }: Partial<{
     format: string;
   }>): Observable<string> =>
-    from(getValidators(getCryptoCurrencyById("osmo"))).pipe(
+    from(osmosisValidatorsManager.getValidators()).pipe(
       map((validators) => {
         const f =
           (format && osmosisValidatorsFormatters[format]) ||
