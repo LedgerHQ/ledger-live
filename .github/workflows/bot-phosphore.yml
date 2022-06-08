@@ -1,4 +1,4 @@
-name: Bot 'Phosphore'
+name: "[Bot] 'Phosphore'"
 on:
   schedule:
     - cron: "0 8-16/2 * * 1-5"

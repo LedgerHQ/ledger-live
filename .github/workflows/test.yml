@@ -1,4 +1,4 @@
-name: Test Libraries
+name: "[Test] Libraries"
 
 on:
   push:
