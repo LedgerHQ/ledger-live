@@ -5,6 +5,12 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import styled from "styled-components";
+import { JSONRPCRequest } from "json-rpc-2.0";
+import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 import {
   accountToPlatformAccount,
@@ -24,14 +30,8 @@ import {
 } from "@ledgerhq/live-common/platform/serializers"
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewTag } from "electron";
-import { JSONRPCRequest } from "json-rpc-2.0";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -41,6 +41,8 @@ import TopBar from "./TopBar";
 import * as tracking from "./tracking";
 import type { TopBarConfig } from "./type";
 import { handleMessageEvent, handleNewWindowEvent } from "./utils";
+import logger from "~/logger";
+import prepareMessageToSign from "@ledgerhq/live-common/families/ethereum/signMessage";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -405,6 +407,36 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     [accounts, dispatch, manifest],
   );
 
+  const signMessage = useCallback(
+    ({ accountId, message }: { accountId: string, message: string }) => {
+      logger.info(`Signature with accountId (${accountId}) and message (${message})`);
+      const account = accounts.find(account => account.id === accountId);
+
+      message = prepareMessageToSign(account, message);
+
+      return new Promise((resolve, reject) => {
+        dispatch(
+          openModal("MODAL_SIGN_MESSAGE", {
+            message,
+            account,
+            onConfirmationHandler: signature => {
+              logger.info("Signature done");
+              resolve(signature);
+            },
+            onFailHandler: err => {
+              logger.error(err);
+              reject(err);
+            },
+            onClose: () => {
+              reject(new Error("Signature aborted"));
+            },
+          }),
+        );
+      });
+    },
+    [accounts, dispatch],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -415,6 +447,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -425,6 +458,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       broadcastTransaction,
       startExchange,
       completeExchange,
+      signMessage,
     ],
   );
 
