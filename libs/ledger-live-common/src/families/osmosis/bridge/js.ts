@@ -10,15 +10,31 @@ import {
 import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
 import { osmosisAPI } from "../api/sdk";
+import osmosisValidatorsManager from "../validators";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-const preload = () => Promise.resolve({});
-const hydrate = (): void => {};
+import { CosmosValidatorItem } from "../../cosmos/types";
+import {
+  asSafeCosmosPreloadData,
+  setCosmosPreloadData,
+} from "../../cosmos/preloadedData";
 
+const preload = () => Promise.resolve({});
 const receive = makeAccountBridgeReceive();
 
 const currencyBridge: CurrencyBridge = {
   preload,
-  hydrate,
+  hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
+    if (!data || typeof data !== "object") return;
+    const { validators } = data;
+    if (
+      !validators ||
+      typeof validators !== "object" ||
+      !Array.isArray(validators)
+    )
+      return;
+    osmosisValidatorsManager.hydrateValidators(validators);
+    setCosmosPreloadData(asSafeCosmosPreloadData(data));
+  },
   scanAccounts,
 };
 
