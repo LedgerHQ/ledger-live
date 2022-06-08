@@ -18,9 +18,9 @@ import type { MessageData, Result } from "./types";
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
-  const getAddress = perFamily[currency.family];
-  invariant(getAddress, `signMessage is not implemented for ${currency.id}`);
-  return getAddress(transport, opts)
+  const signMessage = perFamily[currency.family];
+  invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
+  return signMessage(transport, opts)
     .then((result) => {
       log(
         "hw",
@@ -59,24 +59,28 @@ export type State = AppState & BaseState;
 export type Request = AppRequest & {
   message: MessageData;
 };
+
 export type Input = {
   request: Request;
   deviceId: string;
 };
+
 export const signMessageExec = ({
   request,
   deviceId,
 }: Input): Observable<Result> => {
-  const result: Observable<Result> = withDevice(deviceId)((t) =>
-    from(dispatch(t, request.message))
+  const result: Observable<Result> = withDevice(deviceId)((transport) =>
+    from(dispatch(transport, request.message))
   );
   return result;
 };
+
 const initialState: BaseState = {
   signMessageRequested: null,
   signMessageError: null,
   signMessageResult: null,
 };
+
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
   signMessage: (arg0: Input) => Observable<Result> = signMessageExec
@@ -124,6 +128,7 @@ export const createAction = (
 
       setState({ ...initialState, signMessageResult: result?.signature });
     }, [device, request]);
+
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         return;
@@ -146,9 +151,9 @@ export const createAction = (
 
   return {
     useHook,
-    mapResult: (r: State) => ({
-      signature: r.signMessageResult,
-      error: r.signMessageError,
+    mapResult: (state: State) => ({
+      signature: state.signMessageResult,
+      error: state.signMessageError,
     }),
   };
 };
