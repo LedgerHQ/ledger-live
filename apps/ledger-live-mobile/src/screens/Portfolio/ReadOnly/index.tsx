@@ -41,8 +41,8 @@ import TabBarSafeAreaView, {
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
-  IMAGE_PROPS_SMALL_NANO_BOX,
 } from "../../../components/BuyDeviceBanner";
+import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import Carousel from "../../../components/Carousel";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/lib/types";
@@ -178,25 +178,7 @@ function PortfolioScreen({ navigation }: Props) {
     () => [
       hasOrderedNano && (
         <Box mx={6} mb={5} mt={6}>
-          <BuyDeviceBanner
-            variant={"setup"}
-            topLeft={
-              <Text
-                color="primary.c40"
-                uppercase
-                mb={3}
-                fontSize="11px"
-                fontWeight="semiBold"
-              >
-                {t("postBuyDeviceSetupNanoWall.bannerTitle")}
-              </Text>
-            }
-            style={{ paddingTop: 13.5, paddingBottom: 13.5 }}
-            buttonLabel={t("postBuyDeviceSetupNanoWall.bannerCta")}
-            buttonSize="small"
-            event="button_clicked"
-            {...IMAGE_PROPS_SMALL_NANO_BOX}
-          />
+          <SetupDeviceBanner />
         </Box>
       ),
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>

@@ -16,8 +16,8 @@ import ReadOnlyFabActions from "../../../components/ReadOnlyFabActions";
 import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
-  IMAGE_PROPS_SMALL_NANO_BOX,
 } from "../../../components/BuyDeviceBanner";
+import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { TrackScreen } from "../../../analytics";
 
@@ -105,25 +105,7 @@ function ReadOnlyAccount({ route }: Props) {
     </Box>,
     <Box mt={8} mx={6}>
       {hasOrderedNano ? (
-        <BuyDeviceBanner
-          variant={"setup"}
-          topLeft={
-            <Text
-              color="primary.c40"
-              uppercase
-              mb={3}
-              fontSize="11px"
-              fontWeight="semiBold"
-            >
-              {t("postBuyDeviceSetupNanoWall.bannerTitle")}
-            </Text>
-          }
-          style={{ paddingTop: 13.5, paddingBottom: 13.5 }}
-          buttonLabel={t("postBuyDeviceSetupNanoWall.bannerCta")}
-          buttonSize="small"
-          event="button_clicked"
-          {...IMAGE_PROPS_SMALL_NANO_BOX}
-        />
+        <SetupDeviceBanner />
       ) : (
         <BuyDeviceBanner
           style={{
