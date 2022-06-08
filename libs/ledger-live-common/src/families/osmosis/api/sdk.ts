@@ -14,7 +14,7 @@ import {
   OsmosisStakingEventContent,
 } from "./sdk.types";
 
-const nodeEndpoint = getEnv("API_OSMOSIS_NODE").replace(/\/$/, "");
+export const nodeEndpoint = getEnv("API_OSMOSIS_NODE").replace(/\/$/, "");
 const indexerEndpoint = getEnv("API_OSMOSIS_INDEXER").replace(/\/$/, "");
 
 /**
