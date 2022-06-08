@@ -17,11 +17,15 @@ import GradientContainer from "../../../components/GradientContainer";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
+import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { TrackScreen } from "../../../analytics";
 
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { counterValueCurrencySelector } from "../reducers/settings";
+import {
+  counterValueCurrencySelector,
+  hasOrderedNanoSelector,
+} from "../reducers/settings";
 
 type RouteParams = {
   currencyId: string;
@@ -48,6 +52,8 @@ function ReadOnlyAccount({ route }: Props) {
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
   );
+
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
   const data = [
     <Box mx={6} my={6}>
@@ -97,19 +103,22 @@ function ReadOnlyAccount({ route }: Props) {
         </Flex>
       </GradientContainer>
     </Box>,
-    <Box mt={8}>
-      <BuyDeviceBanner
-        style={{
-          marginHorizontal: 16,
-          marginTop: 40,
-          paddingTop: 13.5,
-          paddingBottom: 13.5,
-        }}
-        buttonLabel={t("buyDevice.bannerButtonTitle")}
-        buttonSize="small"
-        event="button_clicked"
-        {...IMAGE_PROPS_BIG_NANO}
-      />
+    <Box mt={8} mx={6}>
+      {hasOrderedNano ? (
+        <SetupDeviceBanner />
+      ) : (
+        <BuyDeviceBanner
+          style={{
+            marginTop: 40,
+            paddingTop: 13.5,
+            paddingBottom: 13.5,
+          }}
+          buttonLabel={t("buyDevice.bannerButtonTitle")}
+          buttonSize="small"
+          event="button_clicked"
+          {...IMAGE_PROPS_BIG_NANO}
+        />
+      )}
     </Box>,
   ];
 
