@@ -8,11 +8,11 @@ import BinTools from 'avalanche/dist/utils/bintools';
 import { avalancheClient } from "./client";
 import type { AddressBatch } from "../types";
 
-
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
 
-export const binTools = BinTools.getInstance();
+const binTools = BinTools.getInstance();
+
 const INDEX_RANGE = 20;
 const SCAN_RANGE = 80;
 const P_IMPORT = "p_import";
@@ -80,11 +80,18 @@ const getOperationType = (type: string): OperationType => {
 };
 
 export const getOperations = async (hdKey, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
-    const usedKeys = await getUsedKeys(hdKey, () => { });
+    let operations: Operation[] = [];
 
-    const operations = await fetchOperations(usedKeys, blockStartHeight);
+    const batchFunction = async (batch: AddressBatch) => {
+        const batchedAddresses = batch.nonChange.addresses.concat(batch.change.addresses);
+        const batchOperations = await fetchOperations(batchedAddresses, blockStartHeight);
+
+        operations = [...operations, ...batchOperations];
+    };
+
+    await getUsedKeys(hdKey, batchFunction);
+
     const pChainOperations = operations.filter(getPChainOperations);
-
     return pChainOperations.map(o => convertTransactionToOperation(o, accountId));
 }
 
@@ -98,7 +105,10 @@ export const getAccount = async (hdKey) => {
     }
 }
 
-//Liberally inspired by avalanche-wallet-cli
+/**
+ * @param hdKey 
+ * @returns Total balance of this wallet's P-chain addresses
+ */
 export const fetchBalances = async (hdKey) => {
 
     let balanceTotal = new BigNumber(0);
@@ -124,10 +134,17 @@ export const fetchBalances = async (hdKey) => {
     return balanceTotal;
 }
 
+/**
+ * Liberally inspired by avalanche-wallet-cli
+ * Traverses the wallet, finding all used keys.
+ * Batching 40 used keys at a time, hit the node to retrieve each key's UTXOs.
+ * Then, call the batchFunction on that group of 40 used keys.
+ * @param hdKey 
+ * @param batchFunction 
+ */
 const getUsedKeys = async (hdKey, batchFunction) => {
     let allAddressesAreUnused = false;
     let index = 0;
-    let allNonChangeAddresses: string[] = [];
 
     while (!allAddressesAreUnused || index < SCAN_RANGE) {
         const batch: AddressBatch = {
@@ -158,12 +175,9 @@ const getUsedKeys = async (hdKey, batchFunction) => {
         let { utxos } = await pchain.getUTXOs(batchedAddresses);
         batch.utxoset = utxos;
 
-        batchFunction(batch);
+        await batchFunction(batch);
 
         index += INDEX_RANGE;
         allAddressesAreUnused = batch.utxoset.getAllUTXOs().length === 0;
-        allNonChangeAddresses = allNonChangeAddresses.concat(batch.nonChange.addresses);
     }
-
-    return allNonChangeAddresses;
 } 
