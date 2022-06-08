@@ -1,26 +1,26 @@
-name: Create Hotfix
+name: "[Release] Create Branch"
 on:
   workflow_dispatch:
 
 jobs:
-  create-hotfix:
-    name: Create Hotfix
+  create-release:
+    name: Create Release
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: main
+          ref: develop
           fetch-depth: 0
           token: ${{ secrets.GH_PAT }}
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: create hotfix branch
+      - name: create release branch
         run: |
-          git checkout -b hotfix
+          git checkout -b release
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -32,18 +32,18 @@ jobs:
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: enter prerelease mode
-        run: pnpm changeset pre enter hotfix
+        run: pnpm changeset pre enter next
       - name: commit
         run: |
           git add .
-          git commit -m ":rocket: entering hotfix mode"
+          git commit -m ":rocket: entering prerelease mode"
       - name: Get date
         id: date
         run: |
           echo "::set-output name=date::$(date +%F)"
       - name: push
         run: |
-          git push origin hotfix
-          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base main --head hotfix
+          git push origin release
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" --body "Release ${{ steps.date.outputs.date }}" --base main --head release
         env:
           GITHUB_TOKEN: ${{ github.token }}

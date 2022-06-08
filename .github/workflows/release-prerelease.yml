@@ -1,49 +1,49 @@
-name: Nightly Release
-
+name: "[Release](Prerelease) Publish packages and apps"
 on:
-  schedule:
-    - cron: "0 2 * * *"
+  push:
+    branches:
+      - "release"
+      - "releases/**"
+      - "hotfix"
   workflow_dispatch:
-
+    inputs:
+      ref:
+        description: the branch to prerelease from
+        required: true
 jobs:
-  nightly-release:
-    name: Nightly Release
+  prerelease:
+    name: Prerelease
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'push' }}
         with:
-          ref: nightly
-          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        with:
+          ref: ${{ github.event.inputs.ref }}
           token: ${{ secrets.GH_PAT }}
 
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-
-      - name: merge develop
-        run: |
-          git merge origin/develop -X theirs
-
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
-
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7 # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
@@ -56,27 +56,43 @@ jobs:
 
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
-
       - name: build libs
         run: pnpm run build:libs
-
       - name: versioning
         run: pnpm changeset version
 
-      - name: commit
+      - name: commit (from release branch)
+        if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
+        run: |
+          git add . &&
+          git commit -m ":rocket: release prerelease" ||
+          echo ""
+      - name: commit (from hotfix branch)
+        if: ${{ startsWith(github.event.inputs.ref, 'hotfix') }}
+        run: |
+          git add . &&
+          git commit -m ":fire: hotfix prerelease" ||
+          echo ""
+      - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
+        if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
-          git commit -m ":rocket: nightly release"
+          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease" ||
+          echo ""
 
-      - name: publish nightly
+      - name: publish prerelease
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: push changes
-        if: ${{ always() }}
+      - name: push changes (push event)
+        if: ${{ github.event_name == 'push' }}
         run: |
-          git push origin nightly --follow-tags
+          git push origin ${{ github.ref_name }} --follow-tags
+      - name: push changes (other events)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          git push origin ${{ github.event.inputs.ref }} --follow-tags
 
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -89,7 +105,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
 
       - uses: actions/github-script@v6
-        name: trigger nightly build of desktop
+        name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         with:
           github-token: ${{ secrets.GH_PAT }}
@@ -98,11 +114,14 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "nightly-desktop-mono.yml",
+              workflow_id: "pre-desktop.yml",
+              inputs: {
+                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+              }
             });
 
       - uses: actions/github-script@v6
-        name: trigger nightly build of mobile
+        name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         with:
           github-token: ${{ secrets.GH_PAT }}
@@ -111,5 +130,5 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: "nightly-mobile-mono.yml",
+              workflow_id: "release-mobile.yml",
             });
