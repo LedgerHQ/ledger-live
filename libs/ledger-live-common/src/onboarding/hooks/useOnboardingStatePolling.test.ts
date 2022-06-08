@@ -1,25 +1,18 @@
-import { from, TimeoutError } from "rxjs";
+import { timer, of } from "rxjs";
+import { map, delayWhen } from "rxjs/operators";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
-import { withDevice } from "../../hw/deviceAccess";
-import getVersion from "../../hw/getVersion";
 import {
   extractOnboardingState,
   OnboardingState,
   SeedPhraseType,
   OnboardingStep,
 } from "../../hw/extractOnboardingState";
-import Transport from "@ledgerhq/hw-transport";
-import {
-  DeviceOnboardingStatePollingError,
-  DeviceExtractOnboardingStateError,
-} from "@ledgerhq/errors";
+import { DisconnectedDevice } from "@ledgerhq/errors";
+import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
 
-jest.mock("../../hw/deviceAccess");
-jest.mock("../../hw/getVersion");
-jest.mock("../../hw/extractOnboardingState");
-jest.mock("@ledgerhq/hw-transport");
+jest.mock("../../hw/getOnboardingStatePolling");
 jest.useFakeTimers();
 
 const aDevice = {
@@ -29,27 +22,13 @@ const aDevice = {
   wired: false,
 };
 
-// As extractOnboardingState is mocked, the firmwareInfo
-// returned by getVersion does not matter
-const aFirmwareInfo = {
-  isBootloader: false,
-  rawVersion: "",
-  targetId: 0,
-  mcuVersion: "",
-  flags: Buffer.from([]),
-};
-
 const pollingPeriodMs = 1000;
 
-const mockedGetVersion = jest.mocked(getVersion);
-// const mockedWithDevice = withDevice as jest.Mock;
-const mockedWithDevice = jest.mocked(withDevice);
-mockedWithDevice.mockReturnValue((job) => from(job(new Transport())));
-
-const mockedExtractOnboardingState = jest.mocked(extractOnboardingState);
+const mockedGetOnboardingStatePolling = jest.mocked(getOnboardingStatePolling);
 
 describe("useOnboardingStatePolling", () => {
   let anOnboardingState: OnboardingState;
+  let aSecondOnboardingState: OnboardingState;
 
   beforeEach(() => {
     anOnboardingState = {
@@ -59,103 +38,51 @@ describe("useOnboardingStatePolling", () => {
       currentSeedWordIndex: 0,
       currentOnboardingStep: OnboardingStep.NewDevice,
     };
+
+    aSecondOnboardingState = {
+      ...anOnboardingState,
+      currentOnboardingStep: OnboardingStep.NewDeviceConfirming,
+    };
   });
 
   afterEach(() => {
-    mockedGetVersion.mockClear();
-    mockedExtractOnboardingState.mockClear();
-  });
-
-  describe("When polling returns incorrect information on the device state", () => {
-    it("should return a null onboarding state, continue the polling and keep track of the error", async () => {
-      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-      mockedExtractOnboardingState.mockImplementation(() => {
-        throw new DeviceExtractOnboardingStateError(
-          "Some incorrect device info"
-        );
-      });
-
-      const device = aDevice;
-
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useOnboardingStatePolling({ device, pollingPeriodMs })
-      );
-
-      await act(async () => {
-        jest.advanceTimersByTime(1);
-        // Waits for the hook update as we don't know how much time it should take
-        await waitForNextUpdate();
-      });
-
-      expect(result.current.onboardingState).toBeNull();
-      expect(result.current.allowedError).toBeInstanceOf(
-        DeviceExtractOnboardingStateError
-      );
-      expect(result.current.fatalError).toBeNull();
-    });
-  });
-
-  describe("When an error occurs during polling", () => {
-    describe("and the error is thrown before the defined timeout", () => {
-      it("should update the onboarding state to null and keep track of the error (here fatal error)", async () => {
-        mockedGetVersion.mockRejectedValue(new Error("Unknown error"));
-
-        const device = aDevice;
-
-        const { result, waitForNextUpdate } = renderHook(() =>
-          useOnboardingStatePolling({ device, pollingPeriodMs })
-        );
-
-        await act(async () => {
-          jest.advanceTimersByTime(1);
-          await waitForNextUpdate();
-        });
-
-        expect(result.current.onboardingState).toBeNull();
-        expect(result.current.allowedError).toBeNull();
-        expect(result.current.fatalError).toBeInstanceOf(
-          DeviceOnboardingStatePollingError
-        );
-      });
-    });
-
-    describe("and when a timeout occurred before the error (or the fetch took too long)", () => {
-      it("should update the allowed error value to notify the consumer", async () => {
-        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
-
-        const device = aDevice;
-
-        const { result } = renderHook(() =>
-          useOnboardingStatePolling({ device, pollingPeriodMs })
-        );
-
-        await act(async () => {
-          // Waits more than the timeout
-          jest.advanceTimersByTime(pollingPeriodMs + 1);
-        });
-
-        expect(result.current.allowedError).toBeInstanceOf(TimeoutError);
-        expect(result.current.fatalError).toBeNull();
-        expect(result.current.onboardingState).toBeNull();
-      });
-    });
+    mockedGetOnboardingStatePolling.mockClear();
   });
 
   describe("When polling returns a correct device state", () => {
-    it("should return a correct onboarding state", async () => {
-      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-      mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+    beforeEach(() => {
+      mockedGetOnboardingStatePolling.mockReturnValue(
+        of(
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+          },
+          {
+            onboardingState: { ...aSecondOnboardingState },
+            allowedError: null,
+          }
+        ).pipe(
+          delayWhen((_, index) => {
+            // "delay" or "delayWhen" piped to a streaming source, for ex the "of" operator, will not block the next
+            // Observable to be streamed. They return an Observable that delays the emission of the source Observable,
+            // but do not create a delay in-between each emission. That's why the delay is increased by multiplying by "index".
+            // "concatMap" could have been used to wait for the previous Observable to complete, but
+            // the "index" arg given to "delayWhen" would always be 0
+            return timer(index * pollingPeriodMs);
+          })
+        )
+      );
+    });
 
+    it("should update the onboarding state returned to the consumer", async () => {
       const device = aDevice;
 
-      const { result, waitForNextUpdate } = renderHook(() =>
+      const { result } = renderHook(() =>
         useOnboardingStatePolling({ device, pollingPeriodMs })
       );
 
       await act(async () => {
         jest.advanceTimersByTime(1);
-        await waitForNextUpdate();
       });
 
       expect(result.current.fatalError).toBeNull();
@@ -163,56 +90,46 @@ describe("useOnboardingStatePolling", () => {
       expect(result.current.onboardingState).toEqual(anOnboardingState);
     });
 
-    it("should poll a new onboarding state after the defined period of time", async () => {
-      mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-      mockedExtractOnboardingState
-        .mockReturnValueOnce(anOnboardingState)
-        .mockReturnValue({
-          ...anOnboardingState,
-          currentOnboardingStep: OnboardingStep.NewDevice,
-        });
-
+    it("should fetch again the state at a defined frequency and update (if new) the onboarding state returned to the consumer", async () => {
       const device = aDevice;
 
-      const { result, waitForNextUpdate } = renderHook(() =>
+      const { result } = renderHook(() =>
         useOnboardingStatePolling({ device, pollingPeriodMs })
       );
 
       await act(async () => {
         jest.advanceTimersByTime(1);
-        await waitForNextUpdate();
-        jest.advanceTimersByTime(pollingPeriodMs + 1);
-        await waitForNextUpdate();
       });
-
-      // Another run of the polling could have started between the waitForNextUpdate()
-      // and the advanceTimersByTime(pollingPeriodMs), so more than 2 calls could have happened
-      expect(mockedGetVersion.mock.calls.length).toBeGreaterThanOrEqual(2);
 
       expect(result.current.fatalError).toBeNull();
       expect(result.current.allowedError).toBeNull();
       expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+      // Next polling
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
     });
 
     describe("and when the hook consumer stops the polling", () => {
       it("should stop the polling and stop fetching the device onboarding state", async () => {
-        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
-
         const device = aDevice;
         let stopPolling = false;
 
-        const { result, waitForNextUpdate, rerender } = renderHook(() =>
+        const { result, rerender } = renderHook(() =>
           useOnboardingStatePolling({ device, pollingPeriodMs, stopPolling })
         );
 
         await act(async () => {
           jest.advanceTimersByTime(1);
-          await waitForNextUpdate();
         });
 
         // Everything is normal on the first run
-        expect(mockedGetVersion).toHaveBeenCalledTimes(1);
+        expect(mockedGetOnboardingStatePolling).toHaveBeenCalledTimes(1);
         expect(result.current.fatalError).toBeNull();
         expect(result.current.allowedError).toBeNull();
         expect(result.current.onboardingState).toEqual(anOnboardingState);
@@ -220,23 +137,169 @@ describe("useOnboardingStatePolling", () => {
         // The consumer stops the polling
         stopPolling = true;
         rerender({ device, pollingPeriodMs, stopPolling });
-        // If another run of the polling started, it will max terminated in pollingPeriodMs
-        jest.advanceTimersByTime(pollingPeriodMs);
-        mockedGetVersion.mockClear();
-        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
 
         await act(async () => {
           // Waits as long as we want
           jest.advanceTimersByTime(10 * pollingPeriodMs);
         });
 
-        // No polling should occur
-        expect(mockedGetVersion).toHaveBeenCalledTimes(0);
-        // And the state should stay the same
+        // While the hook was rerendered, it did not call a new time getOnboardingStatePolling
+        expect(mockedGetOnboardingStatePolling).toHaveBeenCalledTimes(1);
+        // And the state should stay the same (and not be aSecondOnboardingState)
         expect(result.current.fatalError).toBeNull();
         expect(result.current.allowedError).toBeNull();
         expect(result.current.onboardingState).toEqual(anOnboardingState);
       });
+    });
+  });
+
+  describe("When an allowed error occurs while polling the device state", () => {
+    beforeEach(() => {
+      mockedGetOnboardingStatePolling.mockReturnValue(
+        of(
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+          },
+          {
+            onboardingState: null,
+            allowedError: new DisconnectedDevice("An allowed error"),
+          },
+          {
+            onboardingState: { ...aSecondOnboardingState },
+            allowedError: null,
+          }
+        ).pipe(
+          delayWhen((_, index) => {
+            return timer(index * pollingPeriodMs);
+          })
+        )
+      );
+    });
+
+    it("should update the allowed error returned to the consumer, update the fatal error to null and keep the previous onboarding state", async () => {
+      const device = aDevice;
+
+      const { result } = renderHook(() =>
+        useOnboardingStatePolling({ device, pollingPeriodMs })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      // Everything is ok on the first run
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+    });
+
+    it("should be able to recover once the allowed error is fixed and the onboarding state is updated", async () => {
+      const device = aDevice;
+
+      const { result } = renderHook(() =>
+        useOnboardingStatePolling({ device, pollingPeriodMs })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs + 1);
+      });
+
+      // Allowed error occured
+      expect(result.current.allowedError).toBeInstanceOf(DisconnectedDevice);
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // Everything is ok on the next run
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(aSecondOnboardingState);
+    });
+  });
+
+  describe("When a (fatal) error is thrown while polling the device state", () => {
+    const anOnboardingStateThatShouldNeverBeReached = {
+      ...aSecondOnboardingState,
+    };
+
+    beforeEach(() => {
+      mockedGetOnboardingStatePolling.mockReturnValue(
+        of(
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+          },
+          {
+            onboardingState: { ...anOnboardingState },
+            allowedError: null,
+          },
+          {
+            // It should never be reached
+            onboardingState: { ...anOnboardingStateThatShouldNeverBeReached },
+            allowedError: null,
+          }
+        ).pipe(
+          delayWhen((_, index) => {
+            return timer(index * pollingPeriodMs);
+          }),
+          map((value, index) => {
+            // Throws an error the second time
+            if (index === 1) {
+              throw new Error("An unallowed error");
+            }
+            return value;
+          })
+        )
+      );
+    });
+
+    it("should update the fatal error returned to the consumer, update the allowed error to null, keep the previous onboarding state and stop the polling", async () => {
+      const device = aDevice;
+
+      const { result } = renderHook(() =>
+        useOnboardingStatePolling({ device, pollingPeriodMs })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      // Everything is ok on the first run
+      expect(result.current.fatalError).toBeNull();
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // Fatal error on the second run
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(Error);
+      expect(result.current.onboardingState).toEqual(anOnboardingState);
+
+      await act(async () => {
+        jest.advanceTimersByTime(pollingPeriodMs);
+      });
+
+      // The polling should have been stopped, and we never update the onboardingState
+      expect(result.current.allowedError).toBeNull();
+      expect(result.current.fatalError).toBeInstanceOf(Error);
+      expect(result.current.onboardingState).not.toEqual(
+        anOnboardingStateThatShouldNeverBeReached
+      );
     });
   });
 });

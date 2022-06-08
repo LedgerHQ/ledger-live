@@ -1,43 +1,18 @@
 import { useState, useEffect } from "react";
-import {
-  from,
-  merge,
-  partition,
-  of,
-  throwError,
-  Observable,
-  Subscription,
-  TimeoutError,
-} from "rxjs";
-import { map, catchError, repeat, first, timeout } from "rxjs/operators";
-import getVersion from "../../hw/getVersion";
-import { withDevice } from "../../hw/deviceAccess";
+import { Subscription } from "rxjs";
 import type { Device } from "../../hw/actions/types";
-import {
-  TransportStatusError,
-  DeviceOnboardingStatePollingError,
-  DeviceExtractOnboardingStateError,
-  DisconnectedDevice,
-  CantOpenDevice,
-} from "@ledgerhq/errors";
-import { FirmwareInfo } from "../../types/manager";
-import {
-  extractOnboardingState,
-  OnboardingState,
-} from "../../hw/extractOnboardingState";
+import { DeviceOnboardingStatePollingError } from "@ledgerhq/errors";
 
-export type OnboardingStatePollingResult = {
-  onboardingState: OnboardingState | null;
-  allowedError: Error | null;
-};
+import type { OnboardingStatePollingResult } from "../../hw/getOnboardingStatePolling";
+import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
+import { OnboardingState } from "../../hw/extractOnboardingState";
 
 export type UseOnboardingStatePollingResult = OnboardingStatePollingResult & {
   fatalError: Error | null;
 };
 
-// Polls the current device onboarding state
-// TODO dependency injection withDevice (and getVersion ?) to easily test ?
-// or dependency injection in onboardingStatePolling ?
+// Polls the current device onboarding state, and notify the hook consumer of
+// any allowed errors and fatal errors
 export const useOnboardingStatePolling = ({
   device,
   pollingPeriodMs,
@@ -47,12 +22,9 @@ export const useOnboardingStatePolling = ({
   pollingPeriodMs: number;
   stopPolling?: boolean;
 }): UseOnboardingStatePollingResult => {
-  const [onboardingStatePollingResult, setOnboardingStatePollingResult] =
-    useState<OnboardingStatePollingResult>({
-      onboardingState: null,
-      allowedError: null,
-    });
-
+  const [onboardingState, setOnboardingState] =
+    useState<OnboardingState | null>(null);
+  const [allowedError, setAllowedError] = useState<Error | null>(null);
   const [fatalError, setFatalError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -65,7 +37,7 @@ export const useOnboardingStatePolling = ({
         `SyncOnboarding: 🧑‍💻 new device: ${JSON.stringify(device)}`
       );
 
-      onboardingStatePollingSubscription = onboardingStatePolling({
+      onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         pollingPeriodMs,
       }).subscribe({
@@ -76,12 +48,14 @@ export const useOnboardingStatePolling = ({
             )}`
           );
 
-          // Does not update the state if it could not be extracted from the flags
           if (onboardingStatePollingResult) {
-            console.log(
-              "SyncOnboarding: onboarding state from polling is not null"
-            );
-            setOnboardingStatePollingResult(onboardingStatePollingResult);
+            setFatalError(null);
+            setAllowedError(onboardingStatePollingResult.allowedError);
+
+            // Does not update the onboarding state if an allowed error occurred
+            if (!onboardingStatePollingResult.allowedError) {
+              setOnboardingState(onboardingStatePollingResult.onboardingState);
+            }
           }
         },
         error: (error) => {
@@ -90,6 +64,7 @@ export const useOnboardingStatePolling = ({
               error,
             })}`
           );
+          setAllowedError(null);
           setFatalError(
             new DeviceOnboardingStatePollingError(
               `Error from: ${error?.name ?? error} ${error?.message}`
@@ -103,166 +78,14 @@ export const useOnboardingStatePolling = ({
       console.log("SyncOnboarding: cleaning up polling 🧹");
       onboardingStatePollingSubscription?.unsubscribe();
     };
-  }, [device, pollingPeriodMs, setOnboardingStatePollingResult, stopPolling]);
+  }, [
+    device,
+    pollingPeriodMs,
+    setOnboardingState,
+    setAllowedError,
+    setFatalError,
+    stopPolling,
+  ]);
 
-  return { ...onboardingStatePollingResult, fatalError };
-};
-
-// TODO: Put in live-common/src/onboarding/onboardingStatePolling ?
-export const onboardingStatePolling = ({
-  deviceId,
-  pollingPeriodMs,
-}: {
-  deviceId: string;
-  pollingPeriodMs: number;
-}): Observable<OnboardingStatePollingResult> => {
-  console.log("🏎 GOING TO START");
-
-  // Could just be a boolean: firstRun ?
-  let i = 0;
-
-  const delayedOnboardingStateOnce$: Observable<OnboardingStatePollingResult> =
-    new Observable((subscriber) => {
-      console.log(`SyncOnboarding: ▶️ Polling from Observable ${i}`);
-      const delayMs = i > 0 ? pollingPeriodMs : 0;
-      console.log(`SyncOnboarding: polling delayed by ${delayMs} ms`);
-      i++;
-
-      const getOnboardingStateOnce = () => {
-        const firmwareInfoOrAllowedError$ = withDevice(deviceId)((t) =>
-          from(getVersion(t))
-        ).pipe(
-          // TODO: choose timeout ms value. For now = polling period
-          timeout(pollingPeriodMs), // Throws a TimeoutError
-          first(),
-          catchError((error: any) => {
-            if (isAllowedOnboardingStatePollingError(error)) {
-              // Pushes the error to the next step to be processed (no retry from the beginning)
-              return of(error);
-            }
-
-            console.log(
-              `SyncOnboarding: 💥 Fatal Error ${error} -> ${JSON.stringify(
-                error
-              )}`
-            );
-            return throwError(error);
-          })
-        );
-
-        // If an error is catched previously, and this error is "allowed",
-        // the value from the observable is not a FirmwareInfo but an Error
-        const [firmwareInfo$, allowedError$] = partition(
-          firmwareInfoOrAllowedError$,
-          (value) => !!value?.flags
-        );
-
-        // Handles the case of a FirmwareInfo value
-        const onboardingStateFromFirmwareInfo$ = firmwareInfo$.pipe(
-          map((firmwareInfo: FirmwareInfo) => {
-            console.log(
-              `SyncOnboarding: ♧ MAP got firmwareInfo: ${JSON.stringify(
-                firmwareInfo
-              )}`
-            );
-
-            let onboardingState: OnboardingState | null = null;
-
-            try {
-              onboardingState = extractOnboardingState(firmwareInfo.flags);
-            } catch (error) {
-              console.log(
-                `SyncOnboarding: extract onboarding error ${JSON.stringify(
-                  error
-                )}`
-              );
-              if (error instanceof DeviceExtractOnboardingStateError) {
-                return {
-                  onboardingState: null,
-                  allowedError:
-                    error as typeof DeviceExtractOnboardingStateError,
-                };
-              } else {
-                return {
-                  onboardingState: null,
-                  allowedError: new DeviceOnboardingStatePollingError(
-                    "SyncOnboarding: Unknown error while extracting the onboarding state"
-                  ),
-                };
-              }
-            }
-            return { onboardingState, allowedError: null };
-          })
-        );
-
-        // Handles the case of an (allowed) Error value
-        const onboardingStateFromAllowedError$ = allowedError$.pipe(
-          map((allowedError: Error) => {
-            console.log(
-              `SyncOnboarding: ♧ MAP got accepted error: ${JSON.stringify(
-                allowedError
-              )}`
-            );
-            return {
-              onboardingState: null,
-              allowedError: allowedError,
-            };
-          })
-        );
-
-        return merge(
-          onboardingStateFromFirmwareInfo$,
-          onboardingStateFromAllowedError$
-        );
-      };
-
-      // Delays the fetch of the onboarding state
-      setTimeout(() => {
-        getOnboardingStateOnce().subscribe({
-          next: (value: OnboardingStatePollingResult) => {
-            subscriber.next(value);
-          },
-          error: (error: any) => {
-            subscriber.error(error);
-          },
-          complete: () => subscriber.complete(),
-        });
-      }, delayMs);
-    });
-
-  return delayedOnboardingStateOnce$.pipe(repeat());
-};
-
-// TODO: decide which errors are allowed
-export const isAllowedOnboardingStatePollingError = (error: Error): boolean => {
-  // Timeout error thrown by rxjs's timeout
-  if (error && error instanceof TimeoutError) {
-    console.log(`SyncOnboarding: timeout error ⌛️ ${JSON.stringify(error)}`);
-    return true;
-  }
-
-  if (error && error instanceof DisconnectedDevice) {
-    console.log(
-      `SyncOnboarding: disconnection error 🔌 ${JSON.stringify(error)}`
-    );
-    return true;
-  }
-
-  if (error && error instanceof CantOpenDevice) {
-    console.log(
-      `SyncOnboarding: cannot open device error 🔌 ${JSON.stringify(error)}`
-    );
-    return true;
-  }
-
-  if (
-    error &&
-    error instanceof TransportStatusError
-    // error.statusCode === 0x6d06
-  ) {
-    console.log(`SyncOnboarding: 0x6d06 error 🔨 ${JSON.stringify(error)}`);
-    return true;
-  }
-
-  return false;
+  return { onboardingState, allowedError, fatalError };
 };
