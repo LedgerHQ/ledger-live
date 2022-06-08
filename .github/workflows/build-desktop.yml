@@ -74,15 +74,14 @@ jobs:
         run: |
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-
-      - name: TurboRepo local server
-        uses: felixmosh/turborepo-gh-artifacts@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          server-token: "yolo"
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
@@ -132,6 +131,15 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
@@ -172,6 +180,10 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
@@ -208,6 +220,15 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
+
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
