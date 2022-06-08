@@ -820,7 +820,8 @@
     "desc": "Once you receive your device, you can start its setup through Ledger Live !",
     "cta": "Setup my device",
     "bannerTitle": "Received your device ?",
-    "bannerCta": "Begin the setup"
+    "bannerCta": "Begin the setup",
+    "continue": "Continue"
   },
   "discover": {
     "title": "Discover",
@@ -860,8 +861,8 @@
       "subtitle": "First things first"
     },
     "postWelcomeStep": {
-      "title": "Let’s get started",
-      "subtitle": "Set up your Ledger or buy one now.",
+      "title": "It's your choice",
+      "subtitle": "You can choose : take a look around the app first or buy a Nano X device",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
         "title": "Set up my Ledger",

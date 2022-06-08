@@ -7,8 +7,6 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Discover from "../../screens/Discover";
 import PlatformCatalog from "../../screens/Platform";
-import { useSelector } from "react-redux";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 export default function DiscoverNavigator() {
   const { colors } = useTheme();
