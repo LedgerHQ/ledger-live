@@ -63,6 +63,11 @@ export type Props = React.PropsWithChildren<{
         duration?: number;
       }>
     | React.ReactElement;
+
+  /**
+   * Number of milliseconds a tap should not exceed to scroll to the netxt or precedent item.
+   */
+  maxDurationOfTap: number;
 }>;
 
 function Carousel({
@@ -76,6 +81,7 @@ function Carousel({
   onChange,
   onOverflow,
   IndicatorComponent = SlideIndicator,
+  maxDurationOfTap,
   children,
 }: Props) {
   const [init, setInit] = useState(false);
@@ -181,6 +187,21 @@ function Carousel({
     restartAfterEnd,
   ]);
 
+  // Timestamp of start of click on the Carrousel
+  const [tapTime, setTapTime] = useState<number>(0);
+  const onStartTap = useCallback(() => {
+    setTapTime(new Date().getTime());
+  }, []);
+  const onEndTap = useCallback(
+    (event) => {
+      const currentTime: number = new Date().getTime();
+      if (!maxDurationOfTap || currentTime - tapTime <= maxDurationOfTap) {
+        onTap(event);
+      }
+    },
+    [maxDurationOfTap, onTap, tapTime],
+  );
+
   return (
     <Flex flex={1} width="100%" alignItems="center" justifyContent="center" {...containerProps}>
       <HorizontalScrollView
@@ -198,7 +219,8 @@ function Carousel({
         scrollEventThrottle={200}
         contentContainerStyle={{ width: `${fullWidth}%` }}
         decelerationRate="fast"
-        onTouchEnd={scrollOnSidePress ? onTap : undefined}
+        onTouchStart={scrollOnSidePress ? onStartTap : undefined}
+        onTouchEnd={scrollOnSidePress ? onEndTap : undefined}
         {...scrollViewProps}
       >
         {React.Children.map(children, (child, index) => (
