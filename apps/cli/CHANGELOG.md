@@ -1,5 +1,11 @@
 # @ledgerhq/live-cli
 
+## 22.0.0-nightly.1
+
+### Major Changes
+
+- 77aa0a570: extracted live-cli to it's own module
+
 ## 21.33.1-nightly.0
 
 ### Patch Changes
