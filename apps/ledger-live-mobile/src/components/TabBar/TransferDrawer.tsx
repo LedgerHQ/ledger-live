@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView } from "react-native";
-import styled from "styled-components";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
@@ -18,10 +17,6 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import { useAnalytics } from "../../analytics";
-
-const StyledTransferButton = styled(TransferButton)`
-  margin-bottom: ${(p: { noMargin?: boolean }) => (p.noMargin ? 0 : 32)}px;
-`;
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -89,86 +84,98 @@ export default function TransferDrawer({ onClose }: ModalProps) {
 
   const buttons = (
     <>
-      <StyledTransferButton
-        eventProperties={{
-          button: "transfer_send",
-          page,
-          drawer: "trade",
-        }}
-        title={t("transfer.send.title")}
-        description={t("transfer.send.description")}
-        onPress={
-          accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-            ? onSendFunds
-            : null
-        }
-        Icon={Icons.ArrowTopMedium}
-        disabled={readOnlyModeEnabled}
-      />
-      <StyledTransferButton
-        eventProperties={{
-          button: "transfer_receive",
-          page,
-          drawer: "trade",
-        }}
-        title={t("transfer.receive.title")}
-        description={t("transfer.receive.description")}
-        onPress={accountsCount > 0 ? onReceiveFunds : null}
-        Icon={Icons.ArrowBottomMedium}
-        disabled={readOnlyModeEnabled}
-      />
-      <StyledTransferButton
-        eventProperties={{
-          button: "transfer_buy",
-          page,
-          drawer: "trade",
-        }}
-        title={t("transfer.buy.title")}
-        description={t("transfer.buy.description")}
-        Icon={Icons.PlusMedium}
-        onPress={onBuy}
-        disabled={readOnlyModeEnabled}
-      />
-      <StyledTransferButton
-        eventProperties={{
-          button: "transfer_sell",
-          page,
-          drawer: "trade",
-        }}
-        title={t("transfer.sell.title")}
-        description={t("transfer.sell.description")}
-        Icon={Icons.MinusMedium}
-        onPress={onSell}
-        disabled={readOnlyModeEnabled}
-      />
-      <StyledTransferButton
-        eventProperties={{
-          button: "transfer_swap",
-          page,
-          drawer: "trade",
-        }}
-        title={t("transfer.swap.title")}
-        description={t("transfer.swap.description")}
-        Icon={Icons.BuyCryptoMedium}
-        onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
-        noMargin={!lendingEnabled}
-        disabled={readOnlyModeEnabled}
-      />
-      {lendingEnabled ? (
-        <StyledTransferButton
+      <Box mb={8}>
+        <TransferButton
           eventProperties={{
-            button: "transfer_lending",
+            button: "transfer_send",
             page,
             drawer: "trade",
           }}
-          title={t("transfer.lending.titleTransferTab")}
-          description={t("transfer.lending.descriptionTransferTab")}
-          tag={t("common.popular")}
-          Icon={Icons.LendMedium}
-          onPress={accountsCount > 0 && !readOnlyModeEnabled ? onLending : null}
-          noMargin
+          title={t("transfer.send.title")}
+          description={t("transfer.send.description")}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
+              ? onSendFunds
+              : null
+          }
+          Icon={Icons.ArrowTopMedium}
           disabled={readOnlyModeEnabled}
         />
+      </Box>
+      <Box mb={8}>
+        <TransferButton
+          eventProperties={{
+            button: "transfer_receive",
+            page,
+            drawer: "trade",
+          }}
+          title={t("transfer.receive.title")}
+          description={t("transfer.receive.description")}
+          onPress={accountsCount > 0 ? onReceiveFunds : null}
+          Icon={Icons.ArrowBottomMedium}
+          disabled={readOnlyModeEnabled}
+        />
+      </Box>
+      <Box mb={8}>
+        <TransferButton
+          eventProperties={{
+            button: "transfer_buy",
+            page,
+            drawer: "trade",
+          }}
+          title={t("transfer.buy.title")}
+          description={t("transfer.buy.description")}
+          Icon={Icons.PlusMedium}
+          onPress={onBuy}
+          disabled={readOnlyModeEnabled}
+        />
+      </Box>
+      <Box mb={8}>
+        <TransferButton
+          eventProperties={{
+            button: "transfer_sell",
+            page,
+            drawer: "trade",
+          }}
+          title={t("transfer.sell.title")}
+          description={t("transfer.sell.description")}
+          Icon={Icons.MinusMedium}
+          onPress={onSell}
+          disabled={readOnlyModeEnabled}
+        />
+      </Box>
+      <Box mb={lendingEnabled ? 8 : 0}>
+        <TransferButton
+          eventProperties={{
+            button: "transfer_swap",
+            page,
+            drawer: "trade",
+          }}
+          title={t("transfer.swap.title")}
+          description={t("transfer.swap.description")}
+          Icon={Icons.BuyCryptoMedium}
+          onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
+          disabled={readOnlyModeEnabled}
+        />
+      </Box>
+      {lendingEnabled ? (
+        <Box>
+          <TransferButton
+            eventProperties={{
+              button: "transfer_lending",
+              page,
+              drawer: "trade",
+            }}
+            title={t("transfer.lending.titleTransferTab")}
+            description={t("transfer.lending.descriptionTransferTab")}
+            tag={t("common.popular")}
+            Icon={Icons.LendMedium}
+            onPress={
+              accountsCount > 0 && !readOnlyModeEnabled ? onLending : null
+            }
+            disabled={readOnlyModeEnabled}
+          />
+        </Box>
       ) : null}
     </>
   );
