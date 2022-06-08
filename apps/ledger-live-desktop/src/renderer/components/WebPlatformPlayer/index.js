@@ -12,7 +12,7 @@ import { getEnv } from "@ledgerhq/live-common/lib/env";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyById, listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -48,6 +48,8 @@ import * as tracking from "./tracking";
 import TopBar from "./TopBar";
 
 import type { TopBarConfig } from "./type";
+import logger from "~/logger";
+import prepareMessageToSign from "@ledgerhq/live-common/lib/families/ethereum/signMessage";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -412,6 +414,36 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     [accounts, dispatch, manifest],
   );
 
+  const signMessage = useCallback(
+    ({ accountId, message }: { accountId: string, message: string }) => {
+      logger.info(`Signature with accountId (${accountId}) and message (${message})`);
+      const account = accounts.find(account => account.id === accountId);
+
+      message = prepareMessageToSign(account, message);
+
+      return new Promise((resolve, reject) => {
+        dispatch(
+          openModal("MODAL_SIGN_MESSAGE", {
+            message,
+            account,
+            onConfirmationHandler: signature => {
+              logger.info("Signature done");
+              resolve(signature);
+            },
+            onFailHandler: err => {
+              logger.error(err);
+              reject(err);
+            },
+            onClose: () => {
+              reject(new Error("Signature aborted"));
+            },
+          }),
+        );
+      });
+    },
+    [accounts, dispatch],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -422,6 +454,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -432,6 +465,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       broadcastTransaction,
       startExchange,
       completeExchange,
+      signMessage,
     ],
   );
 

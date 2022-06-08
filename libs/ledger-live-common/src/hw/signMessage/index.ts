@@ -101,6 +101,7 @@ export const createAction = (
       signMessageRequested: request.message,
     });
     const signedFired = useRef<boolean>();
+
     const sign = useCallback(async () => {
       let result;
 
