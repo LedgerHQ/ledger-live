@@ -74,6 +74,20 @@ jobs:
         run: |
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
@@ -81,10 +95,7 @@ jobs:
           os: linux
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:lld
+        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -120,16 +131,28 @@ jobs:
           cd apps/ledger-live-desktop
           ./tools/g++-5.4/install.sh
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: linux
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:lld
+        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -157,17 +180,24 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: win
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
-          pnpm build:lld
+          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v3
@@ -191,6 +221,21 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
@@ -199,11 +244,9 @@ jobs:
       - name: build the app
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           eval "$(rbenv init - bash)"
-          pnpm build:lld
+          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload macOS app
         uses: actions/upload-artifact@v3
         with:

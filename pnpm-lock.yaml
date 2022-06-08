@@ -18721,7 +18721,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
 
@@ -27274,15 +27274,6 @@ packages:
     dependencies:
       tabbable: 5.3.2
     dev: false
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.2:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
@@ -43077,7 +43068,7 @@ packages:
       ansi-regex: 2.1.1
 
   /strip-ansi/4.0.0:
-    resolution: {integrity: sha1-qEeQIusaw2iocTibY1JixQXuNo8=}
+    resolution: {integrity: sha512-4XaJ2zQdCzROZDivEVIDPkcQn8LMFSa8kj8Gxb/Lnwzv9A8VctNZ+lfivC/sV3ivW8ElJTERXZoPBRrZKkNKow==}
     engines: {node: '>=4'}
     dependencies:
       ansi-regex: 3.0.1
