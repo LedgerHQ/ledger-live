@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
 import getFeesForTransaction from "./js-getFeesForTransaction";
+import estimateMaxSpendable from "./js-estimateMaxSpendable";
 
 const createTransaction = (): Transaction => ({
     family: "avalanchecchain",
@@ -15,6 +16,10 @@ const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
 
 const prepareTransaction = async (account: Account, transaction: Transaction) => {
     let fees = transaction.fees;
+
+    transaction.amount = transaction.useAllAmount
+        ? await estimateMaxSpendable({ account, parentAccount: undefined, transaction })
+        : transaction.amount;
 
     fees = await getFeesForTransaction();
 
