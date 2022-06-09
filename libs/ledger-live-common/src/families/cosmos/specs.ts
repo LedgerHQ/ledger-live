@@ -50,7 +50,6 @@ const cosmos: AppSpec<Transaction> = {
   currency: getCryptoCurrencyById("cosmos"),
   appQuery: {
     model: DeviceModelId.nanoS,
-    firmware: "2.0.0",
     appName: "Cosmos",
   },
   testTimeout: 2 * 60 * 1000,

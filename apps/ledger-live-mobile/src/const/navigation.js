@@ -171,6 +171,7 @@ export const ScreenName = {
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
+  CosmosDelegationValidatorSelect: "CosmosDelegationValidatorSelect",
   CosmosDelegationAmount: "CosmosDelegationAmount",
   CosmosDelegationSelectDevice: "CosmosDelegationSelectDevice",
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
@@ -349,6 +350,7 @@ export const ScreenName = {
 
   // solana
   SolanaEditMemo: "SolanaEditMemo",
+  SolanaEditAmount: "SolanaEditAmount",
 
   BuyDeviceScreen: "BuyDeviceScreen",
 
@@ -413,6 +415,9 @@ export const NavigatorName = {
   PolkadotRebondFlow: "PolkadotRebondFlow",
   PolkadotNominateFlow: "PolkadotNominateFlow",
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
+
+  // Solana
+  SolanaDelegationFlow: "SolanaDelegationFlow",
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",
