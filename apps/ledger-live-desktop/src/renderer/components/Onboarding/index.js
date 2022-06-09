@@ -34,6 +34,7 @@ import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarni
 import { preloadAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { SideDrawer } from "../SideDrawer";
 import Box from "../Box";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 function LedgerLogo() {
   return (
@@ -251,6 +252,12 @@ export function Onboarding({ onboardingRelaunched }: { onboardingRelaunched: boo
       },
     },
   });
+
+  useEffect(() => {
+    if (getEnv("SANDBOX_MODE")) {
+      sendEvent("onboardingComplete");
+    }
+  }, [sendEvent]);
 
   useEffect(() => {
     if (notSeededDeviceRelaunch && currentDevice) {
