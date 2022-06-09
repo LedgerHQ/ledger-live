@@ -72,13 +72,15 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
         ? onboardingState.currentSeedWordIndex + 1
         : ""
     }`,
-    `Confirming seed words ${
-      onboardingState && onboardingState.currentOnboardingStep === OnboardingStep.NewDeviceConfirming
+    `${
+      onboardingState?.currentOnboardingStep === OnboardingStep.RestoreSeed ? "Restoring seed 🐇 " : "Confirming seed words "
+    } ${
+      onboardingState && (onboardingState.currentOnboardingStep === OnboardingStep.NewDeviceConfirming || onboardingState.currentOnboardingStep === OnboardingStep.RestoreSeed)
         ? onboardingState.currentSeedWordIndex + 1
         : ""
     }`,
     "Safety Warning",
-    "Ready ?"
+    "Ready"
   ];
 
   // Updates UI step index from the onboarding state
@@ -108,6 +110,7 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
         setStepIndex(4);
         break;
       case OnboardingStep.NewDeviceConfirming:
+      case OnboardingStep.RestoreSeed:
         setStepIndex(5);
         break;
       case OnboardingStep.SafetyWarning:
@@ -147,7 +150,7 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
     >
       {onboardingSteps.map((label, i) => (
         <Text key={i} variant="h2" textAlign="left" color={colors.primary}>
-          {label} {stepIndex === i ? "✏️" : stepIndex > i ? "✅" : "🦧"}
+          {label} {stepIndex === i && stepIndex < 7 ? "✏️" : stepIndex > i || stepIndex === 7 ? "✅" : "🦧"}
         </Text>
       ))}
     </Flex>
