@@ -86,8 +86,11 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [onNavigate],
   );
   const onManageCard = useCallback(() => {
-    Linking.openURL(urls.manageClCard);
-  }, []);
+    onNavigate(ScreenName.PlatformApp, {
+      platform: "cl-card",
+      name: "CL Card Powered by Ledger",
+    });
+  }, [onNavigate]);
 
   const buttons = (
     <>

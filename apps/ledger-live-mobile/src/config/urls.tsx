@@ -163,5 +163,4 @@ export const urls = {
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
   },
-  manageClCard: "https://ledger-ui.baanx.co.uk/iframeV2/view/",
 };
