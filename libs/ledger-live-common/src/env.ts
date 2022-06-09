@@ -444,6 +444,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
   },
+  SANDBOX_MODE: {
+    def: false,
+    parser: boolParser,
+    desc: "allow the direct access to live feature for dev purposes",
+  },
   SATSTACK: {
     def: false,
     parser: boolParser,
