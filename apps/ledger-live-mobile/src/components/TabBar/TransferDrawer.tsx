@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { ScrollView } from "react-native";
+import { ScrollView, Linking } from "react-native";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
@@ -19,6 +19,7 @@ import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
+import { urls } from "../../config/urls";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -84,6 +85,9 @@ export default function TransferDrawer({ onClose }: ModalProps) {
       }),
     [onNavigate],
   );
+  const onManageCard = useCallback(() => {
+    Linking.openURL(urls.manageClCard);
+  }, []);
 
   const buttons = (
     <>
@@ -147,7 +151,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={readOnlyModeEnabled}
         />
       </Box>
-      <Box mb={lendingEnabled ? 8 : 0}>
+      <Box mb={8}>
         <TransferButton
           eventProperties={{
             button: "transfer_swap",
@@ -162,7 +166,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         />
       </Box>
       {lendingEnabled ? (
-        <Box>
+        <Box mb={8}>
           <TransferButton
             eventProperties={{
               button: "transfer_lending",
@@ -180,6 +184,15 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           />
         </Box>
       ) : null}
+      <Box>
+        <TransferButton
+          title={t("transfer.manageCard.title")}
+          description={t("transfer.manageCard.description")}
+          Icon={Icons.CardMedium}
+          onPress={onManageCard}
+          disabled={readOnlyModeEnabled}
+        />
+      </Box>
     </>
   );
 
@@ -222,7 +235,11 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           {...IMAGE_PROPS_SMALL_NANO}
         />
       )}
-      {readOnlyModeEnabled && hasOrderedNano && <SetupDeviceBanner />}
+      {readOnlyModeEnabled && hasOrderedNano ? (
+        <Box mt={8}>
+          <SetupDeviceBanner />
+        </Box>
+      ) : null}
     </Flex>
   );
 }
