@@ -16,7 +16,9 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
-import { NavigatorName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
+import { screen } from "../../../analytics";
+import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -127,6 +129,19 @@ const Item = ({
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
 
+  const previousRoute = usePreviousRouteName();
+
+  const onChange = useCallback(
+    (index: number, skipped: boolean) => {
+      screen("Onboarding", `Reborn Story Step ${index}`, {
+        skipped,
+        flow: "Onboarding No Device",
+        source: previousRoute,
+      });
+    },
+    [previousRoute],
+  );
+
   return (
     <StyledSafeAreaView>
       <Carousel
@@ -143,6 +158,8 @@ function DiscoverLiveInfo() {
         }}
         scrollViewProps={{ scrollEnabled: false }}
         maxDurationOfTap={700}
+        onAutoChange={(index: number) => onChange(index, false)}
+        onManualChange={(index: number) => onChange(index, true)}
       >
         {slidesImages.map((image, index) => (
           <Item
