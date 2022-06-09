@@ -1594,6 +1594,47 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
+  mimblewimble_coin: {
+    type: "CryptoCurrency",
+    id: "mimblewimble_coin",
+    coinType: 593,
+    name: "MimbleWimble Coin",
+    managerAppName: "MimbleWimble Coin",
+    ticker: "MWC",
+    scheme: "mimblewimble_coin",
+    color: "#7A00D9",
+    family: "mimblewimble_coin",
+    blockAvgTime: 1 * 60,
+    units: [
+      {
+        name: "mimblewimble coin",
+        code: "MWC",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [],
+  },
+  mimblewimble_coin_floonet: {
+    type: "CryptoCurrency",
+    id: "mimblewimble_coin_floonet",
+    coinType: 1,
+    name: "MimbleWimble Coin Floonet",
+    managerAppName: "MimbleWimble Coin Floonet",
+    ticker: "MWC",
+    scheme: "mimblewimble_coin_floonet",
+    isTestnetFor: "mimblewimble_coin",
+    color: "#7A00D9",
+    family: "mimblewimble_coin",
+    blockAvgTime: 1 * 60,
+    units: [
+      {
+        name: "mimblewimble coin",
+        code: "MWC",
+        magnitude: 9,
+      }
+    ].map(makeTestnetUnit),
+    explorerViews: [],
+  },
   mix: {
     type: "CryptoCurrency",
     id: "mix",
