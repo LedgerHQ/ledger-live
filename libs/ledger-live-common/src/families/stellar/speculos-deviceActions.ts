@@ -72,6 +72,13 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
           3,
           4
         )}`,
+      maxY: 5,
+    },
+    {
+      title: "Create Account",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.recipient,
+      maxY: 5,
     },
     {
       title: "Send",
@@ -90,11 +97,6 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Starting Balance",
       button: "Rr",
-    },
-    {
-      title: "Create Account",
-      button: "Rr",
-      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
       title: "Network",
