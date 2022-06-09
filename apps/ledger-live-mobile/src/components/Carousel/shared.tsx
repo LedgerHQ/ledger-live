@@ -188,7 +188,13 @@ const FamilyPackXSlide: SlideProps = {
 };
 
 const ManageClCardSlide: SlideProps = {
-  url: urls.manageClCard,
+  url: "ledgerlive://discover/cl-card",
+  onPress: navigate => {
+    navigate(ScreenName.PlatformApp, {
+      platform: "cl-card",
+      name: "CL Card Powered by Ledger",
+    });
+  },
   name: "ManageClCard",
   title: "carousel.banners.manageCard.title",
   description: "carousel.banners.manageCard.description",
