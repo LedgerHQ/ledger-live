@@ -4,7 +4,6 @@ import * as rxjsOperators from "rxjs/operators";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import {
-  DeviceOnboardingStatePollingError,
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
@@ -13,9 +12,9 @@ import getVersion from "./getVersion";
 import {
   extractOnboardingState,
   OnboardingState,
-  SeedPhraseType,
   OnboardingStep,
 } from "./extractOnboardingState";
+import { SeedPhraseType } from "../types/manager";
 
 jest.mock("./deviceAccess");
 jest.mock("./getVersion");

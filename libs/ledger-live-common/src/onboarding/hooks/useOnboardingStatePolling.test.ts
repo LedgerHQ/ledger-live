@@ -2,14 +2,13 @@ import { timer, of } from "rxjs";
 import { map, delayWhen } from "rxjs/operators";
 import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { DisconnectedDevice } from "@ledgerhq/errors";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";
 import {
-  extractOnboardingState,
   OnboardingState,
-  SeedPhraseType,
   OnboardingStep,
 } from "../../hw/extractOnboardingState";
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { SeedPhraseType } from "../../types/manager";
 import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
 
 jest.mock("../../hw/getOnboardingStatePolling");

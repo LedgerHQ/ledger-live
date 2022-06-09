@@ -1,4 +1,6 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
+import { SeedPhraseType } from "../types/manager";
+
 const onboardingFlagsBytesLength = 4;
 
 const onboardedMask = 0x04;
@@ -6,12 +8,6 @@ const inRecoveryModeMask = 0x01;
 const seedPhraseTypeMask = 0x60;
 const seedPhraseTypeFlagOffset = 5;
 const currentSeedWordIndexMask = 0x1f;
-
-export enum SeedPhraseType {
-  Twelve = "12-words",
-  Eighteen = "18-words",
-  TwentyFour = "24-words",
-}
 
 const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
   [0, SeedPhraseType.TwentyFour],
