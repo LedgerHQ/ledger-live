@@ -8,6 +8,7 @@ import MODAL_MANAGE_TRON from "./ManageTron";
 import MODAL_PASSWORD from "./PasswordModal";
 import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
 import MODAL_ADD_ACCOUNTS from "./AddAccounts";
+import MODAL_ADD_MOCK_ACCOUNT from "./AddMockAccount";
 import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
@@ -88,6 +89,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_PASSWORD,
   MODAL_DISABLE_PASSWORD,
   MODAL_ADD_ACCOUNTS,
+  MODAL_ADD_MOCK_ACCOUNT,
   MODAL_RECEIVE,
   MODAL_WALLETCONNECT_PASTE_LINK,
   MODAL_WALLETCONNECT_DEEPLINK,

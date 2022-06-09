@@ -20,12 +20,27 @@ const AccountsHeader = () => {
     dispatch(openModal("MODAL_ADD_ACCOUNTS"));
   }, [dispatch]);
 
+  const openAddMockAccounts = useCallback(() => {
+    dispatch(openModal("MODAL_ADD_MOCK_ACCOUNT"));
+  }, [dispatch]);
+
   return (
     <Box horizontal style={{ paddingBottom: 32 }}>
       <Box grow ff="Inter|SemiBold" fontSize={7} color="palette.text.shade100" id="accounts-title">
         {t("accounts.title")}
       </Box>
       <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
+        <Button
+          small
+          primary
+          onClick={openAddMockAccounts}
+          data-test-id="accounts-add-account-button"
+        >
+          <Box horizontal flow={1} alignItems="center">
+            <IconPlus size={12} />
+            <Box>Add mock account</Box>
+          </Box>
+        </Button>
         <Button small primary onClick={openAddAccounts} data-test-id="accounts-add-account-button">
           <Box horizontal flow={1} alignItems="center">
             <IconPlus size={12} />

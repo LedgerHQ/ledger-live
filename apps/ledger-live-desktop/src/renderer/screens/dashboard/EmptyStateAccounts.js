@@ -29,6 +29,10 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
     dispatch(openModal("MODAL_ADD_ACCOUNTS"));
   }, [dispatch]);
 
+  const openAddMockAccount = useCallback(() => {
+    dispatch(openModal("MODAL_ADD_MOCK_ACCOUNT"));
+  }, [dispatch]);
+
   return (
     <Box alignItems="center" pb={8} style={{ margin: "auto" }}>
       <NoAccounts size={250} />
@@ -59,6 +63,13 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
             data-test-id="portfolio-empty-state-add-account-button"
           >
             {t("emptyState.accounts.buttons.addAccount")}
+          </Button>
+          <Button
+            primary
+            onClick={openAddMockAccount}
+            data-test-id="portfolio-empty-state-add-account-button"
+          >
+            Add mock account
           </Button>
         </Box>
         <FakeLink
