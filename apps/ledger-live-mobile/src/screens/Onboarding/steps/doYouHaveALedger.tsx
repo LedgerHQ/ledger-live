@@ -18,6 +18,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
         userHasDevice: true,
+        from: ScreenName.OnboardingDoYouHaveALedgerDevice,
       },
     });
   }, [navigation]);
@@ -29,6 +30,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       name: ScreenName.OnboardingPostWelcomeSelection,
       params: {
         userHasDevice: false,
+        from: ScreenName.OnboardingDoYouHaveALedgerDevice,
       },
     });
   }, [navigation]);

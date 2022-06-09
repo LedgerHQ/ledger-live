@@ -77,9 +77,12 @@ const PostWelcomeDiscoverCard = ({
 function PostWelcomeSelection({
   route,
 }: {
-  route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
+  route: RouteProp<
+    { params: { userHasDevice: boolean; from: string } },
+    "params"
+  >;
 }) {
-  const { userHasDevice } = route.params;
+  const { userHasDevice, from } = route.params;
 
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -107,6 +110,15 @@ function PostWelcomeSelection({
 
   return (
     <Flex flex={1}>
+      <TrackScreen
+        category="Onboarding"
+        name={
+          userHasDevice
+            ? "Onboarding Choice With Device"
+            : "Onboarding Choice No Device"
+        }
+        source={from}
+      />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>
           {t("onboarding.postWelcomeStep.title")}
