@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.42.1-nightly.1
+
+### Patch Changes
+
+- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+  - @ledgerhq/live-common@22.3.0-nightly.1
+
 ## 2.42.1-nightly.0
 
 ### Patch Changes
