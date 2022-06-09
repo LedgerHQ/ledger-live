@@ -119,7 +119,6 @@ export function deviceActionFlow<T extends Transaction>(
     }
 
     if (!finalState) {
-      console.log(event);
       let possibleKnownStep: Step<T> | null | undefined =
         description.steps.find((s) => {
           if (s.maxY) {
@@ -128,7 +127,6 @@ export function deviceActionFlow<T extends Transaction>(
           return event.text.startsWith(s.title);
         });
 
-      console.log(possibleKnownStep);
       // if there is a fallback provided, we will run it to try to detect another possible known step
       if (!possibleKnownStep && description.fallback) {
         possibleKnownStep = description.fallback(arg);
