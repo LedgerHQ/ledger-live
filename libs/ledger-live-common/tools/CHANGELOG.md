@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [6bcf42ecd]
+  - @ledgerhq/live-common@22.2.1
+
 ## 0.1.2-hotfix.0
 
 ### Patch Changes
