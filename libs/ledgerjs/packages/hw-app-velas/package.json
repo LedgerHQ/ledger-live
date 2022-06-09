@@ -1,0 +1,45 @@
+{
+    "name": "@ledgerhq/hw-app-velas",
+    "version": "1.0.1",
+    "description": "Ledger Hardware Wallet Velas Application API",
+    "keywords": [
+        "Ledger",
+        "LedgerWallet",
+        "Velas",
+        "VLX",
+        "NanoS",
+        "Blue",
+        "Hardware Wallet"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/LedgerHQ/ledger-live"
+    },
+    "bugs": {
+        "url": "https://github.com/LedgerHQ/ledger-live"
+    },
+    "homepage": "https://github.com/LedgerHQ/ledger-live",
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "lib/Velas.js",
+    "module": "lib-es/Velas.js",
+    "types": "lib/Velas.d.ts",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@ledgerhq/errors": "^6.10.0",
+        "@ledgerhq/hw-transport": "^6.24.1",
+        "@ledgerhq/logs": "^6.10.0",
+        "bip32-path": "^0.4.2"
+    },
+    "devDependencies": {
+        "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
+        "axios": "^0.26.1"
+    },
+    "scripts": {
+        "clean": "bash ../../script/clean.sh",
+        "build": "bash ../../script/build.sh",
+        "watch": "bash ../../script/watch.sh",
+        "doc": "bash ../../script/doc.sh"
+    }
+}
