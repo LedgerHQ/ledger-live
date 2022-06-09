@@ -133,7 +133,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     <TabBarSafeAreaView>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
       <Flex flex={1} bg={"background.main"}>
-        <AccountsNavigationHeader readOnly/>
+        <AccountsNavigationHeader readOnly />
         <FilteredSearchBar
           list={accounts}
           inputWrapperStyle={{

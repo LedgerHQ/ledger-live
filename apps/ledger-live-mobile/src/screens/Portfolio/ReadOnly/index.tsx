@@ -43,9 +43,9 @@ import BuyDeviceBanner, {
   IMAGE_PROPS_BIG_NANO,
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import Carousel from "../../../components/Carousel";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/lib/types";
+import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -188,8 +188,8 @@ function PortfolioScreen({ navigation }: Props) {
         />
       </Box>,
       showCarousel && hasOrderedNano && (
-        <Box mt={6}>
-          <Carousel cardsVisibility={carouselVisibility} />
+        <Box mt={6} mx={6}>
+          <ExploreWeb3Slide />
         </Box>
       ),
       <SectionContainer>
@@ -217,11 +217,11 @@ function PortfolioScreen({ navigation }: Props) {
       ),
     ],
     [
+      hasOrderedNano,
       onPortfolioCardLayout,
       counterValueCurrency,
-      portfolio,
-      areAccountsEmpty,
       t,
+      showCarousel,
       navigation,
       assetsToDisplay,
     ],

@@ -784,6 +784,16 @@
         "title": "Crypto Markets",
         "description": "Check crypto prices and market trends right in the app",
         "cta": "Browse"
+      },
+      "manageCard": {
+        "title": "Introducing CL Card",
+        "description": "Order and manage your CL Card powered by Ledger",
+        "cta": "Learn more"
+      },
+      "discoverWeb3": {
+        "title": "Discover Web3",
+        "description": "Discover everything about web3 until your device arrives!",
+        "cta": "Discover"
       }
     }
   },
@@ -2048,6 +2058,10 @@
     },
     "fees": {
       "title": "Edit fees"
+    },
+    "manageCard": {
+      "title": "Manage CL Card",
+      "description": "Order and Manage CL Card"
     },
     "receive": {
       "title": "Receive",
