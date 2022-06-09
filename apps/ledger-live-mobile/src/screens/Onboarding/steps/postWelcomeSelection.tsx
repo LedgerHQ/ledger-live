@@ -9,6 +9,8 @@ import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
+import { useTheme } from "styled-components/native";
+import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
 
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
@@ -102,8 +104,19 @@ function PostWelcomeSelection({
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
   }, [navigation]);
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <Flex flex={1} bg="background.main">
+      <TrackScreen
+        category="Onboarding"
+        name={
+          userHasDevice
+            ? "Choice With Device"
+            : "Choice No Device"
+        }
+        source={previousRoute}
+      />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>
           {t("onboarding.postWelcomeStep.title")}
