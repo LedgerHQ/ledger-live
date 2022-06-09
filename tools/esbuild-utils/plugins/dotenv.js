@@ -5,18 +5,23 @@ module.exports = (path, options = {}) => {
   return {
     name: "Dotenv",
     setup(build) {
-      const buf = fs.readFileSync(path);
-      const define = {};
-      const config = dotenv.parse(buf);
+      try {
+        const buf = fs.readFileSync(path);
+        const define = {};
+        const config = dotenv.parse(buf);
 
-      Object.entries(config).forEach(([key, value]) => {
-        define["process.env." + key] = JSON.stringify(value);
-      });
+        Object.entries(config).forEach(([key, value]) => {
+          define["process.env." + key] = JSON.stringify(value);
+        });
 
-      build.initialOptions.define = {
-        ...build.initialOptions.define,
-        ...define,
-      };
+        build.initialOptions.define = {
+          ...build.initialOptions.define,
+          ...define,
+        };
+      } catch (error) {
+        // Ignore…
+        // console.error(error);
+      }
     },
   };
 };

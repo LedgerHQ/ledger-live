@@ -1,100 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const babelPlugins = require("./babel.plugins");
 const UnusedWebpackPlugin = require("unused-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
 
-const packagesToTranspile = [
-  /@polkadot[\\/]api/,
-  /@polkadot[\\/]api-derive/,
-  /@polkadot[\\/]keyring/,
-  /@polkadot[\\/]networks/,
-  /@polkadot[\\/]rpc-augment/,
-  /@polkadot[\\/]rpc-core/,
-  /@polkadot[\\/]rpc-provider/,
-  /@polkadot[\\/]types/,
-  /@polkadot[\\/]types-known/,
-  /@polkadot[\\/]ui-shared/,
-  /@polkadot[\\/]util/,
-  /@polkadot[\\/]util-crypto/,
-  /@polkadot[\\/]x-bigint/,
-  /@polkadot[\\/]x-fetch/,
-  /@polkadot[\\/]x-global/,
-  /@polkadot[\\/]x-randomvalues/,
-  /@polkadot[\\/]x-textdecoder/,
-  /@polkadot[\\/]x-textencoder/,
-  /@polkadot[\\/]x-ws/,
-  /@polkadot[\\/]react-identicon/,
-];
-
-const exceptionToTranspile = path_ruled => {
-  // DO transpile these packages
-  if (packagesToTranspile.some(pkg => path_ruled.match(pkg))) {
-    return false;
-  }
-
-  // Ignore all other modules that are in node_modules
-  if (path_ruled.match(/node_modules/)) {
-    return true;
-  } else return false;
-};
-
-const includeToTranspile = path_ruled => {
-  // DO transpile these packages
-  if (packagesToTranspile.some(pkg => path_ruled.match(pkg))) {
-    return true;
-  }
-
-  return false;
-};
-
-const babelConfig = {
-  presets: [
-    [
-      "@babel/preset-env",
-      {
-        targets: {
-          electron: "7.1.9",
-        },
-      },
-    ],
-    "@babel/preset-react",
-    "@babel/preset-flow",
-  ],
-  plugins: [
-    ...babelPlugins,
-    [
-      "babel-plugin-styled-components",
-      {
-        ssr: false,
-      },
-    ],
-  ],
-};
-const babelTsConfig = {
-  presets: [
-    "@babel/preset-typescript",
-    [
-      "@babel/preset-env",
-      {
-        targets: {
-          electron: "7.1.9",
-        },
-      },
-    ],
-    "@babel/preset-react",
-    "@babel/preset-flow",
-  ],
-  plugins: [
-    ...babelPlugins,
-    [
-      "babel-plugin-styled-components",
-      {
-        ssr: false,
-      },
-    ],
-  ],
-};
+const lldFolder = path.resolve(__dirname, "..", "..");
 
 function getDotenvPathFromEnv() {
   if (process.env.TESTING) {
@@ -110,9 +19,9 @@ function getDotenvPathFromEnv() {
 
 module.exports = {
   target: "electron-renderer",
-  entry: ["./src/renderer/index.js"],
+  entry: [path.resolve(lldFolder, "src/renderer/index.js")],
   output: {
-    path: path.resolve(__dirname, ".webpack"),
+    path: path.resolve(lldFolder, ".webpack"),
     filename: "renderer.bundle.js",
   },
   optimization: {
@@ -127,12 +36,12 @@ module.exports = {
       ignoreStub: true,
     }),
     new HtmlWebpackPlugin({
-      template: "./src/renderer/index.html",
+      template: path.resolve(lldFolder, "src/renderer/index.html"),
       filename: "index.html",
       title: "Ledger Live",
     }),
     new UnusedWebpackPlugin({
-      directories: [path.join(__dirname, "src/renderer")],
+      directories: [path.join(lldFolder, "src", "renderer")],
       exclude: [
         "*.test.js",
         "*.html",
@@ -146,20 +55,23 @@ module.exports = {
     rules: [
       {
         test: /\.(ts)x?$/,
-        exclude: exceptionToTranspile,
-        loader: "babel-loader",
-        options: babelTsConfig,
+        loader: "esbuild-loader",
+        options: {
+          loader: "tsx",
+        },
       },
       {
-        test: /\.js$/i,
-        loader: "babel-loader",
-        exclude: exceptionToTranspile,
-        options: babelConfig,
-      },
-      {
-        test: /\.js$/i,
-        loader: require.resolve("@open-wc/webpack-import-meta-loader"),
-        include: includeToTranspile,
+        test: /\.(js)x?$/i,
+        use: [
+          {
+            loader: "esbuild-loader",
+            options: {
+              loader: "jsx",
+              target: "chrome91",
+            },
+          },
+          { loader: "remove-flow-types-loader" },
+        ],
       },
       {
         test: /\.css$/i,
@@ -193,17 +105,12 @@ module.exports = {
           },
         },
       },
-      {
-        type: "javascript/auto",
-        test: /\.mjs$/,
-        use: [],
-      },
     ],
   },
   resolve: {
-    modules: ["node_modules", path.resolve(__dirname, "node_modules")],
+    modules: ["node_modules", path.resolve(lldFolder, "node_modules")],
     alias: {
-      "~": path.resolve(__dirname, "src"),
+      "~": path.resolve(lldFolder, "src"),
       // See: https://github.com/facebook/react/issues/20235
       "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
       // Prevents having duplicate react and react-redux contexts when bundling the app in "npm mode".
