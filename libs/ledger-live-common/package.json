@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "22.2.0",
+  "version": "22.2.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
@@ -33,11 +33,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -88,10 +88,10 @@
     "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.6.1",
     "@ledgerhq/logs": "workspace:^",
-    "@polkadot/types": "8.1.1",
-    "@polkadot/types-known": "8.1.1",
-    "@polkadot/util": "9.1.1",
-    "@polkadot/util-crypto": "9.1.1",
+    "@polkadot/types": "8.5.1",
+    "@polkadot/types-known": "8.5.1",
+    "@polkadot/util": "9.2.1",
+    "@polkadot/util-crypto": "9.2.1",
     "@polkadot/wasm-crypto": "6.0.1",
     "@solana/spl-token": "^0.2.0",
     "@solana/web3.js": "^1.41.4",
