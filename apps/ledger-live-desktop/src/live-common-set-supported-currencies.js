@@ -42,6 +42,5 @@ setSupportedCurrencies([
   "ethereum_goerli",
   "cosmos_testnet",
   "hedera",
-  "filecoin",
   "cardano",
 ]);
