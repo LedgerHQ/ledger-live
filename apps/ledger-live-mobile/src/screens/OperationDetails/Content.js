@@ -378,13 +378,15 @@ export default function Content({
         value={operation.hash}
       />
 
-      <View style={sectionStyles.wrapper}>
-        <DataList
-          data={uniqueSenders}
-          title={<Trans i18nKey="operationDetails.from" />}
-          titleStyle={sectionStyles.title}
-        />
-      </View>
+      {uniqueSenders.length > 0 && (
+        <View style={sectionStyles.wrapper}>
+          <DataList
+            data={uniqueSenders}
+            title={<Trans i18nKey="operationDetails.from" />}
+            titleStyle={sectionStyles.title}
+          />
+        </View>
+      )}
 
       {shouldDisplayTo ? (
         <View style={sectionStyles.wrapper}>

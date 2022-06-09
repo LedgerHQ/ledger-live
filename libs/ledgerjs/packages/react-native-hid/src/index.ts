@@ -17,6 +17,7 @@ type DeviceObj = {
 const disconnectedErrors = [
   "I/O error",
   "Attempt to invoke virtual method 'int android.hardware.usb.UsbDevice.getDeviceClass()' on a null object reference",
+  "Invalid channel",
 ];
 
 const listLedgerDevices = async () => {

@@ -9,6 +9,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { track } from "../../analytics";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -26,6 +27,7 @@ import {
   renderConfirmSwap,
   renderConfirmSell,
   LoadingAppInstall,
+  AutoRepair,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -72,6 +74,9 @@ export default function DeviceAction<R, H, P>({
     requiresAppInstallation,
     inWrongDeviceForAccount,
     onRetry,
+    repairModalOpened,
+    onAutoRepair,
+    closeRepairModal,
     deviceSignatureRequested,
     deviceStreamingProgress,
     displayUpgradeWarning,
@@ -109,6 +114,19 @@ export default function DeviceAction<R, H, P>({
       colors,
       theme,
     });
+  }
+
+  if (repairModalOpened && repairModalOpened.auto) {
+    return (
+      <AutoRepair
+        t={t}
+        onDone={closeRepairModal}
+        device={device}
+        navigation={navigation}
+        colors={colors}
+        theme={theme}
+      />
+    );
   }
 
   if (requestQuitApp) {
@@ -205,6 +223,8 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (!isLoading && error) {
+    /** @TODO Put that back if the app is still crashing */
+    // track("DeviceActionError", error);
     onError && onError(error);
 
     // NB Until we find a better way, remap the error if it's 6d06 and we haven't fallen
@@ -252,7 +272,7 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({ t, colors, theme });
+    return renderBootloaderStep({ onAutoRepair, t });
   }
 
   if (request && device && deviceSignatureRequested) {
