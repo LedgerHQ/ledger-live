@@ -29,13 +29,13 @@ import {
   Token,
 } from "./types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import bs58 from "bs58";
 import BigNumber from "bignumber.js";
 import { getNetworkParameters } from "./networks";
 import { CryptoCurrency, OperationType } from "../../types";
 import groupBy from "lodash/groupBy";
 import { APITransaction } from "./api/api-types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -152,21 +152,17 @@ export const isValidAddress = (address: string, networkId: number): boolean => {
   if (!address) return false;
 
   try {
-    // check if it is byron address
-    const addr = bs58.decode(address).toString("hex");
-    if (addr[0] !== "8") {
-      return false;
-    }
-  } catch (error) {
-    try {
-      const hexAddress = TyphonUtils.decodeBech32(address);
-      const addressNetworkId = Number(hexAddress.value.toLowerCase().charAt(1));
+    const cardanoAddress = TyphonUtils.getAddressFromBech32(address);
+    if (cardanoAddress instanceof ShelleyTypeAddress) {
+      const addressNetworkId = Number(
+        cardanoAddress.getHex().toLowerCase().charAt(1)
+      );
       if (addressNetworkId !== networkId) {
         return false;
       }
-    } catch (error) {
-      return false;
     }
+  } catch (error) {
+    return false;
   }
   return true;
 };
