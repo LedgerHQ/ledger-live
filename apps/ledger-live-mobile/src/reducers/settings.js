@@ -20,6 +20,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 import { SLIDES } from "../components/Carousel/shared";
@@ -99,6 +100,9 @@ export type SettingsState = {
   lastSeenDevice: ?DeviceModelInfo,
   starredMarketCoins: string[],
   lastConnectedDevice: ?Device,
+  marketRequestParams: MarketListRequestParams,
+  marketCounterCurrency: ?string,
+  marketFilterByStarredAccounts: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -141,6 +145,16 @@ export const INITIAL_STATE: SettingsState = {
   lastSeenDevice: null,
   starredMarketCoins: [],
   lastConnectedDevice: null,
+  marketRequestParams: {
+    range: "24h",
+    orderBy: "market_cap",
+    order: "desc",
+    liveCompatible: false,
+    sparkline: false,
+    top100: false,
+  },
+  marketCounterCurrency: null,
+  marketFilterByStarredAccounts: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -397,6 +411,24 @@ const handlers: Object = {
     ...state,
     lastConnectedDevice,
   }),
+  SET_MARKET_REQUEST_PARAMS: (state: SettingsState, { payload }) => ({
+    ...state,
+    marketRequestParams: {
+      ...state.marketRequestParams,
+      ...payload,
+    },
+  }),
+  SET_MARKET_COUNTER_CURRENCY: (state: SettingsState, { payload }) => ({
+    ...state,
+    marketCounterCurrency: payload,
+  }),
+  SET_MARKET_FILTER_BY_STARRED_ACCOUNTS: (
+    state: SettingsState,
+    { payload },
+  ) => ({
+    ...state,
+    marketFilterByStarredAccounts: payload,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -587,3 +619,12 @@ export const starredMarketCoinsSelector = (state: State) =>
 
 export const lastConnectedDeviceSelector = (state: State) =>
   state.settings.lastConnectedDevice;
+
+export const marketRequestParamsSelector = (state: State) =>
+  state.settings.marketRequestParams;
+
+export const marketCounterCurrencySelector = (state: State) =>
+  state.settings.marketCounterCurrency;
+
+export const marketFilterByStarredAccountsSelector = (state: State) =>
+  state.settings.marketFilterByStarredAccounts;

@@ -29,6 +29,8 @@ export default (app: Probot) => {
     const { payload, octokit } = context;
     const repository = context.repo();
 
+    if (repository.repo !== "ledger-live") return;
+
     const branch = payload.pull_request.head.ref;
     const login = payload.pull_request.user.login;
 
@@ -36,6 +38,8 @@ export default (app: Probot) => {
 
     const isBranchValid = isValidBranchName(branch);
     const isBodyValid = isValidBody(payload.pull_request.body);
+
+    if (isBranchValid && isBodyValid) return;
 
     let body =
       `❌ @${login}\n\n` +
