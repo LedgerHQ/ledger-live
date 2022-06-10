@@ -46,7 +46,6 @@ setSupportedCurrencies([
   "crypto_org_croeseid",
   "celo",
   "hedera",
-  "filecoin",
   "cardano",
 ]);
 
