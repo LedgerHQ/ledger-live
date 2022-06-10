@@ -8,8 +8,8 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 import {
@@ -409,10 +409,13 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
 
   const signMessage = useCallback(
     ({ accountId, message }: { accountId: string, message: string }) => {
-      logger.info(`Signature with accountId (${accountId}) and message (${message})`);
       const account = accounts.find(account => account.id === accountId);
 
-      message = prepareMessageToSign(account, message);
+      try {
+        message = prepareMessageToSign(account, message);
+      } catch (error) {
+        return Promise.reject(error);
+      }
 
       return new Promise((resolve, reject) => {
         dispatch(

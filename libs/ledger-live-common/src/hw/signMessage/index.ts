@@ -1,20 +1,36 @@
-import invariant from "invariant";
 import {
   DeviceAppVerifyNotSupported,
   UserRefusedAddress,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { Observable } from "rxjs";
-import type { Resolver } from "./types";
+import invariant from "invariant";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { from, Observable } from "rxjs";
 import perFamily from "../../generated/hw-signMessage";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { from } from "rxjs";
-import { createAction as createAppAction } from "../actions/app";
+import { Account } from "../../types";
 import type { AppRequest, AppState } from "../actions/app";
+import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData, Result } from "./types";
+import type { MessageData, Resolver, Result } from "./types";
+
+export const prepareMessageToSign = (
+  { currency, freshAddressPath, derivationMode }: Account,
+  message: string
+): MessageData | null => {
+  if (!perFamily[currency.family]) {
+    throw new Error("Crypto does not support signMessage");
+  }
+
+  return {
+    currency: currency,
+    path: freshAddressPath,
+    derivationMode: derivationMode,
+    message: message,
+    rawMessage: Buffer.from(message).toString("hex"),
+  };
+};
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
