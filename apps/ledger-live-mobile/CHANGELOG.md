@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.1-nightly.0
+
+### Patch Changes
+
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+
 ## 3.2.0
 
 ### Minor Changes
