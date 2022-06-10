@@ -177,7 +177,10 @@ platform :ios do
 
       raise 'Xcode build failed.'
     end
-    enable_automatic_code_signing(path: XCODE_PROJECT)
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: XCODE_PROJECT
+    )
   end
 
   desc "upload to Testflight (only to be run after an app-store build)"
