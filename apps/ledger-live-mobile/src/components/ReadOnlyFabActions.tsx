@@ -6,6 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "./wrappedUi/Button";
 
 import { ScreenName } from "../const";
+import useCurrency from "../helpers/useCurrency";
+import { useCurrentRouteName } from "../helpers/routeHooks";
+import { track } from "../analytics";
 
 const iconBuy = Icons.PlusMedium;
 const iconReceive = Icons.ArrowBottomMedium;
@@ -13,10 +16,24 @@ const iconReceive = Icons.ArrowBottomMedium;
 function ReadOnlyFabActions() {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
+  const currentRoute = useCurrentRouteName();
+  const currency = useCurrency().name;
 
-  const handleOnPress = useCallback(() => {
-    navigate(ScreenName.NoDeviceWallScreen);
-  }, [navigate]);
+  const buyDevice = useCallback(() => navigate(ScreenName.BuyDeviceScreen), [
+    navigate,
+  ]);
+
+  const handleOnPress = useCallback(
+    (buttonTitle: string) => {
+      track("button_clicked", {
+        button: buttonTitle,
+        screen: currentRoute,
+        currency,
+      });
+      buyDevice();
+    },
+    [buyDevice, currency, currentRoute],
+  );
 
   return (
     <Flex mx={16} flexDirection={"row"}>
@@ -29,7 +46,7 @@ function ReadOnlyFabActions() {
         key={"cta-buy"}
         mr={3}
         flex={1}
-        onPress={handleOnPress}
+        onPress={() => handleOnPress("+ Buy")}
       >
         {t("account.buy")}
       </Button>
@@ -41,7 +58,7 @@ function ReadOnlyFabActions() {
         outline={true}
         key={"cta-receive"}
         flex={1}
-        onPress={handleOnPress}
+        onPress={() => handleOnPress("Receive")}
       >
         {t("account.receive")}
       </Button>

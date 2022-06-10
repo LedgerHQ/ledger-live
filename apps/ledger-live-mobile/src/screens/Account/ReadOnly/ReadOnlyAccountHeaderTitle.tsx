@@ -10,6 +10,7 @@ import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import { scrollToTop } from "../../../navigation/utils";
+import useCurrency from "../../../helpers/useCurrency";
 
 const HeaderContainer = styled(View)`
   flex-direction: row;
@@ -26,15 +27,7 @@ const IconContainer = styled(View)`
 `;
 
 function AccountHeaderTitle() {
-  const route: any = useRoute();
-  const { currencyId, currencyType } = route.params;
-  const currency = useMemo(
-    () =>
-      currencyType === "CryptoCurrency"
-        ? getCryptoCurrencyById(currencyId)
-        : getTokenById(currencyId),
-    [currencyType, currencyId],
-  );
+  const currency = useCurrency();
 
   if (!currency) return null;
 

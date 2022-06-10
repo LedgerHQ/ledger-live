@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
@@ -20,6 +20,11 @@ import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyA
 import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import { accountsSelector } from "../../reducers/accounts";
+import { TouchableOpacity } from "react-native";
+import { Box, Icons } from "@ledgerhq/native-ui";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
+import { useNavigation } from "@react-navigation/native";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
@@ -30,6 +35,17 @@ export default function AccountsNavigator() {
   const accounts = useSelector(accountsSelector);
   const readOnlyModeEnabled =
     useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
+  const navigation = useNavigation();
+  const currentRoute = useCurrentRouteName();
+
+  const goBackFromAccount = useCallback(() => {
+    readOnlyModeEnabled &&
+      track("button_clicked", {
+        button: "Back",
+        screen: currentRoute,
+      });
+    navigation.goBack();
+  }, [navigation, currentRoute, readOnlyModeEnabled]);
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
@@ -44,6 +60,14 @@ export default function AccountsNavigator() {
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
         options={{
+          headerLeft: () => (
+            // There are spacing differences between ReadOnly and normal modes
+            <Box ml={6} mt={readOnlyModeEnabled ? 0 : 6}>
+              <TouchableOpacity onPress={goBackFromAccount}>
+                <Icons.ArrowLeftMedium size={24} />
+              </TouchableOpacity>
+            </Box>
+          ),
           headerTitle: () =>
             readOnlyModeEnabled ? (
               <ReadOnlyAccountHeaderTitle />

@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
+import { track } from "../../analytics";
 
 type Props = {
   readOnly?: boolean;
@@ -14,15 +16,28 @@ type Props = {
 function AccountsNavigationHeader({ readOnly }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const currentRoute = useCurrentRouteName();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Add Account '+'",
+      screen: currentRoute,
+    });
     navigation.navigate(ScreenName.NoDeviceWallScreen);
-  }, [navigation]);
+  }, [navigation, currentRoute]);
+
+  const goBack = useCallback(() => {
+    track("button_clicked", {
+      button: "Back",
+      screen: currentRoute,
+    });
+    navigation.goBack();
+  }, [navigation, currentRoute]);
 
   return (
     <Flex p={6} flexDirection="row" alignItems="center">
       <Box mr={3}>
-        <TouchableOpacity onPress={navigation.goBack}>
+        <TouchableOpacity onPress={goBack}>
           <Icons.ArrowLeftMedium size={24} />
         </TouchableOpacity>
       </Box>
