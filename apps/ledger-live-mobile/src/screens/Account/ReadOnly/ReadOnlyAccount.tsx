@@ -26,7 +26,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
-import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type RouteParams = {
   currencyId: string;

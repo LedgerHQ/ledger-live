@@ -23,7 +23,7 @@ import TabBarSafeAreaView, {
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
 import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 

@@ -46,7 +46,7 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
-import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),

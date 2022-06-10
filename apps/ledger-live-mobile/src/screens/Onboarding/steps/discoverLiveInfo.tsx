@@ -18,7 +18,7 @@ import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
 import { NavigatorName, ScreenName } from "../../../const";
 import { screen } from "../../../analytics";
-import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),

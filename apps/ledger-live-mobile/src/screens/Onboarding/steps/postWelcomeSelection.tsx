@@ -10,7 +10,10 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
 import { useTheme } from "styled-components/native";
-import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
+import {
+  usePreviousRouteName,
+  useCurrentRouteName,
+} from "../../../helpers/routeHooks";
 
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
@@ -75,6 +78,12 @@ const PostWelcomeDiscoverCard = ({
   );
 };
 
+type DataType = {
+  title: string;
+  event: string;
+  onValidate: () => void;
+};
+
 function PostWelcomeSelection({
   route,
 }: {
@@ -84,7 +93,7 @@ function PostWelcomeSelection({
 
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const [selectedOption, setSelectedOption] = useState({});
+  const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
 
   const setupLedger = useCallback(() => {
     // TODO: FIX @react-navigation/native using Typescript
@@ -105,6 +114,26 @@ function PostWelcomeSelection({
   }, [navigation]);
 
   const previousRoute = usePreviousRouteName();
+  const currentRoute = useCurrentRouteName();
+
+  const onCardClick = useCallback(
+    (data: DataType, value: string) => {
+      setSelectedOption(data);
+      track("banner_clicked", {
+        banner: value,
+        screen: currentRoute,
+      });
+    },
+    [currentRoute],
+  );
+
+  const onContinue = useCallback(() => {
+    selectedOption?.onValidate();
+    track("button_clicked", {
+      button: "Continue",
+      screen: currentRoute,
+    });
+  }, [currentRoute, selectedOption]);
 
   return (
     <Flex flex={1} bg="background.main">
@@ -136,7 +165,7 @@ function PostWelcomeSelection({
             event="Onboarding PostWelcome - Setup Ledger"
             testID={`Onboarding PostWelcome - Selection|SetupLedger`}
             selectedOption={selectedOption}
-            onPress={setSelectedOption}
+            onPress={(data: DataType) => onCardClick(data, "Setup my Ledger")}
             onValidate={setupLedger}
             imageSource={setupLedgerImg}
           />
@@ -147,7 +176,7 @@ function PostWelcomeSelection({
           event="Onboarding PostWelcome - Explore Ledger"
           testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
           selectedOption={selectedOption}
-          onPress={setSelectedOption}
+          onPress={(data: DataType) => onCardClick(data, "Explore LL")}
           onValidate={exploreLedger}
           imageSource={discoverLiveImg}
         />
@@ -158,7 +187,7 @@ function PostWelcomeSelection({
             event="Onboarding PostWelcome - Buy Nano"
             testID={`Onboarding PostWelcome - Selection|BuyNano`}
             selectedOption={selectedOption}
-            onPress={setSelectedOption}
+            onPress={(data: DataType) => onCardClick(data, "Buy a Nano X")}
             onValidate={buyLedger}
             imageSource={buyNanoImg}
           />
@@ -170,7 +199,7 @@ function PostWelcomeSelection({
           type="main"
           outline={false}
           event={selectedOption.event}
-          onPress={selectedOption.onValidate}
+          onPress={onContinue}
           size="large"
           m={6}
           mb={8}

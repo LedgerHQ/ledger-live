@@ -8,4 +8,12 @@ function usePreviousRouteName() {
   );
 }
 
-export default usePreviousRouteName;
+function useCurrentRouteName() {
+  return useNavigationState(state =>
+    state.routes[state.index]?.name
+      ? state.routes[state.index].name
+      : undefined,
+  );
+}
+
+export { usePreviousRouteName, useCurrentRouteName };
