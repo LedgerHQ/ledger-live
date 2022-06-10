@@ -92,12 +92,9 @@ platform :ios do
   private_lane :build do |options|
     export_options_method = (options[:adhoc] ? "ad-hoc" : "app-store")
     code_sign_identity = "iPhone Distribution"
-    MY_APP_BUNDLE_ID = (options[:adhoc] ? "#{ENV["APP_IDENTIFIER"]}.*" : "#{ENV["APP_IDENTIFIER"]}")
-    MY_APP_ID = (options[:adhoc] ? (ENV["SHA"] != nil ? "#{ENV["APP_IDENTIFIER"]}.#{ENV["SHA"]}" : "#{ENV["APP_IDENTIFIER"]}.local") : "#{ENV["APP_IDENTIFIER"]}")
-    if (options[:mono])
-      MY_APP_BUNDLE_ID = "#{ENV["APP_IDENTIFIER"]}.*"
-      MY_APP_ID = "#{ENV["APP_IDENTIFIER"]}.mono"
-    end
+    MY_APP_BUNDLE_ID = ENV["MY_APP_BUNDLE_ID"]
+    MY_APP_ID = (options[:adhoc] ? "#{ENV["SHORT_BUNDLE_ID"]}.local" : "#{ENV["APP_IDENTIFIER"]}")
+
     MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
     MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
 
@@ -325,16 +322,6 @@ platform :android do
   desc "private: prepare android for internal"
   private_lane :prepare_android_internal do |options|
     bump_version_code
-    # version_code = android_get_version_code(gradle_file: 'android/app/build.gradle')
-    # git_commit(
-    #   path: [
-    #     "android/app/build.gradle"
-    #   ],
-    #   message: "Bump android version to v#{package["version"]}-#{version_code}#{options[:nightly] ? " (nightly)" : ""}"
-    # )
-    # add_git_tag(
-    #   tag: "android-v#{package["version"]}-#{version_code}"
-    # )
   end
 
   desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
