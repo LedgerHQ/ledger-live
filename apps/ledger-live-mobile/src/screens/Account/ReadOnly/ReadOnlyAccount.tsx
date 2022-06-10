@@ -26,6 +26,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
+import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
 
 type RouteParams = {
   currencyId: string;
@@ -125,9 +126,16 @@ function ReadOnlyAccount({ route }: Props) {
   const renderItem = useCallback(({ item }: any) => item, []);
   const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
-      <TrackScreen category="Account" currency={currency} operationsSize={0} />
+      <TrackScreen
+        category="Account"
+        currency={currency}
+        operationsSize={0}
+        source={previousRoute}
+      />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
