@@ -34,7 +34,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   }, [navigation]);
 
   return (
-    <Flex flex={1}>
+    <Flex flex={1} bg="background.main">
       <StyledStatusBar barStyle="light-content" />
       <Box flex={1} justifyContent="center" alignItems="center" mt={8} mx={7}>
         <Image
@@ -64,6 +64,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
           size="large"
           event="Onboarding - Start"
           onPress={nextDontHaveALedger}
+          mb={6}
         >
           {t("common.no")}
         </Button>
