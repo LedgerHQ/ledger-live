@@ -17,8 +17,11 @@ import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
 import { NavigatorName, ScreenName } from "../../../const";
-import { screen } from "../../../analytics";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import { screen, track } from "../../../analytics";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../../helpers/routeHooks";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -46,15 +49,27 @@ const Item = ({
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  const onClick = useCallback(
+    (value: string) => {
+      track("button_clicked", {
+        button: value,
+        screen: currentRoute,
+      });
+    },
+    [currentRoute],
+  );
+
   const buyLedger = useCallback(() => {
+    onClick("Buy a Ledger");
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
     navigation.navigate(NavigatorName.BuyDevice);
-  }, [navigation]);
+  }, [navigation, onClick]);
 
   const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
+    onClick("Explore without a device");
 
     // Fixme: Navigate to read only page ?
     // TODO: FIX @react-navigation/native using Typescript
@@ -62,7 +77,9 @@ const Item = ({
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [dispatch, navigation]);
+  }, [dispatch, navigation, onClick]);
+
+  const currentRoute = useCurrentRouteName();
 
   return (
     <Flex flex={1} backgroundColor={`background.main`}>
