@@ -23,6 +23,7 @@ import TabBarSafeAreaView, {
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
 import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -129,9 +130,15 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     [t],
   );
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="Accounts" accountsLength={accounts.length} />
+      <TrackScreen
+        category="Accounts"
+        accountsLength={accounts.length}
+        source={previousRoute}
+      />
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FilteredSearchBar
