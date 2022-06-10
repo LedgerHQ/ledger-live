@@ -15,12 +15,13 @@ import {
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
+  discreetModeSelector,
 } from "../../reducers/settings";
 import { Props as ModalProps } from "../BottomModal";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
-import { TrackScreen, useAnalytics } from "../../analytics";
+import { track, TrackScreen, useAnalytics } from "../../analytics";
 import { urls } from "../../config/urls";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
@@ -38,6 +39,8 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
     accounts,
   ]);
+  const currentRoute = useCurrentRouteName();
+  const discreetMode = useSelector(discreetModeSelector);
 
   const onNavigate = useCallback(
     (name: string, options?: { [key: string]: any }) => {
@@ -50,44 +53,60 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [navigation, onClose],
   );
 
-  const onSendFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.SendFunds, {
-        screen: ScreenName.SendCoin,
-      }),
-    [onNavigate],
+  const trackClick = useCallback(
+    (buttonTitle: string) => {
+      discreetMode &&
+        track("button_clicked", {
+          button: buttonTitle,
+          screen: currentRoute,
+          drawer: "trade",
+        });
+    },
+    [currentRoute, discreetMode],
   );
-  const onReceiveFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
-      }),
-    [onNavigate],
-  );
-  const onSwap = useCallback(
-    () =>
-      onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
-      }),
-    [onNavigate],
-  );
-  const onBuy = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
-    [onNavigate],
-  );
-  const onSell = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
-    [onNavigate],
-  );
-  const onLending = useCallback(
-    () =>
-      onNavigate(NavigatorName.Lending, {
-        screen: ScreenName.LendingDashboard,
-      }),
-    [onNavigate],
-  );
+
+  const onSendFunds = useCallback(() => {
+    trackClick("Send");
+    onNavigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+    });
+  }, [onNavigate, trackClick]);
+
+  const onReceiveFunds = useCallback(() => {
+    trackClick("Receive");
+    onNavigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveSelectAccount,
+    });
+  }, [onNavigate, trackClick]);
+
+  const onSwap = useCallback(() => {
+    trackClick("Swap");
+    onNavigate(NavigatorName.Swap, {
+      screen: ScreenName.Swap,
+    });
+  }, [onNavigate, trackClick]);
+
+  const onBuy = useCallback(() => {
+    trackClick("Buy");
+    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
+  }, [onNavigate, trackClick]);
+
+  const onSell = useCallback(() => {
+    trackClick("Sell");
+    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell });
+  }, [onNavigate, trackClick]);
+
+  const onLending = useCallback(() => {
+    trackClick("Lending");
+    onNavigate(NavigatorName.Lending, {
+      screen: ScreenName.LendingDashboard,
+    });
+  }, [onNavigate, trackClick]);
+
+  const onManageCard = useCallback(() => {
+    trackClick("Manage Card");
+    Linking.openURL(urls.manageClCard);
+  }, [trackClick]);
 
   const buttons = (
     <>
@@ -187,8 +206,6 @@ export default function TransferDrawer({ onClose }: ModalProps) {
       ) : null}
     </>
   );
-
-  const currentRoute = useCurrentRouteName();
 
   const bannerEventProperties = useMemo(
     () => ({
