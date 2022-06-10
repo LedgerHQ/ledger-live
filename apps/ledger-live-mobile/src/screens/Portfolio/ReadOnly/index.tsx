@@ -46,6 +46,7 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
+import usePreviousRouteName from "../../../helpers/usePreviousRouteName";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -227,6 +228,8 @@ function PortfolioScreen({ navigation }: Props) {
     ],
   );
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <>
       <TabBarSafeAreaView>
@@ -236,6 +239,7 @@ function PortfolioScreen({ navigation }: Props) {
           category="Portfolio"
           accountsLength={topCryptoCurrencies.length}
           discreet={discreetMode}
+          source={previousRoute}
         />
         <Box bg={"background.main"}>
           <Header
