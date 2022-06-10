@@ -26,7 +26,10 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../../helpers/routeHooks";
 
 type RouteParams = {
   currencyId: string;
@@ -55,6 +58,8 @@ function ReadOnlyAccount({ route }: Props) {
   );
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
+
+  const currentRoute = useCurrentRouteName();
 
   const data = [
     <Box mx={6} my={6}>
@@ -117,6 +122,11 @@ function ReadOnlyAccount({ route }: Props) {
           buttonLabel={t("buyDevice.bannerButtonTitle")}
           buttonSize="small"
           event="button_clicked"
+          eventProperties={{
+            button: "Discover the Nano",
+            screen: currentRoute,
+            currency: currency.name,
+          }}
           {...IMAGE_PROPS_BIG_NANO}
         />
       )}

@@ -46,7 +46,10 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/lib/types";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../../helpers/routeHooks";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -175,6 +178,8 @@ function PortfolioScreen({ navigation }: Props) {
     [topCryptoCurrencies],
   );
 
+  const currentRoute = useCurrentRouteName();
+
   const data = useMemo(
     () => [
       hasOrderedNano && (
@@ -213,6 +218,10 @@ function PortfolioScreen({ navigation }: Props) {
           buttonLabel={t("buyDevice.bannerButtonTitle")}
           buttonSize="small"
           event="button_clicked"
+          eventProperties={{
+            button: "Discover the Nano",
+            screen: currentRoute,
+          }}
           {...IMAGE_PROPS_BIG_NANO}
         />
       ),
@@ -225,6 +234,7 @@ function PortfolioScreen({ navigation }: Props) {
       showCarousel,
       navigation,
       assetsToDisplay,
+      currentRoute,
     ],
   );
 

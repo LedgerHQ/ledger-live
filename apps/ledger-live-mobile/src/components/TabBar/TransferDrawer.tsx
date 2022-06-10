@@ -188,17 +188,18 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     </>
   );
 
+  const currentRoute = useCurrentRouteName();
+
   const bannerEventProperties = useMemo(
     () => ({
       banner: "You'll need a nano",
       button: "Buy a device",
       drawer: "transfer",
       page,
+      screen: currentRoute,
     }),
-    [page],
+    [page, currentRoute],
   );
-
-  const currentRoute = useCurrentRouteName();
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
