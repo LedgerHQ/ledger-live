@@ -1,20 +1,27 @@
 import BigNumber from "bignumber.js";
 import { Account, CryptoCurrency } from "../../types";
-import prepareMessageToSign from "./signMessage";
+import { prepareMessageToSign } from "./index";
+import { MessageData } from "./types";
 
 describe("prepareMessageToSign", () => {
   it("returns the prepared data from a simple string", () => {
     // Given
-    const crypto = createCryptoCurrency();
+    const crypto = createCryptoCurrency("ethereum");
     const account = createAccount(crypto);
-
     const message = "Message de test";
     const expectedRawMessage = "4d6573736167652064652074657374";
 
     // When
-    const result = prepareMessageToSign(account, message);
+    let result: MessageData | null = null;
+    let error: unknown = null;
+    try {
+      result = prepareMessageToSign(account, message);
+    } catch (err) {
+      error = err;
+    }
 
     // Then
+    expect(error).toBeNull();
     expect(result).toEqual({
       currency: crypto,
       path: "44'/60'/0'/0/0",
@@ -23,9 +30,29 @@ describe("prepareMessageToSign", () => {
       rawMessage: expectedRawMessage,
     });
   });
+
+  it("returns an error if account is not linked to a crypto able to sign a message", () => {
+    // Given
+    const crypto = createCryptoCurrency("mycoin");
+    const account = createAccount(crypto);
+    const message = "Message de test";
+
+    // When
+    let result: MessageData | null = null;
+    let error: Error | null = null;
+    try {
+      result = prepareMessageToSign(account, message);
+    } catch (err) {
+      error = err as Error;
+    }
+
+    // Then
+    expect(result).toBeNull();
+    expect(error).toEqual(Error("Crypto does not support signMessage"));
+  });
 });
 
-const createCryptoCurrency = (): CryptoCurrency => ({
+const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId",
   coinType: 8008,
@@ -35,7 +62,7 @@ const createCryptoCurrency = (): CryptoCurrency => ({
   countervalueTicker: "MYC",
   scheme: "mycoin",
   color: "#ff0000",
-  family: "mycoin",
+  family,
   units: [
     {
       name: "MYC",
