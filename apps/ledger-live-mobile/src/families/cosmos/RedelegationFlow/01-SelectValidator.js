@@ -61,7 +61,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(t, {
         mode: "redelegate",
         validators: [],
-        cosmosSourceValidator: route.params?.validatorSrcAddress,
+        sourceValidator: route.params?.validatorSrcAddress,
         /** @TODO remove this once the bridge handles it */
         recipient: mainAccount.freshAddress,
       }),
@@ -69,7 +69,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
   });
 
   invariant(
-    transaction && transaction.cosmosSourceValidator,
+    transaction && transaction.sourceValidator,
     "transaction src validator required",
   );
 
@@ -83,9 +83,9 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     () =>
       validators.find(
         ({ validatorAddress }) =>
-          validatorAddress === transaction.cosmosSourceValidator,
+          validatorAddress === transaction.sourceValidator,
       ),
-    [validators, transaction.cosmosSourceValidator],
+    [validators, transaction.sourceValidator],
   );
 
   const SR = useSortedValidators(searchQuery, validators, []);
@@ -94,9 +94,9 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     () =>
       delegations.find(
         ({ validatorAddress }) =>
-          validatorAddress === transaction.cosmosSourceValidator,
+          validatorAddress === transaction.sourceValidator,
       ),
-    [delegations, transaction.cosmosSourceValidator],
+    [delegations, transaction.sourceValidator],
   );
 
   invariant(srcDelegation, "source delegation required");
@@ -109,7 +109,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
         (data, validator) => {
           if (
             validator.validator.validatorAddress ===
-            transaction?.cosmosSourceValidator
+            transaction?.sourceValidator
           )
             return data;
 

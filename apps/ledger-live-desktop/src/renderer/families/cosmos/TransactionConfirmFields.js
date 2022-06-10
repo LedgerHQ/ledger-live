@@ -188,7 +188,7 @@ const CosmosValidatorAmountField = ({
   ) : null;
 };
 
-const CosmosSourceValidatorField = ({
+const sourceValidatorField = ({
   account,
   parentAccount,
   transaction,
@@ -197,11 +197,11 @@ const CosmosSourceValidatorField = ({
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const { cosmosSourceValidator } = transaction;
+  const { sourceValidator } = transaction;
   const { validators: cosmosValidators } = useCosmosPreloadData();
   const formattedValidator = useMemo(
-    () => cosmosValidators.find(v => v.validatorAddress === cosmosSourceValidator),
-    [cosmosValidators, cosmosSourceValidator],
+    () => cosmosValidators.find(v => v.validatorAddress === sourceValidator),
+    [cosmosValidators, sourceValidator],
   );
 
   return formattedValidator ? (
@@ -275,7 +275,7 @@ const fieldComponents = {
   "cosmos.delegateValidators": CosmosDelegateValidatorsField,
   "cosmos.validatorName": CosmosValidatorNameField,
   "cosmos.validatorAmount": CosmosValidatorAmountField,
-  "cosmos.sourceValidatorName": CosmosSourceValidatorField,
+  "cosmos.sourceValidatorName": sourceValidatorField,
 };
 
 export default {

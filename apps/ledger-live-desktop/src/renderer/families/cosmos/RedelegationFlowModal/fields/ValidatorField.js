@@ -29,7 +29,7 @@ export default function ValidatorField({ account, transaction, t, onChange }: *)
 
   const unit = getAccountUnit(account);
 
-  const fromValidatorAddress = transaction.cosmosSourceValidator;
+  const fromValidatorAddress = transaction.sourceValidator;
   const sortedFilteredValidators = validators.filter(
     v => v.validatorAddress !== fromValidatorAddress,
   );

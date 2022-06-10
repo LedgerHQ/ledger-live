@@ -187,8 +187,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       break;
     }
     case "REDELEGATE": {
-      const { cosmosSourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !cosmosSourceValidator) return null;
+      const { sourceValidator, validators } = extra;
+      if (!validators || validators.length <= 0 || !sourceValidator) return null;
 
       const validator = extra.validators[0];
 
@@ -197,7 +197,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       );
 
       const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === cosmosSourceValidator,
+        v => v.validatorAddress === sourceValidator,
       );
 
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
@@ -210,8 +210,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
               <Trans i18nKey={"operationDetails.extra.redelegatedFrom"} />
             </OpDetailsTitle>
             <OpDetailsData>
-              <Address onClick={redirectAddress(currency, cosmosSourceValidator)}>
-                {formattedSourceValidator ? formattedSourceValidator.name : cosmosSourceValidator}
+              <Address onClick={redirectAddress(currency, sourceValidator)}>
+                {formattedSourceValidator ? formattedSourceValidator.name : sourceValidator}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
