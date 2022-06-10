@@ -12,8 +12,8 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 import {
