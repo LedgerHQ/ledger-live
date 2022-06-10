@@ -48,19 +48,16 @@ jobs:
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
         run: pnpm changeset version
-
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
         run: |
@@ -79,12 +76,26 @@ jobs:
           git add .
           git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease" ||
           echo ""
-
       - name: publish prerelease
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: tag desktop
+        if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
+        run: |
+          git tag @ledgerhq/live-desktop@${{{ steps.post-desktop-version.outputs.version }}}
+      - name: tag mobile
+        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
+        run: |
+          git tag @ledgerhq/live-mobile@${{{ steps.post-mobile-version.outputs.version }}}
       - name: push changes (push event)
         if: ${{ github.event_name == 'push' }}
         run: |
@@ -93,17 +104,14 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git push origin ${{ github.event.inputs.ref }} --follow-tags
-
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -119,7 +127,6 @@ jobs:
                 ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
               }
             });
-
       - uses: actions/github-script@v6
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
