@@ -90,6 +90,12 @@ const buildRendererConfig = (mode, wpConf) => {
       ...wpConf.output,
       publicPath: mode === "production" ? "./" : "/webpack",
     },
+    watchOptions:
+      mode === "development"
+        ? {
+            aggregateTimeout: 150,
+          }
+        : undefined,
   };
 };
 

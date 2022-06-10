@@ -55,6 +55,7 @@ module.exports = {
     rules: [
       {
         test: /\.(ts)x?$/,
+        include: path.resolve(lldFolder, "src"),
         loader: "esbuild-loader",
         options: {
           loader: "tsx",
@@ -62,6 +63,7 @@ module.exports = {
       },
       {
         test: /\.(js)x?$/i,
+        include: [path.resolve(lldFolder, "src"), path.resolve(lldFolder, "tests")],
         use: [
           {
             loader: "esbuild-loader",
