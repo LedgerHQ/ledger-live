@@ -1,5 +1,11 @@
 import React, { forwardRef } from "react";
-import { View, FlatListProps, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import {
+  View,
+  FlatListProps,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  FlatList,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
@@ -17,11 +23,8 @@ type ScrollListContainerProps = BaseStyledProps &
  ** This Layout is a wrapper for FlatList that accepts
  ** complex onScroll callback for react-native-reanimated.
  */
-const ScrollListContainer = forwardRef(
-  (
-    { children, onScroll, horizontal = false, ...props }: ScrollListContainerProps,
-    ref,
-  ): JSX.Element => {
+const ScrollListContainer = forwardRef<FlatList, ScrollListContainerProps>(
+  ({ children, onScroll, horizontal = false, ...props }, ref) => {
     return (
       <AnimatedFlatList
         ref={ref}
