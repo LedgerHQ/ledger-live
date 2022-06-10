@@ -1,5 +1,24 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike, Operation } from "./types";
+import { encodeNftId } from "./nft";
+import {
+  encodeERC1155OperationId,
+  encodeERC721OperationId,
+} from "./nft/nftOperationId";
+import {
+  Account,
+  AccountLike,
+  decodeAccountId,
+  NFTStandard,
+  Operation,
+} from "./types";
+
+const nftOperationIdEncoderPerStandard: Record<
+  NFTStandard,
+  (...args: any[]) => string
+> = {
+  ERC721: encodeERC721OperationId,
+  ERC1155: encodeERC1155OperationId,
+};
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -73,6 +92,26 @@ export function patchOperationWithHash(
         hash,
         id: encodeOperationId(op.accountId, hash, op.type),
       })),
+    nftOperations:
+      operation.nftOperations &&
+      operation.nftOperations.map((nftOp, i) => {
+        const { currencyId } = decodeAccountId(operation.accountId);
+        const nftId = encodeNftId(
+          operation.accountId,
+          nftOp.contract || "",
+          nftOp.tokenId || "",
+          currencyId
+        );
+        const nftOperationIdEncoder =
+          nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
+          nftOperationIdEncoderPerStandard.ERC721;
+
+        return {
+          ...nftOp,
+          hash,
+          id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
+        };
+      }),
   };
 }
 
