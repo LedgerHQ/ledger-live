@@ -7,15 +7,15 @@ import type { AccountLike, TransactionStatus } from "../../types";
 
 export type ExtraDeviceTransactionField =
   | {
-      type: "osmosis.delegateValidators";
+      type: "cosmos.delegateValidators";
       label: string;
     }
   | {
-      type: "osmosis.validatorName";
+      type: "cosmos.validatorName";
       label: string;
     }
   | {
-      type: "osmosis.sourceValidatorName";
+      type: "cosmos.sourceValidatorName";
       label: string;
     }
   | {
@@ -33,7 +33,7 @@ function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const { mode, memo, validators } = transaction;
-  const currency = getCryptoCurrencyById("osmosis");
+  const currency = getCryptoCurrencyById("osmo");
   const fields: Array<DeviceTransactionField> = [];
 
   switch (mode) {
@@ -52,7 +52,7 @@ function getDeviceTransactionConfig({
       });
 
       fields.push({
-        type: "osmosis.delegateValidators",
+        type: "cosmos.delegateValidators",
         label: "Validators",
       });
       break;
@@ -76,7 +76,7 @@ function getDeviceTransactionConfig({
         ),
       });
       fields.push({
-        type: "osmosis.validatorName",
+        type: "cosmos.validatorName",
         label: "Validator",
       });
       break;
@@ -102,12 +102,12 @@ function getDeviceTransactionConfig({
       });
 
       fields.push({
-        type: "osmosis.validatorName",
+        type: "cosmos.validatorName",
         label: "Validator Dest",
       });
 
       fields.push({
-        type: "osmosis.sourceValidatorName",
+        type: "cosmos.sourceValidatorName",
         label: "Validator Source",
       });
       break;
@@ -119,7 +119,7 @@ function getDeviceTransactionConfig({
         value: "Withdraw Reward",
       });
       fields.push({
-        type: "osmosis.validatorName",
+        type: "cosmos.validatorName",
         label: "Validator",
       });
       break;
@@ -131,7 +131,7 @@ function getDeviceTransactionConfig({
         value: "Withdraw Reward",
       });
       fields.push({
-        type: "osmosis.validatorName",
+        type: "cosmos.validatorName",
         label: "Validator",
       });
       fields.push({
@@ -140,7 +140,7 @@ function getDeviceTransactionConfig({
         value: "Delegate",
       });
       fields.push({
-        type: "osmosis.delegateValidators",
+        type: "cosmos.delegateValidators",
         label: "Validators",
       });
       break;
