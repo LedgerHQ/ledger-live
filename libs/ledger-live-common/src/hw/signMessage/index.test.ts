@@ -9,7 +9,7 @@ describe("prepareMessageToSign", () => {
     const crypto = createCryptoCurrency("ethereum");
     const account = createAccount(crypto);
     const message = "Message de test";
-    const expectedRawMessage = "4d6573736167652064652074657374";
+    const expectedRawMessage = "0x4d6573736167652064652074657374";
 
     // When
     let result: MessageData | null = null;

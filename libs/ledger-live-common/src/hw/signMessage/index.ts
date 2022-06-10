@@ -28,7 +28,7 @@ export const prepareMessageToSign = (
     path: freshAddressPath,
     derivationMode: derivationMode,
     message: message,
-    rawMessage: Buffer.from(message).toString("hex"),
+    rawMessage: "0x" + Buffer.from(message).toString("hex"),
   };
 };
 
