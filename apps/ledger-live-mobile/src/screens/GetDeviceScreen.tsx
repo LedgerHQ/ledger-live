@@ -25,7 +25,7 @@ import {
   hasCompletedOnboardingSelector,
   discreetModeSelector,
 } from "../reducers/settings";
-import { TrackScreen } from "../analytics";
+import { track, TrackScreen } from "../analytics";
 import { useCurrentRouteName } from "../helpers/routeHooks";
 
 const hitSlop = {
@@ -84,8 +84,16 @@ export default function GetDeviceScreen() {
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const discreetMode = useSelector(discreetModeSelector);
+  const currentRoute = useCurrentRouteName();
 
-  const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+  const handleBack = useCallback(() => {
+    navigation.goBack();
+    discreetMode &&
+      track("button_clicked", {
+        button: "close",
+        screen: currentRoute,
+      });
+  }, [currentRoute, discreetMode, navigation]);
 
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
@@ -96,7 +104,19 @@ export default function GetDeviceScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-  }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
+    discreetMode &&
+      track("message_clicked", {
+        message: "I already have a device, set it up now",
+        // TODO analytics : link: "",
+        screen: currentRoute,
+      });
+  }, [
+    currentRoute,
+    discreetMode,
+    navigation,
+    setFirstTimeOnboarding,
+    setShowWelcome,
+  ]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
@@ -107,8 +127,6 @@ export default function GetDeviceScreen() {
   }, [buyDeviceFromLive?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
-
-  const currentRoute = useCurrentRouteName();
 
   return (
     <StyledSafeAreaView>
