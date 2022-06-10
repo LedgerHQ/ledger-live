@@ -44,7 +44,7 @@ function inferAccounts(
 ): AccountLikeArray {
   invariant(account.currency.family === "algorand", "algorand family");
 
-  if (!opts.token || opts.mode === "optIn") {
+  if (opts.token.length === 0 || opts.mode === "optIn") {
     const accounts: Account[] = [account];
     return accounts;
   }

@@ -14,7 +14,8 @@ import type {
 } from "../../types";
 import type { BalanceAsset } from "./types";
 
-const getAssetIdFromTokenId = (tokenId: string) => tokenId.split("/")[2];
+export const getAssetIdFromTokenId = (tokenId: string): string =>
+  tokenId.split("/")[2];
 
 const getAssetIdFromAsset = (asset: BalanceAsset) =>
   `${asset.asset_code}:${asset.asset_issuer}`;
@@ -52,7 +53,7 @@ const buildStellarTokenAccount = ({
     starred: false,
     token,
     operationsCount: operations.length,
-    operations,
+    operations: operations.map((op) => ({ ...op, accountId: id })),
     pendingOperations: [],
     balance,
     spendableBalance,
@@ -87,7 +88,7 @@ export const buildSubAccounts = ({
 
   const tokenAccounts: TokenAccount[] = [];
 
-  assets.forEach((asset) => {
+  assets.map((asset) => {
     const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {

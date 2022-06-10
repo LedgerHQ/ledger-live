@@ -1,10 +1,13 @@
 import invariant from "invariant";
+import { getAccountCurrency } from "../../account";
 import type {
   Transaction,
   AccountLike,
   Account,
   AccountLikeArray,
 } from "../../types";
+import { getAssetIdFromTokenId } from "./tokens";
+
 const options = [
   {
     name: "fee",
@@ -21,6 +24,21 @@ const options = [
     type: String,
     desc: "stellar memo value",
   },
+  {
+    name: "operationType",
+    type: String,
+    desc: "change operation type",
+  },
+  {
+    name: "assetIssuer",
+    type: String,
+    desc: "Asset issuer",
+  },
+  {
+    name: "assetCode",
+    type: String,
+    desc: "Same as token",
+  },
 ];
 
 function inferTransactions(
@@ -30,12 +48,17 @@ function inferTransactions(
   }>,
   opts: Record<string, any>
 ): Transaction[] {
-  return transactions.map(({ transaction }) => {
+  return transactions.map(({ transaction, account }) => {
     invariant(transaction.family === "stellar", "stellar family");
+
     return {
       ...transaction,
+      subAccountId: account.type === "TokenAccount" ? account.id : null,
       memoType: opts.memoType,
       memoValue: opts.memoValue,
+      operationType: opts.mode ?? opts.operationType ?? "payment",
+      assetCode: opts.token,
+      assetIssuer: opts.assetIssuer,
     };
   });
 }
@@ -56,6 +79,29 @@ function inferAccounts(
     }
 
     return [assetSubAccount];
+  }
+
+  if (opts.assetCode) {
+    const subAccounts = account.subAccounts || [];
+
+    const subAccount = subAccounts.find((sa) => {
+      const currency = getAccountCurrency(sa);
+      return (
+        opts.assetCode.toLowerCase() === currency.ticker.toLowerCase() ||
+        opts.assetCode.toLowerCase() === getAssetIdFromTokenId(currency.id)
+      );
+    });
+
+    if (!subAccount) {
+      throw new Error(
+        "token account '" +
+          opts.assetCode +
+          "' not found. Available: " +
+          subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
+      );
+    }
+
+    return [subAccount];
   }
 
   return [account];
