@@ -533,6 +533,8 @@ importers:
       '@types/react-native-video': ^5.0.13
       '@types/react-redux': ^7.1.24
       '@types/react-test-renderer': ^17.0.1
+      '@types/redux-actions': ^2.6.2
+      '@types/semver': ^7.3.9
       '@types/styled-components': ^5.1.25
       '@types/styled-system': ^5.1.15
       assert: ^2.0.0
@@ -666,6 +668,7 @@ importers:
       rn-snoopy: ^2.0.2
       rxjs: ^6.6.6
       rxjs-compat: ^6.6.6
+      semver: ^7.3.7
       stream-browserify: ^3.0.0
       string_decoder: ~1.3.0
       styled-components: ^5.3.3
@@ -817,6 +820,7 @@ importers:
       rn-snoopy: 2.0.2_eslint@7.32.0
       rxjs: 6.6.7
       rxjs-compat: 6.6.7
+      semver: 7.3.7
       stream-browserify: 3.0.0
       string_decoder: 1.3.0
       styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
@@ -843,6 +847,8 @@ importers:
       '@types/react-native-video': 5.0.13_@types+react@17.0.45
       '@types/react-redux': 7.1.24_@types+react@17.0.45
       '@types/react-test-renderer': 17.0.2_@types+react@17.0.45
+      '@types/redux-actions': 2.6.2
+      '@types/semver': 7.3.9
       '@types/styled-components': 5.1.25_@types+react@17.0.45
       '@types/styled-system': 5.1.15
       babel-jest: 26.6.3_epmq4ny5eiwbyxkub5iqcapase
@@ -920,7 +926,7 @@ importers:
       '@polkadot/util-crypto': 9.2.1
       '@polkadot/wasm-crypto': 6.0.1
       '@solana/spl-token': ^0.2.0
-      '@solana/web3.js': ^1.41.4
+      '@solana/web3.js': 1.41.3
       '@svgr/core': ^5.5.0
       '@taquito/ledger-signer': stablelib
       '@taquito/taquito': stablelib
@@ -984,6 +990,7 @@ importers:
       eth-sig-util: 3.0.1
       ethereumjs-abi: ^0.6.8
       ethereumjs-util: ^7.1.4
+      events: ^3.3.0
       expect: ^27.4.6
       fs: ^0.0.1-security
       generic-pool: ^3.8.2
@@ -1074,7 +1081,7 @@ importers:
       '@polkadot/util-crypto': 9.2.1
       '@polkadot/wasm-crypto': 6.0.1_@polkadot+util@9.2.1
       '@solana/spl-token': 0.2.0
-      '@solana/web3.js': 1.41.4
+      '@solana/web3.js': 1.41.3
       '@taquito/ledger-signer': 11.1.0-stablelib.0
       '@taquito/taquito': 11.1.0-stablelib.0
       '@taquito/utils': 11.1.0-stablelib.0
@@ -1112,6 +1119,7 @@ importers:
       eth-sig-util: 3.0.1
       ethereumjs-abi: 0.6.8
       ethereumjs-util: 7.1.4
+      events: 3.3.0
       expect: 27.5.1
       generic-pool: 3.8.2
       invariant: 2.2.4
@@ -11570,15 +11578,43 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/web3.js/1.41.4:
-    resolution: {integrity: sha512-2/mjqUcGsBkLEvKxA+rWFE1vODBycAMa62r3wm3Uzb6nmsXQQNTotB+6YoeLQmF0mxVoy8ZA+/QENzBkGkPzSg==}
+  /@solana/web3.js/1.41.3:
+    resolution: {integrity: sha512-H+zRDh7zpzma8fvA6S16DJY2sDemw4HHU/3WR9kXQG+3jsRtIJxhOD2NAwu1M2JrXoblyE2QYHWneLKDV2Bu6g==}
     engines: {node: '>=12.20.0'}
     dependencies:
       '@babel/runtime': 7.17.9
       '@ethersproject/sha2': 5.6.0
       '@solana/buffer-layout': 4.0.0
-      '@solana/buffer-layout-utils': 0.2.0
       bn.js: 5.2.0
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.1
+      cross-fetch: 3.1.5
+      fast-stable-stringify: 1.0.0
+      jayson: 3.6.6
+      js-sha3: 0.8.0
+      rpc-websockets: 7.4.18
+      secp256k1: 4.0.3
+      sinon-chai: 3.7.0
+      superstruct: 0.14.2
+      tweetnacl: 1.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - chai
+      - encoding
+      - sinon
+      - utf-8-validate
+    dev: false
+
+  /@solana/web3.js/1.41.4:
+    resolution: {integrity: sha512-2/mjqUcGsBkLEvKxA+rWFE1vODBycAMa62r3wm3Uzb6nmsXQQNTotB+6YoeLQmF0mxVoy8ZA+/QENzBkGkPzSg==}
+    engines: {node: '>=12.20.0'}
+    dependencies:
+      '@babel/runtime': 7.18.2
+      '@ethersproject/sha2': 5.6.0
+      '@solana/buffer-layout': 4.0.0
+      '@solana/buffer-layout-utils': 0.2.0
+      bn.js: 5.2.1
       borsh: 0.7.0
       bs58: 4.0.1
       buffer: 6.0.1
@@ -18538,7 +18574,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.0_debug@4.3.4
     transitivePeerDependencies:
       - debug
     dev: false
@@ -21448,7 +21484,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream/1.5.2:
     resolution: {integrity: sha1-cIl4Yk2FavQaWnQd790mHadSwmY=}
@@ -22748,7 +22784,7 @@ packages:
     dev: true
 
   /decamelize/1.2.0:
-    resolution: {integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=}
+    resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
 
   /decamelize/4.0.0:
@@ -27125,16 +27161,6 @@ packages:
     resolution: {integrity: sha512-gBEuXOPNOKPrLdZpMFUSTyIo1eT2NSZRrwZ9r/0Jqw5tmT3Yvxfmu8KBHw8xW2XQkw6E/JoG+OlEq7UDtSUNgw==}
     dependencies:
       tabbable: 5.3.2
-    dev: false
-
-  /follow-redirects/1.15.0:
-    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
     dev: false
 
   /follow-redirects/1.15.0_debug@4.3.2:
@@ -36825,7 +36851,7 @@ packages:
     dev: true
 
   /p-try/1.0.0:
-    resolution: {integrity: sha1-y8ec26+P1CKOE/Yh8rGiN8GyB7M=}
+    resolution: {integrity: sha512-U1etNYuMJoIz3ZXSrrySFjsXQTWOx2/jdi86L+2pRvph/qMKL6sbcCYdH23fqsbm8TH2Gn0OybpT4eSFlCVHww==}
     engines: {node: '>=4'}
 
   /p-try/2.2.0:
@@ -42948,7 +42974,7 @@ packages:
       ansi-regex: 2.1.1
 
   /strip-ansi/4.0.0:
-    resolution: {integrity: sha1-qEeQIusaw2iocTibY1JixQXuNo8=}
+    resolution: {integrity: sha512-4XaJ2zQdCzROZDivEVIDPkcQn8LMFSa8kj8Gxb/Lnwzv9A8VctNZ+lfivC/sV3ivW8ElJTERXZoPBRrZKkNKow==}
     engines: {node: '>=4'}
     dependencies:
       ansi-regex: 3.0.1

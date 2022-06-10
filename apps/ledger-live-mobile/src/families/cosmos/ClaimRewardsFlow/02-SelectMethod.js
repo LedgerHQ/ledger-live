@@ -21,6 +21,7 @@ import {
 
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
@@ -31,8 +32,8 @@ import InfoModal from "../../../modals/Info";
 import Info from "../../../icons/Info";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
 import TranslatedError from "../../../components/TranslatedError";
+import ValidatorImage from "../shared/ValidatorImage";
 
 const options = [
   {
@@ -200,7 +201,14 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.byDelegationAssetsTo" />
           </LText>
           <View style={styles.row}>
-            <FirstLetterIcon label={name} />
+            <ValidatorImage
+              size={38}
+              isLedger={
+                LEDGER_VALIDATOR_ADDRESS ===
+                route.params.validator?.validatorAddress
+              }
+              name={name}
+            />
             <LText semiBold style={styles.label}>
               {name}
             </LText>
@@ -303,6 +311,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   desc: {
     textAlign: "center",

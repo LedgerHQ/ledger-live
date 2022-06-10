@@ -1,27 +1,18 @@
 # @ledgerhq/live-cli
 
-## 22.0.0-nightly.2
+## 21.33.1
 
 ### Patch Changes
 
-- Updated dependencies [8323d2eaa]
-- Updated dependencies [8861c4fe0]
-  - @ledgerhq/live-common@22.3.0-nightly.1
+- Updated dependencies [6bcf42ecd]
+  - @ledgerhq/live-common@22.2.1
 
-## 22.0.0-nightly.1
-
-### Major Changes
-
-- 77aa0a570: extracted live-cli to it's own module
-
-## 21.33.1-nightly.0
+## 21.33.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [09648db7f]
-- Updated dependencies [0f59cfc10]
-- Updated dependencies [71ad84023]
-  - @ledgerhq/live-common@22.2.1-nightly.0
+- Updated dependencies [6bcf42ecd]
+  - @ledgerhq/live-common@22.2.1-hotfix.0
 
 ## 21.33.0
 

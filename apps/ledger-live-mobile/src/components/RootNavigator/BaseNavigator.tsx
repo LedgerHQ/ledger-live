@@ -77,7 +77,6 @@ import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import Learn from "../../screens/Learn";
-import ManagerMain from "../../screens/Manager/Manager";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -551,11 +550,6 @@ export default function BaseNavigator() {
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "", headerRight: null }}
       />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];

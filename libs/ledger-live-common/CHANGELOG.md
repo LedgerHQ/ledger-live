@@ -1,22 +1,16 @@
 # @ledgerhq/live-common
 
-## 22.3.0-nightly.1
-
-### Minor Changes
-
-- 8861c4fe0: upgrade dependencies
+## 22.2.1
 
 ### Patch Changes
 
-- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+- 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
 
-## 22.2.1-nightly.0
+## 22.2.1-hotfix.0
 
 ### Patch Changes
 
-- 09648db7f: refactor of the top perfs filter
-- 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
-- 71ad84023: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+- 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
 
 ## 22.2.0
 

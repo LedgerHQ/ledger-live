@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.0.0-nightly.2",
+  "version": "21.33.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
