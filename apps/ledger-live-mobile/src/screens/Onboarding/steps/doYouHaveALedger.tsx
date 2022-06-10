@@ -6,13 +6,23 @@ import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { track, screen } from "../../../analytics";
+import { useCurrentRouteName } from "../../../helpers/routeHooks";
 
 const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
 
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
 
+  // TODO analytics : if device detected : track("Has at least 1 device", true);
+
   const nextHaveALedger = useCallback(() => {
+    // TODO analytics : user has a device
+    track("button_clicked", {
+      button: "Yes",
+      screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
+    });
+
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
     navigation.navigate({
@@ -23,7 +33,16 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     });
   }, [navigation]);
 
+  const currentRoute = useCurrentRouteName();
+
   const nextDontHaveALedger = useCallback(() => {
+    // TODO analytics : user doesn't has a device
+    track("button_clicked", {
+      First_connection_has_device: false,
+      button: "No",
+      screen: currentRoute,
+    });
+
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
     navigation.navigate({
