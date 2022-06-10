@@ -21,7 +21,12 @@ import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
-import { hasCompletedOnboardingSelector } from "../reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  discreetModeSelector,
+} from "../reducers/settings";
+import { TrackScreen } from "../analytics";
+import { useCurrentRouteName } from "../helpers/routeHooks";
 
 const hitSlop = {
   bottom: 10,
@@ -78,6 +83,7 @@ export default function GetDeviceScreen() {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const discreetMode = useSelector(discreetModeSelector);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -102,8 +108,17 @@ export default function GetDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
+  const currentRoute = useCurrentRouteName();
+
   return (
     <StyledSafeAreaView>
+      {discreetMode && (
+        <TrackScreen
+          category="ReadOnly"
+          name="Upsell Nano"
+          source={currentRoute}
+        />
+      )}
       <Flex
         flexDirection="row"
         alignItems="center"
