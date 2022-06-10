@@ -35,7 +35,7 @@ function getURLWhatIsThis(op: Operation): ?string {
 type Props = {
   extra: {
     validators: CosmosDelegationInfo[],
-    cosmosSourceValidator?: string,
+    sourceValidator?: string,
     memo?: string,
   },
   type: OperationType,
@@ -143,9 +143,8 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       break;
     }
     case "REDELEGATE": {
-      const { cosmosSourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !cosmosSourceValidator)
-        break;
+      const { sourceValidator, validators } = extra;
+      if (!validators || validators.length <= 0 || !sourceValidator) break;
 
       const validator = extra.validators[0];
 
@@ -154,7 +153,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       );
 
       const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === cosmosSourceValidator,
+        v => v.validatorAddress === sourceValidator,
       );
 
       const formattedAmount = formatCurrencyUnit(
@@ -176,10 +175,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
             value={
               formattedSourceValidator
                 ? formattedSourceValidator.name
-                : cosmosSourceValidator
+                : sourceValidator
             }
             onPress={() => {
-              redirectAddressCreator(cosmosSourceValidator);
+              redirectAddressCreator(sourceValidator);
             }}
           />
           <Section

@@ -76,22 +76,22 @@ function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
   );
 }
 
-function CosmosSourceValidatorNameField({
+function sourceValidatorNameField({
   field,
-  transaction: { cosmosSourceValidator },
+  transaction: { sourceValidator },
 }: FieldProps) {
   const { validators } = useCosmosPreloadData();
-  if (!cosmosSourceValidator) {
+  if (!sourceValidator) {
     return null;
   }
   const validator = validators.find(
-    v => v.validatorAddress === cosmosSourceValidator,
+    v => v.validatorAddress === sourceValidator,
   );
 
   return (
     <TextValueField
       label={field.label}
-      value={validator?.name ?? cosmosSourceValidator}
+      value={validator?.name ?? sourceValidator}
     />
   );
 }
@@ -127,7 +127,7 @@ function Warning({ transaction }: FieldProps) {
 const fieldComponents = {
   "cosmos.delegateValidators": CosmosDelegateValidatorsField,
   "cosmos.validatorName": CosmosValidatorNameField,
-  "cosmos.sourceValidatorName": CosmosSourceValidatorNameField,
+  "cosmos.sourceValidatorName": sourceValidatorNameField,
 };
 
 export default {
