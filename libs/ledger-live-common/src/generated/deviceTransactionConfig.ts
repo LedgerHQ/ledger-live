@@ -1,5 +1,7 @@
 import algorand from "../families/algorand/deviceTransactionConfig";
 
+import avalanchecchain from "../families/avalanchecchain/deviceTransactionConfig";
+
 import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 
 import celo from "../families/celo/deviceTransactionConfig";
@@ -31,6 +33,7 @@ import tron from "../families/tron/deviceTransactionConfig";
 
 export default {
   algorand,
+  avalanchecchain,
   bitcoin,
   celo,
   cosmos,
