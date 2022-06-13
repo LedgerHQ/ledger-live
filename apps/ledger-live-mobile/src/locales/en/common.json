@@ -650,6 +650,12 @@
     "locationRequiredMessage": "On Android location permission is required to list Bluetooth LE devices.",
     "checkEnabled": "Please enable Bluetooth in your phone settings."
   },
+  "webview": {
+    "noConnectionError": {
+      "title": "No connection",
+      "description": "It seems you don't have access to the Internet. Please check your connection and try again."
+    }
+  },
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
@@ -878,6 +884,31 @@
     "bannerTitle": "Received your device?",
     "bannerCta": "Begin the setup",
     "continue": "Continue"
+  },
+  "purchaseDevice": {
+    "pageTitle": "Purchase Device",
+    "debugDrawers": {
+      "url": {
+        "title": "Update iframe URL",
+        "subtitle": "Debug Settings",
+        "cta": "Save"
+      },
+      "message": {
+        "successTitle": "Transaction complete",
+        "errorTitle": "Transaction error",
+        "subtitle": "Message received",
+        "type": "Type: {{type}}",
+        "deviceId": "Device ID: {{deviceId}}",
+        "price": "Price: {{price}}",
+        "currency": "Currency: {{currency}}",
+        "value": "Value: {{value}}"
+      }
+    }
+  },
+  "postBuyDevice": {
+    "headerTitle": "Purchase successful",
+    "title": "Congratulations",
+    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation.",
   },
   "discover": {
     "title": "Discover",
@@ -1494,8 +1525,6 @@
   },
   "learn": {
     "pageTitle": "learn",
-    "noConnection": "No connection",
-    "noConnectionDesc": "It seems you don't have access to the Internet. Please check your connection and try again.",
     "sectionShows": "Shows",
     "sectionVideo": "Video",
     "sectionPodcast": "Podcast",

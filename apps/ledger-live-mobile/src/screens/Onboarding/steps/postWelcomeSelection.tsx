@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "styled-components/native";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Text, Button, Flex } from "@ledgerhq/native-ui";
-import { ImageSourcePropType } from "react-native";
 import { track, TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
-import { useTheme } from "styled-components/native";
 
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
@@ -93,9 +92,7 @@ function PostWelcomeSelection({
 
   const buyLedger = useCallback(() => {
     track("Onboarding PostWelcome - Buy Ledger");
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.navigate(ScreenName.BuyDeviceScreen);
+    navigation.navigate(NavigatorName.BuyDevice);
   }, [navigation]);
 
   const exploreLedger = useCallback(() => {

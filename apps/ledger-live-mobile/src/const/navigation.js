@@ -86,6 +86,7 @@ export const ScreenName = {
   FreezeValidationError: "FreezeValidationError",
   FreezeValidationSuccess: "FreezeValidationSuccess",
   GeneralSettings: "GeneralSettings",
+  GetDevice: "GetDevice",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
   ManagerDevice: "ManagerDevice",
@@ -104,6 +105,7 @@ export const ScreenName = {
   PasswordRemove: "PasswordRemove",
   Portfolio: "Portfolio",
   PortfolioOperationHistory: "PortfolioOperationHistory",
+  PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
@@ -354,7 +356,7 @@ export const ScreenName = {
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
 
-  BuyDeviceScreen: "BuyDeviceScreen",
+  PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
@@ -376,6 +378,7 @@ export const NavigatorName = {
   ExchangeSellFlow: "ExchangeSellFlow",
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
+  BuyDevice: "BuyDevice",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",

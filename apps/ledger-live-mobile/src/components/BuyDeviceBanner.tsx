@@ -71,7 +71,7 @@ export default function BuyDeviceBanner({
   const { t } = useTranslation();
   const { navigate } = useNavigation();
   const handleOnPress = useCallback(() => {
-    navigate(ScreenName.BuyDeviceScreen);
+    navigate(NavigatorName.BuyDevice);
   }, [navigate]);
   const handleSetupCtaOnPress = useCallback(() => {
     navigate(NavigatorName.BaseOnboarding, {

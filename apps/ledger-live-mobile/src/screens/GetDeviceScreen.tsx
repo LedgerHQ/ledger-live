@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
+import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 import { useSelector } from "react-redux";
 
 import Button from "../components/wrappedUi/Button";
@@ -70,11 +71,12 @@ const videoStyle = {
   right: 0,
 };
 
-export default function BuyDeviceScreen() {
+export default function GetDeviceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
@@ -91,8 +93,12 @@ export default function BuyDeviceScreen() {
   }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
-    Linking.openURL(urls.buyNanoX);
-  }, []);
+    if (buyDeviceFromLive?.enabled) {
+      navigation.navigate(ScreenName.PurchaseDevice);
+    } else {
+      Linking.openURL(urls.buyNanoX);
+    }
+  }, [buyDeviceFromLive?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 

@@ -27,6 +27,7 @@ import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
+import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
 import SignMessageNavigator from "./SignMessageNavigator";
@@ -74,9 +75,8 @@ import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScree
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
-import ManagerMain from "../../screens/Manager/Manager";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 
@@ -103,8 +103,8 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.BuyDeviceScreen}
-        component={BuyDeviceScreen}
+        name={NavigatorName.BuyDevice}
+        component={BuyDeviceNavigator}
         options={{ headerShown: false }}
         {...noNanoBuyNanoWallScreenOptions}
       />
@@ -112,6 +112,14 @@ export default function BaseNavigator() {
         name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
         component={PostBuyDeviceSetupNanoWallScreen}
         options={{ headerShown: false, presentation: "transparentModal" }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostBuyDeviceScreen}
+        component={PostBuyDeviceScreen}
+        options={{
+          title: t("postBuyDevice.headerTitle"),
+          headerLeft: null,
+        }}
       />
       <Stack.Screen
         name={NavigatorName.Settings}
@@ -321,8 +329,8 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-              component={ExchangeNavigator}
-              options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        component={ExchangeNavigator}
+        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen

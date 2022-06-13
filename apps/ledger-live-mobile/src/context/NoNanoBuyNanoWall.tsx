@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { CardStyleInterpolators } from "@react-navigation/stack";
+import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
-import BuyDeviceScreen from "../screens/BuyDeviceScreen";
 import PostBuyDeviceSetupNanoWallScreen from "../screens/PostBuyDeviceSetupNanoWallScreen";
 
 /**
@@ -37,7 +37,7 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
   }
   if (readOnlyModeEnabled) {
     return {
-      component: BuyDeviceScreen,
+      component: BuyDeviceNavigator,
       options: {
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,

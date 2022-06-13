@@ -38,7 +38,7 @@ import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawer
 import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import GetDeviceScreen from "../../screens/GetDeviceScreen";
 import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 
 const Stack = createStackNavigator();
@@ -160,8 +160,8 @@ export default function OnboardingNavigator() {
         component={PostWelcomeSelection}
       />
       <Stack.Screen
-        name={ScreenName.BuyDeviceScreen}
-        component={BuyDeviceScreen}
+        name={ScreenName.GetDevice}
+        component={GetDeviceScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
