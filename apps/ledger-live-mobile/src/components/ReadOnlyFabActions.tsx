@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import Button from "./wrappedUi/Button";
 
-import { ScreenName } from "../const";
+import { NavigatorName } from "../const";
 
 const iconBuy = Icons.PlusMedium;
 const iconReceive = Icons.ArrowBottomMedium;
@@ -15,7 +15,7 @@ function ReadOnlyFabActions() {
   const { navigate } = useNavigation();
 
   const handleOnPress = useCallback(() => {
-    navigate(ScreenName.BuyDevice);
+    navigate(NavigatorName.BuyDevice);
   }, [navigate]);
 
   return (

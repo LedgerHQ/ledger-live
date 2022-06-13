@@ -4,13 +4,13 @@ import { FiltersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
 
 import Touchable from "../../../components/Touchable";
-import { ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 
 export default function AccountHeaderRight() {
   const { navigate } = useNavigation();
 
   const handleOnPress = useCallback(() => {
-    navigate(ScreenName.BuyDevice);
+    navigate(NavigatorName.BuyDevice);
   }, [navigate]);
 
   return (

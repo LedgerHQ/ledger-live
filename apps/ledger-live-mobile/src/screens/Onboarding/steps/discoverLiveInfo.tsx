@@ -16,7 +16,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -47,7 +47,7 @@ const Item = ({
   const buyLedger = useCallback(() => {
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
-    navigation.navigate(ScreenName.BuyDevice);
+    navigation.navigate(NavigatorName.BuyDevice);
   }, [navigation]);
 
   const exploreLedger = useCallback(() => {
@@ -60,7 +60,7 @@ const Item = ({
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [navigation]);
+  }, [dispatch, navigation]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`}>
