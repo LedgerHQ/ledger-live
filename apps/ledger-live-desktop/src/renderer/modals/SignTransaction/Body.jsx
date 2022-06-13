@@ -201,7 +201,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     warning,
     status,
     bridgePending,
-    openModal: dispatch(openModal()),
+    openModal: () => dispatch(openModal()),
     onClose,
     closeModal: handleCloseModal,
     onChangeAccount: handleChangeAccount,
