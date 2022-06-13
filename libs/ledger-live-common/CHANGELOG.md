@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.0.0-next.4
+
+### Patch Changes
+
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+
 ## 23.0.0-next.3
 
 ### Minor Changes

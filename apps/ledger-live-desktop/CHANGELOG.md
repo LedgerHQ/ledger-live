@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.43.0-next.5
+
+### Patch Changes
+
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+- Updated dependencies [8b2e24b6c]
+  - @ledgerhq/live-common@23.0.0-next.4
+
 ## 2.43.0-next.4
 
 ### Patch Changes
