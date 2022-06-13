@@ -53,7 +53,7 @@ type Step<T extends Transaction> = {
   button?: string;
   // action to apply in term of button press
   final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
-  maxY?: number; // check if text is bellow a cerrtains Y coordinate on the screen
+  maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
 };
 type FlowDesc<T extends Transaction> = {
   steps: Array<Step<T>>;
