@@ -6,6 +6,7 @@ import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
+import { Adjust, AdjustEvent } from "react-native-adjust";
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
@@ -13,7 +14,6 @@ import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { NavigatorName, ScreenName } from "../../const";
-import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvider";
 import {
   completeOnboarding,
   setHasOrderedNano,
@@ -48,14 +48,17 @@ const PurchaseDevice = () => {
   }, [setURLDrawerOpen]);
 
   const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
-    pushDelayedTrackingEvent({
-      type: "adjust",
-      payload: {
-        id: `${data.type}-${data.value?.deviceId}`,
-        revenue: data.value?.price,
-        currency: data.value?.currency,
-      },
-    });
+    const id = `${data.type}-${data.value?.deviceId}`;
+    const revenue = data.value?.price;
+    const currency = data.value?.currency;
+
+    const adjustEvent = new AdjustEvent(id);
+
+    if (revenue && currency) {
+      adjustEvent.setRevenue(revenue, currency);
+    }
+
+    Adjust.trackEvent(adjustEvent);
   }, []);
 
   const handleOnboardingStates = useCallback(
