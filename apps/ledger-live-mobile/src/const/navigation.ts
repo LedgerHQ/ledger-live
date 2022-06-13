@@ -317,6 +317,8 @@ export enum ScreenName {
   OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
 
+  SyncOnboardingCompanion = "SyncOnboardingCompanion",
+
   PlatformCatalog = "PlatformCatalog",
   PlatformApp = "PlatformApp",
 
