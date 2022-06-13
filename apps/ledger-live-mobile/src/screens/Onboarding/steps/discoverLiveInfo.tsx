@@ -107,10 +107,15 @@ const Item = ({
       </Box>
       {displayNavigationButtons && (
         <Box position={"absolute"} bottom={0} width={"100%"} px={6} pb={10}>
-          <Button onPress={exploreLedger} type={"main"} mb={6}>
+          <Button onPress={exploreLedger} type={"main"} mb={6} size="large">
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
-          <Button onPress={buyLedger} type={"shade"} outline={true}>
+          <Button
+            onPress={buyLedger}
+            type={"shade"}
+            outline={true}
+            size="large"
+          >
             {t("onboarding.discoverLive.buyALedgerNow")}
           </Button>
         </Box>

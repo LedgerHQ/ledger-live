@@ -103,7 +103,7 @@ function PostWelcomeSelection({
   }, [navigation]);
 
   return (
-    <Flex flex={1}>
+    <Flex flex={1} bg="background.main">
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>
           {t("onboarding.postWelcomeStep.title")}
@@ -156,6 +156,7 @@ function PostWelcomeSelection({
           onPress={selectedOption.onValidate}
           size="large"
           m={6}
+          mb={8}
         >
           {t("postBuyDeviceSetupNanoWall.continue")}
         </Button>

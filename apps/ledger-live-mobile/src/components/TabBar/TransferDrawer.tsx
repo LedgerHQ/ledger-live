@@ -221,7 +221,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <BuyDeviceBanner
           topLeft={
             <Text
-              color="#6358B7"
+              color="primary.c40"
               uppercase
               mb={3}
               fontSize="11px"
