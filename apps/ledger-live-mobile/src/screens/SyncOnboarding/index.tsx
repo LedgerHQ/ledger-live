@@ -20,6 +20,29 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
 
   const { pairedDevice } = route.params; 
 
+  // Triggers the pairing if no pairedDevice was given
+  useEffect(() => {
+    if (!pairedDevice) {
+      // @ts-expect-error navigator typing issue
+      navigation.navigate(ScreenName.PairDevices, {
+        onlySelectDeviceWithoutFullAppPairing: true,
+        onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
+      });
+    }
+  }, [navigation, pairedDevice]);
+ 
+
+  const handleOnPaired = useCallback((pairedDevice: Device) => {
+    setDevice(pairedDevice);
+  }, []);
+
+  // Triggered when a new paired device is passed when navigating to this screen
+  // It avoids having a callback function passed to the PairDevices screen
+  useEffect(() => {
+    if (pairedDevice) {
+      handleOnPaired(pairedDevice);
+    }
+  }, [pairedDevice, handleOnPaired]);
 
   return (
     <Flex
