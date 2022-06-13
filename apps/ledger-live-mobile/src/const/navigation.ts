@@ -311,6 +311,9 @@ export const ScreenName = {
   OnboardingModalSyncDesktopInformation:
     "OnboardingModalSyncDesktopInformation",
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
+
+  SyncOnboardingCompanion: "SyncOnboardingCompanion",
+
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
   PlatformStartExchange: "PlatformStartExchange",
@@ -377,6 +380,7 @@ export const NavigatorName = {
   MigrateAccountsFlow: "MigrateAccountsFlow",
   NftNavigator: "NftNavigator",
   Onboarding: "Onboarding",
+  SyncOnboarding: "SyncOnboarding",
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",
   Platform: "Platform",
