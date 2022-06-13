@@ -923,7 +923,7 @@ importers:
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': ^1.41.4
       '@stricahq/bip32ed25519': ^1.0.3
-      '@stricahq/typhonjs': ^1.1.3
+      '@stricahq/typhonjs': ^1.2.3
       '@svgr/core': ^5.5.0
       '@taquito/ledger-signer': stablelib
       '@taquito/taquito': stablelib
@@ -1080,7 +1080,7 @@ importers:
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.4
       '@stricahq/bip32ed25519': 1.0.4
-      '@stricahq/typhonjs': 1.1.3
+      '@stricahq/typhonjs': 1.2.3
       '@taquito/ledger-signer': 11.1.0-stablelib.0
       '@taquito/taquito': 11.1.0-stablelib.0
       '@taquito/utils': 11.1.0-stablelib.0
@@ -15013,21 +15013,21 @@ packages:
       pbkdf2: 3.1.2
     dev: false
 
-  /@stricahq/cbors/1.0.0:
-    resolution: {integrity: sha512-Nt5puNsaVLmkE31yXYCJAmhgYn7ufs7gXRQcDS8ZnNmP9GuUfA9fCXbNUHT7K7UQgyi/dXolzr9R3q83+q250w==}
+  /@stricahq/cbors/1.0.1:
+    resolution: {integrity: sha512-vlQj7ygG0EQpQ7FsCTC9n7oAAvD6/Cqqsywk5vRPmdpFpCxRwB6ju+glkWwLKmshL8bJF953Oi0mLWdFEbjVcw==}
     dependencies:
       bignumber.js: 9.0.2
       buffer: 6.0.3
     dev: false
 
-  /@stricahq/typhonjs/1.1.3:
-    resolution: {integrity: sha512-yYDA1c1IvLPVgT40gucL2GGJ9NnsjymY13sSR3nWkusQiIaXZXXSnxhMf+Y4uKs2cImvCYdCGChfIB4iRYavLw==}
+  /@stricahq/typhonjs/1.2.3:
+    resolution: {integrity: sha512-iJnX8eYck8tmOEoxsUJbd+58Yxu4wxXmgCCNzGZqDabLQeOENTF9ug4+yn/EgTLI4x/LXpJE0Uch62NBH8DGOQ==}
     dependencies:
-      '@stricahq/cbors': 1.0.0
+      '@stricahq/cbors': 1.0.1
       bech32: 2.0.0
       bignumber.js: 9.0.2
       blakejs: 1.2.1
-      bs58: 4.0.1
+      bs58: 5.0.0
       buffer: 6.0.3
       lodash: 4.17.21
     dev: false
@@ -47942,7 +47942,7 @@ packages:
     dev: false
 
   /xhr2-cookies/1.1.0:
-    resolution: {integrity: sha1-fXdEnQmZGX8VXLc7I99yUF7YnUg=}
+    resolution: {integrity: sha512-hjXUA6q+jl/bd8ADHcVfFsSPIf+tyLIjuO9TwJC9WI6JP2zKcS7C+p56I9kCLLsaCiNT035iYvEUUzdEFj/8+g==}
     dependencies:
       cookiejar: 2.1.3
     dev: false
