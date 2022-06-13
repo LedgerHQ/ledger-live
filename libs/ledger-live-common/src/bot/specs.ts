@@ -53,6 +53,7 @@ type Step<T extends Transaction> = {
   button?: string;
   // action to apply in term of button press
   final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
+  maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
 };
 type FlowDesc<T extends Transaction> = {
   steps: Array<Step<T>>;
@@ -119,7 +120,12 @@ export function deviceActionFlow<T extends Transaction>(
 
     if (!finalState) {
       let possibleKnownStep: Step<T> | null | undefined =
-        description.steps.find((s) => event.text.startsWith(s.title));
+        description.steps.find((s) => {
+          if (s.maxY) {
+            return event.text.startsWith(s.title) && event.y < s.maxY;
+          }
+          return event.text.startsWith(s.title);
+        });
 
       // if there is a fallback provided, we will run it to try to detect another possible known step
       if (!possibleKnownStep && description.fallback) {
