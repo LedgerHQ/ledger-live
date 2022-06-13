@@ -14,7 +14,11 @@ import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { NavigatorName, ScreenName } from "../../const";
 import { pushDelayedTrackingEvent } from "../../components/DelayedTrackingProvider";
-import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
+import {
+  completeOnboarding,
+  setHasOrderedNano,
+  setReadOnlyMode,
+} from "../../actions/settings";
 import { urls } from "../../config/urls";
 
 const defaultURL = urls.buyNanoX;
@@ -59,8 +63,7 @@ const PurchaseDevice = () => {
       if (data.type === "ledgerLiveOrderSuccess") {
         dispatch(setReadOnlyMode(true));
         dispatch(completeOnboarding());
-        // TODO: dispatch this when Reborn is merged
-        // dispatch(hasOrderedNano(true));
+        dispatch(setHasOrderedNano(true));
       }
     },
     [dispatch],
