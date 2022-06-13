@@ -11,6 +11,7 @@ import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 // eslint-disable-next-line import/no-cycle
 import OnboardingNavigator from "./OnboardingNavigator";
+import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
@@ -63,6 +64,10 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.Onboarding}
         component={OnboardingNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.SyncOnboarding}
+        component={SyncOnboardingNavigator}
       />
       <Stack.Screen
         name={NavigatorName.ImportAccounts}
