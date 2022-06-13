@@ -5,6 +5,7 @@ import { Image } from "react-native";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
 
@@ -34,42 +35,44 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   }, [navigation]);
 
   return (
-    <Flex flex={1} bg="background.main">
-      <StyledStatusBar barStyle="light-content" />
-      <Box flex={1} justifyContent="center" alignItems="center" mt={8} mx={7}>
-        <Image
-          source={RenderVertical}
-          resizeMode={"contain"}
-          style={{ flex: 1, width: "100%" }}
-        />
-      </Box>
-      <Flex px={6} pb={6}>
-        <Text variant="large" fontWeight="medium" color="neutral.c70" pb={2}>
-          {t("onboarding.stepDoYouHaveALedgerDevice.subtitle")}
-        </Text>
-        <Text variant="h4" color="neutral.c100" pb={8}>
-          {t("onboarding.stepDoYouHaveALedgerDevice.title")}
-        </Text>
-        <Button
-          type="main"
-          size="large"
-          event="Onboarding - Start"
-          onPress={nextHaveALedger}
-          mb={6}
-        >
-          {t("common.yes")}
-        </Button>
-        <Button
-          type="main"
-          size="large"
-          event="Onboarding - Start"
-          onPress={nextDontHaveALedger}
-          mb={6}
-        >
-          {t("common.no")}
-        </Button>
+    <SafeAreaView flex={1}>
+      <Flex flex={1} bg="background.main">
+        <StyledStatusBar barStyle="light-content" />
+        <Box flex={1} justifyContent="center" alignItems="center" mt={8} mx={7}>
+          <Image
+            source={RenderVertical}
+            resizeMode={"contain"}
+            style={{ flex: 1, width: "100%" }}
+          />
+        </Box>
+        <Flex px={6} pb={6}>
+          <Text variant="large" fontWeight="medium" color="neutral.c70" pb={2}>
+            {t("onboarding.stepDoYouHaveALedgerDevice.subtitle")}
+          </Text>
+          <Text variant="h4" color="neutral.c100" pb={8}>
+            {t("onboarding.stepDoYouHaveALedgerDevice.title")}
+          </Text>
+          <Button
+            type="main"
+            size="large"
+            event="Onboarding - Start"
+            onPress={nextHaveALedger}
+            mb={6}
+          >
+            {t("onboarding.stepDoYouHaveALedgerDevice.yes")}
+          </Button>
+          <Button
+            type="main"
+            size="large"
+            event="Onboarding - Start"
+            onPress={nextDontHaveALedger}
+            mb={6}
+          >
+            {t("onboarding.stepDoYouHaveALedgerDevice.no")}
+          </Button>
+        </Flex>
       </Flex>
-    </Flex>
+    </SafeAreaView>
   );
 }
 
