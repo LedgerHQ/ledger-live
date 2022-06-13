@@ -3,10 +3,10 @@ import type { ReactElement } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
