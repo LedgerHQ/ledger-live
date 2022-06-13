@@ -75,10 +75,10 @@ import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScree
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
-import GetDeviceScreen from "../../screens/GetDeviceScreen";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import Learn from "../../screens/Learn";
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
+import Learn from "../../screens/Learn";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -87,8 +87,8 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const learn = useFeature("learn");
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -106,6 +106,12 @@ export default function BaseNavigator() {
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
+        options={{ headerShown: false, presentation: "transparentModal" }}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceScreen}
@@ -142,6 +148,7 @@ export default function BaseNavigator() {
           headerStyle: styles.headerNoShadow,
           title: route.params.name,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       {learn?.enabled ? (
         <Stack.Screen
@@ -322,33 +329,22 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-        {...(readOnlyModeEnabled
-          ? {
-              component: BuyDeviceNavigator,
-              options: {
-                ...TransitionPresets.ModalTransition,
-                headerShown: false,
-              },
-            }
-          : {
-              component: ExchangeNavigator,
-              options: { headerStyle: styles.headerNoShadow, headerLeft: null },
-            })}
+        component={ExchangeNavigator}
+        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}
-        component={
-          readOnlyModeEnabled ? BuyDeviceNavigator : ExchangeBuyFlowNavigator
-        }
+        component={ExchangeBuyFlowNavigator}
         initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeSellFlow}
-        component={
-          readOnlyModeEnabled ? BuyDeviceNavigator : ExchangeSellFlowNavigator
-        }
+        component={ExchangeSellFlowNavigator}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.OperationDetails}
@@ -466,11 +462,12 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Asset}
-        component={readOnlyModeEnabled ? GetDeviceScreen : Asset}
+        component={Asset}
         options={{
           headerTitle: () => <HeaderTitle />,
           headerRight: null,
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.PortfolioOperationHistory}
@@ -482,7 +479,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? GetDeviceScreen : Account}
+        component={Account}
         options={({ route, navigation }) => ({
           headerLeft: () => (
             <BackButton navigation={navigation} route={route} />

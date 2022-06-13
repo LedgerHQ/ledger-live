@@ -5,6 +5,7 @@ import {
   Text,
   IconBoxList,
   Link as TextLink,
+  ScrollListContainer,
 } from "@ledgerhq/native-ui";
 import Video from "react-native-video";
 import styled, { useTheme } from "styled-components/native";
@@ -13,11 +14,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
+import { useSelector } from "react-redux";
+
 import Button from "../components/wrappedUi/Button";
 import { urls } from "../config/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
+import { hasCompletedOnboardingSelector } from "../reducers/settings";
 
 const hitSlop = {
   bottom: 10,
@@ -31,7 +35,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
-const sourceDark = require("../../assets/videos/NanoX_LL_black.mp4");
+const sourceDark = require("../../assets/videos/NanoX_LL_Black.mp4");
 const sourceLight = require("../../assets/videos/NanoX_LL_White.mp4");
 
 const items = [
@@ -73,6 +77,7 @@ export default function GetDeviceScreen() {
   const { theme, colors } = useTheme();
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const handleBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -101,79 +106,99 @@ export default function GetDeviceScreen() {
     <StyledSafeAreaView>
       <Flex
         flexDirection="row"
-        justifyContent="space-between"
         alignItems="center"
+        justifyContent="space-between"
         width="100%"
-        height={48}
-        mb={-60}
+        background={colors.background.main}
         zIndex={1}
         p={6}
-        pt={9}
       >
-        <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
-          <Icons.ArrowLeftMedium size="24px" />
-        </TouchableOpacity>
+        {hasCompletedOnboarding ? (
+          <Flex width={24} />
+        ) : (
+          <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
+            <Icons.ArrowLeftMedium size="24px" />
+          </TouchableOpacity>
+        )}
+        <Text variant="h3" lineHeight="18" uppercase>
+          {t("buyDevice.title")}
+        </Text>
+        {hasCompletedOnboarding ? (
+          <TouchableOpacity onPress={handleBack} hitSlop={hitSlop}>
+            <Icons.CloseMedium size="24px" />
+          </TouchableOpacity>
+        ) : (
+          <Flex width={24} />
+        )}
       </Flex>
-      <Flex height={240} width="100%" position="relative" overflow="hidden">
-        {videoMounted && (
-          <Video
-            disableFocus
-            source={theme === "light" ? sourceLight : sourceDark}
+      <ScrollListContainer>
+        <Flex
+          height={240}
+          my={-50}
+          width="100%"
+          position="relative"
+          overflow="hidden"
+        >
+          {videoMounted && (
+            <Video
+              disableFocus
+              source={theme === "light" ? sourceLight : sourceDark}
+              style={{
+                ...videoStyle,
+                backgroundColor: colors.background.main,
+                transform: [{ scale: 1.4 }],
+              }}
+              muted
+              resizeMode={"cover"}
+            />
+          )}
+          <Flex
             style={{
               ...videoStyle,
-              backgroundColor: colors.background.main,
-              transform: [{ scale: 1.5 }],
+              opacity: 0.1,
             }}
-            muted
-            resizeMode={"cover"}
+            bg="background.main"
           />
-        )}
-        <Flex
-          style={{
-            ...videoStyle,
-            opacity: 0.1,
-          }}
-          bg="background.main"
-        />
-      </Flex>
-      <Flex flex={1} p={6} pt={6}>
-        <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
-          <Text textAlign="center" variant="h2">
-            {t("buyDevice.title")}
-          </Text>
-          <Text px={6} textAlign="center" variant="body">
-            {t("buyDevice.desc")}
-          </Text>
         </Flex>
-        <IconBoxList
-          flex={1}
-          items={items.map(item => ({
-            ...item,
-            title: t(item.title),
-            description: t(item.desc),
-          }))}
-        />
-      </Flex>
-      <Button
-        mx={6}
-        my={4}
-        type="main"
-        outline={false}
-        event="GetDeviceScreen - Buy Ledger"
-        onPress={buyLedger}
-        size="large"
-      >
-        {t("buyDevice.cta")}
-      </Button>
-      <Flex px={6} pt={0} pb={5}>
-        <TextLink
-          type="color"
-          onPress={setupDevice}
-          Icon={Icons.ArrowRightMedium}
-          iconPosition="right"
+        <Flex p={6} pt={6}>
+          <Flex mt={0} mb={8} justifyContent="center" alignItems="stretch">
+            <Text px={6} textAlign="center" variant="large">
+              {t("buyDevice.desc")}
+            </Text>
+          </Flex>
+          <IconBoxList
+            iconVariants="plain"
+            iconShapes="circle"
+            items={items.map(item => ({
+              ...item,
+              title: t(item.title),
+              description: t(item.desc),
+            }))}
+          />
+        </Flex>
+      </ScrollListContainer>
+      <Flex borderTopColor="neutral.c40" borderTopWidth={1}>
+        <Button
+          mx={6}
+          my={6}
+          type="main"
+          outline={false}
+          event="BuyDeviceScreen - Buy Ledger"
+          onPress={buyLedger}
+          size="large"
         >
-          {t("buyDevice.footer")}
-        </TextLink>
+          {t("buyDevice.cta")}
+        </Button>
+        <Flex px={6} pt={0} pb={5}>
+          <TextLink
+            type="color"
+            onPress={setupDevice}
+            Icon={Icons.ArrowRightMedium}
+            iconPosition="right"
+          >
+            {t("buyDevice.footer")}
+          </TextLink>
+        </Flex>
       </Flex>
     </StyledSafeAreaView>
   );

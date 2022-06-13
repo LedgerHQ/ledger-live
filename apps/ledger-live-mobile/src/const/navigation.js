@@ -1,6 +1,7 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
+
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -283,6 +284,7 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
   OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",
@@ -355,6 +357,7 @@ export const ScreenName = {
   SolanaEditAmount: "SolanaEditAmount",
 
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
+  PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
