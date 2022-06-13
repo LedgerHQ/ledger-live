@@ -67,7 +67,7 @@ export type Props = React.PropsWithChildren<{
   /**
    * Number of milliseconds a tap should not exceed to scroll to the netxt or precedent item.
    */
-  maxDurationOfTap: number;
+  maxDurationOfTap?: number;
 }>;
 
 function Carousel({
