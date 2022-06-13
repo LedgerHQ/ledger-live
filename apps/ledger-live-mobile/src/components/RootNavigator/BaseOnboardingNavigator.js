@@ -11,6 +11,7 @@ import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import OnboardingNavigator from "./OnboardingNavigator";
+import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
@@ -62,6 +63,10 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.Onboarding}
         component={OnboardingNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.SyncOnboarding}
+        component={SyncOnboardingNavigator}
       />
       <Stack.Screen
         name={NavigatorName.ImportAccounts}
