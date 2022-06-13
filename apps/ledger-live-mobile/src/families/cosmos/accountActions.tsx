@@ -15,8 +15,7 @@ const getActions = ({ account }: { account: Account }) => {
       navigationParams: [
         NavigatorName.CosmosDelegationFlow,
         {
-          screen: ScreenName.CosmosDelegationStarted,
-
+          screen: (account.cosmosResources && account.cosmosResources?.delegations.length > 0) ? ScreenName.CosmosDelegationValidator : ScreenName.CosmosDelegationStarted,
         },
       ],
       label: <Trans i18nKey="account.stake" />,
