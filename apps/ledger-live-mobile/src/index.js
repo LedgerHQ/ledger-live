@@ -12,7 +12,6 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
-import * as Sentry from "@sentry/react-native";
 import {
   StyleSheet,
   View,
@@ -29,6 +28,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
+import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
@@ -75,6 +75,7 @@ import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
+import RatingsModal from "./screens/RatingsModal";
 import { lightTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -119,8 +120,6 @@ Text.defaultProps.allowFontScaling = false;
 type AppProps = {
   importDataString?: string,
 };
-
-export const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
 function App({ importDataString }: AppProps) {
   useAppStateListener();
@@ -192,6 +191,9 @@ function App({ importDataString }: AppProps) {
 
       <AnalyticsConsole />
       <ThemeDebug />
+      <FeatureToggle feature="ratings">
+        <RatingsModal />
+      </FeatureToggle>
     </View>
   );
 }
@@ -430,7 +432,6 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
         onReady={() => {
           isReadyRef.current = true;
           setTimeout(() => SplashScreen.hide(), 300);
-          routingInstrumentation.registerNavigationContainer(navigationRef);
         }}
       >
         {children}

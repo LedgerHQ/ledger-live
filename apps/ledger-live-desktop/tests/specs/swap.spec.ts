@@ -8,7 +8,7 @@ import { DeviceAction } from "../models/DeviceAction";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
-test("Swap", async ({ page }) => {
+test.skip("Swap", async ({ page }) => {
   const swapPage = new SwapPage(page);
   const deviceAction = new DeviceAction(page);
 

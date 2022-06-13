@@ -17,6 +17,7 @@ import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
 import type { State } from ".";
 import regionsByKey from "../screens/settings/sections/General/regions.json";
+import { getSystemLocale } from "~/helpers/systemLocale";
 export type CurrencySettings = {
   confirmationsNb: number,
 };
@@ -134,7 +135,7 @@ const defaultsForCurrency: Currency => CurrencySettings = crypto => {
 
 const DEFAULT_LANGUAGE_LOCALE = "en";
 export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) => {
-  const detectedLanguage = window.navigator?.language || fallbackLocale;
+  const detectedLanguage = getSystemLocale() || fallbackLocale;
   return getLanguages().find(lang => detectedLanguage.startsWith(lang)) || fallbackLocale;
 };
 
@@ -200,7 +201,9 @@ const INITIAL_STATE: SettingsState = {
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
 
-export const supportedCountervalues: { value: string, label: string, currency: Currency }[] = [
+export type SupportedCoutervaluesData = { value: string, label: string, currency: Currency };
+
+export const supportedCountervalues: SupportedCoutervaluesData[] = [
   ...listSupportedFiats(),
   ...possibleIntermediaries,
 ]

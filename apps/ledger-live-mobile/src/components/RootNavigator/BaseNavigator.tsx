@@ -550,11 +550,6 @@ export default function BaseNavigator() {
         component={AccountsNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "", headerRight: null }}
-      />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];
         return (

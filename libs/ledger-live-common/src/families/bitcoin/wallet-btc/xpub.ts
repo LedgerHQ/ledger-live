@@ -401,10 +401,8 @@ class Xpub extends EventEmitter {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handler = (evt: any) => {
           if (evt.type === type && evt.key === key) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            this.off("synced", handler);
             resolve();
+            this.removeListener("synced", handler);
           }
         };
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

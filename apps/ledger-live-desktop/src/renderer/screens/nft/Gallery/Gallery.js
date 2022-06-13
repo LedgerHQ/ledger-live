@@ -10,7 +10,7 @@ import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
-import CollectionName from "~/renderer/screens/nft/CollectionName";
+import CollectionName from "~/renderer/components/Nft/CollectionName";
 import TokensList from "./TokensList";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
@@ -146,6 +146,7 @@ const Gallery = () => {
           </Text>
         </Box>
       )}
+      <div ref={ref} />
       {isLoading && (
         <SpinnerContainer>
           <SpinnerBackground>
@@ -153,7 +154,6 @@ const Gallery = () => {
           </SpinnerBackground>
         </SpinnerContainer>
       )}
-      <div ref={ref} />
     </>
   );
 };

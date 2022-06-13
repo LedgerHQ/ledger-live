@@ -16,11 +16,15 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
+// import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
+import "@ledgerhq/live-common/lib/reactNative";
+
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import VersionNumber from "react-native-version-number";
 
+import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
@@ -67,11 +71,7 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
     // dist: String(VersionNumber.buildVersion),
     sampleRate: 0.2,
     tracesSampleRate: 0.02,
-    integrations: [
-      new Sentry.ReactNativeTracing({
-        routingInstrumentation,
-      }),
-    ],
+    integrations: [],
     beforeSend(event: any) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,
@@ -117,3 +117,7 @@ logReport.logReportInit();
 const AppWithSentry = Sentry.wrap(App);
 
 AppRegistry.registerComponent("ledgerlivemobile", () => AppWithSentry);
+AppRegistry.registerHeadlessTask(
+  "BackgroundRunnerService",
+  () => BackgroundRunnerService,
+);

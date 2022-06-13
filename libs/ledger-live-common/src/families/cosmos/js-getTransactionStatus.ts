@@ -146,25 +146,19 @@ const getDelegateTransactionStatus = async (
     errors.validators = new CosmosTooManyValidators();
   }
 
-  let amount = t.validators.reduce(
-    (old, current) => old.plus(current.amount),
-    new BigNumber(0)
-  );
-
-  if (amount.eq(0)) {
-    errors.amount = new AmountRequired();
-  }
-
   const estimatedFees = t.fees || new BigNumber(0);
 
-  if (!t.fees) {
+  if (!t.fees || !t.fees.gt(0)) {
     errors.fees = new FeeNotLoaded();
   }
 
-  let totalSpent = amount.plus(estimatedFees);
+  const amount = t.useAllAmount
+    ? getMaxEstimatedBalance(a, estimatedFees)
+    : t.amount;
+  const totalSpent = amount.plus(estimatedFees);
 
-  if (totalSpent.eq(a.spendableBalance)) {
-    warnings.delegate = new CosmosDelegateAllFundsWarning();
+  if (amount.eq(0)) {
+    errors.amount = new AmountRequired();
   }
 
   if (
@@ -173,8 +167,10 @@ const getDelegateTransactionStatus = async (
     (amount.lt(0) || totalSpent.gt(a.spendableBalance))
   ) {
     errors.amount = new NotEnoughBalance();
-    amount = new BigNumber(0);
-    totalSpent = new BigNumber(0);
+  }
+
+  if (!errors.amount && t.useAllAmount) {
+    warnings.amount = new CosmosDelegateAllFundsWarning();
   }
 
   return Promise.resolve({

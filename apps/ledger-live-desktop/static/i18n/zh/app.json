@@ -122,7 +122,8 @@
     },
     "exchange": "兑换",
     "info": "信息",
-    "connectDevice": "连接您的设备"
+    "connectDevice": "连接您的设备",
+    "selectCurrencyEmptyOption": "没有加密货币资产"
   },
   "devices": {
     "nanoS": "Nano S",
@@ -935,7 +936,6 @@
         "switchLabel": "<1>我已阅读并同意 </1><0>使用条款</0><1>。</1>"
       },
       "steps": {
-        "title": "步骤 <0>{{step}} / {{total}}</0>",
         "1": {
           "subtitle": "批准账户以允许协议",
           "subtitle2": "处理未来贷款。",
@@ -948,7 +948,8 @@
         "3": {
           "subtitle": "随时提取资产",
           "description": "您可以直接通过您的 Ledger 账户，部分或全部的，随时提取您的资产以及所赚取的利息。"
-        }
+        },
+        "title": "步骤 <0>{{step}} / {{total}}</0>"
       }
     },
     "supply": {
@@ -1291,7 +1292,8 @@
       "galleryCTA": "查看图库",
       "seeMore": "查看更多收藏",
       "seeAll": "查看所有收藏",
-      "seeLess": "查看更少"
+      "seeLess": "查看更少",
+      "placeholder": "要添加 NFT，只需将其发送到您的 {{currency}} 地址。"
     },
     "gallery": {
       "title": "所有 NFT",
@@ -1609,7 +1611,7 @@
         "not_supported": "需要第三方钱包",
         "addAccount": "添加账户",
         "addAccountTooltip": "添加 {{appName}} 账户",
-        "addAccountWarn": "请等待应用程序完成更新",
+        "addAccountWarn": "请等待处理完成",
         "learnMore": "了解更多",
         "learnMoreTooltip": "了解关于 {{appName}} 的更多信息...",
         "removeTooltip": "卸载 {{appName}}",
@@ -2127,9 +2129,14 @@
               "cta": "查看详情"
             },
             "broadcastError": "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+          },
+          "amount": {
+            "title": "数额"
           }
         }
-      }
+      },
+      "commission": "佣金",
+      "totalStake": "质押总额"
     },
     "claimRewards": {
       "flow": {
@@ -2182,7 +2189,8 @@
             "currentDelegation": "当前委托",
             "newDelegation": "新的委托",
             "chooseValidator": "选择一个验证器",
-            "warning": "更换验证器后，您需要等待 <0> 21 天</0> 才能再次更换。"
+            "warning": "更换验证器后，您需要等待 <0> 21 天</0> 才能再次更换。",
+            "amountLabel": "要重新委托的数额"
           },
           "device": {
             "title": "设备"
@@ -2574,7 +2582,7 @@
       "commission": "佣金",
       "delegate": "添加",
       "listHeader": "委托",
-      "availableBalance": "可用余额",
+      "availableBalance": "可提取",
       "active": "活跃",
       "activeTooltip": "活跃的数额会生成奖励",
       "inactiveTooltip": "不活跃的数额不会生成奖励。",
@@ -3520,12 +3528,6 @@
     "connected": "已连接！",
     "backToPortfolio": "返回投资组合",
     "steps": {
-      "entry": {
-        "title": "排除 USB 连接故障",
-        "desc": "设备连接出现问题。请勿担心，您可以逐一尝试不同的解决方案，直到完成设备连接！",
-        "cta": "开始解决问题！",
-        "back": "返回"
-      },
       "1": {
         "windows": {
           "title": "以管理员的身份运行 Ledger Live",
@@ -3637,6 +3639,12 @@
           "updateInstructions": "请遵照设备更新指示",
           "somethingElse": "其他"
         }
+      },
+      "entry": {
+        "title": "排除 USB 连接故障",
+        "desc": "设备连接出现问题。请勿担心，您可以逐一尝试不同的解决方案，直到完成设备连接！",
+        "cta": "开始解决问题！",
+        "back": "返回"
       }
     }
   },
@@ -4323,6 +4331,18 @@
     },
     "NotEnoughNftOwned": {
       "title": "您已超过可用代币的数量"
+    },
+    "CosmosDelegateAllFundsWarning": {
+      "title": "确保您有足够的剩余余额以用作未来的交易费"
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
+    },
+    "SolanaTxSimulationFailedPendingOp": {
+      "title": "您之前的交易尚未处理。请稍等片刻后检查交易记录，然后重试。"
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "确保您有足够的余额剩余，用作未来的交易费"
     }
   },
   "cryptoOrg": {
@@ -4340,5 +4360,15 @@
     "memo": "Memo 标签",
     "memoPlaceholder": "可选",
     "memoWarningText": "当使用 Memo 标签时，请仔细核对接收方的信息。"
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "要了解如何创建 Hedera 账户，",
+      "link": "请参考此支持文章"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "无法在 Ledger 设备上确认您的 {{name}} 地址。使用需自担风险。"
+    }
   }
 }

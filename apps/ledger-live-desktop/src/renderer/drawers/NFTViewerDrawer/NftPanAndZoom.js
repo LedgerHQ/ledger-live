@@ -1,11 +1,11 @@
 // @flow
 
-import React from "react";
+import React, { memo } from "react";
 import { createPortal } from "react-dom";
 
-import { NFTWithMetadata } from "@ledgerhq/live-common/lib/types";
+import type { NFTMetadata } from "@ledgerhq/live-common/lib/types";
 import IconCross from "~/renderer/icons/Cross";
-import Image from "~/renderer/screens/nft/Image";
+import Media from "~/renderer/components/Nft/Media";
 
 import PrismaZoom from "react-prismazoom";
 
@@ -49,12 +49,13 @@ const domNode = document.getElementById("modals");
 
 type NftPanAndZoomProps = {
   onClose: () => void,
-  nft: NFTWithMetadata,
+  metadata: NFTMetadata,
+  tokenId: string,
 };
 
-type BodyProps = { nft: NFTWithMetadata };
+type BodyProps = { metadata: NFTMetadata, tokenId: string };
 
-const NftPanAndZoomBody = ({ nft }: BodyProps) => (
+const NftPanAndZoomBody = ({ metadata, tokenId }: BodyProps) => (
   <NFTImageContainer>
     <PrismaZoom
       style={{
@@ -65,8 +66,10 @@ const NftPanAndZoomBody = ({ nft }: BodyProps) => (
         justifyContent: "center",
       }}
     >
-      <Image
-        nft={nft}
+      <Media
+        metadata={metadata}
+        tokenId={tokenId}
+        mediaFormat="original"
         full
         square={false}
         objectFit="scale-down"
@@ -79,13 +82,13 @@ const NftPanAndZoomBody = ({ nft }: BodyProps) => (
   </NFTImageContainer>
 );
 
-const NftPanAndZoom = ({ onClose, nft }: NftPanAndZoomProps) => {
+const NftPanAndZoom = ({ onClose, metadata, tokenId }: NftPanAndZoomProps) => {
   const modal = (
     <Container onClick={onClose}>
       <CloseButton onClick={onClose} className="sidedrawer-close">
         <IconCross size={32} />
       </CloseButton>
-      <NftPanAndZoomBody nft={nft} />
+      <NftPanAndZoomBody metadata={metadata} tokenId={tokenId} />
     </Container>
   );
 
@@ -94,4 +97,4 @@ const NftPanAndZoom = ({ onClose, nft }: NftPanAndZoomProps) => {
   return domNode ? createPortal(modal, domNode) : null;
 };
 
-export default NftPanAndZoom;
+export default memo<NftPanAndZoomProps>(NftPanAndZoom);

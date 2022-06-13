@@ -5,16 +5,19 @@ import accounts from "./accounts";
 import settings from "./settings";
 import appstate from "./appstate";
 import ble from "./ble";
+import ratings from "./ratings";
 import type { AccountsState } from "./accounts";
 import type { SettingsState } from "./settings";
 import type { AppState } from "./appstate";
 import type { BleState } from "./ble";
+import type { RatingsState } from "./ratings";
 
 export type State = {
   accounts: AccountsState,
   settings: SettingsState,
   appstate: AppState,
   ble: BleState,
+  ratings: RatingsState,
 };
 
 // $FlowFixMe
@@ -23,6 +26,7 @@ const appReducer = combineReducers({
   settings,
   appstate,
   ble,
+  ratings,
 });
 
 const rootReducer = (state: State, action: *) => {

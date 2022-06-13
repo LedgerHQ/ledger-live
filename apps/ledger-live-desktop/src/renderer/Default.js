@@ -229,7 +229,9 @@ export default function Default() {
                     <ToastOverlay />
                   </Box>
 
-                  {__PRERELEASE__ ? <NightlyLayer /> : null}
+                  {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
+                    <NightlyLayer />
+                  ) : null}
 
                   <DeviceBusyIndicator />
                   <KeyboardContent sequence="BJBJBJ">
