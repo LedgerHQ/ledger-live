@@ -39,11 +39,12 @@ export default function AccountsNavigator() {
   const currentRoute = useCurrentRouteName();
 
   const goBackFromAccount = useCallback(() => {
-    readOnlyModeEnabled &&
+    if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "Back",
         screen: currentRoute,
       });
+    }
     navigation.goBack();
   }, [navigation, currentRoute, readOnlyModeEnabled]);
 

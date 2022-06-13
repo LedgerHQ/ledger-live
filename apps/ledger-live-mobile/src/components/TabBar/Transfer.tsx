@@ -149,12 +149,13 @@ export function TransferTabIcon() {
   const onPressButton = useCallback(() => {
     if (getIsModalOpened()) {
       closeModal();
-      discreetMode &&
+      if (discreetMode) {
         track("button_clicked", {
           button: "Close Trade",
           screen: currentRoute,
           drawer: "trade",
         });
+      }
     } else {
       openModal();
       track("button_clicked", { button: "trade", drawer: "trade" });

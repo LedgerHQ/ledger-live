@@ -35,6 +35,11 @@ function ReadOnlyFabActions() {
     [buyDevice, currency, currentRoute],
   );
 
+  const pressBuy = useCallback(() => handleOnPress("+ Buy"), [handleOnPress]);
+  const pressReceive = useCallback(() => handleOnPress("Receive"), [
+    handleOnPress,
+  ]);
+
   return (
     <Flex mx={16} flexDirection={"row"}>
       <Button
@@ -46,7 +51,7 @@ function ReadOnlyFabActions() {
         key={"cta-buy"}
         mr={3}
         flex={1}
-        onPress={() => handleOnPress("+ Buy")}
+        onPress={pressBuy}
       >
         {t("account.buy")}
       </Button>
@@ -58,7 +63,7 @@ function ReadOnlyFabActions() {
         outline={true}
         key={"cta-receive"}
         flex={1}
-        onPress={() => handleOnPress("Receive")}
+        onPress={pressReceive}
       >
         {t("account.receive")}
       </Button>
