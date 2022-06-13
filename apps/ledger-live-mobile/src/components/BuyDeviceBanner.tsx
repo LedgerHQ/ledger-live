@@ -25,7 +25,7 @@ type Props = {
 };
 
 const Container = styled(Flex).attrs({
-  backgroundColor: "constant.purple",
+  backgroundColor: "primary.c80",
   padding: 16,
   flexDirection: "row",
   alignItems: "flex-start",
@@ -49,9 +49,10 @@ export const IMAGE_PROPS_SMALL_NANO = {
 
 /** Preset props for a small nano image */
 export const IMAGE_PROPS_SMALL_NANO_BOX = {
-  imageScale: 1.8,
+  imageScale: 2.5,
   imageStyle: {
-    bottom: -65,
+    bottom: -110,
+    right: -5,
   },
 };
 

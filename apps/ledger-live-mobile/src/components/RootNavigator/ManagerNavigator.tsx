@@ -11,8 +11,7 @@ import { hasAvailableUpdateSelector } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
-import ReadOnlyTab from "../ReadOnlyTab";
-import NanoXIcon from "../../icons/TabNanoX";
+import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import ManagerMain from "../../screens/Manager/Manager";
 
@@ -93,12 +92,10 @@ export function ManagerTabIcon(props: any) {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
 
   const content = (
-    <ReadOnlyTab
-      OnIcon={NanoXIcon}
-      oni18nKey="tabs.nanoX"
-      OffIcon={hasAvailableUpdate ? ManagerIconWithUpate : NanoFoldedMedium}
-      offi18nKey="tabs.manager"
+    <TabIcon
       {...props}
+      Icon={hasAvailableUpdate ? ManagerIconWithUpate : NanoFoldedMedium}
+      i18nKey="tabs.manager"
     />
   );
 

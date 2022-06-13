@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { CardStyleInterpolators } from "@react-navigation/stack";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
@@ -30,6 +31,7 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
         headerRight: null,
         headerBackTitleVisible: false,
         title: null,
+        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
       },
     };
   }
@@ -38,6 +40,7 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
       component: BuyDeviceScreen,
       options: {
         headerShown: false,
+        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
       },
     };
   }
