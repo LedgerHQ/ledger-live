@@ -5,8 +5,8 @@ module.exports = {
   ...common,
   entryPoints: ["./src/webviewPreloader/index.js"],
   entryNames: "webviewPreloader.bundle",
-  platform: "browser",
-  format: "iife",
+  platform: "node",
+  format: "cjs",
   target: ["chrome91"],
   external: [...electronPreloaderExternals],
 };

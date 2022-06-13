@@ -12,9 +12,9 @@ module.exports = (mappings) => ({
         const errors = [];
 
         for (const mapping of mappings) {
-          const mappedPathAbsolute = args.path.replace(filter, mapping);
+          const rawMappedPath = args.path.replace(filter, mapping);
           const relativeMappedPath = path
-            .relative(args.resolveDir, mappedPathAbsolute)
+            .relative(args.resolveDir, rawMappedPath)
             // Fixes windows paths
             .replace(new RegExp("\\\\+", "g"), "/");
 
@@ -22,13 +22,20 @@ module.exports = (mappings) => ({
             ? relativeMappedPath
             : `./${relativeMappedPath}`;
 
-          const result = await build.resolve(mappedPath, {
+          let result = await build.resolve(mappedPath, {
             resolveDir: args.resolveDir,
           });
 
           if (result.errors.length > 0) {
             errors.push(...result.errors);
-            continue;
+            result = await build.resolve(rawMappedPath, {
+              resolveDir: args.resolveDir,
+            });
+
+            if (result.errors.length > 0) {
+              errors.push(...result.errors);
+              continue;
+            }
           }
 
           return result;

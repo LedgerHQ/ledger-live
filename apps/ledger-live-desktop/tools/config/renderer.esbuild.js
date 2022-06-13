@@ -12,14 +12,11 @@ module.exports = {
   ...common,
   entryPoints: ["src/renderer/index.js"],
   entryNames: "renderer.bundle",
-  platform: "node",
+  platform: "browser",
   target: ["chrome91"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
-  external: [
-    ...nodeExternals.filter(external => !external.startsWith("buffer")),
-    ...electronRendererExternals,
-  ],
+  external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
     ? [".v3.tsx", ".v3.ts", ".v3.jsx", ".v3.js", ".tsx", ".ts", ".jsx", ".js", ".json"]
     : [".jsx", ".js", ".v3.tsx", ".v3.ts", ".v3.jsx", ".v3.js", ".tsx", ".ts", ".json"],
@@ -32,6 +29,7 @@ module.exports = {
       // It prevents the global styles from working.
       // See: https://github.com/styled-components/styled-components/issues/3714#issuecomment-1112672142
       "styled-components": [require.resolve("styled-components/dist/styled-components")],
+      "buffer/": "buffer",
     }),
     HtmlPlugin({
       files: [

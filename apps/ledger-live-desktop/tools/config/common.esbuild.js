@@ -19,7 +19,7 @@ module.exports = {
     AliasPlugin({
       "~": srcFolder,
     }),
-    StripFlowPlugin(/.jsx?$/),
+    StripFlowPlugin(/\.jsx?$/),
   ],
   loader: {
     ".woff": "file",
