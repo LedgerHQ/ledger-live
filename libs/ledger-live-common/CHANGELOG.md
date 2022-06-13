@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.0.0-next.3
+
+### Minor Changes
+
+- a66fbe852: import fix for Cardano (ADA) when doing a send it may cause invalid address
+
 ## 23.0.0-next.2
 
 ### Patch Changes
