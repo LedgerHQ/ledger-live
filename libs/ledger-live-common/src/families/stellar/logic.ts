@@ -116,6 +116,7 @@ export const getOperationType = (
       return "IN";
 
     case "path_payment_strict_send":
+      if (operation.to === addr) return "IN";
       return "OUT";
 
     case "path_payment_strict_receive":
@@ -155,6 +156,9 @@ const getRecipients = (operation): string[] => {
 
     case "payment":
       return [operation.to_muxed || operation.to];
+
+    case "path_payment_strict_send":
+      return [operation.to];
 
     default:
       return [];

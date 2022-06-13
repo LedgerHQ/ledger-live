@@ -5,6 +5,7 @@ import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
+import { inferSubOperations } from "../../account";
 
 const getOldAssetOperations = (
   subAccounts?: TokenAccount[]
@@ -106,7 +107,13 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     blockHeight,
     subAccounts,
   };
-  return { ...shape, operations: nativeOperations };
+  return {
+    ...shape,
+    operations: nativeOperations.map((op) => ({
+      ...op,
+      subOperations: inferSubOperations(op.hash, subAccounts),
+    })),
+  };
 };
 
 export const sync = makeSync({ getAccountShape });

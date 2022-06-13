@@ -10,9 +10,22 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
-  { amount, recipient, fees, memoValue, useAllAmount }: Transaction,
-  account: Account
-): string => `
+  {
+    amount,
+    recipient,
+    fees,
+    memoValue,
+    useAllAmount,
+    subAccountId,
+  }: Transaction,
+  mainAccount: Account
+): string => {
+  const account =
+    (subAccountId &&
+      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    mainAccount;
+
+  return `
     SEND ${
       useAllAmount
         ? "MAX"
@@ -30,6 +43,7 @@ export const formatTransaction = (
             disableRounding: true,
           })
     }${memoValue ? "\n  memo=" + memoValue : ""}`;
+};
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
