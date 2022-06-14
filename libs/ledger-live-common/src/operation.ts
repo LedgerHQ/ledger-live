@@ -51,6 +51,16 @@ export function findOperationInAccount(
   for (let i = 0; i < pendingOperations.length; i++) {
     const op = pendingOperations[i];
     if (op.id === operationId) return op;
+
+    if (op.nftOperations) {
+      const nftOps = op.nftOperations;
+
+      for (let j = 0; j < nftOps.length; j++) {
+        const nftOp = nftOps[j];
+
+        if (nftOp.id === operationId) return nftOp;
+      }
+    }
   }
 
   return null;
