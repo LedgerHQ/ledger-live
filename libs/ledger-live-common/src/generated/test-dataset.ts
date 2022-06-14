@@ -2,6 +2,8 @@ import algorand from "../families/algorand/test-dataset";
 
 import bitcoin from "../families/bitcoin/test-dataset";
 
+import cardano from "../families/cardano/test-dataset";
+
 import cosmos from "../families/cosmos/test-dataset";
 
 import crypto_org from "../families/crypto_org/test-dataset";
@@ -30,6 +32,7 @@ import tron from "../families/tron/test-dataset";
 export default {
   algorand,
   bitcoin,
+  cardano,
   cosmos,
   crypto_org,
   elrond,
