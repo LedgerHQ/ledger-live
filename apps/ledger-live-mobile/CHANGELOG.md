@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.2
+
+### Minor Changes
+
+- 09f79c7b4: Add Cardano to mobile
+
 ## 3.3.0-next.1
 
 ### Minor Changes
