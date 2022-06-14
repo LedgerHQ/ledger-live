@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "토큰 주소 복사됨 !",
       "tokenId" : "토큰 ID",
       "tokenIdCopied" : "토큰 ID가 복사되었습니다!",
-      "quantity" : "수량"
+      "quantity" : "수량",
+      "attributes" : {
+        "floorPrice" : "가격 하한선"
+      }
     },
     "viewerModal" : {
       "viewOn" : "다음에서 보기:",
