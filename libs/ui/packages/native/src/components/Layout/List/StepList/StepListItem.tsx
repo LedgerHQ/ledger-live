@@ -26,7 +26,7 @@ export default function StepListItem({ status, title, children, ...props }: Prop
       <Text variant="body" color={status === "inactive" ? "neutral.c70" : "primary.c90"}>
         {title}
       </Text>
-      {status === "active" && children}
+      <Flex mt={12}>{children}</Flex>
     </Container>
   );
 }

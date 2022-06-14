@@ -66,7 +66,7 @@ const StepListStory = () => {
   }, [items, animate]);
 
   return (
-    <Flex width={400} height={800}>
+    <Flex width={300}>
       <StepList items={items as any} />
     </Flex>
   );
