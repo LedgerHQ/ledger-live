@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
@@ -60,20 +60,27 @@ export const AccountBalanceSummaryFooterComponent = ({
   delegatedBalance,
   unbondingBalance,
   hasUnbondingBalance,
+  localizations,
 }: {
   spendableBalance: any,
   delegatedBalance: any,
   unbondingBalance: any,
   hasUnbondingBalance?: boolean,
+  localizations: {
+    availableBalanceTooltip: string,
+    availableBalance: string,
+    delegatedAssetsTooltip: string,
+    delegatedAssets: string,
+    undelegatedAssetsTooltip: string,
+    undelegatedAssets: string,
+  },
 }) => {
   return (
     <Wrapper>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.availableBalanceTooltip" />}>
+        <ToolTip content={localizations.availableBalanceTooltip}>
           <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.availableBalance" />
-            </Title>
+            <Title>{localizations.availableBalance}</Title>
             <InfoCircle size={13} />
           </TitleWrapper>
         </ToolTip>
@@ -82,11 +89,9 @@ export const AccountBalanceSummaryFooterComponent = ({
         </AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.delegatedAssetsTooltip" />}>
+        <ToolTip content={localizations.delegatedAssetsTooltip}>
           <TitleWrapper>
-            <Title>
-              <Trans i18nKey="account.delegatedAssets" />
-            </Title>
+            <Title>{localizations.delegatedAssets}</Title>
             <InfoCircle size={13} />
           </TitleWrapper>
         </ToolTip>
@@ -96,11 +101,9 @@ export const AccountBalanceSummaryFooterComponent = ({
       </BalanceDetail>
       {hasUnbondingBalance && (
         <BalanceDetail>
-          <ToolTip content={<Trans i18nKey="account.undelegatingTooltip" />}>
+          <ToolTip content={localizations.undelegatedAssetsTooltip}>
             <TitleWrapper>
-              <Title>
-                <Trans i18nKey="account.undelegating" />
-              </Title>
+              <Title>{localizations.undelegatedAssets}</Title>
               <InfoCircle size={13} />
             </TitleWrapper>
           </ToolTip>
@@ -119,6 +122,7 @@ type Props = {
 };
 
 const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+  const { t } = useTranslation();
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.cosmosResources) return null;
@@ -151,6 +155,14 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
       delegatedBalance={delegatedBalance}
       unbondingBalance={unbondingBalance}
       hasUnbondingBalance={_unbondingBalance.gt(0)}
+      localizations={{
+        availableBalanceTooltip: t("account.availableBalanceTooltip"),
+        availableBalance: t("account.availableBalance"),
+        delegatedAssetsTooltip: t("account.cosmosDelegatedTooltip"),
+        delegatedAssets: t("account.delegatedAssets"),
+        undelegatedAssetsTooltip: t("account.cosmosUndelegatingTooltip"),
+        undelegatedAssets: t("account.undelegating"),
+      }}
     />
   );
 };

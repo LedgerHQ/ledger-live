@@ -716,8 +716,10 @@
     "frozenAssetsTooltip": "Los activos congelados se utilizan en el proceso de votación de TRON. Esto representa tu número total de votos.",
     "bandwidthTooltip": "Congela activos para ganar Ancho de banda",
     "energyTooltip": "Congela activos para ganar Energía",
-    "delegatedAssetsTooltip": "Los activos delegados se utilizan en el proceso de votación de Cosmos. Esto representa tu cantidad total de votos.",
-    "undelegatingTooltip": "Los activos desdelegados presentan un bloqueo temporal de 21 días antes de estar disponibles."
+    "cosmosDelegatedTooltip": "Los activos delegados se utilizan en el proceso de votación de Cosmos. Esto representa tu cantidad total de votos.",
+    "cosmosUndelegatingTooltip": "Los activos desdelegados presentan un bloqueo temporal de 21 días antes de estar disponibles.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Elegir de {{providerCount}} proveedor",

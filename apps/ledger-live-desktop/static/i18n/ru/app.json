@@ -716,8 +716,10 @@
     "frozenAssetsTooltip": "Замороженные активы используются в процедуре голосования в сети Tron. От них зависит количество ваших голосов.",
     "bandwidthTooltip": "Замораживайте активы для наращивания Пропускной способности",
     "energyTooltip": "Замораживайте активы для наращивания Энергии",
-    "delegatedAssetsTooltip": "Делегированные активы используются в процедуре голосования в сети Cosmos. От них зависит количество ваших голосов.",
-    "undelegatingTooltip": "Отозванные активы блокируются на 21 день, прежде чем вы сможете их получить."
+    "cosmosDelegatedTooltip": "Делегированные активы используются в процедуре голосования в сети Cosmos. От них зависит количество ваших голосов.",
+    "cosmosUndelegatingTooltip": "Отозванные активы блокируются на 21 день, прежде чем вы сможете их получить.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Выберите одного из {{providerCount}} оператора",

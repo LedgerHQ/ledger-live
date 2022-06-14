@@ -27,7 +27,7 @@ function formatOperationSpecifics(
     .join("");
 }
 
-function formatAccountSpecifics(account: Account): string {
+export function formatAccountSpecifics(account: Account): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
   const { validators } = getCurrentCosmosPreloadData();
