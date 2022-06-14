@@ -272,7 +272,7 @@
             "pending": "KYC pending",
             "approved": "KYC approved",
             "closed": "KYC rejected",
-            "upgradeRequierd": "KYC expired"
+            "upgradeRequired": "KYC expired"
           }
         },
         "login": {

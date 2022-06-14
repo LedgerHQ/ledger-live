@@ -11,7 +11,7 @@ export const KYC_STATUS = {
   pending: "pending",
   rejected: "closed",
   approved: "approved",
-  upgradeRequierd: "upgradeRequierd",
+  upgradeRequired: "upgradeRequired",
 };
 
 export type KYCStatus = keyof typeof KYC_STATUS;
@@ -107,7 +107,7 @@ export const getKYCStatusFromCheckQuoteStatus = (
 
     case "KYC_UNDEFINED":
     case "KYC_UPGRADE_REQUIRED":
-      return KYC_STATUS.upgradeRequierd as KYCStatus;
+      return KYC_STATUS.upgradeRequired as KYCStatus;
 
     case "RATE_VALID":
       return KYC_STATUS.approved as KYCStatus;

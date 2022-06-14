@@ -45,7 +45,7 @@ const StatusThemeMap = {
   pending: { color: "warning", Icon: ClockIcon },
   approved: { color: "marketUp_western", Icon: CheckCircleIcon },
   closed: { color: "alertRed", Icon: ExclamationCircleIcon },
-  upgradeRequierd: { color: "warning", Icon: ClockIcon },
+  upgradeRequired: { color: "warning", Icon: ClockIcon },
 };
 
 const ProviderStatusTag = ({ status }: ProviderStatusTagProps) => {
