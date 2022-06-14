@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.3
+
+### Minor Changes
+
+- fe3c7a39c: Add Earn Rewards btn on Solana
+
 ## 3.3.0-next.2
 
 ### Minor Changes
