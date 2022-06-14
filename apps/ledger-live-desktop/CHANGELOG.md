@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.44.0-next.2
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+
 ## 2.44.0-next.1
 
 ### Patch Changes

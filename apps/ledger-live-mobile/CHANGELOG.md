@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.4
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+
 ## 3.3.0-next.3
 
 ### Minor Changes
