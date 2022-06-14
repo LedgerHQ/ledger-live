@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "代币地址已复制！",
       "tokenId" : "代币 ID",
       "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "底价"
+      }
     },
     "viewerModal" : {
       "viewOn" : "查看",
