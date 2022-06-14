@@ -3,3 +3,4 @@ node_modules
 .vscode
 .pnpm-*
 /temp
+.idea

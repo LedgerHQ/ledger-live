@@ -29,7 +29,7 @@ import { Operation } from "../../../types/operation";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
 import { getAddressRaw, validateAddress } from "./utils/addresses";
-import { patchOperationWithHash } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { withDevice } from "../../../hw/deviceAccess";
 
 const receive = makeAccountBridgeReceive();
@@ -84,10 +84,12 @@ const getTransactionStatus = async (
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
   const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
-  amount = useAllAmount ? balance.minus(estimatedFees) : amount;
-
-  if (amount.lte(0)) errors.amount = new AmountRequired();
-  if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
+  if (totalSpent.gt(a.spendableBalance)) {
+    errors.amount = new NotEnoughBalance();
+  } else {
+    amount = useAllAmount ? balance.minus(estimatedFees) : amount;
+    if (amount.lte(0)) errors.amount = new AmountRequired();
+  }
 
   // log("debug", "[getTransactionStatus] finish fn");
 
@@ -114,29 +116,27 @@ const estimateMaxSpendable = async ({
   const a = getMainAccount(account, parentAccount);
   const { address } = getAddress(a);
 
+  const recipient = transaction?.recipient;
+
   if (!validateAddress(address).isValid) throw new InvalidAddress();
+  if (recipient && !validateAddress(recipient).isValid)
+    throw new InvalidAddress();
 
   const balances = await fetchBalances(address);
-
   const balance = new BigNumber(balances.spendable_balance);
 
-  const recipient = transaction?.recipient;
+  if (balance.eq(0)) return balance;
+
   const amount = transaction?.amount;
-  if (recipient) {
-    log(
-      "debug",
-      "[estimateMaxSpendable] fetching estimated fees to adjust the real max spendable balance"
-    );
 
-    if (!validateAddress(recipient).isValid) throw new InvalidAddress();
+  const result = await fetchEstimatedFees({ to: recipient, from: address });
+  const gasFeeCap = new BigNumber(result.gas_fee_cap);
+  const gasLimit = new BigNumber(result.gas_limit);
+  const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
 
-    const result = await fetchEstimatedFees({ to: recipient, from: address });
-    const gasFeeCap = new BigNumber(result.gas_fee_cap);
-    const gasLimit = new BigNumber(result.gas_limit);
+  if (balance.lte(estimatedFees)) return new BigNumber(0);
 
-    balance.minus(calculateEstimatedFees(gasFeeCap, gasLimit));
-  }
-
+  balance.minus(estimatedFees);
   if (amount) balance.minus(amount);
 
   // log("debug", "[estimateMaxSpendable] finish fn");
@@ -269,7 +269,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             const signature = `${result.signature_compact.toString("base64")}`;
 
             const operation: Operation = {
-              id: `${accountId}-${txHash}-OUT`,
+              id: encodeOperationId(accountId, txHash, "OUT"),
               hash: txHash,
               type: "OUT",
               senders: [address],

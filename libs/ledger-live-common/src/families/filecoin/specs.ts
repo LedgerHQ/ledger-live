@@ -9,7 +9,6 @@ import type { AppSpec } from "../../bot/types";
 
 const MIN_SAFE = new BigNumber(100000);
 const filecoinSpecs: AppSpec<Transaction> = {
-  disabled: true, // Bot spec is currently not correctly working
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
   appQuery: {
@@ -17,7 +16,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
     appName: "Filecoin",
   },
 
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 5 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
