@@ -642,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout": {
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum {{amount}} ADA required"
     }
   },
   "bluetooth": {
