@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "トークンアドレスがコピーされました！",
       "tokenId" : "トークンID",
       "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "フロア価格"
+      }
     },
     "viewerModal" : {
       "viewOn" : "表示",
