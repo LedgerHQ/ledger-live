@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.2.1-next.0
+
+### Patch Changes
+
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [dd6a12c9b]
+  - @ledgerhq/live-common@23.1.0-next.0
+  - @ledgerhq/native-ui@0.7.19-next.0
+
 ## 3.2.0
 
 ### Minor Changes

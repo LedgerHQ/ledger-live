@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.44.0-next.0
+
+### Minor Changes
+
+- 9c3b16bcc: Fix infinite loading when NFTs are load in gallery mode
+
+### Patch Changes
+
+- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
+- c78f7d6db: Fixed issue on Circulating Supply, removed currency in front of the value
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+  - @ledgerhq/live-common@23.1.0-next.0
+
 ## 2.43.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.7.19-next.0
+
+### Patch Changes
+
+- dd6a12c9b: Fix ScrollListContainer ref not being forwarded to FlatList
+
 ## 0.7.18
 
 ### Patch Changes

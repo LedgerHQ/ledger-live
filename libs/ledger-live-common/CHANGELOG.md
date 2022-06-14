@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 23.1.0-next.0
+
+### Minor Changes
+
+- 8861c4fe0: upgrade dependencies
+
+### Patch Changes
+
+- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+
 ## 23.0.0
 
 ### Major Changes

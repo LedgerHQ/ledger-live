@@ -70,5 +70,14 @@
     "native-modules-tools": "1.0.0",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "dry-trains-drive",
+    "funny-pianos-mix",
+    "green-dodos-live",
+    "hot-seals-call",
+    "olive-days-attend",
+    "thin-bees-happen",
+    "unlucky-jars-speak",
+    "wild-trains-sort"
+  ]
 }
