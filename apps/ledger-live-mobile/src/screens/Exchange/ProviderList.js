@@ -35,13 +35,13 @@ import AppIcon from "../Platform/AppIcon";
 const forceInset = { bottom: "always" };
 
 const assetMap = {
-  applepay: ApplePay,
-  googlepay: GooglePay,
-  maestro: Maestro,
-  mastercard: MasterCard,
-  paypal: PayPal,
-  sepa: Sepa,
-  visa: Visa,
+  applepay: <ApplePay />,
+  googlepay: <GooglePay />,
+  maestro: <Maestro />,
+  mastercard: <MasterCard />,
+  paypal: <PayPal />,
+  sepa: <Sepa />,
+  visa: <Visa />,
 };
 
 type ProviderItemProps = {
@@ -98,7 +98,7 @@ const ProviderItem = ({ provider, onClick }: ProviderItemProps) => {
               style={[styles.pm, { borderColor: colors.border }]}
             >
               {assetMap[paymentProvider] ? (
-                assetMap[paymentProvider]({})
+                assetMap[paymentProvider]
               ) : (
                 <LText style={styles.pmLabel}>{paymentProvider}</LText>
               )}
