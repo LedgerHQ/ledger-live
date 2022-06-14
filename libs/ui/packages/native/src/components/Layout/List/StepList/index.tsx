@@ -20,6 +20,7 @@ export default function StepList({ items }: Props) {
     <Flex flexDirection="column">
       {items?.map((item, index) => (
         <StepListItemWrapper
+          key={item.title}
           item={item}
           isFirstItem={index === 0}
           isLastItem={index === items.length - 1}
