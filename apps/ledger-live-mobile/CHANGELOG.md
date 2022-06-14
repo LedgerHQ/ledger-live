@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.3.0-next.1
+
+### Minor Changes
+
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
+### Patch Changes
+
+- Updated dependencies [592ad2f7b]
+- Updated dependencies [608010c9d]
+  - @ledgerhq/native-ui@0.8.0-next.1
+  - @ledgerhq/live-common@23.1.0-next.1
+
 ## 3.2.1-next.0
 
 ### Patch Changes

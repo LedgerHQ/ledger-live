@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.8.0-next.1
+
+### Minor Changes
+
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+
 ## 0.7.19-next.0
 
 ### Patch Changes

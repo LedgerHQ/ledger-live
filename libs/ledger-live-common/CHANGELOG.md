@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-next.1
+
+### Patch Changes
+
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
 ## 23.1.0-next.0
 
 ### Minor Changes
