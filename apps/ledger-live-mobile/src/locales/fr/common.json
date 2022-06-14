@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "Adresse du token copiée",
       "tokenId" : "Identifiant du token",
       "tokenIdCopied" : "Identifiant du token copié",
-      "quantity" : "Nombre"
+      "quantity" : "Nombre",
+      "attributes" : {
+        "floorPrice" : "Prix plancher"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Voir sur",
