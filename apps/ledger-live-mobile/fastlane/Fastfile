@@ -108,11 +108,13 @@ platform :ios do
     }
 
     build_number = latest_testflight_build_number(
-      version: trim_version_number(package["version"])
+      version: trim_version_number(package["version"]),
+      app_identifier: "com.ledger.live"
     )
 
     increment_build_number({
-      build_number: build_number + 1
+      build_number: build_number + 1,
+      xcodeproj: XCODE_PROJECT
     })
 
     if (options[:ci])
@@ -164,7 +166,6 @@ platform :ios do
         output_directory: OUTPUT_DIRECTORY,
         output_name: "#{PROJECT_NAME}.ipa",
         export_options: {
-          manageAppVersionAndBuildNumber: true,
           method: export_options_method,
           signingStyle: "manual",
           provisioningProfiles: {

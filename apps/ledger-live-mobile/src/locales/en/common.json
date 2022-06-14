@@ -105,6 +105,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
+    "FwUpdateBluetoothNotSupported": {
+      "title": "Firmware updates are only supported for wired connections"
+    },
     "BtcUnmatchedApp": {
       "title": "That's the wrong app",
       "description": "Please open the {{managerAppName}} app on your device."
@@ -257,12 +260,12 @@
       "description": "Please try again."
     },
     "DisconnectedDevice": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "Device disconnected",
+      "description": "Ledger Live could not connect to your device. Please try it again."
     },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",
@@ -629,6 +632,15 @@
     },
     "SolanaMemoIsTooLong": {
       "title": "Memo is too long. Max length is {{maxLength}}"
+    },
+    "SolanaUseAllAmountStakeWarning": {
+      "title": "Ensure you have enough balance left for future transactions fees"
+    },
+    "SolanaTxSimulationFailedWhilePendingOp": {
+      "title": "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
+    },
+    "SolanaTxConfirmationTimeout": {
+      "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     }
   },
   "bluetooth": {
@@ -783,6 +795,40 @@
         "title": "Crypto Markets",
         "description": "Check crypto prices and market trends right in the app",
         "cta": "Browse"
+      }
+    }
+  },
+  "ratings": {
+    "init": {
+      "title": "Enjoying Ledger Live?",
+      "description": "Whether you like it or feel we could be doing better. We really value your feedback.",
+      "cta": {
+        "enjoy": "It's great",
+        "disappointed": "I am disappointed",
+        "notNow": "Not now"
+      }
+    },
+    "enjoy": {
+      "title": "You're great too",
+      "description": "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
+      "cta": {
+        "rate": "Give us 5 stars",
+        "notNow": "Not now"
+      }
+    },
+    "disappointed": {
+      "title": "Help us build a better product for you",
+      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "cta": {
+        "sendFeedback": "Send feedback",
+        "notNow": "Not now"
+      }
+    },
+    "disappointedDone": {
+      "title": "Thank you for your feedback",
+      "description": "If you'd like to give us more feedback or require assistance please email us at ",
+      "cta": {
+        "done": "Done"
       }
     }
   },
@@ -1928,7 +1974,8 @@
       "privacyPolicy": "Privacy policy",
       "privacyPolicyDesc": "See what personal data are collected, why and how they are used.",
       "liveReview": {
-        "title": "Rate the app!",
+        "title": "Feedback",
+        "desc": "Give us your feedback on the app",
         "ios": "Review in the App Store",
         "android": "Review in the Google Play store"
       }
@@ -2777,6 +2824,10 @@
     "appNotInstalled": "Please install the {{appName}} app",
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
+    "deviceInBootloader": {
+      "title": "Device in Bootloader mode.",
+      "description": "Click on \"Continue\" to update it."
+    },
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -3072,6 +3123,27 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
+    "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
+    "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
+    "pleaseReinstallApps": "Please reinstall the apps on your device.",
+    "pleaseConfirmUpdate": "Confirm the update on your device",
+    "finishUpdate": "Finish the update on your {{deviceName}}",
+    "identifierTitle": "Identifier:",
+    "pleaseWaitDownload": "Please wait for the installer to be downloaded",
+    "preparingDevice": "Preparing your device",
+    "pleaseWaitUpdate": "Please wait for the update to finish",
+    "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
+    "unlockDeviceWithPin": "Unlock your device with your PIN",
+    "reinstallApps": "Reinstall apps.",
+    "currentVersionNumber": "Current version",
+    "newVersionNumber": "New version",
+    "success": "Firmware updated",
+    "update": "Update",
+    "Notifications": {
+      "confirmOnDevice": "We require your confirmation on the device",
+      "preparingUpdate": "Transferring update, we will notify you when we're done",
+      "installing": "Installing {{progress}}%"
+    },
     "Installing": {
       "title": "{{stepName}}...",
       "subtitle": "If requested on your device, please enter your PIN to finish the process."
@@ -3081,16 +3153,19 @@
       "flash-mcu": "MCU updating",
       "flash-bootloader": "Bootloader updating",
       "flash": "Flashing your device",
-      "firmware": "Firmware updating"
+      "preparing": "Preparing update",
+      "firmware": "Downloading update"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
     }
   },
   "FirmwareUpdateReleaseNotes": {
-    "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
+    "introTitle": "Update {{deviceName}} to version {{version}}",
+    "recoveryPhraseBackupInstructions": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
+    "confirmRecoveryPhrase": "I have my recovery phrase",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
     "introDescription2": "This has no impact on your crypto assets.",
     "action": "Continue update"
@@ -3246,6 +3321,9 @@
       "redelegate": "Redelegate",
       "reward": "Claim rewards",
       "estYield": "Est. yield",
+      "totalStake": "Total Stake",
+      "commission": "Commission",
+      "iDelegate": "I delegate",
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",
@@ -3822,6 +3900,23 @@
       }
     }
   },
+  "solana": {
+    "delegation": {
+      "iDelegate": "I delegate",
+      "iActivate": "I activate",
+      "iReactivate": "I reactivate",
+      "iDeactivate": "I undelegate",
+      "iWithdraw": "I withdraw",
+      "totalStake": "Total stake",
+      "commission": "Commission",
+      "stakeActivationState": "State",
+      "delegationEarn": "You can earn SOL rewards by delegating your assets.",
+      "info": "How Delegation works",
+      "broadcastSuccessTitle": "Operation sent",
+      "broadcastSuccessDescription": "The status of the delegation will be updated when the transaction is confirmed.",
+      "delegatedTo": "delegated to"
+    }
+  },
   "delegation": {
     "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from your delegated account.",
@@ -3908,6 +4003,7 @@
     },
     "name": "Name",
     "votes": "Votes",
+    "validator": "Validator",
     "infoWording": {
       "freeze": "Frozen tokens are locked for a period of 3 days.",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",

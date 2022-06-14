@@ -16,7 +16,7 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || remoteManifest;
   useEffect(() => {
-    manifest.name && setParams({ name: manifest.name });
+    manifest?.name && setParams({ name: manifest.name });
   }, [manifest, setParams]);
   const themeType = dark ? "dark" : "light";
 

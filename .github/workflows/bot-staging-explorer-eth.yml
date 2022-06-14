@@ -1,4 +1,4 @@
-name: Bot Staging Explorer 'Ethereum'
+name: "[Bot](Staging) 'Ethereum'"
 on:
   schedule:
     - cron: 0 8,12,16 * * 1-5
@@ -53,8 +53,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          # cache: pnpm
+          # cache-dependency-path: "**/pnpm-lock.yaml"
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build
