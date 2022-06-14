@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Image, PixelRatio } from "react-native";
+import { Image } from "react-native";
 import { Flex, Text, Icons, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -29,13 +29,15 @@ const Container = styled(Flex).attrs({
   padding: 16,
   flexDirection: "row",
   alignItems: "flex-start",
+  borderRadius: 2,
 })``;
 
 /** Preset props for a big nano image */
 export const IMAGE_PROPS_BIG_NANO = {
   imageScale: 1.5,
   imageStyle: {
-    right: -10,
+    height: 176,
+    right: -65,
   },
 };
 
@@ -43,6 +45,8 @@ export const IMAGE_PROPS_BIG_NANO = {
 export const IMAGE_PROPS_SMALL_NANO = {
   imageScale: 1,
   imageStyle: {
+    height: 140,
+    right: -70,
     bottom: -30,
   },
 };
@@ -51,8 +55,8 @@ export const IMAGE_PROPS_SMALL_NANO = {
 export const IMAGE_PROPS_SMALL_NANO_BOX = {
   imageScale: 2.5,
   imageStyle: {
-    bottom: -110,
-    right: -5,
+    height: 110,
+    right: -160,
   },
 };
 
@@ -63,7 +67,6 @@ export default function BuyDeviceBanner({
   event,
   eventProperties,
   style,
-  imageScale = 1.4,
   imageContainerStyle,
   imageStyle,
   variant,
@@ -81,12 +84,17 @@ export default function BuyDeviceBanner({
       },
     });
   }, [navigate]);
-
-  const imgScale = imageScale / PixelRatio.get();
+  const onPress = useCallback(() => {
+    if (variant === "setup") {
+      handleSetupCtaOnPress();
+    } else {
+      handleOnPress();
+    }
+  }, [handleOnPress, handleSetupCtaOnPress, variant]);
 
   return (
     <>
-      <Container borderRadius={2} style={style}>
+      <Container style={style}>
         <Flex flexDirection="column" alignItems="flex-start">
           {topLeft || (
             <Flex flexDirection="column" width="80%">
@@ -110,9 +118,7 @@ export default function BuyDeviceBanner({
           )}
           <ForceTheme selectedPalette={"light"}>
             <Button
-              onPress={
-                variant === "setup" ? handleSetupCtaOnPress : handleOnPress
-              }
+              onPress={onPress}
               size={buttonSize}
               event={event}
               eventProperties={eventProperties}
@@ -134,10 +140,8 @@ export default function BuyDeviceBanner({
         >
           <Image
             resizeMode="contain"
-            style={[
-              { height: 394 * imgScale, width: 242 * imgScale },
-              imageStyle,
-            ]}
+            resizeMethod="resize"
+            style={imageStyle}
             source={variant === "setup" ? setupImgSource : buyImgSource}
           />
         </Flex>

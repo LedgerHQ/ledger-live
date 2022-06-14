@@ -933,8 +933,8 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "The most secure cryptocurrency & NFT wallet",
-      "subtitle": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
+      "title": "Welcome to Ledger",
+      "subtitle": "We make digital ownership secured and simple.",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
@@ -944,8 +944,10 @@
       "and": "and"
     },
     "stepDoYouHaveALedgerDevice": {
-      "title": "Do you have a ledger device ?",
-      "subtitle": "First things first"
+      "title": "Do you own a Ledger?",
+      "subtitle": "First things first",
+      "yes": "Yes, I do.",
+      "no": "Not yet."
     },
     "postWelcomeStep": {
       "title": "It's your choice",
