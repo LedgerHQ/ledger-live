@@ -544,7 +544,7 @@ PODS:
   - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (3.4.2):
+  - RNSentry (3.4.3):
     - React-Core
     - Sentry (= 7.11.0)
   - RNShare (6.5.0):
@@ -668,7 +668,7 @@ DEPENDENCIES:
   - "RNOS (from `../../../node_modules/.pnpm/react-native-os@1.2.6/node_modules/react-native-os`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.8.0_wrgtwllbv7uq5vzsmw42tqtiju/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.13.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-screens`)"
-  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.4.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native`)"
+  - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@3.4.3_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@12.3.0_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-svg`)"
   - "RNVectorIcons (from `../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons`)"
@@ -850,7 +850,7 @@ EXTERNAL SOURCES:
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.13.1_jtrxi44z2zn3egoyupbz6wol6a/node_modules/react-native-screens"
   RNSentry:
-    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.4.2_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native"
+    :path: "../../../node_modules/.pnpm/@sentry+react-native@3.4.3_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@sentry/react-native"
   RNShare:
     :path: "../../../node_modules/.pnpm/react-native-share@6.5.0/node_modules/react-native-share"
   RNSVG:
@@ -960,7 +960,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 46cdb89ca59ab7181334f4ed05a70e82ddb36751
   RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
-  RNSentry: 2cd1daa124b0d9fd0dfc2cb6094fdd168cb579bc
+  RNSentry: 85f6525b5fe8d2ada065858026b338605b3c09da
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
