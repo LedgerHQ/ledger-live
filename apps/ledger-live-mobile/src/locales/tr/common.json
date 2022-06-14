@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "Token Adresi kopyalandı!",
       "tokenId" : "Token Kimliği (Token ID)",
       "tokenIdCopied" : "Token Kimliği kopyalandı!",
-      "quantity" : "Miktar"
+      "quantity" : "Miktar",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Burada görüntüle:",
