@@ -20,6 +20,10 @@ import type { Props as DisclaimerProps } from "./DAppDisclaimer";
 import CatalogBanner from "./CatalogBanner";
 import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import { useSelector } from "react-redux";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 type RouteParams = {
   defaultAccount: ?AccountLike,
@@ -34,6 +38,7 @@ const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { platform, ...routeParams } = route.params ?? {};
   const navigation = useNavigation();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const { manifests } = usePlatformApp();
   const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
@@ -68,7 +73,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
           name: manifest.name,
         });
 
-      if (!disclaimerDisabled) {
+      if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
           disableDisclaimer: () => setDisclaimerDisabled(),
           closeDisclaimer: () => setDisclaimerOpened(false),
@@ -81,7 +86,13 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
         openDApp();
       }
     },
-    [navigation, routeParams, setDisclaimerDisabled, disclaimerDisabled],
+    [
+      navigation,
+      routeParams,
+      setDisclaimerDisabled,
+      disclaimerDisabled,
+      readOnlyModeEnabled,
+    ],
   );
 
   useEffect(() => {
@@ -100,47 +111,47 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   }, [platform, filteredManifests, navigation, routeParams]);
 
   return (
-    <AnimatedHeaderView
-      titleStyle={styles.title}
-      title={<Trans i18nKey={"platform.catalog.title"} />}
-      hasBackButton
-    >
-      <TrackScreen category="Platform" name="Catalog" />
-      {disclaimerOpts && (
-        <DAppDisclaimer
-          disableDisclaimer={disclaimerOpts.disableDisclaimer}
-          closeDisclaimer={disclaimerOpts.closeDisclaimer}
-          onContinue={disclaimerOpts.onContinue}
-          isOpened={disclaimerOpened}
-          icon={disclaimerOpts.icon}
-          name={disclaimerOpts.name}
-        />
-      )}
+    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <AnimatedHeaderView
+        edges={[]}
+        titleStyle={styles.title}
+        title={<Trans i18nKey={"platform.catalog.title"} />}
+        hasBackButton
+      >
+        <TrackScreen category="Platform" name="Catalog" />
+        {disclaimerOpts && (
+          <DAppDisclaimer
+            disableDisclaimer={disclaimerOpts.disableDisclaimer}
+            closeDisclaimer={disclaimerOpts.closeDisclaimer}
+            onContinue={disclaimerOpts.onContinue}
+            isOpened={disclaimerOpened}
+            icon={disclaimerOpts.icon}
+            name={disclaimerOpts.name}
+          />
+        )}
 
-      <CatalogBanner />
-      <CatalogTwitterBanner />
-      {filteredManifests.map(manifest => (
-        <AppCard
-          key={manifest.id}
-          manifest={manifest}
-          onPress={handlePressCard}
-        />
-      ))}
-      <View style={styles.bottomPadding} />
-    </AnimatedHeaderView>
+        <CatalogBanner />
+        <CatalogTwitterBanner />
+        {filteredManifests.map(manifest => (
+          <AppCard
+            key={manifest.id}
+            manifest={manifest}
+            onPress={handlePressCard}
+          />
+        ))}
+        <View style={styles.bottomPadding} />
+      </AnimatedHeaderView>
+    </TabBarSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   title: {
     lineHeight: 40,
     textAlign: "left",
   },
   bottomPadding: {
-    height: 40,
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });
 

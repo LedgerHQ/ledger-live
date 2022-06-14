@@ -1,6 +1,7 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
+
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -85,6 +86,7 @@ export const ScreenName = {
   FreezeValidationError: "FreezeValidationError",
   FreezeValidationSuccess: "FreezeValidationSuccess",
   GeneralSettings: "GeneralSettings",
+  GetDevice: "GetDevice",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
   ManagerDevice: "ManagerDevice",
@@ -103,6 +105,7 @@ export const ScreenName = {
   PasswordRemove: "PasswordRemove",
   Portfolio: "Portfolio",
   PortfolioOperationHistory: "PortfolioOperationHistory",
+  PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
@@ -281,6 +284,7 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
   OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",
@@ -352,7 +356,8 @@ export const ScreenName = {
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
 
-  BuyDeviceScreen: "BuyDeviceScreen",
+  PostBuyDeviceScreen: "PostBuyDeviceScreen",
+  PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
@@ -373,6 +378,7 @@ export const NavigatorName = {
   ExchangeSellFlow: "ExchangeSellFlow",
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
+  BuyDevice: "BuyDevice",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",

@@ -43,6 +43,9 @@ import { useScrollToTop } from "../../navigation/utils";
 
 import { getListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../components/TabBar/TabBarSafeAreaView";
 
 type Props = {
   navigation: any;
@@ -260,23 +263,21 @@ const AccountScreenInner = ({
   ];
 
   return (
-    <View style={[styles.root]}>
+    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
       {analytics}
       <AnimatedFlatListWithRefreshControl
         style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
       />
-    </View>
+    </TabBarSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   header: {
     flexDirection: "column",
   },
