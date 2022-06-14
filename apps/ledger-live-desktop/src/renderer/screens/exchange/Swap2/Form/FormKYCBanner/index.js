@@ -20,9 +20,28 @@ const FormKYCBanner = ({
   // i.e: we don't render it if the KYC is "pending".
   if (!provider || (status && status === KYC_STATUS.pending)) return null;
 
-  const { message, cta } = status
-    ? { message: "swap2.form.providers.kyc.rejected", cta: "swap2.form.providers.kyc.update" }
-    : { message: "swap2.form.providers.kyc.required", cta: "swap2.form.providers.kyc.complete" };
+  const { message, cta } = (() => {
+    switch (status) {
+      case KYC_STATUS.rejected:
+        return {
+          message: "swap2.form.providers.kyc.rejected",
+          cta: "swap2.form.providers.kyc.update",
+        };
+
+      case KYC_STATUS.upgradeRequired:
+        return {
+          message: "swap2.form.providers.kyc.updateRequired",
+          cta: "swap2.form.providers.kyc.complete",
+        };
+
+      // If the status is _undefined_, this means the user has not yet completed KYC (for Wyre only)
+      default:
+        return {
+          message: "swap2.form.providers.kyc.required",
+          cta: "swap2.form.providers.kyc.complete",
+        };
+    }
+  })();
 
   return <SectionInformative message={t(message)} ctaLabel={t(cta)} onClick={onClick} />;
 };

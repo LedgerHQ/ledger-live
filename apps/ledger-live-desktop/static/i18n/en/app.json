@@ -268,11 +268,12 @@
           "complete": "Complete KYC",
           "update": "Refresh KYC",
           "rejected": "KYC rejected, start the verification again",
+          "updateRequired": "Complete or update your KYC",
           "status": {
             "pending": "KYC pending",
             "approved": "KYC approved",
             "closed": "KYC rejected",
-            "upgradeRequired": "KYC expired"
+            "upgradeRequired": "KYC insufficient"
           }
         },
         "login": {
