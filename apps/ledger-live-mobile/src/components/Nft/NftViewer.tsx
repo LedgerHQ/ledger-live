@@ -224,28 +224,6 @@ const NftViewer = ({ route }: Props) => {
   const mediaType = useMemo(() => getMetadataMediaType(nftMetadata, "big"), [
     nftMetadata,
   ]);
-  const MaybePressableNftImageViewer = useCallback(
-    ({ children }) =>
-      mediaType === "video" ? (
-        <>{children}</>
-      ) : (
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(NavigatorName.NftNavigator, {
-              screen: ScreenName.NftImageViewer,
-              params: {
-                metadata: nftMetadata,
-                mediaFormat: "original",
-                status: nftStatus,
-              },
-            })
-          }
-        >
-          {children}
-        </TouchableOpacity>
-      ),
-    [mediaType, navigation, nftMetadata, nftStatus],
-  );
 
   const NftComponent = useCallback(
     () => (
@@ -283,10 +261,21 @@ const NftViewer = ({ route }: Props) => {
           </Skeleton>
 
           <View style={styles.imageContainer}>
-            {nftMetadata?.media ? (
-              <MaybePressableNftImageViewer>
+            {nftMetadata?.media && mediaType !== "video" ? (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(NavigatorName.NftNavigator, {
+                    screen: ScreenName.NftImageViewer,
+                    params: {
+                      metadata: nftMetadata,
+                      mediaFormat: "original",
+                      status: nftStatus,
+                    },
+                  })
+                }
+              >
                 <NftComponent />
-              </MaybePressableNftImageViewer>
+              </TouchableOpacity>
             ) : (
               <NftComponent />
             )}
