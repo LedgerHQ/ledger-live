@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "Token Address copied !",
       "tokenId" : "Token ID",
       "tokenIdCopied" : "Token ID copied !",
-      "quantity" : "الكمية"
+      "quantity" : "الكمية",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal" : {
       "viewOn" : "View on",
