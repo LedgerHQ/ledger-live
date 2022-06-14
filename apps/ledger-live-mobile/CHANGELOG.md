@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.5
+
+### Patch Changes
+
+- 3d71946fb: Fix deep linking logic for platform apps
+
 ## 3.3.0-next.4
 
 ### Minor Changes
