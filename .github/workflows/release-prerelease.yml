@@ -91,11 +91,11 @@ jobs:
       - name: tag desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-desktop@${{{ steps.post-desktop-version.outputs.version }}}
+          git tag @ledgerhq/live-desktop@${{ steps.post-desktop-version.outputs.version }}
       - name: tag mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-mobile@${{{ steps.post-mobile-version.outputs.version }}}
+          git tag @ledgerhq/live-mobile@${{ steps.post-mobile-version.outputs.version }}
       - name: push changes (push event)
         if: ${{ github.event_name == 'push' }}
         run: |
@@ -104,14 +104,6 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           git push origin ${{ github.event.inputs.ref }} --follow-tags
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
-        id: post-desktop-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
-        id: post-mobile-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
