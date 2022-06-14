@@ -11,8 +11,9 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import type { Account, FloorPrice } from "@ledgerhq/live-common/lib/types";
+import type { Account, FloorPrice, Currency, ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
+import network from "@ledgerhq/live-common/lib/network";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -202,6 +203,28 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
           setFloorPrice(result.value);
         }
       })
+      .finally(() => setFloorPriceLoading(false));
+  }, [protoNft, currency]);
+
+  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
+  const [ticker, setTicker] = useState("");
+  const [floorPrice, setFloorPrice] = useState(null);
+
+  useEffect(() => {
+    setFloorPriceLoading(true);
+    getFloorPrice(protoNft, currency)
+      .then(
+        (result: any) => {
+          if (result) {
+            setTicker(result.ticker);
+            setFloorPrice(result.value);
+          }
+        },
+        err => {
+          throw new Error(err);
+        },
+      )
+      .catch(err => console.log("error", err))
       .finally(() => setFloorPriceLoading(false));
   }, [protoNft, currency]);
 

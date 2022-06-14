@@ -12,16 +12,17 @@ import {
   decodeNftId,
   getNftCapabilities,
   useNftCollectionMetadata,
-  getFloorPrice
+  getFloorPrice,
 } from "@ledgerhq/live-common/lib/nft";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import { ProtoNFT, FloorPrice } from "@ledgerhq/live-common/lib/types";
+import { ProtoNFT, Currency } from "@ledgerhq/live-common/lib/types";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import network from "@ledgerhq/live-common/lib/network";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountSelector } from "../../reducers/accounts";
@@ -43,6 +44,23 @@ type RouteParams = {
 };
 
 type TimeoutReturn = ReturnType<typeof setTimeout>;
+
+const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
+const getFloorPrice = async (
+  nft: ProtoNFT,
+  currency: Currency,
+): Promise<any> => {
+  if (!FLOOR_PRICE_CURRENCIES.has(nft.currencyId)) {
+    return null;
+  }
+
+  const { data } = await network({
+    method: "GET",
+    url: `https://nft.api.live.ledger.com/v1/marketdata/${nft.currencyId}/${currency.ethereumLikeInfo.chainId}/contract/${nft.contract}/floor-price`,
+  });
+
+  return data;
+};
 
 const Section = ({
   title,
@@ -113,7 +131,9 @@ const NftViewer = ({ route }: Props) => {
     nft?.tokenId,
     nft?.currencyId,
   );
-  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [nft.currencyId]);
+  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [
+    nft.currencyId,
+  ]);
   const {
     status: collectionStatus,
     metadata: collectionMetadata,
@@ -136,15 +156,13 @@ const NftViewer = ({ route }: Props) => {
 
   useEffect(() => {
     setFloorPriceLoading(true);
-    getFloorPrice(nft, currency?.ethereumLikeInfo?.chainId)
-      .then(
-        (result: FloorPrice) => {
-          if (result) {
-            setTicker(result.ticker);
-            setFloorPrice(result.value);
-          }
+    getFloorPrice(nft, currency)
+      .then(result => {
+        if (result) {
+          setTicker(result.ticker);
+          setFloorPrice(result.value);
         }
-      )
+      })
       .finally(() => setFloorPriceLoading(false));
   }, [nft, currency]);
 
@@ -367,13 +385,13 @@ const NftViewer = ({ route }: Props) => {
           )}
           <FeatureToggle feature="counterValue">
             {!floorPriceLoading && floorPrice ? (
-                <>
-                  <View style={styles.hr} />
-                  <Section
-                    title={t("nft.viewer.attributes.floorPrice")}
-                    value={`${floorPrice} ${ticker}`}
-                  />
-                </>
+              <>
+                <View style={styles.hr} />
+                <Section
+                  title={t("nft.viewer.attributes.floorPrice")}
+                  value={`${floorPrice} ${ticker}`}
+                />
+              </>
             ) : null}
           </FeatureToggle>
         </View>
