@@ -4283,7 +4283,10 @@
       "tokenContractCopied" : "¡Dirección de token copiada!",
       "tokenId" : "ID de token",
       "tokenIdCopied" : "¡ID de token copiado!",
-      "quantity" : "Cantidad"
+      "quantity" : "Cantidad",
+      "attributes" : {
+        "floorPrice" : "Precio base"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ver en",
