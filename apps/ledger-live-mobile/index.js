@@ -71,11 +71,7 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
     // dist: String(VersionNumber.buildVersion),
     sampleRate: 0.2,
     tracesSampleRate: 0.02,
-    integrations: [
-      new Sentry.ReactNativeTracing({
-        routingInstrumentation,
-      }),
-    ],
+    integrations: [],
     beforeSend(event: any) {
       if (!getEnabled()) return null;
       // If the error matches excludedErrorName or excludedErrorDescription,

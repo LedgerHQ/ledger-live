@@ -177,7 +177,6 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
           {
             label: t(`market.filters.order.topGainers`),
             requestParam: {
-              limit: 100,
               ids: [],
               starred: [],
               orderBy: "market_cap",
@@ -322,16 +321,6 @@ export default function Market({ navigation }: { navigation: any }) {
       });
     }
   }, [initialTop100, refresh]);
-
-  const listData = useMemo(
-    () =>
-      top100
-        ? marketData?.sort(
-            (a, b) => b.priceChangePercentage - a.priceChangePercentage,
-          )
-        : marketData,
-    [marketData, top100],
-  );
 
   const renderItems = useCallback(
     ({ item, index }) => (
@@ -485,7 +474,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
       <FlatList
         contentContainerStyle={{ paddingHorizontal: 16 }}
-        data={listData}
+        data={marketData}
         renderItem={renderItems}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
