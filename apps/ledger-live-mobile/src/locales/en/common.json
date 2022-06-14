@@ -946,8 +946,8 @@
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
       "subtitle": "First things first",
-      "yes": "Yes, I do.",
-      "no": "Not yet."
+      "yes": "Yes, I do",
+      "no": "Not yet"
     },
     "postWelcomeStep": {
       "title": "It's your choice",
