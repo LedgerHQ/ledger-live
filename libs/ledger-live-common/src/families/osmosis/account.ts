@@ -1,6 +1,9 @@
 import type { Operation } from "../../types";
-import { fromOperationExtraRaw, toOperationExtraRaw } from "../cosmos/account";
-import formatAccountSpecifics from "../cosmos/account";
+import {
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+  formatAccountSpecifics,
+} from "../cosmos/account";
 
 function formatOperationSpecifics(op: Operation): string {
   const { memo, validators } = op.extra;

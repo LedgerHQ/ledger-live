@@ -716,8 +716,10 @@
     "frozenAssetsTooltip": "A befagyasztott eszközeid a Tron szavazási folyamatban használhatod. Ez képviseli az összes rendelkezésedre álló szavazatod.",
     "bandwidthTooltip": "Fagyassz le eszközöket, hogy sávszélességet gyűjts",
     "energyTooltip": "Fagyassz le eszközöket, hogy energiát gyűjts",
-    "delegatedAssetsTooltip": "Delegated assets are used in the Cosmos voting process. This represents your total number of votes.",
-    "undelegatingTooltip": "Undelegated assets are in a timelock of 21 days, before being available."
+    "cosmosDelegatedTooltip": "Delegated assets are used in the Cosmos voting process. This represents your total number of votes.",
+    "cosmosUndelegatingTooltip": "Undelegated assets are in a timelock of 21 days, before being available.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Choose from {{providerCount}} provider",
