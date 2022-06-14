@@ -20,7 +20,6 @@ import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import getExchangeRates from "./getExchangeRates";
 import getKYCStatus from "./getKYCStatus";
 import getProviders from "./getProviders";
-import getStatus from "./getStatus";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import submitKYC from "./submitKYC";
@@ -178,7 +177,6 @@ export {
   getSwapAPIBaseURL,
   getProviderConfig,
   getProviders,
-  getStatus,
   getExchangeRates,
   getCompleteSwapHistory,
   postSwapAccepted,

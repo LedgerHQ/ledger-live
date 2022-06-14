@@ -141,7 +141,6 @@ export type SwapStatus = {
   swapId: string;
   status: ValidSwapStatus;
 };
-export type GetStatus = (arg0: SwapStatusRequest) => Promise<SwapStatus>;
 
 // -----
 // Related to Swap state API call (accepted or cancelled)
