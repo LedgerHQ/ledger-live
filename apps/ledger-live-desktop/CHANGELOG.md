@@ -14,6 +14,12 @@
 - Updated dependencies [8861c4fe0]
   - @ledgerhq/live-common@23.1.0-next.0
 
+## 2.43.1
+
+### Patch Changes
+
+- 2707fa19b: add release notes
+
 ## 2.43.0
 
 ### Minor Changes
