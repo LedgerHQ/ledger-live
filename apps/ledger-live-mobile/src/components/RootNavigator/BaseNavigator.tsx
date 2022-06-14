@@ -72,6 +72,7 @@ import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
+import ScreenHeader from "../../screens/Exchange/ScreenHeader";
 import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
