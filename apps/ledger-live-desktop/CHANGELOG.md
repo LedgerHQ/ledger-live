@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.43.1
+
+### Patch Changes
+
+- 2707fa19b: add release notes
+
 ## 2.43.0
 
 ### Minor Changes
