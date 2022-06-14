@@ -57,6 +57,9 @@ export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
 export const DeviceExtractOnboardingStateError = createCustomErrorClass(
   "DeviceExtractOnboardingStateError"
 );
+export const DeviceOnboardingStatePollingError = createCustomErrorClass(
+  "DeviceOnboardingStatePollingError"
+);
 export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData"
