@@ -285,7 +285,7 @@
           "complete": "Set up MFA"
         },
         "withdrawalsBlockedError": {
-          "message": "Your withdrawl has been blocked by {{providerName}}.\n\n Please contact their support for more information."
+          "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
       }
     },
