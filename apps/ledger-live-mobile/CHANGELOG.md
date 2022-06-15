@@ -12,6 +12,13 @@
 
 - bf12e0f65: feat: sell and fund flow [LIVE-784]
 - d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+## 3.2.1
+
+### Patch Changes
+
+- fea7a4aa1: Fix bug of a conditionally called hook in the firmware retrieval
+
+## 3.2.1-hotfix.0
 
 ### Patch Changes
 
