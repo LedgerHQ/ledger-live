@@ -685,6 +685,37 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  cube: {
+    type: "CryptoCurrency",
+    id: "cube",
+    coinType: 60,
+    name: "Cube",
+    managerAppName: "Cube",
+    ticker: "CUBE",
+    scheme: "cube",
+    color: "#057649",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 1818,
+      networkId: 1818,
+      hardfork: "muirGlacier",
+    },
+    units: [
+      {
+        name: "CUBE",
+        code: "CUBE",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.cubescan.network/en-us/tx/$hash",
+        address: "https://www.cubescan.network/en-us/address/$address",
+        token: "https://www.cubescan.network/en-us/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   dash: {
     type: "CryptoCurrency",
     id: "dash",
