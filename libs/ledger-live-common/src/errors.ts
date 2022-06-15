@@ -210,3 +210,4 @@ export const UnsupportedDerivation = createCustomErrorClass(
 export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
+export * from "./families/cardano/errors";
