@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.1-hotfix.0
+
+### Patch Changes
+
+- fea7a4aa1: Fix bug of a conditionally called hook in the firmware retrieval
+
 ## 3.2.0
 
 ### Minor Changes
@@ -11,7 +17,7 @@
 - 64c2fdb06: Filecoin integration in LLD and LLM
 
 ### Patch Changes
-  
+
 - 09648db7f: refactor of the top perfs filter
 - 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
 - 68cb59649: Fix overlapped price on the market screen
@@ -53,9 +59,9 @@
 - Updated dependencies [f913f6fdb]
 - Updated dependencies [403ea8efe]
 - Updated dependencies [9a86fe231]
+
   - @ledgerhq/live-common@22.2.0
   - @ledgerhq/react-native-hid@6.28.3
-  
 
 ## 3.2.0-llmnext.6
 
