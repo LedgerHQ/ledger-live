@@ -2061,6 +2061,31 @@
         "android": "Review in the Google Play store"
       }
     },
+    "notifications": {
+      "title": "Notifications",
+      "desc": "Manage your notifications",
+      "allowNotifications": {
+        "title": "Allow notifications",
+        "desc": "Receive notifications about your crypto, market tendencies and more."
+      },
+      "transactions": {
+        "title": "Transactions",
+        "desc": "Get notified when your crypto moves."
+      },
+      "market": {
+        "title": "Market",
+        "desc": "Receive live push notifications about the crypto market."
+      },
+      "announcement": {
+        "title": "Announcement",
+        "desc": "Receive live push notifications about the crypto market."
+      },
+      "price": {
+        "title": "Price Alerts",
+        "desc": "Receive alerts for your favorite coins",
+        "label": "Coming soon"
+      }
+    },
     "help": {
       "title": "Help",
       "header": "Help",
