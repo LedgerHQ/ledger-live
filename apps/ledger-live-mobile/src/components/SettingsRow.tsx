@@ -35,6 +35,7 @@ export default function SettingsRow({
   event,
   eventProperties,
   compact,
+  label,
 }: {
   onPress?: () => void;
   onHelpPress?: () => void;
@@ -53,6 +54,7 @@ export default function SettingsRow({
   event?: string;
   eventProperties?: Object;
   compact?: boolean;
+  label?: string;
 }) {
   let title$ = (
     <Flex
@@ -60,14 +62,29 @@ export default function SettingsRow({
       alignItems={"center"}
       style={titleContainerStyle}
     >
-      <Text
-        variant={"large"}
-        fontWeight={"semiBold"}
-        color={"neutral.c100"}
-        style={[titleStyle]}
-      >
-        {title}
-      </Text>
+      <Box flexDirection={"row"} alignItems={"center"}>
+        <Text
+          variant={"large"}
+          fontWeight={"semiBold"}
+          color={"neutral.c100"}
+          style={[titleStyle]}
+        >
+          {title}
+        </Text>
+        {label ? (
+          <Text
+            variant={"tiny"}
+            color={"background.main"}
+            fontWeight={"bold"}
+            backgroundColor={"primary.c90"}
+            ml={4}
+            p={2}
+            borderRadius={4}
+          >
+            {label.toUpperCase()}
+          </Text>
+        ) : null}
+      </Box>
       {subtitle && (
         <Text
           variant={"body"}
