@@ -23,33 +23,31 @@ type State = {
 };
 
 class NftMedia extends React.PureComponent<Props, State> {
-  state = {
-    useFallback: false,
-  };
-
-  setUseFallback = (_useFallback: boolean): void => {
-    this.setState({ useFallback: _useFallback });
-  };
-
   render() {
-    const { metadata, mediaFormat, colors } = this.props;
-    const { useFallback } = this.state;
+    const { metadata, mediaFormat, colors, status } = this.props;
 
-    const contentType = getMetadataMediaType(metadata, mediaFormat);
-    const Component =
-      contentType === "video" && !useFallback ? NftVideo : NftImage;
+    let { uri, mediaType } = metadata?.medias?.[mediaFormat] || {};
+    let contentType = getMetadataMediaType(metadata, mediaFormat);
 
-    const { uri, mediaType } =
-      metadata?.medias[useFallback ? "preview" : mediaFormat] || {};
+    const noData = status === "nodata";
+    const metadataError = status === "error";
+    const noSource = status === "loaded" && !uri;
+
+    if (noData || metadataError || noSource) {
+      uri = metadata?.medias?.["preview"]?.uri;
+      mediaType = metadata?.medias?.["preview"]?.mediaType;
+      contentType = getMetadataMediaType(metadata, "preview");
+    }
+
+    const Component = contentType === "video" ? NftVideo : NftImage;
 
     return (
       <Component
         {...this.props}
         colors={colors}
         src={uri}
+        srcFallback={metadata?.medias?.["preview"]?.uri}
         mediaType={mediaType}
-        useFallback={useFallback}
-        setUseFallback={this.setUseFallback}
       />
     );
   }
