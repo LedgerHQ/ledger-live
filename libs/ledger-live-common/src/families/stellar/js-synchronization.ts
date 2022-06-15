@@ -76,17 +76,15 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
 
   const allOperations = mergeOps(oldOperations, newOperations);
 
-  const nativeOperations: Operation[] = [];
   const assetOperations: Operation[] = [];
 
   allOperations.forEach((op) => {
-    // change_trust operations
-    if (op.type === "OPT_IN" || op.type === "OPT_OUT") {
-      nativeOperations.push(op);
-    } else if (op?.extra?.assetCode && op?.extra?.assetIssuer) {
+    if (
+      op?.extra?.assetCode &&
+      op?.extra?.assetIssuer &&
+      !["OPT_IN", "OPT_OUT"].includes(op.type)
+    ) {
       assetOperations.push(op);
-    } else {
-      nativeOperations.push(op);
     }
   });
 
@@ -103,13 +101,13 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     id: accountId,
     balance,
     spendableBalance,
-    operationsCount: nativeOperations.length,
+    operationsCount: allOperations.length,
     blockHeight,
     subAccounts,
   };
   return {
     ...shape,
-    operations: nativeOperations.map((op) => ({
+    operations: allOperations.map((op) => ({
       ...op,
       subOperations: inferSubOperations(op.hash, subAccounts),
     })),
