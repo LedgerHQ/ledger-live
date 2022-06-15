@@ -42,6 +42,7 @@ import signMessage from "./commands/signMessage";
 import speculosList from "./commands/speculosList";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
+import synchronousOnboarding from "./commands/synchronousOnboarding";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
@@ -93,6 +94,7 @@ export default {
   speculosList,
   swap,
   sync,
+  synchronousOnboarding,
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   user,
