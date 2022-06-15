@@ -877,7 +877,7 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Le wallet de cryptomonnaies et NFT le plus sécurisé",
+      "title" : "Le wallet de cryptos et NFT le plus sécurisé",
       "subtitle" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
       "start" : "Commencer",
       "noDevice" : "Pas encore de wallet Ledger ?",
@@ -896,7 +896,7 @@
         "subtitle" : "Nous vous guiderons à chaque étape pour sécuriser vos cryptos et vos NFT."
       },
       "buyNano" : {
-        "title" : "Achetez un Ledger Nano X",
+        "title" : "Acheter un Ledger Nano X",
         "subtitle" : "Vos clés vers le monde du Web3 : pilotez vos actifs en toute liberté."
       },
       "discoverLedger" : {
@@ -933,6 +933,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Choisissez votre appareil"
     },
@@ -948,7 +949,7 @@
       "devicePairing" : {
         "title" : "Vous avez déjà une phrase de récupération ?",
         "label" : "Couplage de l’appareil",
-        "subTitle" : "Connecter le Nano",
+        "subTitle" : "Connecter votre Nano",
         "desc" : "Si votre Nano est déjà configuré, connectez-le à l’app."
       },
       "desktopSync" : {
@@ -4049,8 +4050,8 @@
       "selectCurrency" : "Sélectionner une devise",
       "selectAccount" : "Sélectionner un compte",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via notre partenaire",
-      "coinifyTitle" : "Acheter des cryptos via notre partenaire",
+      "title" : "Acheter des cryptos via nos partenaires",
+      "coinifyTitle" : "Acheter des cryptos via nos partenaires",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
