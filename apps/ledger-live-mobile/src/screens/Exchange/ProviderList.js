@@ -143,9 +143,6 @@ export default function ProviderList({ route }: Props) {
 
   const filteredProviders = filterRampCatalogEntries(rampCatalog.value[type], {
     cryptoCurrencies: currency.id ? [currency.id] : undefined,
-    fiatCurrencies: fiatCurrency.ticker
-      ? [fiatCurrency.ticker.toLowerCase()]
-      : undefined,
   });
 
   const onProviderClick = useCallback(
