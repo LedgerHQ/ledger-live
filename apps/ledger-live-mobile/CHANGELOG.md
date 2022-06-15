@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.8
+
+### Patch Changes
+
+- 27c947ba4: fix(multibuy): remove fiat filter
+
 ## 3.3.0-next.7
 
 ### Minor Changes
@@ -12,6 +18,7 @@
 
 - bf12e0f65: feat: sell and fund flow [LIVE-784]
 - d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+
 ## 3.2.1
 
 ### Patch Changes
