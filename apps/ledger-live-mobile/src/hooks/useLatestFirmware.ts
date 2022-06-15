@@ -8,8 +8,6 @@ import manager from "@ledgerhq/live-common/lib/manager";
 const useLatestFirmware: (
   deviceInfo?: DeviceInfo,
 ) => FirmwareUpdateContext | null | undefined = deviceInfo => {
-  if (!deviceInfo) return null;
-
   const [latestFirmware, setLatestFirmware] = useState<
     FirmwareUpdateContext | null | undefined
   >(null);
