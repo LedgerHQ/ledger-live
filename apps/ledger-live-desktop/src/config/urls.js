@@ -181,13 +181,13 @@ export const urls = {
       ftx: {
         main: "https://ftx.com",
         tos: "",
-        support: "https://ftx.com/eu/support",
+        support: "https://ftx.com/support",
         kyc: "",
       },
       ftxus: {
         main: "https://ftx.us/",
         tos: "",
-        support: "https://help.ftx.us/hc/en-us/articles/360043063474-Contact-Info",
+        support: "https://help.ftx.us/hc/en-us",
         kyc: "",
       },
     },
