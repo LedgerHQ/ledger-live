@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.7
+
+### Minor Changes
+
+- 7ba2346a5: feat(LLM): multibuy 1.5 [LIVE-1710]
+
 ## 3.3.0-next.6
 
 ### Minor Changes
