@@ -1,8 +1,8 @@
-import {
+const {
   DetoxCircusEnvironment,
   SpecReporter,
   WorkerAssignReporter,
-} from "detox/runners/jest-circus";
+} = require("detox/runners/jest-circus");
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor({ globalConfig, projectConfig }, context) {
@@ -21,4 +21,4 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   }
 }
 
-export default CustomDetoxEnvironment;
+module.exports = CustomDetoxEnvironment;
