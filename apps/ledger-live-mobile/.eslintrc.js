@@ -94,5 +94,12 @@ module.exports = {
     fetch: false,
     it: false,
     expect: false,
+    waitFor: false,
+    element: false,
+    by: false,
+    beforeAll: false,
+    afterAll: false,
+    // TODO:: might be dangerous with production code, might need to remove or scope to e2e folder only
+    device: false,
   },
 };
