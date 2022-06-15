@@ -283,6 +283,9 @@
         "mfa": {
           "required": "You need to set up MFA with this provider",
           "complete": "Set up MFA"
+        },
+        "withdrawalsBlockedError": {
+          "message": "Your withdrawl has been blocked by {{providerName}}.\n\n Please contact their support for more information."
         }
       }
     },
