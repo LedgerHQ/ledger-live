@@ -24,6 +24,7 @@ import AboutSettings from "../../screens/Settings/About";
 import Resources from "../../screens/Settings/Resources";
 import GeneralSettings from "../../screens/Settings/General";
 import CountervalueSettings from "../../screens/Settings/General/CountervalueSettings";
+import NotificationsSettings from "../../screens/Settings/Notifications";
 import HelpSettings from "../../screens/Settings/Help";
 import RegionSettings from "../../screens/Settings/General/Region";
 import CurrenciesList from "../../screens/Settings/CryptoAssets/Currencies/CurrenciesList";
@@ -95,6 +96,13 @@ export default function SettingsNavigator() {
         component={AboutSettings}
         options={{
           title: t("settings.about.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NotificationsSettings}
+        component={NotificationsSettings}
+        options={{
+          title: t("settings.notifications.title"),
         }}
       />
       <Stack.Screen
