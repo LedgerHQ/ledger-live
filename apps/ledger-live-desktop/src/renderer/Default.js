@@ -31,6 +31,8 @@ import OnboardingOrElse from "~/renderer/components/OnboardingOrElse";
 import AppRegionDrag from "~/renderer/components/AppRegionDrag";
 import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
+// $FlowFixMe
+import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import DeviceBusyIndicator from "~/renderer/components/DeviceBusyIndicator";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import PerfIndicator from "~/renderer/components/PerfIndicator";
@@ -158,6 +160,7 @@ export default function Default() {
                 <Route>
                   <IsNewVersion />
                   <IsSystemLanguageAvailable />
+                  <IsTermOfUseUpdated />
                   <SyncNewAccounts priority={2} />
 
                   <Box

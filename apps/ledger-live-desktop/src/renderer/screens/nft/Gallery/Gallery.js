@@ -146,6 +146,7 @@ const Gallery = () => {
           </Text>
         </Box>
       )}
+      <div ref={ref} />
       {isLoading && (
         <SpinnerContainer>
           <SpinnerBackground>
@@ -153,7 +154,6 @@ const Gallery = () => {
           </SpinnerBackground>
         </SpinnerContainer>
       )}
-      <div ref={ref} />
     </>
   );
 };

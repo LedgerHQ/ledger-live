@@ -1,22 +1,95 @@
 # ledger-live-desktop
 
-## 2.42.1-nightly.1
+## 2.43.1
 
 ### Patch Changes
 
-- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
-- Updated dependencies [8323d2eaa]
-- Updated dependencies [8861c4fe0]
-  - @ledgerhq/live-common@22.3.0-nightly.1
+- 2707fa19b: add release notes
 
-## 2.42.1-nightly.0
+## 2.43.0
+
+### Minor Changes
+
+- cefeff1d7: Display a modal at app launch to inform users terms of use got updated. Also refactor the way we assess terms update using date comparison instead of strict string equality.
+- 64c2fdb06: Filecoin integration in LLD and LLM
+
+### Patch Changes
+
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+- Updated dependencies [09648db7f]
+- Updated dependencies [a66fbe852]
+- Updated dependencies [0f59cfc10]
+- Updated dependencies [8ee9c5568]
+- Updated dependencies [899aa3300]
+- Updated dependencies [89e82ed79]
+- Updated dependencies [403ea8efe]
+- Updated dependencies [98ecc6272]
+- Updated dependencies [9a86fe231]
+- Updated dependencies [8b2e24b6c]
+- Updated dependencies [64c2fdb06]
+- Updated dependencies [f686ec781]
+- Updated dependencies [b688a592d]
+- Updated dependencies [71ad84023]
+- Updated dependencies [64c2fdb06]
+  - @ledgerhq/live-common@23.0.0
+  - @ledgerhq/react-ui@0.7.7
+
+## 2.43.0-next.5
+
+### Patch Changes
+
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+- Updated dependencies [8b2e24b6c]
+  - @ledgerhq/live-common@23.0.0-next.4
+
+## 2.43.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [a66fbe852]
+  - @ledgerhq/live-common@23.0.0-next.3
+
+## 2.43.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [8ee9c5568]
+  - @ledgerhq/live-common@23.0.0-next.2
+
+## 2.43.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [98ecc6272]
+  - @ledgerhq/live-common@23.0.0-next.1
+
+## 2.43.0-next.1
+
+### Minor Changes
+
+- cefeff1d7: Display a modal at app launch to inform users terms of use got updated. Also refactor the way we assess terms update using date comparison instead of strict string equality.
+
+## 2.43.0-next.0
+
+### Minor Changes
+
+- 64c2fdb06: Filecoin integration in LLD and LLM
 
 ### Patch Changes
 
 - Updated dependencies [09648db7f]
 - Updated dependencies [0f59cfc10]
+- Updated dependencies [899aa3300]
+- Updated dependencies [89e82ed79]
+- Updated dependencies [403ea8efe]
+- Updated dependencies [9a86fe231]
+- Updated dependencies [64c2fdb06]
+- Updated dependencies [f686ec781]
+- Updated dependencies [b688a592d]
 - Updated dependencies [71ad84023]
-  - @ledgerhq/live-common@22.2.1-nightly.0
+- Updated dependencies [64c2fdb06]
+  - @ledgerhq/live-common@23.0.0-next.0
+  - @ledgerhq/react-ui@0.7.7-next.0
 
 ## 2.42.0
 

@@ -36,11 +36,15 @@ const resolver: EthResolver = async (
   if (typeof message === "string") {
     result = await eth.signPersonalMessage(path, rawMessage.slice(2));
   } else {
-    result = await eth.signEIP712HashedMessage(
-      path,
-      bufferToHex(domainHash(message)),
-      bufferToHex(messageHash(message))
-    );
+    if (process.env.EXPERIMENTAL_EIP712) {
+      result = await eth.signEIP712Message(path, message);
+    } else {
+      result = await eth.signEIP712HashedMessage(
+        path,
+        bufferToHex(domainHash(message)),
+        bufferToHex(messageHash(message))
+      );
+    }
   }
 
   let v: string | number = result["v"] - 27;
