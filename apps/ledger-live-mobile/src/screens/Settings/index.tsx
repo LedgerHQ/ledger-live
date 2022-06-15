@@ -76,6 +76,13 @@ export default function Settings({ navigation }: Props) {
         arrowRight
       />
       <SettingsCard
+        title={t("settings.notifications.title")}
+        desc={t("settings.notifications.desc")}
+        Icon={Icons.NotificationsMedium}
+        onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
+        arrowRight
+      />
+      <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
         Icon={Icons.LifeRingMedium}
