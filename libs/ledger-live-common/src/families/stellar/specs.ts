@@ -32,6 +32,7 @@ const stellar: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Stellar",
   },
+  testTimeout: 2 * 60 * 1000,
   mutations: [
     {
       name: "move ~50% XLM",
@@ -109,8 +110,11 @@ const stellar: AppSpec<Transaction> = {
       name: "add USDC asset",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(reserve), "XLM balance is too low");
-
+        invariant(maxSpendable.gt(reserve), "XLM balance is too low 1");
+        invariant(
+          account.subAccounts && !findAssetUSDC(account.subAccounts),
+          "already have subaccounts"
+        );
         const assetUSDC = findAssetUSDC<TokenCurrency>(
           listTokensForCryptoCurrency(account.currency)
         );

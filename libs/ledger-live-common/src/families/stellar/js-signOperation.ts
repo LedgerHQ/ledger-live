@@ -21,7 +21,9 @@ const buildOptimisticOperation = async (
     id: `${account.id}--${type}`,
     hash: "",
     type,
-    value: getAmountValue(account, transaction, fees),
+    value: transaction.subAccountId
+      ? fees
+      : getAmountValue(account, transaction, fees),
     fee: fees,
     blockHash: null,
     blockHeight: null,

@@ -53,7 +53,11 @@ const buildStellarTokenAccount = ({
     starred: false,
     token,
     operationsCount: operations.length,
-    operations: operations.map((op) => ({ ...op, accountId: id })),
+    operations: operations.map((op) => ({
+      ...op,
+      accountId: id,
+      value: new BigNumber(op.extra.assetAmount) ?? op.value,
+    })),
     pendingOperations: [],
     balance,
     spendableBalance,

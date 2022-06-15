@@ -183,7 +183,9 @@ export const formatOperation = async (
     id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
     accountId,
     fee: new BigNumber(transaction.fee_charged),
-    value,
+    value: rawOperation?.asset_code
+      ? new BigNumber(transaction.fee_charged)
+      : value,
     type: type,
     hash: rawOperation.transaction_hash,
     blockHeight: transaction.ledger_attr,
@@ -197,6 +199,7 @@ export const formatOperation = async (
       pagingToken: rawOperation.paging_token,
       assetCode: rawOperation?.asset_code,
       assetIssuer: rawOperation?.asset_issuer,
+      assetAmount: rawOperation?.asset_code ? value.toString() : undefined,
       memo,
     },
   };
