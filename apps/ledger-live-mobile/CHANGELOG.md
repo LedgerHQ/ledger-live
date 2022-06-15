@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.3.0-next.6
+
+### Minor Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+
+### Patch Changes
+
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
 ## 3.3.0-next.5
 
 ### Patch Changes
