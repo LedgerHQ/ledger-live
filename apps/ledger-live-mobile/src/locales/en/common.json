@@ -4148,9 +4148,11 @@
   },
   "exchange": {
     "buy": {
+      "screenTitle": "BUY CRYPTO",
       "tabTitle": "Buy",
       "selectCurrency": "Select a currency",
       "selectAccount": "Select an account",
+      "wantToBuy": "I want to buy",
       "connectDevice": "Connect your device",
       "title": "Buy crypto via our partner",
       "coinifyTitle": "Buy crypto via our partner",
@@ -4174,9 +4176,11 @@
       }
     },
     "sell": {
+      "screenTitle": "SELL CRYPTO",
       "tabTitle": "Sell",
       "selectCurrency": "Select a currency",
       "selectAccount": "Select an account",
+      "wantToSell": "I want to sell",
       "connectDevice": "Connect your device",
       "title": "Sell crypto via our partner",
       "description": "Sell crypto assets directly from your Ledger account via Coinify and receive fiat in your bank account.",
@@ -4189,6 +4193,9 @@
     },
     "history": {
       "tabTitle": "History"
+    },
+    "providerList": {
+      "title": "Choose a provider"
     }
   },
   "banner": {

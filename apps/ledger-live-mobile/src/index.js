@@ -38,11 +38,13 @@ import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
 import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
 import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
+import { GlobalCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/GlobalCatalogProvider";
+import { RampCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
 import {
-  PlatformAppProvider,
-  usePlatformApp,
-} from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
-import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
+  RemoteLiveAppProvider,
+  useRemoteLiveAppContext,
+} from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
 
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
@@ -333,23 +335,13 @@ const linkingOptions = {
               [ScreenName.SendCoin]: "send",
             },
           },
-          [NavigatorName.ExchangeBuyFlow]: {
-            screens: {
-              /**
-               * @params currency: string
-               * ie: "ledgerlive://buy/bitcoin" -> will redirect to the prefilled search currency in the buy crypto flow
-               */
-              [ScreenName.ExchangeSelectCurrency]: "buy/:currency",
-            },
-          },
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
           [NavigatorName.Exchange]: {
             initialRouteName: "buy",
             screens: {
-              [ScreenName.ExchangeBuy]: "buy",
-              [ScreenName.Coinify]: "buy/coinify",
+              [ScreenName.ExchangeBuy]: "buy/:currency?",
             },
           },
           /**
@@ -395,7 +387,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const platformAppState = usePlatformApp();
+  const removeLiveAppState = useRemoteLiveAppContext();
   const filteredManifests = useFilteredManifests();
 
   const linking = useMemo(
@@ -441,9 +433,9 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       return;
     }
     if (
-      platformAppState.isLoading &&
-      !platformAppState.lastUpdateTime &&
-      !platformAppState.error
+      removeLiveAppState.isLoading &&
+      !removeLiveAppState.lastUpdateTime &&
+      !removeLiveAppState.error
     )
       /**
        * Ensure that the list of manifests has been loaded once so that the
@@ -454,9 +446,9 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
     setIsReady(true);
   }, [
     wcContext.initDone,
-    platformAppState.isLoading,
-    platformAppState.lastUpdateTime,
-    platformAppState.error,
+    removeLiveAppState.isLoading,
+    removeLiveAppState.lastUpdateTime,
+    removeLiveAppState.error,
   ]);
 
   React.useEffect(
@@ -511,6 +503,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   );
 };
 
+const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
+
 export default class Root extends Component<
   { importDataString?: string },
   { appState: * },
@@ -536,6 +530,8 @@ export default class Root extends Component<
   render() {
     const importDataString = __DEV__ ? this.props.importDataString : "";
 
+    const provider = __DEV__ ? "staging" : "production";
+
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -548,52 +544,65 @@ export default class Root extends Component<
                 <DelayedTrackingProvider />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
-                  <PlatformAppProvider
-                    platformAppsServerURL={
-                      getProvider(__DEV__ ? "staging" : "production").url
-                    }
+                  <RemoteLiveAppProvider
+                    provider={provider}
+                    updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
                   >
-                    <FirebaseRemoteConfigProvider>
-                      <FirebaseFeatureFlagsProvider>
-                        <SafeAreaProvider>
-                          <DeepLinkingNavigator>
-                            <StyledStatusBar />
-                            <NavBarColorHandler />
-                            <AuthPass>
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
-                                  <BridgeSyncProvider>
-                                    <CounterValuesProvider
-                                      initialState={initialCountervalues}
-                                    >
-                                      <ButtonUseTouchable.Provider value={true}>
-                                        <OnboardingContextProvider>
-                                          <ToastProvider>
-                                            <NotificationsProvider>
-                                              <SnackbarContainer />
-                                              <NftMetadataProvider>
-                                                <MarketDataProvider>
-                                                  <App
-                                                    importDataString={
-                                                      importDataString
-                                                    }
-                                                  />
-                                                </MarketDataProvider>
-                                              </NftMetadataProvider>
-                                            </NotificationsProvider>
-                                          </ToastProvider>
-                                        </OnboardingContextProvider>
-                                      </ButtonUseTouchable.Provider>
-                                    </CounterValuesProvider>
-                                  </BridgeSyncProvider>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </AuthPass>
-                          </DeepLinkingNavigator>
-                        </SafeAreaProvider>
-                      </FirebaseFeatureFlagsProvider>
-                    </FirebaseRemoteConfigProvider>
-                  </PlatformAppProvider>
+                    <LocalLiveAppProvider>
+                      <GlobalCatalogProvider
+                        provider={provider}
+                        updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
+                      >
+                        <RampCatalogProvider
+                          provider={provider}
+                          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
+                        >
+                          <FirebaseRemoteConfigProvider>
+                            <FirebaseFeatureFlagsProvider>
+                              <SafeAreaProvider>
+                                <DeepLinkingNavigator>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <AuthPass>
+                                    <I18nextProvider i18n={i18n}>
+                                      <LocaleProvider>
+                                        <BridgeSyncProvider>
+                                          <CounterValuesProvider
+                                            initialState={initialCountervalues}
+                                          >
+                                            <ButtonUseTouchable.Provider
+                                              value={true}
+                                            >
+                                              <OnboardingContextProvider>
+                                                <ToastProvider>
+                                                  <NotificationsProvider>
+                                                    <SnackbarContainer />
+                                                    <NftMetadataProvider>
+                                                      <MarketDataProvider>
+                                                        <App
+                                                          importDataString={
+                                                            importDataString
+                                                          }
+                                                        />
+                                                      </MarketDataProvider>
+                                                    </NftMetadataProvider>
+                                                  </NotificationsProvider>
+                                                </ToastProvider>
+                                              </OnboardingContextProvider>
+                                            </ButtonUseTouchable.Provider>
+                                          </CounterValuesProvider>
+                                        </BridgeSyncProvider>
+                                      </LocaleProvider>
+                                    </I18nextProvider>
+                                  </AuthPass>
+                                </DeepLinkingNavigator>
+                              </SafeAreaProvider>
+                            </FirebaseFeatureFlagsProvider>
+                          </FirebaseRemoteConfigProvider>
+                        </RampCatalogProvider>
+                      </GlobalCatalogProvider>
+                    </LocalLiveAppProvider>
+                  </RemoteLiveAppProvider>
                 </WalletConnectProvider>
               </>
             ) : (

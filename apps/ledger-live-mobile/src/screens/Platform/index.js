@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 
+import { useSelector } from "react-redux";
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
 import { ScreenName } from "../../const";
@@ -19,7 +20,6 @@ import AppCard from "./AppCard";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
 import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
-import { useSelector } from "react-redux";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { useFilteredManifests } from "./shared";
 
@@ -117,7 +117,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
         <CatalogTwitterBanner />
         {filteredManifests.map(manifest => (
           <AppCard
-            key={manifest.id}
+            key={`${manifest.id}.${manifest.branch}`}
             manifest={manifest}
             onPress={handlePressCard}
           />

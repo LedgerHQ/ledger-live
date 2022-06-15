@@ -6,7 +6,6 @@ import {
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
@@ -17,8 +16,6 @@ import OperationDetails, {
 } from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
-import Distribution from "../../screens/Distribution";
-import Asset, { HeaderTitle } from "../../screens/Asset";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import WalletConnectScan from "../../screens/WalletConnect/Scan";
 import WalletConnectConnect from "../../screens/WalletConnect/Connect";
@@ -36,8 +33,6 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeBuyFlowNavigator from "./ExchangeBuyFlowNavigator";
-import ExchangeSellFlowNavigator from "./ExchangeSellFlowNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
@@ -75,6 +70,11 @@ import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurre
 import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
+
+import ProviderList from "../../screens/Exchange/ProviderList";
+import ProviderView from "../../screens/Exchange/ProviderView";
+import ScreenHeader from "../../screens/Exchange/ScreenHeader";
+import ExchangeStackNavigator from "./ExchangeStackNavigator";
 
 import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
@@ -335,15 +335,30 @@ export default function BaseNavigator() {
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeBuyFlow}
-        component={ExchangeBuyFlowNavigator}
-        initialParams={{ mode: "buy" }}
-        options={{ headerShown: false }}
-        {...noNanoBuyNanoWallScreenOptions}
+        name={NavigatorName.ProviderList}
+        component={ProviderList}
+        options={({ route }) => ({
+          headerStyle: styles.headerNoShadow,
+          title:
+            route.params.type === "onRamp"
+              ? t("exchange.buy.screenTitle")
+              : t("exchange.sell.screenTitle"),
+        })}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeSellFlow}
-        component={ExchangeSellFlowNavigator}
+        name={NavigatorName.ProviderView}
+        component={ProviderView}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <ScreenHeader icon={route.params.icon} name={route.params.name} />
+          ),
+          headerStyle: styles.headerNoShadow,
+        })}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExchangeStack}
+        component={ExchangeStackNavigator}
+        initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
         {...noNanoBuyNanoWallScreenOptions}
       />
@@ -351,6 +366,7 @@ export default function BaseNavigator() {
         name={NavigatorName.PlatformExchange}
         component={PlatformExchangeNavigator}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.OperationDetails}
@@ -440,15 +456,6 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.Distribution}
-        component={Distribution}
-        options={{
-          ...stackNavigationConfig,
-          title: t("distribution.header"),
-          headerLeft: null,
-        }}
-      />
-      <Stack.Screen
         name={NavigatorName.Analytics}
         component={AnalyticsNavigator}
         options={{
@@ -465,15 +472,6 @@ export default function BaseNavigator() {
           headerLeft: null,
           unmountOnBlur: true,
         }}
-      />
-      <Stack.Screen
-        name={ScreenName.Asset}
-        component={Asset}
-        options={{
-          headerTitle: () => <HeaderTitle />,
-          headerRight: null,
-        }}
-        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.PortfolioOperationHistory}

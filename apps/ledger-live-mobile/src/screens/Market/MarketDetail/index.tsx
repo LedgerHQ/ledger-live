@@ -75,7 +75,6 @@ function MarketDetail({
     priceChangePercentage,
     internalCurrency,
     chartData,
-    isLiveSupported,
   } = currency || {};
 
   useEffect(() => {
@@ -168,7 +167,7 @@ function MarketDetail({
             justifyContent="flex-start"
             alignItems="center"
           >
-            {isLiveSupported && internalCurrency ? (
+            {internalCurrency ? (
               // @ts-expect-error import js issue
               <CircleCurrencyIcon
                 size={32}
@@ -229,7 +228,7 @@ function MarketDetail({
                 )}
               </Flex>
             </Flex>
-            {internalCurrency && isLiveSupported ? (
+            {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions
                   currency={internalCurrency}

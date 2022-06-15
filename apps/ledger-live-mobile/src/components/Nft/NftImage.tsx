@@ -2,30 +2,22 @@ import React, { useState } from "react";
 import FastImage, {
   OnLoadEvent,
   FastImageProps,
+  ResizeMode,
 } from "react-native-fast-image";
 import { View, StyleSheet, Animated } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
 import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
-const ImageComponent = ({
-  ...props
-}: {
-  style: Object;
-} & FastImageProps) =>
+const ImageComponent: React.FC<FastImageProps> = props =>
   typeof props?.source === "object" && props?.source?.uri ? (
     <FastImage {...props} />
-  ) : (
-    <></>
-  );
+  ) : null;
 
-const NotFound = ({
-  colors,
-  onLayout,
-}: {
-  colors: Object;
+const NotFound: React.FC<{
+  colors: { [key: string]: string };
   onLayout: () => void;
-}) => {
+}> = ({ colors, onLayout }) => {
   const [iconWidth, setIconWidth] = useState(40);
 
   return (
@@ -50,7 +42,7 @@ type Props = {
   style?: Object;
   status: string;
   src: string;
-  resizeMode?: FastImageProps["resizeMode"];
+  resizeMode?: ResizeMode;
   colors: any;
   useFallback: boolean;
   setUseFallback: (_useFallback: boolean) => void;
