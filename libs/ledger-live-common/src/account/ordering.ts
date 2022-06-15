@@ -7,7 +7,7 @@ import type {
 } from "../types";
 import { flattenAccounts, getAccountCurrency } from "./helpers";
 import type { FlattenAccountsOptions } from "./helpers";
-type AccountComparator = (a: AccountLike, b: AccountLike) => number;
+export type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
 const sortNameLense = (a: AccountLike): string => {
   switch (a.type) {
