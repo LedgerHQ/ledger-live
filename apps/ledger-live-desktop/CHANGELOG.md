@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.44.0-nightly.0
+
+### Minor Changes
+
+- 9c3b16bcc: Fix infinite loading when NFTs are load in gallery mode
+
+### Patch Changes
+
+- c78f7d6db: Fixed issue on Circulating Supply, removed currency in front of the value
+
 ## 2.43.1
 
 ### Patch Changes

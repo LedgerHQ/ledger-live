@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.2.1-nightly.1
+
+### Patch Changes
+
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 7bdf0091f: (internal) Filtering more errors to NOT be reported to Sentry – typically to ignore users-specific cases
+- Updated dependencies [dd6a12c9b]
+  - @ledgerhq/native-ui@0.7.19-nightly.0
+
 ## 3.2.1-nightly.0
 
 ### Patch Changes
