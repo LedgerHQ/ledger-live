@@ -44,16 +44,18 @@ type Props = {
   src: string;
   resizeMode?: ResizeMode;
   colors: any;
+  useFallback: boolean;
+  setUseFallback: (_useFallback: boolean) => void;
 };
 
 type State = {
-  loadError: boolean;
+  error: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
   state = {
     beforeLoadDone: false,
-    loadError: false,
+    error: false,
     contentType: null,
   };
 
@@ -69,17 +71,25 @@ class NftImage extends React.PureComponent<Props, State> {
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
-      this.setState({ loadError: true });
+      if (!this.props.useFallback) {
+        this.props.setUseFallback(true);
+      } else {
+        this.setState({ error: true });
+      }
     }
   };
 
   onError = () => {
-    this.setState({ loadError: true });
+    if (!this.props.useFallback) {
+      this.props.setUseFallback(true);
+    } else {
+      this.setState({ error: true });
+    }
   };
 
   render() {
     const { style, status, src, colors, resizeMode = "cover" } = this.props;
-    const { loadError } = this.state;
+    const { error } = this.state;
 
     const noData = status === "nodata";
     const metadataError = status === "error";
@@ -96,7 +106,7 @@ class NftImage extends React.PureComponent<Props, State> {
             },
           ]}
         >
-          {noData || metadataError || noSource || loadError ? (
+          {noData || metadataError || noSource || error ? (
             <NotFound colors={colors} onLayout={this.startAnimation} />
           ) : (
             <ImageComponent

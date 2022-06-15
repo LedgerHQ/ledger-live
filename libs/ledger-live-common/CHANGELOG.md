@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-next.2
+
+### Patch Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+
 ## 23.1.0-next.1
 
 ### Patch Changes
