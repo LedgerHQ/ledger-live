@@ -6,19 +6,23 @@ import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
   "SyncOnboardingCompanion"
 >;
 
+const pollingPeriodMs = 1000;
+
 export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
   const { colors } = useTheme();
   const [device, setDevice] = useState<Device | null>(null);
 
-  // const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({ device, pollingPeriodMs });
-
   const { pairedDevice } = route.params; 
+
+  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({ device, pollingPeriodMs });
+  console.log(`📝 OS = ${JSON.stringify(onboardingState)} - allowedError = ${JSON.stringify(allowedError)} - fatalError = ${JSON.stringify(fatalError)}`);
 
   // Triggers the pairing if no pairedDevice was given
   useEffect(() => {
