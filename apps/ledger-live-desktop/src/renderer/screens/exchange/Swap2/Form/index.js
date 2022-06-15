@@ -287,12 +287,18 @@ const SwapForm = () => {
         return;
       }
 
+      // If RATE_NOT_FOUND it means the quote as expired, so we need to refresh the rates
+      if (status.codeName === "RATE_NOT_FOUND") {
+        swapTransaction.setFromAmount(swapTransaction?.swap?.refetchRates());
+        return;
+      }
+
       // All other statuses are considered errors
       setError(status.codeName);
     };
 
     handleCheckQuote();
-  }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow]);
+  }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow, swapTransaction]);
 
   const isSwapReady =
     !error &&
