@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.1
+
+### Patch Changes
+
+- fea7a4aa1: Fix bug of a conditionally called hook in the firmware retrieval
+
 ## 3.2.1-hotfix.0
 
 ### Patch Changes
