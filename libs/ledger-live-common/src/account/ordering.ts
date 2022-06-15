@@ -6,7 +6,8 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-type AccountComparator = (a: AccountLike, b: AccountLike) => number;
+
+export type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
 const sortNameLense = (a: AccountLike): string => {
   switch (a.type) {

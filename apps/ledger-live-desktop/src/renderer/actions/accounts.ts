@@ -1,6 +1,7 @@
-// @flow
+import { Dispatch } from "redux";
 
 import type { Account, SubAccount } from "@ledgerhq/types-live";
+import { AccountComparator } from "@ledgerhq/live-common/account/ordering";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 
@@ -24,13 +25,13 @@ export const setAccounts = (payload: Account[]) => ({
   payload,
 });
 
-export const reorderAccounts = (comparator: *) => (dispatch: *) =>
+export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dispatch) =>
   dispatch({
     type: "DB:REORDER_ACCOUNTS",
     payload: { comparator },
   });
 
-export const fetchAccounts = () => async (dispatch: *) => {
+export const fetchAccounts = () => async (dispatch: Dispatch) => {
   const accounts = implicitMigration(await getKey("app", "accounts", []));
   return dispatch({
     type: "SET_ACCOUNTS",
@@ -38,14 +39,14 @@ export const fetchAccounts = () => async (dispatch: *) => {
   });
 };
 
-export type UpdateAccountWithUpdater = (accountId: string, (Account) => Account) => *;
+export type UpdateAccountWithUpdater = (accountId: string, updater: (account: Account) => Account) => any;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: { accountId, updater },
 });
 
-export type UpdateAccount = ($Shape<Account>) => *;
+export type UpdateAccount = (account: Partial<Account>) => any;
 export const updateAccount: UpdateAccount = payload => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: {
@@ -54,7 +55,7 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-export const toggleStarAction = (id: string, parentId: ?string) => {
+export const toggleStarAction = (id: string, parentId?: string) => {
   return {
     type: "DB:UPDATE_ACCOUNT",
     payload: {

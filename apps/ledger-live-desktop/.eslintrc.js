@@ -59,9 +59,6 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
       ],
       parser: "@typescript-eslint/parser",
-      parserOptions: {
-        project: "./src/tsconfig.json",
-      },
       rules: {
         "space-before-function-paren": 0,
         "no-prototype-builtins": 0,
