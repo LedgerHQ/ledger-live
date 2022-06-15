@@ -262,6 +262,13 @@ export const mockCheckQuote: CheckQuote = async ({
         description: "Rate not found",
       };
 
+    case "WITHDRAWALS_BLOCKED":
+      return {
+        codeName: mockedCheckQuoteStatusCode,
+        error: "Withdrawals blocked",
+        description: "Withdrawals blocked",
+      };
+
     default:
       return {
         codeName: "UNKNOWN_ERROR",
