@@ -1,4 +1,3 @@
-// @flow
 import invariant from "invariant";
 import { useCallback } from "react";
 import { log } from "@ledgerhq/logs";
@@ -17,8 +16,8 @@ import { execAndWaitAtLeast } from "@ledgerhq/live-common/lib/promise";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 type SignTransactionArgs = {
-  account: ?AccountLike,
-  parentAccount: ?Account,
+  account?: AccountLike | null,
+  parentAccount?: Account | null,
 };
 
 export const useBroadcast = ({
