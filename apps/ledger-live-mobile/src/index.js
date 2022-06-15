@@ -392,11 +392,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
 
   const linking = useMemo(
     () => ({
-      ...linkingOptions,
-      enabled:
-        hasCompletedOnboarding &&
-        wcContext.initDone &&
-        !wcContext.session.session,
+      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+      enabled: wcContext.initDone && !wcContext.session.session,
       getStateFromPath: (path, config) => {
         const url = new URL(`ledgerlive://${path}`);
         const { hostname, pathname } = url;
