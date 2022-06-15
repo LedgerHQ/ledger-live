@@ -5,6 +5,7 @@ import ClearCacheRow from "./ClearCacheRow";
 import ExportLogsRow from "./ExportLogsRow";
 import HardResetRow from "./HardResetRow";
 import ConfigureDeviceRow from "./ConfigureDeviceRow";
+import ResetThirdPartyDataRow from "./ResetThirdPartyDataRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 
 export default function HelpSettings() {
@@ -15,6 +16,7 @@ export default function HelpSettings() {
       <ConfigureDeviceRow />
       <ExportLogsRow />
       <ClearCacheRow />
+      <ResetThirdPartyDataRow />
       <HardResetRow />
     </SettingsNavigationScrollView>
   );

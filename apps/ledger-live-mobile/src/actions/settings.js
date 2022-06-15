@@ -194,6 +194,10 @@ export const setSwapKYCStatus = (payload: {
   payload,
 });
 
+export const resetSwapLoginAndKYCData = () => ({
+  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
+});
+
 export const swapAcceptProvider = (providerId: string) => ({
   type: "ACCEPT_SWAP_PROVIDER",
   payload: providerId,
