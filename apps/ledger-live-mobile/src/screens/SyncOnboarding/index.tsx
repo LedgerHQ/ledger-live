@@ -7,9 +7,14 @@ import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 
-const pollingPeriodMs = 1000;
+type Step = {
+  status: "completed" | "active" | "inactive";
+  deviceStates: OnboardingStep[];
+  title: string;
+  renderBody?: () => ReactNode;
+};
 
-const defaultOnboardingSteps = [
+const defaultOnboardingSteps: Step[] = [
   {
     status: "inactive",
     deviceStates: [OnboardingStep.WelcomeScreen, OnboardingStep.SetupChoice],
@@ -60,6 +65,8 @@ type Props = StackScreenProps<
   "SyncOnboardingCompanion"
 >;
 
+const pollingPeriodMs = 1000;
+
 export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { colors } = useTheme();
   const [onboardingSteps, setOnboardingSteps] = useState(
@@ -71,27 +78,31 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { onboardingState, allowedError, fatalError } =
     useOnboardingStatePolling({ device, pollingPeriodMs });
 
-  console.log("Allowed Error:", allowedError);
-
-  console.log("Fatal Error:", fatalError);
-
   useEffect(() => {
-    console.log(onboardingState);
-    setOnboardingSteps(
-      defaultOnboardingSteps.map(step => {
-        if (
-          onboardingState &&
-          onboardingState.currentOnboardingStep &&
-          step.deviceStates.includes(onboardingState.currentOnboardingStep)
-        ) {
-          return {
-            ...step,
-            status: "active",
-          };
-        }
-        return step;
-      }),
-    );
+    const newStepState: Step[] = [];
+
+    defaultOnboardingSteps.some((step, index, steps) => {
+      if (
+        onboardingState &&
+        onboardingState.currentOnboardingStep &&
+        step.deviceStates.includes(onboardingState.currentOnboardingStep)
+      ) {
+        newStepState.push({
+          ...step,
+          status: "active",
+        });
+        newStepState.push(...steps.slice(index + 1));
+        return true;
+      }
+
+      newStepState.push({
+        ...step,
+        status: "completed",
+      });
+      return false;
+    });
+
+    setOnboardingSteps(newStepState);
   }, [onboardingState]);
 
   return (
