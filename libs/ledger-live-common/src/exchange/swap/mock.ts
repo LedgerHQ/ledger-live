@@ -255,6 +255,13 @@ export const mockCheckQuote: CheckQuote = async ({
         description: "Provided bearerToken does not match any known user",
       };
 
+    case "RATE_NOT_FOUND":
+      return {
+        codeName: mockedCheckQuoteStatusCode,
+        error: "Rate not found",
+        description: "Rate not found",
+      };
+
     default:
       return {
         codeName: "UNKNOWN_ERROR",

@@ -1,12 +1,11 @@
+import { getEnv } from "../../env";
+import network from "../../network";
+import { getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { mockCheckQuote } from "./mock";
 import type { CheckQuote } from "./types";
 
-import { getEnv } from "../../env";
-import { mockCheckQuote } from "./mock";
-import { getSwapAPIError, getSwapAPIBaseURL } from "./";
-import network from "../../network";
-
 const checkQuote: CheckQuote = async ({ provider, quoteId, bearerToken }) => {
-  if (getEnv("MOCK")) {
+  if (getEnv("MOCK") || getEnv("MOCK_SWAP_CHECK_QUOTE")) {
     return mockCheckQuote({ provider, quoteId, bearerToken });
   }
 

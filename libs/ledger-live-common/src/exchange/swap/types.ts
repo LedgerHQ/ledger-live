@@ -94,7 +94,8 @@ type ValidCheckQuoteErrorCodes =
   | "OVER_TRADE_LIMIT"
   | "UNKNOWN_ERROR"
   | "WITHDRAWALS_BLOCKED"
-  | "MFA_REQUIRED";
+  | "MFA_REQUIRED"
+  | "RATE_NOT_FOUND";
 
 type CheckQuoteErrorStatus = {
   codeName: ValidCheckQuoteErrorCodes;
