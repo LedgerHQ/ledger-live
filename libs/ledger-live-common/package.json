@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "22.2.1",
+  "version": "23.1.0-next.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
@@ -54,6 +54,7 @@
     "https": false
   },
   "dependencies": {
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
     "@celo/base": "^1.5.2",
     "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
@@ -94,7 +95,9 @@
     "@polkadot/util-crypto": "9.2.1",
     "@polkadot/wasm-crypto": "6.0.1",
     "@solana/spl-token": "^0.2.0",
-    "@solana/web3.js": "1.41.3",
+    "@solana/web3.js": "^1.41.4",
+    "@stricahq/bip32ed25519": "^1.0.3",
+    "@stricahq/typhonjs": "^1.2.3",
     "@taquito/ledger-signer": "stablelib",
     "@taquito/taquito": "stablelib",
     "@taquito/utils": "stablelib",

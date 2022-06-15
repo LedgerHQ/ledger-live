@@ -12,6 +12,7 @@ import SwapFormNavigator from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import SwapPendingOperation from "../../screens/Swap/PendingOperation";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export default function SwapNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -31,6 +33,7 @@ export default function SwapNavigator() {
         options={{
           title: t("transfer.swap.landing.header"),
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.SwapFormOrHistory}

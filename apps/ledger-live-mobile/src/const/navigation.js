@@ -1,6 +1,7 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
+
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -79,6 +80,7 @@ export const ScreenName = {
   FreezeValidationError: "FreezeValidationError",
   FreezeValidationSuccess: "FreezeValidationSuccess",
   GeneralSettings: "GeneralSettings",
+  GetDevice: "GetDevice",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
   ManagerDevice: "ManagerDevice",
@@ -97,6 +99,7 @@ export const ScreenName = {
   PasswordRemove: "PasswordRemove",
   Portfolio: "Portfolio",
   PortfolioOperationHistory: "PortfolioOperationHistory",
+  PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
@@ -275,6 +278,7 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
   OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",
@@ -316,6 +320,8 @@ export const ScreenName = {
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
+  PlatformStartExchange: "PlatformStartExchange",
+  PlatformCompleteExchange: "PlatformCompleteExchange",
 
   WalletConnectScan: "WalletConnectScan",
   WalletConnectConnect: "WalletConnectConnect",
@@ -346,10 +352,14 @@ export const ScreenName = {
   SolanaEditMemo: "SolanaEditMemo",
   SolanaEditAmount: "SolanaEditAmount",
 
-  BuyDeviceScreen: "BuyDeviceScreen",
+  PostBuyDeviceScreen: "PostBuyDeviceScreen",
+  PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
+
+  // cardano
+  CardanoEditMemo: "CardanoEditMemo",
 };
 
 export const NavigatorName = {
@@ -366,6 +376,7 @@ export const NavigatorName = {
   ExchangeStack: "ExchangeStack",
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
+  BuyDevice: "BuyDevice",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
@@ -386,6 +397,7 @@ export const NavigatorName = {
   Platform: "Platform",
   ProviderList: "ProviderList",
   ProviderView: "ProviderView",
+  PlatformExchange: "PlatformExchange",
   ReceiveFunds: "ReceiveFunds",
   SendFunds: "SendFunds",
   Settings: "Settings",

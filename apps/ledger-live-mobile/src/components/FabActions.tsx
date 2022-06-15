@@ -39,6 +39,7 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
+const iconCard = Icons.CardMedium;
 
 export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   account,
@@ -393,6 +394,19 @@ const FabActions: React.FC<FabActionsProps> = ({
       disabled: areAccountsEmpty,
     };
 
+    const actionManageCard: ActionButton = {
+      event: "ManageCard",
+      label: t("transfer.manageCard.title"),
+      Icon: iconCard,
+      navigationParams: [
+        ScreenName.PlatformApp,
+        {
+          platform: "cl-card",
+          name: "CL Card Powered by Ledger",
+        },
+      ],
+    };
+
     return [
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferSwap]
@@ -402,6 +416,7 @@ const FabActions: React.FC<FabActionsProps> = ({
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferReceive, actionButtonTransferSend]
         : []),
+      actionManageCard,
     ];
   }, [hasAccounts, readOnlyModeEnabled, t, areAccountsEmpty]);
 
