@@ -32,6 +32,7 @@ const stellar: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Stellar",
   },
+  testTimeout: 2 * 60 * 1000,
   mutations: [
     {
       name: "move ~50% XLM",
