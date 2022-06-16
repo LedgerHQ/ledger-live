@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type {
+import {
   AccountRaw,
   AccountRawLike,
   CryptoCurrency,
@@ -8,7 +8,7 @@ import type {
   Transaction,
   TransactionRaw,
 } from "../../types";
-import type { Account, AccountLike } from "../../types/account";
+import { Account, AccountLike } from "../../types/account";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
