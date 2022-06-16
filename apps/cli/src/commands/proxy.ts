@@ -250,9 +250,10 @@ const job = ({
         };
 
         ws.on("close", onClose);
-        ws.on("message", async (apduHex) => {
+        ws.on("message", async (data, isBinary) => {
           if (destroyed) return;
-
+          
+          const apduHex = isBinary ? data : data.toString();
           if (apduHex === "open") {
             if (wsBusyIndex) {
               ws.send(
