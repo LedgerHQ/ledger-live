@@ -19,6 +19,14 @@
       "require": "./lib/cjs/",
       "default": "./lib/"
     },
+    "./*.woff2": {
+      "require": "./lib/cjs/*.woff2",
+      "default": "./lib/*.woff2"
+    },
+    "./*/": {
+      "require": "./lib/cjs/*/index.js",
+      "default": "./lib/*/index.js"
+    },
     "./*": {
       "require": "./lib/cjs/*.js",
       "default": "./lib/*.js"
