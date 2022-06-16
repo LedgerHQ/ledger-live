@@ -21,7 +21,7 @@ import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
 
 // $FlowFixMe
-import Button from "~/renderer/components/Button.ui.tsx";
+import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";

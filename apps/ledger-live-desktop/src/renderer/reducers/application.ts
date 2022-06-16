@@ -42,6 +42,15 @@ const handlers = {
     ...state,
     ...payload,
   }),
+  RELAUNCH_ONBOARDING: (
+    state: ApplicationState,
+    { payload: onboardingRelaunched }: { payload: boolean },
+  ) => {
+    return {
+      ...state,
+      onboardingRelaunched,
+    };
+  },
 };
 
 // NOTE: V2 `lock` and `unlock` have been moved to actions/application.js
@@ -64,6 +73,9 @@ export const osLangAndRegionSelector = (state: Object) => state.application.osLa
 
 export const notSeededDeviceRelaunchSelector = (state: Object) =>
   state.application.notSeededDeviceRelaunch;
+
+export const onboardingRelaunchedSelector = (state: ApplicationState) =>
+  state.application.onboardingRelaunched as boolean;
 
 export const isNavigationLocked = (state: Object) => state.application.navigationLocked;
 

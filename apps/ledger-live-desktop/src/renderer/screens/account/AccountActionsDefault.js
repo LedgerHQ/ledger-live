@@ -6,7 +6,7 @@ import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
 import IconExchange from "~/renderer/icons/Exchange";
 // $FlowFixMe
-import Button from "~/renderer/components/Button.ui.tsx";
+import Button from "~/renderer/components/ButtonV3";
 import { Flex } from "@ledgerhq/react-ui";
 type Props = {
   onClick: () => void,
