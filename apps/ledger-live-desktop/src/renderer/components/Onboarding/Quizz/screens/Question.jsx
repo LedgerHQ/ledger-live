@@ -5,7 +5,7 @@ import styled from "styled-components";
 import type { TFunction } from "react-i18next";
 import WtfIsThis from "~/renderer/components/Onboarding/Quizz/assets/WtfIsThis.svg";
 import { Wave } from "../assets/Wave";
-import Text from "~/renderer/components/Text";
+import { Text } from "@ledgerhq/react-ui";
 
 const WaveContainer = styled.div`
   position: absolute;

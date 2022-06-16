@@ -1,9 +1,9 @@
 // @flow
 
 import React, { useCallback } from "react";
-import Text from "~/renderer/components/Text";
+import { Text } from "@ledgerhq/react-ui";
 import type { TFunction } from "react-i18next";
-import Button from "~/renderer/components/Button";
+import Button from "~/renderer/components/ButtonV3";
 import styled from "styled-components";
 import { Illustration } from "~/renderer/components/Onboarding/Screens/Tutorial/shared";
 import deviceOnToken from "./assets/deviceOnToken.svg";
