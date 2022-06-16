@@ -124,7 +124,6 @@ export default function BuyDeviceBanner({
               eventProperties={eventProperties}
               type="main"
               flexShrink={0}
-              zIndex={1}
             >
               {buttonLabel ?? t("buyDevice.bannerButtonTitle")}
             </Button>
@@ -138,6 +137,7 @@ export default function BuyDeviceBanner({
           borderRadius={2}
           overflow="hidden"
           imageContainerStyle={imageContainerStyle}
+          pointerEvents="none"
         >
           <Image
             resizeMode="contain"
