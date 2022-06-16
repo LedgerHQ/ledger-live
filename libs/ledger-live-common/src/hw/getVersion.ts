@@ -81,26 +81,31 @@ export default async function getVersion(
     }
     mcuVersion = mcuVersionBuf.toString();
 
-    const bootloaderVersionLength = data[i++];
-    let bootloaderVersionBuf: Buffer = Buffer.from(
-      data.slice(i, i + bootloaderVersionLength)
-    );
-    i += bootloaderVersionLength;
+    const isOSU = rawVersion.includes("-osu");
 
-    if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
-      bootloaderVersionBuf = bootloaderVersionBuf.slice(
-        0,
-        bootloaderVersionBuf.length - 1
+    if(!isOSU) {
+
+      const bootloaderVersionLength = data[i++];
+      let bootloaderVersionBuf: Buffer = Buffer.from(
+        data.slice(i, i + bootloaderVersionLength)
       );
+      i += bootloaderVersionLength;
+
+      if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
+        bootloaderVersionBuf = bootloaderVersionBuf.slice(
+          0,
+          bootloaderVersionBuf.length - 1
+        );
+      }
+      bootloaderVersion = bootloaderVersionBuf.toString();
+
+      const hardwareVersionLength = data[i++];
+      hardwareVersion = data.slice(i, i + hardwareVersionLength).readUIntBE(0, 1); // ?? string? number?
+      i += hardwareVersionLength;
+
+      const languageIdLength = data[i++];
+      languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
     }
-    bootloaderVersion = bootloaderVersionBuf.toString();
-
-    const hardwareVersionLength = data[i++];
-    hardwareVersion = data.slice(i, i + hardwareVersionLength).readUIntBE(0, 1); // ?? string? number?
-    i += hardwareVersionLength;
-
-    const languageIdLength = data[i++];
-    languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
   }
 
   return {
