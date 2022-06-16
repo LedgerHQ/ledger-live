@@ -12,6 +12,7 @@ import { areAllOperationsLoaded, decodeAccountId } from "../../account";
 import type { Operation, Account } from "../../types";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
+import { validateAddress } from "@taquito/utils";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
@@ -62,9 +63,14 @@ function isStringHex(s: string): boolean {
 export const getAccountShape: GetAccountShape = async (infoInput) => {
   const { initialAccount, rest, currency, derivationMode } = infoInput;
   const publicKey = reconciliatePublicKey(rest?.publicKey, initialAccount);
-  invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
-  const hex = Buffer.from(publicKey, "hex");
-  const address = encodeAddress(hex);
+  let address;
+  if (validateAddress(publicKey)) {
+    address = publicKey;
+  } else {
+    invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
+    const hex = Buffer.from(publicKey, "hex");
+    address = encodeAddress(hex);
+  }
 
   const accountId = encodeAccountId({
     type: "js",
@@ -208,7 +214,7 @@ const txToOp =
         type = "CREATE";
         maybeValue = new BigNumber(tx.contractBalance || 0);
         senders = [address];
-        recipients = [tx.originatedContract.address];
+        recipients = [tx.originatedContract?.address || ""];
         break;
       case "activation":
         type = "IN";
