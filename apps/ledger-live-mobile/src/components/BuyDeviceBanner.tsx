@@ -124,6 +124,7 @@ export default function BuyDeviceBanner({
               eventProperties={eventProperties}
               type="main"
               flexShrink={0}
+              zIndex={1}
             >
               {buttonLabel ?? t("buyDevice.bannerButtonTitle")}
             </Button>
