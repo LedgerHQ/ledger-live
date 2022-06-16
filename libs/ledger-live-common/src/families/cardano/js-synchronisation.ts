@@ -21,6 +21,7 @@ import {
   getMemoFromTx,
   getOperationType,
   isHexString,
+  mergeTokens,
 } from "./logic";
 import { encodeOperationId } from "../../operation";
 import { getNetworkParameters } from "./networks";
@@ -28,6 +29,7 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
+import { buildSubAccounts } from "./buildSubAccounts";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -196,16 +198,15 @@ export const getAccountShape: GetAccountShape = async (info) => {
     (total, u) => total.plus(u.amount),
     new BigNumber(0)
   );
-  // const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
-  // const subAccounts = buildSubAccounts({
-  //   initialAccount,
-  //   parentAccountId: accountId,
-  //   parentCurrency: currency,
-  //   newTransactions,
-  //   tokens: tokenBalance,
-  //   accountCredentialsMap,
-  // });
-  const subAccounts = [];
+  const tokenBalance = mergeTokens(utxos.map((u) => u.tokens).flat());
+  const subAccounts = buildSubAccounts({
+    initialAccount,
+    parentAccountId: accountId,
+    parentCurrency: currency,
+    newTransactions,
+    tokens: tokenBalance,
+    accountCredentialsMap,
+  });
 
   const newOperations = newTransactions.map((t) =>
     mapTxToAccountOperation(t, accountId, accountCredentialsMap, subAccounts)
