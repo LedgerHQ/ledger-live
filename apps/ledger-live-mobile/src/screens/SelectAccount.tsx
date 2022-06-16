@@ -1,52 +1,35 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { FlatList } from "react-native";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/lib/account/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { Flex } from "@ledgerhq/native-ui";
-import {
-  isAccountEmpty,
-  getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../const";
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { accountsSelector } from "../reducers/accounts";
-import { TrackScreen } from "../analytics";
-import AccountSelector from "../components/AccountSelector";
-import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
+import AccountCard from "../components/AccountCard";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types/account";
 
 type Props = {
   navigation: any;
   route: {
-    params?: {
-      currency?: string;
-      selectedCurrency?: CryptoCurrency | TokenCurrency;
-      next: string;
-      category: string;
-      notEmptyAccounts?: boolean;
-      minBalance?: number;
+    params: {
+      selectedCurrency: CryptoCurrency | TokenCurrency;
     };
   };
 };
 
-export default function ReceiveFunds({ navigation, route }: Props) {
-  const {
-    selectedCurrency,
-    currency: initialCurrencySelected,
-    next,
-    category,
-    notEmptyAccounts,
-    minBalance,
-  } = route.params || {};
+export default function SelectAccount({ navigation, route }: Props) {
+  const { selectedCurrency } = route.params;
 
-  const [error, setError] = useState<Error | undefined>();
-
-  const accounts = useSelector(accountsSelector);
-  const enhancedAccounts = useMemo(() => {
+  const { t } = useTranslation();
+  const allAccounts = useSelector(accountsSelector);
+  const currencyAccounts = useMemo(() => {
     if (selectedCurrency) {
-      const filteredAccounts = accounts.filter(
+      const filteredAccounts = allAccounts.filter(
         acc =>
           acc.currency.id ===
           (selectedCurrency.type === "TokenCurrency"
@@ -68,45 +51,50 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       }
       return flattenAccounts(filteredAccounts);
     }
-    return flattenAccounts(accounts);
-  }, [accounts, selectedCurrency]);
-  const allAccounts = notEmptyAccounts
-    ? enhancedAccounts.filter(account => !isAccountEmpty(account))
-    : enhancedAccounts;
+    return flattenAccounts(allAccounts);
+  }, [allAccounts, selectedCurrency]);
 
-  const handleSelectAccount = useCallback(
+  const keyExtractor = (item: Account) => item.id;
+  
+  const onSelectAccount = useCallback(
     account => {
-      const balance = getAccountSpendableBalance(account);
-
-      if (!isNaN(minBalance) && balance.lte(minBalance)) {
-        setError(new NotEnoughBalance());
-      } else {
-        navigation.navigate(ScreenName.ReceiveConnectDevice, {
-          account,
-          accountId: account.id,
-          parentId: account.type !== "Account" ? account.parentId : undefined,
-        });
-      }
+      navigation.navigate(ScreenName.ReceiveConnectDevice, {
+        account,
+        accountId: account.id,
+        parentId: account.type !== "Account" ? account.parentId : undefined,
+      });
     },
-    [minBalance, navigation],
+    [navigation],
+  );
+
+  const renderItem = ({ item }: { item: AccountLike }) => (
+      <AccountCard
+        account={item}
+        onPress={() => onSelectAccount(item)}
+      />
   );
 
   return (
-    <Flex flex={1} color="background.main">
-      <TrackScreen category={category} name="SelectAccount" />
-      <Flex p={6}>
-        <AccountSelector
-          list={allAccounts}
-          onSelectAccount={handleSelectAccount}
-          initialCurrencySelected={initialCurrencySelected}
-        />
-      </Flex>
-      {error ? (
-        <GenericErrorBottomModal
-          error={error}
-          onClose={() => setError(undefined)}
-        />
-      ) : null}
+    <Flex flex={1} color="background.main" px={6} py={3}>
+      <Text color="neutral.c100" fontWeight="medium" variant="h4">
+        {t("")}Select account
+      </Text>
+      <Text
+        color="neutral.c80"
+        fontWeight="medium"
+        variant="bodyLineHeight"
+        mt={2}
+        mb={6}
+      >
+        {t("")}Your {selectedCurrency.ticker} will be deposited into this account.
+      </Text>
+      <FlatList
+        data={currencyAccounts}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+      />
     </Flex>
   );
 }
