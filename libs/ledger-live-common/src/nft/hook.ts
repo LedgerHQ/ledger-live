@@ -12,12 +12,23 @@ export const getFloorPrice = async (
     return null;
   }
 
-  const { data } = await network({
-    method: "GET",
-    url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${
-      nft.currencyId
-    }/${chainId}/contract/${nft.contract}/floor-price`,
-  });
+  try {
 
-  return data;
+    const { data } = await network({
+      method: "GET",
+      url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${
+        nft.currencyId
+      }/${chainId}/contract/${nft.contract}/floor-price`,
+    });
+
+    return data
+
+  } catch (err: any) {
+    
+    if (err.status === 500) {
+      return null;
+    }
+
+    throw err;
+  }
 };
