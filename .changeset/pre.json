@@ -71,6 +71,7 @@
     "live-github-bot": "1.0.0"
   },
   "changesets": [
+    "angry-ads-obey",
     "dry-trains-drive",
     "funny-pianos-mix",
     "green-dodos-live",

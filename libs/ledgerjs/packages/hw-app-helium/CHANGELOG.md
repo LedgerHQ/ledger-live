@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-helium
 
+## 6.28.0-nightly.0
+
+### Minor Changes
+
+- 0f378fff2: Memo serialization has been fixed. The transaction memo field was incorrectly serialized which caused verification failures.
+
 ## 6.27.2-nightly.0
 
 ### Patch Changes
