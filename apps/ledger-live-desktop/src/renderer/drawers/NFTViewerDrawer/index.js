@@ -13,7 +13,6 @@ import { space, layout, position } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import type { Account, FloorPrice, Currency, ProtoNFT } from "@ledgerhq/live-common/lib/types";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
-import network from "@ledgerhq/live-common/lib/network";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -196,25 +195,9 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
 
   useEffect(() => {
     setFloorPriceLoading(true);
-    getFloorPrice(protoNft, currency?.ethereumLikeInfo?.chainId)
-      .then((result: FloorPrice) => {
-        if (result) {
-          setTicker(result.ticker);
-          setFloorPrice(result.value);
-        }
-      })
-      .finally(() => setFloorPriceLoading(false));
-  }, [protoNft, currency]);
-
-  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
-  const [ticker, setTicker] = useState("");
-  const [floorPrice, setFloorPrice] = useState(null);
-
-  useEffect(() => {
-    setFloorPriceLoading(true);
-    getFloorPrice(protoNft, currency)
+    getFloorPrice(protoNft, currency?.ethereumLikeInfo.chainId)
       .then(
-        (result: any) => {
+        (result: FloorPrice) => {
           if (result) {
             setTicker(result.ticker);
             setFloorPrice(result.value);
