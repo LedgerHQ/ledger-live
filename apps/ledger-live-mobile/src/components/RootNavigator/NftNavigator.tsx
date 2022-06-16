@@ -31,6 +31,7 @@ const NftNavigator = () => {
           title: null,
           headerRight: null,
           headerLeft: () => <BackButton navigation={navigation} />,
+          headerTransparent: true,
         })}
       />
     </Stack.Navigator>
