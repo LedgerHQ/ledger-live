@@ -74,13 +74,10 @@ class NftImage extends React.PureComponent<Props, State> {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    }).start();
+    }).start(({ finished }) => {
+      finished && this.setState({ loading: false });
+    });
   };
-
-  onLoadEnd = () => {
-    this.setState({ loading: false });
-    this.startAnimation()
-  }
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
@@ -126,7 +123,7 @@ class NftImage extends React.PureComponent<Props, State> {
                 uri: src,
               }}
               onLoad={this.onLoad}
-              onLoadEnd={this.onLoadEnd}
+              onLoadEnd={this.startAnimation}
               onError={this.onError}
             />
           )}
