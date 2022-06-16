@@ -88,17 +88,23 @@ export const useProviderRates = ({
             onNoRates && onNoRates({ fromState, toState });
           }
 
-          /**
-           * FIXME
-           * need to handle multiple different errors
-           * example: one partner proposes the quote but with a "minAmount" and
-           * another one does not propose the quote
-           */
-
           // Discard bad provider rates
           let rateError: Error | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
+
+            /**
+             * If we have an error linked to the ammount, this error takes
+             * precedence over the other (like a "CurrencyNotSupportedError" one
+             * for example)
+             */
+            if (
+              rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+              rate.error?.name === "SwapExchangeRateAmountTooHigh"
+            ) {
+              rateError = rate.error;
+            }
+
             return rate.error ? acc : [...acc, rate];
           }, []);
 
