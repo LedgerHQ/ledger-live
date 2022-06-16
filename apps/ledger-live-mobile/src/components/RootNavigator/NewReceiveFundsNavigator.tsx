@@ -12,6 +12,8 @@ import ReceiveSelectAccount from "../../screens/SelectAccount";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+
 export default function NewReceiveFundsNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -30,23 +32,38 @@ export default function NewReceiveFundsNavigator() {
       <Stack.Screen
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
-        options={{ headerLeft: null }}
+        options={{
+          headerLeft: null,
+          headerTitle: "",
+        }}
       />
       {/* Select Account */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectAccount}
         component={ReceiveSelectAccount}
+        options={{
+          headerTitle: "",
+        }}
+        initialParams={{
+          selectedCurrency: findCryptoCurrencyById("bitcoin"),
+        }}
       />
       {/* Select / Connect Device */}
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}
         component={ReceiveConnectDevice}
+        options={{
+          headerTitle: "",
+        }}
       />
       {/* Add account(s) automatically */}
       {/* Receive Address */}
       <Stack.Screen
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
+        options={{
+          headerTitle: "",
+        }}
       />
       {/* Receive Address Device Verification */}
     </Stack.Navigator>
