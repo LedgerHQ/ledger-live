@@ -184,8 +184,8 @@ const dataset: DatasetTest<Transaction> = {
                 errors: {},
                 warnings: {},
                 estimatedFees: new BigNumber("100"),
-                amount: account.balance.minus("1500000").minus("100"),
-                totalSpent: account.balance.minus("1500000"),
+                amount: account.spendableBalance.minus("100"),
+                totalSpent: account.spendableBalance.minus("100"),
               }),
             },
             {
