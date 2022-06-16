@@ -26,6 +26,7 @@ import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
+import NewReceiveFundsNavigator from "./NewReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
 import SignMessageNavigator from "./SignMessageNavigator";
 import SignTransactionNavigator from "./SignTransactionNavigator";
@@ -150,7 +151,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.ReceiveFunds}
-        component={ReceiveFundsNavigator}
+        component={NewReceiveFundsNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
