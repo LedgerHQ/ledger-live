@@ -4,15 +4,15 @@ import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
 import {
   useNftMetadata,
   useNftCollectionMetadata,
-} from "@ledgerhq/live-common/lib/nft/NftMetadataProvider";
+  getFloorPrice,
+} from "@ledgerhq/live-common/lib/nft";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import type { Account, Currency, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import type { Account, FloorPrice } from "@ledgerhq/live-common/lib/types";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
-import network from "@ledgerhq/live-common/lib/network";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -120,20 +120,6 @@ const HashContainer = styled.div`
   user-select: none;
 `;
 
-const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
-const getFloorPrice = async (nft: ProtoNFT, currency: Currency): Promise<any> => {
-  if (!FLOOR_PRICE_CURRENCIES.has(nft.currencyId)) {
-    return null;
-  }
-
-  const { data } = await network({
-    method: "GET",
-    url: `https://nft.api.live.ledger.com/v1/marketdata/${nft.currencyId}/${currency.ethereumLikeInfo.chainId}/contract/${nft.contract}/floor-price`,
-  });
-
-  return data;
-};
-
 const NFTAttribute = memo(
   ({
     title,
@@ -143,7 +129,7 @@ const NFTAttribute = memo(
     separatorTop,
   }: {
     title: string,
-    value: any,
+    value: React$Node | string,
     skeleton?: boolean,
     separatorBottom?: boolean,
     separatorTop?: boolean,
@@ -203,16 +189,15 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   const contentType = useMemo(() => getMetadataMediaType(metadata, "big"), [metadata]);
   const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
   const name = metadata?.nftName || protoNft.tokenId;
-
   const [floorPriceLoading, setFloorPriceLoading] = useState(false);
   const [ticker, setTicker] = useState("");
   const [floorPrice, setFloorPrice] = useState(null);
 
   useEffect(() => {
     setFloorPriceLoading(true);
-    getFloorPrice(protoNft, currency)
+    getFloorPrice(protoNft, currency?.ethereumLikeInfo.chainId)
       .then(
-        (result: any) => {
+        (result: FloorPrice) => {
           if (result) {
             setTicker(result.ticker);
             setFloorPrice(result.value);
