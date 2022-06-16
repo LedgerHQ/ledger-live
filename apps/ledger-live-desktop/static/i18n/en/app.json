@@ -580,7 +580,7 @@
               "disclaimer": "Your full node must be fully synchronized before connecting Ledger Live.",
               "fields": {
                 "nodeHost": {
-                  "title": "Host",
+                  "title" : "Host",
                   "tooltip": "Leave as default if node runs on this computer, or replace the node IP address and port number."
                 },
                 "rpcCredentials": {
@@ -4386,7 +4386,7 @@
       "link": "how to create a Hedera account"
     },
     "currentAddress": {
-      "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+      "messageIfVirtual" : "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
   }
 }

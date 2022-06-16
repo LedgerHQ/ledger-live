@@ -1020,7 +1020,7 @@
           "0": {
             "title": "Turn on Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label" : "Turn on your device by pressing the black button for 1 second."
             },
             "nanoS": {
               "label": "Turn on your device by connecting it to the USB port of your phone."
@@ -4304,7 +4304,7 @@
       "title": "Allocation"
     },
     "operations": {
-      "title": "Transaction history"
+      "title" : "Transaction history"
     }
   }
 }
