@@ -106,7 +106,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [onboardingState]);
 
   return (
-    <Flex px={7} py={8}>
+    <Flex height="100%" px={7} py={8} bg="background.main">
       <Flex flexDirection="row" justifyContent="space-between" mt={6} mb={8}>
         <Button type="main" outline>
           EN
