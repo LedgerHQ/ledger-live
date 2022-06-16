@@ -10,6 +10,7 @@ import {
   isAccountEmpty,
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/lib/account";
+import { ScreenName } from "../const";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";
@@ -80,14 +81,14 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       if (!isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
       } else {
-        navigation.navigate(next, {
+        navigation.navigate(ScreenName.ReceiveConnectDevice, {
           account,
           accountId: account.id,
           parentId: account.type !== "Account" ? account.parentId : undefined,
         });
       }
     },
-    [minBalance, navigation, next],
+    [minBalance, navigation],
   );
 
   return (

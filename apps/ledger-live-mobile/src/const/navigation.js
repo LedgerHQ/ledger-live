@@ -103,6 +103,7 @@ export const ScreenName = {
   RateProviderSettings: "RateProviderSettings",
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
+  ReceiveSelectCrypto: "ReceiveSelectCrypto",
   ReceiveSelectAccount: "ReceiveSelectAccount",
   RegionSettings: "RegionSettings",
   RepairDevice: "RepairDevice",
