@@ -63,14 +63,9 @@ function isStringHex(s: string): boolean {
 export const getAccountShape: GetAccountShape = async (infoInput) => {
   const { initialAccount, rest, currency, derivationMode } = infoInput;
   const publicKey = reconciliatePublicKey(rest?.publicKey, initialAccount);
-  let address;
-  if (validateAddress(publicKey)) {
-    address = publicKey;
-  } else {
-    invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
-    const hex = Buffer.from(publicKey, "hex");
-    address = encodeAddress(hex);
-  }
+  invariant(isStringHex(publicKey), "Please reimport your Tezos accounts");
+  const hex = Buffer.from(publicKey, "hex");
+  const address = encodeAddress(hex);
 
   const accountId = encodeAccountId({
     type: "js",
