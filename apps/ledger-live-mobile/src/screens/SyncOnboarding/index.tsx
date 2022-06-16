@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, ReactNode } from "react";
 import { Button, Flex, StepList, Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/src/onboarding/hooks/useOnboardingStatePolling";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { useTheme } from "styled-components/native";
@@ -79,11 +79,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   const { pairedDevice } = route.params;
 
-  const {
-    onboardingState,
-    allowedError,
-    fatalError,
-  } = useOnboardingStatePolling({ device, pollingPeriodMs });
+  const { onboardingState } = useOnboardingStatePolling({
+    device,
+    pollingPeriodMs,
+  });
 
   // Triggers the pairing if no pairedDevice was given
   useEffect(() => {

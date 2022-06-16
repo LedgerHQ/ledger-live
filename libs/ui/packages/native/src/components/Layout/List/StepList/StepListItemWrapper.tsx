@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue, withTiming } from "react-native-reanimated";
+import { Theme } from "src/styles/theme";
 import styled from "styled-components/native";
 
 import { Item, ItemStatus } from ".";
@@ -14,12 +15,35 @@ export type Props = {
   isLastItem?: boolean;
 };
 
-const Container = styled(Flex)<{ status: ItemStatus }>`
+const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
+  if (isLastItem && status === "completed") {
+    return theme.colors.success.c30;
+  } else if (status === "completed") {
+    return theme.colors.primary.c20;
+  } else if (status === "active") {
+    return theme.colors.neutral.c20;
+  }
+  return theme.colors.neutral.c30;
+};
+
+const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
+  if (isLastItem && status === "completed") {
+    return theme.colors.success.c30;
+  } else if (isLastItem && status === "active") {
+    return theme.colors.success.c100;
+  } else if (status === "completed") {
+    return theme.colors.primary.c20;
+  } else if (status === "active") {
+    return theme.colors.primary.c80;
+  }
+  return theme.colors.neutral.c30;
+};
+
+const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) =>
-    p.status === "completed" ? p.theme.colors.primary.c10 : p.theme.colors.neutral.c20};
-  border: 1px solid ${(p) => (p.status === "active" ? p.theme.colors.primary.c80 : "transparent")};
+  background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
+  border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
 
@@ -49,12 +73,17 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
     <Flex flexDirection="row">
       <StepIndicator
         status={item.status}
-        hideTopSegment={isFirstItem}
-        hideBottomSegment={isLastItem}
+        isFirstItem={isFirstItem}
+        isLastItem={isLastItem}
         mr={4}
       />
-      <Container status={item.status} mb={6}>
-        <Text variant="body" color={item.status === "inactive" ? "neutral.c70" : "primary.c90"}>
+      <Container status={item.status} isLastItem={isLastItem} mb={6}>
+        <Text
+          variant="body"
+          color={
+            item.status === "inactive" ? "neutral.c80" : isLastItem ? "success.c100" : "primary.c90"
+          }
+        >
           {item.title}
         </Text>
         <Animated.View style={style}>
