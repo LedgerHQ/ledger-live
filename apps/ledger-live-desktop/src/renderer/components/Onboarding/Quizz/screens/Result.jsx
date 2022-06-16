@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import type { TFunction } from "react-i18next";
 import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
+import Button from "~/renderer/components/ButtonV3";
 import failIllu from "../assets/answerFail.svg";
 import successIllu from "../assets/answerSuccess.svg";
 
