@@ -270,7 +270,7 @@ const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
       navigationParams: [
         NavigatorName.ReceiveFunds,
         {
-          screen: ScreenName.ReceiveSelectAccount,
+          screen: ScreenName.ReceiveSelectCrypto,
         },
       ],
     };
