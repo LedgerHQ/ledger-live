@@ -289,7 +289,7 @@ const SwapForm = () => {
 
       // If RATE_NOT_FOUND it means the quote as expired, so we need to refresh the rates
       if (status.codeName === "RATE_NOT_FOUND") {
-        swapTransaction.setFromAmount(swapTransaction?.swap?.refetchRates());
+        swapTransaction?.swap?.refetchRates();
         return;
       }
 
@@ -298,7 +298,12 @@ const SwapForm = () => {
     };
 
     handleCheckQuote();
-  }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow, swapTransaction]);
+    /**
+     * Remove `swapTransaction` from dependency list because it seems to mess up
+     * with the `checkQuote` call (the endpoint gets called too often)
+     */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providerKYC, exchangeRate, dispatch, provider, kycStatus, currentFlow]);
 
   const isSwapReady =
     !error &&
