@@ -80,12 +80,6 @@
 
 - 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
 
-## 22.2.1-hotfix.0
-
-### Patch Changes
-
-- 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
-
 ## 22.2.0
 
 ### Minor Changes
