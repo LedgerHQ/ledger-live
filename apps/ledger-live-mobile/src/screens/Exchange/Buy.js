@@ -29,10 +29,12 @@ export default function Buy() {
 
   const navigateToMoonPay = useCallback(() => {
     const manifest = manifests.get("moonpay");
-    navigation.navigate(ScreenName.PlatformApp, {
-      platform: manifest.id,
-      name: manifest.name,
-    });
+    if (manifest) {
+      navigation.navigate(ScreenName.PlatformApp, {
+        platform: manifest.id,
+        name: manifest.name,
+      });
+    }
   }, [navigation, manifests]);
 
   const navigateToCoinify = useCallback(() => {

@@ -1,6 +1,7 @@
 // @flow
 import moment from "moment";
-import { ipcRenderer, webFrame, remote } from "electron";
+import { ipcRenderer, webFrame } from "electron";
+import * as remote from "@electron/remote";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";

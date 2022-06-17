@@ -2,7 +2,6 @@
 
 import { app, ipcMain } from "electron";
 import path from "path";
-import rimraf from "rimraf";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/lib/env";
 import { isRestartNeeded } from "~/helpers/env";
 import logger from "~/logger";
@@ -16,13 +15,8 @@ const hydratedPerCurrency = {};
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
-const LEDGER_LIVE_SQLITE_PATH = path.resolve(app.getPath("userData"), "sqlite");
 
 const internal = new InternalProcess({ timeout: 3000 });
-
-const cleanUpBeforeClosingSync = () => {
-  rimraf.sync(path.resolve(LEDGER_CONFIG_DIRECTORY, "sqlite/*.log"));
-};
 
 const sentryEnabled = false;
 const userId = "TODO";
@@ -34,7 +28,6 @@ const spawnCoreProcess = () => {
     ...process.env,
     IS_INTERNAL_PROCESS: 1,
     LEDGER_CONFIG_DIRECTORY,
-    LEDGER_LIVE_SQLITE_PATH,
     INITIAL_SENTRY_ENABLED: sentryEnabled,
     SENTRY_USER_ID: userId,
   };
@@ -61,7 +54,6 @@ app.on("window-all-closed", async () => {
   if (internal.active) {
     await internal.stop();
   }
-  cleanUpBeforeClosingSync();
   app.quit();
 });
 

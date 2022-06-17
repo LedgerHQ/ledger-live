@@ -1,4 +1,3 @@
-/* @flow */
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
@@ -68,6 +67,9 @@ type RouteParams = {
   searchQuery?: string;
   tab?: ManagerTab;
   installApp?: string;
+  firmwareUpdate?: boolean;
+  device?: Device;
+  appsToRestore?: string[];
 };
 
 type Props = {
@@ -152,11 +154,14 @@ class ChooseDevice extends Component<
   };
 
   componentDidMount() {
-    this.setState(state => ({ ...state, device: undefined }));
+    this.setState(state => ({ ...state, device: this.props.route.params.device }));
   }
 
   render() {
-    const { isFocused } = this.props;
+    const {
+      isFocused,
+      route: { params = {} },
+    } = this.props;
     const { showMenu, device } = this.state;
 
     if (!isFocused) return null;
@@ -171,6 +176,7 @@ class ChooseDevice extends Component<
           <Trans i18nKey="manager.connect" />
         </Text>
         <SelectDevice
+          usbOnly={params?.firmwareUpdate}
           autoSelectOnAdd
           onSelect={this.onSelectDevice}
           onStepEntered={this.onStepEntered}

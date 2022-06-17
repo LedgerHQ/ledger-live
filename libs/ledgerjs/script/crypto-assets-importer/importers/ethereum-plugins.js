@@ -6,7 +6,7 @@ const { readFileJSON } = require("../utils");
 const mapObject = (obj, fn) => Object.fromEntries(Object.entries(obj).map(fn));
 
 module.exports = {
-  paths: ["dapps/ethereum", "dapps/bsc", "dapps/polygon"],
+  paths: ["dapps/ethereum", "dapps/bsc", "dapps/polygon", "dapps/ethereum_ropsten", "dapps/ethereum_goerli"],
   output: "ethereum.json", // to be put in crypto assets list
 
   join: (d) => {

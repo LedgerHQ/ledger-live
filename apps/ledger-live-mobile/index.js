@@ -16,12 +16,16 @@ import "react-native-url-polyfill/auto";
 // cosmjs use TextEncoder that's not available in React Native but on Node
 import "text-encoding-polyfill";
 
+// import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
+import "@ledgerhq/live-common/lib/reactNative";
+
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import VersionNumber from "react-native-version-number";
 
-import App from "./src";
+import BackgroundRunnerService from "./services/BackgroundRunnerService";
+import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
 import pkg from "./package.json";
@@ -35,28 +39,39 @@ const excludedErrorName = [
   "NotConnectedError",
   "TimeoutError",
   "WebsocketConnectionError",
+  "TronTransactionExpired", // user waits too long on device, possibly network slowness too
   // bad usage of device
   "BleError",
   "EthAppPleaseEnableContractData",
   "CantOpenDevice",
+  "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "DeviceOnDashboardExpected",
   "PairingFailed",
   "GetAppAndVersionUnsupportedFormat",
+  "BluetoothRequired",
+  "ManagerDeviceLocked",
   // other
   "InvalidAddressError",
+  "AccountNeedResync",
 ];
 const excludedErrorDescription = [
   // networking
   /timeout of .* exceeded/,
+  "Network Error",
   "Network request failed",
   "INVALID_STATE_ERR",
+  "API HTTP",
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
   // others
   "Transaction signing request was rejected by the user",
   "Transaction approval request was rejected",
+  /Please reimport your .* accounts/,
+  "database or disk is full",
+  "Unable to open URL",
+  "Received an invalid JSON-RPC message",
 ];
 if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
   Sentry.init({
@@ -113,3 +128,7 @@ logReport.logReportInit();
 const AppWithSentry = Sentry.wrap(App);
 
 AppRegistry.registerComponent("ledgerlivemobile", () => AppWithSentry);
+AppRegistry.registerHeadlessTask(
+  "BackgroundRunnerService",
+  () => BackgroundRunnerService,
+);

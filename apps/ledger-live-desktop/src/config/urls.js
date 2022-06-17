@@ -218,6 +218,6 @@ export const urls = {
   },
   hedera: {
     supportArticleLink:
-      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+      "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",
   },
 };

@@ -1,10 +1,18 @@
+import { findCryptoCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import "../../__tests__/test-helpers/setup";
 import BigNumber from "bignumber.js";
 import { encodeAccountId, toNFTRaw } from "../../account";
 import { Operation } from "../../types";
 import { ProtoNFT } from "../../types/nft";
 import { mergeNfts } from "../../bridge/jsHelpers";
-import { encodeNftId, nftsFromOperations } from "../../nft";
+import {
+  encodeNftId,
+  getNftCapabilities,
+  isNFTActive,
+  isNftTransaction,
+  nftsFromOperations,
+} from "../../nft";
+import { Transaction } from "./types";
 
 describe("nft merging", () => {
   const makeNFT = (
@@ -145,5 +153,106 @@ describe("OpenSea lazy minting bs", () => {
     const nfts = nftsFromOperations(ops);
     expect(prevOperations).toEqual(ops); // ensure preserved order of operations
     expect(nfts[0].amount.toNumber()).toBe(1);
+  });
+});
+
+describe("nft helpers", () => {
+  describe("isNftTransaction ", () => {
+    test("should return that it's an NFT transaction", () => {
+      const transaction: Transaction = {
+        family: "ethereum",
+        mode: "erc721.transfer",
+        amount: new BigNumber(0),
+        recipient: "",
+        gasPrice: null,
+        userGasLimit: null,
+        estimatedGasLimit: null,
+        feeCustomUnit: null,
+        networkInfo: null,
+      };
+
+      expect(isNftTransaction(transaction)).toEqual(true);
+    });
+
+    test("should return that it's not an NFT transaction", () => {
+      const transaction: Transaction = {
+        family: "ethereum",
+        mode: "compound.supply",
+        amount: new BigNumber(0),
+        recipient: "",
+        gasPrice: null,
+        userGasLimit: null,
+        estimatedGasLimit: null,
+        feeCustomUnit: null,
+        networkInfo: null,
+      };
+
+      expect(isNftTransaction(transaction)).toEqual(false);
+    });
+
+    test("should not throw with null or undefined", () => {
+      expect(isNftTransaction(null)).toEqual(false);
+      expect(isNftTransaction(undefined)).toEqual(false);
+    });
+  });
+
+  describe("isNFTActive", () => {
+    test("should return that's it's activated for ethereum", () => {
+      const currency = findCryptoCurrencyByTicker("ETH");
+
+      expect(isNFTActive(currency)).toBe(true);
+    });
+
+    test("should return that's it's not activated for ripple", () => {
+      const currency = findCryptoCurrencyByTicker("XRP");
+
+      expect(isNFTActive(currency)).toBe(false);
+    });
+
+    test("should not throw with null or undefined", () => {
+      expect(isNFTActive(null)).toBe(false);
+      expect(isNFTActive(undefined)).toBe(false);
+    });
+  });
+
+  describe("getNftCapabilities", () => {
+    test("should return the capabilities of an NFT ERC1155", () => {
+      const nft: ProtoNFT = {
+        id: "",
+        contract: "",
+        tokenId: "",
+        amount: new BigNumber(0),
+        currencyId: "ethereum",
+        standard: "ERC1155",
+      };
+
+      expect(getNftCapabilities(nft)).toEqual(
+        expect.objectContaining({
+          hasQuantity: true,
+        })
+      );
+    });
+
+    test("should return the capabilities of an NFT ERC721", () => {
+      const nft: ProtoNFT = {
+        id: "",
+        contract: "",
+        tokenId: "",
+        amount: new BigNumber(0),
+        currencyId: "ethereum",
+        standard: "ERC721",
+      };
+
+      expect(getNftCapabilities(nft)).toEqual(
+        expect.objectContaining({
+          hasQuantity: false,
+        })
+      );
+    });
+
+    test("should not throw with null or undefined", () => {
+      expect(getNftCapabilities(null)).toMatchObject({});
+      expect(getNftCapabilities(undefined)).toMatchObject({});
+    });
   });
 });
