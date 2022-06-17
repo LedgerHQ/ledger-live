@@ -12,12 +12,12 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import "./internal-lifecycle";
+import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import logger from "~/logger";
-/* eslint-enable import/first */
+import sentry from "~/sentry/main";
 
 app.allowRendererProcessReuse = false;
 
@@ -131,6 +131,17 @@ app.on("ready", async () => {
 
   const windowParams = await db.getKey("windowParams", "MainWindow", {});
   const settings = await db.getKey("app", "settings");
+  const user = await db.getKey("app", "user");
+
+  const userId = user?.id;
+  if (userId) {
+    setUserId(userId);
+    sentry(() => {
+      const value = getSentryEnabled();
+      if (value === null) return settings?.sentryLogs;
+      return value;
+    }, userId);
+  }
 
   const window = await createMainWindow(windowParams, settings);
 
