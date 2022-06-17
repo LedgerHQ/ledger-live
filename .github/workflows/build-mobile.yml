@@ -71,8 +71,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm i -g npm
       - uses: ruby/setup-ruby@v1
@@ -147,8 +147,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm i -g npm
       - uses: ruby/setup-ruby@v1
@@ -219,8 +219,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
         run: npm i -g npm
       - uses: ruby/setup-ruby@v1
