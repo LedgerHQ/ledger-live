@@ -75,9 +75,11 @@ const captureBreadcrumb = (breadcrumb: any) => {
   if (!process.env.STORYBOOK_ENV) {
     try {
       if (typeof window !== "undefined") {
-        require("~/sentry/browser").captureBreadcrumb(breadcrumb);
+        require("~/sentry/renderer").captureBreadcrumb(breadcrumb);
+      } else if (process.title === "Ledger Live Internal") {
+        require("~/sentry/internal").captureBreadcrumb(breadcrumb);
       } else {
-        require("~/sentry/node").captureBreadcrumb(breadcrumb);
+        require("~/sentry/main").captureBreadcrumb(breadcrumb);
       }
     } catch (e) {
       logger.log("warn", "Can't captureBreadcrumb", e);
@@ -88,9 +90,11 @@ const captureBreadcrumb = (breadcrumb: any) => {
 const captureException = (error: Error) => {
   try {
     if (typeof window !== "undefined") {
-      require("~/sentry/browser").captureException(error);
+      require("~/sentry/renderer").captureException(error);
+    } else if (process.title === "Ledger Live Internal") {
+      require("~/sentry/internal").captureException(error);
     } else {
-      require("~/sentry/node").captureException(error);
+      require("~/sentry/main").captureException(error);
     }
   } catch (e) {
     logger.log("warn", "Can't send to sentry", error, e);
@@ -187,6 +191,7 @@ export default {
         case "cmd.COMPLETE":
           logger.log("info", `✔ CMD ${id} finished in ${spentTime.toFixed(0)}ms`, { type });
           captureBreadcrumb({
+            level: "debug",
             category: "command",
             message: `✔ ${id}`,
           });
@@ -194,6 +199,7 @@ export default {
         case "cmd.ERROR":
           logger.log("warn", `✖ CMD ${id} error`, summarize({ type, data }));
           captureBreadcrumb({
+            level: "error",
             category: "command",
             message: `✖ ${id}`,
           });
@@ -266,6 +272,7 @@ export default {
       logger.log("info", log, { type: "network-response" });
     }
     captureBreadcrumb({
+      level: "debug",
       category: "network",
       message: "network success",
       data: { url: anonymURL, status, method, responseTime },
@@ -295,6 +302,7 @@ export default {
       logger.log("info", log, { type: "network-error", status, method, ...rest });
     }
     captureBreadcrumb({
+      level: "debug",
       category: "network",
       message: "network error",
       data: { url: anonymURL, status, method, responseTime },
@@ -315,6 +323,7 @@ export default {
       logger.log("info", log, { type: "network-down" });
     }
     captureBreadcrumb({
+      level: "error",
       category: "network",
       message: "network down",
     });
@@ -340,6 +349,7 @@ export default {
       logger.log("info", `△ track ${event}`, { type: ANALYTICS_TYPE, data: properties });
     }
     captureBreadcrumb({
+      level: "info",
       category: "track",
       message: event,
       data: properties,
@@ -352,6 +362,7 @@ export default {
       logger.log("info", `△ page ${message}`, { type: ANALYTICS_TYPE, data: properties });
     }
     captureBreadcrumb({
+      level: "info",
       category: "page",
       message,
       data: properties,
@@ -389,6 +400,7 @@ export default {
   critical: (error: Error, context?: string) => {
     if (context) {
       captureBreadcrumb({
+        level: "critical",
         category: "context",
         message: context,
       });
