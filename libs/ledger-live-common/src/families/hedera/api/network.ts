@@ -21,11 +21,12 @@ export async function buildUnsignedTransaction({
   const accountId = account.freshAddress;
 
   return new hedera.TransferTransaction()
-    .setNodeAccountIds([new AccountId(3)])
-    .setTransactionId(hedera.TransactionId.generate(accountId))
-    .addHbarTransfer(accountId, hbarAmount.negated())
-    .addHbarTransfer(transaction.recipient, hbarAmount)
-    .freeze();
+  .setNodeAccountIds([new AccountId(3)])
+  .setTransactionId(hedera.TransactionId.generate(accountId))
+  .setTransactionMemo(transaction.memo ?? "")
+  .addHbarTransfer(accountId, hbarAmount.negated())
+  .addHbarTransfer(transaction.recipient, hbarAmount)
+  .freeze();
 }
 
 export interface AccountBalance {
