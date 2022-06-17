@@ -24,10 +24,6 @@ export const getFloorPrice = async (
 
     return data;
   } catch (err: any) {
-    if (err.status === 500) {
-      return null;
-    }
-
-    throw err;
+    return null;
   }
 };
