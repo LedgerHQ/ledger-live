@@ -195,7 +195,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
 
   useEffect(() => {
     setFloorPriceLoading(true);
-    getFloorPrice(protoNft, currency?.ethereumLikeInfo?.chainId)
+    getFloorPrice(protoNft, currency)
       .then((result: FloorPrice) => {
         if (result) {
           setTicker(result.ticker);

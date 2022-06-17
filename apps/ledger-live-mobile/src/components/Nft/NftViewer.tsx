@@ -136,7 +136,7 @@ const NftViewer = ({ route }: Props) => {
 
   useEffect(() => {
     setFloorPriceLoading(true);
-    getFloorPrice(nft, currency?.ethereumLikeInfo?.chainId)
+    getFloorPrice(nft, currency)
       .then(
         (result: FloorPrice) => {
           if (result) {
