@@ -1,55 +1,44 @@
 // @flow
 
-import React, { useState, useEffect } from "react";
-import Config from "react-native-config";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTheme, useRoute, useNavigation } from "@react-navigation/native";
 import { useSwapProviders } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import NotAvailable from "./NotAvailable";
-import { swapKYCSelector } from "../../reducers/settings";
-import { setSwapSelectableCurrencies } from "../../actions/settings";
+import {
+  providersSelector,
+  resetSwapAction,
+  updateProvidersAction,
+} from "../../actions/swap";
 import { ScreenName } from "../../const";
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 
-export const useProviders = () => {
-  const { providers, error: providersError } = useSwapProviders();
-
-  return {
-    providers,
-    providersError,
-  };
-};
-
-const SwapEntrypoint = () => {
+// Check if any provider is available
+// if yes -> SwapFormEntry
+export default function SwapEntrypoint() {
   const { colors } = useTheme();
   const { replace } = useNavigation();
   const route = useRoute();
-  const swapKYC = useSelector(swapKYCSelector);
 
-  const { providers } = useProviders();
-  const provider = providers?.[0].provider;
+  const providerInfo = useProviders();
+  const provider = providerInfo.providers?.[0].provider;
 
   useEffect(() => {
-    if (!providers?.length || !provider) return;
-    if (provider === "wyre" && swapKYC?.wyre?.status !== "approved") {
-      replace(ScreenName.SwapKYC, { provider });
-    } else {
-      replace(ScreenName.SwapFormOrHistory, {
-        providers,
-        provider,
-        defaultAccount: route?.params?.defaultAccount,
-        defaultParentAccount: route?.params?.defaultParentAccount,
-      });
-    }
-  }, [replace, provider, providers, swapKYC, route?.params]);
+    if (!providerInfo.providers?.length || !provider) return;
+
+    replace(ScreenName.SwapFormOrHistory, {
+      defaultAccount: route?.params?.defaultAccount,
+      defaultParentAccount: route?.params?.defaultParentAccount,
+      providersError: providerInfo.providersError,
+    });
+  }, [providerInfo, provider, replace, route?.params]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      {!providers ? (
+      {!providerInfo.providers ? (
         <View style={styles.loading}>
           <Spinning clockwise>
             <BigSpinner />
@@ -60,7 +49,29 @@ const SwapEntrypoint = () => {
       ) : null}
     </SafeAreaView>
   );
-};
+}
+
+export function useProviders() {
+  const dispatch = useDispatch();
+  const { providers, error: providersError } = useSwapProviders();
+  const storedProviders = useSelector(providersSelector);
+
+  useEffect(() => {
+    if (providers) dispatch(updateProvidersAction(providers));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providers]);
+
+  useEffect(() => {
+    if (providersError) dispatch(resetSwapAction());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providersError]);
+
+  return {
+    storedProviders,
+    providers,
+    providersError,
+  };
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -80,5 +91,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-export default SwapEntrypoint;

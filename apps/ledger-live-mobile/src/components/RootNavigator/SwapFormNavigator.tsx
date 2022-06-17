@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
-
 import { Account, AccountLike } from "@ledgerhq/live-common/lib/types/account";
-
+import { AvailableProviderV3 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
@@ -19,8 +18,9 @@ type TabLabelProps = {
 type RouteParams = {
   defaultAccount?: AccountLike;
   defaultParentAccount?: Account;
-  providers: any;
   provider: string;
+  providers: AvailableProviderV3[] | null | undefined;
+  providersError: Error | null | undefined;
 };
 
 export default function SwapFormNavigator({
@@ -49,7 +49,7 @@ export default function SwapFormNavigator({
           ),
         }}
       >
-        {_props => <Swap {..._props} {...routeParams} />}
+        {props => <Swap {...props} {...routeParams} />}
       </Tab.Screen>
       <Tab.Screen
         name={ScreenName.SwapHistory}
