@@ -107,10 +107,19 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   };
   return {
     ...shape,
-    operations: allOperations.map((op) => ({
-      ...op,
-      subOperations: inferSubOperations(op.hash, subAccounts),
-    })),
+    operations: allOperations.map((op) => {
+      const subOperations = inferSubOperations(op.hash, subAccounts);
+      const isSubAccount = subOperations.length > 0;
+
+      return {
+        ...op,
+        // Type FEES for token account operations (shows on main account only)
+        type: isSubAccount ? "FEES" : op.type,
+        // Fees should not have value
+        value: isSubAccount ? new BigNumber(0) : op.value,
+        subOperations,
+      };
+    }),
   };
 };
 

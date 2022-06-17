@@ -21,7 +21,7 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   return (
     <>
       {Object.keys(extra).map(key => {
-        if (key === "pagingToken") {
+        if (["pagingToken", "assetAmount"].includes(key)) {
           return null;
         }
 
