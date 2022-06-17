@@ -20,7 +20,6 @@ const startDev = async argv => {
   const electron = new Electron("./.webpack/main.bundle.js");
 
   const devConfig = {
-    sourcemap: true,
     minify: false,
     incremental: true,
     watch: {

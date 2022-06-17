@@ -11,7 +11,7 @@ module.exports = {
   // Lower the log level in order to debug the build
   logLevel: "info",
   nodePaths: ["node_modules", path.resolve(rootFolder, "node_modules")],
-  sourcemap: false,
+  sourcemap: true,
   minify: true,
   color: true,
   metafile: true,
