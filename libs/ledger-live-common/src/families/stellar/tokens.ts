@@ -13,6 +13,7 @@ import type {
   SyncConfig,
 } from "../../types";
 import type { BalanceAsset } from "./types";
+import { encodeOperationId } from "../../operation";
 
 export const getAssetIdFromTokenId = (tokenId: string): string =>
   tokenId.split("/")[2];
@@ -55,6 +56,7 @@ const buildStellarTokenAccount = ({
     operationsCount: operations.length,
     operations: operations.map((op) => ({
       ...op,
+      id: encodeOperationId(id, op.hash, op.type),
       accountId: id,
       value: new BigNumber(op.extra.assetAmount) ?? op.value,
     })),
