@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
+import { Tag } from "../../../../libs/ui/packages/native/lib";
 
 const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
   background-color: ${p => p.theme.colors.palette.background.main};
@@ -71,19 +72,7 @@ export default function SettingsRow({
         >
           {title}
         </Text>
-        {label ? (
-          <Text
-            variant={"tiny"}
-            color={"background.main"}
-            fontWeight={"bold"}
-            backgroundColor={"primary.c90"}
-            ml={4}
-            p={2}
-            borderRadius={4}
-          >
-            {label.toUpperCase()}
-          </Text>
-        ) : null}
+        {label ? <Tag ml={3}>{label}</Tag> : null}
       </Box>
       {subtitle && (
         <Text

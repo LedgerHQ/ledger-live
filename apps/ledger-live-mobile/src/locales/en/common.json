@@ -81,7 +81,8 @@
     "seeMore": "See more",
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
-    "popular": "popular"
+    "popular": "popular",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -2064,7 +2065,7 @@
     "notifications": {
       "title": "Notifications",
       "desc": "Manage your notifications",
-      "allowNotifications": {
+      "allowed": {
         "title": "Allow notifications",
         "desc": "Receive notifications about your crypto, market tendencies and more."
       },

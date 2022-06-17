@@ -2,12 +2,12 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/types/index";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import { selectedTimeRangeSelector } from "../reducers/settings";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+import { selectedTimeRangeSelector, SettingsState } from "../reducers/settings";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -249,6 +249,10 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
 
 export const setFirstConnectionHasDevice = (payload: boolean) => ({
   type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+});
+
+export const setNotifications = (payload: any) => ({
+  type: "SET_NOTIFICATIONS",
   payload,
 });
 
