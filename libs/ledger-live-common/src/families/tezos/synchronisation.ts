@@ -12,7 +12,6 @@ import { areAllOperationsLoaded, decodeAccountId } from "../../account";
 import type { Operation, Account } from "../../types";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
-import { validateAddress } from "@taquito/utils";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
