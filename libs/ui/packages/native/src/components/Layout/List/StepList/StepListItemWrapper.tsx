@@ -1,6 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { LayoutChangeEvent } from "react-native";
-import Animated, { useAnimatedStyle, useDerivedValue, withTiming } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { Theme } from "src/styles/theme";
 import styled from "styled-components/native";
 
@@ -51,20 +56,23 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
   const [height, setHeight] = useState(0);
 
   const transition = useDerivedValue(() => {
-    return item.status === "active" ? withTiming(1) : withTiming(0);
+    return item.status === "active"
+      ? withTiming(1, { duration: 300, easing: Easing.out(Easing.linear) })
+      : withTiming(0, { duration: 300, easing: Easing.in(Easing.linear) });
   }, [item.status]);
 
   const handleLayoutChange = useCallback(
     (event: LayoutChangeEvent) => {
-      setHeight(event.nativeEvent.layout.height);
+      if (height === 0 && event?.nativeEvent?.layout?.height > 0) {
+        setHeight(event.nativeEvent.layout.height);
+      }
     },
-    [setHeight],
+    [setHeight, height],
   );
 
   const style = useAnimatedStyle(
     () => ({
       height: transition.value * height + 1,
-      overflow: "hidden",
     }),
     [height, transition.value],
   );
@@ -87,9 +95,14 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
           {item.title}
         </Text>
         <Animated.View style={style}>
-          <Flex onLayout={handleLayoutChange}>
-            {item.renderBody && <Flex pt={6}>{item.renderBody()}</Flex>}
-          </Flex>
+          {item.renderBody && (
+            <Flex position="relative">
+              <Flex onLayout={handleLayoutChange} pt={6} position="absolute" opacity={0}>
+                {item.renderBody()}
+              </Flex>
+              <Flex pt={6}>{item.renderBody()}</Flex>
+            </Flex>
+          )}
         </Animated.View>
       </Container>
     </Flex>
