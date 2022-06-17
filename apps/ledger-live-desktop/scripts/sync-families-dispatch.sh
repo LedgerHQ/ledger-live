@@ -17,7 +17,9 @@ AccountBalanceSummaryFooter.js \
 TokenList.js \
 AccountHeaderManageActions.js \
 StepReceiveFunds.js \
-NoAssociatedAccounts.js
+NoAssociatedAccounts.js \
+StepAmount.js \
+StepSummary.js
 "
 
 cd ../src/renderer

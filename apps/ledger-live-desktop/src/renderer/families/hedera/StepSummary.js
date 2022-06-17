@@ -1,5 +1,20 @@
 // @flow
 
+/** NOTE: The purpose of this custom component is purely to re-arrange
+ *  the order of the transaction details to have it be aligned and consistent
+ *  with the order of the transaction details set in `deviceTransactionConfig`,.
+ *  I.e., 1. Amount | 2. Fees | 3. Memo
+ *  At the time of creating this component (06/17/22), the 'Memo' detail in the core
+ *  `StepSummary` component is above the 'Amount' and 'Network fees' details, respectively.
+ *  I.e., 1. Memo | 2. Amount | 3. Fees
+ *
+ *  _Please_ adjust (or delete) this note if this custom component is to ever be altered for a purpose
+ *  other than the note listed above.
+ */
+
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { StepProps } from "~/renderer/modals/Send/types";
+
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -9,25 +24,23 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
+
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { rgba } from "~/renderer/styles/helpers";
+
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import TranslatedError from "~/renderer/components/TranslatedError";
+import CounterValue from "~/renderer/components/CounterValue";
+import Alert from "~/renderer/components/Alert";
+import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import IconQrCode from "~/renderer/icons/QrCode";
 import IconWallet from "~/renderer/icons/Wallet";
-import { rgba } from "~/renderer/styles/helpers";
-import CounterValue from "~/renderer/components/CounterValue";
-import Alert from "~/renderer/components/Alert";
-import NFTSummary from "~/renderer/screens/nft/Send/Summary";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../types";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import byFamily from "~/renderer/generated/StepSummary";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
 const Circle: ThemedComponent<{}> = styled.div`
@@ -58,17 +71,10 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
-    const { account, parentAccount, transaction, status, currencyName, isNFTSend } = this.props;
+    const { account, parentAccount, transaction, status, currencyName } = this.props;
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
-
-    // custom family UI for StepSummary
-    const CustomStepSummary = byFamily[mainAccount.currency.family];
-    if (CustomStepSummary) {
-      return <CustomStepSummary {...this.props} />;
-    }
-
     const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
@@ -89,7 +95,6 @@ export default class StepSummary extends PureComponent<StepProps> {
           category="Send Flow"
           name="Step Summary"
           currencyName={currencyName}
-          isNFTSend={isNFTSend}
         />
         {utxoLag ? (
           <Alert type="warning">
@@ -145,45 +150,35 @@ export default class StepSummary extends PureComponent<StepProps> {
             </Box>
           </Box>
           <Separator />
-          {memo && (
-            <Box horizontal justifyContent="space-between" mb={2}>
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                <Trans i18nKey="operationDetails.extra.memo" />
-              </Text>
-              <Text ff="Inter|Medium" fontSize={4}>
-                {memo}
-              </Text>
-            </Box>
-          )}
-          {!isNFTSend ? (
-            <Box horizontal justifyContent="space-between" mb={2}>
-              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                <Trans i18nKey="send.steps.details.amount" />
-              </Text>
-              <Box>
-                <FormattedVal
-                  color={"palette.text.shade80"}
-                  disableRounding
-                  unit={unit}
-                  val={amount}
-                  fontSize={4}
-                  inline
-                  showCode
+
+          {/* amount transaction detail */}
+          <Box horizontal justifyContent="space-between" mb={2}>
+            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+              <Trans i18nKey="send.steps.details.amount" />
+            </Text>
+            <Box>
+              <FormattedVal
+                color={"palette.text.shade80"}
+                disableRounding
+                unit={unit}
+                val={amount}
+                fontSize={4}
+                inline
+                showCode
+              />
+              <Box textAlign="right">
+                <CounterValue
+                  color="palette.text.shade60"
+                  fontSize={3}
+                  currency={currency}
+                  value={amount}
+                  alwaysShowSign={false}
                 />
-                <Box textAlign="right">
-                  <CounterValue
-                    color="palette.text.shade60"
-                    fontSize={3}
-                    currency={currency}
-                    value={amount}
-                    alwaysShowSign={false}
-                  />
-                </Box>
               </Box>
             </Box>
-          ) : (
-            <NFTSummary transaction={transaction} />
-          )}
+          </Box>
+
+          {/* transaction fee transaction detail */}
           <Box horizontal justifyContent="space-between">
             <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
               <Trans i18nKey="send.steps.details.fees" />
@@ -211,6 +206,19 @@ export default class StepSummary extends PureComponent<StepProps> {
               </Box>
             </Box>
           </Box>
+
+          {/* memo transaction detail */}
+          {memo && (
+            <Box horizontal justifyContent="space-between" mb={2}>
+              <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+                <Trans i18nKey="operationDetails.extra.memo" />
+              </Text>
+              <Text ff="Inter|Medium" fontSize={4}>
+                {memo}
+              </Text>
+            </Box>
+          )}
+
           {feeTooHigh ? (
             <Box horizontal justifyContent="flex-end" alignItems="center" color="warning">
               <IconExclamationCircle size={10} />
@@ -255,32 +263,6 @@ export default class StepSummary extends PureComponent<StepProps> {
           ) : null}
         </FromToWrapper>
       </Box>
-    );
-  }
-}
-
-export class StepSummaryFooter extends PureComponent<StepProps> {
-  onNext = async () => {
-    const { transitionTo } = this.props;
-    transitionTo("device");
-  };
-
-  render() {
-    const { account, status, bridgePending } = this.props;
-    if (!account) return null;
-    const { errors } = status;
-    const canNext = !bridgePending && !Object.keys(errors).length;
-    return (
-      <>
-        <Button
-          id={"send-summary-continue-button"}
-          primary
-          disabled={!canNext}
-          onClick={this.onNext}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </>
     );
   }
 }

@@ -20,28 +20,37 @@ import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import AmountField from "../fields/AmountField";
 import type { StepProps } from "../types";
+import byFamily from "~/renderer/generated/StepAmount";
 
-const StepAmount = ({
-  t,
-  account,
-  parentAccount,
-  transaction,
-  onChangeTransaction,
-  onChangeQuantities,
-  error,
-  status,
-  bridgePending,
-  maybeAmount,
-  onResetMaybeAmount,
-  updateTransaction,
-  currencyName,
-  isNFTSend,
-  walletConnectProxy,
-}: StepProps) => {
+const StepAmount = (props: StepProps) => {
+  const {
+    t,
+    account,
+    parentAccount,
+    transaction,
+    onChangeTransaction,
+    onChangeQuantities,
+    error,
+    status,
+    bridgePending,
+    maybeAmount,
+    onResetMaybeAmount,
+    updateTransaction,
+    currencyName,
+    isNFTSend,
+    walletConnectProxy,
+  } = props;
+
   const allNfts = useSelector(getAllNFTs);
   const nft = allNfts?.find(nft => nft.tokenId === transaction?.tokenIds?.[0]);
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+
+  // custom family UI for StepAmount
+  const CustomStepAmount = byFamily[mainAccount.currency.family];
+  if (CustomStepAmount) {
+    return <CustomStepAmount {...props} />;
+  }
 
   return (
     <Box flow={4}>
