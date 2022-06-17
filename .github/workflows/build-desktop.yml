@@ -79,9 +79,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
@@ -136,9 +136,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
@@ -226,9 +226,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1

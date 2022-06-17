@@ -8,7 +8,8 @@
   /!\ Everything done in this file must be safe, it can not afford to crash. /!\
 */
 
-import { ipcRenderer, remote } from "electron";
+import { ipcRenderer } from "electron";
+import * as remote from "@electron/remote";
 import logo from "./logo.svg";
 import palettes from "~/renderer/styles/palettes";
 

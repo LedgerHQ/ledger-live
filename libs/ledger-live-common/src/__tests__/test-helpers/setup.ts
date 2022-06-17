@@ -59,4 +59,6 @@ setSupportedCurrencies([
   "solana",
   "celo",
   "hedera",
+  "cardano",
+  "cardano_testnet",
 ]);

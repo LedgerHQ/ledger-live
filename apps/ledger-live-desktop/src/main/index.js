@@ -1,4 +1,8 @@
 // @flow
+
+require("@electron/remote/main").initialize();
+
+/* eslint-disable import/first */
 import "./setup";
 import { app, Menu, ipcMain } from "electron";
 import menu from "./menu";
@@ -14,8 +18,6 @@ import db from "./db";
 import debounce from "lodash/debounce";
 import logger from "~/logger";
 import sentry from "~/sentry/main";
-
-require("@electron/remote/main").initialize();
 
 app.allowRendererProcessReuse = false;
 
