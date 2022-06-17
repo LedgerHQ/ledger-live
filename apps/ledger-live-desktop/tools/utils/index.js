@@ -1,7 +1,7 @@
 const childProcess = require("child_process");
 const { prerelease } = require("semver");
 const path = require("path");
-const { StripFlowPlugin } = require("esbuild-utils");
+const { StripFlowPlugin, DotEnvPlugin } = require("esbuild-utils");
 const { flowPlugin } = require("@bunchtogether/vite-plugin-flow");
 const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
@@ -22,6 +22,14 @@ if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
 }
+
+const DOTENV_FILE = process.env.TESTING
+  ? ".env.testing"
+  : process.env.STAGING
+  ? ".env.staging"
+  : process.env.NODE_ENV === "production"
+  ? ".env.production"
+  : ".env";
 
 // TODO: ADD BUNDLE ANALYZER
 
@@ -65,7 +73,10 @@ const buildViteConfig = argv => ({
     port: argv.port,
     // force: true,
   },
-  define: buildRendererEnv("development"),
+  define: {
+    ...buildRendererEnv("development"),
+    ...DotEnvPlugin.buildDefine(DOTENV_FILE),
+  },
   resolve: {
     conditions: ["node", "import", "module", "browser", "default"],
     alias: {
@@ -140,4 +151,5 @@ module.exports = {
   buildRendererEnv,
   buildViteConfig,
   lldRoot,
+  DOTENV_FILE,
 };
