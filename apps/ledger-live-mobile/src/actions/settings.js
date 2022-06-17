@@ -7,7 +7,7 @@ import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
-import { selectedTimeRangeSelector } from "../reducers/settings";
+import { selectedTimeRangeSelector, SettingsState } from "../reducers/settings";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -234,6 +234,11 @@ export const setMarketCounterCurrency = (currency: string) => ({
 
 export const setMarketFilterByStarredAccounts = (payload: boolean) => ({
   type: "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
+  payload,
+});
+
+export const setNotifications = (payload: any) => ({
+  type: "SET_NOTIFICATIONS",
   payload,
 });
 

@@ -80,7 +80,8 @@
     },
     "seeMore": "See more",
     "moreInfo": "More info",
-    "buyEth": "Buy Ethereum"
+    "buyEth": "Buy Ethereum",
+    "comingSoon": "Coming soon"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -1983,7 +1984,7 @@
     "notifications": {
       "title": "Notifications",
       "desc": "Manage your notifications",
-      "allowNotifications": {
+      "allowed": {
         "title": "Allow notifications",
         "desc": "Receive notifications about your crypto, market tendencies and more."
       },

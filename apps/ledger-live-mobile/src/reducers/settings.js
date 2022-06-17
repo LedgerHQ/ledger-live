@@ -103,6 +103,13 @@ export type SettingsState = {
   marketRequestParams: MarketListRequestParams,
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
+  notifications: {
+    allowed: boolean,
+    transactions: boolean,
+    market: boolean,
+    announcement: boolean,
+    price: boolean,
+  },
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -155,6 +162,13 @@ export const INITIAL_STATE: SettingsState = {
   },
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
+  notifications: {
+    allowed: false,
+    transactions: false,
+    market: false,
+    announcement: false,
+    price: false,
+  },
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -429,6 +443,13 @@ const handlers: Object = {
     ...state,
     marketFilterByStarredAccounts: payload,
   }),
+  SET_NOTIFICATIONS: (state: SettingsState, { payload }) => ({
+    ...state,
+    notifications: {
+      ...state.notifications,
+      ...payload,
+    },
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -628,3 +649,6 @@ export const marketCounterCurrencySelector = (state: State) =>
 
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+
+export const notificationsSelector = (state: State) =>
+  state.settings.notifications;
