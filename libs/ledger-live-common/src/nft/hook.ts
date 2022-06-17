@@ -1,4 +1,4 @@
-import type { ProtoNFT, FloorPrice } from "../types";
+import type { ProtoNFT, CryptoCurrency, FloorPrice } from "../types";
 import { getEnv } from "../env";
 import network from "../network";
 
@@ -6,7 +6,7 @@ const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
 
 export const getFloorPrice = async (
   nft: ProtoNFT,
-  chainId: string
+  currency: CryptoCurrency
 ): Promise<FloorPrice | null> => {
   if (!FLOOR_PRICE_CURRENCIES.has(nft.currencyId)) {
     return null;
@@ -17,7 +17,9 @@ export const getFloorPrice = async (
       method: "GET",
       url: `${getEnv("NFT_ETH_METADATA_SERVICE")}/v1/marketdata/${
         nft.currencyId
-      }/${chainId}/contract/${nft.contract}/floor-price`,
+      }/${currency?.ethereumLikeInfo?.chainId}/contract/${
+        nft.contract
+      }/floor-price`,
     });
 
     return data;

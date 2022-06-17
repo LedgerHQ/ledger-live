@@ -139,7 +139,7 @@ const NftViewer = ({ route }: Props) => {
   useEffect(() => {
     setFloorPriceLoading(true);
     getFloorPrice(nft, currency)
-      .then(result => {
+      .then((result: FloorPrice | null) => {
         if (result) {
           setTicker(result.ticker);
           setFloorPrice(result.value);
