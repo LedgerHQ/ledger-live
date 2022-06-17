@@ -59,7 +59,7 @@ pnpm dev:llm -- --reset-cache
 
 ### `pnpm mobile ios`
 
-or `open ios/ledgerlivemobile.xcworkspace`
+or `open ios/ledgerlivemobile.xcworkspace` in XCode
 
 ### `pnpm mobile android`
 
@@ -74,6 +74,14 @@ Delete the application data for Ledger Live Mobile, equivalent to doing it manua
 Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
 easy data setting for development.
 
+### `pnpm build:llm:ios` 
+
+Produces a development .ipa signed with the developer's current certificates (can be installed on phones added to our apple dev center). Not eligible for AppStore/TestFlight
+
+### `pnpm build:llm:android`
+
+Produces a development .apk that can be installed on Android phones. Not eligible for Google PlayStore
+
 ## Environment variables
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
@@ -87,12 +95,6 @@ Optional environment variables you can put in `.env`, `.env.production` or `.env
 - `SKIP_ONBOARDING=1` Skips the onboarding flow.
 
 ## Maintenance
-
-### Refresh the flow-typed from flow-typed Github
-
-```
-pnpm mobile sync-flowtyped
-```
 
 ### Refresh the languages (when we add new languages)
 
