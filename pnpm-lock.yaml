@@ -927,7 +927,7 @@ importers:
       '@polkadot/util-crypto': 9.2.1
       '@polkadot/wasm-crypto': 6.0.1
       '@solana/spl-token': ^0.2.0
-      '@solana/web3.js': ^1.41.4
+      '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
       '@stricahq/typhonjs': ^1.2.3
       '@svgr/core': ^5.5.0
@@ -1085,7 +1085,7 @@ importers:
       '@polkadot/util-crypto': 9.2.1
       '@polkadot/wasm-crypto': 6.0.1_@polkadot+util@9.2.1
       '@solana/spl-token': 0.2.0
-      '@solana/web3.js': 1.41.4
+      '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
       '@stricahq/typhonjs': 1.2.3
       '@taquito/ledger-signer': 11.1.0-stablelib.0
@@ -11719,6 +11719,34 @@ packages:
       - encoding
       - sinon
       - supports-color
+      - utf-8-validate
+    dev: false
+
+  /@solana/web3.js/1.41.3:
+    resolution: {integrity: sha512-H+zRDh7zpzma8fvA6S16DJY2sDemw4HHU/3WR9kXQG+3jsRtIJxhOD2NAwu1M2JrXoblyE2QYHWneLKDV2Bu6g==}
+    engines: {node: '>=12.20.0'}
+    dependencies:
+      '@babel/runtime': 7.18.2
+      '@ethersproject/sha2': 5.6.0
+      '@solana/buffer-layout': 4.0.0
+      bn.js: 5.2.1
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.1
+      cross-fetch: 3.1.5
+      fast-stable-stringify: 1.0.0
+      jayson: 3.6.6
+      js-sha3: 0.8.0
+      rpc-websockets: 7.4.18
+      secp256k1: 4.0.3
+      sinon-chai: 3.7.0
+      superstruct: 0.14.2
+      tweetnacl: 1.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - chai
+      - encoding
+      - sinon
       - utf-8-validate
     dev: false
 
@@ -24303,7 +24331,7 @@ packages:
     dev: false
 
   /es6-promisify/5.0.0:
-    resolution: {integrity: sha1-UQnWLz5W6pZ8S2NQWu8IKRyKUgM=}
+    resolution: {integrity: sha512-C+d6UdsYDk0lMebHNR4S2NybQMMngAOnOwYBQjTOiv0MkoJMP0Myw2mgpDLBcpfCmRLxyFqYhS/CfOENq4SJhQ==}
     dependencies:
       es6-promise: 4.2.8
     dev: false
@@ -26856,7 +26884,7 @@ packages:
     optional: true
 
   /eyes/0.1.8:
-    resolution: {integrity: sha1-Ys8SAjTGg3hdkCNIqADvPgzCC8A=}
+    resolution: {integrity: sha512-GipyPsXO1anza0AOZdy69Im7hGFCNB7Y/NGjDlZGJ3GJJLtwNSb2vrzYrTYJRrRloVx7pl+bhUaTB8yiccPvFQ==}
     engines: {node: '> 0.1.90'}
     dev: false
 
@@ -26917,7 +26945,7 @@ packages:
     resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
   /fast-stable-stringify/1.0.0:
-    resolution: {integrity: sha1-XFVDRisiru79NtBbNOUceMuG0xM=}
+    resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
     dev: false
 
   /fast-url-parser/1.1.3:
@@ -32966,7 +32994,7 @@ packages:
     dev: false
 
   /js-sha3/0.5.7:
-    resolution: {integrity: sha1-DU/9gALVMzqrr0oj7tL2N0yfKOc=}
+    resolution: {integrity: sha512-GII20kjaPX0zJ8wzkTbNDYMY7msuZcTWk8S5UOh6806Jq/wz1J8/bnr8uGU0DAUmYDjj2Mr4X1cW8v/GLYnR+g==}
     dev: false
 
   /js-sha3/0.8.0:
@@ -33328,7 +33356,7 @@ packages:
     resolution: {integrity: sha1-LHS27kHZPKUbe1qu6PUDYx0lKnM=}
 
   /jsonparse/1.3.1:
-    resolution: {integrity: sha1-P02uSpH6wxX3EGL4UhzCOfE2YoA=}
+    resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
     engines: {'0': node >= 0.2.0}
 
   /jsonwebtoken/8.5.1:
@@ -44475,7 +44503,7 @@ packages:
     dev: true
 
   /through/2.3.8:
-    resolution: {integrity: sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=}
+    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
 
   /through2-filter/3.0.0:
     resolution: {integrity: sha512-jaRjI2WxN3W1V8/FMZ9HKIBXixtiqs3SQSX4/YGIiP3gL6djW48VoZq9tDqeCWs3MT8YY5wb/zli8VW8snY1CA==}
