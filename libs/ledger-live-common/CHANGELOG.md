@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-next.3
+
+### Minor Changes
+
+- ec5c4fa3d: Fix incremental sync for Cardano, use blockHeight from last operation instead of from account
+
 ## 23.1.0-next.2
 
 ### Patch Changes

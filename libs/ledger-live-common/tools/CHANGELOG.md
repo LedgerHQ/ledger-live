@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.1.3-next.3
+
+### Patch Changes
+
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
 ## 0.1.3-next.2
 
 ### Patch Changes
