@@ -83,7 +83,7 @@ export default function EditFeeUnitEthereum({
           >
             <LText style={[styles.currencyUnitText, { color: colors.live }]}>
               <CurrencyUnitValue
-                unit={feeCustomUnit || mainAccount.unit}
+                unit={mainAccount.unit || feeCustomUnit}
                 value={gasPrice}
               />
             </LText>
