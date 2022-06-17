@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.44.0-nightly.1
+
+### Patch Changes
+
+- 89e31c3c4: Fixed issue on CryptoCurrency Icon in transactions history (size issue)
+- Updated dependencies [22531f3c3]
+- Updated dependencies [1e4a5647b]
+  - @ledgerhq/live-common@23.0.1-nightly.0
+
 ## 2.44.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 23.0.1-nightly.0
+
+### Patch Changes
+
+- 22531f3c3: Update expected steps labels for Cosmos device actions
+- 1e4a5647b: Patching shouldUpgrade & mustUpgrade logic to allow for pre-release tags that were considered always considered as false before
+
 ## 23.0.0
 
 ### Major Changes
