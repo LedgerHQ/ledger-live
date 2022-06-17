@@ -1,5 +1,6 @@
 // @flow
-import { ipcRenderer, shell, remote } from "electron";
+import { ipcRenderer, shell } from "electron";
+import * as remote from "@electron/remote";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { log } from "@ledgerhq/logs";

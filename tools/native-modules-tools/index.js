@@ -194,10 +194,12 @@ function buildWebpackExternals(nativeModules) {
   };
 }
 
-function processNativeModules({ root, destination }) {
+function processNativeModules({ root, destination, silent = false }) {
   // First, we crawl the production dependencies and find every node.js native modules.
   const nativeModulesPaths = findNativeModules(root);
-  console.log("Found the following native modules:", nativeModulesPaths);
+  if (!silent) {
+    console.log("Found the following native modules:", nativeModulesPaths);
+  }
 
   // Then for each one of these native modules…
   const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {

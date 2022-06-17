@@ -27,6 +27,10 @@ if (process.env.DESKTOP_LOGS_FILE) {
   enableFileLogger();
 }
 
+ipcMain.on("mainCrashTest", () => {
+  logger.critical(new Error("CrashTestMain"));
+});
+
 ipcMain.on("updater", (e, type) => {
   updater(type);
 });
