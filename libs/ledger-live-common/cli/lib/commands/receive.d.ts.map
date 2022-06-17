@@ -1,1 +1,0 @@
-{"version":3,"file":"receive.d.ts","sourceRoot":"","sources":["../../src/commands/receive.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,cAAc,EAAE,MAAM,SAAS,CAAC;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;gBAmBpC,cAAc,GAAG;QACrB,EAAE,EAAE,OAAO,CAAC;QACZ,iBAAiB,EAAE,MAAM,GAAG,IAAI,GAAG,SAAS,CAAC;KAC9C;;AAnBL,wBA8CE"}
