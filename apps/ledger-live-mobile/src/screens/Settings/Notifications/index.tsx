@@ -3,13 +3,18 @@ import { Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
-import { Box, Switch, Text, Button, Icons, InfiniteLoader } from "@ledgerhq/native-ui";
-
+import {
+  Box,
+  Switch,
+  Text,
+  Button,
+  Icons,
+  InfiniteLoader,
+} from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
 import { TrackScreen } from "../../../analytics";
-
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
@@ -71,7 +76,10 @@ function NotificationSettingsRow({
 function NotificationsSettings() {
   const { t } = useTranslation();
   const notifications = useSelector(notificationsSelector);
-  const { getIsNotifEnabled, handlePushNotificationsPermission } = useNotifications();
+  const {
+    getIsNotifEnabled,
+    handlePushNotificationsPermission,
+  } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState();
 
   const refreshNotifPermission = useCallback(() => {
@@ -85,27 +93,32 @@ function NotificationsSettings() {
 
     return () => {
       clearInterval(interval);
-    }
+    };
   }, [refreshNotifPermission]);
-  
+
   const disableSubSettings = !notifications.allowed;
 
-  const platformData = useMemo(() => {
-    return Platform.OS === "ios" ? {
-      osName: "iOS",
-      ctaTransKey: "turnOnNotif",
-      ctaIcon: Icons.NotificationsMedium,
-    } : {
-      osName: "Android",
-      ctaTransKey: "goToSettings",
-      ctaIcon: Icons.SettingsMedium,
-    };
-  }, []);
+  const platformData = useMemo(
+    () =>
+      Platform.OS === "ios"
+        ? {
+            osName: "iOS",
+            ctaTransKey: "turnOnNotif",
+            ctaIcon: Icons.NotificationsMedium,
+          }
+        : {
+            osName: "Android",
+            ctaTransKey: "goToSettings",
+            ctaIcon: Icons.SettingsMedium,
+          },
+    [],
+  );
 
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Notifications" />
-      {isNotifPermissionEnabled === null || isNotifPermissionEnabled === undefined ? (
+      {isNotifPermissionEnabled === null ||
+      isNotifPermissionEnabled === undefined ? (
         <InfiniteLoader />
       ) : (
         <Box>
@@ -120,7 +133,9 @@ function NotificationsSettings() {
                 {t(`settings.notifications.disabledNotifications.title`)}
               </Text>
               <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
-                {t(`settings.notifications.disabledNotifications.desc`, { platform: platformData.osName })}
+                {t(`settings.notifications.disabledNotifications.desc`, {
+                  platform: platformData.osName,
+                })}
               </Text>
               <Button
                 type={"main"}
@@ -129,12 +144,17 @@ function NotificationsSettings() {
                 Icon={platformData.ctaIcon}
                 iconPosition={"left"}
               >
-                {t(`settings.notifications.disabledNotifications.${platformData.ctaTransKey}`)}
+                {t(
+                  `settings.notifications.disabledNotifications.${platformData.ctaTransKey}`,
+                )}
               </Button>
             </Box>
           ) : null}
           <Box opacity={isNotifPermissionEnabled ? 1 : 0.2}>
-            <NotificationSettingsRow notificationKey={"allowed"} disabled={!isNotifPermissionEnabled} />
+            <NotificationSettingsRow
+              notificationKey={"allowed"}
+              disabled={!isNotifPermissionEnabled}
+            />
           </Box>
           <Box opacity={notifications.allowed ? 1 : 0.2}>
             <NotificationSettingsRow
