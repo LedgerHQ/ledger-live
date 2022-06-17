@@ -1,24 +1,24 @@
-import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
-import useBridgeTransaction, {
-  Result as UseBridgeTransactionReturnType,
-} from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  TokenAccount,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../../../types";
-import { ExchangeRate } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { BigNumber } from "bignumber.js";
+import { useMemo } from "react";
 import {
   RatesReducerState,
   useFromState,
   useProviderRates,
   useToState,
 } from ".";
+import useBridgeTransaction, {
+  Result as UseBridgeTransactionReturnType,
+} from "../../../bridge/useBridgeTransaction";
+import type {
+  Account,
+  CryptoCurrency,
+  TokenAccount,
+  TokenCurrency,
+} from "../../../types";
+import { ExchangeRate } from "../types";
 import { useReverseAccounts } from "./useReverseAccounts";
+import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
 export type SwapSelectorStateType = {
   currency: null | undefined | TokenCurrency | CryptoCurrency;
@@ -82,7 +82,6 @@ export const useFromAmountError = (
 
 export const useSwapTransaction = ({
   accounts,
-  exchangeRate,
   setExchangeRate,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
@@ -90,7 +89,6 @@ export const useSwapTransaction = ({
   onNoRates,
 }: {
   accounts?: Account[];
-  exchangeRate?: ExchangeRate;
   setExchangeRate?: SetExchangeRateCallback;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
@@ -141,7 +139,6 @@ export const useSwapTransaction = ({
   const { rates, refetchRates } = useProviderRates({
     fromState,
     toState,
-    exchangeRate,
     transaction,
     onNoRates,
     setExchangeRate,

@@ -107,7 +107,6 @@ const SwapForm = () => {
   );
   const swapTransaction = useSwapTransaction({
     accounts,
-    exchangeRate,
     setExchangeRate,
     onNoRates: trackNoRates,
     ...locationState,

@@ -1,11 +1,6 @@
+import { getTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
 import BigNumber from "bignumber.js";
-
-import {
-  pickExchangeRate,
-  getAccountTuplesForCurrency,
-  getAvailableAccountsById,
-} from "./index";
-import { getMockExchangeRate } from "../mock";
+import { getCryptoCurrencyById } from "../../../currencies";
 import { genAccount } from "../../../mock/account";
 import type {
   Account,
@@ -13,62 +8,7 @@ import type {
   SubAccount,
   TokenCurrency,
 } from "../../../types";
-import { getCryptoCurrencyById } from "../../../currencies";
-import { getTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
-
-describe("swap/utils/pickExchangeRate", () => {
-  test("calls the callback function with null when no exchange rates are passed", () => {
-    const setExchangeRate = jest.fn();
-    pickExchangeRate([], undefined, setExchangeRate);
-
-    expect(setExchangeRate).toHaveBeenCalledTimes(1);
-    expect(setExchangeRate).toHaveBeenCalledWith(null);
-  });
-
-  test("calls the callback function with null when no exchange rates are passed but there is an exchange rate", () => {
-    const setExchangeRate = jest.fn();
-    const exchangeRate = getMockExchangeRate({ provider: "wyre" });
-    pickExchangeRate([], exchangeRate, setExchangeRate);
-
-    expect(setExchangeRate).toHaveBeenCalledTimes(1);
-    expect(setExchangeRate).toHaveBeenCalledWith(null);
-  });
-
-  test("calls the callback function with the first exchange rate when the exchange passed isn't included in the list", () => {
-    const setExchangeRate = jest.fn();
-    const firstExchangeRate = getMockExchangeRate({
-      provider: "changelly",
-      tradeMethod: "fixed",
-    });
-    const exchangeRates = [
-      firstExchangeRate,
-      getMockExchangeRate({ provider: "changelly", tradeMethod: "float" }),
-    ];
-    const exchangeRate = getMockExchangeRate({ provider: "wyre" });
-
-    pickExchangeRate(exchangeRates, exchangeRate, setExchangeRate);
-
-    expect(setExchangeRate).toHaveBeenCalledTimes(1);
-    expect(setExchangeRate).toHaveBeenCalledWith(firstExchangeRate);
-  });
-
-  test("calls the callback function with the passed exchange rate when the exchange passed is included in the list", () => {
-    const setExchangeRate = jest.fn();
-    const exchangeRate = getMockExchangeRate({
-      provider: "changelly",
-      tradeMethod: "fixed",
-    });
-    const exchangeRates = [
-      getMockExchangeRate({ provider: "changelly", tradeMethod: "float" }),
-      exchangeRate,
-    ];
-
-    pickExchangeRate(exchangeRates, exchangeRate, setExchangeRate);
-
-    expect(setExchangeRate).toHaveBeenCalledTimes(1);
-    expect(setExchangeRate).toHaveBeenCalledWith(exchangeRate);
-  });
-});
+import { getAccountTuplesForCurrency, getAvailableAccountsById } from "./index";
 
 /* TODO: Refacto these two function and move them to mock/account.ts if needed */
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {

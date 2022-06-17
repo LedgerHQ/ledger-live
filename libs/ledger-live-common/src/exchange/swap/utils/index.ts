@@ -4,7 +4,7 @@ import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
 import { Account, SubAccount, TokenAccount } from "../../../types";
-import type { CheckQuoteStatus, ExchangeRate } from "../types";
+import type { CheckQuoteStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {
@@ -15,26 +15,6 @@ export const KYC_STATUS = {
 };
 
 export type KYCStatus = keyof typeof KYC_STATUS;
-
-export const pickExchangeRate = (
-  exchangeRates: ExchangeRate[],
-  exchangeRate: ExchangeRate | null | undefined,
-  setExchangeRate: (rate?: ExchangeRate | null) => void
-): void => {
-  const hasRates = exchangeRates?.length > 0;
-  // If the user picked an exchange rate before, try to select the new one that matches.
-  // Otherwise pick the first one.
-  const rate =
-    hasRates &&
-    ((exchangeRate &&
-      exchangeRates.find(
-        ({ tradeMethod, provider }) =>
-          tradeMethod === exchangeRate.tradeMethod &&
-          provider === exchangeRate.provider
-      )) ||
-      exchangeRates[0]);
-  setExchangeRate(rate || null);
-};
 
 export type AccountTuple = {
   account: Account | null | undefined;

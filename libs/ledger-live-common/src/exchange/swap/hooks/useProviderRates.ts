@@ -2,7 +2,6 @@ import { useCallback, useEffect, useReducer, useState } from "react";
 import { getExchangeRates } from "..";
 import { Transaction } from "../../../generated/types";
 import { Exchange, ExchangeRate } from "../types";
-import { pickExchangeRate } from "../utils";
 import {
   OnNoRatesCallback,
   SetExchangeRateCallback,
@@ -34,14 +33,12 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
 export const useProviderRates = ({
   fromState,
   toState,
-  exchangeRate,
   transaction,
   onNoRates,
   setExchangeRate,
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
-  exchangeRate?: ExchangeRate | null | undefined;
   transaction?: Transaction | null | undefined;
   onNoRates?: OnNoRatesCallback | null | undefined;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
@@ -113,8 +110,14 @@ export const useProviderRates = ({
             dispatchRates({ type: "error", payload: rateError });
           } else {
             dispatchRates({ type: "set", payload: rates });
-            setExchangeRate &&
-              pickExchangeRate(rates, exchangeRate, setExchangeRate);
+
+            /**
+             * Select the first rate returned by the API. Should be the prefered
+             * rate for the user. Rate ordering logic is handeled on backend side
+             */
+            const rate = rates?.length > 0 ? rates[0] : null;
+
+            setExchangeRate && setExchangeRate(rate);
           }
         } catch (error) {
           !abort && dispatchRates({ type: "error", payload: error });
