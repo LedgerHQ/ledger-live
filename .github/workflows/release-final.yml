@@ -28,9 +28,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
       - uses: ruby/setup-ruby@v1
         with:
