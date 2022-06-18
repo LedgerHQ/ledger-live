@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.2-nightly.1
+
+### Patch Changes
+
+- 6bf75fa20: Updated naming for last operations to last transactions
+
 ## 3.2.2-nightly.0
 
 ### Patch Changes

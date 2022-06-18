@@ -1,5 +1,11 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.27.2-nightly.1
+
+### Patch Changes
+
+- c5c3f48e4: Add basic support for macOS universal apps.
+
 ## 6.27.2-nightly.0
 
 ### Patch Changes

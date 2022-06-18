@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.44.0-nightly.2
+
+### Minor Changes
+
+- a35c6e9a3: Add Sentry support
+
+### Patch Changes
+
+- c5c3f48e4: Add basic support for macOS universal apps.
+- Updated dependencies [c5c3f48e4]
+  - @ledgerhq/hw-transport-node-hid-singleton@6.27.2-nightly.1
+
 ## 2.44.0-nightly.1
 
 ### Patch Changes
