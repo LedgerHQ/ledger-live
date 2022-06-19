@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { getExchangeRates } from "..";
 import { Transaction } from "../../../generated/types";
-import { Exchange, ExchangeRate } from "../types";
+import type { CustomMinOrMaxError, Exchange, ExchangeRate } from "../types";
 import {
   OnNoRatesCallback,
   SetExchangeRateCallback,
@@ -86,7 +86,7 @@ export const useProviderRates = ({
           }
 
           // Discard bad provider rates
-          let rateError: Error | null | undefined = null;
+          let rateError: Error | CustomMinOrMaxError | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
 
@@ -96,10 +96,32 @@ export const useProviderRates = ({
              * for example)
              */
             if (
-              rate.error?.name === "SwapExchangeRateAmountTooLow" ||
-              rate.error?.name === "SwapExchangeRateAmountTooHigh"
+              rateError?.name !== rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
             ) {
               rateError = rate.error;
+            }
+
+            if (
+              rateError?.name === rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              /**
+               * Comparison pivot, depending on the order in which we want to sort errors
+               * If the order is ascending, the pivot is -1, otherwise it's 1
+               * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
+               */
+              const cmp =
+                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+
+              rateError =
+                (rateError as CustomMinOrMaxError).amount.comparedTo(
+                  (rate.error as CustomMinOrMaxError)?.amount
+                ) === cmp
+                  ? rateError
+                  : rate.error;
             }
 
             return rate.error ? acc : [...acc, rate];

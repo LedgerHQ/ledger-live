@@ -262,3 +262,7 @@ export type InitSwapInputRaw = {
   deviceId: string;
   userId?: string;
 };
+
+export interface CustomMinOrMaxError extends Error {
+  amount: BigNumber;
+}
