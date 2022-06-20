@@ -224,7 +224,7 @@ const AccountScreenInner = ({
       contentContainerStyle={styles.contentContainer}
       ListHeaderComponent={() => (
         <Text variant={"h3"} mt={8}>
-          <Trans i18nKey="account.lastOperations" />
+          <Trans i18nKey="account.lastTransactions" />
         </Text>
       )}
       ListFooterComponent={

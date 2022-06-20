@@ -16,8 +16,8 @@ import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/lib/families/bitcoin/wallet-btc/crypto/secp256k1";
-import BluetoothTransport from "./react-native-hw-transport-ble";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 import logger from "./logger";
 

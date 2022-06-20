@@ -1,5 +1,5 @@
-/* eslint-disable consistent-return */
 // @flow
+/* eslint-disable consistent-return */
 import React, { useCallback } from "react";
 
 import { BigNumber } from "bignumber.js";

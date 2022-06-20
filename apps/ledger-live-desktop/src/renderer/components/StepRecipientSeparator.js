@@ -13,7 +13,7 @@ const Separator: ThemedComponent<{}> = styled.div`
     flex: 1;
     height: 1px;
     background: ${p => p.theme.colors.palette.divider};
-    & :nth-of-type(2) {
+    &:nth-of-type(2) {
       color: ${p => p.theme.colors.palette.primary.main};
       flex: unset;
       display: flex;

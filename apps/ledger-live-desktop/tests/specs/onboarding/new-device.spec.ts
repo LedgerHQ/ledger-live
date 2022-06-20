@@ -5,6 +5,16 @@ import { DeviceAction } from "../../models/DeviceAction";
 
 const nanos = ["nanoS", "nanoSP", "nanoX"];
 
+test.use({
+  env: {
+    // A cheap way of not displaying the firmware update banner in the home screen.
+    // Without this, the new device will get detected as having an outdated firmware.
+    // The test suite is making calls to the MANAGER_API_BASE address.
+    // This is not right, and should be replaced with proper mocks.
+    DEBUG_FW_VERSION: "",
+  },
+});
+
 test.describe.parallel("Onboarding", () => {
   for (const nano of nanos) {
     test(`[${nano}] Onboarding flow new device`, async ({ page }) => {

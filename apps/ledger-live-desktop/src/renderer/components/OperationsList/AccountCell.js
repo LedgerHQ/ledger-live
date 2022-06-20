@@ -13,6 +13,7 @@ const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
   px: 4,
   horizontal: true,
   alignItems: "center",
+  height: "100%",
 }))`
   flex: 1 1 auto;
   overflow: hidden;
