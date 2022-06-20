@@ -2,10 +2,6 @@ import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/portfolioPage";
 
 describe("Onboarding", () => {
-  beforeAll(async () => {
-    await device.launchApp();
-  });
-
   it("should be able to connect a Nano X", async () => {
     await OnboardingSteps.waitForPageToBeVisible();
     await OnboardingSteps.startOnboarding();
