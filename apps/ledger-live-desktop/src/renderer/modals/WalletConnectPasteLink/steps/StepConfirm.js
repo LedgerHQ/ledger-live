@@ -7,6 +7,7 @@ import type { StepProps } from "../types";
 import Box from "~/renderer/components/Box";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Button from "~/renderer/components/Button";
+// $FlowFixMe
 import { context, STATUS, approveSession } from "~/renderer/screens/WalletConnect/Provider";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
