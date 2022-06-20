@@ -56,6 +56,7 @@ type Props = {
 
 type State = {
   loadError: boolean;
+  loading: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
@@ -63,6 +64,7 @@ class NftImage extends React.PureComponent<Props, State> {
     beforeLoadDone: false,
     loadError: false,
     contentType: null,
+    loading: true,
   };
 
   opacityAnim = new Animated.Value(0);
@@ -72,12 +74,14 @@ class NftImage extends React.PureComponent<Props, State> {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    }).start();
+    }).start(({ finished }) => {
+      finished && this.setState({ loading: false });
+    });
   };
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
-      this.setState({ loadError: true });
+      this.setState({ loading: true, loadError: true });
     }
   };
 
@@ -87,7 +91,7 @@ class NftImage extends React.PureComponent<Props, State> {
 
   render() {
     const { style, status, src, colors, resizeMode = "cover" } = this.props;
-    const { loadError } = this.state;
+    const { loadError, loading } = this.state;
 
     const noData = status === "nodata";
     const metadataError = status === "error";
@@ -95,7 +99,7 @@ class NftImage extends React.PureComponent<Props, State> {
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Skeleton style={styles.skeleton} loading={loading} />
         <Animated.View
           style={[
             styles.imageContainer,
@@ -111,7 +115,7 @@ class NftImage extends React.PureComponent<Props, State> {
               style={[
                 styles.image,
                 {
-                  backgroundColor: colors.white,
+                  backgroundColor: colors.background.main,
                 },
               ]}
               resizeMode={resizeMode}
