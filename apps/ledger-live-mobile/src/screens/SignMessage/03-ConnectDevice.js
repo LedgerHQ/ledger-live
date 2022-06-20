@@ -29,8 +29,10 @@ type Props = {
 type RouteParams = {
   device: Device,
   accountId: string,
-  appName?: string,
   message: TypedMessageData | MessageData,
+  appName?: string,
+  onConfirmationHandler?: (MessageData | TypedMessageData) => void,
+  onFailHandler?: (Error) => void,
 };
 
 export default function ConnectDevice({ route, navigation }: Props) {

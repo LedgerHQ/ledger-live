@@ -27,11 +27,12 @@ type RouteParams = {
   accountId: string,
   message: TypedMessageData | MessageData,
   error: Error,
+  onFailHandler?: (Error) => void,
 };
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const error = route.params.error;
+  const { error, onFailHandler } = route.params;
   const wcContext = useContext(_wcContext);
   const [disableRetry, setDisableRetry] = useState(false);
 
@@ -39,6 +40,9 @@ export default function ValidationError({ navigation, route }: Props) {
     if (wcContext.currentCallRequestId) {
       setDisableRetry(true);
       setCurrentCallRequestError(error);
+      if (onFailHandler) {
+        onFailHandler(error);
+      }
     }
   }, []);
 

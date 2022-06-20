@@ -25,16 +25,21 @@ type RouteParams = {
   accountId: string,
   message: TypedMessageData | MessageData,
   signature: string,
+  onConfirmationHandler?: (MessageData | TypedMessageData) => void,
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { signature, onConfirmationHandler } = route.params;
   const wcContext = useContext(_wcContext);
 
   useEffect(() => {
     if (wcContext.currentCallRequestId) {
-      setCurrentCallRequestResult(route.params.signature);
+      setCurrentCallRequestResult(signature);
+    }
+    if (onConfirmationHandler) {
+      onConfirmationHandler(signature);
     }
   }, []);
 
