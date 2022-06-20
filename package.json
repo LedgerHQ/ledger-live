@@ -89,6 +89,8 @@
   },
   "pnpm": {
     "overrides": {
+      "@types/react": "^17.0.39",
+      "@types/react-redux": "^7.1.24",
       "stellar-base>sodium-native": "^3.2.1",
       "metro": "^0.67.0",
       "metro-config": "^0.67.0",
@@ -97,6 +99,8 @@
       "metro-resolver": "^0.67.0",
       "metro-runtime": "^0.67.0",
       "metro-transform-worker": "^0.67.0",
+      "react": "^17.0.2",
+      "react-redux": "^7.2.6",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
     }
