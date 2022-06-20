@@ -46,7 +46,13 @@ export const getAccountShape: GetAccountShape = async (
     : [];
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
+  const currentBlockP = fetchCurrentBlock(currency);
+  const balanceP = api.getAccountBalance(address);
   // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
+  // Check if the block hash exists on chain to prevent reorg issue
+  const blockHashExistsOnChain = await api
+    .getBlockByHash(mostRecentStableOperation?.blockHash)
+    .then(Boolean);
   const syncHash =
     JSON.stringify(blacklistedTokenIds || []) +
     "_" +
@@ -58,12 +64,11 @@ export const getAccountShape: GetAccountShape = async (
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
     mostRecentStableOperation &&
+    blockHashExistsOnChain &&
     !outdatedSyncHash
       ? mostRecentStableOperation.blockHash
       : undefined;
   const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
-  const currentBlockP = fetchCurrentBlock(currency);
-  const balanceP = api.getAccountBalance(address);
   const [txs, currentBlock, balance] = await Promise.all([
     txsP,
     currentBlockP,
@@ -167,7 +172,10 @@ export const getAccountShape: GetAccountShape = async (
     ...o,
     subOperations: inferSubOperations(o.hash, subAccounts),
   }));
-  const operations = mergeOps(initialStableOperations, newOps);
+  const operations = mergeOps(
+    blockHashExistsOnChain ? initialStableOperations : [],
+    newOps
+  );
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
