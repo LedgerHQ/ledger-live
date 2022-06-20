@@ -135,6 +135,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           }}
           title={t("transfer.buy.title")}
           description={t("transfer.buy.description")}
+          tag={t("common.popular")}
           Icon={Icons.PlusMedium}
           onPress={onBuy}
           disabled={readOnlyModeEnabled}
