@@ -13,59 +13,59 @@ Ledger Hardware Wallet ETH JavaScript bindings.
 
 #### Table of Contents
 
-*   [Eth](#eth)
-    *   [Parameters](#parameters)
-    *   [Examples](#examples)
-    *   [getAddress](#getaddress)
-        *   [Parameters](#parameters-1)
-        *   [Examples](#examples-1)
-    *   [signTransaction](#signtransaction)
-        *   [Parameters](#parameters-2)
-        *   [Examples](#examples-2)
-    *   [getAppConfiguration](#getappconfiguration)
-    *   [signPersonalMessage](#signpersonalmessage)
-        *   [Parameters](#parameters-3)
-        *   [Examples](#examples-3)
-    *   [signEIP712HashedMessage](#signeip712hashedmessage)
-        *   [Parameters](#parameters-4)
-        *   [Examples](#examples-4)
-    *   [signEIP712Message](#signeip712message)
-        *   [Parameters](#parameters-5)
-        *   [Examples](#examples-5)
-    *   [starkGetPublicKey](#starkgetpublickey)
-        *   [Parameters](#parameters-6)
-    *   [starkSignOrder](#starksignorder)
-        *   [Parameters](#parameters-7)
-    *   [starkSignOrder_v2](#starksignorder_v2)
-        *   [Parameters](#parameters-8)
-    *   [starkSignTransfer](#starksigntransfer)
-        *   [Parameters](#parameters-9)
-    *   [starkSignTransfer_v2](#starksigntransfer_v2)
-        *   [Parameters](#parameters-10)
-    *   [starkProvideQuantum](#starkprovidequantum)
-        *   [Parameters](#parameters-11)
-    *   [starkProvideQuantum_v2](#starkprovidequantum_v2)
-        *   [Parameters](#parameters-12)
-    *   [starkUnsafeSign](#starkunsafesign)
-        *   [Parameters](#parameters-13)
-    *   [eth2GetPublicKey](#eth2getpublickey)
-        *   [Parameters](#parameters-14)
-        *   [Examples](#examples-6)
-    *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
-        *   [Parameters](#parameters-15)
-    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
-        *   [Parameters](#parameters-16)
-        *   [Examples](#examples-7)
-    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
-        *   [Parameters](#parameters-17)
-        *   [Examples](#examples-8)
-*   [loadInfosForContractMethod](#loadinfosforcontractmethod)
-    *   [Parameters](#parameters-18)
-*   [byContractAddressAndChainId](#bycontractaddressandchainid)
-    *   [Parameters](#parameters-19)
-*   [list](#list)
-*   [ResolutionConfig](#resolutionconfig)
-    *   [Properties](#properties)
+- [Eth](#eth)
+  - [Parameters](#parameters)
+  - [Examples](#examples)
+  - [getAddress](#getaddress)
+    - [Parameters](#parameters-1)
+    - [Examples](#examples-1)
+  - [signTransaction](#signtransaction)
+    - [Parameters](#parameters-2)
+    - [Examples](#examples-2)
+  - [getAppConfiguration](#getappconfiguration)
+  - [signPersonalMessage](#signpersonalmessage)
+    - [Parameters](#parameters-3)
+    - [Examples](#examples-3)
+  - [signEIP712HashedMessage](#signeip712hashedmessage)
+    - [Parameters](#parameters-4)
+    - [Examples](#examples-4)
+  - [signEIP712Message](#signeip712message)
+    - [Parameters](#parameters-5)
+    - [Examples](#examples-5)
+  - [starkGetPublicKey](#starkgetpublickey)
+    - [Parameters](#parameters-6)
+  - [starkSignOrder](#starksignorder)
+    - [Parameters](#parameters-7)
+  - [starkSignOrder_v2](#starksignorder_v2)
+    - [Parameters](#parameters-8)
+  - [starkSignTransfer](#starksigntransfer)
+    - [Parameters](#parameters-9)
+  - [starkSignTransfer_v2](#starksigntransfer_v2)
+    - [Parameters](#parameters-10)
+  - [starkProvideQuantum](#starkprovidequantum)
+    - [Parameters](#parameters-11)
+  - [starkProvideQuantum_v2](#starkprovidequantum_v2)
+    - [Parameters](#parameters-12)
+  - [starkUnsafeSign](#starkunsafesign)
+    - [Parameters](#parameters-13)
+  - [eth2GetPublicKey](#eth2getpublickey)
+    - [Parameters](#parameters-14)
+    - [Examples](#examples-6)
+  - [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
+    - [Parameters](#parameters-15)
+  - [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
+    - [Parameters](#parameters-16)
+    - [Examples](#examples-7)
+  - [getEIP1024SharedSecret](#geteip1024sharedsecret)
+    - [Parameters](#parameters-17)
+    - [Examples](#examples-8)
+- [loadInfosForContractMethod](#loadinfosforcontractmethod)
+  - [Parameters](#parameters-18)
+- [byContractAddressAndChainId](#bycontractaddressandchainid)
+  - [Parameters](#parameters-19)
+- [list](#list)
+- [ResolutionConfig](#resolutionconfig)
+  - [Properties](#properties)
 
 ### Eth
 
@@ -73,15 +73,15 @@ Ethereum API
 
 #### Parameters
 
-*   `transport` **Transport** 
-*   `scrambleKey`   (optional, default `"w0w"`)
-*   `loadConfig` **LoadConfig**  (optional, default `{}`)
+- `transport` **Transport**
+- `scrambleKey` (optional, default `"w0w"`)
+- `loadConfig` **LoadConfig** (optional, default `{}`)
 
 #### Examples
 
 ```javascript
 import Eth from "@ledgerhq/hw-app-eth";
-const eth = new Eth(transport)
+const eth = new Eth(transport);
 ```
 
 #### getAddress
@@ -90,14 +90,14 @@ get Ethereum address for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `boolChaincode` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+- `boolChaincode` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
 ##### Examples
 
 ```javascript
-eth.getAddress("44'/60'/0'/0/0").then(o => o.address)
+eth.getAddress("44'/60'/0'/0/0").then((o) => o.address);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), chainCode: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}>** an object with a publicKey, address and (optionally) chainCode
@@ -108,25 +108,26 @@ You can sign a transaction and retrieve v, r, s given the raw transaction and th
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the BIP32 path to sign the transaction on
-*   `rawTxHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the raw ethereum transaction in hexadecimal to sign
-*   `resolution` **(LedgerEthTransactionResolution | null)?** : resolution is an object with all "resolved" metadata necessary to allow the device to clear sign information. This includes: ERC20 token information, plugins, contracts, NFT signatures,... You must explicitly provide something to avoid having a warning. By default, you can use Ledger's service or your own resolution service. See services/types.js for the contract. Setting the value to "null" will fallback everything to blind signing but will still allow the device to sign the transaction.
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the BIP32 path to sign the transaction on
+- `rawTxHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the raw ethereum transaction in hexadecimal to sign
+- `resolution` **(LedgerEthTransactionResolution | null)?** : resolution is an object with all "resolved" metadata necessary to allow the device to clear sign information. This includes: ERC20 token information, plugins, contracts, NFT signatures,... You must explicitly provide something to avoid having a warning. By default, you can use Ledger's service or your own resolution service. See services/types.js for the contract. Setting the value to "null" will fallback everything to blind signing but will still allow the device to sign the transaction.
 
 ##### Examples
 
 ```javascript
-import ledgerService from "@ledgerhq/hw-app-eth/lib/services/ledger"
-const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
+import { ledgerService } from "@ledgerhq/hw-app-eth";
+const tx =
+  "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
 const resolution = await ledgerService.resolveTransaction(tx);
 const result = eth.signTransaction("44'/60'/0'/0/0", tx, resolution);
 console.log(result);
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), v: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), v: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
 
 #### getAppConfiguration
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{arbitraryDataEnabled: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), erc20ProvisioningNecessary: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), starkEnabled: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), starkv2Supported: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{arbitraryDataEnabled: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), erc20ProvisioningNecessary: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), starkEnabled: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), starkv2Supported: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
 
 #### signPersonalMessage
 
@@ -134,23 +135,25 @@ You can sign a message according to eth_sign RPC call and retrieve v, r, s given
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `messageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `messageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ##### Examples
 
 ```javascript
-eth.signPersonalMessage("44'/60'/0'/0/0", Buffer.from("test").toString("hex")).then(result => {
-var v = result['v'] - 27;
-v = v.toString(16);
-if (v.length < 2) {
-v = "0" + v;
-}
-console.log("Signature 0x" + result['r'] + result['s'] + v);
-})
+eth
+  .signPersonalMessage("44'/60'/0'/0/0", Buffer.from("test").toString("hex"))
+  .then((result) => {
+    var v = result["v"] - 27;
+    v = v.toString(16);
+    if (v.length < 2) {
+      v = "0" + v;
+    }
+    console.log("Signature 0x" + result["r"] + result["s"] + v);
+  });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
 
 #### signEIP712HashedMessage
 
@@ -158,24 +161,34 @@ Sign a prepared message following web3.eth.signTypedData specification. The host
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `domainSeparatorHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `hashStructMessageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `domainSeparatorHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `hashStructMessageHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
 
 ##### Examples
 
 ```javascript
-eth.signEIP712HashedMessage("44'/60'/0'/0/0", Buffer.from("0101010101010101010101010101010101010101010101010101010101010101").toString("hex"), Buffer.from("0202020202020202020202020202020202020202020202020202020202020202").toString("hex")).then(result => {
-var v = result['v'] - 27;
-v = v.toString(16);
-if (v.length < 2) {
-v = "0" + v;
-}
-console.log("Signature 0x" + result['r'] + result['s'] + v);
-})
+eth
+  .signEIP712HashedMessage(
+    "44'/60'/0'/0/0",
+    Buffer.from(
+      "0101010101010101010101010101010101010101010101010101010101010101"
+    ).toString("hex"),
+    Buffer.from(
+      "0202020202020202020202020202020202020202020202020202020202020202"
+    ).toString("hex")
+  )
+  .then((result) => {
+    var v = result["v"] - 27;
+    v = v.toString(16);
+    if (v.length < 2) {
+      v = "0" + v;
+    }
+    console.log("Signature 0x" + result["r"] + result["s"] + v);
+  });
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**
 
 #### signEIP712Message
 
@@ -184,37 +197,35 @@ https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-ei
 
 ##### Parameters
 
-*   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** derivationPath
-*   `jsonMessage` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** message to sign
-*   `fullImplem` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** use the legacy implementation (optional, default `false`)
+- `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** derivationPath
+- `jsonMessage` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** message to sign
+- `fullImplem` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** use the legacy implementation (optional, default `false`)
 
 ##### Examples
 
 ```javascript
 eth.signEIP721Message("44'/60'/0'/0/0", {
-domain: {
-chainId: 69,
-name: "Da Domain",
-verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
-version: "1"
-},
-types: {
-"EIP712Domain": [
-{ name: "name", type: "string" },
-{ name: "version", type: "string" },
-{ name: "chainId", type: "uint256" },
-{ name: "verifyingContract", type: "address" }
-],
-"Test": [
-{ name: "contents", type: "string" }
-]
-},
-primaryType: "Test",
-message: {contents: "Hello, Bob!"},
-})
+  domain: {
+    chainId: 69,
+    name: "Da Domain",
+    verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+    version: "1",
+  },
+  types: {
+    EIP712Domain: [
+      { name: "name", type: "string" },
+      { name: "version", type: "string" },
+      { name: "chainId", type: "uint256" },
+      { name: "verifyingContract", type: "address" },
+    ],
+    Test: [{ name: "contents", type: "string" }],
+  },
+  primaryType: "Test",
+  message: { contents: "Hello, Bob!" },
+});
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)**
 
 #### starkGetPublicKey
 
@@ -222,8 +233,8 @@ get Stark public key for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** the Stark public key
 
@@ -233,17 +244,17 @@ sign a Stark order
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `sourceTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `sourceQuantization` **BigNumber** quantization used for the source token
-*   `destinationTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `destinationQuantization` **BigNumber** quantization used for the destination token
-*   `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
-*   `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
-*   `amountSell` **BigNumber** amount to sell
-*   `amountBuy` **BigNumber** amount to buy
-*   `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
-*   `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `sourceTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `sourceQuantization` **BigNumber** quantization used for the source token
+- `destinationTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `destinationQuantization` **BigNumber** quantization used for the destination token
+- `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
+- `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
+- `amountSell` **BigNumber** amount to sell
+- `amountBuy` **BigNumber** amount to buy
+- `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
+- `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Buffer](https://nodejs.org/api/buffer.html) | {r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)})>** the signature
 
@@ -253,21 +264,21 @@ sign a Stark order using the Starkex V2 protocol
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `sourceTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `sourceQuantizationType` **StarkQuantizationType** quantization type used for the source token
-*   `sourceQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `sourceMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `destinationTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `destinationQuantizationType` **StarkQuantizationType** quantization type used for the destination token
-*   `destinationQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `destinationMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
-*   `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
-*   `amountSell` **BigNumber** amount to sell
-*   `amountBuy` **BigNumber** amount to buy
-*   `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
-*   `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `sourceTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `sourceQuantizationType` **StarkQuantizationType** quantization type used for the source token
+- `sourceQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `sourceMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `destinationTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `destinationQuantizationType` **StarkQuantizationType** quantization type used for the destination token
+- `destinationQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `destinationMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
+- `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
+- `amountSell` **BigNumber** amount to sell
+- `amountBuy` **BigNumber** amount to buy
+- `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
+- `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Buffer](https://nodejs.org/api/buffer.html) | {r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)})>** the signature
 
@@ -277,15 +288,15 @@ sign a Stark transfer
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `transferTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `transferQuantization` **BigNumber** quantization used for the token to be transferred
-*   `targetPublicKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target Stark public key
-*   `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
-*   `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
-*   `amountTransfer` **BigNumber** amount to transfer
-*   `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
-*   `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `transferTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `transferQuantization` **BigNumber** quantization used for the token to be transferred
+- `targetPublicKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target Stark public key
+- `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
+- `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
+- `amountTransfer` **BigNumber** amount to transfer
+- `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
+- `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Buffer](https://nodejs.org/api/buffer.html) | {r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)})>** the signature
 
@@ -295,19 +306,19 @@ sign a Stark transfer or conditional transfer using the Starkex V2 protocol
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `transferTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `transferQuantizationType` **StarkQuantizationType** quantization type used for the token to be transferred
-*   `transferQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `transferMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `targetPublicKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target Stark public key
-*   `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
-*   `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
-*   `amountTransfer` **BigNumber** amount to transfer
-*   `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
-*   `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
-*   `conditionalTransferAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-*   `conditionalTransferFact` **BigNumber?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `transferTokenAddress` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `transferQuantizationType` **StarkQuantizationType** quantization type used for the token to be transferred
+- `transferQuantization` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `transferMintableBlobOrTokenId` **(BigNumber | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
+- `targetPublicKey` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** target Stark public key
+- `sourceVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the source vault
+- `destinationVault` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** ID of the destination vault
+- `amountTransfer` **BigNumber** amount to transfer
+- `nonce` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction nonce
+- `timestamp` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** transaction validity timestamp
+- `conditionalTransferAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**
+- `conditionalTransferFact` **BigNumber?**
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Buffer](https://nodejs.org/api/buffer.html) | {r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)})>** the signature
 
@@ -319,10 +330,10 @@ It shall be run following a provideERC20TokenInformation call for the given cont
 
 ##### Parameters
 
-*   `operationContract` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** contract address of the token to be transferred (not present for ETH)
-*   `operationQuantization` **BigNumber** quantization used for the token to be transferred
+- `operationContract` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** contract address of the token to be transferred (not present for ETH)
+- `operationQuantization` **BigNumber** quantization used for the token to be transferred
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**
 
 #### starkProvideQuantum_v2
 
@@ -332,12 +343,12 @@ It shall be run following a provideERC20TokenInformation call for the given cont
 
 ##### Parameters
 
-*   `operationContract` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** contract address of the token to be transferred (not present for ETH)
-*   `operationQuantizationType` **StarkQuantizationType** quantization type of the token to be transferred
-*   `operationQuantization` **BigNumber?** 
-*   `operationMintableBlobOrTokenId` **BigNumber?** 
+- `operationContract` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** contract address of the token to be transferred (not present for ETH)
+- `operationQuantizationType` **StarkQuantizationType** quantization type of the token to be transferred
+- `operationQuantization` **BigNumber?**
+- `operationMintableBlobOrTokenId` **BigNumber?**
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**
 
 #### starkUnsafeSign
 
@@ -346,8 +357,8 @@ It is intended for speed of execution in case an unknown Stark model is pushed a
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `hash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** hexadecimal hash to sign
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `hash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** hexadecimal hash to sign
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Buffer](https://nodejs.org/api/buffer.html) | {r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)})>** the signature
 
@@ -357,13 +368,13 @@ get an Ethereum 2 BLS-12 381 public key for a given BIP 32 path.
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
 ##### Examples
 
 ```javascript
-eth.eth2GetPublicKey("12381/3600/0/0").then(o => o.publicKey)
+eth.eth2GetPublicKey("12381/3600/0/0").then((o) => o.publicKey);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey
@@ -376,7 +387,7 @@ It shall be run before the ETH 2 deposit transaction is signed. If not called, t
 
 ##### Parameters
 
-*   `withdrawalIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** index path in the EIP 2334 path m/12381/3600/withdrawalIndex/0
+- `withdrawalIndex` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** index path in the EIP 2334 path m/12381/3600/withdrawalIndex/0
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** True if the method was executed successfully
 
@@ -386,13 +397,13 @@ get a public encryption key on Curve25519 according to EIP 1024
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
 ##### Examples
 
 ```javascript
-eth.getEIP1024PublicEncryptionKey("44'/60'/0'/0/0").then(o => o.publicKey)
+eth.getEIP1024PublicEncryptionKey("44'/60'/0'/0/0").then((o) => o.publicKey);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{publicKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a publicKey
@@ -403,14 +414,19 @@ get a shared secret on Curve25519 according to EIP 1024
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `remotePublicKeyHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** remote Curve25519 public key
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
+- `remotePublicKeyHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** remote Curve25519 public key
+- `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
 
 ##### Examples
 
 ```javascript
-eth.getEIP1024SharedSecret("44'/60'/0'/0/0", "87020e80af6e07a6e4697f091eacadb9e7e6629cb7e5a8a371689a3ed53b3d64").then(o => o.sharedSecret)
+eth
+  .getEIP1024SharedSecret(
+    "44'/60'/0'/0/0",
+    "87020e80af6e07a6e4697f091eacadb9e7e6629cb7e5a8a371689a3ed53b3d64"
+  )
+  .then((o) => o.sharedSecret);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{sharedSecret: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a shared secret
@@ -421,12 +437,12 @@ Retrieve the metadatas a given contract address and a method selector
 
 #### Parameters
 
-*   `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `selector` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `userLoadConfig` **LoadConfig** 
+- `contractAddress` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `selector` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
+- `userLoadConfig` **LoadConfig**
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<(ContractMethod | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<(ContractMethod | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>**
 
 ### byContractAddressAndChainId
 
@@ -434,16 +450,16 @@ Retrieve the token information by a given contract address if any
 
 #### Parameters
 
-*   `contract` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+- `contract` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
+- `chainId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
 
-Returns **(TokenInfo | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **(TokenInfo | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**
 
 ### list
 
 list all the ERC20 tokens informations
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenInfo>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenInfo>**
 
 ### ResolutionConfig
 
@@ -454,6 +470,6 @@ Type: {nft: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Referenc
 
 #### Properties
 
-*   `nft` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `externalPlugins` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `erc20` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+- `nft` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+- `externalPlugins` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**
+- `erc20` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**

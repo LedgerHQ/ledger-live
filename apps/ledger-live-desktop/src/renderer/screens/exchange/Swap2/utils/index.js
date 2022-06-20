@@ -2,8 +2,8 @@
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import * as providerIcons from "~/renderer/icons/providers";
-import type { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/lib/errors";
+import type { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
 

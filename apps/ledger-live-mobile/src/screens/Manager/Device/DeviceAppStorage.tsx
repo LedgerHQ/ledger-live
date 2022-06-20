@@ -3,8 +3,8 @@ import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 
 import { DeviceModel } from "@ledgerhq/devices";
-import { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 

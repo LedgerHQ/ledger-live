@@ -1,9 +1,9 @@
 // @flow
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 
 export async function clearBridgeCache() {
   const keys = await AsyncStorage.getAllKeys();

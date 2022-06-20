@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import { compose } from "redux";

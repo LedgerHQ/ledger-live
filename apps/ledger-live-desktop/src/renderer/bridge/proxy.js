@@ -9,7 +9,7 @@ import type {
   AccountLike,
   CurrencyBridge,
   AccountBridge,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import isEqual from "lodash/isEqual";
 import {
   fromTransactionRaw,
@@ -17,15 +17,15 @@ import {
   toSignedOperationRaw,
   fromTransactionStatusRaw,
   fromSignOperationEventRaw,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import {
   toAccountLikeRaw,
   toAccountRaw,
   fromOperationRaw,
-} from "@ledgerhq/live-common/lib/account";
-import { patchAccount } from "@ledgerhq/live-common/lib/reconciliation";
-import { fromScanAccountEventRaw } from "@ledgerhq/live-common/lib/bridge";
-import * as bridgeImpl from "@ledgerhq/live-common/lib/bridge/impl";
+} from "@ledgerhq/live-common/account/index";
+import { patchAccount } from "@ledgerhq/live-common/reconciliation";
+import { fromScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
+import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 import { command } from "~/renderer/commands";
 
 const scanAccounts = ({ currency, deviceId, syncConfig }) =>

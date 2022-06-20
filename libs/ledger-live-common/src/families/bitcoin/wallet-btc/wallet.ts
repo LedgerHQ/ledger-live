@@ -4,7 +4,7 @@ import { flatten } from "lodash";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { Transaction } from "@ledgerhq/hw-app-btc/lib/types";
+import { Transaction } from "@ledgerhq/hw-app-btc/types";
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";

@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import type { State } from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/types/manager";
+import type { State } from "@ledgerhq/live-common/apps/index";
 import { useTheme } from "@react-navigation/native";
 import AppRow from "./AppRow";
 import getWindowDimensions from "../../../logic/getWindowDimensions";

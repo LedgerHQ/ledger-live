@@ -1,16 +1,16 @@
 /* eslint-disable no-console */
 import { from, of, Observable } from "rxjs";
 import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import {
   initState,
   reducer,
   runAll,
   getActionPlan,
-} from "@ledgerhq/live-common/lib/apps";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import type { AppOp } from "@ledgerhq/live-common/lib/apps/types";
+} from "@ledgerhq/live-common/apps/index";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import type { AppOp } from "@ledgerhq/live-common/apps/types";
 import { deviceOpt } from "../scan";
 
 const prettyActionPlan = (ops: AppOp[]) =>

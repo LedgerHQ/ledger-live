@@ -1,7 +1,7 @@
 import React, { useMemo, memo } from "react";
 
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/types/manager";
+import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { Flex } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
