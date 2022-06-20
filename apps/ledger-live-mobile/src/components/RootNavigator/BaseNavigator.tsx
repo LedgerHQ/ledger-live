@@ -106,13 +106,29 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
         component={PostBuyDeviceSetupNanoWallScreen}
-        options={{ headerShown: false, presentation: "transparentModal" }}
+        options={{
+          headerShown: false,
+          presentation: "transparentModal",
+          headerMode: "none",
+          mode: "modal",
+          transparentCard: true,
+          cardStyle: { opacity: 1 },
+          gestureEnabled: true,
+          headerTitle: null,
+          headerRight: null,
+          headerBackTitleVisible: false,
+          title: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceScreen}
