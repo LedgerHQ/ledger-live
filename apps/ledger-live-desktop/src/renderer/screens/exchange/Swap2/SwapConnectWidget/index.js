@@ -1,6 +1,7 @@
 // @flow
 
-import { remote, WebviewTag } from "electron";
+import * as remote from "@electron/remote";
+import { WebviewTag } from "electron";
 import React, { forwardRef, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
