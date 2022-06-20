@@ -14,7 +14,6 @@ import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import ManagerMain from "../../screens/Manager/Manager";
-import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -57,7 +56,6 @@ export default function ManagerNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
-  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -78,7 +76,6 @@ export default function ManagerNavigator() {
           headerRight: null,
           gestureEnabled: false,
         }}
-        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.ManagerMain}

@@ -12,7 +12,10 @@ import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import {
+  hasOrderedNanoSelector,
+  readOnlyModeEnabledSelector,
+} from "../../reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
@@ -29,6 +32,7 @@ export default function MainNavigator({
 }) {
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
   const { hideTabNavigation } = params || {};
 
@@ -150,17 +154,23 @@ export default function MainNavigator({
         listeners={({ navigation }) => ({
           tabPress: (e: any) => {
             e.preventDefault();
-            // NB The default behaviour is not reset route params, leading to always having the same
-            // search query or preselected tab after the first time (ie from Swap/Sell)
-            // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-            navigation.navigate(NavigatorName.Manager, {
-              screen: ScreenName.Manager,
-              params: {
-                tab: undefined,
-                searchQuery: undefined,
-                updateModalOpened: undefined,
-              },
-            });
+            if (hasOrderedNano) {
+              navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+            } else if (readOnlyModeEnabled) {
+              navigation.navigate(NavigatorName.BuyDevice);
+            } else {
+              // NB The default behaviour is not reset route params, leading to always having the same
+              // search query or preselected tab after the first time (ie from Swap/Sell)
+              // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
+              navigation.navigate(NavigatorName.Manager, {
+                screen: ScreenName.Manager,
+                params: {
+                  tab: undefined,
+                  searchQuery: undefined,
+                  updateModalOpened: undefined,
+                },
+              });
+            }
           },
         })}
       />
