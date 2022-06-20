@@ -49,7 +49,7 @@ const test = base.extend<TestFixtures>({
     env = Object.assign(
       {
         ...process.env,
-        MOCK: true,
+        MOCK: "true",
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
