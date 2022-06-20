@@ -1,6 +1,5 @@
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-
-import test from "../fixtures/common";
 
 test.use({ userdata: "skip-onboarding-with-terms" });
 

@@ -9,7 +9,7 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-test.skip("subAccounts", async ({ page }) => {
+test("subAccounts", async ({ page }) => {
   const addAccountModal = new AddAccountModal(page);
   const accountsPage = new AccountsPage(page);
   const receiveModal = new ReceiveModal(page);
