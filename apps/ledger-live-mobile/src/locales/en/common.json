@@ -948,13 +948,14 @@
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
-      "subtitle": "First things first",
+      "subtitle": "First thing's first",
       "yes": "Yes, I do",
       "no": "Not yet"
     },
     "postWelcomeStep": {
       "title": "It's your choice",
-      "subtitle": "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes": "You can choose to set up your Ledger or take a look around the app first",
+      "subtitle_no": "You can choose : take a look around the app first or buy a Nano X device",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
         "title": "Set up my Ledger",
@@ -962,7 +963,7 @@
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "A hardware wallet is the only way to ensure your assets are secure "
       },
       "discoverLedger": {
         "title": "Explore Ledger Live",

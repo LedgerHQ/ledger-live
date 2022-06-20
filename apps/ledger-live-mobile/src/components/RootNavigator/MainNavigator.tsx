@@ -150,26 +150,17 @@ export default function MainNavigator({
         listeners={({ navigation }) => ({
           tabPress: (e: any) => {
             e.preventDefault();
-            if (readOnlyModeEnabled) {
-              // NB The default behaviour is not reset route params, leading to always having the same
-              // search query or preselected tab after the first time (ie from Swap/Sell)
-              // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-              navigation.navigate(ScreenName.GetDevice, {
-                from: NavigatorName.Manager,
-              });
-            } else {
-              // NB The default behaviour is not reset route params, leading to always having the same
-              // search query or preselected tab after the first time (ie from Swap/Sell)
-              // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
-              navigation.navigate(NavigatorName.Manager, {
-                screen: ScreenName.Manager,
-                params: {
-                  tab: undefined,
-                  searchQuery: undefined,
-                  updateModalOpened: undefined,
-                },
-              });
-            }
+            // NB The default behaviour is not reset route params, leading to always having the same
+            // search query or preselected tab after the first time (ie from Swap/Sell)
+            // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
+            navigation.navigate(NavigatorName.Manager, {
+              screen: ScreenName.Manager,
+              params: {
+                tab: undefined,
+                searchQuery: undefined,
+                updateModalOpened: undefined,
+              },
+            });
           },
         })}
       />
