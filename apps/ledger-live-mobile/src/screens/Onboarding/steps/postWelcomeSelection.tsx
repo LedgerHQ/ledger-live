@@ -109,7 +109,11 @@ function PostWelcomeSelection({
           {t("onboarding.postWelcomeStep.title")}
         </Text>
         <Text variant="large" fontWeight="medium" color="neutral.c70" mb={9}>
-          {t("onboarding.postWelcomeStep.subtitle")}
+          {t(
+            userHasDevice
+              ? "onboarding.postWelcomeStep.subtitle_yes"
+              : "onboarding.postWelcomeStep.subtitle_no",
+          )}
         </Text>
         <StyledStatusBar barStyle="dark-content" />
         {userHasDevice && (

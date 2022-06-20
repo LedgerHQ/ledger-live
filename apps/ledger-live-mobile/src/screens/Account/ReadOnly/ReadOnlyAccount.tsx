@@ -96,8 +96,8 @@ function ReadOnlyAccount({ route }: Props) {
             mt={3}
           >
             <Trans
-              i18nKey={"account.readOnly.noTransaction.title"}
-              values={currency.name}
+              i18nKey={"account.readOnly.noTransaction.subtitle"}
+              values={{ assetName: currency.name }}
             />
           </Text>
         </Flex>
