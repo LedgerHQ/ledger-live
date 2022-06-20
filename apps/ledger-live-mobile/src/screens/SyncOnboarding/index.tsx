@@ -98,28 +98,32 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   useEffect(() => {
     const newStepState: Step[] = [];
 
-    defaultOnboardingSteps.some((step, index, steps) => {
-      if (
-        onboardingState &&
-        onboardingState.currentOnboardingStep &&
-        step.deviceStates.includes(onboardingState.currentOnboardingStep)
-      ) {
+    const needToUpdateSteps = defaultOnboardingSteps.some(
+      (step, index, steps) => {
+        if (
+          onboardingState &&
+          onboardingState.currentOnboardingStep &&
+          step.deviceStates.includes(onboardingState.currentOnboardingStep)
+        ) {
+          newStepState.push({
+            ...step,
+            status: "active",
+          });
+          newStepState.push(...steps.slice(index + 1));
+          return true;
+        }
+
         newStepState.push({
           ...step,
-          status: "active",
+          status: "completed",
         });
-        newStepState.push(...steps.slice(index + 1));
-        return true;
-      }
+        return false;
+      },
+    );
 
-      newStepState.push({
-        ...step,
-        status: "completed",
-      });
-      return false;
-    });
-
-    setOnboardingSteps(newStepState);
+    if (needToUpdateSteps) {
+      setOnboardingSteps(newStepState);
+    }
   }, [onboardingState]);
 
   const handleOnPaired = useCallback((pairedDevice: Device) => {
