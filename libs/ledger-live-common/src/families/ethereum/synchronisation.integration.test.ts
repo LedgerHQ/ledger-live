@@ -6,6 +6,12 @@ import type { Account, SubAccount } from "../../types";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { ethereum1 } from "./datasets/ethereum1";
+import { ethereum2 } from "./datasets/ethereum2";
+import { encodeOperationId } from "../../operation";
+import {
+  getCryptoCurrencyById,
+  listTokensForCryptoCurrency,
+} from "@ledgerhq/cryptoassets";
 
 describe("blacklistedTokenIds functionality", () => {
   const account = fromAccountRaw(ethereum1);
@@ -81,5 +87,57 @@ describe("blacklistedTokenIds functionality", () => {
         (a) => getAccountCurrency(a)?.id === "ethereum/erc20/weth"
       )
     ).toBeTruthy();
+  });
+});
+
+describe("sync on reorg", () => {
+  test("should sync from scratch if stableoperations latest blockhash is not on chain", async () => {
+    const opHash = "NotImportant";
+    const accountId = ethereum2.id;
+    const opType = "OUT";
+    const blockHeight = 10042069;
+    const currency = getCryptoCurrencyById(ethereum2.currencyId);
+    const syncHash =
+      JSON.stringify([]) +
+      "_" +
+      listTokensForCryptoCurrency(currency, {
+        withDelisted: true,
+      }).length;
+
+    const account = fromAccountRaw({
+      ...ethereum2,
+      blockHeight,
+      syncHash,
+      operations: [
+        {
+          id: encodeOperationId(accountId, opHash, opType),
+          hash: opHash,
+          type: opType,
+          value: "1",
+          fee: "string",
+          senders: ["0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5"],
+          recipients: ["0xdA9EDcC3CF66bc18050dB55D376407Cf85e0617B"],
+          blockHeight: blockHeight - 81, // 80 is defined today as the threshold number of confirmation to be safe for a reorg. @see SAFE_REORG_THRESHOLD
+          blockHash:
+            "0x00000000000000000000000000000000000Th1sH4shSh0u1dN0t3x1sTOnCh4iN",
+          transactionSequenceNumber: 1,
+          date: new Date(Date.now()).toISOString(),
+          extra: {},
+          accountId,
+        },
+      ],
+      operationsCount: 1,
+    });
+    const bridge = getAccountBridge(account);
+
+    await expect(
+      bridge
+        .sync(account, {
+          paginationConfig: {},
+          blacklistedTokenIds: [],
+        })
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
+        .toPromise()
+    ).rejects.toThrow();
   });
 });
