@@ -1,4 +1,5 @@
-import { remote, shell, WebviewTag } from "electron";
+import { shell, WebviewTag } from "electron";
+import * as remote from "@electron/remote";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ import Box from "../Box";
 
 import TopBar from "./TopBar";
 import * as tracking from "./tracking";
-import type { TopBarConfig } from "./type";
+import { TopBarConfig } from "./type";
 import {
   listAccountsCallback,
   listCurrenciesCallback,
@@ -73,10 +74,10 @@ type WebPlatformPlayerConfig = {
 };
 
 type Props = {
-  manifest: AppManifest,
-  onClose?: () => void,
-  inputs?: Record<string, any>,
-  config?: WebPlatformPlayerConfig,
+  manifest: AppManifest;
+  onClose?: () => void;
+  inputs?: Record<string, any>;
+  config?: WebPlatformPlayerConfig;
 };
 
 const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
@@ -111,17 +112,25 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     return urlObj;
   }, [manifest.url, theme, inputs, manifest.params]);
 
-  const listAccounts = useCallback(() => { return listAccountsCallback(accounts) }, [accounts]);
+  const listAccounts = useCallback(() => {
+    return listAccountsCallback(accounts);
+  }, [accounts]);
 
-  const listCurrencies = useCallback(() => { return listCurrenciesCallback(currencies) }, [currencies]);
+  const listCurrencies = useCallback(() => {
+    return listCurrenciesCallback(currencies);
+  }, [currencies]);
 
   const requestAccount = useCallback(
-    (request: RequestAccountParams) => { return requestAccountCallback({manifest, dispatch}, request) },
+    (request: RequestAccountParams) => {
+      return requestAccountCallback({ manifest, dispatch }, request);
+    },
     [manifest, dispatch],
   );
 
   const receiveOnAccount = useCallback(
-    ({ accountId }: { accountId: string }) => { return receiveOnAccountCallback(accountId, {manifest, dispatch, accounts}) },
+    ({ accountId }: { accountId: string }) => {
+      return receiveOnAccountCallback(accountId, { manifest, dispatch, accounts });
+    },
     [manifest, accounts, dispatch],
   );
 
@@ -131,10 +140,17 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       transaction,
       params = {},
     }: {
-      accountId: string,
-      transaction: RawPlatformTransaction,
-      params: any,
-    }) => { return signTransactionCallback({manifest, dispatch, accounts}, accountId, transaction, params) },
+      accountId: string;
+      transaction: RawPlatformTransaction;
+      params: any;
+    }) => {
+      return signTransactionCallback(
+        { manifest, dispatch, accounts },
+        accountId,
+        transaction,
+        params,
+      );
+    },
     [manifest, dispatch, accounts],
   );
 
@@ -143,19 +159,31 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       accountId,
       signedTransaction,
     }: {
-      accountId: string,
-      signedTransaction: RawPlatformSignedTransaction,
-    }) => { return broadcastTransactionCallback({manifest, dispatch, accounts}, accountId, signedTransaction, pushToast, t) },
+      accountId: string;
+      signedTransaction: RawPlatformSignedTransaction;
+    }) => {
+      return broadcastTransactionCallback(
+        { manifest, dispatch, accounts },
+        accountId,
+        signedTransaction,
+        pushToast,
+        t,
+      );
+    },
     [manifest, accounts, pushToast, dispatch, t],
   );
 
   const startExchange = useCallback(
-    ({ exchangeType }: { exchangeType: number }) => { return startExchangeCallback({manifest, dispatch}, exchangeType) },
+    ({ exchangeType }: { exchangeType: number }) => {
+      return startExchangeCallback({ manifest, dispatch }, exchangeType);
+    },
     [manifest, dispatch],
   );
 
   const completeExchange = useCallback(
-    (completeRequest: CompleteExchangeRequest) => { return completeExchangeCallback({manifest, dispatch, accounts}, completeRequest) },
+    (completeRequest: CompleteExchangeRequest) => {
+      return completeExchangeCallback({ manifest, dispatch, accounts }, completeRequest);
+    },
     [accounts, dispatch, manifest],
   );
 
