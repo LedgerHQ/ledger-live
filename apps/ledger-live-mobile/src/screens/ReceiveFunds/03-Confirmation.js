@@ -188,22 +188,45 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         <View style={styles.container}>
           <Touchable event="QRZoom" onPress={onZoom}>
             {width < 350 ? (
-              <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
-                <QRcodeZoom size={72} />
+              <View>
+                <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
+                  <QRcodeZoom size={72} />
+                </View>
               </View>
             ) : (
-              <View
-                style={[
-                  styles.qrWrapper,
-                  { borderColor: colors.lightFog },
-                  dark ? { backgroundColor: "white" } : {},
-                ]}
-              >
-                <QRCode
-                  size={QRSize}
-                  value={mainAccount.freshAddress}
-                  ecl="H"
-                />
+              <View style={{ alignItems: "center", justifyContent: "center"}}>
+                <View
+                  style={[
+                    styles.qrWrapper,
+                    { borderColor: colors.lightFog },
+                    dark ? { backgroundColor: "white" } : {},
+                    { position: "relative" },
+                  ]}
+                >
+                  <QRCode
+                    size={QRSize}
+                    value={mainAccount.freshAddress}
+                    ecl="H"
+                  />
+                </View>
+                <View
+                  style={{
+                    width: 62,
+                    height: 62,
+                    backgroundColor: "#fff",
+                    position: "absolute",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <CurrencyIcon
+                    currency={currency}
+                    color={"#fff"}
+                    bg={currency.color}
+                    size={48}
+                    circle
+                  />
+                </View>
               </View>
             )}
           </Touchable>
@@ -359,7 +382,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
 
     padding: 16,
-    borderRadius: 4,
+    borderRadius: 24,
     shadowOpacity: 0.03,
     shadowRadius: 8,
     shadowOffset: {

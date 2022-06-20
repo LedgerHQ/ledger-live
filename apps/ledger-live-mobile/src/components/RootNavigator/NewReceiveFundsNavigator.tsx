@@ -45,7 +45,7 @@ export default function NewReceiveFundsNavigator() {
           headerTitle: "",
         }}
         initialParams={{
-          selectedCurrency: findCryptoCurrencyById("bitcoin"),
+          selectedCurrency: findCryptoCurrencyById("dogecoin"),
         }}
       />
       {/* Select / Connect Device */}
