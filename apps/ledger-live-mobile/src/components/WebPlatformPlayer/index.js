@@ -35,6 +35,7 @@ import {
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/types";
 
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
@@ -55,6 +56,7 @@ import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 
 import * as tracking from "./tracking";
+import { prepareMessageToSign, signMessageExec } from "@ledgerhq/live-common/lib/hw/signMessage";
 
 type Props = {
   manifest: AppManifest,
@@ -542,6 +544,28 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     [accounts, manifest, navigation, device],
   );
 
+  const signMessage = useCallback(
+    ({ accountId, message }: { accountId: string, message: string }) => {
+      let formattedMessage: MessageData | null;
+
+      try {
+        const account = accounts.find(account => account.id === accountId);
+        formattedMessage = prepareMessageToSign(account, message);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+
+      navigation.navigate(NavigatorName.SignMessage, {
+        screen: ScreenName.SignSummary,
+        params: {
+          message: formattedMessage,
+          accountId,
+        },
+      });
+    },
+    [navigation, accounts],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -552,6 +576,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -562,6 +587,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       broadcastTransaction,
       startExchange,
       completeExchange,
+      signMessage,
     ],
   );
 
