@@ -58,6 +58,7 @@ const buildStellarTokenAccount = ({
       ...op,
       id: encodeOperationId(id, op.hash, op.type),
       accountId: id,
+      type: op.extra.assetType,
       value: new BigNumber(op.extra.assetAmount) ?? op.value,
     })),
     pendingOperations: [],

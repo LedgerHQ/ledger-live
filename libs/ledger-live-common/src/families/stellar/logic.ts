@@ -186,7 +186,10 @@ export const formatOperation = async (
     value: rawOperation?.asset_code
       ? new BigNumber(transaction.fee_charged)
       : value,
-    type: type,
+    type:
+      rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type)
+        ? "FEES"
+        : type,
     hash: rawOperation.transaction_hash,
     blockHeight: transaction.ledger_attr,
     date: new Date(rawOperation.created_at),
@@ -200,6 +203,7 @@ export const formatOperation = async (
       assetCode: rawOperation?.asset_code,
       assetIssuer: rawOperation?.asset_issuer,
       assetAmount: rawOperation?.asset_code ? value.toString() : undefined,
+      assetType: type,
       memo,
     },
   };
