@@ -10,7 +10,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../const";
 import { accountsSelector } from "../reducers/accounts";
-import AccountCard from "../components/AccountCard";
+import ReceiveAccountCard from "../components/ReceiveAccountCard";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types/account";
 
 type Props = {
@@ -68,7 +68,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   );
 
   const renderItem = ({ item }: { item: AccountLike }) => (
-      <AccountCard
+      <ReceiveAccountCard
         account={item}
         onPress={() => onSelectAccount(item)}
       />
@@ -77,7 +77,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   return (
     <Flex flex={1} color="background.main" px={6} py={3}>
       <Text color="neutral.c100" fontWeight="medium" variant="h4">
-        {t("")}Select account
+        {t("receive.selectAccount.title")}
       </Text>
       <Text
         color="neutral.c80"
@@ -86,7 +86,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         mt={2}
         mb={6}
       >
-        {t("")}Your {selectedCurrency.ticker} will be deposited into this account.
+        {t("receive.selectAccount.subtitle", { currencyTicker: selectedCurrency.ticker})}
       </Text>
       <FlatList
         data={currencyAccounts}
