@@ -17,7 +17,7 @@ export const isValidBody = (body: string | null): boolean => {
     "### 📝 Description",
     "### ❓ Context",
     "### ✅ Checklist",
-    "### 🚀 Expectations to reach",
+    // "### 🚀 Expectations to reach",
   ];
 
   const results = body.split(/\r?\n/).reduce(
