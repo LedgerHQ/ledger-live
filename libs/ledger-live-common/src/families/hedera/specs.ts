@@ -2,7 +2,12 @@ import expect from "expect";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { DeviceModelId } from "@ledgerhq/devices";
-import type { AppSpec } from "../../bot/types";
+import type {
+  AppSpec,
+  TransactionTestInput,
+  TransactionArg,
+  TransactionRes,
+} from "../../bot/types";
 import type { Transaction } from "./types";
 import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
@@ -41,7 +46,11 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send ~50%",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
 
@@ -58,7 +67,11 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ amount }, { recipient }],
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }) => {
+      test: ({
+        account,
+        accountBeforeTransaction,
+        operation,
+      }: TransactionTestInput<Transaction>): void => {
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
@@ -67,7 +80,11 @@ const hedera: AppSpec<Transaction> = {
     {
       name: "Send max",
       maxRun: 2,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
 
@@ -78,7 +95,12 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ recipient }, { useAllAmount: true }],
         };
       },
-      test: ({ accountBeforeTransaction, account, operation, transaction }) => {
+      test: ({
+        accountBeforeTransaction,
+        account,
+        operation,
+        transaction,
+      }: TransactionTestInput<Transaction>): void => {
         const accountBalanceAfterTx = account.balance.toNumber();
 
         // NOTE: operation.fee is the ACTUAL (not estimated) fee cost of the transaction

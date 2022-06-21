@@ -34,20 +34,23 @@ const MemoField = ({
   status,
   t,
 }: Props) => {
-  if (!status) return null;
-
-  const bridge = getAccountBridge(account, parentAccount);
-
-  const [memoLength, setMemoLength] = React.useState(0);
   const MEMO_MAX_LENGTH = 100;
 
+  /**
+   * NOTE: lint doesn't like `React.useState` and `useCallback` being used
+   * conditionally (i.e. below the status check condition). Moved up here to fix that.
+   */
+  const [memoLength, setMemoLength] = React.useState(0);
   const onMemoChange = useCallback(
     (memo: string) => {
+      const bridge = getAccountBridge(account, parentAccount);
       onChangeTransaction(bridge.updateTransaction(transaction, { memo }));
       setMemoLength(memo.length);
     },
-    [bridge, transaction, onChangeTransaction],
+    [account, parentAccount, transaction, onChangeTransaction],
   );
+
+  if (!status) return null;
 
   return (
     <Box flow={1}>
