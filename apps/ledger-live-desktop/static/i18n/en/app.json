@@ -3263,6 +3263,7 @@
             }
           },
           "deviceHowTo2": {
+            "title": "The best way to get you started:",
             "turnOn": {
               "title": "Turn on Nano",
               "descr": "Connect your device to your computer with the USB cable."
@@ -3306,7 +3307,7 @@
           },
           "quizFailure": {
             "title": "You will soon become a pro...",
-            "paragraph": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety.\n\nOnly one quick step left!",
+            "paragraph": "Don't worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety.\n\nOnly one quick step left!",
             "buttons": {
               "next": "Next step",
               "prev": "Previous step"
@@ -3339,7 +3340,7 @@
             },
             "warning": {
               "title": "Do not use a recovery phrase that you have not generated yourself.",
-              "desc": "Your Ledger hardware wallet’s pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
+              "desc": "Your Ledger hardware wallet's pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
               "supportLink": "Contact customer support"
             }
           },
@@ -3721,7 +3722,9 @@
     "termsLabel": "Terms of service",
     "privacyLabel": "Privacy policy",
     "switchLabel": "I have read and accept the Terms of service and Privacy policy",
-    "cta": "Enter Ledger app"
+    "cta": "Enter Ledger app",
+    "termsCheckboxLabel": "I have read and agree with the Terms of use",
+    "privacyCheckboxLabel": "I have read and accepted the Privacy Policy"
   },
   "updatedTerms": {
     "title": "Terms of Use Update",
@@ -3736,6 +3739,89 @@
     },
     "link": "Terms of Use",
     "cta": "Continue"
+  },
+  "v3": {
+    "onboarding": {
+      "screens": {
+        "welcome": {
+          "title": "Welcome to Ledger Live",
+          "description": "Safely manage your crypto from your computer.",
+          "nextButton": "Continue",
+          "noDevice": "No device?",
+          "buyLink": "Buy a Ledger Nano X",
+          "steps": {
+            "0": {
+              "title": "Access your crypto",
+              "desc": "Your crypto assets are stored on the blockchain.<br/>Use your private key to access and manage them"
+            },
+            "1": {
+              "title": "Own your private key",
+              "desc": "Your private key is stored within your Nano<br/>You must be the only one to own it to be in control of your money"
+            },
+            "2": {
+              "title": "Stay offline",
+              "desc": "Your Nano works as a \"cold storage\" wallet<br/>This means that it never exposes your private key online, even when using the app"
+            },
+            "3": {
+              "title": "Validate transactions",
+              "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected<br/>You will validate every crypto transaction with your Nano"
+            },
+            "4": {
+              "title": "Let's set up your nano",
+              "desc": "We'll start by setting up your nano"
+            }
+          }
+        },
+        "selectDevice": {
+          "title": "Select your device",
+          "selectLabel": "Select"
+        },
+        "selectUseCase": {
+          "hasNoRecovery": "First time using your {{deviceName}}?",
+          "hasRecovery": "Already have a recovery phrase?",
+          "options": {
+            "1": {
+              "title": "Setup a new {{deviceName}}",
+              "description": "Let's start and set up your device"
+            },
+            "2": {
+              "title": "Connect your {{deviceName}}",
+              "description": "is your device already set up? Connect it to the app!"
+            },
+            "3": {
+              "title": "Restore your recovery phrase on a new device",
+              "description": "Use an existing recovery phrase to restore your private keys on a new Nano!"
+            }
+          }
+        }
+      },
+      "pedagogy": {
+        "heading": "Basics",
+        "screens": {
+          "accessYourCoins": {
+            "title": "Access your crypto",
+            "description": "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
+          },
+          "ownYourPrivateKey": {
+            "title": "Own your private key",
+            "description": "Your private key is stored within your Nano. You must be the only one to own it to be in control of your money."
+          },
+          "stayOffline": {
+            "title": "Stay offline",
+            "description": "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
+          },
+          "validateTransactions": {
+            "title": "Validate transactions",
+            "description": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
+          },
+          "setUpNanoWallet": {
+            "title": "Let's set up your Nano!",
+            "description": "We'll start by setting up your Nano security.",
+            "CTA": "Let's do this!"
+          }
+        }
+      }
+    }
   },
   "families": {
     "cardano": {
