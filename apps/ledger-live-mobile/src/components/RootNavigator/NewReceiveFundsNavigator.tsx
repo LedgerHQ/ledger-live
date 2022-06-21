@@ -8,7 +8,7 @@ import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
 import ReceiveConnectDevice from "../../screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveSelectCrypto from "../../screens/SelectCrypto";
-import ReceiveSelectAccount from "../../screens/SelectAccount";
+import ReceiveSelectAccount from "../../screens/ReceiveSelectAccount";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
