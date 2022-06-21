@@ -13,6 +13,7 @@ import { pickSiblings } from "../../bot/specs";
 import { isAccountEmpty } from "../../account";
 
 const currency = getCryptoCurrencyById("hedera");
+const memoTestMessage = "This is a test memo.";
 
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
@@ -109,6 +110,30 @@ const hedera: AppSpec<Transaction> = {
           .toNumber();
 
         expect(accountBalanceAfterTx).toBe(amount);
+      },
+    },
+    {
+      name: "Memo",
+      maxRun: 2,
+      transaction: ({
+        account,
+        siblings,
+        bridge,
+      }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+
+        const transaction = bridge.createTransaction(account);
+
+        return {
+          transaction,
+          updates: [{ recipient }, { memo: memoTestMessage }],
+        };
+      },
+      test: ({
+        transaction,
+      }: TransactionTestInput<Transaction>): void => {
+        expect(transaction.memo).toBe(memoTestMessage);
       },
     },
   ],
