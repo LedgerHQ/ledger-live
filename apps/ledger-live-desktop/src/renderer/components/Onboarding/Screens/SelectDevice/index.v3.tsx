@@ -3,10 +3,11 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
-import Text from "~/renderer/components/Text";
+import { Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
+import OnboardingNavHeader from "../../OnboardingNavHeader.v3";
 
 import { OnboardingContext } from "../../index.v3";
 
@@ -49,13 +50,9 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
-      <TopRightContainer>
-        <Button small onClick={() => history.push("/onboarding/welcome")}>
-          {t("common.previous")}
-        </Button>
-      </TopRightContainer>
+      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/welcome")} />
       <DeviceSelector onClick={handleDeviceSelect} />
-      <TitleText variant="h3" fontSize="28px" ff="Alpha|Medium">
+      <TitleText variant="h3" fontSize="28px">
         {t("v3.onboarding.screens.selectDevice.title")}
       </TitleText>
     </SelectDeviceContainer>
