@@ -89,6 +89,7 @@
   },
   "pnpm": {
     "overrides": {
+      "@babel/core": "^7.15.8",
       "@types/react": "^17.0.39",
       "@types/react-redux": "^7.1.24",
       "stellar-base>sodium-native": "^3.2.1",
@@ -102,7 +103,8 @@
       "react": "^17.0.2",
       "react-redux": "^7.2.6",
       "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*"
+      "remove-flow-types-loader>loader-utils": "*",
+      "typescript": "^4.5.5"
     }
   }
 }
