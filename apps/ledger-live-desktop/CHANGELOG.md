@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.44.0-nightly.3
+
+### Patch Changes
+
+- cdcee7ad9: Replace webpack with esbuild for production builds.
+
 ## 2.44.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.2.2-nightly.2
+
+### Patch Changes
+
+- 4f43ac0e5: Add back navigation to NftViewer and fixed style issues on the view
+
 ## 3.2.2-nightly.1
 
 ### Patch Changes
