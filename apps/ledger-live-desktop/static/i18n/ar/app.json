@@ -77,7 +77,7 @@
     "selectAccountNoOption" : "لا يوجد حساب مطابق \"{{accountName}}\"",
     "selectCurrency" : "اختار أصل مشفّر",
     "selectCurrencyNoOption" : "لا يوجد أصل مشفّر \"{{currencyName}}\"",
-    "selectCurrencyEmptyOption" : "لا يوجد أصل مشفر",
+    "selectCurrencyEmptyOption" : "No crypto asset",
     "selectValidatorNoOption" : "لا يوجد مدقق مطابق\"{{accountName}}\"",
     "selectNoResults" : "لم يتم العثور على نتائج مطابقة \"{{query}}\"",
     "sortBy" : "ترتيب النتائج",
@@ -1293,7 +1293,7 @@
       "seeMore" : "See more collections",
       "seeAll" : "See all collections",
       "seeLess" : "رؤية أقل",
-      "placeholder" : "لإضافة NFTs، ببساطة أرسلها إلى عنوان {{currency}} الخاص بك."
+      "placeholder" : "To add NFTs, simply send them to your {{currency}} address."
     },
     "gallery" : {
       "title" : "All NFT",
@@ -1611,7 +1611,7 @@
         "not_supported" : "Requires 3rd-party wallet",
         "addAccount" : "إضافة حساب",
         "addAccountTooltip" : "أضف حساب {{appName}}",
-        "addAccountWarn" : "يرجى الانتظار حتى تنتهي المعالجة",
+        "addAccountWarn" : "Please wait for processing to finish",
         "learnMore" : "تعرّف على المزيد",
         "learnMoreTooltip" : "معرفة المزيد عن {{appName}}",
         "removeTooltip" : "إلغاء تثبيت {{appName}}",
@@ -2323,7 +2323,7 @@
       "nominate" : "ترشيح",
       "setController" : "Change Controller",
       "chill" : "حذف الترشيحات",
-      "totalStake" : "إجمالي التكديس",
+      "totalStake" : "إجمالي الرهن",
       "amount" : "المبلغ المقيد",
       "commission" : "العمولة",
       "active" : "مفعل",
@@ -2570,17 +2570,17 @@
       }
     },
     "delegation" : {
-      "totalStake" : "إجمالي التكديس",
+      "totalStake" : "Total stake",
       "commission" : "العمولة",
       "delegate" : "أضف",
       "listHeader" : "Delegations",
-      "availableBalance" : "قابل للسحب",
+      "availableBalance" : "Withdrawable",
       "active" : "مفعل",
       "activeTooltip" : "Active amount generate rewards",
       "inactiveTooltip" : "Inactive amount does not generate rewards",
       "delegatedInfoTooltip" : "Total amount that is delegated to validators.",
       "withdrawableInfoTooltip" : "Total amount that is withdrawable from delegations.",
-      "withdrawableTitle" : "قابل للسحب",
+      "withdrawableTitle" : "Withdrawable",
       "statusUpdateNotice" : "The status of the delegation will be updated when the transaction is confirmed.",
       "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
       "emptyState" : {
@@ -3705,8 +3705,8 @@
       "bulletPoints" : ["Clarifying what services are available and how they work", "Explaining how fees for Services work", "Improving our notification process to make sure that you are properly informed of any new changes to our Terms of Use"],
       "agreement" : "By clicking on \"Continue\" you agree that you have read and accept the Terms of Use below."
     },
-    "link" : "شروط الاستخدام",
-    "cta" : "متابعة"
+    "link" : "Terms of Use",
+    "cta" : "Continue"
   },
   "families" : {
     "cardano" : {
@@ -3848,7 +3848,7 @@
       "description" : "يرجى الاتصال بدعم ليدجر"
     },
     "CosmosDelegateAllFundsWarning" : {
-      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+      "title" : "Ensure you have enough balance left for future transactions fees"
     },
     "CurrencyNotSupported" : {
       "title" : "{{currencyName}} غير مدعومة",
@@ -4306,7 +4306,7 @@
       "title" : "ليس لديك ترشيحات"
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+      "title" : "تأكد من وجود رصيد كافٍ متبقٍ لتغطية رسوم المعاملات المستقبلية"
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Balance cannot be below {{minimumBalance}}. Send max to empty account."
@@ -4340,10 +4340,10 @@
       "title" : "Address off ed25519 curve"
     },
     "SolanaUseAllAmountStakeWarning" : {
-      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+      "title" : "Ensure you have enough balance left for future transactions fees"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
-      "title" : "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+    "SolanaTxSimulationFailedWhilePendingOp" : {
+      "title" : "Your previous transaction hasn't been processed yet. Please wait a moment then check the transaction history before trying again."
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
@@ -4371,11 +4371,11 @@
   "hedera" : {
     "name" : "hedera",
     "createHederaAccountHelp" : {
-      "text" : "يرجي الرجوع إلى مقالة الدعم هذه لمعرفة",
-      "link" : "كيفية إنشاء حساب Hedera"
+      "text" : "Please refer to this support article for",
+      "link" : "how to create a Hedera account"
     },
     "currentAddress" : {
-      "messageIfVirtual" : "عنوانك {{name}} لا يمكن تأكيده على جهازك Ledger. استخدمه على مسؤوليتك الخاصة."
+      "messageIfVirtual" : "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
   }
 }
