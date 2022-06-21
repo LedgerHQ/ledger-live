@@ -96,7 +96,7 @@ const StepReceiveFunds = ({
     }
     onChangeAddressVerified(null);
     onResetSkip();
-  });
+  }, [device, isAddressVerified, onChangeAddressVerified, onResetSkip, transitionTo]);
 
   return (
     <>
