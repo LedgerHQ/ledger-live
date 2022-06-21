@@ -105,9 +105,6 @@
       "title" : "عذراً، تم تعطيل البلوتوث",
       "description" : "يرجى تفعيل البلوتوث في إعدادات هاتفك. (حالة {{state}})"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Firmware updates are only supported for wired connections"
-    },
     "BtcUnmatchedApp" : {
       "title" : "هذا التطبيق الخطأ",
       "description" : "يرجى فتح تطبيق {{managerAppName}} على جهازك."
@@ -260,12 +257,12 @@
       "description" : "يرجى إعادة المحاولة."
     },
     "DisconnectedDevice" : {
-      "title" : "Device disconnected",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "title" : "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
+      "description" : "يرجى إعادة الاتصال وإعادة المحاولة مرة أخرى."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Device disconnected",
-      "description" : "Ledger Live could not connect to your device. Please try it again."
+      "title" : "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
+      "description" : "يرجى إعادة الاتصال وإعادة المحاولة مرة أخرى."
     },
     "ETHAddressNonEIP" : {
       "title" : "التحقق التلقائي غير متاح: تحقق بعناية من العنوان.",
@@ -597,7 +594,7 @@
       "title" : "ليس لديك ترشيحات"
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
+      "title" : "تأكد من وجود رصيد كافٍ متبقٍ لتغطية رسوم المعاملات المستقبلية"
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Balance cannot be below {{minimumBalance}}. Send max to empty account."
@@ -632,15 +629,6 @@
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo is too long. Max length is {{maxLength}}"
-    },
-    "SolanaUseAllAmountStakeWarning" : {
-      "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
-    },
-    "SolanaTxSimulationFailedWhilePendingOp" : {
-      "title" : "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
-    },
-    "SolanaTxConfirmationTimeout" : {
-      "title" : "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     }
   },
   "bluetooth" : {
@@ -795,40 +783,6 @@
         "title" : "Crypto Markets",
         "description" : "Check crypto prices and market trends right in the app",
         "cta" : "تصفح"
-      }
-    }
-  },
-  "ratings" : {
-    "init" : {
-      "title" : "Enjoying Ledger Live?",
-      "description" : "Whether you like it or feel we could be doing better. We really value your feedback.",
-      "cta" : {
-        "enjoy" : "It's great",
-        "disappointed" : "I am disappointed",
-        "notNow" : "Not now"
-      }
-    },
-    "enjoy" : {
-      "title" : "You're great too",
-      "description" : "We'd be grateful if you could take a moment to write us a review. Your support helps us reach more people and motivates us to release new app features.",
-      "cta" : {
-        "rate" : "Give us 5 stars",
-        "notNow" : "Not now"
-      }
-    },
-    "disappointed" : {
-      "title" : "Help us build a better product for you",
-      "description" : "We want to do better, and your honest feedback helps us know what to improve.",
-      "cta" : {
-        "sendFeedback" : "Send feedback",
-        "notNow" : "Not now"
-      }
-    },
-    "disappointedDone" : {
-      "title" : "Thank you for your feedback",
-      "description" : "If you'd like to give us more feedback or require assistance please email us at ",
-      "cta" : {
-        "done" : "تم"
       }
     }
   },
@@ -1329,7 +1283,7 @@
       "cta" : "أنا مستعد لإجراء المسح الضوئي",
       "bullets" : {
         "0" : {
-          "label" : "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
+          "label" : "On the Desktop app, select <1>Settings &gt; Accounts &gt; Account export</1>."
         },
         "1" : {
           "label" : "قم بإجراء مسح ضوئي لرمز LiveQR بهاتفك."
@@ -1948,7 +1902,7 @@
       "blacklistedTokensDesc" : "يمكنك إخفاء رموز التوكن من خلال الانتقال إلى قائمة الحسابات ثم الضغط لفترة طويلة على رمز التوكن واختيار \"إخفاء رمز التوكن\".",
       "blacklistedTokensModal" : {
         "title" : "إخفاء رمز التوكن",
-        "desc" : "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
+        "desc" : "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings &gt; Accounts</3>.",
         "confirm" : "إخفاء رمز التوكن"
       },
       "hideNFTCollectionCTA" : "Hide collection",
@@ -1974,8 +1928,7 @@
       "privacyPolicy" : "سياسة الخصوصية",
       "privacyPolicyDesc" : "تعرف على البيانات الشخصية التي يتم جمعها ولماذا وكيف يتم استخدامها.",
       "liveReview" : {
-        "title" : "الآراء والتعليقات",
-        "desc" : "Give us your feedback on the app",
+        "title" : "قم بتقييم التطبيق!",
         "ios" : "التقييم على App Store",
         "android" : "مراجعة في سوق جوجل بلاي"
       }
@@ -2245,7 +2198,7 @@
           "fees" : "الحد الأقصى للرسوم",
           "disclaimer" : {
             "title" : "الشروط والأحكام",
-            "desc" : "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
+            "desc" : "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms &amp; Conditions.",
             "tos" : "الشروط والأحكام",
             "accept" : "قبول",
             "reject" : "إغلاق"
@@ -2763,8 +2716,8 @@
     "finalCtaForSwap" : "رجوع إلى المبادلة",
     "synchronizing" : "تتم المزامنة",
     "synchronizingDesc" : "تتم مزامنة حساباتك. قد يستغرق ذلك بعض الوقت...",
-    "noAccountToCreate" : "Could not create <1><0>{{currencyName}}</></> account. Restart the process and sync your accounts.",
-    "cantCreateAccount" : "A new account cannot be added before receiving assets on your <1><0>{{accountName}}</></> account.",
+    "noAccountToCreate" : "Could not create <1><0>{{currencyName}}&lt;/&gt;&lt;/&gt; account. Restart the process and sync your accounts.",
+    "cantCreateAccount" : "A new account cannot be added before receiving assets on your <1><0>{{accountName}}&lt;/&gt;&lt;/&gt; account.",
     "tokens" : {
       "title" : "إضافة رمز توكن",
       "createParentCurrencyAccount" : "أضف حساب {{parrentCurrencyName}}",
@@ -2826,10 +2779,6 @@
     "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
     "useAnotherDevice" : "Use another device",
-    "deviceInBootloader" : {
-      "title" : "Device in Bootloader mode.",
-      "description" : "Click on \"Continue\" to update it."
-    },
     "verifyAddress" : {
       "title" : "تحقق من العنوان على الجهاز",
       "description" : "يرجى التحقق من أن العنوان {{currencyName}} الذي سيتم عرضه في ليدجر لايف يطابق العنوان الموجود على جهاز ليدجر الخاص بك."
@@ -3125,27 +3074,6 @@
   },
   "FirmwareUpdate" : {
     "title" : "قم بتحديث البرنامج الثابت",
-    "preparing" : "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
-    "confirmIdentifierText" : "تحقق من أن المُعرّف على جهازك هو المُعرّف ذاته أدناه. قم بتأكيد وإدخال رمز PINال الخاص بك إذا طُلب.",
-    "pleaseReinstallApps" : "Please reinstall the apps on your device.",
-    "pleaseConfirmUpdate" : "Confirm the update on your device",
-    "finishUpdate" : "Finish the update on your {{deviceName}}",
-    "identifierTitle" : "Identifier:",
-    "pleaseWaitDownload" : "Please wait for the installer to be downloaded",
-    "preparingDevice" : "Preparing your device",
-    "pleaseWaitUpdate" : "يُرجى انتظار الانتهاء من التحديث",
-    "waitForFirmwareUpdate" : "Wait for the firmware update to finish on your device",
-    "unlockDeviceWithPin" : "Unlock your device with your PIN",
-    "reinstallApps" : "Reinstall apps.",
-    "currentVersionNumber" : "Current version",
-    "newVersionNumber" : "New version",
-    "success" : "تم تحديث البرنامج الثابت",
-    "update" : "تحديث",
-    "Notifications" : {
-      "confirmOnDevice" : "We require your confirmation on the device",
-      "preparingUpdate" : "Transferring update, we will notify you when we're done",
-      "installing" : "Installing {{progress}}%"
-    },
     "Installing" : {
       "title" : "{{stepName}} ...",
       "subtitle" : "إذا طُلب منك على جهازك، يرجى إدخال رقم الPIN الخاص بك لإنهاء العملية."
@@ -3155,19 +3083,16 @@
       "flash-mcu" : "جاري تحديث MCU",
       "flash-bootloader" : "جاري تحديث Bootloader",
       "flash" : "قم بإعادة ضبط نسخة نظام التشغيل على جهازك",
-      "preparing" : "Preparing update",
-      "firmware" : "جاري تنزيل التحديث"
+      "firmware" : "جاري تحديث البرنامج الثابت"
     },
-    "newVersion" : "Update {{version}} available for your {{deviceName}}",
+    "newVersion" : "Update Firmware to {{version}} is available",
     "drawerUpdate" : {
       "title" : "Firmware Update",
       "description" : "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
     }
   },
   "FirmwareUpdateReleaseNotes" : {
-    "introTitle" : "Update {{deviceName}} to version {{version}}",
-    "recoveryPhraseBackupInstructions" : "تأكد من كتابة عبارة الاسترداد المكونة من 24 كلمة على ورقة الاسترداد وأنها متاحة، على سبيل الاحتياط.",
-    "confirmRecoveryPhrase" : "لدي عبارة الاسترداد الخاصة بي",
+    "introTitle" : "You are about to install <1><0>firmware version {{version}}.</0></1>",
     "introDescription1" : "يرجى ملاحظة أنه سيتم حذف جميع التطبيقات الموجودة على جهازك. يمكنك إعادة تثبيت تطبيقاتك بعد تحديث البرنامج الثابت.",
     "introDescription2" : "ليس لذلك أي تأثير على الأصول المشفرة الخاصة بك.",
     "action" : "متابعة التحديث"
@@ -3323,9 +3248,6 @@
       "redelegate" : "إعادة التفويض",
       "reward" : "المطالبة بالمكافآت",
       "estYield" : "العائد التقديري",
-      "totalStake" : "إجمالي التكديس",
-      "commission" : "Commission",
-      "iDelegate" : "I delegate",
       "stepperHeader" : {
         "starter" : "اكسب المكافآت",
         "validator" : "تفويض الأصول",
@@ -3692,7 +3614,7 @@
       "chill" : "حذف الترشيحات",
       "setController" : "Change controller",
       "status" : "الوضع الحالي",
-      "totalStake" : "إجمالي التكديس",
+      "totalStake" : "إجمالي الرهن",
       "amount" : "المبلغ المقيد",
       "commission" : "العمولة",
       "active" : "مفعل",
@@ -3898,23 +3820,6 @@
       }
     }
   },
-  "solana" : {
-    "delegation" : {
-      "iDelegate" : "I delegate",
-      "iActivate" : "I activate",
-      "iReactivate" : "I reactivate",
-      "iDeactivate" : "I undelegate",
-      "iWithdraw" : "I withdraw",
-      "totalStake" : "إجمالي التكديس",
-      "commission" : "العمولة",
-      "stakeActivationState" : "الولاية",
-      "delegationEarn" : "You can earn SOL rewards by delegating your assets.",
-      "info" : "كيف يعمل التفويض",
-      "broadcastSuccessTitle" : "تم إرسال العملية",
-      "broadcastSuccessDescription" : "The status of the delegation will be updated when the transaction is confirmed.",
-      "delegatedTo" : "delegated to"
-    }
-  },
   "delegation" : {
     "overdelegated" : "تفويض زائد عن الحد",
     "delegationSendWarnDesc" : "سيتم خصم المبلغ المراد إرساله من حسابك المفوض.",
@@ -4001,7 +3906,6 @@
     },
     "name" : "الاسم",
     "votes" : "الأصوات",
-    "validator" : "المدقق",
     "infoWording" : {
       "freeze" : "يتم قفل رموز التوكن المجمدة لمدة 3 أيام.",
       "unfreeze" : "سيتم خفض نقاطك في {{resource}} وإلغاء جميع أصواتك.",
