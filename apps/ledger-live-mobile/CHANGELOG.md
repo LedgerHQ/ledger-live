@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.11
+
+### Patch Changes
+
+- 46994ebfd: Wording - small typos fixed
+
 ## 3.3.0-next.10
 
 ### Patch Changes
