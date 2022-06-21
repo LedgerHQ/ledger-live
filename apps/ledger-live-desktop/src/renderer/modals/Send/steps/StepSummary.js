@@ -27,7 +27,6 @@ import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import byFamily from "~/renderer/generated/StepSummary";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
 const Circle: ThemedComponent<{}> = styled.div`
@@ -62,13 +61,6 @@ export default class StepSummary extends PureComponent<StepProps> {
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
-
-    // custom family UI for StepSummary
-    const CustomStepSummary = byFamily[mainAccount.currency.family];
-    if (CustomStepSummary) {
-      return <CustomStepSummary {...this.props} />;
-    }
-
     const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
