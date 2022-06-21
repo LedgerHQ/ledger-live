@@ -9,13 +9,13 @@
     "index.js"
   ],
   "exports": {
-    "./react/": {
-      "require": "./react/cjs/",
-      "default": "./react/"
-    },
     "./react": {
       "require": "./react/cjs/index.js",
       "default": "./react/index.js"
+    },
+    "./react/": {
+      "require": "./react/cjs/",
+      "default": "./react/"
     },
     "./native/": "./native/",
     "./package.json": "./package.json"
@@ -28,7 +28,8 @@
   "peerDependencies": {
     "styled-components": "*",
     "styled-system": "*",
-    "@types/react": "*"
+    "@types/react": "*",
+    "react": "*"
   },
   "peerDependenciesMeta": {
     "@types/react": {

@@ -1,4 +1,4 @@
-//  @flow
+// @flow
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";

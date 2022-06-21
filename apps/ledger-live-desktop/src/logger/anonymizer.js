@@ -19,7 +19,7 @@ const basePaths = {
 };
 
 function filepathReplace(path: string) {
-  if (!path) return path;
+  if (!path || path.startsWith("app://")) return path;
   const replaced = Object.keys(basePaths).reduce((path, name) => {
     const p = basePaths[name];
     return path

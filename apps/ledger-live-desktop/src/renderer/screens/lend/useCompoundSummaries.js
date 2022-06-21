@@ -1,5 +1,5 @@
-/* eslint-disable array-callback-return */
 // @flow
+/* eslint-disable array-callback-return */
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { AccountLikeArray, TokenAccount } from "@ledgerhq/live-common/lib/types";

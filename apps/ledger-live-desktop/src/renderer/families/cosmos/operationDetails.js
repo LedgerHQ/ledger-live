@@ -1,5 +1,5 @@
-/* eslint-disable consistent-return */
 // @flow
+/* eslint-disable consistent-return */
 import { BigNumber } from "bignumber.js";
 import React, { useMemo } from "react";
 import type { ComponentType } from "react";

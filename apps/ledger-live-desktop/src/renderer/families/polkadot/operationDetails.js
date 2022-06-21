@@ -1,5 +1,5 @@
-/* eslint-disable consistent-return */
 // @flow
+/* eslint-disable consistent-return */
 import startCase from "lodash/startCase";
 import React, { useMemo } from "react";
 
