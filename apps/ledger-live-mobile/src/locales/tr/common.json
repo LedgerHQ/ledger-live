@@ -1591,7 +1591,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "İşlem detayları",
+    "title" : "İşlem bilgileri",
     "account" : "Hesap",
     "date" : "Tarih",
     "confirmed" : "Onaylandı",
@@ -1657,7 +1657,7 @@
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
-    "noMoreOperations" : "Başka İşlem Yok"
+    "noMoreTransactions" : "Başka işlem yok"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tüm seçimi kaldır",
@@ -1698,7 +1698,7 @@
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
-    "lastOperations" : "Son işlemler",
+    "lastTransactions" : "Son işlemler",
     "emptyState" : {
       "title" : "Henüz kripto varlığınız yok mu?",
       "desc" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz",
