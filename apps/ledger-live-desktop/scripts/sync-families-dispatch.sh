@@ -18,8 +18,7 @@ TokenList.js \
 AccountHeaderManageActions.js \
 StepReceiveFunds.js \
 NoAssociatedAccounts.js \
-StepAmount.js \
-StepSummary.js
+StepAmount.js
 "
 
 cd ../src/renderer
