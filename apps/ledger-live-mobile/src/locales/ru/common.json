@@ -872,7 +872,7 @@
         "desc" : "Получайте пассивный доход и приумножайте криптоактивы"
       }
     },
-    "comingSoon" : "скоро",
+    "comingSoon" : "Уже скоро",
     "mostPopular" : "Самые популярные"
   },
   "onboarding" : {
@@ -1591,7 +1591,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Сведения об операции",
+    "title" : "Детали транзакции",
     "account" : "Счёт",
     "date" : "Дата",
     "confirmed" : "Подтверждена",
@@ -1657,7 +1657,7 @@
   },
   "operationList" : {
     "noOperations" : "Нет операций",
-    "noMoreOperations" : "Других операций нет"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Отменить все",
@@ -1698,7 +1698,7 @@
     "sell" : "Продать",
     "swap" : "Обменять",
     "manage" : "Управление",
-    "lastOperations" : "Последние операции",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "Ещё нет криптоактивов?",
       "desc" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать",
@@ -3954,7 +3954,7 @@
         "1" : "Управлять активами можно в любое время",
         "2" : "Безопасно делегируйте средства на устройстве Ledger"
       },
-      "cta" : "Делегировать за вознаграждения"
+      "cta" : "Делегировать и получить вознаграждение"
     },
     "broadcastSuccessTitle" : {
       "delegate" : "Средства делегированы",
@@ -4163,7 +4163,7 @@
     "catalog" : {
       "title" : "Каталог приложений",
       "branch" : {
-        "soon" : "скоро",
+        "soon" : "уже скоро",
         "experimental" : "экспериментальная функция",
         "debug" : "отладка"
       },
