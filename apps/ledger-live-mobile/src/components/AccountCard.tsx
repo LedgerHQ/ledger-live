@@ -9,21 +9,13 @@ import {
 } from "@ledgerhq/live-common/lib/account/helpers";
 import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import Card, { Props as CardProps } from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-
-const Tag = ({ children, ...props }: { children: string }) => (
-  <Flex p={2} bg={"neutral.c30"} borderRadius={2} {...props}>
-    <Text variant="tiny" fontWeight="medium" color="neutral.c80" uppercase>
-      {children}
-    </Text>
-  </Flex>
-);
 
 export type Props = CardProps & {
   account: Account;
@@ -62,8 +54,7 @@ const AccountCard = ({
       >
         <CurrencyIcon
           currency={currency}
-          color={disabled ? colors.neutral.c40 : colors.constant.white}
-          bg={currency.color}
+          color={disabled ? colors.neutral.c40 : undefined}
           size={32}
           circle
         />
@@ -76,7 +67,7 @@ const AccountCard = ({
         >
           <Flex minWidth={20} flexShrink={1}>
             <Text
-              variant="body"
+              variant="paragraph"
               fontWeight="semiBold"
               numberOfLines={1}
               color={disabled ? "neutral.c50" : "neutral.c100"}
@@ -89,7 +80,7 @@ const AccountCard = ({
           {tag && <Tag marginLeft={3}>{tag}</Tag>}
         </Flex>
         <Flex marginLeft={3} alignItems="flex-end">
-          <Text variant="body" fontWeight="medium" color="neutral.c70">
+          <Text variant="small" fontWeight="medium" color="neutral.c70">
             <CurrencyUnitValue
               showCode
               unit={unit}
