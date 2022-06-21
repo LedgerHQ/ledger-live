@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.10
+
+### Patch Changes
+
+- 3d1ab8511: Behavior fixed when clicking on the "My Ledger" button on the tab bar when on read only mode
+
 ## 3.3.0-next.9
 
 ### Patch Changes
