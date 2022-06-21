@@ -45,10 +45,10 @@ const AccountCard = ({
   const { colors } = useTheme();
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
-  const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
+  const tag = getTagDerivationMode(
+    currency as CryptoCurrency,
+    account.derivationMode,
+  );
 
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress}>

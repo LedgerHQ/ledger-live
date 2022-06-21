@@ -1839,6 +1839,10 @@
   "receive": {
     "title": "Receive",
     "successTitle": "Address shared securely",
+    "selectAccount": {
+      "title": "Select account",
+      "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+    },
     "steps": {
       "chooseAccount": {
         "title": "Account",
