@@ -1,39 +1,47 @@
 // @flow
 
-import React, { useCallback } from "react";
-import useTheme from "~/renderer/hooks/useTheme";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import { Trans } from "react-i18next";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import Ellipsis from "~/renderer/components/Ellipsis";
 import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
-import { swapAcceptedProvidersSelector } from "~/renderer/reducers/settings";
-import { swapAcceptProvider } from "~/renderer/actions/settings";
-import { useDispatch, useSelector } from "react-redux";
-import FormattedVal from "~/renderer/components/FormattedVal";
-import ArrowSeparator from "~/renderer/components/ArrowSeparator";
-import CheckBox from "~/renderer/components/CheckBox";
 import { SwapGenericAPIError } from "@ledgerhq/live-common/lib/errors";
+import type { Exchange, ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import Button from "~/renderer/components/Button";
-import IconWallet from "~/renderer/icons/Wallet";
-import IconArrowDown from "~/renderer/icons/ArrowDown";
+import React, { useCallback } from "react";
+import { Trans } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { colors } from "~/renderer/styles/theme";
-import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import IconExternalLink from "~/renderer/icons/ExternalLink";
-import FakeLink from "~/renderer/components/FakeLink";
-import { CountdownTimerWrapper } from "~/renderer/screens/exchange/swap/Form/Footer";
+import { swapAcceptProvider } from "~/renderer/actions/settings";
+import ArrowSeparator from "~/renderer/components/ArrowSeparator";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
+import CheckBox from "~/renderer/components/CheckBox";
 import CountdownTimer from "~/renderer/components/CountdownTimer";
-import type { ExchangeRate, Exchange } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import Ellipsis from "~/renderer/components/Ellipsis";
+import FakeLink from "~/renderer/components/FakeLink";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import Text from "~/renderer/components/Text";
+import useTheme from "~/renderer/hooks/useTheme";
+import IconArrowDown from "~/renderer/icons/ArrowDown";
+import IconExternalLink from "~/renderer/icons/ExternalLink";
 import IconLock from "~/renderer/icons/Lock";
 import IconLockOpen from "~/renderer/icons/LockOpen";
+import IconWallet from "~/renderer/icons/Wallet";
+import { openURL } from "~/renderer/linking";
+import { swapAcceptedProvidersSelector } from "~/renderer/reducers/settings";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { colors } from "~/renderer/styles/theme";
+
+const CountdownTimerWrapper: ThemedComponent<{}> = styled(Box)`
+  align-items: center;
+  align-self: center;
+  justify-content: flex-start;
+  margin-right: 8px;
+  flex: 1;
+`;
 
 const IconWrapper = styled(Box)`
   background: ${colors.pillActiveBackground};
