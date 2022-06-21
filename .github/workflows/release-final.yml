@@ -1,0 +1,103 @@
+name: "[Release] Publish packages and apps"
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - \[Release\] Prepare for releasing
+    types:
+      - "completed"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+          registry-url: "https://registry.npmjs.org"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: install dependencies
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+      - name: build libs
+        run: pnpm run build:libs
+      - name: publish release
+        run: pnpm changeset publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: check if desktop versions are different
+        id: desktop-changed
+        run: |
+          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-desktop/package.json | grep '"version": "' | wc -l)"
+      - name: check if mobile versions are different
+        id: mobile-changed
+        run: |
+          echo "::set-output name=status::$(git diff HEAD HEAD~1 ./apps/ledger-live-mobile/package.json | grep '"version": "' | wc -l)"
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: tag desktop
+        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        run: |
+          git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
+      - name: tag mobile
+        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        run: |
+          git tag @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }}
+      - name: push changes
+        run: |
+          git push origin main --follow-tags
+      - uses: actions/github-script@v6
+        name: trigger release build for desktop
+        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "release-desktop.yml",
+              inputs: {
+                branch: "main"
+              }
+            });
+      - uses: actions/github-script@v6
+        name: trigger release build for mobile
+        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "release-mobile.yml",
+              inputs: {
+                ref: "main"
+              }
+            });

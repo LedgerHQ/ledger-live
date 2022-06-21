@@ -57,6 +57,7 @@ function readPackage(pkg, context) {
           "source-map-support": "*",
           typescript: "^4",
           documentation: "13.2.4",
+          rimraf: "*",
         },
         { silent: true }
       ),

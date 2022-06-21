@@ -201,7 +201,9 @@ const INITIAL_STATE: SettingsState = {
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
 
-export const supportedCountervalues: { value: string, label: string, currency: Currency }[] = [
+export type SupportedCoutervaluesData = { value: string, label: string, currency: Currency };
+
+export const supportedCountervalues: SupportedCoutervaluesData[] = [
   ...listSupportedFiats(),
   ...possibleIntermediaries,
 ]

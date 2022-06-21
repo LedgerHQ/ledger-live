@@ -227,7 +227,6 @@ function MarketInfo({
             <LoadingLabel loading={loading}>
               {counterValueFormatter({
                 value: circulatingSupply,
-                currency: counterCurrency,
                 locale,
                 shorten: true,
               })}

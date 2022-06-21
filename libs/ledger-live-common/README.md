@@ -70,3 +70,15 @@ The stack is pretty standard for a ES6 and FlowType library. The notable depende
   - End-to-end tests of the `ledger-live` command
   - Bridge dataset tests
   - Providing mocks to implement UI tests
+
+---
+
+## Are you adding the support of a blockchain to Ledger Live?
+
+This part of the repository is where you will add most of your code.
+
+For a smooth and quick integration:
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
+- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+
+---

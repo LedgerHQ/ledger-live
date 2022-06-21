@@ -5,8 +5,13 @@ import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity, Image } from "react-native";
 import styled, { useTheme } from "styled-components/native";
+import { useDispatch } from "react-redux";
 import Search from "../../components/Search";
 import { supportedCountervalues } from "../../reducers/settings";
+import {
+  setMarketCounterCurrency,
+  setMarketRequestParams,
+} from "../../actions/settings";
 
 const RenderEmptyList = ({
   theme,
@@ -53,6 +58,7 @@ const CheckIconContainer = styled(Flex).attrs({
 
 function MarketCurrencySelect({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { colors } = useTheme();
   const {
     counterCurrency,
@@ -78,6 +84,7 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
 
   const onSelectCurrency = useCallback(
     (value: string) => {
+      dispatch(setMarketCounterCurrency(value));
       setCounterCurrency(value);
       navigation.goBack();
     },

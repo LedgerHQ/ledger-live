@@ -233,6 +233,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         )}
         <SendRowsFee
           setTransaction={setTransaction}
+          status={status}
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}

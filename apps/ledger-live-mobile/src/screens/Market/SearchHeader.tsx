@@ -23,11 +23,14 @@ function SearchHeader({ search, refresh }: Props) {
         search: debouncedSearch ? debouncedSearch.trim() : "",
         starred: [],
         liveCompatible: false,
-        top100: false,
         limit: 20,
       });
     }
-  }, [debouncedSearch, refresh, search]);
+  }, [debouncedSearch, refresh]);
+
+  useEffect(() => {
+    setInputSearch(search)
+  }, [setInputSearch, search]);
 
   return (
     <SearchInput

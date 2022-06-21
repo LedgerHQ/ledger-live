@@ -5,6 +5,7 @@ import type { Transaction } from "./types";
 import { calculateAmount } from "./logic";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import createTransaction from "./js-createTransaction";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -20,6 +21,7 @@ const estimateMaxSpendable = async ({
   parentAccount: Account | null | undefined;
   transaction: Transaction | null | undefined;
 }): Promise<BigNumber> => {
+  await loadPolkadotCrypto();
   const a = getMainAccount(account, parentAccount);
   const t = { ...createTransaction(), ...transaction, useAllAmount: true };
   const fees = await getEstimatedFees({
