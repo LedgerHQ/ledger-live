@@ -2161,6 +2161,10 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
       "taprootWarning": "Make sure the sender supports taproot",
+      "selectAccount": {
+        "title": "Select account",
+        "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+      },
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
