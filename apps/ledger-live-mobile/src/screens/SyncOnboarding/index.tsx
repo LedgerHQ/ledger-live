@@ -1,14 +1,30 @@
 import React, { useEffect, useState, useCallback, ReactNode } from "react";
-import { Button, Flex, StepList, Text } from "@ledgerhq/native-ui";
+import {
+  BottomDrawer,
+  Button,
+  Flex,
+  ScrollContainer,
+  ScrollContainerHeader,
+  StepList,
+  Text,
+} from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
-import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
+import {
+  CloseMedium,
+  ExternalLinkMedium,
+  InfoMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { useTheme } from "styled-components/native";
 
 import { ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Question from "../../icons/Question";
+import HelpDrawer from "./HelpDrawer";
+import DesyncDrawer from "./DesyncDrawer";
 
 type Step = {
   status: "completed" | "active" | "inactive";
@@ -28,9 +44,12 @@ const defaultOnboardingSteps: Step[] = [
     deviceStates: [OnboardingStep.Pin],
     title: "Set your PIN",
     renderBody: () => (
-      <Text>
-        {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-      </Text>
+      <Flex>
+        <Text mb={6}>{`Your PIN can be 4 to 8 digits long.`}</Text>
+        <Text>
+          {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+        </Text>
+      </Flex>
     ),
   },
   {
@@ -53,7 +72,7 @@ const defaultOnboardingSteps: Step[] = [
     deviceStates: [],
     title: "Software check",
     renderBody: () => (
-      <Text>{`We'll verify whether your Nano is genuine. This should be quick and easy!`}</Text>
+      <Text>{`We'll verify whether your Naimport { SafeAreaView } from 'react-native-safe-area-context';no is genuine. This should be quick and easy!`}</Text>
     ),
   },
   {
@@ -69,9 +88,14 @@ type Props = StackScreenProps<
 >;
 
 const pollingPeriodMs = 1000;
+const pollingTimeoutMs = 5000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { colors } = useTheme();
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [stopPolling, setStopPolling] = useState<boolean>(false);
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
   const [device, setDevice] = useState<Device | null>(null);
   const [onboardingSteps, setOnboardingSteps] = useState(
     defaultOnboardingSteps,
@@ -79,9 +103,14 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   const { pairedDevice } = route.params;
 
-  const { onboardingState } = useOnboardingStatePolling({
+  const {
+    onboardingState,
+    allowedError,
+    fatalError,
+  } = useOnboardingStatePolling({
     device,
     pollingPeriodMs,
+    stopPolling,
   });
 
   // Triggers the pairing if no pairedDevice was given
@@ -126,9 +155,18 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     }
   }, [onboardingState]);
 
+  const handleClose = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
   const handleOnPaired = useCallback((pairedDevice: Device) => {
     setDevice(pairedDevice);
   }, []);
+
+  const handleTimerRunsOut = useCallback(() => {
+    console.log("Timeout done");
+    setDesyncDrawerOpen(true);
+  }, [setDesyncDrawerOpen]);
 
   // Triggered when a new paired device is passed when navigating to this screen
   // It avoids having a callback function passed to the PairDevices screen
@@ -138,20 +176,68 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     }
   }, [pairedDevice, handleOnPaired]);
 
+  useEffect(() => {
+    console.log("Fatal error");
+    setDesyncDrawerOpen(true);
+  }, [fatalError]);
+
+  useEffect(() => {
+    if (allowedError && !timer) {
+      console.log("Set timeout");
+      setTimer(setTimeout(handleTimerRunsOut, pollingTimeoutMs));
+    } else if (!allowedError && timer) {
+      console.log("Clear timeout");
+      clearTimeout(timer);
+    }
+  }, [allowedError, timer]);
+
+  useEffect(() => {
+    if (isDesyncDrawerOpen) {
+      console.log("Stopped polling");
+      setStopPolling(false);
+    }
+  }, [isDesyncDrawerOpen]);
+
   return (
-    <Flex height="100%" px={7} py={8} bg="background.main">
-      <Flex flexDirection="row" justifyContent="space-between" mt={6} mb={8}>
-        <Button type="main" outline>
-          EN
-        </Button>
-        <Button Icon={CloseMedium} />
-      </Flex>
-      <Text variant="h4">Setup Manual</Text>
-      <Text mb={8} variant="body">
-        Continue setting up on your Nano. Check back here for tips and
-        information.
-      </Text>
-      <StepList items={onboardingSteps} />
-    </Flex>
+    <SafeAreaView>
+      <HelpDrawer
+        isOpen={isHelpDrawerOpen}
+        onClose={() => setHelpDrawerOpen(false)}
+      />
+      <DesyncDrawer
+        isOpen={isDesyncDrawerOpen}
+        onClose={() => setDesyncDrawerOpen(false)}
+      />
+      <ScrollContainer>
+        <ScrollContainerHeader>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            pt={7}
+            px={7}
+          >
+            <Button type="main" outline>
+              EN
+            </Button>
+            <Button type="default" Icon={CloseMedium} onPress={handleClose} />
+          </Flex>
+        </ScrollContainerHeader>
+        <Flex px={7} pt={7}>
+          <Flex flexDirection="row" alignItems="center">
+            <Text variant="h4">Setup Manual</Text>
+            <Button
+              ml={2}
+              Icon={Question}
+              onPress={() => setHelpDrawerOpen(true)}
+            />
+          </Flex>
+          <Text variant="body">Continue setting up on your Nano.</Text>
+          <Text mb={8} variant="body">
+            Check back here for tips and information.
+          </Text>
+          <StepList items={onboardingSteps} />
+        </Flex>
+      </ScrollContainer>
+    </SafeAreaView>
   );
 };
