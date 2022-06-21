@@ -47,6 +47,8 @@
     "camelcase": "^6.2.1",
     "esbuild": "^0.13.15",
     "glob": "^7.2.0",
+    "react": "^17.0.2",
+    "react-native": "^0.65.1",
     "react-native-svg": "^12.1.1",
     "rimraf": "^3.0.2",
     "tiny-glob": "^0.2.9",
