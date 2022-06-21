@@ -877,7 +877,7 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Le wallet de cryptomonnaies et NFT le plus sécurisé",
+      "title" : "Le wallet de cryptos et NFT le plus sécurisé",
       "subtitle" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
       "start" : "Commencer",
       "noDevice" : "Pas encore de wallet Ledger ?",
@@ -896,7 +896,7 @@
         "subtitle" : "Nous vous guiderons à chaque étape pour sécuriser vos cryptos et vos NFT."
       },
       "buyNano" : {
-        "title" : "Achetez un Ledger Nano X",
+        "title" : "Acheter un Ledger Nano X",
         "subtitle" : "Vos clés vers le monde du Web3 : pilotez vos actifs en toute liberté."
       },
       "discoverLedger" : {
@@ -948,7 +948,7 @@
       "devicePairing" : {
         "title" : "Vous avez déjà une phrase de récupération ?",
         "label" : "Couplage de l’appareil",
-        "subTitle" : "Connecter le Nano",
+        "subTitle" : "Connecter votre Nano",
         "desc" : "Si votre Nano est déjà configuré, connectez-le à l’app."
       },
       "desktopSync" : {
@@ -1290,7 +1290,7 @@
             "label" : "<1>{{Os}}</1> : dans les paramètres de votre téléphone, assurez-vous que Ledger Live a l’autorisation d’accéder à votre localisation. Ledger Live n’utilise jamais vos informations de localisation : c’est nécessaire pour accéder au Bluetooth sur {{Os}}."
           },
           "2" : {
-            "label" : "En cas de problème de couplage Bluetooth, jetez un œil à cet article",
+            "label" : "En cas de problème de couplage Bluetooth, jetez un œil à cet article :",
             "link" : "Résoudre les problèmes de connexion"
           }
         }
@@ -1591,7 +1591,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Détails de l’opération",
+    "title" : "Détails de la transaction",
     "account" : "Compte",
     "date" : "Date",
     "confirmed" : "Confirmée",
@@ -1657,7 +1657,7 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
-    "noMoreOperations" : "Aucune autre opération"
+    "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tout désélectionner",
@@ -1698,7 +1698,7 @@
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
-    "lastOperations" : "Dernières opérations",
+    "lastTransactions" : "Dernières transactions",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
       "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
@@ -2386,7 +2386,7 @@
         "1" : {
           "label" : "Étape 1/3",
           "title" : "Approuver un compte permet au protocole de traiter vos futurs prêts.",
-          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d'un compte permet au protocole de traiter les futurs prêts."
+          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d’un compte permet au protocole de traiter les futurs prêts."
         },
         "2" : {
           "label" : "Étape 2/3",
@@ -2435,7 +2435,7 @@
           "noEnabledAccounts" : "Vous devez approuver un compte avant de pouvoir prêter des actifs."
         },
         "enable" : {
-          "summary" : "<0>J’autorise le contrat intelligent </0><1>{{contractName}}</1><0> à accéder à mon compte </0><1>{{accountName}}</1><0> pour un montant de</0><1>{{amount}}</1>.",
+          "summary" : "<0>J’autorise le contrat intelligent </0><1>{{contractName}}</1><0> à accéder à mon compte </0><1>{{accountName}}</1><0> pour un montant </0><1>{{amount}}</1>.",
           "limit" : "limité : {{amount}}",
           "noLimit" : "{{assetName}} sans limite",
           "contractName" : "Compound {{currencyName}}",
@@ -3776,7 +3776,7 @@
       "rewardDestination" : {
         "label" : "Destination des récompenses",
         "stash" : "Solde disponible",
-        "stashDescription" : "Vos récompenses ont été ajoutées à votre solde disponible.",
+        "stashDescription" : "Vos récompenses sont ajoutées à votre solde disponible.",
         "staked" : "Solde lié",
         "stakedDescription" : "Les récompenses sont créditées à votre solde lié.",
         "optionTitle" : "Note",
@@ -4049,8 +4049,8 @@
       "selectCurrency" : "Sélectionner une devise",
       "selectAccount" : "Sélectionner un compte",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via notre partenaire",
-      "coinifyTitle" : "Acheter des cryptos via notre partenaire",
+      "title" : "Acheter des cryptos via nos partenaires",
+      "coinifyTitle" : "Acheter des cryptos via nos partenaires",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
