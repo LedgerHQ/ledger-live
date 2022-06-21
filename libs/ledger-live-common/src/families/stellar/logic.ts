@@ -186,9 +186,11 @@ export const formatOperation = async (
     value: rawOperation?.asset_code
       ? new BigNumber(transaction.fee_charged)
       : value,
+    // Using type NONE to hide asset operations from the main account (show them
+    // only on sub-account)
     type:
       rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type)
-        ? "FEES"
+        ? "NONE"
         : type,
     hash: rawOperation.transaction_hash,
     blockHeight: transaction.ledger_attr,
@@ -203,7 +205,7 @@ export const formatOperation = async (
       assetCode: rawOperation?.asset_code,
       assetIssuer: rawOperation?.asset_issuer,
       assetAmount: rawOperation?.asset_code ? value.toString() : undefined,
-      assetType: type,
+      ledgerOpType: type,
       memo,
     },
   };
