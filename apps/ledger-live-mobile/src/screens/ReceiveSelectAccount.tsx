@@ -77,7 +77,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   return (
     <Flex flex={1} color="background.main" px={6} py={3}>
       <Text color="neutral.c100" fontWeight="medium" variant="h4">
-        {t("receive.selectAccount.title")}
+        {t("transfer.receive.selectAccount.title")}
       </Text>
       <Text
         color="neutral.c80"
@@ -86,7 +86,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         mt={2}
         mb={6}
       >
-        {t("receive.selectAccount.subtitle", { currencyTicker: selectedCurrency.ticker})}
+        {t("transfer.receive.selectAccount.subtitle", { currencyTicker: selectedCurrency.ticker})}
       </Text>
       <FlatList
         data={currencyAccounts}
