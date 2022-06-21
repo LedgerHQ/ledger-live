@@ -4342,7 +4342,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
