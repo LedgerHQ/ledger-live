@@ -93,8 +93,9 @@ const getTransactionStatus = async (
       amount: minTransactionAmount.div(1e6).toString(),
     });
   } else if (
-    (tokenAccount && totalSpent.gt(tokenAccount.balance)) ||
-    totalSpent.gt(a.balance)
+    tokenAccount
+      ? totalSpent.gt(tokenAccount.balance)
+      : totalSpent.gt(a.balance)
   ) {
     errors.amount = new NotEnoughBalance();
   } else {
