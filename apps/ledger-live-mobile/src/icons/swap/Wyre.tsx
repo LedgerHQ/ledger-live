@@ -1,9 +1,7 @@
-// @flow
-
 import React from "react";
 import Svg, { G, Defs, Path, Rect, ClipPath } from "react-native-svg";
 
-const Wyre = ({ size }: { size: number }) => (
+export function Wyre({ size }: { size: number }) {
   <Svg viewBox="0 0 32 32" height={size} width={size}>
     <G clipPath="url(#clip0)">
       <Path
@@ -32,7 +30,5 @@ const Wyre = ({ size }: { size: number }) => (
         <Rect x="0.833496" width="32" height="32" rx="8" fill="white" />
       </ClipPath>
     </Defs>
-  </Svg>
-);
-
-export default Wyre;
+  </Svg>;
+}

@@ -52,7 +52,7 @@ describe("usePollKYCStatus", () => {
     expect(mockedGetKYCStatus).toHaveBeenCalledTimes(1);
     expect(mockedGetKYCStatus).toHaveBeenCalledWith(
       input.provider,
-      input.kyc.id
+      input.kyc?.id
     );
     expect(onChange).toHaveBeenCalledTimes(0);
   });

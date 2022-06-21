@@ -72,11 +72,6 @@ export default function RatesSection({
   accounts,
 }: Props) {
   const { colors } = useTheme();
-  console.log(
-    provider,
-    providers.map(p => p.provider),
-  );
-
   const {
     from: { account: fromAccount },
     to: { account: toAccount, currency: toCurrency },

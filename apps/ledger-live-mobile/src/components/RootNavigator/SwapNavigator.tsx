@@ -7,8 +7,7 @@ import { ScreenName } from "../../const";
 import SwapError from "../../screens/Swap/Error";
 import SwapKYC from "../../screens/Swap/KYC";
 import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
-import Swap from "../../screens/Swap/SwapEntry";
-import SwapFormNavigator from "./SwapFormNavigator";
+import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import SwapPendingOperation from "../../screens/Swap/PendingOperation";
@@ -26,20 +25,13 @@ export default function SwapNavigator() {
       screenOptions={{ ...stackNavigationConfig, headerShown: false }}
     >
       <Stack.Screen
-        name={ScreenName.Swap}
-        component={Swap}
-        options={{
-          title: t("transfer.swap.landing.header"),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.SwapFormOrHistory}
+        name={"Swap"}
         component={SwapFormNavigator}
         options={{
           title: t("transfer.swap.form.tab"),
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={ScreenName.SwapKYC}
         component={SwapKYC}
         options={{
@@ -72,9 +64,13 @@ export default function SwapNavigator() {
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
           headerLeft: null,
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }
 
-const Stack = createStackNavigator();
+type SwapNavParamList = {
+  Swap: undefined;
+};
+
+const Stack = createStackNavigator<SwapNavParamList>();

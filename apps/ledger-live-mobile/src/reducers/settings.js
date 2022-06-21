@@ -20,6 +20,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { KYCStatus } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 import { SLIDES } from "../components/Carousel/shared";
@@ -95,10 +96,7 @@ export type SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
     KYC: {
-      [string]: {
-        id: string,
-        status: string,
-      },
+      [key: string]: KYCStatus,
     },
   },
   lastSeenDevice: ?DeviceModelInfo,
@@ -583,7 +581,7 @@ export const swapSelectableCurrenciesSelector = (state: Object) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 
-export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
+export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;

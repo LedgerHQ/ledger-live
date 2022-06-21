@@ -4,7 +4,7 @@ import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
 import { Account, SubAccount, TokenAccount } from "../../../types";
-import type { CheckQuoteStatus, ExchangeRate } from "../types";
+import type { CheckQuoteStatus, ExchangeRate, ValidKYCStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {
@@ -14,12 +14,10 @@ export const KYC_STATUS = {
   upgradeRequired: "upgradeRequired",
 };
 
-export type KYCStatus = keyof typeof KYC_STATUS;
-
 export const pickExchangeRate = (
   exchangeRates: ExchangeRate[],
-  exchangeRate: ExchangeRate | null | undefined,
-  setExchangeRate: (rate?: ExchangeRate | null) => void
+  exchangeRate: ExchangeRate | undefined,
+  setExchangeRate: (rate?: ExchangeRate) => void
 ): void => {
   const hasRates = exchangeRates?.length > 0;
   // If the user picked an exchange rate before, try to select the new one that matches.
@@ -33,7 +31,7 @@ export const pickExchangeRate = (
           provider === exchangeRate.provider
       )) ||
       exchangeRates[0]);
-  setExchangeRate(rate || null);
+  setExchangeRate(rate || undefined);
 };
 
 export type AccountTuple = {
@@ -97,20 +95,20 @@ export const isJwtExpired = (jwtToken: string): boolean => {
 // Note: used in UI (LLD / LLM)
 export const getKYCStatusFromCheckQuoteStatus = (
   checkQuoteStatus: CheckQuoteStatus
-): KYCStatus | null => {
+): ValidKYCStatus | null => {
   switch (checkQuoteStatus.codeName) {
     case "KYC_PENDING":
-      return KYC_STATUS.pending as KYCStatus;
+      return KYC_STATUS.pending as ValidKYCStatus;
 
     case "KYC_FAILED":
-      return KYC_STATUS.rejected as KYCStatus;
+      return KYC_STATUS.rejected as ValidKYCStatus;
 
     case "KYC_UNDEFINED":
     case "KYC_UPGRADE_REQUIRED":
-      return KYC_STATUS.upgradeRequired as KYCStatus;
+      return KYC_STATUS.upgradeRequired as ValidKYCStatus;
 
     case "RATE_VALID":
-      return KYC_STATUS.approved as KYCStatus;
+      return KYC_STATUS.approved as ValidKYCStatus;
 
     // FIXME: should handle all other non KYC related error cases somewhere
     default:
@@ -174,10 +172,10 @@ export const shouldShowLoginBanner = ({
 // Note: used in UI (LLD / LLM)
 export const shouldShowKYCBanner = ({
   provider,
-  kycStatus,
+  validKycStatus,
 }: {
   provider?: string;
-  kycStatus: KYCStatus;
+  validKycStatus: ValidKYCStatus;
 }): boolean => {
   if (!provider) {
     return false;
@@ -189,7 +187,7 @@ export const shouldShowKYCBanner = ({
     return false;
   }
 
-  return kycStatus !== KYC_STATUS.approved;
+  return validKycStatus !== KYC_STATUS.approved;
 };
 
 export const getProviderName = (provider: string): string => {

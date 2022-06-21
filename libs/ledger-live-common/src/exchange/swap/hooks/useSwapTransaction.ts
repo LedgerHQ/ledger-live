@@ -3,13 +3,12 @@ import { BigNumber } from "bignumber.js";
 import useBridgeTransaction, {
   Result as UseBridgeTransactionReturnType,
 } from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  TokenAccount,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../../../types";
-import { ExchangeRate } from "../types";
+import type { Account } from "../../../types";
+import {
+  ExchangeRate,
+  SwapSelectorStateType,
+  OnNoRatesCallback,
+} from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import {
@@ -19,13 +18,6 @@ import {
   useToState,
 } from ".";
 import { useReverseAccounts } from "./useReverseAccounts";
-
-export type SwapSelectorStateType = {
-  currency: null | undefined | TokenCurrency | CryptoCurrency;
-  account: null | undefined | Account | TokenAccount;
-  parentAccount: null | undefined | Account;
-  amount: null | undefined | BigNumber;
-};
 export type SwapDataType = {
   from: SwapSelectorStateType;
   to: SwapSelectorStateType;
@@ -57,14 +49,7 @@ export type SwapTransactionType = UseBridgeTransactionReturnType & {
   reverseSwap: () => void;
   fromAmountError?: Error;
 };
-
-export type OnNoRatesCallback = (arg: {
-  fromState: SwapSelectorStateType;
-  toState: SwapSelectorStateType;
-}) => void;
-export type SetExchangeRateCallback = (
-  exchangeRate?: ExchangeRate | null
-) => void;
+export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountError = (
   errors: Record<string, Error | undefined>

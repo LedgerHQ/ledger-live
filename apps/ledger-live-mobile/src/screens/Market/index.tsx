@@ -21,6 +21,7 @@ import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { useRoute } from "@react-navigation/native";
+import { useNetInfo } from "@react-native-community/netinfo";
 import { starredMarketCoinsSelector } from "../../reducers/settings";
 import MarketRowItem from "./MarketRowItem";
 import { useLocale } from "../../context/Locale";
@@ -29,9 +30,7 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/SwapEntry";
 import Illustration from "../../images/illustration/Illustration";
-import { useNetInfo } from "@react-native-community/netinfo";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -173,7 +172,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "asc",
               orderBy: "market_cap",
               top100: false,
-              limit: 20
+              limit: 20,
             },
             value: "market_cap_asc",
           },
@@ -183,7 +182,7 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
               order: "desc",
               orderBy: "market_cap",
               top100: false,
-              limit: 20
+              limit: 20,
             },
             value: "market_cap_desc",
           },
@@ -252,8 +251,6 @@ export default function Market({ navigation }: { navigation: any }) {
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
 
-  useProviders();
-
   const {
     requestParams,
     refresh,
@@ -282,7 +279,7 @@ export default function Market({ navigation }: { navigation: any }) {
   );
 
   useEffect(() => {
-    if (!isConnected) setIsLoading(false); 
+    if (!isConnected) setIsLoading(false);
   }, [isConnected]);
 
   useEffect(() => {
@@ -335,61 +332,63 @@ export default function Market({ navigation }: { navigation: any }) {
 
   const renderEmptyComponent = useCallback(
     () =>
-        search ? ( // shows up in case of no search results
-          <Flex
-            flex={1}
-            flexDirection="column"
-            alignItems="stretch"
-            p="4"
-            mt={70}
-          >
-              <Flex alignItems="center">
-                <Illustration
-                  size={164}
-                  lightSource={noResultIllustration.light}
-                  darkSource={noResultIllustration.dark}
-                />
-              </Flex>
-              <Text textAlign="center" variant="h4" my={3}>
-                {t("market.warnings.noCryptosFound")}
-              </Text>
-              <Text textAlign="center" variant="body" color="neutral.c70">
-                <Trans
-                  i18nKey="market.warnings.noSearchResultsFor"
-                  values={{ search }}
-                >
-                  <Text fontWeight="bold" variant="body" color="neutral.c70">
-                    {""}
-                  </Text>
-                </Trans>
-              </Text>
-              <Button mt={8} onPress={resetSearch} type="main">
-                {t("market.warnings.browseAssets")}
-              </Button>
-            </Flex>
-          ) : !isConnected ? ( // shows up in case of network down
-            <Flex
-              flex={1}
-              flexDirection="column"
-              alignItems="stretch"
-              p="4"
-              mt={70}
-            >
-              <Flex alignItems="center">
-                <Illustration
-                  size={164}
-                  lightSource={noNetworkIllustration.light}
-                  darkSource={noNetworkIllustration.dark}
-                />
-              </Flex>
-              <Text textAlign="center" variant="h4" my={3}>
-                {t("errors.NetworkDown.title")}
-              </Text>
-              <Text textAlign="center" variant="body" color="neutral.c70">
-                  {t("errors.NetworkDown.description")}
-              </Text>
+      search ? ( // shows up in case of no search results
+        <Flex
+          flex={1}
+          flexDirection="column"
+          alignItems="stretch"
+          p="4"
+          mt={70}
+        >
+          <Flex alignItems="center">
+            <Illustration
+              size={164}
+              lightSource={noResultIllustration.light}
+              darkSource={noResultIllustration.dark}
+            />
           </Flex>
-      ): <InfiniteLoader size={30} />, // shows up in case loading is ongoing
+          <Text textAlign="center" variant="h4" my={3}>
+            {t("market.warnings.noCryptosFound")}
+          </Text>
+          <Text textAlign="center" variant="body" color="neutral.c70">
+            <Trans
+              i18nKey="market.warnings.noSearchResultsFor"
+              values={{ search }}
+            >
+              <Text fontWeight="bold" variant="body" color="neutral.c70">
+                {""}
+              </Text>
+            </Trans>
+          </Text>
+          <Button mt={8} onPress={resetSearch} type="main">
+            {t("market.warnings.browseAssets")}
+          </Button>
+        </Flex>
+      ) : !isConnected ? ( // shows up in case of network down
+        <Flex
+          flex={1}
+          flexDirection="column"
+          alignItems="stretch"
+          p="4"
+          mt={70}
+        >
+          <Flex alignItems="center">
+            <Illustration
+              size={164}
+              lightSource={noNetworkIllustration.light}
+              darkSource={noNetworkIllustration.dark}
+            />
+          </Flex>
+          <Text textAlign="center" variant="h4" my={3}>
+            {t("errors.NetworkDown.title")}
+          </Text>
+          <Text textAlign="center" variant="body" color="neutral.c70">
+            {t("errors.NetworkDown.description")}
+          </Text>
+        </Flex>
+      ) : (
+        <InfiniteLoader size={30} />
+      ), // shows up in case loading is ongoing
     [error, isLoading, resetSearch, search, t],
   );
 

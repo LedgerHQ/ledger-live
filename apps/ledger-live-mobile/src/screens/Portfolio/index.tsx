@@ -151,7 +151,6 @@ function PortfolioScreen({ navigation }: Props) {
   const openAddModal = useCallback(() => setAddModalOpened(true), [
     setAddModalOpened,
   ]);
-  useProviders();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [
     setAddModalOpened,

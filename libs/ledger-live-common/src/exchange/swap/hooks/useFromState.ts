@@ -1,13 +1,10 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { useCallback, useState } from "react";
-import {
-  selectorStateDefaultValues,
-  SwapSelectorStateType,
-  SwapTransactionType,
-} from ".";
+import { selectorStateDefaultValues, SwapTransactionType } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { Account, AccountLike } from "../../../types";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
+import { SwapSelectorStateType } from "../types";
 
 export const useFromState = ({
   accounts,

@@ -2,11 +2,11 @@ import { useCallback, useMemo, useState } from "react";
 import {
   selectorStateDefaultValues,
   SwapDataType,
-  SwapSelectorStateType,
   SwapTransactionType,
 } from ".";
 import { Account } from "../../../types";
 import { getAccountTuplesForCurrency } from "../utils";
+import { SwapSelectorStateType } from "../types";
 
 export const useToState = ({
   accounts,

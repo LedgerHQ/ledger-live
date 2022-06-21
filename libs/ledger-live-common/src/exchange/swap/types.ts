@@ -8,7 +8,7 @@ import {
   Transaction,
   TransactionRaw,
 } from "../../types";
-import { Account, AccountLike } from "../../types/account";
+import { Account, AccountLike, TokenAccount } from "../../types/account";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
@@ -85,7 +85,7 @@ type CheckQuoteOkStatus = {
   codeName: "RATE_VALID";
 };
 
-type ValidCheckQuoteErrorCodes =
+export type ValidCheckQuoteErrorCodes =
   | "UNKNOW_USER"
   | "KYC_UNDEFINED"
   | "KYC_PENDING"
@@ -94,7 +94,8 @@ type ValidCheckQuoteErrorCodes =
   | "OVER_TRADE_LIMIT"
   | "UNKNOWN_ERROR"
   | "WITHDRAWALS_BLOCKED"
-  | "MFA_REQUIRED";
+  | "MFA_REQUIRED"
+  | "UNAUTHENTICATED_USER";
 
 type CheckQuoteErrorStatus = {
   codeName: ValidCheckQuoteErrorCodes;
@@ -254,6 +255,7 @@ export type InitSwapInput = {
   deviceId: string;
   userId?: string; // Nb for kyc purposes
 };
+
 export type InitSwapInputRaw = {
   exchange: ExchangeRaw;
   exchangeRate: ExchangeRateRaw;
@@ -261,3 +263,15 @@ export type InitSwapInputRaw = {
   deviceId: string;
   userId?: string;
 };
+
+export type SwapSelectorStateType = {
+  currency: null | undefined | TokenCurrency | CryptoCurrency;
+  account: null | undefined | Account | TokenAccount;
+  parentAccount: null | undefined | Account;
+  amount: null | undefined | BigNumber;
+};
+
+export type OnNoRatesCallback = (arg: {
+  fromState: SwapSelectorStateType;
+  toState: SwapSelectorStateType;
+}) => void;
