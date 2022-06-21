@@ -1591,7 +1591,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "取引詳細",
+    "title" : "Transaction details",
     "account" : "アカウント",
     "date" : "日付",
     "confirmed" : "確認済み",
@@ -1657,7 +1657,7 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
-    "noMoreOperations" : "その他のオペレーションはありません。"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
@@ -1698,7 +1698,7 @@
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
-    "lastOperations" : "最近の取引",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "暗号資産をまだお持ちでないですか？",
       "desc" : "受取を開始する前に、<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してください。",
