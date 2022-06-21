@@ -32,7 +32,7 @@
       },
       "banner" : {
         "title" : "Découvrez le Catalogue d’apps Live",
-        "description" : "Nous mettons tout en œuvre pour vous permettre d’accéder au monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
+        "description" : "Nous mettons tout en œuvre pour vous ouvrir les portes du monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
       },
       "twitterBanner" : {
         "description" : "Indiquez-nous le service que vous rêvez de voir dans Ledger Live avec le hashtag",
@@ -876,7 +876,7 @@
         },
         "amount" : {
           "title" : "Montant",
-          "summary" : "J’autorise le contrat intelligent <0>{{contractName}}</0> à accéder à mon compte <0>{{accountName}}</0> pour un montant de <0>{{amount}}</0>.",
+          "summary" : "J’autorise le contrat intelligent <0>{{contractName}}</0> à accéder à mon compte <0>{{accountName}}</0> pour un montant <0>{{amount}}</0>.",
           "limit" : "limité à {{amount}}",
           "noLimit" : "sans limite de {{assetName}}",
           "contractName" : "Compound {{currencyName}}",
@@ -940,7 +940,7 @@
         "1" : {
           "subtitle" : "Approuver un compte pour permettre au protocole de",
           "subtitle2" : "traiter vos futurs prêts.",
-          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d'un compte permet au protocole de traiter les futurs prêts."
+          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d’un compte permet au protocole de traiter les futurs prêts."
         },
         "2" : {
           "subtitle" : "Prêter des actifs pour gagner des intérêts",
@@ -1023,7 +1023,7 @@
     "title" : "Aide",
     "gettingStarted" : {
       "title" : "Premiers pas",
-      "desc" : "Commencez ici"
+      "desc" : "Commencez ici."
     },
     "status" : {
       "title" : "Statut de Ledger",
@@ -1031,11 +1031,11 @@
     },
     "helpCenter" : {
       "title" : "Assistance Ledger",
-      "desc" : "Obtenez de l’aide"
+      "desc" : "Obtenez de l’aide."
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "desc" : "En savoir plus sur les cryptos"
+      "desc" : "En savoir plus sur les cryptos."
     },
     "facebook" : {
       "title" : "Facebook",
@@ -2415,7 +2415,7 @@
       "rewardDestination" : {
         "label" : "Destination des récompenses",
         "stash" : "Solde disponible",
-        "stashDescription" : "Vos récompenses ont été ajoutées à votre solde disponible.",
+        "stashDescription" : "Vos récompenses sont ajoutées à votre solde disponible.",
         "staked" : "Solde lié",
         "stakedDescription" : "Les récompenses sont créditées sur votre solde lié.",
         "optionTitle" : "Note",
@@ -2805,7 +2805,7 @@
       "stock" : "Indicateur de marché régional",
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "carouselVisibility" : "Visibilité du carrousel",
-      "carouselVisibilityDesc" : "Afficher le carrousel sur le Portefeuille"
+      "carouselVisibilityDesc" : "Afficher le carrousel sur le Portefeuille."
     },
     "developer" : {
       "toast" : {
@@ -2813,9 +2813,9 @@
         "text" : "Bienvenue au pays des merveilles"
       },
       "debugApps" : "Autoriser les Apps Debug",
-      "debugAppsDesc" : "Afficher et autoriser l’ouverture des Platform Apps \"Debug\".",
+      "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
-      "experimentalAppsDesc" : "Afficher et autoriser l’ouverture des Platform Apps \"Expérimentales\".",
+      "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
       "catalogServer" : "Définir le fournisseur du Catalogue",
       "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
@@ -3515,7 +3515,7 @@
     "nextSolution" : "Solution suivante",
     "previousSolution" : "Solution précédente",
     "followSteps" : "Suivez ces étapes",
-    "supportArticle" : "cet article de l’Assistance",
+    "supportArticle" : "article de l’Assistance",
     "connecting" : "Connexion en cours...",
     "connected" : "Connecté",
     "backToPortfolio" : "Retour au Portefeuille",
@@ -3591,7 +3591,7 @@
         "windows" : {
           "title" : "Mettre à jour les pilotes USB",
           "bullets" : {
-            "0" : "Allez sur ce <0>{{link}}</0>",
+            "0" : "Allez sur cet <0>{{link}}</0>",
             "1" : "Suivez les instructions pour mettre à jour les pilotes USB.",
             "2" : "Connectez et déverrouillez votre appareil pour le détecter."
           }
@@ -4342,7 +4342,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Votre transaction précédente n’a pas encore été traitée. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "SolanaTxConfirmationTimeout" : {
