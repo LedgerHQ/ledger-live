@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
 import { Adjust, AdjustEvent } from "react-native-adjust";
+import Config from "react-native-config";
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
@@ -48,7 +49,20 @@ const PurchaseDevice = () => {
   }, [setURLDrawerOpen]);
 
   const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
-    const id = `${data.type}-${data.value?.deviceId}`;
+    const ids = {
+      nanoS: Config.ADJUST_BUY_NANOS_EVENT_ID,
+      nanoX: Config.ADJUST_BUY_NANOX_EVENT_ID,
+      nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
+    };
+    const id = data.value?.deviceId
+      ? // @ts-ignore issue in typing
+        ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
+      : Config.ADJUST_BUY_GENERIC_EVENT_ID;
+
+    if (!id) {
+      return;
+    }
+
     const revenue = data.value?.price;
     const currency = data.value?.currency;
 
