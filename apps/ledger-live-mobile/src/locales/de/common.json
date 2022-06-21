@@ -1591,7 +1591,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Details",
+    "title" : "Transaktionsdetails",
     "account" : "Konto",
     "date" : "Datum",
     "confirmed" : "Bestätigt",
@@ -1657,7 +1657,7 @@
   },
   "operationList" : {
     "noOperations" : "Keine Aktionen",
-    "noMoreOperations" : "Keine anderen Vorgänge"
+    "noMoreTransactions" : "Keine anderen Transaktionen"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Auswahl aufheben",
@@ -1698,7 +1698,7 @@
     "sell" : "Verkaufen",
     "swap" : "Umtauschen",
     "manage" : "Verwalten",
-    "lastOperations" : "Letzte Aktionen",
+    "lastTransactions" : "Letzte Transaktionen",
     "emptyState" : {
       "title" : "Noch keine Krypto-Werte?",
       "desc" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
