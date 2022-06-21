@@ -82,7 +82,7 @@ export const CheckStep = ({
   label: React.ReactNode;
 }) => (
   <BorderFlex mt={12} p={4} {...props}>
-    <Switch name="checkbox" checked={checked} size="normal" />
+    <Switch onChange={props.onClick} name="checkbox" checked={checked} size="normal" />
     <Text ml={4} flex="1" variant="body">
       {label}
     </Text>
