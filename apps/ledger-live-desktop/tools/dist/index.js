@@ -72,7 +72,7 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      await exec("pnpm", ["run", "build"], {
+      await exec("pnpm", ["run", "build:js"], {
         env: args.release
           ? { SENTRY_URL: releaseSentryDSN }
           : args.pre
@@ -122,9 +122,9 @@ const buildTasks = args => [
       } else if (args.pre) {
         commands.push("--config");
         commands.push("electron-builder-pre.yml");
-      } else if (args.ci) {
+      } else if (args.nosign) {
         commands.push("--config");
-        commands.push("electron-builder-ci.yml");
+        commands.push("electron-builder-nosign.yml");
         commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
       }
@@ -242,7 +242,7 @@ yargs
           type: "boolean",
           describe: "make it a release build",
         })
-        .option("ci", {
+        .option("nosign", {
           type: "boolean",
         })
         .option("dirty", {
