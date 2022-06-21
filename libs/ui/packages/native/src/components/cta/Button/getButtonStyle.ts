@@ -14,6 +14,8 @@ export function getButtonColors(colors: Theme["colors"]): {
     default: {
       primaryColor: colors.neutral.c100,
       secondaryColor: "rgba(0,0,255,0)",
+      pressedColor: "transparent",
+      pressedOutlineColor: "transparent",
     },
     disabled: {
       primaryColor: colors.neutral.c50,
