@@ -77,6 +77,9 @@ const SwapConnectWidget = (
   useEffect(() => {
     const webview = webviewRef.current;
     if (webview) {
+      // For mysterious reasons, the webpreferences attribute does not
+      // pass through the styled component when added in the JSX.
+      webview.webpreferences = "nativeWindowOpen=yes";
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("new-window", handleNewWindow);
     }
