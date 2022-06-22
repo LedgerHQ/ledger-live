@@ -88,11 +88,10 @@ const WebViewScreen = ({
     <SafeContainer>
       {renderHeader && renderHeader()}
       {trackEventName && <Track onMount event={trackEventName} />}
+
       <Flex flex={1}>
         {hasNetwork ? (
           <>
-            {loading &&
-              (renderLoading ? renderLoading() : defaultRenderLoading())}
             <StyledWebview
               ref={ref}
               source={{ uri }}
@@ -106,6 +105,18 @@ const WebViewScreen = ({
                 setCanGoBack(!navState.canGoBack);
               }}
             />
+            {loading ? (
+              <Flex
+                position="absolute"
+                width="100%"
+                height="100%"
+                top={0}
+                left={0}
+                bg="background.main"
+              >
+                {renderLoading ? renderLoading() : defaultRenderLoading()}
+              </Flex>
+            ) : null}
           </>
         ) : renderError ? (
           renderError()
