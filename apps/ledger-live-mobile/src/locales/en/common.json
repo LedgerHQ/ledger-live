@@ -80,7 +80,8 @@
     },
     "seeMore": "See more",
     "moreInfo": "More info",
-    "buyEth": "Buy Ethereum"
+    "buyEth": "Buy Ethereum",
+    "exchange": "Exchange"
   },
   "errors": {
     "countervaluesUnavailable": {

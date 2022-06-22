@@ -4,6 +4,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import Config from "react-native-config"
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
+import { Button } from "@ledgerhq/native-ui";
 import {
   AvailableProviderV3,
   ExchangeRate,
@@ -24,6 +25,7 @@ import {
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { accountsSelector } from "../../reducers/accounts";
 import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
@@ -49,6 +51,7 @@ enum ActionRequired {
 export function SwapForm(_props: Props) {
   const { colors } = useTheme();
   const dispatch = useDispatch();
+  const {t} = useTranslation();
 
   const accounts = useSelector(accountsSelector);
   const { providers, error } = useProviders(Config.SWAP_DISABLED_PROVIDERS);
@@ -324,6 +327,10 @@ export function SwapForm(_props: Props) {
       <KeyboardView style={styles.root}>
         <TrackScreen category="Swap Form" providerName={provider} />
         <Selector swapTx={swapTx} />
+
+        <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
+          {t("common.exchange")}
+        </Button>
       </KeyboardView>
     );
   }
