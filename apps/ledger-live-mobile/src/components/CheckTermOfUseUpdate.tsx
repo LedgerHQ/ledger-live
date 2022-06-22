@@ -7,15 +7,10 @@ import styled from "styled-components/native";
 import { useLocalizedTermsUrl, useTermsAccept } from "../logic/terms";
 import Button from "./Button";
 import Alert from "./Alert";
+import Divider from "./Divider";
 
 const Description = styled(Text).attrs(() => ({
   color: "neutral.c70",
-}))``;
-
-const Divider = styled(Flex).attrs(() => ({
-  my: 4,
-  height: 1,
-  backgroundColor: "neutral.c40",
 }))``;
 
 const Update = ({ children }: { children: ReactNode }) => (
