@@ -118,7 +118,6 @@ const dataset: DatasetTest<Transaction> = {
                 operationType: "payment",
                 assetCode: "",
                 assetIssuer: "",
-                assetType: "",
               }),
               expectedStatus: {
                 errors: {
@@ -178,7 +177,6 @@ const dataset: DatasetTest<Transaction> = {
                 operationType: "payment",
                 assetCode: "",
                 assetIssuer: "",
-                assetType: "",
               }),
               expectedStatus: (account) => ({
                 errors: {},

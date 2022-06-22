@@ -46,7 +46,6 @@ const createTransaction = (): Transaction => ({
   operationType: "payment",
   assetCode: "",
   assetIssuer: "",
-  assetType: "",
 });
 
 const updateTransaction = (t, patch) => {

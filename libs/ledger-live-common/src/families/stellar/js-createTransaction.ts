@@ -19,7 +19,6 @@ const createTransaction = (): Transaction => ({
   operationType: "payment",
   assetCode: "",
   assetIssuer: "",
-  assetType: "",
 });
 
 export default createTransaction;

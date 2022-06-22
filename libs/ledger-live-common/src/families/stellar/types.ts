@@ -45,7 +45,6 @@ export type Transaction = TransactionCommon & {
   operationType: "payment" | "changeTrust";
   assetCode: string | undefined;
   assetIssuer: string | undefined;
-  assetType: string | undefined;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -58,7 +57,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   operationType: "payment" | "changeTrust";
   assetCode: string | undefined;
   assetIssuer: string | undefined;
-  assetType: string | undefined;
 };
 
 export type BalanceAsset = {

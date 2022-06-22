@@ -114,6 +114,7 @@ export const fetchAccount = async (
     balance = account.balances?.find((balance) => {
       return balance.asset_type === "native";
     });
+    // Getting all non-native (XLM) assets on the account
     assets = account.balances?.filter((balance) => {
       return balance.asset_type !== "native";
     });

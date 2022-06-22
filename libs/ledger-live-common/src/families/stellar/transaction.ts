@@ -67,7 +67,6 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     operationType: tr.operationType,
     assetCode,
     assetIssuer,
-    assetType: tr.assetType,
   };
 };
 
@@ -92,7 +91,6 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     operationType: t.operationType,
     assetCode,
     assetIssuer,
-    assetType: t.assetType,
   };
 };
 
