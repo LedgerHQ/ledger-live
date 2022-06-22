@@ -1,5 +1,12 @@
 # @ledgerhq/react-ui
 
+## 0.8.0-nightly.0
+
+### Minor Changes
+
+- e393b9bfa: fix checkbox on ui:react
+- 9c3e27f46: add breakpoints to desktop ui
+
 ## 0.7.7
 
 ### Patch Changes

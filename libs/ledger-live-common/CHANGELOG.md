@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-nightly.1
+
+### Minor Changes
+
+- d22452817: Fix Tezos synchronisation with originating type
+
 ## 23.0.1-nightly.0
 
 ### Patch Changes
