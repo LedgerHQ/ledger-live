@@ -2,6 +2,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { FirmwareInfo } from "../types/manager";
 import { satisfies as versionSatisfies } from "semver";
+import { isDeviceLocalizationSupported } from "../manager/localization";
 
 const deviceVersionRangesForBootloaderVersion: { [key in DeviceModelId]?: string } = {
   nanoS: ">=2.0.0",
@@ -19,13 +20,6 @@ export const isHardwareVersionSupported = (seVersion: string, modelId: DeviceMod
   deviceVersionRangesForHardwareVersion[modelId] &&
   versionSatisfies(seVersion, deviceVersionRangesForHardwareVersion[modelId] as string);
 
-// TODO: To be replaced by actual release version with the localization firmware for each device
-const deviceVersionRangesForLanguageId: { [key in DeviceModelId]?: string } = {
-  nanoX: "=2.1.0-lo2",
-};
-export const isLanguageIdSupported = (seVersion: string, modelId: DeviceModelId) =>
-  deviceVersionRangesForLanguageId[modelId] &&
-  versionSatisfies(seVersion, deviceVersionRangesForLanguageId[modelId] as string);
 
 /**
  * Retrieve targetId and firmware version from device
@@ -132,7 +126,7 @@ export default async function getVersion(transport: Transport): Promise<Firmware
         i += hardwareVersionLength;
       }
 
-      if (isLanguageIdSupported(seVersion, deviceModel)) {
+      if (isDeviceLocalizationSupported(seVersion, deviceModel)) {
         const languageIdLength = data[i++];
         languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
       }
