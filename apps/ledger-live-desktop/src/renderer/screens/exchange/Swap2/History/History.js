@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import OperationRow from "./OperationRow";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import { isSwapOperationPending } from "@ledgerhq/live-common/lib/exchange/swap";
 import getCompleteSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/lib/exchange/swap/updateAccountSwapStatus";
 import type { SwapHistorySection } from "@ledgerhq/live-common/lib/exchange/swap/types";
@@ -136,7 +136,7 @@ const History = () => {
     if (mappedSwapOperations) {
       for (const section of mappedSwapOperations) {
         for (const swapOperation of section.data) {
-          if (operationStatusList.pending.includes(swapOperation.status)) {
+          if (isSwapOperationPending(swapOperation.status)) {
             return true;
           }
         }

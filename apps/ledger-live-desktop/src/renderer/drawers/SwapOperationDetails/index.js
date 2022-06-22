@@ -5,7 +5,7 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import { isSwapOperationPending } from "@ledgerhq/live-common/lib/exchange/swap";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import {
@@ -171,7 +171,7 @@ const SwapOperationDetails = ({
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
         <IconSwap size={18} />
-        {operationStatusList.pending.includes(status) ? (
+        {isSwapOperationPending(status) ? (
           <WrapperClock>
             <IconClock size={16} />
           </WrapperClock>
