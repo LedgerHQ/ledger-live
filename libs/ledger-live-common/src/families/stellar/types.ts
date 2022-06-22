@@ -35,6 +35,8 @@ export const StellarMemoType = [
   "MEMO_RETURN",
 ];
 
+export type StellarTransactionMode = "send" | "changeTrust";
+
 export type Transaction = TransactionCommon & {
   family: "stellar";
   networkInfo: NetworkInfo | null | undefined;
@@ -42,7 +44,7 @@ export type Transaction = TransactionCommon & {
   baseReserve: BigNumber | null | undefined;
   memoType: string | null | undefined;
   memoValue: string | null | undefined;
-  operationType: "payment" | "changeTrust";
+  mode: StellarTransactionMode;
   assetCode: string | undefined;
   assetIssuer: string | undefined;
 };
@@ -54,7 +56,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   baseReserve: string | null | undefined;
   memoType: string | null | undefined;
   memoValue: string | null | undefined;
-  operationType: "payment" | "changeTrust";
+  mode: StellarTransactionMode;
   assetCode: string | undefined;
   assetIssuer: string | undefined;
 };

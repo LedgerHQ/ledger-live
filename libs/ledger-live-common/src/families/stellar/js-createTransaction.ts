@@ -16,7 +16,7 @@ const createTransaction = (): Transaction => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
-  operationType: "payment",
+  mode: "send",
   assetCode: "",
   assetIssuer: "",
 });

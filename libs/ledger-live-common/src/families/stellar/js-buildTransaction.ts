@@ -30,7 +30,7 @@ export const buildTransaction = async (
     fees,
     memoType,
     memoValue,
-    operationType,
+    mode,
     assetCode,
     assetIssuer,
   } = transaction;
@@ -50,7 +50,7 @@ export const buildTransaction = async (
   const transactionBuilder = buildTransactionBuilder(source, fees);
   let operation = null;
 
-  if (operationType === "changeTrust") {
+  if (mode === "changeTrust") {
     if (!assetCode || !assetIssuer) {
       throw new StellarAssetRequired("");
     }

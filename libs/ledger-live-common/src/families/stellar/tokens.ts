@@ -56,7 +56,7 @@ const buildStellarTokenAccount = ({
     operationsCount: operations.length,
     operations: operations.map((op) => ({
       ...op,
-      id: encodeOperationId(id, op.hash, op.type),
+      id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
       accountId: id,
       type: op.extra.ledgerOpType,
       value: new BigNumber(op.extra.assetAmount) ?? op.value,

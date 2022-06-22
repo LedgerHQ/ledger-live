@@ -64,7 +64,7 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       baseReserve: new BigNumber(networkInfo.baseReserve),
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
-    operationType: tr.operationType,
+    mode: tr.mode,
     assetCode,
     assetIssuer,
   };
@@ -88,7 +88,7 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
       baseReserve: networkInfo.baseReserve.toString(),
       networkCongestionLevel: networkInfo.networkCongestionLevel,
     },
-    operationType: t.operationType,
+    mode: t.mode,
     assetCode,
     assetIssuer,
   };

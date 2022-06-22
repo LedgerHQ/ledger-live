@@ -90,12 +90,10 @@ const stellar: AppSpec<Transaction> = {
           });
         }
 
-        // Transaction type "payment" can be either "payment" or "create_account"
-        // (if account is not created).
         const getType = () => {
-          switch (transaction.operationType) {
-            case "payment":
-              return /payment|create_account/;
+          switch (transaction.mode) {
+            case "send":
+              return "send";
             case "changeTrust":
               return /change_trust/;
             default:
@@ -103,7 +101,7 @@ const stellar: AppSpec<Transaction> = {
           }
         };
 
-        expect(transaction.operationType).toMatch(getType());
+        expect(transaction.mode).toMatch(getType());
       },
     },
     {
@@ -124,7 +122,7 @@ const stellar: AppSpec<Transaction> = {
 
         const updates: Array<Partial<Transaction>> = [
           {
-            operationType: "changeTrust",
+            mode: "changeTrust",
             // Setting higher max fee here to make sure transaction doesn't
             // time out.
             fees: new BigNumber(MAX_FEE),

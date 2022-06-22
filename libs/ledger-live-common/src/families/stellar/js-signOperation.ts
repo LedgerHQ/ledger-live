@@ -15,7 +15,7 @@ const buildOptimisticOperation = async (
 ): Promise<Operation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
-  const type = transaction.operationType === "changeTrust" ? "OPT_IN" : "OUT";
+  const type = transaction.mode === "changeTrust" ? "OPT_IN" : "OUT";
 
   const operation: Operation = {
     id: `${account.id}--${type}`,

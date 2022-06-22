@@ -85,7 +85,7 @@ const getTransactionStatus = async (
   }
 
   // Operation specific checks
-  if (t.operationType === "changeTrust") {
+  if (t.mode === "changeTrust") {
     // Check asset provided
     if (!t.assetCode || !t.assetIssuer) {
       // This is unlikely

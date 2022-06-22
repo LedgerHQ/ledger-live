@@ -25,7 +25,7 @@ const options = [
     desc: "stellar memo value",
   },
   {
-    name: "operationType",
+    name: "mode",
     type: String,
     desc: "change operation type",
   },
@@ -56,7 +56,7 @@ function inferTransactions(
       subAccountId: account.type === "TokenAccount" ? account.id : null,
       memoType: opts.memoType,
       memoValue: opts.memoValue,
-      operationType: opts.mode ?? opts.operationType ?? "payment",
+      mode: opts.mode ?? "send",
       assetCode: opts.token,
       assetIssuer: opts.assetIssuer,
     };
