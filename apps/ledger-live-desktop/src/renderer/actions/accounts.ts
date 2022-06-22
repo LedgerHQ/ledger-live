@@ -41,7 +41,7 @@ export const fetchAccounts = () => async (dispatch: Dispatch) => {
 
 export type UpdateAccountWithUpdater = (
   accountId: string,
-  updater: (account: Account) => Account
+  updater: (account: Account) => Account,
 ) => any;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
