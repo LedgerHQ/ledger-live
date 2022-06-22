@@ -8,11 +8,11 @@ import { NavigatorName, ScreenName } from "../const";
 import {
   accountsCountSelector,
   hasLendEnabledAccountsSelector,
+  accountsSelector,
 } from "../reducers/accounts";
 import BottomModal, { Props as ModalProps } from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
-import { accountsSelector } from "../reducers/accounts";
 
 export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -47,7 +47,7 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const onReceiveFunds = useCallback(
     () =>
       onNavigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
+        screen: ScreenName.ReceiveSelectCrypto,
       }),
     [onNavigate],
   );

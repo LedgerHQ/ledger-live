@@ -29,7 +29,7 @@ export default function NewReceiveFundsNavigator() {
       <Stack.Screen
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
-        options={{ headerLeft: null }}
+        options={{ headerLeft: null, headerTitle: () => null }}
       />
       {/* Select Account */}
       <Stack.Screen
