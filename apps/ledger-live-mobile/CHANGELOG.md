@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.3.0-next.12
+
+### Patch Changes
+
+- 5bae58815: bugfix - webview reload crash issue related to ui rendering layout shift bugs
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/native-ui@0.8.0-next.2
+
 ## 3.3.0-next.11
 
 ### Patch Changes

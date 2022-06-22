@@ -1,5 +1,14 @@
 # @ledgerhq/native-ui
 
+## 0.8.0-next.2
+
+### Patch Changes
+
+- 0c2c6682b: ui packages - release
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/ui-shared@0.1.9-next.0
+  - @ledgerhq/icons-ui@0.2.5-next.0
+
 ## 0.8.0-next.1
 
 ### Minor Changes
