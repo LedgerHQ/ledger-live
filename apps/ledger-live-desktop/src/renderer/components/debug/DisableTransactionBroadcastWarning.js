@@ -5,10 +5,12 @@ export const DisableTransactionBroadcastWarning = () => {
     <div
       style={{
         backgroundColor: "tomato",
-        maxWidth: "200px",
         zIndex: "9999",
         position: "absolute",
-        left: "100px",
+        fontSize: "10px",
+        maxWidth: "250px",
+        top: "4px",
+        left: "150px",
       }}
     >
       DISABLE TRANSACTION BROADCAST APPLIED
