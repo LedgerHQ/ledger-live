@@ -5,7 +5,7 @@ import { satisfies as versionSatisfies } from "semver";
 
 const deviceVersionRangesForBootloaderVersion: { [key in DeviceModelId]?: string } = {
   nanoS: ">=2.0.0",
-  nanoX: ">=2.0.0",
+  nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
   nanoSP: ">=1.0.0",
 };
 export const isBootloaderVersionSupported = (seVersion: string, modelId: DeviceModelId) =>
@@ -13,13 +13,13 @@ export const isBootloaderVersionSupported = (seVersion: string, modelId: DeviceM
   versionSatisfies(seVersion, deviceVersionRangesForBootloaderVersion[modelId] as string);
 
 const deviceVersionRangesForHardwareVersion: { [key in DeviceModelId]?: string } = {
-  nanoX: ">=2.0.0",
+  nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
 };
 export const isHardwareVersionSupported = (seVersion: string, modelId: DeviceModelId) =>
   deviceVersionRangesForHardwareVersion[modelId] &&
   versionSatisfies(seVersion, deviceVersionRangesForHardwareVersion[modelId] as string);
 
-// TODO: TBD according to the firmware in which it's released
+// TODO: To be replaced by actual release version with the localization firmware for each device
 const deviceVersionRangesForLanguageId: { [key in DeviceModelId]?: string } = {
   nanoX: "=2.1.0-lo2",
 };
