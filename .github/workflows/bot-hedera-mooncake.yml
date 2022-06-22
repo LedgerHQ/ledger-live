@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/hedera
+      
 concurrency:
   group: bot-seed4-hedera
 
