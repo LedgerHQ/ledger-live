@@ -9,8 +9,6 @@ const IllustrationContainer = styled.div`
 `;
 
 const TitleText = styled(Text).attrs(() => ({
-  type: "h3",
-  ff: "Alpha|Medium",
   fontSize: "20px",
   mb: "12px",
   uppercase: true,
@@ -18,10 +16,7 @@ const TitleText = styled(Text).attrs(() => ({
   color: ${p => p.theme.colors.palette.neutral.c100};
 `;
 
-const DescriptionText = styled(Text).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: "12px",
-}))`
+const DescriptionText = styled(Text).attrs(() => ({}))`
   color: ${p => p.theme.colors.palette.neutral.c100};
 `;
 
@@ -76,8 +71,10 @@ export function UseCaseOption({ title, description, Illu, onClick, id }: UseCase
     <UseCaseOptionContainer id={id} onClick={onClick}>
       <Container>
         <IllustrationContainer>{Illu}</IllustrationContainer>
-        <TitleText>{title}</TitleText>
-        <DescriptionText>{description}</DescriptionText>
+        <TitleText variant="h3">{title}</TitleText>
+        <DescriptionText variant="paragraph" fontWeight="medium">
+          {description}
+        </DescriptionText>
         <ArrowButton />
       </Container>
     </UseCaseOptionContainer>
