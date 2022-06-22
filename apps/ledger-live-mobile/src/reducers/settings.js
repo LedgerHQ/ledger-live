@@ -21,6 +21,7 @@ import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { KYCStatus } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 import { SLIDES } from "../components/Carousel/shared";
