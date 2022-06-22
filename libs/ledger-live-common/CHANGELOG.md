@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-next.4
+
+### Patch Changes
+
+- 78a64769d: Fix experimental EIP712 variable not working correctly
+
 ## 23.1.0-next.3
 
 ### Minor Changes
