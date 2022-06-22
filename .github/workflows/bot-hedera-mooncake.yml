@@ -1,8 +1,6 @@
 name: [Bot] 'Hedera on Mooncake'
 on:
   push:
-    branches:
-      - feat/hedera
 
 concurrency:
   group: bot-seed4-hedera
