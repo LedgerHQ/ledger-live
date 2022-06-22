@@ -1,3 +1,13 @@
+# 2.43.0
+
+We’re constantly adding new integrations and working on performance improvements to make Ledger Live a world-class experience. Here is what’s new in this release.
+
+### 🚀 Features
+We’re excited to announce that Ledger Live is launching support for Cardano, one of the biggest cryptocurrencies based on its total market value. Now you can send and receive Cardano’s native token, ADA. 
+
+### 🐛 Fixes
+We’ve done some bug fixes and made a few small but important changes behind the curtain.
+
 # v2.42.0
 New coins, Solana staking improvements, NFT videos, and more. Here is what's new in Ledger Live Desktop and what we're gradually rolling out.
 

@@ -8,8 +8,10 @@ import {
   SwapTransactionType,
 } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
+import { useFromState } from "./useFromState";
+import { useProviderRates } from "./useProviderRates";
+import { useToState } from "./useToState";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
-import { useFromState, useProviderRates, useToState } from ".";
 import { useReverseAccounts } from "./useReverseAccounts";
 
 export const selectorStateDefaultValues = {
@@ -36,7 +38,6 @@ export const useFromAmountError = (
 
 export const useSwapTransaction = ({
   accounts,
-  exchangeRate,
   setExchangeRate,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
@@ -44,7 +45,6 @@ export const useSwapTransaction = ({
   onNoRates,
 }: {
   accounts?: Account[];
-  exchangeRate?: ExchangeRate;
   setExchangeRate?: SetExchangeRateCallback;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
@@ -95,7 +95,6 @@ export const useSwapTransaction = ({
   const { rates, refetchRates } = useProviderRates({
     fromState,
     toState,
-    exchangeRate,
     transaction,
     onNoRates,
     setExchangeRate,

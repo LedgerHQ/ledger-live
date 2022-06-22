@@ -1,6 +1,7 @@
 // @flow
 
-import { remote, WebviewTag } from "electron";
+import * as remote from "@electron/remote";
+import { WebviewTag } from "electron";
 import React, { forwardRef, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -76,6 +77,9 @@ const SwapConnectWidget = (
   useEffect(() => {
     const webview = webviewRef.current;
     if (webview) {
+      // For mysterious reasons, the webpreferences attribute does not
+      // pass through the styled component when added in the JSX.
+      webview.webpreferences = "nativeWindowOpen=yes";
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("new-window", handleNewWindow);
     }

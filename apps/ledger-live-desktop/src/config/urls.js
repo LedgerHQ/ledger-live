@@ -181,13 +181,13 @@ export const urls = {
       ftx: {
         main: "https://ftx.com",
         tos: "",
-        support: "https://ftx.com/eu/support",
+        support: "https://ftx.com/support",
         kyc: "",
       },
       ftxus: {
         main: "https://ftx.us/",
         tos: "",
-        support: "https://help.ftx.us/hc/en-us/articles/360043063474-Contact-Info",
+        support: "https://help.ftx.us/hc/en-us",
         kyc: "",
       },
     },
@@ -229,6 +229,6 @@ export const urls = {
   },
   hedera: {
     supportArticleLink:
-      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+      "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",
   },
 };

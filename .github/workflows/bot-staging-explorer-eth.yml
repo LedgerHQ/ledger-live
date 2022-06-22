@@ -1,4 +1,4 @@
-name: Bot Staging Explorer 'Ethereum'
+name: "[Bot](Staging) 'Ethereum'"
 on:
   schedule:
     - cron: 0 8,12,16 * * 1-5
@@ -52,7 +52,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: pull docker image

@@ -41,7 +41,6 @@ import { ScreenName, NavigatorName } from "../../../const";
 import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
 import RedelegateIcon from "../../../icons/Redelegate";
 import UndelegateIcon from "../../../icons/Undelegate";
 import ClaimRewardIcon from "../../../icons/ClaimReward";
@@ -50,6 +49,8 @@ import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
+import ValidatorImage from "../shared/ValidatorImage";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 
 type Props = {
   account: Account,
@@ -109,9 +110,9 @@ function Delegations({ account }: Props) {
   const onDelegate = useCallback(() => {
     onNavigate({
       route: NavigatorName.CosmosDelegationFlow,
-      screen: ScreenName.CosmosDelegationStarted,
+      screen: delegations.length > 0 ? ScreenName.CosmosDelegationValidator : ScreenName.CosmosDelegationStarted,
     });
-  }, [onNavigate]);
+  }, [onNavigate, delegations]);
 
   const onRedelegate = useCallback(() => {
     onNavigate({
@@ -384,15 +385,14 @@ function Delegations({ account }: Props) {
         onClose={onCloseDrawer}
         account={account}
         ValidatorImage={({ size }) => (
-          <FirstLetterIcon
-            label={
+          <ValidatorImage
+            isLedger={(delegation || undelegation)?.validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+            name={
               (delegation || undelegation)?.validator?.name ??
               (delegation || undelegation)?.validatorAddress ??
               ""
             }
-            round
             size={size}
-            fontSize={24}
           />
         )}
         amount={delegation?.amount ?? new BigNumber(0)}

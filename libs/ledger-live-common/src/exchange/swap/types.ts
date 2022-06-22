@@ -96,7 +96,8 @@ export type ValidCheckQuoteErrorCodes =
   | "UNKNOWN_ERROR"
   | "WITHDRAWALS_BLOCKED"
   | "MFA_REQUIRED"
-  | "UNAUTHENTICATED_USER";
+  | "UNAUTHENTICATED_USER"
+  | "RATE_NOT_FOUND";
 
 type CheckQuoteErrorStatus = {
   codeName: ValidCheckQuoteErrorCodes;
@@ -308,3 +309,7 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   reverseSwap: () => void;
   fromAmountError?: Error;
 };
+
+export interface CustomMinOrMaxError extends Error {
+  amount: BigNumber;
+}

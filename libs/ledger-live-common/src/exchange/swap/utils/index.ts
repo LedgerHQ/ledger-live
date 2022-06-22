@@ -33,6 +33,7 @@ export const pickExchangeRate = (
       exchangeRates[0]);
   setExchangeRate(rate || undefined);
 };
+export type KYCStatus = keyof typeof KYC_STATUS;
 
 export type AccountTuple = {
   account: Account | null | undefined;

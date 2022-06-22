@@ -1,7 +1,13 @@
 /* eslint-disable import/named */
 /* eslint-disable import/no-unresolved */
 
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, {
+  useMemo,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
@@ -13,7 +19,7 @@ import {
   InfiniteLoader,
   Icons,
 } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
@@ -22,7 +28,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { useRoute } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { starredMarketCoinsSelector } from "../../reducers/settings";
+import {
+  marketFilterByStarredAccountsSelector,
+  starredMarketCoinsSelector,
+} from "../../reducers/settings";
 import MarketRowItem from "./MarketRowItem";
 import { useLocale } from "../../context/Locale";
 import SortBadge, { Badge } from "./SortBadge";
@@ -31,6 +40,10 @@ import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
 import Illustration from "../../images/illustration/Illustration";
+import {
+  setMarketFilterByStarredAccounts,
+  setMarketRequestParams,
+} from "../../actions/settings";
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -58,31 +71,39 @@ function getAnalyticsProperties(
 
 const BottomSection = ({ navigation }: { navigation: any }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
-  const { range, starred = [], orderBy, order, top100 } = requestParams;
+  const { range, orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const starFilterOn = starred.length > 0;
+  const filterByStarredAccount: boolean = useSelector(
+    marketFilterByStarredAccountsSelector,
+  );
+  const firstMount = useRef(true); // To known if this is the first mount of the page
 
   useEffect(() => {
-    if (starFilterOn) {
-      refresh({ starred: starredMarketCoins });
+    if (firstMount.current) {
+      // We don't want to refresh the market data directly on mount, the data is already refreshed with wanted parameters from MarketDataProviderWrapper
+      firstMount.current = false;
+      return;
     }
-  }, [refresh, starFilterOn, starredMarketCoins]);
+    if (filterByStarredAccount) {
+      refresh({ starred: starredMarketCoins });
+    } else {
+      refresh({ starred: [], search: "" });
+    }
+  }, [refresh, filterByStarredAccount, starredMarketCoins]);
 
   const toggleFilterByStarredAccounts = useCallback(() => {
-    if (starredMarketCoins.length > 0) {
-      const starred = starFilterOn ? [] : starredMarketCoins;
-      if (!starFilterOn) {
-        track(
-          "Page Market Favourites",
-          getAnalyticsProperties(requestParams, {
-            currencies: starredMarketCoins,
-          }),
-        );
-      }
-      refresh({ starred, search: "" });
+    if (!filterByStarredAccount) {
+      track(
+        "Page Market Favourites",
+        getAnalyticsProperties(requestParams, {
+          currencies: starredMarketCoins,
+        }),
+      );
     }
-  }, [refresh, starFilterOn, starredMarketCoins, requestParams]);
+    dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
+  }, [dispatch, filterByStarredAccount]);
 
   const timeRanges = useMemo(
     () =>
@@ -107,9 +128,10 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
         "Page Market",
         getAnalyticsProperties({ ...requestParams, ...value }),
       );
+      dispatch(setMarketRequestParams(value));
       refresh(value);
     },
-    [refresh, requestParams],
+    [dispatch, refresh, requestParams],
   );
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
@@ -125,11 +147,11 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
       showsHorizontalScrollIndicator={false}
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
-      {starredMarketCoins.length <= 0 && !starFilterOn ? null : (
+      {starredMarketCoins.length <= 0 && !filterByStarredAccount ? null : (
         <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
           <Badge>
             <Icon
-              name={starFilterOn ? "StarSolid" : "Star"}
+              name={filterByStarredAccount ? "StarSolid" : "Star"}
               color="neutral.c100"
             />
           </Badge>
@@ -154,7 +176,6 @@ const BottomSection = ({ navigation }: { navigation: any }) => {
           {
             label: t(`market.filters.order.topGainers`),
             requestParam: {
-              limit: 100,
               ids: [],
               starred: [],
               orderBy: "market_cap",
@@ -297,16 +318,6 @@ export default function Market({ navigation }: { navigation: any }) {
       });
     }
   }, [initialTop100, refresh]);
-
-  const listData = useMemo(
-    () =>
-      top100
-        ? marketData?.sort(
-            (a, b) => b.priceChangePercentage - a.priceChangePercentage,
-          )
-        : marketData,
-    [marketData, top100],
-  );
 
   const renderItems = useCallback(
     ({ item, index }) => (
@@ -460,7 +471,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
       <FlatList
         contentContainerStyle={{ paddingHorizontal: 16 }}
-        data={listData}
+        data={marketData}
         renderItem={renderItems}
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}

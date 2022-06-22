@@ -1,12 +1,11 @@
+import { getEnv } from "../../env";
+import network from "../../network";
+import { getSwapAPIBaseURL } from "./";
+import { mockCheckQuote } from "./mock";
 import type { CheckQuote } from "./types";
 
-import { getEnv } from "../../env";
-import { mockCheckQuote } from "./mock";
-import { getSwapAPIError, getSwapAPIBaseURL } from "./";
-import network from "../../network";
-
 const checkQuote: CheckQuote = async ({ provider, quoteId, bearerToken }) => {
-  if (getEnv("MOCK")) {
+  if (getEnv("MOCK") || getEnv("MOCK_SWAP_CHECK_QUOTE")) {
     return mockCheckQuote({ provider, quoteId, bearerToken });
   }
 
@@ -24,14 +23,10 @@ const checkQuote: CheckQuote = async ({ provider, quoteId, bearerToken }) => {
     data: request,
   });
 
-  const error =
-    data.code === 300 ? getSwapAPIError(data.code, data.message) : undefined;
-  if (error) {
-    return {
-      provider,
-      error,
-    };
-  }
+  /**
+   * TODO: we might want to handle various status and error here
+   * cf. https://github.com/LedgerHQ/swap/blob/master/modules/model/src/main/scala/co/ledger/swap/model/RateStatus.scala
+   */
 
   return data;
 };

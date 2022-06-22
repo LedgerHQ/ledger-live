@@ -7,8 +7,8 @@ import {
   OnNoRatesCallback,
   SwapSelectorStateType,
   RatesReducerState,
+  CustomMinOrMaxError,
 } from "../types";
-import { pickExchangeRate } from "../utils";
 import { SetExchangeRateCallback } from "./useSwapTransaction";
 
 const ratesReducerInitialState: RatesReducerState = {};
@@ -30,14 +30,12 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
 export const useProviderRates = ({
   fromState,
   toState,
-  exchangeRate,
   transaction,
   onNoRates,
   setExchangeRate,
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
-  exchangeRate?: ExchangeRate;
   transaction?: Transaction | null;
   onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback;
@@ -84,17 +82,52 @@ export const useProviderRates = ({
             onNoRates && onNoRates({ fromState, toState });
           }
 
-          /**
-           * FIXME
-           * need to handle multiple different errors
-           * example: one partner proposes the quote but with a "minAmount" and
-           * another one does not propose the quote
-           */
-
           // Discard bad provider rates
-          let rateError: Error | null | undefined = null;
+          let rateError: Error | CustomMinOrMaxError | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
+
+            /**
+             * If we have an error linked to the ammount, this error takes
+             * precedence over the other (like a "CurrencyNotSupportedError" one
+             * for example)
+             */
+            if (
+              rateError?.name !== rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              rateError = rate.error;
+            }
+
+            if (
+              rateError?.name === rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              /**
+               * Comparison pivot, depending on the order in which we want to sort errors
+               * If the order is ascending, the pivot is -1, otherwise it's 1
+               * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
+               */
+              const cmp =
+                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+
+              /**
+               * If the amount is too low, the user should put at least the
+               * minimum amount possible
+               * If the amount is too high, the user should put at most the
+               * maximum amount possible
+               */
+
+              rateError =
+                (rateError as CustomMinOrMaxError).amount.comparedTo(
+                  (rate.error as CustomMinOrMaxError)?.amount
+                ) === cmp
+                  ? rateError
+                  : rate.error;
+            }
+
             return rate.error ? acc : [...acc, rate];
           }, []);
 
@@ -103,8 +136,12 @@ export const useProviderRates = ({
             dispatchRates({ type: "error", payload: rateError });
           } else {
             dispatchRates({ type: "set", payload: rates });
-            setExchangeRate &&
-              pickExchangeRate(rates, exchangeRate, setExchangeRate);
+
+            /**
+             * Select the first rate returned by the API. Should be the prefered
+             * rate for the user. Rate ordering logic is handeled on backend side
+             */
+            setExchangeRate && setExchangeRate(rates?.[0]);
           }
         } catch (error) {
           !abort && dispatchRates({ type: "error", payload: error });

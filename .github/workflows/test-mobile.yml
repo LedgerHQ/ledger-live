@@ -1,4 +1,4 @@
-name: Test Mobile App
+name: "[Test] Mobile App"
 
 on:
   push:
@@ -13,12 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-desktop-app:
+  test-mobile-app:
     name: "Ledger Live Mobile Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       FORCE_COLOR: 3
 
     runs-on: ubuntu-latest
@@ -29,7 +27,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1

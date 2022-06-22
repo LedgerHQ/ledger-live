@@ -1,8 +1,4 @@
 module.exports = {
-  /* transform: {
-    '^.+\\.[t|j]sx?$': 'babel-jest',
-  },
-  // testURL: 'http://localhost/', */
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",
@@ -18,5 +14,4 @@ module.exports = {
       "@polkadot/$1/$2",
     ],
   },
-  // transformIgnorePatterns: ["/node_modules/(?!(@polkadot|@babel/runtime)/)"],
 };
