@@ -23,8 +23,8 @@ import type {
 import type {
   SwapTransaction,
   ExchangeRate,
+  SwapDataType,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import type { SwapRouteParams } from "..";
 
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

@@ -1,16 +1,14 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import SwapError from "../../screens/Swap/Error";
-import SwapKYC from "../../screens/Swap/KYC";
-import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
+// import SwapError from "../../screens/Swap/Error";
+// import SwapKYC from "../../screens/Swap/KYC";
+// import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
 import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import StepHeader from "../StepHeader";
-import SwapPendingOperation from "../../screens/Swap/PendingOperation";
+// import StepHeader from "../StepHeader";
+// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
 
 export default function SwapNavigator() {
   const { t } = useTranslation();

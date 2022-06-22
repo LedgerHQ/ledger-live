@@ -17,7 +17,7 @@ import { FormLabel } from "./FormLabel";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { SWAP_VERSION } from "../../utils/index";
 

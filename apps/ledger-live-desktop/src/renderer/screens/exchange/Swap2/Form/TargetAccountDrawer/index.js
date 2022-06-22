@@ -14,7 +14,7 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import Check from "~/renderer/icons/Check";
-import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";

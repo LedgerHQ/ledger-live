@@ -8,7 +8,7 @@ import type {
   TokenCurrency,
   CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { SwapRouteParams } from "..";
 
 import SearchIcon from "../../../icons/Search";

@@ -16,8 +16,10 @@ import type {
   TokenCurrency,
   CryptoCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import type { SwapTransaction } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+import type {
+  SwapTransaction,
+  SwapDataType,
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { SwapRouteParams } from "..";
 
 import LText from "../../../components/LText";

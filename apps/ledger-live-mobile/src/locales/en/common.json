@@ -2251,19 +2251,13 @@
         }
       }
     },
-    "swapv2": {
+    "swap2": {
       "form": {
-        "summary": {
-          "from": "From",
-          "to": "To",
-          "send": "Send",
-          "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
-          "provider": "Provider",
-          "method": "Rate",
-          "fees": "Fees"
+        "from": "from",
+        "to": "to",
+        "notAvailable": {
+          "title": "Swap is not available yet in your area",
+          "content": "Have a little more patience, we will launch this feature very soon"
         }
       }
     },

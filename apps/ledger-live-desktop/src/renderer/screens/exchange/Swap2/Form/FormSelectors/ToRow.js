@@ -16,7 +16,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import type {
   SwapSelectorStateType,
   SwapTransactionType,
-} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
   Container as InputContainer,
   BaseContainer as BaseInputContainer,

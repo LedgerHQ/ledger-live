@@ -2,17 +2,8 @@ import { useTheme } from "@react-navigation/native";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import React, { useMemo, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
-import {
-  CryptoCurrency,
-  TokenCurrency,
-  TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
-import {
-  Account,
-  AccountLike,
-  TokenAccount,
-} from "@ledgerhq/live-common/lib/types/account";
-import { checkQuote, getProviders } from "@ledgerhq/live-common/lib/exchange/swap";
+import Config from "react-native-config"
+import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
 import {
   AvailableProviderV3,
   ExchangeRate,
@@ -35,9 +26,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "../../reducers/accounts";
 import { swapKYCSelector } from "../../reducers/settings";
-import { swapAcceptProvider, setSwapKYCStatus } from "../../actions/settings";
+import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
+import { Loading, NotAvailable, Selector } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
 import { SwapFormNavParamList } from "./types";
 
@@ -59,7 +51,7 @@ export function SwapForm(_props: Props) {
   const dispatch = useDispatch();
 
   const accounts = useSelector(accountsSelector);
-  const { storedProviders, providers, providersError } = useProviders();
+  const { providers, error } = useProviders(Config.SWAP_DISABLED_PROVIDERS);
 
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | undefined>();
   const swapTx = useSwapTransaction({
@@ -89,13 +81,13 @@ export function SwapForm(_props: Props) {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState();
   const [currentBanner, setCurrentBanner] = useState<ActionRequired>(ActionRequired.None);
-  const [error, setError] = useState<ValidCheckQuoteErrorCodes | undefined>();
+  const [errorCode, setErrorCode] = useState<ValidCheckQuoteErrorCodes | undefined>();
 
   // On provider change, reset banner and flow
   useEffect(() => {
     setCurrentFlow(undefined);
     setCurrentBanner(ActionRequired.None);
-    setError(undefined);
+    setErrorCode(undefined);
   }, [provider]);
 
   useEffect(() => {
@@ -268,18 +260,18 @@ export function SwapForm(_props: Props) {
       }
 
       // All other statuses are considered errors
-      setError(status.codeName);
+      setErrorCode(status.codeName);
     };
 
     handleCheckQuote();
   }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
 
   const isSwapReady =
-    !error &&
+    !errorCode &&
     !swapTx.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTx.transaction &&
-    !providersError &&
+    !error &&
     !swapError &&
     !currentBanner &&
     exchangeRate &&
@@ -329,12 +321,20 @@ export function SwapForm(_props: Props) {
   /*    break; */
   /* } */
 
-  return (
-    <KeyboardView style={[styles.root]}>
-      <TrackScreen category="Swap Form" providerName={provider} />
-    </KeyboardView>
-  );
+  if (providers) {
+    return (
+      <KeyboardView style={styles.root}>
+        <TrackScreen category="Swap Form" providerName={provider} />
+        <Selector swapTx={swapTx} />
+      </KeyboardView>
+    );
+  }
+  
+  if (error) {
+    return <NotAvailable />
+  }
 
+  return <Loading />
   // return swapTx.showDeviceConnect ? (
   //   <Connect provider={provider} setResult={swapTx.setDeviceMeta} />
   // ) : (

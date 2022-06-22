@@ -6,15 +6,10 @@ import {
   ExchangeRate,
   OnNoRatesCallback,
   SwapSelectorStateType,
+  RatesReducerState,
 } from "../types";
 import { pickExchangeRate } from "../utils";
 import { SetExchangeRateCallback } from "./useSwapTransaction";
-
-export type RatesReducerState = {
-  status?: string | null;
-  value?: ExchangeRate[];
-  error?: Error;
-};
 
 const ratesReducerInitialState: RatesReducerState = {};
 const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {

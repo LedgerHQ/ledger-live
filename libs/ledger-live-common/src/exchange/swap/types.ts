@@ -9,6 +9,7 @@ import {
   TransactionRaw,
 } from "../../types";
 import { Account, AccountLike, TokenAccount } from "../../types/account";
+import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
@@ -275,3 +276,35 @@ export type OnNoRatesCallback = (arg: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
 }) => void;
+
+export type RatesReducerState = {
+  status?: string | null;
+  value?: ExchangeRate[];
+  error?: Error;
+};
+
+export type SwapDataType = {
+  from: SwapSelectorStateType;
+  to: SwapSelectorStateType;
+  isMaxEnabled: boolean;
+  isSwapReversable: boolean;
+  rates: RatesReducerState;
+  refetchRates: () => void;
+  targetAccounts?: Account[];
+};
+
+export type SwapTransactionType = UseBridgeTransactionResult & {
+  swap: SwapDataType;
+  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
+  setToAccount: (
+    currency: SwapSelectorStateType["currency"],
+    account: SwapSelectorStateType["account"],
+    parentAccount: SwapSelectorStateType["parentAccount"]
+  ) => void;
+  setFromAmount: (amount: BigNumber) => void;
+  setToAmount: (amount: BigNumber) => void;
+  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
+  toggleMax: () => void;
+  reverseSwap: () => void;
+  fromAmountError?: Error;
+};

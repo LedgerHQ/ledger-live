@@ -2,17 +2,30 @@ import { useState, useEffect } from "react";
 import { AvailableProviderV3 } from "../types";
 import getProviders from "../getProviders";
 
-export function useProviders(): AvailableProviderV3[] {
-  const [res, setRes] = useState<AvailableProviderV3[]>([]);
+export function useProviders(disabled = ""): {
+  providers: AvailableProviderV3[];
+  error?: Error;
+} {
+  const [providers, setProviders] = useState<AvailableProviderV3[]>([]);
+  const [error, setError] = useState<Error | undefined>();
 
   useEffect(() => {
     fetch();
 
     async function fetch() {
-      const res = (await getProviders()) as AvailableProviderV3[];
-      setRes(res);
-    }
-  }, []);
+      try {
+        const res = (await getProviders()) as AvailableProviderV3[];
+        const filtered = res.filter((p) => !disabled.includes(p.provider));
 
-  return res;
+        setProviders(filtered);
+      } catch (e) {
+        setError(e as Error);
+      }
+    }
+  }, [disabled]);
+
+  return {
+    providers,
+    error,
+  };
 }

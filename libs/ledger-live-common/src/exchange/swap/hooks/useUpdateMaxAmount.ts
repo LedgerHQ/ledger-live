@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
-
-import { SwapTransactionType, SwapDataType } from "./useSwapTransaction";
-import { SwapSelectorStateType } from "../types";
+import {
+  SwapTransactionType,
+  SwapDataType,
+  SwapSelectorStateType,
+} from "../types";
 import { Transaction } from "../../../generated/types";
 import BigNumber from "bignumber.js";
 

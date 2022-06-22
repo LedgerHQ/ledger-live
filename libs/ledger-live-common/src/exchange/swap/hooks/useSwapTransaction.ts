@@ -1,53 +1,22 @@
 import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
-import useBridgeTransaction, {
-  Result as UseBridgeTransactionReturnType,
-} from "../../../bridge/useBridgeTransaction";
+import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
 import type { Account } from "../../../types";
 import {
   ExchangeRate,
   SwapSelectorStateType,
   OnNoRatesCallback,
+  SwapTransactionType,
 } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
-import {
-  RatesReducerState,
-  useFromState,
-  useProviderRates,
-  useToState,
-} from ".";
+import { useFromState, useProviderRates, useToState } from ".";
 import { useReverseAccounts } from "./useReverseAccounts";
-export type SwapDataType = {
-  from: SwapSelectorStateType;
-  to: SwapSelectorStateType;
-  isMaxEnabled: boolean;
-  isSwapReversable: boolean;
-  rates: RatesReducerState;
-  refetchRates: () => void;
-  targetAccounts?: Account[];
-};
+
 export const selectorStateDefaultValues = {
   currency: null,
   account: null,
   parentAccount: null,
   amount: null,
-};
-
-export type SwapTransactionType = UseBridgeTransactionReturnType & {
-  swap: SwapDataType;
-  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
-  setToAccount: (
-    currency: SwapSelectorStateType["currency"],
-    account: SwapSelectorStateType["account"],
-    parentAccount: SwapSelectorStateType["parentAccount"]
-  ) => void;
-  setFromAmount: (amount: BigNumber) => void;
-  setToAmount: (amount: BigNumber) => void;
-  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
-  toggleMax: () => void;
-  reverseSwap: () => void;
-  fromAmountError?: Error;
 };
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
