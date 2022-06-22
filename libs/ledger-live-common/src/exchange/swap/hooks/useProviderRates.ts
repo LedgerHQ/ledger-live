@@ -116,6 +116,13 @@ export const useProviderRates = ({
               const cmp =
                 rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
 
+              /**
+               * If the amount is too low, the user should put at least the
+               * minimum amount possible
+               * If the amount is too high, the user should put at most the
+               * maximum amount possible
+               */
+
               rateError =
                 (rateError as CustomMinOrMaxError).amount.comparedTo(
                   (rate.error as CustomMinOrMaxError)?.amount
