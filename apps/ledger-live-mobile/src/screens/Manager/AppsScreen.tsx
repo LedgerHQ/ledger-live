@@ -6,7 +6,7 @@ import {
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
 import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
-import { App } from "@ledgerhq/live-common/types/manager";
+import { App, DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
@@ -18,7 +18,6 @@ import { ManagerTab } from "./Manager";
 import AppFilter from "./AppsList/AppFilter";
 
 import DeviceCard from "./Device";
-import FirmwareManager from "./Firmware";
 import AppRow from "./AppsList/AppRow";
 
 import Searchbar from "./AppsList/Searchbar";
@@ -47,7 +46,7 @@ type Props = {
   initialDeviceName: string;
   navigation: any;
   blockNavigation: boolean;
-  deviceInfo: any;
+  deviceInfo: DeviceInfo;
   searchQuery?: string;
   updateModalOpened?: boolean;
   tab: ManagerTab;
