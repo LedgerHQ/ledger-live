@@ -130,9 +130,7 @@ const hedera: AppSpec<Transaction> = {
           updates: [{ recipient }, { memo: memoTestMessage }],
         };
       },
-      test: ({
-        transaction,
-      }: TransactionTestInput<Transaction>): void => {
+      test: ({ transaction }: TransactionTestInput<Transaction>): void => {
         expect(transaction.memo).toBe(memoTestMessage);
       },
     },
