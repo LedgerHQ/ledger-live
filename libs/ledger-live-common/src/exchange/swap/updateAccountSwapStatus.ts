@@ -1,11 +1,11 @@
+import type { Account, SubAccount } from "../../types";
+import { operationStatusList } from "./";
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account } from "../../types";
 import type {
-  UpdateAccountSwapStatus,
   SwapOperation,
   SwapStatusRequest,
+  UpdateAccountSwapStatus,
 } from "./types";
-import { operationStatusList } from "./";
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined
@@ -16,6 +16,8 @@ const maybeGetUpdatedSwapHistory = async (
 
   if (swapHistory) {
     for (const { provider, swapId, status } of swapHistory) {
+      // could be like that to be more resilient (i.e: all non final status are considered pending)
+      // if (!operationStatusList.finishedOK.includes(status) && !operationStatusList.finishedKO.includes(status))
       if (operationStatusList.pending.includes(status)) {
         pendingSwapIds.push({
           provider,

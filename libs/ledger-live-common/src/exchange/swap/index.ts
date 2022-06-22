@@ -27,7 +27,7 @@ import submitKYC from "./submitKYC";
 export const operationStatusList = {
   finishedOK: ["finished"],
   finishedKO: ["refunded"],
-  pending: ["pending", "onhold", "expired"],
+  pending: ["pending", "onhold", "expired", "unknown"],
 };
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
