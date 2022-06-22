@@ -15,7 +15,7 @@ export type UsePollKYCStatusProps = {
 };
 export const usePollKYCStatus = (
   { provider, kyc, onChange }: UsePollKYCStatusProps,
-  dependencies = []
+  dependencies: React.DependencyList = []
 ): void => {
   useEffect(
     () => {

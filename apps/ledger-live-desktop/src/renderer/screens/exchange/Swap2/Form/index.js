@@ -97,7 +97,7 @@ const SwapForm = () => {
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const accounts = useSelector(shallowAccountsSelector);
-  const { storedProviders, providersError } = useProviders();
+  const { storedProviders, providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   const setExchangeRate = useCallback(
     rate => {

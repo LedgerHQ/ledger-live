@@ -56,10 +56,8 @@ export function SwapForm(_props: Props) {
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | undefined>();
   const swapTx = useSwapTransaction({
     accounts,
-    exchangeRate,
     setExchangeRate,
     onNoRates: trackNoRates,
-    // ...locationState,
   });
 
   const exchangeRatesState = swapTx.swap?.rates;
