@@ -27,7 +27,7 @@ function OnboardingStepDeviceSelection() {
     if (deviceModelId === "nanoFTS") {
       // @ts-expect-error navigator typing issue
       navigation.navigate(NavigatorName.SyncOnboarding, {
-        screen: ScreenName.SyncOnboardingCompanion,
+        screen: ScreenName.DeviceModelSelection,
       });
     } else {
       // TODO: FIX @react-navigation/native using Typescript
