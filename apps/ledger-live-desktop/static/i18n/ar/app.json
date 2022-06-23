@@ -1030,7 +1030,7 @@
       "desc" : "تحقق من حالة نظامنا"
     },
     "helpCenter" : {
-      "title" : "دعم ليدجر (Ledger)",
+      "title" : "دعم Ledger",
       "desc" : "الحصول على المساعدة"
     },
     "ledgerAcademy" : {
@@ -1186,7 +1186,7 @@
       "desc" : "أضف حساباً لبدء إدارة أصولك المشفرة. يجب أن يكون لديك التطبيق الخاص بأصولك المشفرة مثبت على جهازك.",
       "buttons" : {
         "addAccount" : "إضافة حساب",
-        "installApp" : "انتقل إلى المدير لتثبيت التطبيق",
+        "installApp" : "الانتقال إلى المدير لتثبيت التطبيقات",
         "help" : "مساعدة"
       }
     }
@@ -1564,7 +1564,7 @@
     "applist" : {
       "placeholder" : "لا يوجد تطابق للبحث مع التصفيات المحددة",
       "placeholderNoAppsInstalled" : "لا توجد تطبيقات مثبتة على جهازك",
-      "placeholderGoToCatalog" : "الذهاب إلى كتالوج التطبيق لتثبيت التطبيقات",
+      "placeholderGoToCatalog" : "الانتقال إلى كتالوج التطبيقات لتثبيت التطبيقات",
       "noResultsFound" : "لم يتم العثور على نتائج",
       "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
       "filter" : {
@@ -2860,7 +2860,7 @@
       "version" : "الإصدار",
       "releaseNotesBtn" : "تفاصيل",
       "termsBtn" : "قراءة",
-      "faq" : "دعم ليدجر (Ledger)",
+      "faq" : "دعم Ledger",
       "faqDesc" : "إذا كانت لديك مشكلة، فاحصل على المساعدة لاستخدام ليدجر لايف (Ledger Live) مع محفظتك للأجهزة.",
       "terms" : "شروط الاستخدام",
       "termsDesc" : "باستخدام ليدجر لايف(Ledger Live)، سوف يُعتبر أنك قد قبلت شروط الاستخدام الخاصة بنا.",
@@ -3399,7 +3399,7 @@
             "keepItOffline" : "أدخل هذه الكلمات في محفظتك للأجهزة فقط، وليس على أجهزة الكمبيوتر أو الهواتف الذكية.",
             "neverShowToAnyone" : "لا تشارك أبدًا كلماتك الـ24 مع أي شخص، ولا حتى مع Ledger.",
             "buttons" : {
-              "next" : "حسنا، لقد انتهيت!",
+              "next" : "حسناً، لقد انتهيت!",
               "prev" : "الخطوة السابقة",
               "help" : "أحتاج إلى مساعدة",
               "learn" : "تعلم كيف تقوم بإخفائها"
@@ -3781,11 +3781,11 @@
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "حدث خطأ ما (الخطأ #1)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeTxDecode" : {
       "title" : "حدث خطأ ما (الخطأ #2)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeInvalidSequence" : {
       "title" : "تسلسل غير صالح",
@@ -3801,7 +3801,7 @@
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "حدث خطأ ما (الخطأ #6)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeInvalidAddress" : {
       "title" : "عنوان غير صحيح",
@@ -3809,7 +3809,7 @@
     },
     "CosmosBroadcastCodeInvalidPubKey" : {
       "title" : "حدث خطأ ما (الخطأ #8)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeUnknownAddress" : {
       "title" : "عنوان غير معروف",
@@ -3821,11 +3821,11 @@
     },
     "CosmosBroadcastCodeInvalidCoins" : {
       "title" : "حدث خطأ ما (الخطأ #11)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeOutOfGas" : {
       "title" : "حدث خطأ ما (الخطأ #12)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeMemoTooLarge" : {
       "title" : "حقل الملاحظة أطول من المسموح",
@@ -3833,19 +3833,19 @@
     },
     "CosmosBroadcastCodeInsufficientFee" : {
       "title" : "حدث خطأ ما (الخطأ #14)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeTooManySignatures" : {
       "title" : "حدث خطأ ما (الخطأ #15)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeGasOverflow" : {
       "title" : "حدث خطأ ما (الخطأ #16)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeNoSignatures" : {
       "title" : "حدث خطأ ما (الخطأ #17)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosDelegateAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
@@ -3864,7 +3864,7 @@
     },
     "DeviceInOSUExpected" : {
       "title" : "عذرًا، فشل التحديث",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger"
     },
     "DeviceHalted" : {
       "title" : "يرجى إعادة تشغيل جهاز ليدجر الخاص بك وإعادة المحاولة",
@@ -3908,7 +3908,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "لم يتم التعرف على البرنامج الثابت للجهاز",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "HardResetFail" : {
       "title" : "عفواً، تعذر إعادة التعيين",
@@ -3920,7 +3920,7 @@
     },
     "LedgerAPI4xx" : {
       "title" : "{{message}}",
-      "description" : "يرجى التحقق من الاتصال الخاص بك والمحاولة مرة أخرى أو الاتصال بدعم ليدجر."
+      "description" : "يرجى التحقق من الاتصال الخاص بك والمحاولة مرة أخرى أو التواصل مع دعم Ledger."
     },
     "LedgerAPI5xx" : {
       "title" : "عذرًا، حاول مرة أخرى.",
@@ -3928,7 +3928,7 @@
     },
     "LedgerAPINotAvailable" : {
       "title" : "عذراً، خدمات {{currencyName}} غير متوفرة",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger"
     },
     "ManagerAppAlreadyInstalled" : {
       "title" : "عذراً، هذا مثبت بالفعل",
@@ -4078,7 +4078,7 @@
     },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض العملية على الجهاز",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر إذا كان لديك شك"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
     },
     "UserRefusedAddress" : {
       "title" : "عنوان استقبال مرفوض",
@@ -4143,7 +4143,7 @@
     },
     "UnknownMCU" : {
       "title" : "إصدار MCU غير معروف",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "MCUNotGenuineToDashboard" : {
       "title" : "قم بالوصول إلى لوحة المعلومات للتحديث",
@@ -4180,7 +4180,7 @@
     },
     "LedgerAPIErrorWithMessage" : {
       "title" : "{{message}}",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر."
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger."
     },
     "ManagerAppRelyOnBTC" : {
       "title" : "تحتاج تطبيقات البيتكوين والإيثيريوم",
@@ -4342,7 +4342,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "SolanaTxConfirmationTimeout" : {
