@@ -3237,6 +3237,10 @@
             "buttons": {
               "next": "OK, I’m ready!",
               "prev": "Previous step"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo": {
@@ -3260,6 +3264,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo2": {
@@ -3284,6 +3292,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCode": {
@@ -3294,6 +3306,10 @@
               "next": "Set up PIN code",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "quizSuccess": {
@@ -3311,6 +3327,10 @@
             "buttons": {
               "next": "Next step",
               "prev": "Previous step"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCodeHowTo": {
@@ -3326,6 +3346,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "existingRecoveryPhrase": {
@@ -3357,6 +3381,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "newRecoveryPhrase": {
@@ -3368,6 +3396,10 @@
               "next": "Recovery phrase",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo": {
@@ -3393,6 +3425,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo3": {
@@ -3407,6 +3443,10 @@
               "next": "Next step",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "genuineCheck": {
@@ -3430,6 +3470,10 @@
               "prev": "Previous step",
               "help": "Need help",
               "learn": "Learn how to hide it"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pairMyNano": {
@@ -3439,6 +3483,10 @@
               "next": "Check my Nano",
               "prev": "Previous step",
               "help": "Need help"
+            },
+            "help": {
+              "help": "Need help",
+              "descr": "Don't know what you have to do? Get some help to close this step."
             }
           }
         }
@@ -3752,15 +3800,15 @@
           "steps": {
             "0": {
               "title": "Access your crypto",
-              "desc": "Your crypto assets are stored on the blockchain.<br/>Use your private key to access and manage them"
+              "desc": "Your crypto assets are stored on the blockchain. Use your private key to access and manage them"
             },
             "1": {
               "title": "Own your private key",
-              "desc": "Your private key is stored within your Nano<br/>You must be the only one to own it to be in control of your money"
+              "desc": "Your private key is stored within your Nano You must be the only one to own it to be in control of your money"
             },
             "2": {
               "title": "Stay offline",
-              "desc": "Your Nano works as a \"cold storage\" wallet<br/>This means that it never exposes your private key online, even when using the app"
+              "desc": "Your Nano works as a \"cold storage\" wallet This means that it never exposes your private key online, even when using the app"
             },
             "3": {
               "title": "Validate transactions",
@@ -3818,6 +3866,69 @@
             "title": "Let's set up your Nano!",
             "description": "We'll start by setting up your Nano security.",
             "CTA": "Let's do this!"
+          }
+        }
+      },
+      "quizz": {
+        "heading": "Quiz",
+        "title": "Now game on!",
+        "descr": "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
+        "buttons": {
+          "start": "Let’s take the quiz",
+          "next": "Next question",
+          "finish": "Finish quiz"
+        },
+        "questions": {
+          "1": {
+            "text": "As a Ledger user, my crypto is stored:",
+            "answers": {
+              "1": "On my Nano",
+              "2": "On the blockchain"
+            },
+            "results": {
+              "success": {
+                "title": "Congrats!",
+                "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              },
+              "fail": {
+                "title": "Incorrect!",
+                "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              }
+            }
+          },
+          "2": {
+            "text": "If my recovery phrase is no longer secure or private...",
+            "answers": {
+              "1": "No problem, Ledger can send me a copy",
+              "2": "My crypto is no longer safe and I need to transfer them to a secure place"
+            },
+            "results": {
+              "success": {
+                "title": "Congrats!",
+                "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              },
+              "fail": {
+                "title": "Incorrect!",
+                "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              }
+            }
+          },
+          "3": {
+            "text": "When I connect my Nano to the Ledger app, my private key is...",
+            "answers": {
+              "1": "Still offline",
+              "2": "Briefly connected to the internet"
+            },
+            "results": {
+              "success": {
+                "title": "Congrats!",
+                "text": "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              },
+              "fail": {
+                "title": "Incorrect!",
+                "text": "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              }
+            }
           }
         }
       }
