@@ -31,7 +31,7 @@ import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
-import { Loading, NotAvailable, Selector } from "./Form";
+import { Loading, NotAvailable, TxForm } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
 import { SwapFormNavParamList } from "./types";
 
@@ -326,7 +326,7 @@ export function SwapForm(_props: Props) {
     return (
       <KeyboardView style={styles.root}>
         <TrackScreen category="Swap Form" providerName={provider} />
-        <Selector swapTx={swapTx} />
+        <TxForm swapTx={swapTx} />
 
         <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
           {t("common.exchange")}

@@ -2301,8 +2301,8 @@
     },
     "swap2": {
       "form": {
-        "from": "from",
-        "to": "to",
+        "from": "From",
+        "to": "To",
         "notAvailable": {
           "title": "Swap is not available yet in your area",
           "content": "Have a little more patience, we will launch this feature very soon"
