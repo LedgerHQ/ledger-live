@@ -10,6 +10,7 @@ import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { idsToLanguage } from "@ledgerhq/live-common/types/languages";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";
@@ -79,6 +80,8 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
+  console.log(deviceInfo);
+
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -137,12 +140,12 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      {isLocalizationSupported && (
-        <>
+      {isLocalizationSupported && deviceInfo.languageId !== undefined && (
+        <Flex px={6}>
           <Divider />
-          <DeviceLanguage />
+          <DeviceLanguage language={idsToLanguage[deviceInfo.languageId]} />
           <Divider />
-        </>
+        </Flex>
       )}
       <DeviceAppStorage
         distribution={distribution}
