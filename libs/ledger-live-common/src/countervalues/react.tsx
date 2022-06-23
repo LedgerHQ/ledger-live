@@ -10,30 +10,8 @@ import React, {
   useCallback,
   ReactElement,
 } from "react";
-import type {
-  Account,
-  AccountLike,
-  PortfolioRange,
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-  AccountPortfolio,
-  Portfolio,
-  CurrencyPortfolio,
-  AssetsDistribution,
-  Unit,
-} from "../types";
-import {
-  getBalanceHistoryWithCountervalue,
-  getPortfolio,
-  getCurrencyPortfolio,
-  getAssetsDistribution,
-} from "../portfolio";
-import {
-  getAccountCurrency,
-  flattenAccounts,
-  getAccountUnit,
-} from "../account/helpers";
+import type { Account, AccountLike, Currency, Unit } from "../types";
+import { getAccountCurrency, getAccountUnit } from "../account/helpers";
 import {
   initialState,
   calculate,
@@ -303,113 +281,6 @@ export function useCalculateMany(
   const state = useCountervaluesState();
   // TODO how to approach perf for this? hash function of the datapoints? responsability on user land?
   return calculateMany(state, dataPoints, query);
-}
-// TODO perf of the useCalculate*, does it even worth worrying?
-// TODO move to portfolio module (I couldn't make useCountervaluesState to work there)
-export function useBalanceHistoryWithCountervalue({
-  account,
-  range,
-  to,
-}: {
-  account: AccountLike;
-  range: PortfolioRange;
-  to: Currency;
-}): AccountPortfolio {
-  const from = getAccountCurrency(account);
-  const state = useCountervaluesState();
-  return useMemo(
-    () =>
-      getBalanceHistoryWithCountervalue(account, range, (_, value, date) => {
-        const countervalue = calculate(state, {
-          value: value.toNumber(),
-          from,
-          to,
-          disableRounding: true,
-          date,
-        });
-        return typeof countervalue === "number"
-          ? new BigNumber(countervalue)
-          : countervalue;
-      }),
-    [account, from, to, range, state]
-  );
-}
-export function usePortfolio({
-  accounts,
-  range,
-  to,
-}: {
-  accounts: Account[];
-  range: PortfolioRange;
-  to: Currency;
-}): Portfolio {
-  const state = useCountervaluesState();
-  return useMemo(
-    () =>
-      getPortfolio(accounts, range, (from, value, date) => {
-        const countervalue = calculate(state, {
-          value: value.toNumber(),
-          from,
-          to,
-          disableRounding: true,
-          date,
-        });
-        return typeof countervalue === "number"
-          ? new BigNumber(countervalue)
-          : countervalue;
-      }),
-    [accounts, range, state, to]
-  );
-}
-export function useCurrencyPortfolio({
-  accounts: rawAccounts,
-  range,
-  to,
-  currency,
-}: {
-  accounts: Account[];
-  range: PortfolioRange;
-  to: Currency;
-  currency: CryptoCurrency | TokenCurrency;
-}): CurrencyPortfolio {
-  const accounts = flattenAccounts(rawAccounts).filter(
-    (a) => getAccountCurrency(a) === currency
-  );
-  const state = useCountervaluesState();
-  return useMemo(
-    () =>
-      getCurrencyPortfolio(accounts, range, (from, value, date) => {
-        const countervalue = calculate(state, {
-          value: value.toNumber(),
-          from,
-          to,
-          disableRounding: true,
-          date,
-        });
-        return typeof countervalue === "number"
-          ? new BigNumber(countervalue)
-          : countervalue;
-      }),
-    [accounts, range, state, to]
-  );
-}
-export function useDistribution({
-  accounts,
-  to,
-}: {
-  accounts: Account[];
-  to: Currency;
-}): AssetsDistribution {
-  const calc = useCalculateCountervalueCallback({
-    to,
-  });
-  return useMemo(() => {
-    return getAssetsDistribution(accounts, calc, {
-      minShowFirst: 6,
-      maxShowFirst: 6,
-      showFirstThreshold: 0.95,
-    });
-  }, [accounts, calc]);
 }
 
 export function useCalculateCountervalueCallback({
