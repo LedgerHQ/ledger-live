@@ -31,7 +31,7 @@ export const useNoNanoBuyNanoWallScreenOptions = () => {
         headerRight: null,
         headerBackTitleVisible: false,
         title: null,
-        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       },
     };
   }
