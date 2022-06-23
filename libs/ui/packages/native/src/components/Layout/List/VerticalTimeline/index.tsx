@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-import StepListItem from "./StepListItem";
+import TimelineItem from "./TimelineItem";
 import { Flex } from "../..";
 
 export type ItemStatus = "inactive" | "active" | "completed";
@@ -12,18 +12,18 @@ export type Item = {
 };
 
 export type Props = {
-  items?: Item[];
+  steps?: Item[];
 };
 
-export default function StepList({ items }: Props) {
+export default function VerticalTimeline({ steps }: Props) {
   return (
     <Flex flexDirection="column">
-      {items?.map((item, index) => (
-        <StepListItem
-          key={item.title}
-          item={item}
+      {steps?.map((step, index) => (
+        <TimelineItem
+          key={step.title}
+          item={step}
           isFirstItem={index === 0}
-          isLastItem={index === items.length - 1}
+          isLastItem={index === steps.length - 1}
         />
       ))}
     </Flex>

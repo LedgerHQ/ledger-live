@@ -12,7 +12,7 @@ import "./Layout/List/NumberedList.stories";
 import "./Layout/List/IconBoxList.stories";
 import "./Layout/List/TipList.stories";
 import "./Layout/List/List.stories";
-import "./Layout/List/StepList.stories";
+import "./Layout/List/VerticalTimeline.stories";
 import "./message/Notification/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
 import "./Navigation/StoriesIndicator/StoriesIndicator.stories";
