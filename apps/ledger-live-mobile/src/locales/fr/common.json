@@ -348,7 +348,7 @@
     },
     "ManagerAppRelyOnBTC" : {
       "title" : "Apps Bitcoin et Ethereum nécessaires",
-      "description" : "Installez d'abord les dernières apps Bitcoin et Ethereum."
+      "description" : "Installez d’abord les dernières apps Bitcoin et Ethereum."
     },
     "ManagerDeviceLocked" : {
       "title" : "Appareil verrouillé",
@@ -484,7 +484,7 @@
     },
     "TronSendTrc20ToNewAccountForbidden" : {
       "title" : "Envoyer des TRC-20 sur le nouveau compte ne l’activera pas.",
-      "description" : "Pour l'activer, envoyez d’abord des TRX ou TRC-10 sur le compte. Il pourra ensuite recevoir des TRC-20."
+      "description" : "Pour l’activer, envoyez d’abord des TRX ou TRC-10 sur le compte. Il pourra ensuite recevoir des TRC-20."
     },
     "TronUnexpectedFees" : {
       "title" : "Des frais supplémentaires peuvent s’appliquer."
@@ -644,7 +644,7 @@
       "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum {{amount}} ADA required"
+      "title" : "Montant minimal d’ADA requis : {{amount}}"
     }
   },
   "bluetooth" : {
@@ -909,9 +909,9 @@
     }
   },
   "postBuyDevice" : {
-    "headerTitle" : "Purchase successful",
-    "title" : "Congratulations",
-    "desc" : "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "headerTitle" : "Achat confirmé",
+    "title" : "Félicitations.",
+    "desc" : "Votre commande est en cours de traitement.\nVous recevrez bientôt votre Ledger. Vous trouverez la confirmation de commande dans votre boîte mail."
   },
   "discover" : {
     "title" : "Discover",
@@ -936,8 +936,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Welcome to Ledger",
-      "subtitle" : "We make digital ownership secured and simple.",
+      "title" : "Bienvenue sur Ledger",
+      "subtitle" : "La propriété numérique, sécurisée et simplifiée.",
       "start" : "Commencer",
       "noDevice" : "Pas encore de wallet Ledger ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
@@ -947,15 +947,15 @@
       "and" : "et"
     },
     "stepDoYouHaveALedgerDevice" : {
-      "title" : "Do you own a Ledger?",
-      "subtitle" : "First thing's first",
-      "yes" : "Yes, I do",
-      "no" : "Not yet"
+      "title" : "Avez-vous un Ledger ?",
+      "subtitle" : "Pour commencer",
+      "yes" : "Oui",
+      "no" : "Pas encore"
     },
     "postWelcomeStep" : {
       "title" : "À vous de choisir",
-      "subtitle_yes" : "You can choose to set up your Ledger or take a look around the app first",
-      "subtitle_no" : "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes" : "Vous pouvez choisir de configurer votre Ledger ou commencer par explorer l’app.",
+      "subtitle_no" : "Vous pouvez commencer par explorer l’app ou choisir d’acheter un Nano X.",
       "noLedgerLink" : "Je n’ai pas de Ledger et souhaite en acheter un",
       "setupLedger" : {
         "title" : "Configurer mon Ledger",
@@ -963,7 +963,7 @@
       },
       "buyNano" : {
         "title" : "Acheter un Ledger Nano X",
-        "subtitle" : "A hardware wallet is the only way to ensure your assets are secure "
+        "subtitle" : "Les wallets physiques sont les seuls outils permettant de sécuriser vos actifs. "
       },
       "discoverLedger" : {
         "title" : "Explorez Ledger Live",
@@ -1368,7 +1368,7 @@
         "title_2" : "Mettez à jour la version d’Android de votre téléphone.",
         "desc" : "Si vous rencontrez des problèmes de Bluetooth avec votre Nano X, supprimez le couplage et oubliez le Nano X sur votre téléphone. Puis réessayez de l’appairer.",
         "desc_1" : "La demande de couplage Bluetooth peut prendre du temps à s’afficher. Vérifiez et confirmez le code de couplage à la fois sur votre Nano X et votre téléphone.",
-        "desc_2" : "Vérifiez dans les paramètres Bluetooth de votre téléphone que le Nano X est détecté. S’il n'est pas détecté, assurez-vous d’avoir bien activé le Bluetooth sur votre Nano X.",
+        "desc_2" : "Vérifiez dans les paramètres Bluetooth de votre téléphone que le Nano X est détecté. S’il n’est pas détecté, assurez-vous d’avoir bien activé le Bluetooth sur votre Nano X.",
         "desc_3" : "Localisation",
         "desc_4" : "Si le Nano X n’est pas détecté dans votre app mobile lorsque vous tentez de le coupler, essayez ceci :",
         "desc_5" : "L’app mobile Ledger vous demande d’autoriser l’accès à la localisation si ce n’est pas déjà fait. Sur quelques modèles de téléphone, cela n’est pas toujours bien détecté. L’app mobile Ledger n’utilise jamais vos informations de localisation. Le Bluetooth requiert simplement cette autorisation sur Android.",
@@ -1413,7 +1413,7 @@
     },
     "stepSetupPin" : {
       "step1" : "Allumez votre {{fullDeviceName}} et suivez les instructions.",
-      "step1-nanoS" : "Connectez votre {{fullDeviceName}} à votre téléphone à l’aide d'un câble OTG.",
+      "step1-nanoS" : "Connectez votre {{fullDeviceName}} à votre téléphone à l’aide d’un câble OTG.",
       "step2" : "Appuyez sur les deux boutons simultanément pour choisir \"<1><1>Set up as new device</1></1>\" (Configurer un nouvel appareil).",
       "step2-restore" : "Appuyez sur les deux boutons simultanément pour choisir \"<1><1>Restore from recovery phrase</1></1>\" (Restaurer à partir d’une phrase de récupération).",
       "step3" : "Appuyez sur le bouton gauche ou droit pour choisir un chiffre. Appuyez sur les deux boutons simultanément pour confirmer.",
@@ -1945,7 +1945,7 @@
     },
     "status" : {
       "title" : "Statut de Ledger",
-      "desc" : "Vérifiez l'état de notre système."
+      "desc" : "Vérifiez l’état de notre système."
     }
   },
   "settings" : {
@@ -1957,7 +1957,7 @@
       "carousel" : "Visibilité du carrousel",
       "carouselDesc" : "Affichez le carrousel sur le Portefeuille.",
       "language" : "Langue d’affichage",
-      "languageDesc" : "Choisissez la langue d'affichage de Ledger Live.",
+      "languageDesc" : "Choisissez la langue d’affichage de Ledger Live.",
       "region" : "Région",
       "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "password" : "Verrouillage par mot de passe",
@@ -2945,7 +2945,7 @@
       "openOnboarding" : "Configurer un appareil"
     },
     "installApp" : "Installation de l’app {{appName}} {{percentage}}",
-    "installAppDescription" : "Merci d'attendre la fin de l’installation.",
+    "installAppDescription" : "Merci d’attendre la fin de l’installation.",
     "listApps" : "Vérification en cours des apps nécessaires",
     "listAppsDescription" : "Patientez pendant que nous vérifions que vous avez toutes les apps requises."
   },
@@ -3224,14 +3224,14 @@
   "FirmwareUpdate" : {
     "title" : "Mettre à jour le micrologiciel",
     "preparing" : "Préparation de la mise à jour du micrologiciel... Veuillez garder votre appareil allumé et connecté. Nous vous informerons de la progression de la mise à jour.",
-    "confirmIdentifierText" : "Vérifiez que l'identifiant sur votre appareil est le même que l'identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
+    "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
     "pleaseReinstallApps" : "Veuillez réinstaller les apps sur votre appareil.",
     "pleaseConfirmUpdate" : "Confirmez la mise à jour sur votre appareil",
     "finishUpdate" : "Terminez la mise à jour sur votre {{deviceName}}",
     "identifierTitle" : "Identifiant :",
     "pleaseWaitDownload" : "Patientez pendant le téléchargement du programme d’installation",
     "preparingDevice" : "Préparation de votre appareil",
-    "pleaseWaitUpdate" : "Merci d'attendre que la mise à jour soit terminée.",
+    "pleaseWaitUpdate" : "Merci d’attendre que la mise à jour soit terminée.",
     "waitForFirmwareUpdate" : "Attendez la fin de la mise à jour du micrologiciel sur votre appareil",
     "unlockDeviceWithPin" : "Déverrouillez votre appareil avec votre code PIN",
     "reinstallApps" : "Réinstaller les apps",
@@ -3265,7 +3265,7 @@
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
     "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
-    "confirmRecoveryPhrase" : "J'ai ma phrase de récupération.",
+    "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",
     "action" : "Continuer la mise à jour"
