@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "编辑费用"
     },
-    "manageCard" : {
-      "title" : "管理 CL 卡",
-      "description" : "订购和管理 CL 卡"
-    },
     "receive" : {
       "title" : "接收",
       "description" : "从另一个钱包接收加密货币。",
