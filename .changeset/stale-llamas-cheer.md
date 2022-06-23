@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-upgrade dependencies
+Update ledger-live-common dependency stellar-sdk to v10.1.1
