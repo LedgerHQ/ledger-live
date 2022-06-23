@@ -75,7 +75,7 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
