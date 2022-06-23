@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.0-next.14
+
+### Patch Changes
+
+- 95b4c2854: Fix hasOrderedNano state with Buy Nano screen
+
 ## 3.3.0-next.13
 
 ### Patch Changes
