@@ -37,7 +37,7 @@ export const useFromState = ({
       const parentAccount =
         account?.type !== "Account"
           ? accounts?.find((a) => a.id === account?.parentId)
-          : null;
+          : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
       bridgeTransaction.setAccount(account as AccountLike, parentAccount);

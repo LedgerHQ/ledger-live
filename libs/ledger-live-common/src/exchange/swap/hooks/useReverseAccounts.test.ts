@@ -39,10 +39,10 @@ describe("useReverseAccounts", () => {
 
     expect(result.current.isSwapReversable).toBe(true);
 
-    rerender({ ...defaultProps, toAccount: null });
+    rerender({ ...defaultProps, toAccount: undefined });
     expect(result.current.isSwapReversable).toBe(false);
 
-    rerender({ ...defaultProps, fromCurrency: null });
+    rerender({ ...defaultProps, fromCurrency: undefined });
     expect(result.current.isSwapReversable).toBe(false);
 
     rerender({

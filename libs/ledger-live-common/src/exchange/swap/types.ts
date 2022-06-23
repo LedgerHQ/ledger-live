@@ -267,10 +267,10 @@ export type InitSwapInputRaw = {
 };
 
 export type SwapSelectorStateType = {
-  currency: null | undefined | TokenCurrency | CryptoCurrency;
-  account: null | undefined | Account | TokenAccount;
-  parentAccount: null | undefined | Account;
-  amount: null | undefined | BigNumber;
+  currency: TokenCurrency | CryptoCurrency | undefined;
+  account: Account | TokenAccount | undefined;
+  parentAccount: Account | undefined;
+  amount: BigNumber | undefined;
 };
 
 export type OnNoRatesCallback = (arg: {

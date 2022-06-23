@@ -49,7 +49,6 @@ enum ActionRequired {
 }
 
 export function SwapForm(_props: Props) {
-  const { colors } = useTheme();
   const dispatch = useDispatch();
   const {t} = useTranslation();
 

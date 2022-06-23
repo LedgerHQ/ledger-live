@@ -15,10 +15,10 @@ import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 import { useReverseAccounts } from "./useReverseAccounts";
 
 export const selectorStateDefaultValues = {
-  currency: null,
-  account: null,
-  parentAccount: null,
-  amount: null,
+  currency: undefined,
+  account: undefined,
+  parentAccount: undefined,
+  amount: undefined,
 };
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
