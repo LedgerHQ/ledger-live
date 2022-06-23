@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
 import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "../../const";
 
 export type Props = {
   isOpen: boolean;
@@ -8,9 +10,14 @@ export type Props = {
 };
 
 const DesyncDrawer = ({ isOpen, onClose }: Props) => {
-  const handleDocumentationPress = useCallback(() => {
-    // TODO: add logic when user press "FAQ" button
-  }, []);
+  const navigation = useNavigation();
+
+  const handleRetryPress = useCallback(() => {
+    navigation.navigate(ScreenName.PairDevices, {
+      onlySelectDeviceWithoutFullAppPairing: true,
+      onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
+    });
+  }, [navigation]);
 
   const handleSupportPress = useCallback(() => {
     // TODO: add logic when user press "Support" button
@@ -25,7 +32,7 @@ const DesyncDrawer = ({ isOpen, onClose }: Props) => {
         Please make sure your Nano is nearby and unlocked. Check to see if
         Bluetooth is enabled on your mobile phone
       </Text>
-      <Button type="main" outline mb={6} onPress={handleDocumentationPress}>
+      <Button type="main" outline mb={6} onPress={handleRetryPress}>
         Try again
       </Button>
       <Link Icon={ExternalLinkMedium} onPress={handleSupportPress}>
