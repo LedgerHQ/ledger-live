@@ -2,7 +2,6 @@ import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
-import JSONBigNumber from "@ledgerhq/json-bignumber";
 import type {
   CryptoCurrency,
   NFTCollectionMetadataResponse,
@@ -158,7 +157,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
             block_hash,
           },
         }),
-        transformResponse: JSONBigNumber.parse,
       });
 
       // v3 have a bug that still includes the tx of the paginated block_hash, we're cleaning it up
@@ -178,7 +176,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/blocks/current`,
-        transformResponse: JSONBigNumber.parse,
       });
       return data;
     },
@@ -206,7 +203,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/addresses/${address}/balance`,
-        transformResponse: JSONBigNumber.parse,
       });
       return new BigNumber(data[0].balance);
     },
@@ -215,7 +211,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/erc20/balances`,
-        transformResponse: JSONBigNumber.parse,
         data: input,
       });
       return data;
@@ -283,7 +278,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
-        transformResponse: JSONBigNumber.parse,
       });
       return new BigNumber(data.estimated_gas_limit);
     },
@@ -299,7 +293,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         method: "POST",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
         data: post,
-        transformResponse: JSONBigNumber.parse,
       });
 
       if (data.error_message) {

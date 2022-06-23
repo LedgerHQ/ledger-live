@@ -64,7 +64,7 @@ export const getAccountShape: GetAccountShape = async (
     currentBlockP,
     balanceP,
   ]);
-  const blockHeight = currentBlock.height.toNumber();
+  const blockHeight = currentBlock?.height;
 
   if (!pullFromBlockHash && txs.length === 0) {
     log("ethereum", "no ops on " + address);

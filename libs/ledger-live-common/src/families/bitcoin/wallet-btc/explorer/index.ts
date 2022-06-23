@@ -4,7 +4,6 @@ import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import BigNumber from "bignumber.js";
 import genericPool, { Pool } from "generic-pool";
 
-import JSONBigNumber from "@ledgerhq/json-bignumber";
 import { Address, Block, TX } from "../storage/types";
 import EventEmitter from "../utils/eventemitter";
 import { IExplorer } from "./types";
@@ -215,7 +214,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
           // some altcoin may have outputs with values > MAX_SAFE_INTEGER
           transformResponse: (string) =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            JSONBigNumber.parse(string, (key: string, value: any) => {
+            JSON.parse(string, (key: string, value: any) => {
               if (BigNumber.isBigNumber(value)) {
                 if (key === "value") {
                   return value.toString();
