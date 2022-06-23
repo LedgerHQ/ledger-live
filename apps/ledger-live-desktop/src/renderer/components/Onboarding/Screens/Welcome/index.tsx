@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel";
@@ -19,6 +19,7 @@ import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { onboardingRelaunchedSelector } from "~/renderer/reducers/application";
+import { palettes } from "@ledgerhq/react-ui/styles";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
 registerAssets(stepLogos);
@@ -85,15 +86,12 @@ const Description = styled(Text)`
   white-space: pre-line;
 `;
 
-type Props = {
-  setOpenedTermsModal: (isOpened: boolean) => void;
-};
-
-export function Welcome({ setOpenedTermsModal }: Props) {
+export function Welcome({}) {
   const onboardingOrigin = useSelector(onboardingRelaunchedSelector) ? "/settings/help" : undefined;
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
+  const { colors } = useTheme();
 
   const buyNanoX = useCallback(() => {
     openURL(urls.noDevice.buyNew);
@@ -117,7 +115,7 @@ export function Welcome({ setOpenedTermsModal }: Props) {
     <WelcomeContainer>
       <LeftContainer>
         <Presentation>
-          <Logos.LedgerLiveRegular />
+          <Logos.LedgerLiveRegular color={colors.neutral.c100} />
           <Text variant="h1" ff="Alpha|Medium" pt={"32px"} pb={"20px"}>
             {t("v3.onboarding.screens.welcome.title")}
           </Text>
@@ -131,7 +129,7 @@ export function Welcome({ setOpenedTermsModal }: Props) {
             iconPosition="right"
             Icon={Icons.ArrowRightMedium}
             variant="main"
-            onClick={() => setOpenedTermsModal(true)}
+            onClick={() => history.push("/onboarding/select-device")}
           >
             {t("v3.onboarding.screens.welcome.nextButton")}
           </Button>
