@@ -10,6 +10,16 @@ require("../../../families/tron/tokens").add("trc20", [
         true,
     ],
     [
+        "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8",
+        "USDC",
+        "USD Coin",
+        "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8",
+        6,
+        false,
+        "",
+        true,
+    ],
+    [
         "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
         "WIN",
         "WINK",
