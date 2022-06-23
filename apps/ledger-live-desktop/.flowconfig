@@ -30,8 +30,5 @@ esproposal.optional_chaining=enable
 
 [untyped]
 .*/node_modules/react-select
-<PROJECT_ROOT>/node_modules/qrloop/lib/Buffer.js*
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/icons/react/*
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/react.jsarn
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/apps/hw.js*
 .*/libs/ledger-live-common/.*
+<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/*

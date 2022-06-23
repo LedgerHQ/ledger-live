@@ -3,6 +3,7 @@ import React from "react";
 import Box from "~/renderer/components/Box";
 import type { FooterProps } from "./types";
 import Button from "~/renderer/components/Button";
+// $FlowFixMe
 import { STATUS } from "~/renderer/screens/WalletConnect/Provider";
 import { useTranslation } from "react-i18next";
 
