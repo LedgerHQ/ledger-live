@@ -320,6 +320,7 @@ export const ScreenName = {
   OnboardingModalRecoveryPhraseWarning: "OnboardingModalRecoveryPhraseWarning",
 
   SyncOnboardingCompanion: "SyncOnboardingCompanion",
+  DeviceModelSelection: "DeviceModelSelection",
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
