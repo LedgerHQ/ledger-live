@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Bullet, Title, Column, IllustrationContainer } from "../shared";
+import { Bullet, Title, Column, IllustrationContainer, AsideFooter } from "../shared";
 import getStarted from "../assets/v3/getStarted.png";
 
 export function HowToGetStarted() {
@@ -28,6 +28,18 @@ export function HowToGetStarted() {
 HowToGetStarted.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={getStarted} />
 );
+
+const Footer = (props: any) => {
+  const { t } = useTranslation();
+  return (
+    <AsideFooter
+      {...props}
+      text={t("onboarding.screens.tutorial.screens.howToGetStarted.help.descr")}
+    />
+  );
+};
+
+HowToGetStarted.Footer = Footer;
 
 HowToGetStarted.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.howToGetStarted.buttons.next" />

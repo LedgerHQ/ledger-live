@@ -51,7 +51,7 @@ const Footer = (props: any) => {
   return (
     <AsideFooter
       {...props}
-      text={t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.buttons.help")}
+      text={t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.help.descr")}
     />
   );
 };
