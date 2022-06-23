@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-import StepListItemWrapper from "./StepListItemWrapper";
+import StepListItem from "./StepListItem";
 import { Flex } from "../..";
 
 export type ItemStatus = "inactive" | "active" | "completed";
@@ -19,7 +19,7 @@ export default function StepList({ items }: Props) {
   return (
     <Flex flexDirection="column">
       {items?.map((item, index) => (
-        <StepListItemWrapper
+        <StepListItem
           key={item.title}
           item={item}
           isFirstItem={index === 0}

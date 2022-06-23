@@ -7,7 +7,6 @@ import { ItemStatus } from ".";
 import { Theme } from "src/styles/theme";
 
 const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  /* width: 4px; */
   height: 20px;
   border-width: ${(p) => (p.hidden ? 0 : 1)}px;
   border-style: solid;
