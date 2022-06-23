@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "Editar tarifas"
     },
-    "manageCard" : {
-      "title" : "Gestionar Tarjeta CL",
-      "description" : "Pedir y gestionar la Tarjeta CL"
-    },
     "receive" : {
       "title" : "Recibir",
       "description" : "Recibe criptomonedas de otra billetera.",
