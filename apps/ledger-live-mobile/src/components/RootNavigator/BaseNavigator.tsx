@@ -110,6 +110,10 @@ export default function BaseNavigator() {
           headerShown: false,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.NoDeviceWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
@@ -136,6 +140,7 @@ export default function BaseNavigator() {
         options={{
           title: t("postBuyDevice.headerTitle"),
           headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen

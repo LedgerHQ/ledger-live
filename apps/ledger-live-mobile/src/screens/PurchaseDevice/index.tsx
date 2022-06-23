@@ -15,11 +15,7 @@ import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { NavigatorName, ScreenName } from "../../const";
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setReadOnlyMode,
-} from "../../actions/settings";
+import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
 import { urls } from "../../config/urls";
 
 const defaultURL = urls.buyNanoX;
@@ -80,7 +76,6 @@ const PurchaseDevice = () => {
       if (data.type === "ledgerLiveOrderSuccess") {
         dispatch(setReadOnlyMode(true));
         dispatch(completeOnboarding());
-        dispatch(setHasOrderedNano(true));
       }
     },
     [dispatch],
