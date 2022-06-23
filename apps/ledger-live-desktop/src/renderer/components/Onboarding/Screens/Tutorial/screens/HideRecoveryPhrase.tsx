@@ -10,8 +10,7 @@ import {
   AsideFooter,
 } from "../shared";
 import { Button, Icons } from "@ledgerhq/react-ui";
-import getStarted from "../assets/v3/getStarted.png";
-
+import hideRecoverySheet from "../assets/hideRecoverySheetLight.svg";
 type Props = {
   handleHelp: () => void;
 };
@@ -43,7 +42,7 @@ export function HideRecoveryPhrase({ handleHelp }: Props) {
 }
 
 HideRecoveryPhrase.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={getStarted} />
+  <IllustrationContainer width="240px" height="245px" src={hideRecoverySheet} />
 );
 
 const Footer = (props: any) => {

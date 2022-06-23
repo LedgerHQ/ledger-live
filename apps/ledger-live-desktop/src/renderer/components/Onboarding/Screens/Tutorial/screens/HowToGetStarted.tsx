@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Bullet, Title, Column, IllustrationContainer, AsideFooter } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import nanoHourglassLight from "../assets/nanoHourglassLight.svg";
 
 export function HowToGetStarted() {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export function HowToGetStarted() {
 }
 
 HowToGetStarted.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={getStarted} />
+  <IllustrationContainer width="240px" height="245px" src={nanoHourglassLight} />
 );
 
 const Footer = (props: any) => {

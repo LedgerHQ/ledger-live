@@ -3,15 +3,13 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
 import ModalStepper from "../../ModalStepper";
-import accessYourCoins from "./assets/accessYourCoins.png";
+import Illustration from "~/renderer/components/Illustration";
 
-const Illustration = styled(Flex)`
-  background: url(${p => p.src}) no-repeat center;
-  background-size: contain;
-  margin: 0 auto;
-  width: ${p => p.width}px;
-  height: ${p => p.height}px;
-`;
+import bitcoinBoxLight from "./assets/bitcoinBoxLight.svg";
+import keyInABallLight from "./assets/keyInABallLight.svg";
+import lnAndGlassLight from "./assets/lnAndGlassLight.svg";
+import lnNoWirelessLight from "./assets/lnNoWirelessLight.svg";
+import phoneAndCoinsLight from "./assets/phoneAndCoinsLight.svg";
 
 type PedagogyProps = {
   isOpen: boolean;
@@ -30,27 +28,45 @@ export function Pedagogy({ isOpen, onDone, onClose }: PedagogyProps) {
         {
           title: t("v3.onboarding.pedagogy.screens.accessYourCoins.title"),
           description: t("v3.onboarding.pedagogy.screens.accessYourCoins.description"),
-          AsideRight: <Illustration width={280} height={280} src={accessYourCoins} />,
+          AsideRight: (
+            <Illustration size={280} lightSource={bitcoinBoxLight} darkSource={bitcoinBoxLight} />
+          ),
         },
         {
           title: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.title"),
           description: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.description"),
-          AsideRight: <Illustration width={280} height={280} src={accessYourCoins} />,
+          AsideRight: (
+            <Illustration size={280} lightSource={keyInABallLight} darkSource={keyInABallLight} />
+          ),
         },
         {
           title: t("v3.onboarding.pedagogy.screens.stayOffline.title"),
           description: t("v3.onboarding.pedagogy.screens.stayOffline.description"),
-          AsideRight: <Illustration width={280} height={280} src={accessYourCoins} />,
+          AsideRight: (
+            <Illustration
+              size={280}
+              lightSource={lnNoWirelessLight}
+              darkSource={lnNoWirelessLight}
+            />
+          ),
         },
         {
           title: t("v3.onboarding.pedagogy.screens.validateTransactions.title"),
           description: t("v3.onboarding.pedagogy.screens.validateTransactions.description"),
-          AsideRight: <Illustration width={280} height={280} src={accessYourCoins} />,
+          AsideRight: (
+            <Illustration
+              size={280}
+              lightSource={phoneAndCoinsLight}
+              darkSource={phoneAndCoinsLight}
+            />
+          ),
         },
         {
           title: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.title"),
           description: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.description"),
-          AsideRight: <Illustration width={280} height={280} src={accessYourCoins} />,
+          AsideRight: (
+            <Illustration size={280} lightSource={lnAndGlassLight} darkSource={lnAndGlassLight} />
+          ),
           continueLabel: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.CTA"),
         },
       ]}

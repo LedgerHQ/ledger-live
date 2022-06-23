@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, AsideFooter, Column, Bullet, IllustrationContainer } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import writeRecoverySheetLight from "../assets/writeRecoverySheetLight.svg";
 
 const steps = [
   {
@@ -24,7 +24,7 @@ export function UseRecoverySheet() {
       {steps.map((step, index) => (
         <Bullet
           key={index}
-          bulletText={index}
+          bulletText={index + 1}
           text={t(step.text)}
           subText={step.subText ? t(step.subText) : null}
         />
@@ -34,7 +34,7 @@ export function UseRecoverySheet() {
 }
 
 UseRecoverySheet.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={getStarted} />
+  <IllustrationContainer width="240px" height="245px" src={writeRecoverySheetLight} />
 );
 
 const Footer = (props: any) => {
