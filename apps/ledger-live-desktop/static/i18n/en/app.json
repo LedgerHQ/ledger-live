@@ -346,6 +346,7 @@
     "title": "Swap",
     "titleCrypto": "Swap {{currency}}",
     "whatIsSwap": "What is Swap",
+    "decentralizedSwapAvailable": "For some transactions you may consider using decentralised SWAP. Discover <0>ParaSwap</0> and <1>1inch</1>.",
     "paraswap": {
       "cta": " Check it out",
       "description": "Looking for Paraswap? It has been moved to the Discover tab."

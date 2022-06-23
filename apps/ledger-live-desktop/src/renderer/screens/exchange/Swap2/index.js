@@ -12,12 +12,15 @@ import Box from "~/renderer/components/Box";
 
 const Body = styled(Box)`
   flex: 1;
+  flex-direction: column;
 `;
 
 const Main = styled.main`
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 1;
+  flex-direction: column;
 
   background-color: ${p => p.theme.colors.palette.background.paper};
 

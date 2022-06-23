@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import SwapFormSummary from "./FormSummary";
 import SwapFormSelectors from "./FormSelectors";
@@ -34,6 +34,8 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { SWAP_VERSION, trackSwapError } from "../utils/index";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import DexSwapAvailableAlert from "./DexSwapAvailableAlert";
 
 const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
   p: 20,
@@ -170,8 +172,28 @@ const SwapForm = () => {
   };
 
   const sourceAccount = swapTransaction.swap.from.account;
+  const sourceParentAccount = swapTransaction.swap.from.parentAccount;
+  const targetAccount = swapTransaction.swap.to.account;
+  const targetParentAccount = swapTransaction.swap.to.parentAccount;
   const sourceCurrency = swapTransaction.swap.from.currency;
   const targetCurrency = swapTransaction.swap.to.currency;
+
+  // We check if a decentralized swap is available to conditionnaly render an Alert below.
+  // All Ethereum related currencies are considered available
+  const decentralizedSwapAvailable = useMemo(() => {
+    if (sourceAccount && targetAccount) {
+      const sourceMainAccount = getMainAccount(sourceAccount, sourceParentAccount);
+      const targetMainAccount = getMainAccount(targetAccount, targetParentAccount);
+
+      if (
+        targetMainAccount.currency.family === "ethereum" &&
+        sourceMainAccount.currency.id === targetMainAccount.currency.id
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
 
   if (providers?.length)
     return (
@@ -201,15 +223,28 @@ const SwapForm = () => {
           provider={provider}
         />
         {showWyreKYCBanner ? <FormKYCBanner provider={provider} status={kycStatus} /> : null}
-        <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-          {t("common.exchange")}
-        </Button>
+        <Box>
+          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
+            {t("common.exchange")}
+          </Button>
+          {decentralizedSwapAvailable ? (
+            <DexSwapAvailableAlert swapTransaction={swapTransaction} />
+          ) : null}
+        </Box>
       </Wrapper>
     );
 
   // TODO: ensure that the error is catch by Sentry in this case
-  if (providersError) return <FormNotAvailable />;
-  if (storedProviders?.length === 0) return <FormNotAvailable />;
+  if (storedProviders?.length === 0 || providersError) {
+    return (
+      <>
+        <FormNotAvailable />
+        <Box px="18px" maxWidth="500px">
+          <DexSwapAvailableAlert swapTransaction={swapTransaction} />
+        </Box>
+      </>
+    );
+  }
 
   return <FormLoading />;
 };
