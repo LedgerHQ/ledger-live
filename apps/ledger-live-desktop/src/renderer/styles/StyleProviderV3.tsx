@@ -1,6 +1,6 @@
 import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, useTheme } from "styled-components";
 import type { StyledComponent } from "styled-components";
 import defaultTheme from "./theme";
 import palettes from "./palettes";
@@ -42,8 +42,10 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
 };
 
 export const withV3StyleProvider = (WrappedComponent: React.ComponentType) => ({ props }) => {
+  const theme = useTheme();
+
   return (
-    <StyleProviderV3 {...props}>
+    <StyleProviderV3 selectedPalette={theme.colors.type}>
       <WrappedComponent {...props} />
     </StyleProviderV3>
   );
