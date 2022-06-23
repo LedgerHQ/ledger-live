@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "Ücretleri düzenle"
     },
-    "manageCard" : {
-      "title" : "CL Kartı Ayarlayın",
-      "description" : "CL Kartı Sipariş Edin ve Ayarlayın"
-    },
     "receive" : {
       "title" : "Al",
       "description" : "Başka bir cüzdandan kripto alın.",
