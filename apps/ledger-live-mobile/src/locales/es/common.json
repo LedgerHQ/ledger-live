@@ -644,7 +644,7 @@
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum {{amount}} ADA required"
+      "title" : "{{amount}} mínimos de ADA necesarios"
     }
   },
   "bluetooth" : {
@@ -909,9 +909,9 @@
     }
   },
   "postBuyDevice" : {
-    "headerTitle" : "Purchase successful",
-    "title" : "Congratulations",
-    "desc" : "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "headerTitle" : "Compra exitosa",
+    "title" : "¡Enhorabuena!",
+    "desc" : "Tu pedido está en proceso.\nRecibirás tu Ledger pronto. Busca la confirmación de tu pedido en tu correo electrónico."
   },
   "discover" : {
     "title" : "Discover",
@@ -936,8 +936,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Welcome to Ledger",
-      "subtitle" : "We make digital ownership secured and simple.",
+      "title" : "Bienvenidos a Ledger",
+      "subtitle" : "Hacemos que poseer activos digitales sea seguro y simple.",
       "start" : "Comenzar",
       "noDevice" : "¿No tienes un dispositivo?",
       "buy" : "Compra un {{fullDeviceName}}",
@@ -947,15 +947,15 @@
       "and" : "Y"
     },
     "stepDoYouHaveALedgerDevice" : {
-      "title" : "Do you own a Ledger?",
-      "subtitle" : "First thing's first",
-      "yes" : "Yes, I do",
-      "no" : "Not yet"
+      "title" : "¿Tienes un Ledger?",
+      "subtitle" : "Lo primero es lo primero",
+      "yes" : "Sí",
+      "no" : "No todavía"
     },
     "postWelcomeStep" : {
       "title" : "Tú eliges",
-      "subtitle_yes" : "You can choose to set up your Ledger or take a look around the app first",
-      "subtitle_no" : "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes" : "Puedes elegir configurar tu Ledger o darle un vistazo a la aplicación primero.",
+      "subtitle_no" : "Puedes elegir darle un vistazo a la aplicación primero o comprar un Nano X",
       "noLedgerLink" : "No tengo un Ledger y me gustaría comprar uno",
       "setupLedger" : {
         "title" : "Configurar mi Ledger",
@@ -963,7 +963,7 @@
       },
       "buyNano" : {
         "title" : "Compra un Ledger Nano X",
-        "subtitle" : "A hardware wallet is the only way to ensure your assets are secure "
+        "subtitle" : "Una billetera de hardware es la única forma de garantizar que tus activos estén protegidos "
       },
       "discoverLedger" : {
         "title" : "Explora Ledger Live",
