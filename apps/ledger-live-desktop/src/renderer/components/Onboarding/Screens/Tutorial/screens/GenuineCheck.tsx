@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Bullet, Column, IllustrationContainer } from "../shared";
+import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import getStarted from "../assets/v3/getStarted.png";
 
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
@@ -65,6 +65,18 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
 }
 
 GenuineCheck.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+
+const Footer = (props: any) => {
+  const { t } = useTranslation();
+  return (
+    <AsideFooter
+      {...props}
+      text={t("onboarding.screens.tutorial.screens.recoveryHowTo.help.descr")}
+    />
+  );
+};
+
+GenuineCheck.Footer = Footer;
 
 GenuineCheck.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.genuineCheck.buttons.next" />

@@ -236,7 +236,7 @@ const ScreenContainer = styled.div`
   }
 `;
 
-export function Onboarding({ onboardingRelaunched }: { onboardingRelaunched: boolean }) {
+export default function Onboarding({ onboardingRelaunched }: { onboardingRelaunched: boolean }) {
   const dispatch = useDispatch();
   const currentDevice = useSelector(getCurrentDevice);
   const notSeededDeviceRelaunch = useSelector(notSeededDeviceRelaunchSelector);

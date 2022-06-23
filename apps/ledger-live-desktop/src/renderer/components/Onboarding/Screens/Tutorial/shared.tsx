@@ -33,7 +33,9 @@ export const IconContainer = styled(BorderFlex).attrs({
   flexDirection: "row",
   justifyContent: "center",
   alignItems: "center",
-})``;
+})`
+  color: ${p => p.theme.colors.palette.neutral.c100};
+`;
 
 export const Row = styled(Flex).attrs({
   flexDirection: "row",
@@ -60,7 +62,9 @@ export const Bullet = ({
 }) => {
   return (
     <Row mb={8}>
-      <IconContainer>{icon ? <Icon name={icon} size={18} /> : bulletText}</IconContainer>
+      <IconContainer>
+        {icon ? <Icon name={icon} size={18} color="palette.neutral.c100" /> : bulletText}
+      </IconContainer>
       <Column flex="1" ml={4}>
         <Text variant="body">{text}</Text>
         {subText && (
@@ -90,7 +94,7 @@ export const CheckStep = ({
 );
 
 const Footer = styled(Column).attrs({ flex: "1", p: 8 })`
-  border-top: 1px solid ${p => p.theme.colors.palette.primary.c100};
+  border-top: 1px solid ${p => p.theme.colors.palette.primary.c80};
   cursor: pointer;
 `;
 
