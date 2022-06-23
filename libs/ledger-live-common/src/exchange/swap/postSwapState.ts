@@ -12,6 +12,14 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   if (getEnv("MOCK"))
     return mockPostSwapAccepted({ provider, swapId, transactionId });
 
+  /**
+   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * this info
+   */
+  if (!swapId) {
+    return null;
+  }
+
   await network({
     method: "POST",
     url: `${getSwapAPIBaseURL()}/swap/accepted`,
@@ -26,6 +34,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   swapId = "",
 }) => {
   if (getEnv("MOCK")) return mockPostSwapCancelled({ provider, swapId });
+
+  /**
+   * Since swapId is requiered by the endpoit, don't call it if we don't have
+   * this info
+   */
+  if (!swapId) {
+    return null;
+  }
 
   await network({
     method: "POST",
