@@ -19,3 +19,9 @@ export const languageIds: { [key in Language]: number } = {
   french: 0x01,
   spanish: 0x02,
 };
+
+export const idsToLanguage: { [key in typeof languageIds[Language]]: Language } = {
+  0x00: "english",
+  0x01: "french",
+  0x02: "spanish"
+};
