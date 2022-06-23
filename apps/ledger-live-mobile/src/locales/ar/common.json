@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "تعديل الرسوم"
     },
-    "manageCard" : {
-      "title" : "Manage CL Card",
-      "description" : "Order and Manage CL Card"
-    },
     "receive" : {
       "title" : "تلقي",
       "description" : "Receive crypto from another wallet.",
