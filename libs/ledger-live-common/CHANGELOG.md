@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 23.1.0-nightly.2
+
+### Minor Changes
+
+- e1f2f07a2: fix(LLC): cardano byron address validation
+
 ## 23.1.0-nightly.1
 
 ### Minor Changes

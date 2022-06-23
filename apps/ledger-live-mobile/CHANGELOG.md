@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.2.2-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [e1f2f07a2]
+  - @ledgerhq/live-common@23.1.0-nightly.2
+
 ## 3.2.2-nightly.3
 
 ### Patch Changes

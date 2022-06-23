@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.44.0-nightly.5
+
+### Patch Changes
+
+- ebb7deb1a: Fix regression when opening external windows from within a webview tag
+- Updated dependencies [e1f2f07a2]
+  - @ledgerhq/live-common@23.1.0-nightly.2
+
 ## 2.44.0-nightly.4
 
 ### Patch Changes
