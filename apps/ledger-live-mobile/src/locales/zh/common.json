@@ -644,7 +644,7 @@
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum {{amount}} ADA required"
+      "title" : "至少需要 {{amount}} 个 ADA"
     }
   },
   "bluetooth" : {
@@ -909,9 +909,9 @@
     }
   },
   "postBuyDevice" : {
-    "headerTitle" : "Purchase successful",
-    "title" : "Congratulations",
-    "desc" : "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "headerTitle" : "购买成功",
+    "title" : "恭喜",
+    "desc" : "您的订单正在处理中。\n您将很快收到您的 Ledger。请查收您的电子邮件以确认订单。"
   },
   "discover" : {
     "title" : "发现",
@@ -936,8 +936,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Welcome to Ledger",
-      "subtitle" : "We make digital ownership secured and simple.",
+      "title" : "欢迎使用 Ledger",
+      "subtitle" : "我们使数字所有权变得安全而简单。",
       "start" : "开始",
       "noDevice" : "没有设备？",
       "buy" : "购买一个 {{fullDeviceName}}",
@@ -947,15 +947,15 @@
       "and" : "和"
     },
     "stepDoYouHaveALedgerDevice" : {
-      "title" : "Do you own a Ledger?",
-      "subtitle" : "First thing's first",
-      "yes" : "Yes, I do",
-      "no" : "Not yet"
+      "title" : "您拥有 Ledger 设备吗？",
+      "subtitle" : "首要事情",
+      "yes" : "是的，我有",
+      "no" : "还没有"
     },
     "postWelcomeStep" : {
       "title" : "这是您的选择",
-      "subtitle_yes" : "You can choose to set up your Ledger or take a look around the app first",
-      "subtitle_no" : "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes" : "您可以选择设置您的 Ledger，或者先浏览一下应用程序。",
+      "subtitle_no" : "您可以选择先看看应用程序，或者购买 Nano X 设备",
       "noLedgerLink" : "我没有 Ledger 设备，我想买一个。",
       "setupLedger" : {
         "title" : "设置我的 Ledger 设备",
@@ -963,7 +963,7 @@
       },
       "buyNano" : {
         "title" : "购买 Ledger Nano X",
-        "subtitle" : "A hardware wallet is the only way to ensure your assets are secure "
+        "subtitle" : "硬件钱包是确保您资产安全的唯一途径 "
       },
       "discoverLedger" : {
         "title" : "探索 Ledger Live",

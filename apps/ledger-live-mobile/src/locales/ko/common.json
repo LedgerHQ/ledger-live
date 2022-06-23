@@ -644,7 +644,7 @@
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum {{amount}} ADA required"
+      "title" : "최소 {{amount}} ADA 필요"
     }
   },
   "bluetooth" : {
@@ -909,9 +909,9 @@
     }
   },
   "postBuyDevice" : {
-    "headerTitle" : "Purchase successful",
-    "title" : "Congratulations",
-    "desc" : "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
+    "headerTitle" : "구매 완료",
+    "title" : "축하합니다!",
+    "desc" : "주문을 처리 중입니다.\n곧 Ledger 장치를 받게 됩니다. 주문 확인 이메일을 확인해 주세요."
   },
   "discover" : {
     "title" : "탐색",
@@ -936,8 +936,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Welcome to Ledger",
-      "subtitle" : "We make digital ownership secured and simple.",
+      "title" : "Ledger에 오신 것을 환영합니다",
+      "subtitle" : "당사는 디지털 소유권을 안전하고 간단하게 만들어 드립니다.",
       "start" : "시작하기",
       "noDevice" : "장치가 없나요?",
       "buy" : "{{fullDeviceName}} 구매",
@@ -947,15 +947,15 @@
       "and" : "및"
     },
     "stepDoYouHaveALedgerDevice" : {
-      "title" : "Do you own a Ledger?",
-      "subtitle" : "First thing's first",
-      "yes" : "Yes, I do",
-      "no" : "Not yet"
+      "title" : "Ledger를 가지고 계신가요?",
+      "subtitle" : "하지만 먼저",
+      "yes" : "네, 그렇습니다",
+      "no" : "아니요, 아직입니다"
     },
     "postWelcomeStep" : {
       "title" : "사용자의 선택",
-      "subtitle_yes" : "You can choose to set up your Ledger or take a look around the app first",
-      "subtitle_no" : "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes" : "Ledger를 설정하거나 앱을 먼저 둘러볼 수 있습니다",
+      "subtitle_no" : "선택 가능 옵션: 먼저 앱을 살펴보거나 Nano X 장치를 구매하세요",
       "noLedgerLink" : "Ledger가 없는데 하나 사고 싶습니다",
       "setupLedger" : {
         "title" : "내 Ledger 설정",
@@ -963,7 +963,7 @@
       },
       "buyNano" : {
         "title" : "Ledger Nano X 구매하기",
-        "subtitle" : "A hardware wallet is the only way to ensure your assets are secure "
+        "subtitle" : "하드웨어 지갑은 자산을 안전하게 보호할 수 있는 유일한 방법입니다. "
       },
       "discoverLedger" : {
         "title" : "Ledger Live를 살펴보세요",
