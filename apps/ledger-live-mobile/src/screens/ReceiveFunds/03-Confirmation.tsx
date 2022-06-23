@@ -3,11 +3,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
-import { View, StyleSheet, Platform } from "react-native";
+import { TouchableOpacity, TouchableWithoutFeedback, Share } from "react-native";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
-import { Trans } from "react-i18next";
-import ReactNativeModal from "react-native-modal";
+import { useTranslation, Trans } from "react-i18next";
 import type {
   Account,
   TokenAccount,
@@ -21,28 +20,21 @@ import {
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
+import { Flex, Text, Icons, Button } from "@ledgerhq/native-ui";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import LText from "../../components/LText/index";
-import DisplayAddress from "../../components/DisplayAddress";
-import Alert from "../../components/Alert";
 import BottomModal from "../../components/BottomModal";
-import QRcodeZoom from "../../icons/QRcodeZoom";
-import Touchable from "../../components/Touchable";
-import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
-import ShareLink from "../../components/ShareLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { urls } from "../../config/urls";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
 import GenericErrorView from "../../components/GenericErrorView";
+import ReceiveSecurityModal from "./ReceiveSecurityModal";
+import AdditionalInfoModal from "./AdditionalInfoModal";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -63,17 +55,31 @@ type RouteParams = {
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { t } = useTranslation();
 
   const [verified, setVerified] = useState(false);
+  const [isToastDisplayed, setIsToastDisplayed] = useState(true);
   const [isModalOpened, setIsModalOpened] = useState(false);
   const onModalHide = useRef(() => {});
   const [error, setError] = useState(null);
-  const [zoom, setZoom] = useState(false);
   const [allowNavigation, setAllowNavigation] = useState(true);
+  const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const sub = useRef();
+
+  const hideToast = useCallback(() => {
+    setIsToastDisplayed(false);
+  }, []);
+
+  const openAdditionalInfoModal = useCallback(() => {
+    setIsAddionalInfoModalOpen(true);
+    hideToast();
+  }, [setIsAddionalInfoModalOpen, hideToast]);
+
+  const closeAdditionalInfoModal = useCallback(() => {
+    setIsAddionalInfoModalOpen(false);
+  }, [setIsAddionalInfoModalOpen]);
 
   const { onSuccess, onError } = route.params;
 
@@ -122,10 +128,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     onModalHide.current = onDone;
   }
 
-  function onZoom(): void {
-    setZoom(!zoom);
-  }
-
   function onDone(): void {
     const n = navigation.getParent();
     if (n) {
@@ -133,15 +135,25 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     }
   }
 
+  const { width } = getWindowDimensions();
+  const QRSize = Math.round(width / 1.8 - 16);
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = account && getAccountCurrency(account);
+
   useEffect(() => {
     if (!allowNavigation) {
       navigation.setOptions({
         headerLeft: null,
+        headerTitle: getAccountName(account),
         headerRight: () => null,
         gestureEnabled: false,
       });
+    } else {
+      navigation.setOptions({
+        headerTitle: getAccountName(account),
+      });
     }
-  }, [allowNavigation, colors, navigation]);
+  }, [allowNavigation, colors, navigation, account]);
 
   useEffect(() => {
     const device = route.params.device;
@@ -152,22 +164,16 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     setAllowNavigation(true);
   }, [route.params, verified, verifyOnDevice]);
 
-  if (!account) return null;
-  const { width } = getWindowDimensions();
-  const unsafe = !route.params.device?.deviceId;
-  const QRSize = Math.round(width / 1.8 - 16);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
+  const onShare = useCallback(() => {
+    if (mainAccount?.freshAddress) {
+      Share.share({ message: mainAccount?.freshAddress });
+    }
+  }, [mainAccount?.freshAddress]);
+
+  if (!account || !currency || !mainAccount) return null;
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen
-        category="ReceiveFunds"
-        name="Confirmation"
-        unsafe={unsafe}
-        verified={verified}
-        currencyName={currency.name}
-      />
+    <Flex flex={1}>
       {allowNavigation ? null : (
         <>
           <PreventNativeBack />
@@ -175,158 +181,124 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </>
       )}
       <NavigationScrollView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Touchable event="QRZoom" onPress={onZoom}>
-            {width < 350 ? (
-              <View>
-                <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
-                  <QRcodeZoom size={72} />
-                </View>
-              </View>
-            ) : (
-              <View style={{ alignItems: "center", justifyContent: "center"}}>
-                <View
-                  style={[
-                    styles.qrWrapper,
-                    { borderColor: colors.lightFog },
-                    dark ? { backgroundColor: "white" } : {},
-                    { position: "relative" },
-                  ]}
-                >
-                  <QRCode
-                    size={QRSize}
-                    value={mainAccount.freshAddress}
-                    ecl="H"
-                  />
-                </View>
-                <View
-                  style={{
-                    width: 62,
-                    height: 62,
-                    backgroundColor: "#fff",
-                    position: "absolute",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <CurrencyIcon
-                    currency={currency}
-                    color={"#fff"}
-                    bg={currency.color}
-                    size={48}
-                    circle
-                  />
-                </View>
-              </View>
-            )}
-          </Touchable>
-          <View>
-            <LText style={styles.addressTitle} color="grey">
-              <Trans i18nKey="transfer.receive.address" />
-            </LText>
-          </View>
-          <View style={styles.addressWrapper}>
-            <CurrencyIcon currency={currency} size={20} />
-            <LText semiBold style={styles.addressTitleBold}>
-              {getAccountName(account)}
-            </LText>
-          </View>
-          <View style={styles.address}>
-            <DisplayAddress
-              address={mainAccount.freshAddress}
-              verified={verified}
-            />
-          </View>
-          {mainAccount.derivationMode === "taproot" ? (
-            <View style={styles.taprootWarning}>
-              <Alert type="warning">
-                <Trans i18nKey="transfer.receive.taprootWarning" />
-              </Alert>
-            </View>
-          ) : null}
-
-          <View style={styles.copyLink}>
-            <CopyLink
-              style={styles.copyShare}
-              string={mainAccount.freshAddress}
-              replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
-            >
-              <Trans i18nKey="transfer.receive.copyAddress" />
-            </CopyLink>
-            <View style={styles.copyShare}>
-              <ShareLink value={mainAccount.freshAddress}>
-                <Trans i18nKey="transfer.receive.shareAddress" />
-              </ShareLink>
-            </View>
-          </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          {unsafe ? (
-            <Alert type="warning">
-              <Trans
-                i18nKey={
-                  readOnlyModeEnabled
-                    ? "transfer.receive.readOnly.verify"
-                    : "transfer.receive.verifySkipped"
-                }
-                values={{
-                  accountType: mainAccount.currency.managerAppName,
-                }}
-              />
-            </Alert>
-          ) : verified ? (
-            <Alert type="help" learnMoreUrl={urls.verifyTransactionDetails}>
-              <Trans i18nKey="transfer.receive.verified" />
-            </Alert>
+        <Flex p={6} alignItems="center" justifyContent="center">
+          <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
+            {t("transfer.receive.receiveConfirmation.title", { currencyTicker: currency.ticker })}
+          </Text>
+          <Flex>
+          {verified ? (
+            <Flex alignItems="center" justifyContent="center" flexDirection="row">
+              <Icons.ShieldCheckMedium color="success.c100" size={16} />
+              <Text color="success.c100" fontWeight="medium" variant="paragraphLineHeight" ml={2}>
+                {t("transfer.receive.receiveConfirmation.addressVerified")}
+              </Text>
+            </Flex>
           ) : (
-            <Alert type="help">
-              <Trans
-                i18nKey="transfer.receive.verifyPending"
-                values={{
-                  currencyName: mainAccount.currency.managerAppName,
-                }}
-              />
-            </Alert>
+            <Flex>
+              <TouchableOpacity onPress={onRetry}>
+                <Flex alignItems="center" justifyContent="center" flexDirection="row">
+                  <Icons.ShieldSecurityMedium color="warning.c100" size={16} />
+                  <Text color="warning.c100" fontWeight="medium" variant="paragraphLineHeight" ml={2}>
+                    {t("transfer.receive.receiveConfirmation.verifyAddress")}
+                  </Text>
+                </Flex>
+              </TouchableOpacity>
+              <Text variant="small" fontWeight="medium" color="neutral.c70" textAlign="center" mt={3}>
+                {t("transfer.receive.receiveConfirmation.adviceVerify")}
+              </Text>
+            </Flex>
           )}
-        </View>
+        </Flex>
+        <Flex alignItems="center" justifyContent="center" mt={10}>
+          <Flex
+            p={6}
+            borderRadius={24}
+            position="relative"
+            bg="constant.white"
+            borderWidth={1}
+            borderColor="neutral.c40"
+          >
+            <QRCode
+              size={QRSize}
+              value={mainAccount.freshAddress}
+              ecl="H"
+            />
+          </Flex>
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            width={QRSize*1/3}
+            height={QRSize*1/3}
+            bg="constant.white"
+            position="absolute"
+          >
+            <CurrencyIcon
+              currency={currency}
+              color={colors.constant.white}
+              bg={currency.color}
+              size={48}
+              circle
+            />
+          </Flex>
+        </Flex>
+        <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6} flexDirection="row" width="100%" justifyContent={"space-between"}>
+          <Text numberOfLines={1} width="75%" fontWeight="semiBold">
+            {mainAccount.freshAddress}
+          </Text>
+          <CopyLink
+            string={mainAccount.freshAddress}
+            replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
+          >
+            {t("transfer.receive.copyAddress")}
+          </CopyLink>
+        </Flex>
+        <Text variant="body" fontWeight="medium" color="neutral.c70" mt={6} textAlign="center">
+          {t("transfer.receive.receiveConfirmation.sendWarning", { currencyName: currency.name, currencyTicker: currency.ticker })}
+        </Text>
+      </Flex>
       </NavigationScrollView>
-      {verified && (
-        <View
-          style={[
-            styles.footer,
-            {
-              borderTopColor: colors.lightFog,
-              backgroundColor: colors.background,
-            },
-          ]}
+      <Button type="shade" outline size="large" m={6} onPress={onShare}>
+        {t("transfer.receive.shareAddress")}
+      </Button>
+      {isToastDisplayed ? (
+        <Flex
+          left={0}
+          right={0}
+          bottom={6}
+          position="absolute"
+          bg="neutral.c100"
+          mx={6}
+          borderRadius={8}
         >
-          <Button
-            event="ReceiveDone"
-            containerStyle={styles.button}
-            onPress={onDone}
-            type="secondary"
-            title={<Trans i18nKey="common.close" />}
-          />
-          <Button
-            event="ReceiveVerifyAgain"
-            containerStyle={styles.bigButton}
-            type="primary"
-            title={<Trans i18nKey="transfer.receive.verifyAgain" />}
-            onPress={onRetry}
-          />
-        </View>
-      )}
-      <ReactNativeModal
-        isVisible={zoom}
-        onBackdropPress={onZoom}
-        onBackButtonPress={onZoom}
-        useNativeDriver
-        hideModalContentWhileAnimating
-      >
-        <View style={[styles.qrZoomWrapper, { backgroundColor: "#FFF" }]}>
-          <QRCode size={width - 66} value={mainAccount.freshAddress} ecl="H" />
-        </View>
-      </ReactNativeModal>
+          <TouchableWithoutFeedback onPress={openAdditionalInfoModal}>
+            <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+            >
+              <Flex flex={1} px={6} py={7} borderRadius={8} alignItems="center">
+                <Icons.CircledCheckMedium color="neutral.c00" size={24} />
+              </Flex>
+              <Flex width="70%">
+                <Text variant="body" fontWeight="semiBold" color="neutral.c00">
+                  {t("transfer.receive.toastMessages.accountImported", { currencyTicker: currency.ticker })}
+                </Text>
+              </Flex>
+              <TouchableWithoutFeedback onPress={hideToast}>
+                <Flex flex={1} py={7} pr={6} pl={3} borderRadius={8} alignItems="center">
+                  <Icons.CloseMedium color="neutral.c00" size={20} />
+                </Flex>
+              </TouchableWithoutFeedback>
+            </Flex>
+          </TouchableWithoutFeedback>
+        </Flex>
+       ) : null}
+      <ReceiveSecurityModal onVerifyAddress={onRetry} />
+      <AdditionalInfoModal
+        isOpen={isAddionalInfoModalOpen}
+        onClose={closeAdditionalInfoModal}
+        currencyTicker={currency.ticker}
+      />
       <BottomModal
         id="ReceiveConfirmationModal"
         isOpened={isModalOpened}
@@ -334,133 +306,20 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         onModalHide={onModalHide.current}
       >
         {error ? (
-          <View style={styles.modal}>
+          <Flex flexDirection="column">
             <GenericErrorView error={error} />
-            <View style={styles.buttonsContainer}>
+            <Flex flexDirection="row" justifyContent="flex-end" flexGrow={1} my={3}>
               <Button
                 event="ReceiveRetry"
                 type="primary"
                 title={<Trans i18nKey="common.retry" />}
-                containerStyle={styles.bigButton}
+                containerStyle={{ flexGrow: 2 }}
                 onPress={onRetry}
               />
-            </View>
-          </View>
+            </Flex>
+          </Flex>
         ) : null}
       </BottomModal>
-    </View>
+    </Flex>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-    paddingTop: 32,
-  },
-  qrWrapper: {
-    borderWidth: 1,
-
-    padding: 16,
-    borderRadius: 24,
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    shadowOffset: {
-      height: 4,
-    },
-  },
-  qrWrapperSmall: {
-    padding: 8,
-  },
-  qrZoomWrapper: {
-    padding: 16,
-    borderRadius: 4,
-    alignItems: "center",
-  },
-  addressTitle: {
-    paddingTop: 16,
-    fontSize: 14,
-  },
-  addressTitleBold: {
-    paddingLeft: 8,
-    fontSize: 16,
-  },
-  addressWrapper: {
-    paddingTop: 8,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  address: {
-    paddingTop: 24,
-  },
-  taprootWarning: {
-    paddingTop: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignSelf: "stretch",
-  },
-  copyLink: {
-    paddingTop: 24,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignSelf: "stretch",
-  },
-  copyShare: {
-    paddingHorizontal: 12,
-  },
-  modal: {
-    flexDirection: "column",
-  },
-  modalBody: {
-    alignItems: "center",
-    paddingHorizontal: 16,
-  },
-  modalIcon: {
-    paddingTop: 20,
-  },
-  modalTitle: {
-    paddingTop: 40,
-    fontSize: 16,
-    textAlign: "center",
-  },
-  modalDescription: {
-    paddingTop: 16,
-    marginBottom: 40,
-    fontSize: 14,
-    paddingHorizontal: 40,
-    textAlign: "center",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    marginVertical: 8,
-    alignItems: "flex-end",
-    flexGrow: 1,
-  },
-  button: {
-    flexGrow: 1,
-    marginHorizontal: 8,
-  },
-  bigButton: {
-    flexGrow: 2,
-  },
-  footer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    paddingTop: 8,
-  },
-  learnmore: {
-    paddingLeft: 8,
-    paddingTop: 4,
-  },
-});
