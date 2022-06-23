@@ -561,9 +561,6 @@ export default function Tutorial({ useCase }: Props) {
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
-      <Popin isOpen={alertBeCareful}>
-        <CarefullyFollowInstructions onClose={() => setAlertBeCareful(false)} />
-      </Popin>
       <Popin isOpen={alertPreferLedgerSeed}>
         <PreferLedgerRecoverySeed onClose={() => setAlertPreferLedgerSeed} />
       </Popin>
