@@ -73,6 +73,7 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
   const style = useAnimatedStyle(
     () => ({
       height: transition.value * height + 1,
+      overflow: "hidden",
     }),
     [height, transition.value],
   );
@@ -85,7 +86,7 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
         isLastItem={isLastItem}
         mr={4}
       />
-      <Container status={item.status} isLastItem={isLastItem} mb={6}>
+      <Container status={item.status} isLastItem={isLastItem} mb={4}>
         <Text
           variant="body"
           color={
