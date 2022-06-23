@@ -161,7 +161,8 @@ jobs:
 
   build-desktop-app-windows:
     name: "Build Ledger Live Desktop (Windows)"
-    runs-on: [ledger-live, windows]
+    # runs-on: [ledger-live, windows]
+    runs-on: windows-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -169,9 +170,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
           fetch-depth: 0
-      - name: update path
-        run: |
-          echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      # - name: update path
+      #   run: |
+      #     echo "C:\Program Files\Git\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 2.1.816
