@@ -18,16 +18,16 @@ const HelpDrawer = ({ isOpen, onClose }: Props) => {
 
   return (
     <BottomDrawer onClose={onClose} isOpen={isOpen}>
-      <Text variant="h4" textAlign="center" mb={4}>
+      <Text variant="h4" fontWeight="semiBold" mb={4}>
         Need some help with your setup manual?
       </Text>
-      <Text variant="body" textAlign="center" mb={4} color="neutral.c80">
-        Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim gehts messti de
+      <Text variant="bodyLineHeight" mb={4} color="neutral.c80">
+        Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de
         Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo
         eget Gal.
       </Text>
-      <Text variant="body" textAlign="center" mb={8} color="neutral.c80">
-        Lorem Elsass ipsum aliquam bissame Oberschaeffolsheim gehts messti de
+      <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
+        Lorem Elsass ipsum aliquam bissame Ober schae ffolsheim gehts messti de
         Bischheim tellus blottkopf, dui sed libero. hopla libero, placerat leo
         eget Gal.
       </Text>
