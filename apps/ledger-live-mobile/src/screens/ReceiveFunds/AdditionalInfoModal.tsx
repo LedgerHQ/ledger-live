@@ -32,7 +32,7 @@ const AdditionalInfoModal = ({
         values={{ currencyTicker }}
       />
     </Text>
-    <Flex alignSelf="stretch" my={8}>
+    <Flex alignSelf="stretch" mt={8}>
       <Button onPress={onClose} type="main" size="large">
         <Trans i18nKey="transfer.receive.additionalInfoModal.closeCta" />
       </Button>
