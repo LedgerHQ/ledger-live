@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "Gebühren bearbeiten"
     },
-    "manageCard" : {
-      "title" : "CL Card verwalten",
-      "description" : "Bestellen und verwalten Sie Ihre CL Card"
-    },
     "receive" : {
       "title" : "Empfangen",
       "description" : "Empfangen Sie Kryptos von einer anderen Wallet.",
