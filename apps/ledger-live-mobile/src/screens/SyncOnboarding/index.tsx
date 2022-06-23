@@ -5,7 +5,7 @@ import {
   Flex,
   ScrollContainer,
   ScrollContainerHeader,
-  StepList,
+  VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/src/onboarding/hooks/useOnboardingStatePolling";
@@ -159,6 +159,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
+      console.log("hello");
       setStopPolling(false);
     }
   }, [isDesyncDrawerOpen]);
@@ -174,7 +175,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           isOpen={isDesyncDrawerOpen}
           onClose={() => setDesyncDrawerOpen(false)}
         />
-        <ResyncOverlay isOpen={!!timer && !isDesyncDrawerOpen} />
+        <ResyncOverlay isOpen={!!timer && !stopPolling} />
         <ScrollContainer>
           <ScrollContainerHeader>
             <Flex
@@ -206,7 +207,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
             <Text mb={8} variant="body" color="neutral.c80">
               Check back here for tips and information.
             </Text>
-            <StepList items={onboardingSteps} />
+            <VerticalTimeline steps={onboardingSteps} />
           </Flex>
         </ScrollContainer>
       </Flex>
