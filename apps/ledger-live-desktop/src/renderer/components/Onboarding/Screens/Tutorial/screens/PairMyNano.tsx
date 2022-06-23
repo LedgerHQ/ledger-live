@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle, IllustrationContainer, AsideFooter } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import geniuneCheckLight from "../assets/geniuneCheckLight.svg";
+
 export function PairMyNano() {
   const { t } = useTranslation();
 
@@ -13,7 +14,9 @@ export function PairMyNano() {
   );
 }
 
-PairMyNano.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+PairMyNano.Illustration = (
+  <IllustrationContainer width="240px" height="245px" src={geniuneCheckLight} />
+);
 
 const Footer = (props: any) => {
   const { t } = useTranslation();
