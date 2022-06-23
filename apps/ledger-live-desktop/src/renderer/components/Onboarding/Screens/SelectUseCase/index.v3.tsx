@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Separator } from "./Separator";
-import placeholderOption from "./assets/placeholderOption.svg";
+
 import { deviceById } from "~/renderer/components/Onboarding/Screens/SelectDevice/devices";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
@@ -19,7 +19,24 @@ import { track } from "~/renderer/analytics/segment";
 import { ScreenId } from "../Tutorial";
 import { OnboardingContext, UseCase } from "../../index.v3";
 
-registerAssets([placeholderOption]);
+import connectNanoLight from "./assets/connectNanoLight.svg";
+import restorePhraseLight from "./assets/restorePhraseLight.svg";
+import setupNanoLight from "./assets/setupNanoLight.svg";
+
+import connectNanoDark from "./assets/connectNanoDark.svg";
+import restorePhraseDark from "./assets/restorePhraseDark.svg";
+import setupNanoDark from "./assets/setupNanoDark.svg";
+
+import Illustration from "~/renderer/components/Illustration";
+
+registerAssets([
+  connectNanoLight,
+  restorePhraseLight,
+  setupNanoLight,
+  connectNanoDark,
+  restorePhraseDark,
+  setupNanoDark,
+]);
 
 const SelectUseCaseContainer = styled.div`
   width: 100%;
@@ -28,12 +45,6 @@ const SelectUseCaseContainer = styled.div`
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-`;
-
-const PlaceholderIllu = styled.div`
-  background: url(${() => placeholderOption}) no-repeat center;
-  width: 200px;
-  height: 200px;
 `;
 
 const Row = styled.div`
@@ -51,9 +62,6 @@ const LeftColumn = styled.div`
 `;
 
 const LeftText = styled(Text).attrs(() => ({
-  ff: "Alpha|Medium",
-  type: "h3",
-  fontSize: "28px",
   uppercase: true,
 }))`
   color: ${p => p.theme.colors.palette.neutral.c100};
@@ -98,7 +106,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
       <SelectUseCaseContainer>
         <Row>
           <LeftColumn>
-            <LeftText>
+            <LeftText variant="h3">
               <Trans
                 i18nKey="v3.onboarding.screens.selectUseCase.hasNoRecovery"
                 values={{
@@ -119,7 +127,9 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 />
               }
               description={t("v3.onboarding.screens.selectUseCase.options.1.description")}
-              Illu={<PlaceholderIllu />}
+              Illu={
+                <Illustration lightSource={setupNanoLight} darkSource={setupNanoDark} size={200} />
+              }
               onClick={() => {
                 track("Onboarding - Setup new");
                 setUseCase(UseCase.setupDevice);
@@ -132,7 +142,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
         <Separator label={t("v3.onboarding.screens.selectUseCase.separator")} />
         <Row>
           <LeftColumn>
-            <LeftText>{t("v3.onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
+            <LeftText variant="h3">{t("v3.onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
           </LeftColumn>
           <RightColumn>
             <UseCaseOption
@@ -146,7 +156,13 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 />
               }
               description={t("v3.onboarding.screens.selectUseCase.options.2.description")}
-              Illu={<PlaceholderIllu />}
+              Illu={
+                <Illustration
+                  lightSource={connectNanoLight}
+                  darkSource={connectNanoDark}
+                  size={200}
+                />
+              }
               onClick={() => {
                 track("Onboarding - Connect");
                 setUseCase(UseCase.connectDevice);
@@ -165,7 +181,13 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                   }}
                 />
               }
-              Illu={<PlaceholderIllu />}
+              Illu={
+                <Illustration
+                  lightSource={restorePhraseLight}
+                  darkSource={restorePhraseDark}
+                  size={200}
+                />
+              }
               onClick={() => {
                 track("Onboarding - Restore");
                 setUseCase(UseCase.recoveryPhrase);
