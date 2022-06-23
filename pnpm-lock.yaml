@@ -908,7 +908,6 @@ importers:
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
       '@ledgerhq/hw-transport-node-speculos': workspace:^
-      '@ledgerhq/json-bignumber': ^1.1.0
       '@ledgerhq/live-app-sdk': ^0.6.1
       '@ledgerhq/logs': workspace:^
       '@polkadot/types': 8.5.1
@@ -1066,7 +1065,6 @@ importers:
       '@ledgerhq/hw-transport': link:../ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': link:../ledgerjs/packages/hw-transport-mocker
       '@ledgerhq/hw-transport-node-speculos': link:../ledgerjs/packages/hw-transport-node-speculos
-      '@ledgerhq/json-bignumber': 1.1.0
       '@ledgerhq/live-app-sdk': 0.6.1
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
       '@polkadot/types': 8.5.1
@@ -9441,12 +9439,6 @@ packages:
       '@ledgerhq/devices': 5.51.1
       '@ledgerhq/errors': 5.50.0
       events: 3.3.0
-    dev: false
-
-  /@ledgerhq/json-bignumber/1.1.0:
-    resolution: {integrity: sha512-FxWFC3UrYF077OV8eXLZ+2ymnr0IEVICdBk5SgplcIM1T4aZWMAJ+KvCVIxUB+DirygBaCYeUwWBrs5twxHUXA==}
-    dependencies:
-      bignumber.js: 9.0.2
     dev: false
 
   /@ledgerhq/live-app-sdk/0.6.1:
@@ -18884,7 +18876,7 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -27656,6 +27648,15 @@ packages:
     dependencies:
       tabbable: 5.3.2
     dev: false
+
+  /follow-redirects/1.15.0:
+    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
 
   /follow-redirects/1.15.0_debug@4.3.2:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
