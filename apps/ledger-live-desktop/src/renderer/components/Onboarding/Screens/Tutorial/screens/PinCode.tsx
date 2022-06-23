@@ -29,7 +29,7 @@ PinCode.Illustration = <IllustrationContainer width="240px" height="245px" src={
 const Footer = (props: any) => {
   const { t } = useTranslation();
   return (
-    <AsideFooter {...props} text={t("onboarding.screens.tutorial.screens.pinCode.buttons.help")} />
+    <AsideFooter {...props} text={t("onboarding.screens.tutorial.screens.pinCode.help.descr")} />
   );
 };
 
