@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, Column, SubTitle, IllustrationContainer } from "../shared";
+import { Title, Column, SubTitle, IllustrationContainer, AsideFooter } from "../shared";
 import getStarted from "../assets/v3/getStarted.png";
 export function PairMyNano() {
   const { t } = useTranslation();
@@ -14,6 +14,15 @@ export function PairMyNano() {
 }
 
 PairMyNano.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+
+const Footer = (props: any) => {
+  const { t } = useTranslation();
+  return (
+    <AsideFooter {...props} text={t("onboarding.screens.tutorial.screens.pairMyNano.help.descr")} />
+  );
+};
+
+PairMyNano.Footer = Footer;
 
 PairMyNano.continueLabel = (
   <Trans i18nKey="onboarding.screens.tutorial.screens.pairMyNano.buttons.next" />
