@@ -61,6 +61,15 @@ export const fetchBaseFee = async (): Promise<{
   recommendedFee: number;
   networkCongestionLevel: NetworkCongestionLevel;
 }> => {
+  // For tests
+  if (getEnv("API_STELLAR_HORIZON_STATIC_FEE")) {
+    return {
+      baseFee: 100,
+      recommendedFee: 100,
+      networkCongestionLevel: NetworkCongestionLevel.LOW,
+    };
+  }
+
   const baseFee = StellarSdk.BASE_FEE || FALLBACK_BASE_FEE;
   let recommendedFee = baseFee;
   let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
