@@ -42,8 +42,11 @@ const defaultOnboardingSteps: Step[] = [
     title: "Set your PIN",
     renderBody: () => (
       <Flex>
-        <Text mb={6}>{`Your PIN can be 4 to 8 digits long.`}</Text>
-        <Text>
+        <Text
+          variant="bodyLineHeight"
+          mb={6}
+        >{`Your PIN can be 4 to 8 digits long.`}</Text>
+        <Text variant="bodyLineHeight">
           {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
         </Text>
       </Flex>
@@ -59,7 +62,7 @@ const defaultOnboardingSteps: Step[] = [
     ],
     title: "Recovery phrase",
     renderBody: () => (
-      <Text>
+      <Text variant="bodyLineHeight">
         {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
       </Text>
     ),
@@ -69,7 +72,7 @@ const defaultOnboardingSteps: Step[] = [
     deviceStates: [],
     title: "Software check",
     renderBody: () => (
-      <Text>{`We'll verify whether your Naimport { SafeAreaView } from 'react-native-safe-area-context';no is genuine. This should be quick and easy!`}</Text>
+      <Text variant="bodyLineHeight">{`We'll verify whether your Naimport { SafeAreaView } from 'react-native-safe-area-context';no is genuine. This should be quick and easy!`}</Text>
     ),
   },
   {
@@ -188,15 +191,19 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           </ScrollContainerHeader>
           <Flex px={7} pt={7}>
             <Flex flexDirection="row" alignItems="center">
-              <Text variant="h4">Setup Manual</Text>
+              <Text variant="h4" fontWeight="semiBold">
+                Setup Manual
+              </Text>
               <Button
                 ml={2}
                 Icon={Question}
                 onPress={() => setHelpDrawerOpen(true)}
               />
             </Flex>
-            <Text variant="body">Continue setting up on your Nano.</Text>
-            <Text mb={8} variant="body">
+            <Text variant="body" color="neutral.c80">
+              Continue setting up on your Nano.
+            </Text>
+            <Text mb={8} variant="body" color="neutral.c80">
               Check back here for tips and information.
             </Text>
             <StepList items={onboardingSteps} />

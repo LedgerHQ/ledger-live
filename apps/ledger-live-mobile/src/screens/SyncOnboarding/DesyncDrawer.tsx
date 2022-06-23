@@ -25,10 +25,10 @@ const DesyncDrawer = ({ isOpen, onClose }: Props) => {
 
   return (
     <BottomDrawer onClose={onClose} isOpen={isOpen}>
-      <Text variant="h4" textAlign="center" mb={4}>
+      <Text variant="h4" fontWeight="semiBold" mb={4}>
         We could not connect to your Nano
       </Text>
-      <Text variant="body" textAlign="center" mb={8} color="neutral.c80">
+      <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
         Please make sure your Nano is nearby and unlocked. Check to see if
         Bluetooth is enabled on your mobile phone
       </Text>
