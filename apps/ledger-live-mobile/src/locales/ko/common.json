@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "수수료 편집"
     },
-    "manageCard" : {
-      "title" : "CL 카드 관리",
-      "description" : "CL 카드 신청 및 관리"
-    },
     "receive" : {
       "title" : "수령",
       "description" : "다른 지갑에서 암호화폐를 수령합니다",
