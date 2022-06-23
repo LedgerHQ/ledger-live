@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "手数料を編集"
     },
-    "manageCard" : {
-      "title" : "CLカードを管理",
-      "description" : "CLカードを注文して管理する"
-    },
     "receive" : {
       "title" : "受け取る",
       "description" : "暗号資産を別のウォレットから受け取る。",
