@@ -2141,10 +2141,6 @@
     "fees" : {
       "title" : "Modifier les frais"
     },
-    "manageCard" : {
-      "title" : "Gérer ma carte CL",
-      "description" : "Commandez et gérez votre carte CL"
-    },
     "receive" : {
       "title" : "Recevoir",
       "description" : "Recevez des cryptos provenant d’un autre wallet.",
