@@ -45,7 +45,7 @@ const Footer = (props: any) => {
   return (
     <AsideFooter
       {...props}
-      text={t("onboarding.screens.tutorial.screens.pinCodeHowTo.buttons.help")}
+      text={t("onboarding.screens.tutorial.screens.pinCodeHowTo.help.descr")}
     />
   );
 };
