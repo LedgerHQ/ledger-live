@@ -15,7 +15,6 @@ import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarni
 import { preloadAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { SideDrawer } from "../SideDrawer";
 import Box from "../Box";
-import TermsAndConditionsModal from "./Screens/Welcome/TermsAndConditionsModal";
 
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
@@ -67,7 +66,6 @@ export function Onboarding() {
   const [useCase, setUseCase] = useState(null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
-  const [openedTermsModal, setOpenedTermsModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
   const { path } = useRouteMatch();
 
@@ -86,13 +84,6 @@ export function Onboarding() {
           setOpenedPedagogyModal(false);
         }}
       />
-      <TermsAndConditionsModal
-        isOpen={openedTermsModal}
-        onClose={() => {
-          setOpenedTermsModal(false);
-        }}
-        setOpenedTermsModal={setOpenedTermsModal}
-      />
       <SideDrawer
         isOpen={openedRecoveryPhraseWarningHelp}
         onRequestClose={() => {
@@ -108,15 +99,8 @@ export function Onboarding() {
         <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
             <Switch>
-              <Route
-                exact
-                path={path}
-                render={props => <Welcome {...props} setOpenedTermsModal={setOpenedTermsModal} />}
-              />
-              <Route
-                path={`${path}/welcome`}
-                render={props => <Welcome {...props} setOpenedTermsModal={setOpenedTermsModal} />}
-              />
+              <Route exact path={path} render={props => <Welcome {...props} />} />
+              <Route path={`${path}/welcome`} render={props => <Welcome {...props} />} />
               <Route path={`${path}/select-device`} component={SelectDevice} />
               <Route
                 path={`${path}/select-use-case`}
