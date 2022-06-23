@@ -44,7 +44,7 @@ jobs:
           ruby-version: 2.7
           bundler-cache: true
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
@@ -110,7 +110,7 @@ jobs:
           ruby-version: 2.7
           bundler-cache: true
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
