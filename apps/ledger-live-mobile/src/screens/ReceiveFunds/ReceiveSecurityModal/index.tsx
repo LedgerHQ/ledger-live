@@ -37,7 +37,7 @@ const ReceiveSecurityModal = ({
 
   useEffect(() => {
     getShouldNotRemindUserAgain().then(shouldNotRemindUserAgain => {
-      if (!shouldNotRemindUserAgain || true) {
+      if (!shouldNotRemindUserAgain) {
         setTimeout(() => {
           setIsModalOpen(true);
         }, 800);
