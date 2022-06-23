@@ -2183,7 +2183,8 @@
         "yes": "Yes"
       },
       "toastMessages": {
-        "accountImported": "We've imported a {{currencyTicker}} account for you."
+        "accountImported": "We've imported a {{currencyTicker}} account for you. ",
+        "why": "Tell me why."
       },
       "additionalInfoModal": {
         "title": "Why we imported an account?",

@@ -257,14 +257,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </Text>
       </Flex>
       </NavigationScrollView>
-      <Button type="shade" outline size="large" m={6} onPress={onShare}>
+      <Button type="shade" outline size="large" m={6} mb={8} onPress={onShare}>
         {t("transfer.receive.shareAddress")}
       </Button>
       {isToastDisplayed ? (
         <Flex
           left={0}
           right={0}
-          bottom={6}
+          bottom={8}
           position="absolute"
           bg="neutral.c100"
           mx={6}
@@ -282,6 +282,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
               <Flex width="70%">
                 <Text variant="body" fontWeight="semiBold" color="neutral.c00">
                   {t("transfer.receive.toastMessages.accountImported", { currencyTicker: currency.ticker })}
+                  <Text variant="body" fontWeight="semiBold" color="primary.c70" style={{ textDecorationLine: "underline" }}>
+                    {t("transfer.receive.toastMessages.why")}
+                  </Text>
                 </Text>
               </Flex>
               <TouchableWithoutFeedback onPress={hideToast}>
