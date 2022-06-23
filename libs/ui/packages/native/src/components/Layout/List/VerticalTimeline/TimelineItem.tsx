@@ -12,7 +12,7 @@ import styled from "styled-components/native";
 import { Item, ItemStatus } from ".";
 import { Flex } from "../..";
 import { Text } from "../../..";
-import StepIndicator from "./StepIndicator";
+import TimelineIndicator from "./TimelineIndicator";
 
 export type Props = {
   item: Item;
@@ -52,7 +52,7 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   padding: 20px 16px;
 `;
 
-export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: Props) {
+export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
   const [height, setHeight] = useState(0);
 
   const transition = useDerivedValue(() => {
@@ -80,7 +80,7 @@ export default function StepListItemWrapper({ item, isFirstItem, isLastItem }: P
 
   return (
     <Flex flexDirection="row">
-      <StepIndicator
+      <TimelineIndicator
         status={item.status}
         isFirstItem={isFirstItem}
         isLastItem={isLastItem}

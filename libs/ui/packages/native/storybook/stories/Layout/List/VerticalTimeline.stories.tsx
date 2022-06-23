@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { select } from "@storybook/addon-knobs";
 
 import { storiesOf } from "../../storiesOf";
-import { Flex, StepList, Text } from "../../../../src";
+import { Flex, VerticalTimeline, Text } from "../../../../src";
 
-const StepListStory = () => {
+const VerticalTimelineStory = () => {
   const defaultItems = [
     {
       status: "active",
@@ -67,9 +67,11 @@ const StepListStory = () => {
 
   return (
     <Flex width={300}>
-      <StepList items={items as any} />
+      <VerticalTimeline steps={items as any} />
     </Flex>
   );
 };
 
-storiesOf((story) => story("Layout/List", module).add("StepList", () => <StepListStory />));
+storiesOf((story) =>
+  story("Layout/List", module).add("VerticalTimeline", () => <VerticalTimelineStory />),
+);
