@@ -1,7 +1,8 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, SubTitle, Column, IllustrationContainer, AsideFooter } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import failureQuizzLight from "../assets/failureQuizzLight.svg";
+
 export function QuizFailure() {
   const { t } = useTranslation();
 
@@ -13,7 +14,9 @@ export function QuizFailure() {
   );
 }
 
-QuizFailure.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+QuizFailure.Illustration = (
+  <IllustrationContainer width="240px" height="245px" src={failureQuizzLight} />
+);
 
 const Footer = (props: any) => {
   const { t } = useTranslation();
