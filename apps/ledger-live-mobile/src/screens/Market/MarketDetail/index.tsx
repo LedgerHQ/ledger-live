@@ -30,6 +30,7 @@ import MarketGraph from "./MarketGraph";
 import { FabMarketActions } from "../../../components/FabActions";
 import { NavigatorName, ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import PromptNotification from "../../../modals/PromptNotification";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -54,6 +55,8 @@ function MarketDetail({
   const dispatch = useDispatch();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
+
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
   const {
     selectedCoinData: currency,
@@ -97,6 +100,8 @@ function MarketDetail({
   const toggleStar = useCallback(() => {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
+
+    if (!isStarred) setIsModalOpened(true);
   }, [dispatch, isStarred, currencyId]);
 
   const { range } = chartRequestParams;
@@ -152,6 +157,10 @@ function MarketDetail({
   }, [refreshControlVisible, loading]);
 
   const [hoveredItem, setHoverItem] = useState<any>(null);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
@@ -267,6 +276,11 @@ function MarketDetail({
         ) : null}
         <MarketStats currency={currency} counterCurrency={counterCurrency} />
       </ScrollContainerHeader>
+      <PromptNotification
+        isOpened={isModalOpened}
+        onClose={onModalClose}
+        type="market"
+      />
     </SafeAreaView>
   );
 }
