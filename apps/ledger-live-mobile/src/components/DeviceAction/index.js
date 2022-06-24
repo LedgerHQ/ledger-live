@@ -24,6 +24,7 @@ import {
   renderInWrongAppForAccount,
   renderError,
   renderBootloaderStep,
+  renderExchange,
   renderConfirmSwap,
   renderConfirmSell,
   LoadingAppInstall,
@@ -86,6 +87,9 @@ export default function DeviceAction<R, H, P>({
     initSwapResult,
     signMessageRequested,
     allowOpeningGranted,
+    completeExchangeStarted,
+    completeExchangeResult,
+    completeExchangeError,
     initSellRequested,
     initSellResult,
     initSellError,
@@ -188,8 +192,30 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (
+    completeExchangeStarted &&
+    !completeExchangeResult &&
+    !completeExchangeError
+  ) {
+    return renderExchange({
+      // $FlowFixMe
+      exchangeType: request?.exchangeType,
+      t,
+      device,
+      theme,
+    });
+  }
+
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
+    return renderConfirmSwap({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      provider:
+        (request && request.exchangeRate && request.exchangeRate.provider) ||
+        undefined,
+    });
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {

@@ -65,6 +65,7 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "elrond",
   "hedera",
+  "cardano",
 ]);
 
 if (Config.VERBOSE) {

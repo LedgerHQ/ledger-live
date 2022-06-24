@@ -14,6 +14,7 @@ import "./Layout/List/TipList.stories";
 import "./Layout/List/List.stories";
 import "./message/Notification/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
+import "./Navigation/StoriesIndicator/StoriesIndicator.stories";
 import "./Navigation/Stepper/Stepper.stories";
 import "./Icon/BoxedIcon.stories";
 import "./Icon/IconBox.stories";

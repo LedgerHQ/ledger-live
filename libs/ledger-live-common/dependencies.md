@@ -44,7 +44,7 @@ yarn upgrade-interactive -i --latest
 |@polkadot/types         | Polkadot coin integration      | monthly                          |
 |@polkadot/types-known   | Polkadot coin integration      | monthly                          |
 |@solana/spl-token       | Solana coin integration        | monthly                          |
-|@solana/web3.js         | Solana coin integration        | monthly                          |
+|@solana/web3.js         | Solana coin integration        | **BLOCKED BY LLM because of BigInt in RN (ticket missing)**                               |
 |@taquito/ledger-signer  | Tezos coin integration         | **BLOCKED BY LLM (ticket missing)**                               |
 |@taquito/taquito        | Tezos coin integration         | **BLOCKED BY LLM (ticket missing)**                               |
 |@types/bchaddrjs        | Bitcoin coin integration       | monthly                          |

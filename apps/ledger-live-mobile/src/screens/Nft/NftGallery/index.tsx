@@ -21,6 +21,9 @@ import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../../components/TabBar/TabBarSafeAreaView";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -95,8 +98,8 @@ const NftGallery = () => {
     });
 
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+    <TabBarSafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {
@@ -128,7 +131,7 @@ const NftGallery = () => {
           collections.length > collectionsCount ? <LoadingFooter /> : null
         }
       />
-    </SafeAreaView>
+    </TabBarSafeAreaView>
   );
 };
 
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
   },
   collectionsList: {
     paddingTop: 24,
-    paddingBottom: 32,
+    paddingBottom: TAB_BAR_SAFE_HEIGHT,
     paddingHorizontal: 16,
   },
   sendButtonContainer: {
