@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Détails de l’opération",
+    "title" : "Détails de la transaction",
     "account" : "Compte",
     "date" : "Date",
     "confirmed" : "Confirmée",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
-    "noMoreOperations" : "Aucune autre opération"
+    "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tout désélectionner",
@@ -1763,7 +1763,7 @@
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
-    "lastOperations" : "Dernières opérations",
+    "lastTransactions" : "Dernières transactions",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
       "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "Modifier les frais"
-    },
-    "manageCard" : {
-      "title" : "Gérer ma carte CL",
-      "description" : "Commandez et gérez votre carte CL"
     },
     "receive" : {
       "title" : "Recevoir",
