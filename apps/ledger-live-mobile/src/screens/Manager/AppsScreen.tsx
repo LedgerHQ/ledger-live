@@ -29,6 +29,7 @@ import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "../../components/Search";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 type Props = {
   state: State;
@@ -47,6 +48,7 @@ type Props = {
   navigation: any;
   blockNavigation: boolean;
   deviceInfo: DeviceInfo;
+  device: Device;
   searchQuery?: string;
   updateModalOpened?: boolean;
   tab: ManagerTab;
@@ -63,6 +65,7 @@ const AppsScreen = ({
   updateModalOpened,
   deviceId,
   initialDeviceName,
+  device,
   navigation,
   blockNavigation,
   deviceInfo,
@@ -86,7 +89,7 @@ const AppsScreen = ({
 
   const [query, setQuery] = useState(searchQuery || "");
 
-  const { update, device, catalog } = useAppsSections(state, {
+  const { update, device: deviceApps, catalog } = useAppsSections(state, {
     query: "",
     appFilter,
     sort: sortOptions,
@@ -264,7 +267,8 @@ const AppsScreen = ({
               deviceInfo={deviceInfo}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
-              appList={device}
+              device={device}
+              appList={deviceApps}
             />
             <Flex mt={6}>
               <FirmwareUpdateBanner />
