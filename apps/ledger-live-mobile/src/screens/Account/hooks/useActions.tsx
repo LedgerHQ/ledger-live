@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { Platform } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -13,7 +12,6 @@ import { NavigatorName, ScreenName } from "../../../const";
 // eslint-disable-next-line import/named
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
-import { isCurrencySupported } from "../../Exchange/coinifyConfig";
 import WalletConnect from "../../../icons/WalletConnect";
 
 type Props = {
@@ -35,10 +33,6 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
     currency.id,
   );
-
-  const accountId = account.id;
-
-  const canBeSold = isCurrencySupported(currency, "sell");
 
   const extraSendActionParams = useMemo(
     () =>
@@ -94,19 +88,6 @@ export default function useActions({ account, parentAccount, colors }: Props) {
     [];
 
   const actions = [
-    ...(!readOnlyModeEnabled && canBeSold
-      ? [
-          {
-            navigationParams: [NavigatorName.ExchangeSellFlow, { accountId }],
-            label: <Trans i18nKey="account.sell" />,
-            Icon: Icons.MinusMedium,
-            event: "Sell Crypto Account Button",
-            eventProperties: {
-              currencyName: currency?.name,
-            },
-          },
-        ]
-      : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
     ...baseActions,

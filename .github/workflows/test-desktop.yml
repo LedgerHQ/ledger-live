@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
   pull_request:
   workflow_dispatch:
 
@@ -52,10 +54,8 @@ jobs:
           server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx @playwright/test install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 

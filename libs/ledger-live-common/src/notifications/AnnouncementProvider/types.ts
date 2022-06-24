@@ -1,7 +1,8 @@
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { DeviceModelInfo } from "../../types/manager";
+export type AnnouncementDeviceModelId = Array<DeviceModelId | "no_nano">;
 export type AnnouncementDeviceFilter = {
-  modelIds?: DeviceModelId[];
+  modelIds?: AnnouncementDeviceModelId;
   versions?: string[];
   apps?: string[];
 };
