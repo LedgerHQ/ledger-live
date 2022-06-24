@@ -117,7 +117,7 @@ const Body = ({
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
-      operationType: "changeTrust",
+      mode: "changeTrust",
     });
 
     return { account, parentAccount: undefined, transaction };

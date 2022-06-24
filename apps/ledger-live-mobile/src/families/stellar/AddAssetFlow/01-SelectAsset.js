@@ -114,7 +114,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     return {
       account,
       transaction: bridge.updateTransaction(t, {
-        operationType: "changeTrust",
+        mode: "changeTrust",
       }),
     };
   });
