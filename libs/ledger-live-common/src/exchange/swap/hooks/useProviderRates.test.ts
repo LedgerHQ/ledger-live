@@ -1,7 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
-import { mocked } from "ts-jest/utils";
 import { useProviderRates } from ".";
 import { getExchangeRates } from "..";
 import {
@@ -19,7 +18,7 @@ const fromAccount = genAccount("from-account", {
   currency: ETH,
 });
 
-const mockedGetExchangeRates = mocked(getExchangeRates, true);
+const mockedGetExchangeRates = jest.mocked(getExchangeRates, true);
 const mockedRatesPromise = mockGetExchangeRates(
   { fromAccount } as any,
   { amount: new BigNumber(1) } as any,
