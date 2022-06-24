@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "تفاصيل العملية",
+    "title" : "Transaction details",
     "account" : "حساب",
     "date" : "التاريخ",
     "confirmed" : "تم التأكيد",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "لا توجد عمليات",
-    "noMoreOperations" : "لا توجد عمليات أخرى"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "إلغاء تحديد الكل",
@@ -1763,7 +1763,7 @@
     "sell" : "بيع",
     "swap" : "مبادلة",
     "manage" : "إدارة",
-    "lastOperations" : "العمليات الأخيرة",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "لا توجد أصول مشفرة بعد؟",
       "desc" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "تعديل الرسوم"
-    },
-    "manageCard" : {
-      "title" : "Manage CL Card",
-      "description" : "Order and Manage CL Card"
     },
     "receive" : {
       "title" : "تلقي",
