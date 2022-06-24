@@ -140,7 +140,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.x
-          cache: pnpm
+          # cache: pnpm
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6

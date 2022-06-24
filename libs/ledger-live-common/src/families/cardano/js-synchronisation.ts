@@ -153,10 +153,14 @@ export const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const requiredConfirmations = 90;
+
+  const oldOperations = initialAccount?.operations || [];
+  const lastBlockHeight = oldOperations.length
+    ? (oldOperations[0].blockHeight || 0) + 1
+    : 0;
   const syncFromBlockHeight =
-    initialAccount?.blockHeight &&
-    initialAccount.blockHeight > requiredConfirmations
-      ? initialAccount.blockHeight - requiredConfirmations
+    lastBlockHeight > requiredConfirmations
+      ? lastBlockHeight - requiredConfirmations
       : 0;
 
   const {

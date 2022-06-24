@@ -48,8 +48,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          # cache: pnpm
+          # cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: actions/setup-python@v2
         with:
           python-version: "2.7.x"
