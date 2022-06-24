@@ -228,6 +228,7 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "Änderung",
       "ratesDrawer" : {
         "title" : "Kurs",
         "quote" : "Preis",
@@ -267,11 +268,25 @@
           "complete" : "Vervollständigen Sie Ihr KYC",
           "update" : "KYC aktualisieren",
           "rejected" : "KYC abgelehnt, erneute Überprüfung starten",
+          "rejectedContactProviderSupport" : "KYC rejected, please contact {{providerName}} support",
+          "updateRequired" : "Vervollständigen oder aktualisieren Sie Ihr KYC",
           "status" : {
             "pending" : "KYC ausstehend",
             "approved" : "KYC genehmigt",
-            "closed" : "KYC abgelehnt"
+            "closed" : "KYC abgelehnt",
+            "upgradeRequired" : "KYC unzureichend"
           }
+        },
+        "login" : {
+          "required" : "Sie müssen sich bei diesem Anbieter anmelden",
+          "complete" : "Anmeldename"
+        },
+        "mfa" : {
+          "required" : "Sie müssen bei diesem Anbieter eine Multi-Faktor-Authentifizierung (MFA) einrichten",
+          "complete" : "MFA einrichten"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "Ihre Abhebung wurde von {{providerName}} blockiert.\n\n Bitte kontaktieren Sie den Support für weitere Informationen."
         }
       }
     },
@@ -482,9 +497,9 @@
       "subtitle" : "Bitte aktualisieren Sie Ledger Live auf die neueste Version, und verifizieren Sie Ihre Identität erneut, um mit wyre zu tauschen",
       "cta" : "Verifizierung zurücksetzen"
     },
-    "resetKYCModal" : {
-      "title" : "Löschen Sie Ihr KYC",
-      "subtitle" : "Löschen Sie Ihr KYC, um alle Token zu löschen, die lokal auf Ihrem Computer gespeichert sind. Sie müssen Ihr KYC erneut einreichen, um auf Dienste unserer Partner zuzugreifen.",
+    "resetThirdPartyDataModal" : {
+      "title" : "Ihre lokalen Drittanbieterdaten löschen",
+      "subtitle" : "Bitte löschen Sie Ihre lokalen Drittanbieterdaten. Eventuell müssen Sie den KYC-Prozess ein weiteres Mal durchlaufen und/oder sich erneut anmelden, um auf die Services unserer Partner zugreifen zu können.",
       "cta" : "Bestätigen"
     },
     "modal" : {
@@ -2844,8 +2859,8 @@
       "softResetTitle" : "Cache löschen",
       "softResetDesc" : "Löschen Sie den Ledger Live-Cache, um eine erneute Synchronisierung mit der Blockchain zu erzwingen.",
       "softReset" : "Leeren",
-      "resetKYC" : "KYC-Daten zurücksetzen",
-      "resetKYCDesc" : "Löschen Sie alle lokal gespeicherten Know-your-Customer-Daten, die für den Zugriff auf Drittanbieter-Transaktionen verwendet werden.",
+      "resetThirdPartyData" : "Drittanbieterdaten zurücksetzen",
+      "resetThirdPartyDataDesc" : "Löschen Sie alle lokalen Drittanbieterdaten, die für den Zugriff auf Transaktionsservices von Drittanbietern verwendet wurden.",
       "hardResetTitle" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Löschen Sie alle auf Ihrem Computer gespeicherten Ledger Live-Daten, einschließlich Ihrer Konten, Transaktionshistorien und Einstellungen.",
       "hardReset" : "Zurücksetzen",
@@ -4342,7 +4357,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Stellen Sie sicher, dass Ihr Guthaben zur Deckung künftiger Transaktionsgebühren ausreicht"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Ihre vorherige Transaktion wurde noch nicht verarbeitet. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
     },
     "SolanaTxConfirmationTimeout" : {
