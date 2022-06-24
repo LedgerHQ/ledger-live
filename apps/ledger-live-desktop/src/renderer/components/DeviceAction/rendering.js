@@ -307,7 +307,7 @@ export const InstallingApp = ({
     track(...trackingArgs);
   }, [appNameToTrack, analyticsPropertyFlow]);
   return (
-    <Wrapper id="deviceAction-loading">
+    <Wrapper data-test-id="device-action-loader">
       <Header />
       <AnimationWrapper modelId={modelId}>
         <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
@@ -326,7 +326,7 @@ export const InstallingApp = ({
 };
 
 export const renderListingApps = () => (
-  <Wrapper id="deviceAction-loading">
+  <Wrapper data-test-id="device-action-loader">
     <Header />
     <ProgressWrapper>
       <Rotating size={58}>
@@ -696,7 +696,7 @@ export const renderSwapDeviceConfirmationV2 = ({
           <Trans i18nKey="DeviceAction.swap.notice" />
         </Alert>
       </Box>
-      <Box mx={6} data-test-id="device-confirm-swap">
+      <Box mx={6} data-test-id="device-swap-summary">
         {map(
           {
             amountSent: (
@@ -796,7 +796,7 @@ export const renderLoading = ({
   modelId: DeviceModelId,
   children?: React$Node,
 }) => (
-  <Wrapper id="deviceAction-loading">
+  <Wrapper data-test-id="device-action-loader">
     <Header />
     <AnimationWrapper modelId={modelId}>
       <BigSpinner size={50} />
