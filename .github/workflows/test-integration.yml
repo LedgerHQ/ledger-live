@@ -1,10 +1,6 @@
 name: "[Test] Integration"
 
 on:
-  push:
-    branches:
-      - support/integration-tests
-
   schedule:
     - cron: 20 9 * * *
 
@@ -63,7 +59,6 @@ jobs:
         run: pnpm build:libs
       - name: Test
         env:
-          CI: true
           FILTER: ${{ github.event.inputs.filter }}
         run: |
           pnpm common ci-test-integration $FILTER
