@@ -19,13 +19,11 @@ const mockListAppsResult = (...params) => {
 
 export class DeviceAction {
   readonly page: Page;
-  readonly loader: Locator;
-  readonly swapSummary: Locator;
+  readonly deviceActionLoader: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.loader = page.locator("data-test-id=device-action-loader");
-    this.swapSummary = page.locator("data-test-id=device-swap-summary");
+    this.deviceActionLoader = page.locator("#deviceAction-loading");
   }
 
   async openApp() {
@@ -33,8 +31,8 @@ export class DeviceAction {
       (window as any).mock.events.mockDeviceEvent({ type: "opened" });
     });
 
-    await this.loader.waitFor({ state: "visible" });
-    await this.loader.waitFor({ state: "detached" });
+    await this.deviceActionLoader.waitFor({ state: "visible" });
+    await this.deviceActionLoader.waitFor({ state: "detached" });
   }
 
   async genuineCheck(appDesc: string = "Bitcoin", installedDesc: string = "Bitcoin") {
@@ -59,7 +57,7 @@ export class DeviceAction {
       [deviceInfo, result],
     );
 
-    await this.loader.waitFor({ state: "hidden" });
+    await this.deviceActionLoader.waitFor({ state: "hidden" });
   }
 
   async accessManager(
@@ -87,7 +85,7 @@ export class DeviceAction {
       [deviceInfo, result],
     );
 
-    await this.loader.waitFor({ state: "hidden" });
+    await this.deviceActionLoader.waitFor({ state: "hidden" });
   }
 
   async complete() {
@@ -105,9 +103,7 @@ export class DeviceAction {
       );
     });
 
-    await this.loader.waitFor({ state: "visible" });
-    await this.loader.waitFor({ state: "detached" });
-    await this.swapSummary.waitFor({ state: "visible" });
+    await this.page.waitForSelector("data-test-id=device-confirm-swap", { state: "visible" });
   }
 
   async confirmSwap() {

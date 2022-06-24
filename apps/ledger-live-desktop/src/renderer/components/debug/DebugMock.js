@@ -31,7 +31,7 @@ const mockListAppsResult = (...params) => {
 };
 /**
  * List of events that will be displayed in the quick-link section of the mock menu
- * to ease the usability when mock is done manually instead of through playwright.
+ * to ease the usability when mock is done manually instead of through spectron.
  */
 const helpfulEvents = [
   { name: "opened", event: { type: "opened" } },

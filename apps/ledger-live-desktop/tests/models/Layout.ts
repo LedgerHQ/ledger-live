@@ -6,7 +6,7 @@ export class Layout {
   readonly pageScroller: Locator;
   readonly loadingLogo: Locator;
   readonly logo: Locator;
-  readonly loadingSpinner: Locator;
+  readonly bigSpinner: Locator;
   readonly inputError: Locator;
   readonly inputWarning: Locator;
   readonly drawerCollapseButton: Locator;
@@ -65,7 +65,7 @@ export class Layout {
     this.logo = page.locator("data-test-id=logo");
     this.inputError = page.locator("id=input-error"); // no data-test-id because css style is applied
     this.inputWarning = page.locator("id=input-warning"); // no data-test-id because css style is applied
-    this.loadingSpinner = page.locator("data-test-id=loading-spinner");
+    this.bigSpinner = page.locator("data-test-id=big-loading-spinner");
 
     // updater
     this.appUpdateBanner = page.locator("data-test-id=layout-app-update-banner");
@@ -120,8 +120,8 @@ export class Layout {
     await this.drawerReceiveButton.click();
   }
 
-  async waitForLoadingSpinner() {
-    await this.loadingSpinner.waitFor({ state: "visible" });
-    await this.loadingSpinner.waitFor({ state: "detached" });
+  async waitForLoadingSpinnerToDisappear() {
+    await this.bigSpinner.waitFor({ state: "hidden" });
+    await this.bigSpinner.waitFor({ state: "detached" });
   }
 }
