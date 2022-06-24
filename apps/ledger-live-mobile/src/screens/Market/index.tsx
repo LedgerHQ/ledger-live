@@ -24,7 +24,6 @@ import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { useRoute } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -40,6 +39,9 @@ import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
 import Illustration from "../../images/illustration/Illustration";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../components/TabBar/TabBarSafeAreaView";
 import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
@@ -449,10 +451,8 @@ export default function Market({ navigation }: { navigation: any }) {
   }, [refreshControlVisible, loading]);
 
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
+    <TabBarSafeAreaView
       style={{
-        flex: 1,
         backgroundColor: colors.background.main,
       }}
     >
@@ -470,7 +470,10 @@ export default function Market({ navigation }: { navigation: any }) {
       </Flex>
 
       <FlatList
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: TAB_BAR_SAFE_HEIGHT,
+        }}
         data={marketData}
         renderItem={renderItems}
         onEndReached={onEndReached}
@@ -489,6 +492,6 @@ export default function Market({ navigation }: { navigation: any }) {
           />
         }
       />
-    </SafeAreaView>
+    </TabBarSafeAreaView>
   );
 }

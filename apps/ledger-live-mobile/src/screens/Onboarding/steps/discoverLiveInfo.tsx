@@ -1,129 +1,160 @@
-import React, { useCallback, useState } from "react";
-import * as Animatable from "react-native-animatable";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
+import {
+  Flex,
+  Carousel,
+  Text,
+  Button,
+  StoriesIndicator,
+  Box,
+} from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
-import { completeOnboarding } from "../../../actions/settings";
-import { useNavigationInterceptor } from "../onboardingContext";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { Image, ImageProps } from "react-native";
+import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
 import { NavigatorName } from "../../../const";
-import Illustration from "../../../images/illustration/Illustration";
 
-import { DeviceNames } from "../types";
+const slidesImages = [
+  require("../../../../assets/images/onboarding/stories/slide1.png"),
+  require("../../../../assets/images/onboarding/stories/slide2.png"),
+  require("../../../../assets/images/onboarding/stories/slide3.png"),
+  require("../../../../assets/images/onboarding/stories/slide4.png"),
+];
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
   background-color: ${p => p.theme.colors.background.main};
-  padding: 16px;
 `;
 
-const images = {
-  light: [
-    require("../../../images/illustration/Light/_069.png"),
-    require("../../../images/illustration/Light/_073.png"),
-    require("../../../images/illustration/Light/_049.png"),
-  ],
-  dark: [
-    require("../../../images/illustration/Dark/_069.png"),
-    require("../../../images/illustration/Dark/_073.png"),
-    require("../../../images/illustration/Dark/_049.png"),
-  ],
-};
-
-type CardType = { index: number; deviceModelId: DeviceNames };
-const Card = ({ index }: CardType) => {
+const Item = ({
+  title,
+  imageProps,
+  displayNavigationButtons = false,
+}: {
+  title: string;
+  imageProps: ImageProps;
+  displayNavigationButtons?: boolean;
+}) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const buyLedger = useCallback(() => {
+    // TODO: FIX @react-navigation/native using Typescript
+    // @ts-ignore next-line
+    navigation.navigate(NavigatorName.BuyDevice);
+  }, [navigation]);
+
+  const exploreLedger = useCallback(() => {
+    dispatch(completeOnboarding());
+    dispatch(setReadOnlyMode(true));
+
+    // Fixme: Navigate to read only page ?
+    // TODO: FIX @react-navigation/native using Typescript
+    // @ts-ignore next-line
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  }, [dispatch, navigation]);
+
   return (
-    <Flex flex={1} justifyContent="center" alignItems="center" px={20}>
-      <Flex mb={10}>
-        <Illustration
-          size={248}
-          darkSource={images.dark[index]}
-          lightSource={images.light[index]}
+    <Flex flex={1} backgroundColor={`background.main`}>
+      <Svg width="100%" height={102} preserveAspectRatio="xMinYMin slice">
+        <Defs>
+          <LinearGradient
+            id="myGradient"
+            x1="0%"
+            y1="0%"
+            x2="0%"
+            y2="100%"
+            gradientUnits="userSpaceOnUse"
+          >
+            <Stop offset="0%" stopOpacity={1} stopColor={colors.neutral.c00} />
+            <Stop
+              offset="100%"
+              stopOpacity={0}
+              stopColor={colors.neutral.c00}
+            />
+          </LinearGradient>
+        </Defs>
+        <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
+      </Svg>
+      <Text
+        variant="h4"
+        style={{ fontSize: 40, lineHeight: 40 }}
+        mx={7}
+        mt={3}
+        mb={10}
+      >
+        {title}
+      </Text>
+      <Box
+        flex={1}
+        alignItems={"center"}
+        justifyContent={"flex-end"}
+        overflow={"hidden"}
+      >
+        <Image
+          resizeMode={"cover"}
+          style={{ flex: 1, width: "100%" }}
+          {...imageProps}
         />
-      </Flex>
-      <Text variant="h2" mb={3} style={{ textTransform: "uppercase" }}>
-        {t(`onboarding.discoverLive.${index}.title`)}
-      </Text>
-      <Text textAlign="center" variant="body">
-        {t(`onboarding.discoverLive.${index}.desc`)}
-      </Text>
+      </Box>
+      {displayNavigationButtons && (
+        <Box position={"absolute"} bottom={0} width={"100%"} px={6} pb={10}>
+          <Button onPress={exploreLedger} type={"main"} mb={6} size="large">
+            {t("onboarding.discoverLive.exploreWithoutADevice")}
+          </Button>
+          <Button
+            onPress={buyLedger}
+            type={"shade"}
+            outline={true}
+            size="large"
+          >
+            {t("onboarding.discoverLive.buyALedgerNow")}
+          </Button>
+        </Box>
+      )}
     </Flex>
   );
 };
 
-const FooterNextButton = ({ label }: { label: string }) => {
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const { resetCurrentStep } = useNavigationInterceptor();
-
-  function next(): void {
-    dispatch(completeOnboarding());
-    resetCurrentStep();
-
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.popToTop();
-    }
-
-    // TODO: FIX @react-navigation/native using Typescript
-    // @ts-ignore next-line
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }
-
-  return (
-    <Button type="main" size="large" onPress={next}>
-      {label}
-    </Button>
-  );
-};
-
-const FooterActions = new Map();
-FooterActions.set(2, FooterNextButton);
-
-const Footer = ({ index }: { index: number }) => {
-  const { t } = useTranslation();
-
-  const Component = FooterActions.get(index);
-  if (!Component) return null;
-
-  return (
-    <Animatable.View animation="fadeIn" useNativeDriver>
-      <Component label={t(`onboarding.discoverLive.${index}.cta`)} />
-    </Animatable.View>
-  );
-};
-
 function DiscoverLiveInfo() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const navigation = useNavigation();
-
-  const handleBack = useCallback(() => navigation.goBack(), [navigation]);
+  const { t } = useTranslation();
 
   return (
     <StyledSafeAreaView>
-      <Flex
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-        width="100%"
-        height={48}
+      <Carousel
+        autoDelay={6000}
+        scrollOnSidePress={true}
+        restartAfterEnd={false}
+        IndicatorComponent={StoriesIndicator}
+        slideIndicatorContainerProps={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          px: 7,
+        }}
+        scrollViewProps={{ scrollEnabled: false }}
+        maxDurationOfTap={700}
       >
-        <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
-      </Flex>
-      <Carousel onChange={setCurrentIndex}>
-        {new Array(3).fill(null).map((_, index) => (
-          <Card index={index} key={index} />
+        {slidesImages.map((image, index) => (
+          <Item
+            key={index}
+            title={t(`onboarding.discoverLive.${index}.title`)}
+            imageProps={{
+              source: image,
+            }}
+            displayNavigationButtons={slidesImages.length - 1 === index}
+          />
         ))}
       </Carousel>
-      <Flex minHeight="13%" justifyContent="center" alignItems="center">
-        <Footer index={currentIndex} />
-      </Flex>
     </StyledSafeAreaView>
   );
 }

@@ -51,7 +51,7 @@ function OnboardingView({
 
   return (
     <SafeAreaView
-      style={[{ flex: 1 }, { backgroundColor: colors.palette.background.main }]}
+      style={[{ flex: 1 }, { backgroundColor: colors.background.main }]}
     >
       {/* HEADER */}
       <Flex mb={8} px={6} pt={8}>
@@ -102,7 +102,7 @@ function OnboardingView({
           </Flex>
         ) : null}
       </Flex>
-      <ScrollListContainer flex={1} px={6} bg="palette.background.main">
+      <ScrollListContainer flex={1} px={6} bg="background.main">
         {/* BODY */}
         {children ? <Flex flex={1}>{children}</Flex> : null}
       </ScrollListContainer>

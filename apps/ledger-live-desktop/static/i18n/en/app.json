@@ -268,6 +268,7 @@
           "complete": "Complete KYC",
           "update": "Refresh KYC",
           "rejected": "KYC rejected, start the verification again",
+          "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
           "updateRequired": "Complete or update your KYC",
           "status": {
             "pending": "KYC pending",

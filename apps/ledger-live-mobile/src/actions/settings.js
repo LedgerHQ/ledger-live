@@ -224,6 +224,11 @@ export const setLastConnectedDevice = (device: Device) => ({
   payload: device,
 });
 
+export const setHasOrderedNano = (enabled: boolean) => ({
+  type: "SET_HAS_ORDERED_NANO",
+  enabled,
+});
+
 export const setMarketRequestParams = (
   marketRequestParams: MarketListRequestParams,
 ) => ({

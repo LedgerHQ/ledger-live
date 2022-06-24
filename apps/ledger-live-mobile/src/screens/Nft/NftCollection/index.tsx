@@ -6,7 +6,6 @@ import {
   Platform,
   SectionList,
   FlatList,
-  SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -25,6 +24,9 @@ import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../../components/TabBar/TabBarSafeAreaView";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -186,29 +188,23 @@ const NftCollection = ({ route }: Props) => {
   ];
 
   return (
-    <SafeAreaView
-      edges={["top", "left", "right"]} // see https://github.com/th3rdwave/react-native-safe-area-context#edges
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
+    <TabBarSafeAreaView
+      style={{
+        backgroundColor: colors.background,
+      }}
     >
       <FlatList
         data={data}
         renderItem={({ item }) => item}
         keyExtractor={(item, index) => String(index)}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
       />
-    </SafeAreaView>
+    </TabBarSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   buttonContainer: {
     marginTop: 24,
     paddingHorizontal: 16,

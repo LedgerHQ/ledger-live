@@ -14,6 +14,8 @@ import StepHeader from "../StepHeader";
 // import SwapError from "../../screens/Swap/Error";
 // import SwapKYC from "../../screens/Swap/KYC";
 // import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
+// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -22,6 +24,7 @@ export default function SwapNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -33,6 +36,7 @@ export default function SwapNavigator() {
         options={{
           title: t("transfer.swap2.form.title"),
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name="SwapSelectAccount"
