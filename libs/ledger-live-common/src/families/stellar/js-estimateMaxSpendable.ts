@@ -27,7 +27,7 @@ const estimateMaxSpendable = async ({
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return s.amount.gte(0) ? s.amount : new BigNumber(0);
 };
 
 export default estimateMaxSpendable;
