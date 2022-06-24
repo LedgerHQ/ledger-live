@@ -1,9 +1,8 @@
 import axios from "axios";
-import { mocked } from "ts-jest/utils";
 import checkQuote from "./checkQuote";
 
 jest.mock("axios");
-const mockedAxios = mocked(axios);
+const mockedAxios = jest.mocked(axios);
 
 const provider = "changelly";
 const quoteId = "RATE_ID";
