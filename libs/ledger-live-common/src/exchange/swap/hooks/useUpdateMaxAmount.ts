@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
 import { Transaction } from "../../../generated/types";
 import {
+  SetIsSendMaxLoading,
   SwapDataType,
   SwapSelectorStateType,
   SwapTransactionType,
@@ -23,7 +24,7 @@ export const useUpdateMaxAmount = ({
   parentAccount: SwapSelectorStateType["parentAccount"];
   transaction: SwapTransactionType["transaction"];
   feesStrategy: Transaction["feesStrategy"];
-  setIsSendMaxLoading?: (boolean) => void;
+  setIsSendMaxLoading?: SetIsSendMaxLoading;
 }): {
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
