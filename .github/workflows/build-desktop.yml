@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:

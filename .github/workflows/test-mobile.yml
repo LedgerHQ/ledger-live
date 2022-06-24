@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
   pull_request:
   workflow_dispatch:
 
@@ -34,7 +36,7 @@ jobs:
         with:
           ruby-version: 2.7
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter

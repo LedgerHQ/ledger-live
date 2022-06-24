@@ -32,7 +32,6 @@ import {
   toTransactionRaw,
   toTransactionStatusRaw,
 } from "../../transaction";
-import { getBalanceHistoryJS, getRanges } from "../../portfolio";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
@@ -514,21 +513,6 @@ export function testBridge<T extends Transaction>(
             });
           });
         });
-        makeTest(
-          "account balanceHistory (when exists) matches getBalanceHistoryJS",
-          async () => {
-            const account = await getSynced();
-            getRanges().forEach((range) => {
-              const balanceHistory =
-                account.balanceHistory && account.balanceHistory[range];
-              if (!balanceHistory) return;
-              const history = getBalanceHistoryJS(account, range);
-              expect(balanceHistory.map((b) => b.value)).toEqual(
-                history.map((b) => b.value)
-              );
-            });
-          }
-        );
         describe("createTransaction", () => {
           makeTest(
             "empty transaction is an object with empty recipient and zero amount",
