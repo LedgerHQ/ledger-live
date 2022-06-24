@@ -17,12 +17,14 @@ export const useUpdateMaxAmount = ({
   parentAccount,
   transaction,
   feesStrategy,
+  setIsSendMaxLoading,
 }: {
   setFromAmount: SwapTransactionType["setFromAmount"];
   account: SwapSelectorStateType["account"];
   parentAccount: SwapSelectorStateType["parentAccount"];
   transaction: SwapTransactionType["transaction"];
   feesStrategy: Transaction["feesStrategy"];
+  setIsSendMaxLoading: any;
 }): {
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
@@ -47,11 +49,13 @@ export const useUpdateMaxAmount = ({
       const updateAmountUsingMax = async () => {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);
+        setIsSendMaxLoading(true);
         const amount = await bridge.estimateMaxSpendable({
           account,
           parentAccount,
           transaction,
         });
+        setIsSendMaxLoading(false);
         setFromAmount(amount);
       };
 

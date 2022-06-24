@@ -83,6 +83,7 @@ export const useFromAmountError = (
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
+  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
@@ -90,6 +91,7 @@ export const useSwapTransaction = ({
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
+  setIsSendMaxLoading?: () => void;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
@@ -134,6 +136,7 @@ export const useSwapTransaction = ({
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
+    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates } = useProviderRates({
