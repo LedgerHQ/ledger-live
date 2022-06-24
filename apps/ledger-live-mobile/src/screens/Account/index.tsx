@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 import { StyleSheet, View, SectionList, FlatList } from "react-native";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import Animated, { Value, event } from "react-native-reanimated";
@@ -43,6 +49,8 @@ import { useScrollToTop } from "../../navigation/utils";
 
 import { getListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
+
+import PromptNotification from "../../modals/PromptNotification";
 
 type Props = {
   navigation: any;
@@ -95,12 +103,21 @@ const AccountScreenInner = ({
   } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const [isModalOpened, setIsModalOpened] = useState(false);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
   const [opCount, setOpCount] = useState(100);
   const ref = useRef();
   const scrollY = useRef(new Value(0)).current;
 
   useScrollToTop(ref);
+
+  useEffect(() => {
+    setTimeout(() => setIsModalOpened(true), 3000);
+  }, []);
 
   const onEndReached = useCallback(() => {
     setOpCount(opCount + 50);
@@ -268,6 +285,11 @@ const AccountScreenInner = ({
         renderItem={({ item }: any) => item}
         keyExtractor={(_: any, index: any) => String(index)}
         showsVerticalScrollIndicator={false}
+      />
+      <PromptNotification
+        isOpen={isModalOpened}
+        onClose={onModalClose}
+        type="generic"
       />
     </View>
   );
