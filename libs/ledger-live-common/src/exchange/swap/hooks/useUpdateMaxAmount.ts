@@ -1,13 +1,12 @@
+import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
-
+import { Transaction } from "../../../generated/types";
 import {
-  SwapTransactionType,
   SwapDataType,
   SwapSelectorStateType,
+  SwapTransactionType,
 } from "./useSwapTransaction";
-import { Transaction } from "../../../generated/types";
-import BigNumber from "bignumber.js";
 
 export const ZERO = new BigNumber(0);
 
@@ -24,7 +23,7 @@ export const useUpdateMaxAmount = ({
   parentAccount: SwapSelectorStateType["parentAccount"];
   transaction: SwapTransactionType["transaction"];
   feesStrategy: Transaction["feesStrategy"];
-  setIsSendMaxLoading: any;
+  setIsSendMaxLoading?: (boolean) => void;
 }): {
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
@@ -36,10 +35,11 @@ export const useUpdateMaxAmount = ({
       setMax((previous) => {
         if (previous) {
           setFromAmount(ZERO);
+          setIsSendMaxLoading?.(false);
         }
         return !previous;
       }),
-    [setFromAmount]
+    [setFromAmount, setIsSendMaxLoading]
   );
 
   /* UPDATE from amount to the estimate max spendable on account
@@ -49,13 +49,13 @@ export const useUpdateMaxAmount = ({
       const updateAmountUsingMax = async () => {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);
-        setIsSendMaxLoading(true);
+        setIsSendMaxLoading?.(true);
         const amount = await bridge.estimateMaxSpendable({
           account,
           parentAccount,
           transaction,
         });
-        setIsSendMaxLoading(false);
+        setIsSendMaxLoading?.(false);
         setFromAmount(amount);
       };
 
