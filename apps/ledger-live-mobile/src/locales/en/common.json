@@ -3292,6 +3292,9 @@
     "language": "Language",
     "deviceLanguage": "Device Language",
     "changeLanguage": "Change language",
+    "allowLanguageInstallation": "Allow language installation",
+    "languageInstalled": "Device language changed to {{language}}",
+    "installingLanguage": "Installing language",
     "languages": {
       "english": "English",
       "french": "French",
