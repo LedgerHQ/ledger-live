@@ -24,6 +24,7 @@ export type Subscription = {
  */
 export type Device = any; // Should be a union type of all possible Device object's shape
 
+export type DescriptorEventType = "add" | "remove";
 /**
  * type: add or remove event
  * descriptor: a parameter that can be passed to open(descriptor)
@@ -31,7 +32,7 @@ export type Device = any; // Should be a union type of all possible Device objec
  * device: transport specific device info
  */
 export interface DescriptorEvent<Descriptor> {
-  type: "add" | "remove";
+  type: DescriptorEventType;
   descriptor: Descriptor;
   deviceModel?: DeviceModel | null | undefined;
   device?: Device;
