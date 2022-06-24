@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Observable, of } from "rxjs";
 import { concatAll } from "rxjs/operators";
 import { getInfosForServiceUuid } from "@ledgerhq/devices";
@@ -140,8 +140,6 @@ export const useBleDevicesScanning = ({
                 ...scannedDevices,
                 newScannedDevice,
               ]);
-
-              scannedDevices.push(newScannedDevice);
             }
           }
         },
