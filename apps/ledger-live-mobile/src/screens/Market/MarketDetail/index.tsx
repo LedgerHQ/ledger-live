@@ -64,6 +64,8 @@ function MarketDetail({
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
 
+  const [isModalOpened, setIsModalOpened] = useState(false);
+
   const {
     selectedCoinData: currency,
     selectCurrency,
@@ -168,6 +170,10 @@ function MarketDetail({
   }, [readOnlyModeEnabled, previousRoute]);
 
   const [hoveredItem, setHoverItem] = useState<any>(null);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
   return (
     <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>
