@@ -1,14 +1,19 @@
 import React, { useCallback } from "react";
+import { Linking } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
-import { TrackScreen } from "../../../analytics";
-import { notificationsSelector } from "../../../reducers/settings";
-import { setNotifications } from "../../../actions/settings";
 import { useTranslation } from "react-i18next";
+import { capitalize } from "lodash/fp";
+import { Box, Switch, Text, Button } from "@ledgerhq/native-ui";
+import { SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
+
+import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
+import { TrackScreen } from "../../../analytics";
+
+import { notificationsSelector } from "../../../reducers/settings";
+import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
-import { Box, Switch, Text, Button } from "@ledgerhq/native-ui";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -34,21 +39,23 @@ function NotificationSettingsRow({
         }),
       );
     },
-    [dispatch],
+    [dispatch, notificationKey],
   );
+
+  const capitalizedKey = capitalize(notificationKey);
 
   return (
     <SettingsRow
-      event="TransactionsRow"
+      event={`${capitalizedKey}Row`}
       title={t(`settings.notifications.${notificationKey}.title`)}
       desc={t(`settings.notifications.${notificationKey}.desc`)}
       label={label}
     >
       <Track
         event={
-          notifications.transactions
-            ? `Enable${notificationKey}Notifications`
-            : `Disable${notificationKey}Notifications`
+          notifications[notificationKey]
+            ? `Enable${capitalizedKey}Notifications`
+            : `Disable${capitalizedKey}Notifications`
         }
         onUpdate
       />
@@ -67,6 +74,8 @@ function NotificationsSettings() {
 
   const disableSubSettings = !notifications.allowed;
 
+  const openSettings = useCallback(() => Linking.openSettings(), []);
+
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Notifications" />
@@ -84,7 +93,13 @@ function NotificationsSettings() {
           on your phone, visit your device’s settings to turn on Ledger Live
           notifications.
         </Text>
-        <Button type={"main"} mt={6}>
+        <Button
+          type={"main"}
+          mt={6}
+          onPress={openSettings}
+          icon={SettingsMedium}
+          iconPosition={"left"}
+        >
           Go to system settings
         </Button>
       </Box>
