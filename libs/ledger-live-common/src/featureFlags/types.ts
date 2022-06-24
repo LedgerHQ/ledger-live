@@ -5,6 +5,7 @@ export type FeatureId =
   | "llmUsbFirmwareUpdate"
   | "ratings"
   | "counterValue"
+  | "buyDeviceFromLive"
   | string;
 
 // We use objects instead of direct booleans for potential future improvements

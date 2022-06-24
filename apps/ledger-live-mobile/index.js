@@ -53,7 +53,7 @@ const excludedErrorName = [
   "ManagerDeviceLocked",
   // other
   "InvalidAddressError",
-  "AccountNeedResync",
+  "SwapNoAvailableProviders",
 ];
 const excludedErrorDescription = [
   // networking
@@ -80,7 +80,7 @@ if (Config.SENTRY_DSN && !__DEV__ && !Config.MOCK) {
     // NB we do not need to explicitly set the release. we let the native side infers it.
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
-    sampleRate: 0.2,
+    sampleRate: 1,
     tracesSampleRate: 0.02,
     integrations: [],
     beforeSend(event: any) {

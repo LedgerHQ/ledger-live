@@ -10,10 +10,15 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Footer from "./Footer";
 import {
+  // $FlowFixMe
   context,
+  // $FlowFixMe
   STATUS,
+  // $FlowFixMe
   connect,
+  // $FlowFixMe
   disconnect,
+  // $FlowFixMe
   approveSession,
 } from "~/renderer/screens/WalletConnect/Provider";
 import BigSpinner from "~/renderer/components/BigSpinner";

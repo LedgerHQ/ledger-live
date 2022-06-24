@@ -29,8 +29,9 @@ import { ScreenName, NavigatorName } from "../../const";
 import NftLinksPanel from "./NftLinksPanel";
 import { rgba } from "../../colors";
 import Skeleton from "../Skeleton";
-import NftImage from "./NftImage";
+import NftMedia from "./NftMedia";
 import LText from "../LText";
+import { getMetadataMediaType } from "../../logic/nft";
 
 type Props = {
   route: {
@@ -242,13 +243,21 @@ const NftViewer = ({ route }: Props) => {
     return null;
   }, [isLoading, nftMetadata]);
 
-  const nftImage = (
-    <NftImage
-      resizeMode="contain"
-      style={styles.image}
-      src={nftMetadata?.media}
-      status={nftStatus}
-    />
+  const mediaType = useMemo(() => getMetadataMediaType(nftMetadata, "big"), [
+    nftMetadata,
+  ]);
+
+  const NftComponent = useCallback(
+    () => (
+      <NftMedia
+        resizeMode="contain"
+        style={styles.image}
+        metadata={nftMetadata}
+        mediaFormat={"big"}
+        status={nftStatus}
+      />
+    ),
+    [nftMetadata, nftStatus],
   );
 
   return (
@@ -274,21 +283,23 @@ const NftViewer = ({ route }: Props) => {
           </Skeleton>
 
           <View style={styles.imageContainer}>
-            {nftMetadata?.media ? (
+            {nftMetadata?.media && mediaType !== "video" ? (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate(NavigatorName.NftNavigator, {
                     screen: ScreenName.NftImageViewer,
                     params: {
-                      media: nftMetadata.media,
+                      metadata: nftMetadata,
+                      mediaFormat: "original",
+                      status: nftStatus,
                     },
                   })
                 }
               >
-                {nftImage}
+                <NftComponent />
               </TouchableOpacity>
             ) : (
-              nftImage
+              <NftComponent />
             )}
           </View>
 

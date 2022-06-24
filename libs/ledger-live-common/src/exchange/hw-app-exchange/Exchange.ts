@@ -67,7 +67,7 @@ export default class Exchange {
       this.transactionType === ExchangeTypes.Sell ||
       this.transactionType === ExchangeTypes.Fund
     ) {
-      return result.subarray(0, 32).toString("base64");
+      return result.slice(0, 32).toString("base64");
     }
 
     return result.toString("ascii", 0, 10);

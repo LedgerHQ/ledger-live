@@ -5,8 +5,9 @@ const configDir = (() => {
   if (!STORYBOOK_ENV) return "__NOTHING_TO_REPLACE__";
   const { LEDGER_CONFIG_DIRECTORY } = process.env;
   if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
-  const electron = require("electron");
-  return (electron.app || electron.remote.app).getPath("userData") || "__NOTHING_TO_REPLACE__";
+  // $FlowFixMe
+  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
+  return electron.app.getPath("userData") || "__NOTHING_TO_REPLACE__";
 })();
 
 const cwd = typeof process === "object" ? process.cwd() || "." : "__NOTHING_TO_REPLACE__";
@@ -18,7 +19,7 @@ const basePaths = {
 };
 
 function filepathReplace(path: string) {
-  if (!path) return path;
+  if (!path || path.startsWith("app://")) return path;
   const replaced = Object.keys(basePaths).reduce((path, name) => {
     const p = basePaths[name];
     return path
