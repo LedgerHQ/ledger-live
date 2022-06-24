@@ -14,6 +14,12 @@ export type LanguagePackage = {
   date_last_modified: string;
 };
 
+export type LanguagePackageResponse = {
+  id: number,
+  language: Language,
+  language_package_version: LanguagePackage[]
+}
+
 export const languageIds: { [key in Language]: number } = {
   english: 0x00,
   french: 0x01,

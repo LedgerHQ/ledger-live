@@ -19,7 +19,7 @@ import { urls } from "../../config/urls";
 import Alert from "../Alert";
 import { lighten } from "../../colors";
 import Button from "../Button";
-import FirmwareProgress from "../FirmwareProgress";
+import DeviceActionProgress from "../DeviceActionProgress";
 import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
 import getDeviceAnimation from "./getDeviceAnimation";
@@ -276,6 +276,27 @@ export function renderAllowManager({
       <CenteredText>
         {t("DeviceAction.allowManagerPermission", { wording })}
       </CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderAllowLanguageInstallation({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) {
+  return (
+    <Wrapper>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
+      <Log>
+        {t("deviceLocalization.allowLanguageInstallation")}
+      </Log>
     </Wrapper>
   );
 }
@@ -676,7 +697,7 @@ export const AutoRepair = ({
   return (
     <Wrapper>
       <TitleText>{t("FirmwareUpdate.preparingDevice")}</TitleText>
-      <FirmwareProgress progress={progress} />
+      <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
   );
