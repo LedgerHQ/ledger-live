@@ -330,6 +330,7 @@ export const ScreenName = {
 
   SyncOnboardingCompanion: "SyncOnboardingCompanion",
   DeviceModelSelection: "DeviceModelSelection",
+  BleDevicesScanning: "BleDevicesScanning",
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
