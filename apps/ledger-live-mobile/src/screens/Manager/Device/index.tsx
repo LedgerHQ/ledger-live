@@ -20,6 +20,7 @@ import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import Divider from "../../../components/Divider";
 import DeviceLanguage from "./DeviceLanguage";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 const illustrations = {
   nanoS: NanoS,
@@ -41,6 +42,7 @@ type Props = {
   initialDeviceName: string;
   blockNavigation: boolean;
   deviceInfo: DeviceInfo;
+  device: Device;
   setAppUninstallWithDependencies: (params: {
     dependents: App[];
     app: App;
@@ -65,6 +67,7 @@ const DeviceCard = ({
   distribution,
   state,
   deviceId,
+  device,
   initialDeviceName,
   blockNavigation,
   deviceInfo,
@@ -141,7 +144,10 @@ const DeviceCard = ({
       {isLocalizationSupported && deviceInfo.languageId !== undefined && (
         <Flex px={6}>
           <Divider />
-          <DeviceLanguage language={idsToLanguage[deviceInfo.languageId]} />
+          <DeviceLanguage
+            currentLanguage={idsToLanguage[deviceInfo.languageId]}
+            device={device}
+          />
           <Divider />
         </Flex>
       )}
