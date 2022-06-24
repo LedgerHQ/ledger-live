@@ -1,5 +1,5 @@
-/* eslint-disable flowtype/generic-spacing */
 // @flow
+/* eslint-disable flowtype/generic-spacing */
 
 import type { Observable } from "rxjs";
 import { from } from "rxjs";

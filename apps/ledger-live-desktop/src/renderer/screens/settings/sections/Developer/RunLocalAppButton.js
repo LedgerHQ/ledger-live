@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
-import { remote } from "electron";
+import * as remote from "@electron/remote";
 import { readFile } from "fs";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
 import { SettingsSectionRow as Row } from "../../SettingsSection";

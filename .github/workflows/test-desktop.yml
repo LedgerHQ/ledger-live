@@ -1,10 +1,12 @@
-name: Test Desktop App
+name: "[Test] Desktop App"
 
 on:
   push:
     branches:
       - main
       - develop
+      - release
+      - hotfix
   pull_request:
   workflow_dispatch:
 
@@ -13,12 +15,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  typecheck:
+    name: "Ledger Live Desktop TypeCheck"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+      CI_OS: ubuntu-latest
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - name: Bump npm to latest
+        run: npm i -g npm@8.12.2
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
+      - name: Build dependencies
+        run: pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+      - name: Run code checkers
+        run: pnpm desktop test:codecheck
+
   test-desktop-app:
     name: "Ledger Live Desktop Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: ${{ matrix.os }}
@@ -53,9 +97,9 @@ jobs:
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: actions/setup-python@v2
@@ -66,16 +110,18 @@ jobs:
           ruby-version: 2.7
           bundler-cache: true
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
         run: npx @playwright/test install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing
-      - name: Run code checkers [Linux]
-        if: matrix.os == 'ubuntu-latest'
-        run: pnpm desktop test:codecheck
+        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: Run unit tests [Linux]
         if: matrix.os == 'ubuntu-latest'
         run: pnpm desktop test:jest

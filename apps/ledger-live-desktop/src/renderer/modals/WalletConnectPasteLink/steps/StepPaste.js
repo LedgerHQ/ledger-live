@@ -10,6 +10,7 @@ import { radii } from "~/renderer/styles/theme";
 import Label from "~/renderer/components/Label";
 import IconPaste from "~/renderer/icons/Paste";
 import Input from "~/renderer/components/Input";
+// $FlowFixMe
 import { connect } from "~/renderer/screens/WalletConnect/Provider";
 
 const Right = styled(Box).attrs(() => ({

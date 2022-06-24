@@ -1,5 +1,5 @@
 import { Probot } from "probot";
-import { commands, isValidBranchName, isValidUser } from "./tools";
+import { commands, isValidBody, isValidBranchName, isValidUser } from "./tools";
 
 export default (app: Probot) => {
   commands(app, "generate-screenshots", async (context, data) => {
@@ -28,34 +28,48 @@ export default (app: Probot) => {
   app.on(["pull_request.opened", "pull_request.reopened"], async (context) => {
     const { payload, octokit } = context;
     const repository = context.repo();
+
+    if (repository.repo !== "ledger-live") return;
+
     const branch = payload.pull_request.head.ref;
     const login = payload.pull_request.user.login;
+
+    if (!isValidUser(login)) return;
+
     const isBranchValid = isValidBranchName(branch);
-    const isUserValid = isValidUser(login);
-    let body = "";
+    const isBodyValid = isValidBody(payload.pull_request.body);
+
+    if (isBranchValid && isBodyValid) return;
+
+    let body =
+      `❌ @${login}\n\n` +
+      "#### Unfortunately this PR does not comply with the [Contributing Conventions](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) and will be closed automatically.\n" +
+      "\n" +
+      "Feel free to reopen this PR once you have browsed through the guidelines.\n" +
+      "\n" +
+      "-------\n" +
+      "\n" +
+      "Found Issues:\n";
+
     let comment;
 
-    if (!isUserValid) return;
-
     if (!isBranchValid) {
-      body = `@${login}
-      Unfortunately this branch name (**${branch}**) does not follow the [CONTRIBUTING.MD](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md) conventions and will be closed automatically.
-      Feel free to reopen this PR once you have browsed through the guidelines.
-      `;
-
-      comment = context.issue({
-        body,
-      });
-
-      await octokit.issues.createComment(comment);
-      await octokit.pulls.update({
-        owner: repository.owner,
-        repo: repository.repo,
-        pull_number: payload.number,
-        state: "closed",
-      });
-
-      return;
+      body += `- _the branch name \`${branch}\` is invalid_\n`;
     }
+
+    if (!isBodyValid) {
+      body += `- _the description is missing or you removed or overrode one or more sections of the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md)_\n`;
+    }
+    comment = context.issue({
+      body,
+    });
+
+    await octokit.issues.createComment(comment);
+    await octokit.pulls.update({
+      owner: repository.owner,
+      repo: repository.repo,
+      pull_number: payload.number,
+      state: "closed",
+    });
   });
 };

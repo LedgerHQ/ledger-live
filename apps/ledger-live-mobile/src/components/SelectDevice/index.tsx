@@ -20,6 +20,7 @@ import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
 import { track } from "../../analytics";
+import { setLastConnectedDevice } from "../../actions/settings";
 
 import PairLight from "../../screens/Onboarding/assets/nanoX/pairDevice/light.json";
 import PairDark from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
@@ -60,6 +61,7 @@ export default function SelectDevice({
         });
         // Nb consider a device selection enough to show the fw update banner in portfolio
         dispatch(setHasConnectedDevice(true));
+        dispatch(setLastConnectedDevice(deviceInfo));
         onSelect(deviceInfo);
       } else {
         NativeModules.BluetoothHelperModule.prompt()
@@ -152,7 +154,7 @@ export default function SelectDevice({
     <>
       {usbOnly && withArrows && !hideAnimation ? (
         <UsbPlaceholder />
-      ) : ble.length === 0 ? (
+      ) : usbOnly ? null : ble.length === 0 ? (
         <BluetoothEmpty
           hideAnimation={hideAnimation}
           onPairNewDevice={onPairNewDevice}

@@ -10,7 +10,7 @@ import Animated, {
 type Props = {
   slidesLength: number;
   activeIndex: number;
-  onChange: (index: number) => void;
+  onChange?: (index: number) => void;
 };
 
 const Container = styled.View`
@@ -64,7 +64,7 @@ function SlideIndicator({ slidesLength, activeIndex = 0, onChange }: Props): Rea
   return (
     <Container>
       {slidesArray.map((_, index) => (
-        <Bullet key={index} onPress={() => onChange(index)} />
+        <Bullet key={index} onPress={() => onChange && onChange(index)} />
       ))}
       <AnimatedBullet style={[animatedStyles]} />
     </Container>

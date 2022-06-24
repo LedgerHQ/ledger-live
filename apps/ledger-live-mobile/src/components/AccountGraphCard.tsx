@@ -252,7 +252,10 @@ const GraphCardHeader = ({
             numberOfLines={1}
             adjustsFontSizeToFit
           >
-            <CurrencyUnitValue {...items[0]} disableRounding />
+            <CurrencyUnitValue
+              disableRounding={shouldUseCounterValue}
+              {...items[0]}
+            />
           </Text>
           <Flex flexDirection="row" alignItems="center">
             <Delta percent valueChange={valueChange} />

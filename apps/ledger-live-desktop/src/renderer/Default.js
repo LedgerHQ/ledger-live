@@ -1,6 +1,7 @@
 // @flow
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
@@ -31,6 +32,8 @@ import OnboardingOrElse from "~/renderer/components/OnboardingOrElse";
 import AppRegionDrag from "~/renderer/components/AppRegionDrag";
 import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
+// $FlowFixMe
+import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import DeviceBusyIndicator from "~/renderer/components/DeviceBusyIndicator";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import PerfIndicator from "~/renderer/components/PerfIndicator";
@@ -45,6 +48,7 @@ import Page from "~/renderer/components/Page";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
 import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
+import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
 import useUSBTroubleshooting from "~/renderer/hooks/useUSBTroubleshooting";
@@ -61,6 +65,23 @@ import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
 import Learn from "~/renderer/screens/learn";
 
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
+
+// in order to test sentry integration, we need the ability to test it out.
+const LetThisCrashForCrashTest = () => {
+  throw new Error("CrashTestRendering");
+};
+const LetMainSendCrashTest = () => {
+  useEffect(() => {
+    ipcRenderer.send("mainCrashTest");
+  }, []);
+  return null;
+};
+const LetInternalSendCrashTest = () => {
+  useEffect(() => {
+    ipcRenderer.send("internalCrashTest");
+  }, []);
+  return null;
+};
 
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
   position: sticky;
@@ -150,6 +171,9 @@ export default function Default() {
               {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
               {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
             </DebugWrapper>
+            {process.env.DISABLE_TRANSACTION_BROADCAST ? (
+              <DisableTransactionBroadcastWarning />
+            ) : null}
             <OnboardingOrElse>
               <Switch>
                 <Route exact path="/walletconnect">
@@ -158,6 +182,7 @@ export default function Default() {
                 <Route>
                   <IsNewVersion />
                   <IsSystemLanguageAvailable />
+                  <IsTermOfUseUpdated />
                   <SyncNewAccounts priority={2} />
 
                   <Box
@@ -229,11 +254,22 @@ export default function Default() {
                     <ToastOverlay />
                   </Box>
 
-                  {__PRERELEASE__ && __CHANNEL__ !== "next" ? <NightlyLayer /> : null}
+                  {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
+                    <NightlyLayer />
+                  ) : null}
 
                   <DeviceBusyIndicator />
                   <KeyboardContent sequence="BJBJBJ">
                     <PerfIndicator />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_TEST">
+                    <LetThisCrashForCrashTest />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_MAIN">
+                    <LetMainSendCrashTest />
+                  </KeyboardContent>
+                  <KeyboardContent sequence="CRASH_INTERNAL">
+                    <LetInternalSendCrashTest />
                   </KeyboardContent>
                 </Route>
               </Switch>

@@ -1,9 +1,12 @@
 // @flow
 import invariant from "invariant";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountUnit,
+  shortAddressPreview,
+} from "@ledgerhq/live-common/lib/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
@@ -13,8 +16,6 @@ import LText from "../../components/LText";
 import {
   DataRow,
   TextValueField,
-  HeaderRow,
-  ValidatorField,
 } from "../../components/ValidateOnDeviceDataRow";
 import Info from "../../icons/Info";
 
@@ -38,19 +39,25 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
     unit,
   );
 
+  const { validator, formattedAmount, address } = mappedDelegations[0];
+
   return (
     <>
-      <HeaderRow
-        label={t("ValidateOnDevice.name")}
-        value={t("ValidateOnDevice.amount")}
+      <TextValueField
+        label={t("ValidateOnDevice.amount")}
+        value={formattedAmount}
       />
-      {mappedDelegations.map(({ validator, address, formattedAmount }) => (
-        <ValidatorField
-          address={address}
-          name={validator?.name ?? address}
-          amount={formattedAmount}
-        />
-      ))}
+      <TextValueField
+        label={t("ValidateOnDevice.validator")}
+        value={
+          <View style={styles.lineLabel}>
+            <LText semiBold>{shortAddressPreview(address)}</LText>
+            <LText style={styles.validatorLabel} color="grey">
+              {validator.name}
+            </LText>
+          </View>
+        }
+      />
     </>
   );
 }
@@ -137,4 +144,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginLeft: 8,
   },
+  lineLabel: { justifyContent: "flex-end" },
+  validatorLabel: { fontSize: 12 },
 });

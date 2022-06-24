@@ -51,7 +51,7 @@ const SLIDES = [
     imgs: [
       {
         // $FlowFixMe
-        source: require("./banners/LedgerAcademy/images/bg.png").default,
+        source: require("./banners/LedgerAcademy/images/bg.png"),
         transform: [0, 60, 5, 60],
         size: {
           width: 160,
@@ -60,7 +60,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/LedgerAcademy/images/card.png").default,
+        source: require("./banners/LedgerAcademy/images/card.png"),
         transform: [65, 50, 20, 50],
         size: {
           width: 109,
@@ -69,7 +69,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/LedgerAcademy/images/coin.png").default,
+        source: require("./banners/LedgerAcademy/images/coin.png"),
         transform: [-15, 20, 25, 20],
         size: {
           width: 28,
@@ -78,7 +78,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/LedgerAcademy/images/hat.png").default,
+        source: require("./banners/LedgerAcademy/images/hat.png"),
         transform: [10, 30, 0, 30],
         size: {
           width: 110,
@@ -87,7 +87,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/LedgerAcademy/images/nano.png").default,
+        source: require("./banners/LedgerAcademy/images/nano.png"),
         transform: [75, 25, 8, 25],
         size: {
           width: 50,
@@ -104,7 +104,7 @@ const SLIDES = [
     imgs: [
       {
         // $FlowFixMe
-        source: require("./banners/BuyCrypto/images/bg.png").default,
+        source: require("./banners/BuyCrypto/images/bg.png"),
         transform: [-10, 60, -8, 60],
         size: {
           width: 180,
@@ -113,7 +113,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BuyCrypto/images/cart.png").default,
+        source: require("./banners/BuyCrypto/images/cart.png"),
         transform: [20, 40, 7, 40],
         size: {
           width: 131,
@@ -122,7 +122,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BuyCrypto/images/coin.png").default,
+        source: require("./banners/BuyCrypto/images/coin.png"),
         transform: [53, 30, 53, 30],
         size: {
           width: 151,
@@ -131,7 +131,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BuyCrypto/images/coin2.png").default,
+        source: require("./banners/BuyCrypto/images/coin2.png"),
         transform: [58, 25, 20, 25],
         size: {
           width: 151,
@@ -140,7 +140,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BuyCrypto/images/coin3.png").default,
+        source: require("./banners/BuyCrypto/images/coin3.png"),
         transform: [29, 20, 33, 20],
         size: {
           width: 151,
@@ -157,7 +157,7 @@ const SLIDES = [
     imgs: [
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/bg.png").default,
+        source: require("./banners/Swap/images/bg.png"),
         transform: [0, 60, 5, 60],
         size: {
           width: 180,
@@ -166,7 +166,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/coin1.png").default,
+        source: require("./banners/Swap/images/coin1.png"),
         transform: [37, 25, 24, 25],
         size: {
           width: 48,
@@ -175,7 +175,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/coin2.png").default,
+        source: require("./banners/Swap/images/coin2.png"),
         transform: [115, 25, 28, 25],
         size: {
           width: 50,
@@ -184,7 +184,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/loop.png").default,
+        source: require("./banners/Swap/images/loop.png"),
         transform: [20, 35, 5, 35],
         size: {
           width: 160,
@@ -193,7 +193,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/smallcoin1.png").default,
+        source: require("./banners/Swap/images/smallcoin1.png"),
         transform: [115, 15, 35, 15],
         size: {
           width: 18,
@@ -202,7 +202,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/smallcoin2.png").default,
+        source: require("./banners/Swap/images/smallcoin2.png"),
         transform: [88, 20, 65, 20],
         size: {
           width: 4,
@@ -211,7 +211,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/Swap/images/smallcoin3.png").default,
+        source: require("./banners/Swap/images/smallcoin3.png"),
         transform: [78, 17, 32, 17],
         size: {
           width: 10,
@@ -228,7 +228,7 @@ const SLIDES = [
     imgs: [
       {
         // $FlowFixMe
-        source: require("./banners/BackupPack/images/bg.png").default,
+        source: require("./banners/BackupPack/images/bg.png"),
         transform: [20, 60, 5, 60],
         size: {
           width: 150,
@@ -237,7 +237,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BackupPack/images/nanos.png").default,
+        source: require("./banners/BackupPack/images/nanos.png"),
         transform: [-55, 13, 5, 15],
         size: {
           width: 162,
@@ -246,7 +246,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BackupPack/images/nanos.png").default,
+        source: require("./banners/BackupPack/images/nanos.png"),
         transform: [0, 15, 5, 15],
         size: {
           width: 162,
@@ -255,7 +255,7 @@ const SLIDES = [
       },
       {
         // $FlowFixMe
-        source: require("./banners/BackupPack/images/nanos.png").default,
+        source: require("./banners/BackupPack/images/nanos.png"),
         transform: [55, 17, 5, 15],
         size: {
           width: 162,
