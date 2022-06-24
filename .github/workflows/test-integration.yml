@@ -58,6 +58,7 @@ jobs:
       - name: Build
         run: pnpm build:libs
       - name: Test
+        shell: bash
         env:
           FILTER: ${{ github.event.inputs.filter }}
         run: |
