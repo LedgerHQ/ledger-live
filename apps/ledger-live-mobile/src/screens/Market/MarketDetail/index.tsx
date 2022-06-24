@@ -62,6 +62,8 @@ function MarketDetail({
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
 
+  const [isModalOpened, setIsModalOpened] = useState(false);
+
   const {
     selectedCoinData: currency,
     selectCurrency,
@@ -103,6 +105,8 @@ function MarketDetail({
   const toggleStar = useCallback(() => {
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
+
+    if (!isStarred) setIsModalOpened(true);
   }, [dispatch, isStarred, currencyId]);
 
   const { range } = chartRequestParams;
@@ -167,6 +171,10 @@ function MarketDetail({
   }, [readOnlyModeEnabled, previousRoute]);
 
   const [hoveredItem, setHoverItem] = useState<any>(null);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
   return (
     <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>
