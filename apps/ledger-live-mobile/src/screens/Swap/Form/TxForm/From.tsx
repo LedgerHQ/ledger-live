@@ -2,8 +2,8 @@ import React, { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useNavigation } from "@react-navigation/native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountName,
@@ -31,7 +31,8 @@ export function From({
   isMaxEnabled,
 }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  // TODO: navigation type
+  const navigation = useNavigation<any>();
   const accounts = (useSelector(flattenAccountsSelector) as unknown) as ((
     | Account
     | TokenAccount
@@ -53,9 +54,17 @@ export function From({
     [account, currency],
   );
 
+  const onSelect = useCallback(
+    (account: Account) => {
+      setAccount(account);
+      navigation.goBack();
+    },
+    [navigation, setAccount],
+  );
+
   const onPress = useCallback(() => {
-    /* navigation.navigate(); */
-  }, [navigation]);
+    navigation.navigate("SwapSelectAccount", { target: "from", onSelect });
+  }, [navigation, onSelect]);
 
   const fromUnit = account && getAccountUnit(account);
 
@@ -64,27 +73,29 @@ export function From({
   }
 
   return (
-    <Flex flex={1}>
+    <Flex>
       <Text>{t("transfer.swap2.form.from")}</Text>
       <Flex flexDirection="row" justifyContent={"space-between"}>
         <Selector
-          Icon={<CurrencyIcon size={32} currency={currency} />}
+          Icon={
+            <BoxedIcon
+              Icon={<CurrencyIcon size={32} currency={currency} />}
+              variant="circle"
+              borderColor="transparent"
+            />
+          }
           title={name}
           subTitle={balance}
           onPress={onPress}
         />
 
         <Flex flex={1} justifyContent="center">
-          {fromUnit ? (
-            <AmountInput
-              value={amount}
-              editable={!isMaxEnabled}
-              unit={fromUnit}
-              onChange={setAmount}
-            />
-          ) : (
-            <Text>0</Text>
-          )}
+          <AmountInput
+            value={amount}
+            editable={!isMaxEnabled}
+            unit={fromUnit}
+            onChange={setAmount}
+          />
         </Flex>
       </Flex>
     </Flex>

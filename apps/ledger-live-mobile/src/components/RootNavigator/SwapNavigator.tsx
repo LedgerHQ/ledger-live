@@ -2,13 +2,18 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import {
+  SwapNavParamList,
+  SelectAccount,
+  SelectCurrency,
+} from "../../screens/Swap";
+import { SwapFormNavigator } from "./SwapFormNavigator";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import StepHeader from "../StepHeader";
+// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
 // import SwapError from "../../screens/Swap/Error";
 // import SwapKYC from "../../screens/Swap/KYC";
 // import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
-import { SwapFormNavigator } from "./SwapFormNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-// import StepHeader from "../StepHeader";
-// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -20,13 +25,37 @@ export default function SwapNavigator() {
 
   return (
     <Stack.Navigator
-      screenOptions={{ ...stackNavigationConfig, headerShown: false }}
+      screenOptions={{ ...stackNavigationConfig, headerShown: true }}
     >
       <Stack.Screen
-        name={"Swap"}
+        name="Swap"
         component={SwapFormNavigator}
         options={{
-          title: t("transfer.swap.form.tab"),
+          title: t("transfer.swap2.form.title"),
+        }}
+      />
+      <Stack.Screen
+        name="SwapSelectAccount"
+        component={SelectAccount}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <StepHeader
+              title={
+                route.params.target === "from"
+                  ? t("transfer.swap.form.from")
+                  : t("transfer.swap.form.to")
+              }
+            />
+          ),
+          headerRight: undefined,
+        })}
+      />
+      <Stack.Screen
+        name="SwapSelectCurrency"
+        component={SelectCurrency}
+        options={{
+          headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
+          headerRight: undefined,
         }}
       />
       {/* <Stack.Screen
@@ -66,9 +95,5 @@ export default function SwapNavigator() {
     </Stack.Navigator>
   );
 }
-
-type SwapNavParamList = {
-  Swap: undefined;
-};
 
 const Stack = createStackNavigator<SwapNavParamList>();

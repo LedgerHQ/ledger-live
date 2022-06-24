@@ -156,13 +156,9 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Swap}
         component={SwapNavigator}
-        options={{
-          ...stackNavigationConfig,
-          headerLeft: null,
-          title: t("transfer.swap.form.tab"),
-        }}
+        options={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={ScreenName.SwapV2FormSelectAccount}
         component={SwapFormSelectAccount}
         options={({ route }) => ({
@@ -213,7 +209,7 @@ export default function BaseNavigator() {
           ),
           headerRight: null,
         }}
-      />
+      /> */}
       <Stack.Screen
         name={NavigatorName.Lending}
         component={LendingNavigator}

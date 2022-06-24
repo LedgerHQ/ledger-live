@@ -2301,6 +2301,7 @@
     },
     "swap2": {
       "form": {
+        "title": "Exchange",
         "from": "From",
         "to": "To",
         "notAvailable": {

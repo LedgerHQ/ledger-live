@@ -1,8 +1,7 @@
 import { useTheme } from "@react-navigation/native";
-import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import React, { useMemo, useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
-import Config from "react-native-config"
+import Config from "react-native-config";
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
 import { Button } from "@ledgerhq/native-ui";
 import {
@@ -33,13 +32,13 @@ import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
 import { Loading, NotAvailable, TxForm } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
-import { SwapFormNavParamList } from "./types";
+import { SwapProps } from "./types";
 
-export type { SwapFormNavParamList };
+export * from "./types";
+export * from "./SelectAccount";
+export * from "./SelectCurrency";
 
 export const ratesExpirationThreshold = 60000;
-
-type Props = MaterialTopTabScreenProps<SwapFormNavParamList, "SwapForm">;
 
 enum ActionRequired {
   Login,
@@ -48,12 +47,14 @@ enum ActionRequired {
   None,
 }
 
-export function SwapForm(_props: Props) {
+export function SwapForm(_props: SwapProps) {
   const dispatch = useDispatch();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const accounts = useSelector(accountsSelector);
-  const { providers, error } = useProviders(Config.SWAP_DISABLED_PROVIDERS);
+  const { providers, error, pairs } = useProviders(
+    Config.SWAP_DISABLED_PROVIDERS,
+  );
 
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | undefined>();
   const swapTx = useSwapTransaction({
@@ -65,23 +66,31 @@ export function SwapForm(_props: Props) {
   const exchangeRatesState = swapTx.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
 
-  const { provider, kyc } = useMemo<{provider?: string, kyc?: KYCStatus}>(() => {
+  const { provider, kyc } = useMemo<{
+    provider?: string;
+    kyc?: KYCStatus;
+  }>(() => {
     const provider = exchangeRate?.provider;
-    
+
     if (!provider || !swapKYC) {
-      return {}
+      return { exchangeRate, provider };
     }
-    
+
     return {
       provider,
-      kyc: swapKYC[provider]
-    }
+      exchangeRate,
+      kyc: swapKYC[provider],
+    };
   }, [exchangeRate, swapKYC]);
 
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState();
-  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(ActionRequired.None);
-  const [errorCode, setErrorCode] = useState<ValidCheckQuoteErrorCodes | undefined>();
+  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
+    ActionRequired.None,
+  );
+  const [errorCode, setErrorCode] = useState<
+    ValidCheckQuoteErrorCodes | undefined
+  >();
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -107,9 +116,9 @@ export function SwapForm(_props: Props) {
       setCurrentBanner(ActionRequired.Login);
       return;
     }
-    
+
     if (!kyc) {
-      return
+      return;
     }
 
     // we display the KYC banner component if partner requiers KYC and is not yet approved
@@ -172,13 +181,13 @@ export function SwapForm(_props: Props) {
     }
   }, [kyc?.id, currentFlow]);
 
-//   const onContinue = useCallback(() => {
-//     swapTx.setConfirmed(true);
-//   }, [swapTx]);
+  //   const onContinue = useCallback(() => {
+  //     swapTx.setConfirmed(true);
+  //   }, [swapTx]);
 
-//   const onReset = useCallback(() => {
-//     swapTx.setConfirmed(false);
-//   }, [swapTx]);
+  //   const onReset = useCallback(() => {
+  //     swapTx.setConfirmed(false);
+  //   }, [swapTx]);
 
   useEffect(() => {
     if (
@@ -189,7 +198,7 @@ export function SwapForm(_props: Props) {
     ) {
       return;
     }
-    async function handleCheckQuote()  {
+    async function handleCheckQuote() {
       if (!provider || !exchangeRate?.rateId || !kyc) return;
 
       const status = await checkQuote({
@@ -233,7 +242,7 @@ export function SwapForm(_props: Props) {
       // Handle all KYC related errors
       if (status.codeName.startsWith("KYC_")) {
         const updatedKycStatus = getKYCStatusFromCheckQuoteStatus(status);
-        if (!updatedKycStatus) return
+        if (!updatedKycStatus) return;
 
         if (updatedKycStatus !== kyc.status) {
           dispatch(
@@ -261,7 +270,7 @@ export function SwapForm(_props: Props) {
 
       // All other statuses are considered errors
       setErrorCode(status.codeName);
-    };
+    }
 
     handleCheckQuote();
   }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
@@ -325,7 +334,7 @@ export function SwapForm(_props: Props) {
     return (
       <KeyboardView style={styles.root}>
         <TrackScreen category="Swap Form" providerName={provider} />
-        <TxForm swapTx={swapTx} />
+        <TxForm swapTx={swapTx} pairs={pairs} />
 
         <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
           {t("common.exchange")}
@@ -333,12 +342,12 @@ export function SwapForm(_props: Props) {
       </KeyboardView>
     );
   }
-  
+
   if (error) {
-    return <NotAvailable />
+    return <NotAvailable />;
   }
 
-  return <Loading />
+  return <Loading />;
   // return swapTx.showDeviceConnect ? (
   //   <Connect provider={provider} setResult={swapTx.setDeviceMeta} />
   // ) : (
@@ -462,11 +471,11 @@ export function SwapForm(_props: Props) {
   // );
 }
 
-const trackNoRates: OnNoRatesCallback = ({ toState }) =>  {
+const trackNoRates: OnNoRatesCallback = ({ toState }) => {
   track("Page Swap Form - Error No Rate", {
     sourceCurrency: toState.currency?.name,
   });
-}
+};
 
 const styles = StyleSheet.create({
   root: {

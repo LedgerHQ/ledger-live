@@ -61,7 +61,9 @@ export type ExchangeRate = {
   error?: Error;
   providerURL?: string | null | undefined;
 };
+
 export type TradeMethod = "fixed" | "float";
+
 export type ExchangeRateRaw = {
   rate: string;
   magnitudeAwareRate: string;
@@ -73,14 +75,22 @@ export type ExchangeRateRaw = {
   error?: string;
   providerURL?: string | null | undefined;
 };
+
 export type AvailableProviderV2 = {
   provider: string;
   supportedCurrencies: string[];
 };
+
 export type AvailableProviderV3 = {
   provider: string;
-  pairs: Array<{ from: string; to: string; tradeMethod: string }>;
+  pairs: Pair[];
 };
+
+export interface Pair {
+  from: string;
+  to: string;
+  tradeMethod: string;
+}
 
 type CheckQuoteOkStatus = {
   codeName: "RATE_VALID";
