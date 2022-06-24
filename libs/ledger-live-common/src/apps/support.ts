@@ -35,6 +35,7 @@ const appVersionsRequired = {
   Elrond: ">= 1.0.11",
   Ethereum: ">= 1.9.17",
   Solana: ">= 1.2.0",
+  CardanoADA: ">= 4.1.0",
 };
 export function mustUpgrade(
   deviceModel: DeviceModelId,
