@@ -15,6 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.1",
     "flow-bin": "^0.145.0",
+    "invariant": "^2.2.4",
     "prop-types": "^15.8.1",
     "qrcode": "^1.4.2",
     "react": "^17.0.2",
@@ -25,6 +26,7 @@
     "react-scripts": "3.4.3",
     "react-select": "^5.3.2",
     "react-table": "^6.11.4",
+    "semver": "^7.3.7",
     "styled-components": "^4.4.0",
     "webpack": "4.42"
   },
@@ -35,7 +37,7 @@
     "eject": "react-app-rewired eject"
   },
   "browserslist": [
-    "chrome > 52"
+    "chrome > 80"
   ],
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.13.0",

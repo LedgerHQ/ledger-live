@@ -1,8 +1,11 @@
 // @flow
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import Select from "react-select";
+import semver from "semver";
 import logoSvg from "../../ledgerlive-logo.svg";
+
+const blacklist = ["1.101.0", "1.102.0", "1.103.0", "1.104.0", "1.105.0"];
 
 const Main = styled.div`
   padding-bottom: 100px;
@@ -77,15 +80,43 @@ const Download = ({ name, href }) => {
   );
 };
 
-const LiveDownloadOptions = ({ release }) => {
+const LiveDownloadOptions = ({ releases = [], version }) => {
+  const githubRelease = useMemo(() => {
+    if (semver.gt(version, "2.42.0")) return null;
+    if (releases) {
+      const found = releases.find((r) => r.tag_name === `v${version}`);
+      return found;
+    }
+  }, [releases, version]);
+
+  if (semver.gt(version, "2.42.0")) {
+    const baseDownloadUrl = `https://download.live.ledger.com`;
+    const linux = `ledger-live-desktop-${version}-linux-x86_64.AppImage`;
+    const mac = `ledger-live-desktop-${version}-mac.dmg`;
+    const win = `ledger-live-desktop-${version}-win-x64.exe`;
+    return (
+      <ul>
+        <li>
+          <Download name={linux} href={`${baseDownloadUrl}/${linux}`} />
+        </li>
+        <li>
+          <Download name={mac} href={`${baseDownloadUrl}/${mac}`} />
+        </li>
+        <li>
+          <Download name={win} href={`${baseDownloadUrl}/${win}`} />
+        </li>
+      </ul>
+    );
+  }
+
   return (
     <ul>
-      {release.assets
+      {githubRelease?.assets
         .filter((a) =>
           [".AppImage", "mac.dmg", ".exe"].some((s) => a.name.endsWith(s))
         )
         .map((a) => (
-          <li>
+          <li key={a.name}>
             <Download name={a.name} href={a.browser_download_url} />
           </li>
         ))}
@@ -95,35 +126,58 @@ const LiveDownloadOptions = ({ release }) => {
 
 const LLDSignature = () => {
   const [releases, setReleases] = useState(null);
-  const [release, selectRelease] = useState(null);
   const [checksums, setChecksums] = useState(null);
   const [checksumsSig, setChecksumsSig] = useState(null);
   const [checksumsFetchError, setChecksumsFetchError] = useState(null);
+  const [versions, setVersions] = useState(null);
+  const [version, setVersion] = useState(null);
 
-  const version = release && release.tag_name.slice(1);
   const checksumsFilename =
-    version && `ledger-live-desktop-${version}.sha512sum`;
+    version && `ledger-live-desktop-${version.value}.sha512sum`;
   const checksumsUrl =
     checksumsFilename &&
     `https://resources.live.ledger.app/public_resources/signatures/${checksumsFilename}`;
 
   useEffect(() => {
     let gone;
-    fetch("https://api.github.com/repos/LedgerHQ/ledger-live-desktop/releases")
-      .then((r) => r.json())
-      .then((releases) => {
-        if (gone) return;
-        setReleases(releases.filter((r) => r.tag_name.startsWith("v")));
-      });
+
+    Promise.all([
+      fetch(
+        "https://resources.live.ledger.app/public_resources/signatures/versions.json"
+      ).then((r) => r.json()),
+      fetch(
+        "https://api.github.com/repos/LedgerHQ/ledger-live-desktop/releases"
+      ).then((r) => r.json()),
+    ]).then(([versions, releases]) => {
+      const res = versions
+        .filter((name) => name.startsWith("ledger-live-desktop"))
+        .map((name) =>
+          name
+            .replace("ledger-live-desktop-", "")
+            .replace(".sha512sum", "")
+            .replace(".sig", "")
+        )
+        .filter((v) => !blacklist.includes(v));
+
+      const v = [...new Set(res)]
+        .sort((a, b) => (semver.gt(a, b) ? -1 : 1))
+        .map((el) => ({ value: el, label: el }));
+
+      if (gone) return;
+      setReleases(releases.filter((r) => r.tag_name.startsWith("v")));
+      setVersions(v);
+    });
+
     return () => {
       gone = true;
     };
   }, []);
 
   useEffect(() => {
-    if (!releases) return;
-    selectRelease(releases.find((r) => !r.prerelease));
-  }, [releases]);
+    if (!versions?.length) return;
+    const first = versions[0];
+    setVersion(first);
+  }, [versions]);
 
   useEffect(() => {
     let gone;
@@ -169,18 +223,20 @@ const LLDSignature = () => {
 
       <Field>
         <FieldHeader>
-          <Label for="release">Ledger Live release</Label>
+          <Label htmlFor="release">Ledger Live release</Label>
         </FieldHeader>
         <Select
           id="release"
-          value={release}
-          options={releases}
-          onChange={selectRelease}
+          value={version}
+          options={versions}
           placeholder="Ledger Live Release"
-          getOptionLabel={(r) => `${r.tag_name}`}
-          getOptionValue={(r) => r.tag_name}
+          onChange={setVersion}
+          getOptionLabel={(r) => `${r.label}`}
+          getOptionValue={(r) => r.value}
         />
-        {release ? <LiveDownloadOptions release={release} /> : null}
+        {version?.value ? (
+          <LiveDownloadOptions version={version?.value} releases={releases} />
+        ) : null}
       </Field>
 
       <h2>Verify my Ledger Live install binary</h2>
@@ -195,7 +251,7 @@ const LLDSignature = () => {
         <>
           <Field>
             <FieldHeader>
-              <Label for="checksums">sha512sum hashes</Label>
+              <Label htmlFor="checksums">sha512sum hashes</Label>
               <Download
                 href={`data:text/plain;base64,${btoa(checksums)}`}
                 name={checksumsFilename}
@@ -204,7 +260,7 @@ const LLDSignature = () => {
             <Textarea
               id="checksums"
               style={{ minHeight: 100 }}
-              value={checksums}
+              defaultValue={checksums}
             />
           </Field>
 
@@ -254,7 +310,7 @@ const LLDSignature = () => {
                 name="ledgerlive.pem"
               />
             </FieldHeader>
-            <Textarea style={{ height: 80 }}>{ledgerlivepem}</Textarea>
+            <Textarea defaultValue={ledgerlivepem} style={{ height: 80 }} />
             <a
               target="_blank"
               rel="noopener noreferrer"
