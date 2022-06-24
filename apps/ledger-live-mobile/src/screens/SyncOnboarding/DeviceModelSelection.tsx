@@ -18,7 +18,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
   // const { t } = useTranslation();
 
   const setupNanoFTS = useCallback(() => {
-    navigation.navigate(ScreenName.SyncOnboardingCompanion, { pairedDevice: null });
+    navigation.navigate(ScreenName.BleDevicesScanning);
   }, [navigation]);
 
   const setupNanoX = () => {};
@@ -30,7 +30,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
       subTitle="Choose which ledger wallet you want to set up with Ledger Live."
     >
       <DiscoverCard
-        title="Nano FTS"
+        title="nanoFTS"
         titleProps={{ variant: "h3" }}
         subTitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         onPress={setupNanoFTS}
