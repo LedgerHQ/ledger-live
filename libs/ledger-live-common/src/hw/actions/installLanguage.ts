@@ -49,11 +49,9 @@ type State = {
   progress?: number;
 };
 
-// there's no result for this device action
-type InstallLanguageAction = Omit<
-  Action<Language, State, undefined>,
-  "mapResult"
->;
+type InstallLanguageAction = Action<Language, State, boolean | undefined>;
+
+const mapResult = ({ languageInstalled }: State) => languageInstalled;
 
 type Event =
   | InstallLanguageEvent
@@ -298,7 +296,10 @@ export const createAction = (
   ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);
+
     useEffect(() => {
+      if(state.languageInstalled) return;
+
       const impl = implementations[currentMode]({
         deviceSubject,
         installLanguage,
@@ -325,7 +326,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, language]);
+    }, [deviceSubject, language, state.languageInstalled]);
 
     return {
       ...state,
@@ -334,5 +335,6 @@ export const createAction = (
 
   return {
     useHook,
+    mapResult
   };
 };
