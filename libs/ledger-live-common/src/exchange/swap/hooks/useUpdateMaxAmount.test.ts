@@ -1,6 +1,5 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { mocked } from "ts-jest/utils";
 import { useUpdateMaxAmount, ZERO } from "./useUpdateMaxAmount";
 import { genAccount, genTokenAccount } from "../../../mock/account";
 import BigNumber from "bignumber.js";
@@ -9,10 +8,10 @@ import { checkAccountSupported } from "../../../account/support";
 
 // Needs to be mocked since userSupportedCurrencies is initially empty.
 jest.mock("../../../account/support");
-const mockedCheckAccount = mocked(checkAccountSupported);
+const mockedCheckAccount = jest.mocked(checkAccountSupported);
 // Mock to use a custom estimate value and test the result.
 jest.mock("../../../families/ethereum/bridge/mock");
-const mockedEstimateMaxSpendable = mocked(
+const mockedEstimateMaxSpendable = jest.mocked(
   ethBridge.accountBridge.estimateMaxSpendable,
   true
 );
