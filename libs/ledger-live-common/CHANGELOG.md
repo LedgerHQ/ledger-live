@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 24.0.0-nightly.3
+
+### Major Changes
+
+- e9decc277: change tags for glif derivation modes
+
+### Patch Changes
+
+- 2012b5477: Drop deprecated "Portfolio V1"
+
 ## 23.1.0-nightly.2
 
 ### Minor Changes

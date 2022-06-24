@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.2.2-nightly.5
+
+### Patch Changes
+
+- fbc32d3e2: AccountGraphCard : Add rounding when using counter value (to prevent too many decimals in crypto-value)
+- Updated dependencies [2012b5477]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-nightly.3
+
 ## 3.2.2-nightly.4
 
 ### Patch Changes
