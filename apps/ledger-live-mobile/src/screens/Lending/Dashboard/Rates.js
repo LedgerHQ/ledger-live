@@ -93,14 +93,14 @@ const Rates = ({
     token => {
       navigation.navigate(NavigatorName.LendingEnableFlow, {
         screen: ScreenName.LendingEnableSelectAccount,
-        params: { currency: token },
+        params: { token },
       });
     },
     [navigation],
   );
   const navigateToBuyFlow = useCallback(
     token => {
-      navigation.navigate(NavigatorName.ExchangeBuyFlow, {
+      navigation.navigate(NavigatorName.ExchangeStack, {
         screen: ScreenName.ExchangeSelectAccount,
         params: {
           currency: token,

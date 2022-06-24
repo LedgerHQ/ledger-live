@@ -38,7 +38,8 @@ import OnboardingWarning from "../../screens/Onboarding/steps/setupDevice/drawer
 import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SyncDesktopInformation";
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
+import GetDeviceScreen from "../../screens/GetDeviceScreen";
+import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 
 const Stack = createStackNavigator();
 const OnboardingCarefulWarningStack = createStackNavigator();
@@ -159,8 +160,8 @@ export default function OnboardingNavigator() {
         component={PostWelcomeSelection}
       />
       <Stack.Screen
-        name={ScreenName.BuyDeviceScreen}
-        component={BuyDeviceScreen}
+        name={ScreenName.GetDevice}
+        component={GetDeviceScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -192,6 +193,10 @@ export default function OnboardingNavigator() {
         name={ScreenName.OnboardingPreQuizModal}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
+        component={OnboardingStepDoYouHaveALedgerDevice}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalDiscoverLive}
