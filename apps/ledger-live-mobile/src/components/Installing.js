@@ -8,7 +8,7 @@ import { useTheme } from "@react-navigation/native";
 import LiveLogo from "../icons/LiveLogoIcon";
 import Spinning from "./Spinning";
 import LText from "./LText";
-import FirmwareProgress from "./FirmwareProgress";
+import DeviceActionProgress from "./DeviceActionProgress";
 import SkipLock from "./behaviour/SkipLock";
 
 type Props = {
@@ -29,7 +29,7 @@ export default function Installing({ progress, installing }: Props) {
           </Spinning>
         </View>
       ) : (
-        <FirmwareProgress progress={progress} size={60} />
+        <DeviceActionProgress progress={progress} size={60} />
       )}
       <LText semiBold style={styles.title}>
         <Trans

@@ -9,7 +9,7 @@ import {
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import { Language, languageIds, LanguagePackage } from "../types/languages";
+import { Language, languageIds, LanguagePackageResponse } from "../types/languages";
 import { getProviderId } from "../manager/provider";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
@@ -93,7 +93,7 @@ export default function installLanguage({
                 seFirmwareVersion.id
               );
 
-              const packs: LanguagePackage[] = languages.filter(
+              const packs: LanguagePackageResponse[] = languages.filter(
                 (l: any) => l.language === language
               );
 
@@ -101,7 +101,9 @@ export default function installLanguage({
                 return subscriber.error(
                   new Error(`No language ${language} found`)
                 );
-              const pack = packs[1];
+
+              // TODO verify if this makes sense, maybe we need another filter here
+              const pack = packs[0].language_package_version[0];
 
               const { apdu_install_url } = pack;
               const url = apdu_install_url;

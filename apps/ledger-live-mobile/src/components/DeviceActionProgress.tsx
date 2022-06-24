@@ -5,7 +5,7 @@ type Props = {
   progress?: number,
 };
 
-function FirmwareProgress({ progress }: Props) {
+function DeviceActionProgress({ progress }: Props) {
   return (
     <ProgressLoader
       progress={progress}
@@ -21,4 +21,4 @@ function FirmwareProgress({ progress }: Props) {
 }
 
 
-export default memo<Props>(FirmwareProgress);
+export default memo<Props>(DeviceActionProgress);

@@ -1,26 +1,36 @@
-import {
-  Flex,
-  Icons,
-  Text,
-  Button,
-  SelectableList,
-  ScrollContainer,
-} from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import { Flex, Icons, Text, Button, BoxedIcon } from "@ledgerhq/native-ui";
+import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  idsToLanguage,
-  Language,
-} from "@ledgerhq/live-common/lib/types/languages";
+import { Language } from "@ledgerhq/live-common/lib/types/languages";
 import BottomModal from "../../../components/BottomModal";
+import DeviceLanguageSelection from "./DeviceLanguageSelection";
+import DeviceActionModal from "../../../components/DeviceActionModal";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
+import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+
 type Props = {
-  language: Language;
+  currentLanguage: Language;
+  device: Device;
 };
 
-const DeviceLanguage: React.FC<Props> = ({ language }) => {
+const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device }) => {
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
+  const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentLanguage);
+
+  const action = useMemo(
+    () =>
+      createAction(() =>
+        installLanguage({
+          deviceId: device.deviceId,
+          language: selectedLanguage,
+        }),
+      ),
+    [selectedLanguage, device.deviceId],
+  );
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
@@ -31,7 +41,12 @@ const DeviceLanguage: React.FC<Props> = ({ language }) => {
     [setIsChangeLanguageOpen],
   );
 
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>(language);
+  const openDeviceActionModal = useCallback(() => {setDeviceForAction(device); closeChangeLanguageModal()}, [
+    setDeviceForAction, device
+  ]);
+  const closeDeviceActionModal = useCallback(() => setDeviceForAction(null), [
+    setDeviceForAction
+  ]);
 
   return (
     <>
@@ -47,49 +62,34 @@ const DeviceLanguage: React.FC<Props> = ({ language }) => {
           </Text>
         </Flex>
         <Button Icon={Icons.DropdownMedium} onPress={openChangeLanguageModal}>
-          {t(`deviceLocalization.languages.${language}`)}
+          {t(`deviceLocalization.languages.${currentLanguage}`)}
         </Button>
       </Flex>
       <BottomModal
         isOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
       >
-        <Flex height="100%" justifyContent="space-between">
-          <Flex flexShrink={1}>
-            <Text variant="h1" textAlign="center">
-              {t("deviceLocalization.deviceLanguage")}
-            </Text>
-            <ScrollContainer mt={5}>
-              <SelectableList
-                currentValue={selectedLanguage}
-                onChange={setSelectedLanguage}
-              >
-                {Object.values(idsToLanguage).map(currentLanguage => {
-                  const isCurrentDeviceLanguage = currentLanguage === language;
-                  return (
-                    <SelectableList.Element
-                      value={currentLanguage}
-                      renderRight={() =>
-                        isCurrentDeviceLanguage ? (
-                          <Icons.CircledCheckSolidMedium
-                            color="primary.c80"
-                            size={24}
-                          />
-                        ) : null
-                      }
-                    >
-                      {t(`deviceLocalization.languages.${currentLanguage}`)}
-                    </SelectableList.Element>
-                  );
-                })}
-              </SelectableList>
-            </ScrollContainer>
-          </Flex>
-          <Button alignSelf="stretch" type="main" mt={5}>
-          {t("deviceLocalization.changeLanguage")}
-          </Button>
-        </Flex>
+        <DeviceLanguageSelection
+          installedLanguage={currentLanguage}
+          onSelectLanguage={setSelectedLanguage}
+          selectedLanguage={selectedLanguage}
+          onConfirmInstall={openDeviceActionModal}
+        />        
       </BottomModal>
+      <DeviceActionModal
+          action={action}
+          onClose={closeDeviceActionModal}
+          device={deviceForAction}
+          renderOnResult={() => (
+            <Flex alignItems="center">
+              <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={48}  iconSize={24} />
+              <Text variant="h4" textAlign="center" my={7}>
+                {t("deviceLocalization.languageInstalled", { language: t(`deviceLocalization.languages.${selectedLanguage}`) })}
+              </Text>
+              <Button type="main" alignSelf="stretch" onPress={closeDeviceActionModal}>Continue</Button>
+            </Flex>
+          )}
+        />
     </>
   );
 };
