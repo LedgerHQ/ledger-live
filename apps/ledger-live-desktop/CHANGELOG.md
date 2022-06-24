@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.44.0
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+- 9c3b16bcc: Fix infinite loading when NFTs are load in gallery mode
+
+### Patch Changes
+
+- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
+- c78f7d6db: Fixed issue on Circulating Supply, removed currency in front of the value
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/live-common@23.1.0
+  - @ledgerhq/react-ui@0.7.8
+
 ## 2.44.0-next.6
 
 ### Patch Changes

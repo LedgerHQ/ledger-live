@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.7.8
+
+### Patch Changes
+
+- 0c2c6682b: ui packages - release
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/ui-shared@0.1.9
+  - @ledgerhq/icons-ui@0.2.5
+
 ## 0.7.8-next.0
 
 ### Patch Changes
