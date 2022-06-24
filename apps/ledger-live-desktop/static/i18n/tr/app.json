@@ -228,6 +228,7 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "Değiştir",
       "ratesDrawer" : {
         "title" : "Kur",
         "quote" : "Teklif",
@@ -267,11 +268,25 @@
           "complete" : "KYC'yi tamamla",
           "update" : "KYC'yi yenile",
           "rejected" : "KYC reddedildi; doğrulamayı yeniden başlatın",
+          "rejectedContactProviderSupport" : "KYC rejected, please contact {{providerName}} support",
+          "updateRequired" : "KYC'nizi tamamlayın veya güncelleyin",
           "status" : {
             "pending" : "KYC beklemede",
             "approved" : "KYC onaylandı",
-            "closed" : "KYC reddedildi"
+            "closed" : "KYC reddedildi",
+            "upgradeRequired" : "KYC eksik"
           }
+        },
+        "login" : {
+          "required" : "Bu sağlayıcı ile giriş yapmanız gerekiyor",
+          "complete" : "Oturum aç"
+        },
+        "mfa" : {
+          "required" : "Bu sağlayıcı ile MFA kurmanız gerekiyor",
+          "complete" : "MFA kur"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "Çekim işleminiz {{providerName}} tarafından engellendi. \n\n Daha fazla bilgi almak için lütfen onların destek ekibiyle iletişime geçin."
         }
       }
     },
@@ -482,9 +497,9 @@
       "subtitle" : "Wyre ile takas işlemleri yapmak için lütfen Ledger Live uygulamasını son sürümüne güncelleyin ve kimliğinizi tekrar doğrulayın",
       "cta" : "Doğrulamayı sıfırla"
     },
-    "resetKYCModal" : {
-      "title" : "KYC belgelerinizi silin",
-      "subtitle" : "Bilgisayarınızda yerel olarak depolanan tüm token'ları silmek için KYC belgelerinizi silin. İş ortaklarımızın sağladığı hizmetleri kullanmak için KYC belgelerinizi tekrar göndermeniz gerekecektir.",
+    "resetThirdPartyDataModal" : {
+      "title" : "Yerel üçüncü taraf verilerinizi silin",
+      "subtitle" : "Yerel üçüncü taraf verilerinizi silin. İş ortaklarımız tarafından sağlanan hizmetlere erişmek için KYC'nizi yeniden göndermeniz veya tekrar oturum açmanız gerekebilir.",
       "cta" : "Onayla"
     },
     "modal" : {
@@ -2844,8 +2859,8 @@
       "softResetTitle" : "Önbelleği temizleyin",
       "softResetDesc" : "Blok zinciri ile tekrar senkronizasyona zorlamak için Ledger Live önbelleğini temizleyin.",
       "softReset" : "Temizle",
-      "resetKYC" : "KYC verilerini sıfırla",
-      "resetKYCDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için yerel olarak depolanan tüm Müşterinizi Tanıyın (KYC) verilerinizi silin.",
+      "resetThirdPartyData" : "Üçüncü taraf verilerini sıfırla",
+      "resetThirdPartyDataDesc" : "Üçüncü taraf işlem sağlayıcısına erişmek için kullanılan tüm yerel üçüncü taraf verilerinizi silin.",
       "hardResetTitle" : "Ledger Live'ı sıfırlayın",
       "hardResetDesc" : "Hesaplarınız, işlem geçmişleriniz ve ayarlarınız da dahil olmak üzere bilgisayarınızda depolanan tüm Ledger Live verilerini silin.",
       "hardReset" : "Sıfırla",
@@ -3710,7 +3725,7 @@
   },
   "families" : {
     "cardano" : {
-      "memoPlaceholder" : "Optional",
+      "memoPlaceholder" : "Tercihe bağlı",
       "memo" : "Memo"
     },
     "stellar" : {
@@ -4342,8 +4357,8 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
-      "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve ardından işlem geçmişini kontrol edip tekrar deneyin."
+    "SolanaTxSimulationFailedWhilePendingOp" : {
+      "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
