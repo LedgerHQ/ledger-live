@@ -13,7 +13,7 @@ import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
-import FirmwareProgress from "../../components/FirmwareProgress";
+import DeviceActionProgress from "../../components/DeviceActionProgress";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
 
@@ -127,7 +127,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
                 </Spinning>
               </View>
             ) : (
-              <FirmwareProgress progress={progress} size={60} />
+              <DeviceActionProgress progress={progress} size={60} />
             )}
           </View>
         </View>
