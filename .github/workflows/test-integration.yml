@@ -62,7 +62,7 @@ jobs:
           FILTER: ${{ github.event.inputs.filter }}
         run: |
           pnpm common ci-test-integration $FILTER
-          git diff --exit-code src
+          git diff --exit-code libs/ledger-live-common/src
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
         if: failure()
