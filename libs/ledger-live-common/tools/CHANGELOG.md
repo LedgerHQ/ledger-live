@@ -1,5 +1,53 @@
 # live-common-tools
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0
+
+## 0.1.3-next.4
+
+### Patch Changes
+
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0-next.4
+
+## 0.1.3-next.3
+
+### Patch Changes
+
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
+## 0.1.3-next.2
+
+### Patch Changes
+
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
+## 0.1.3-next.1
+
+### Patch Changes
+
+- Updated dependencies [608010c9d]
+  - @ledgerhq/live-common@23.1.0-next.1
+
+## 0.1.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+  - @ledgerhq/live-common@23.1.0-next.0
+
 ## 0.1.2
 
 ### Patch Changes

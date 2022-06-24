@@ -42,7 +42,7 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";
 import Switch from "../../components/Switch";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import Info from "../../icons/Info";
 import { accountsSelector } from "../../reducers/accounts";
 import { swapAcceptedProvidersSelector } from "../../reducers/settings";
@@ -416,13 +416,17 @@ export default function SwapFormEntry(props: Props) {
 
   const onNavigateToBuyCrypto = useCallback(() => {
     setNoAssetModalOpen(false);
-    navigation.replace(NavigatorName.ExchangeBuyFlow);
+    navigation.replace(NavigatorName.Exchange, {
+      screen: ScreenName.ExchangeBuy,
+    });
   }, [navigation]);
 
   const onNavigateBack = useCallback(() => {
-    setNoAssetModalOpen(false);
-    navigation.goBack();
-  }, [navigation]);
+    if (noAssetModalOpen) {
+      setNoAssetModalOpen(false);
+      navigation.goBack();
+    }
+  }, [navigation, noAssetModalOpen]);
 
   return defaultAccount ? (
     <SwapForm {...props} defaultAccount={defaultAccount} />

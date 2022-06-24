@@ -70,7 +70,7 @@ function OnboardingStepWelcome({ navigation }: any) {
 
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
-    navigation.navigate({ name: ScreenName.OnboardingPostWelcomeSelection });
+    navigation.navigate({ name: ScreenName.OnboardingDoYouHaveALedgerDevice });
   }, [setAccepted, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
