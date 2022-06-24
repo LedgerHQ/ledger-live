@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SectionList, RefreshControl, View } from "react-native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
@@ -9,6 +9,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import FormatDate from "../../components/FormatDate";
 import NewsRow from "./NewsRow";
+import PromptNotification from "../../modals/PromptNotification";
 
 const viewabilityConfig = {
   viewAreaCoveragePercentThreshold: 95,
@@ -42,74 +43,94 @@ export default function NotificationCenter() {
     }),
   );
 
+  const [isModalOpened, setIsModalOpened] = useState(false);
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => setIsModalOpened(true), 3000);
+  }, []);
+
   return (
-    <SectionList
-      style={[styles.sectionList, { backgroundColor: colors.background.main }]}
-      contentContainerStyle={styles.root}
-      sections={sections}
-      stickySectionHeadersEnabled
-      renderItem={({ item, index, section }) => (
-        <NewsRow
-          item={item}
-          index={index}
-          isLastElement={index >= section.data.length - 1}
-          isUnread={!seenIds.includes(item.uuid)}
-        />
-      )}
-      renderSectionHeader={({ section: { title } }) =>
-        title && title instanceof Date ? (
-          <SectionHeader>
+    <>
+      <SectionList
+        style={[
+          styles.sectionList,
+          { backgroundColor: colors.background.main },
+        ]}
+        contentContainerStyle={styles.root}
+        sections={sections}
+        stickySectionHeadersEnabled
+        renderItem={({ item, index, section }) => (
+          <NewsRow
+            item={item}
+            index={index}
+            isLastElement={index >= section.data.length - 1}
+            isUnread={!seenIds.includes(item.uuid)}
+          />
+        )}
+        renderSectionHeader={({ section: { title } }) =>
+          title && title instanceof Date ? (
+            <SectionHeader>
+              <Text
+                variant={"small"}
+                fontWeight={"semiBold"}
+                color="palette.neutral.c80"
+                style={{ textTransform: "uppercase" }}
+              >
+                <FormatDate date={title} />
+              </Text>
+            </SectionHeader>
+          ) : null
+        }
+        keyExtractor={(item, index) => item.uuid + index}
+        ItemSeparatorComponent={() => (
+          <View
+            style={[
+              styles.separator,
+              { backgroundColor: colors.palette.neutral.c40 },
+            ]}
+          />
+        )}
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={colors.palette.neutral.c00}
+            colors={[colors.palette.primary.c100]}
+            tintColor={colors.palette.primary.c100}
+            refreshing={false}
+            onRefresh={updateCache}
+          />
+        }
+        viewabilityConfig={viewabilityConfig}
+        onViewableItemsChanged={onViewableItemsChanged}
+        ListEmptyComponent={
+          <Flex alignItems={"center"} justifyContent={"center"} flex={1}>
             <Text
-              variant={"small"}
-              fontWeight={"semiBold"}
-              color="palette.neutral.c80"
-              style={{ textTransform: "uppercase" }}
+              variant={"h3"}
+              textAlign={"center"}
+              color={"palette.neutral.c100"}
             >
-              <FormatDate date={title} />
+              <Trans i18nKey="notificationCenter.news.emptyState.title" />
             </Text>
-          </SectionHeader>
-        ) : null
-      }
-      keyExtractor={(item, index) => item.uuid + index}
-      ItemSeparatorComponent={() => (
-        <View
-          style={[
-            styles.separator,
-            { backgroundColor: colors.palette.neutral.c40 },
-          ]}
-        />
-      )}
-      refreshControl={
-        <RefreshControl
-          progressBackgroundColor={colors.palette.neutral.c00}
-          colors={[colors.palette.primary.c100]}
-          tintColor={colors.palette.primary.c100}
-          refreshing={false}
-          onRefresh={updateCache}
-        />
-      }
-      viewabilityConfig={viewabilityConfig}
-      onViewableItemsChanged={onViewableItemsChanged}
-      ListEmptyComponent={
-        <Flex alignItems={"center"} justifyContent={"center"} flex={1}>
-          <Text
-            variant={"h3"}
-            textAlign={"center"}
-            color={"palette.neutral.c100"}
-          >
-            <Trans i18nKey="notificationCenter.news.emptyState.title" />
-          </Text>
-          <Text
-            variant={"paragraph"}
-            fontWeight={"medium"}
-            color={"palette.neutral.c80"}
-            textAlign={"center"}
-          >
-            <Trans i18nKey="notificationCenter.news.emptyState.desc" />
-          </Text>
-        </Flex>
-      }
-    />
+            <Text
+              variant={"paragraph"}
+              fontWeight={"medium"}
+              color={"palette.neutral.c80"}
+              textAlign={"center"}
+            >
+              <Trans i18nKey="notificationCenter.news.emptyState.desc" />
+            </Text>
+          </Flex>
+        }
+      />
+      <PromptNotification
+        isOpen={isModalOpened}
+        onClose={onModalClose}
+        type="generic"
+      />
+    </>
   );
 }
 

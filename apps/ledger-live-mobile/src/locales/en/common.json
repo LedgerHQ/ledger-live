@@ -2120,6 +2120,14 @@
       }
     }
   },
+  "notifications": {
+    "prompt": {
+      "title": "Turn notifications on",
+      "desc": "Get the latest updates on Ledger Live and Ledger products.",
+      "allow": "Allow notifications",
+      "later": "Maybe later"
+    }
+  },
   "migrateAccounts": {
     "banner": "Ledger Live accounts update",
     "overview": {
