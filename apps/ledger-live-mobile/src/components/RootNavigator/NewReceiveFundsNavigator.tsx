@@ -3,12 +3,15 @@ import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
 import ReceiveConnectDevice from "../../screens/ReceiveFunds/02-ConnectDevice";
-import ReceiveSelectCrypto from "../../screens/SelectCrypto";
-import ReceiveSelectAccount from "../../screens/ReceiveSelectAccount";
+import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
+
+import ReceiveAddAccountSelectDevice from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
+import ReceiveSelectAccount from "../../screens/ReceiveFunds/02-SelectAccount";
+import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
+
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 export default function NewReceiveFundsNavigator() {
@@ -33,6 +36,7 @@ export default function NewReceiveFundsNavigator() {
           headerTitle: "",
         }}
       />
+
       {/* Select Account */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectAccount}
@@ -40,10 +44,26 @@ export default function NewReceiveFundsNavigator() {
         options={{
           headerTitle: "",
         }}
-        initialParams={{
-          selectedCurrency: findCryptoCurrencyById("dogecoin"),
+      />
+
+      {/* Select Account */}
+      <Stack.Screen
+        name={ScreenName.ReceiveAddAccountSelectDevice}
+        component={ReceiveAddAccountSelectDevice}
+        options={{
+          headerTitle: "",
         }}
       />
+
+      {/* Select Account */}
+      <Stack.Screen
+        name={ScreenName.ReceiveAddAccount}
+        component={ReceiveAddAccount}
+        options={{
+          headerTitle: "",
+        }}
+      />
+
       {/* Select / Connect Device */}
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}

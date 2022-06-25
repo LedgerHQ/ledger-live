@@ -58,9 +58,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   );
   const onReceiveFunds = useCallback(
     () =>
-      onNavigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveSelectAccount,
-      }),
+      onNavigate(NavigatorName.ReceiveFunds),
     [onNavigate],
   );
   const onSwap = useCallback(
