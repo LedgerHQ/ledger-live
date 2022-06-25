@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.8.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [429df1cff]
+  - @ledgerhq/icons-ui@0.2.6-nightly.0
+
 ## 0.8.0
 
 ### Minor Changes

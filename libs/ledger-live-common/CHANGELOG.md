@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 24.0.0-nightly.0
+
+### Major Changes
+
+- b1e396dd8: satstack issue fix Jira ticket: LIVE-2208 and LIVE-2170
+
+### Minor Changes
+
+- 10440ec3c: XRP: add retry to api call
+
 ## 23.1.0
 
 ### Minor Changes

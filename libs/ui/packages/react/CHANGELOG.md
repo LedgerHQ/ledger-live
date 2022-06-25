@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.7.9-nightly.0
+
+### Patch Changes
+
+- ef01a3cc2: fix(Tip): missing colon in StyledIconContainer
+- Updated dependencies [429df1cff]
+  - @ledgerhq/icons-ui@0.2.6-nightly.0
+
 ## 0.7.8
 
 ### Patch Changes

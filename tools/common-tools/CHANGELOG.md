@@ -1,5 +1,17 @@
 # live-common-tools
 
+## 0.2.0-nightly.0
+
+### Minor Changes
+
+- 117d607f9: added possibility to check release signatures and make it work with the new way we handle releases through cdn and not github releases anymore
+
+### Patch Changes
+
+- Updated dependencies [10440ec3c]
+- Updated dependencies [b1e396dd8]
+  - @ledgerhq/live-common@24.0.0-nightly.0
+
 ## 0.1.3
 
 ### Patch Changes
