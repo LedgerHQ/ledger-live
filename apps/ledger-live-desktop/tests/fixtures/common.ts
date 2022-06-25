@@ -79,6 +79,7 @@ const test = base.extend<TestFixtures>({
       colorScheme: theme,
       locale: lang,
       executablePath: require("electron/index.js"),
+      timeout: 120000,
     });
 
     // app is ready

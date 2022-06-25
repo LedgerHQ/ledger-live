@@ -106,7 +106,7 @@ export class DeviceAction {
     });
 
     await this.loader.waitFor({ state: "detached" });
-    await this.swapSummary.waitFor({ state: "visible" });
+    await this.swapSummary.waitFor({ state: "visible", timeout: 60000 });
   }
 
   async confirmSwap() {

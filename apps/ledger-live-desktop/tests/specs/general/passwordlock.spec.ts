@@ -14,7 +14,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   const passwordlockModal = new PasswordlockModal(page);
   const lockscreenPage = new LockscreenPage(page);
 
-  function getUserdata() {
+   const getUserdata = () => {
     const jsonFile = fs.readFileSync(userdataFile, "utf-8");
     return JSON.parse(jsonFile);
   }
@@ -64,7 +64,6 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   await test.step("Unlock with wrong password", async () => {
     await lockscreenPage.login("wrong");
     expect(await layout.inputError).toBeVisible();
-    await page.waitForTimeout(400); // weird 0.4s css transition on error message
     await expect.soft(page).toHaveScreenshot("lockscreen-wrong-password.png");
   });
 

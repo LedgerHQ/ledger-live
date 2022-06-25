@@ -39,6 +39,7 @@ test("Layout", async ({ page }) => {
   await test.step("go to discover", async () => {
     await layout.goToDiscover();
     await expect(page).toHaveURL(/.*\/platform.*/);
+    await page.waitForLoadState('domcontentloaded');
     await expect(page).toHaveScreenshot("discover.png");
   });
 
