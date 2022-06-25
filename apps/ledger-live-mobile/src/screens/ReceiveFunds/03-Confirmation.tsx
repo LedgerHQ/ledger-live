@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
 import { TouchableOpacity, TouchableWithoutFeedback, Share } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { useTranslation, Trans } from "react-i18next";
 import type {
@@ -35,6 +35,10 @@ import { rejectionOp } from "../../logic/debugReject";
 import GenericErrorView from "../../components/GenericErrorView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
+import { replaceAccounts } from "../../actions/accounts";
+import { ScreenName } from "../../const";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -47,9 +51,12 @@ type Props = {
 type RouteParams = {
   account?: AccountLike,
   accountId: string,
+  parentId?: string,
   modelId: DeviceModelId,
   wired: boolean,
   device?: Device,
+  currency?: Currency,
+  createTokenAccount?: boolean,
   onSuccess?: (address?: string) => void,
   onError?: () => void,
 };
@@ -58,15 +65,16 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-
   const [verified, setVerified] = useState(false);
-  const [isToastDisplayed, setIsToastDisplayed] = useState(true);
   const [isModalOpened, setIsModalOpened] = useState(false);
+  const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState();
+  const [isToastDisplayed, setIsToastDisplayed] = useState(false);
   const onModalHide = useRef(() => {});
   const [error, setError] = useState(null);
   const [allowNavigation, setAllowNavigation] = useState(true);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const sub = useRef();
+  const dispatch = useDispatch();
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
@@ -114,31 +122,46 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     [account, onError, onSuccess, parentAccount],
   );
 
-  function onRetry(): void {
+  const onRetry = useCallback(() => {
     if (isModalOpened) {
       setIsModalOpened(false);
-      onModalHide.current = navigation.goBack;
+      onModalHide.current = () => navigation.navigate(ScreenName.ReceiveConnectDevice, route.params);
     } else {
-      navigation.goBack();
+      navigation.navigate(ScreenName.ReceiveConnectDevice, route.params);
     }
-  }
+  }, [isModalOpened, navigation, route.params])
 
-  function onModalClose(): void {
-    setIsModalOpened(false);
-    onModalHide.current = onDone;
-  }
-
-  function onDone(): void {
+  const onDone = useCallback(() => {
     const n = navigation.getParent();
     if (n) {
       n.pop();
     }
-  }
+  }, [navigation])
+
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+    onModalHide.current = onDone;
+  }, [onDone])
+
+
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency = account && getAccountCurrency(account);
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
+
+
+  useEffect(() => {
+    if(route.params?.createTokenAccount && !hasAddedTokenAccount) {
+      const newMainAccount = mainAccount;
+      const emptyTokenAccount = makeEmptyTokenAccount(newMainAccount, currency);
+      newMainAccount.subAccounts = [...newMainAccount.subAccounts, emptyTokenAccount];
+
+      dispatch(replaceAccounts({ scannedAccounts: [newMainAccount], selectedIds: [newMainAccount.id], renamings: {}}));
+      setIsToastDisplayed(true);
+      setHasAddedTokenAccount(true);
+    }
+  }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount])
 
   useEffect(() => {
     if (!allowNavigation) {
@@ -231,11 +254,12 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             height={QRSize*1/3}
             bg="constant.white"
             position="absolute"
+            borderRadius={16}
           >
             <CurrencyIcon
               currency={currency}
               color={colors.constant.white}
-              bg={currency.color}
+              bg={currency?.color || currency.parentCurrency?.color || colors.constant.black}
               size={48}
               circle
             />

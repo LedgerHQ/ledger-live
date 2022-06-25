@@ -2161,9 +2161,18 @@
       "shareAddress": "Share address",
       "addressCopied": "Copied",
       "taprootWarning": "Make sure the sender supports taproot",
+      "selectCrypto": {
+        "title": "Select a crypto"
+      },
       "selectAccount": {
-        "title": "Select account",
+        "title": "Select an account",
         "subtitle": "Your {{currencyTicker}} will be deposited into this account."
+      },
+      "addAccount": {
+        "title": "Blockchain synchronization",
+        "subtitle": "We are verifying if you already have an {{currencyTicker}} account on blockchain.",
+        "foundAccounts": "{{count}} accounts found",
+        "stopSynchronization": "Stop synchronization"
       },
       "receiveConfirmation": {
         "title": "Receive {{currencyTicker}}",

@@ -101,10 +101,14 @@ export const ScreenName = {
   PortfolioOperationHistory: "PortfolioOperationHistory",
   PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
+
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
   ReceiveSelectCrypto: "ReceiveSelectCrypto",
   ReceiveSelectAccount: "ReceiveSelectAccount",
+  ReceiveAddAccountSelectDevice: "ReceiveAddAccountSelectDevice",
+  ReceiveAddAccount: "ReceiveAddAccount",
+
   RegionSettings: "RegionSettings",
   RepairDevice: "RepairDevice",
   Resources: "Resources",
