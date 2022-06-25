@@ -124,6 +124,14 @@ export const useBleDevicesScanning = ({
                 return;
               }
 
+              // Filters on the model ids, if asked
+              if (
+                filterByModelIds &&
+                !filterByModelIds.includes(bleInfo.deviceModel.id)
+              ) {
+                return;
+              }
+
               console.log({ bleInfo });
 
               const newScannedDevice = {
