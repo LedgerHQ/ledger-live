@@ -38,7 +38,6 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
     marketcapRank,
     price,
     priceChangePercentage,
-    isLiveSupported,
   } = item;
 
   return (
@@ -50,7 +49,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
       py="16px"
       key={index}
     >
-      {isLiveSupported && internalCurrency ? (
+      {internalCurrency ? (
         <CircleCurrencyIcon
           size={32}
           currency={internalCurrency}

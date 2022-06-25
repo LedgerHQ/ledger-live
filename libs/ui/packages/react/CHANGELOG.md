@@ -1,11 +1,22 @@
 # @ledgerhq/react-ui
 
-## 0.8.0-nightly.0
+## 0.7.8
 
-### Minor Changes
+### Patch Changes
 
-- e393b9bfa: fix checkbox on ui:react
-- 9c3e27f46: add breakpoints to desktop ui
+- 0c2c6682b: ui packages - release
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/ui-shared@0.1.9
+  - @ledgerhq/icons-ui@0.2.5
+
+## 0.7.8-next.0
+
+### Patch Changes
+
+- 0c2c6682b: ui packages - release
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/ui-shared@0.1.9-next.0
+  - @ledgerhq/icons-ui@0.2.5-next.0
 
 ## 0.7.7
 

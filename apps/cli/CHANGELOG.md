@@ -1,36 +1,52 @@
 # @ledgerhq/live-cli
 
-## 22.0.1-nightly.3
+## 22.0.1
 
 ### Patch Changes
 
-- Updated dependencies [2012b5477]
-- Updated dependencies [e9decc277]
-  - @ledgerhq/live-common@24.0.0-nightly.3
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0
 
-## 22.0.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [e1f2f07a2]
-  - @ledgerhq/live-common@23.1.0-nightly.2
-
-## 22.0.1-nightly.1
+## 22.0.1-next.4
 
 ### Patch Changes
 
-- Updated dependencies [d22452817]
-  - @ledgerhq/live-common@23.1.0-nightly.1
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0-next.4
 
-## 22.0.1-nightly.0
+## 22.0.1-next.3
 
 ### Patch Changes
 
-- 22531f3c3: Update expected steps labels for Cosmos device actions
-- 0616fe75d: Fix WS message now possibly being a Buffer instead of a string
-- Updated dependencies [22531f3c3]
-- Updated dependencies [1e4a5647b]
-  - @ledgerhq/live-common@23.0.1-nightly.0
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
+## 22.0.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
+## 22.0.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [608010c9d]
+  - @ledgerhq/live-common@23.1.0-next.1
+
+## 22.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+  - @ledgerhq/live-common@23.1.0-next.0
 
 ## 22.0.0
 

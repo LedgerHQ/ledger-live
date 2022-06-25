@@ -1,59 +1,68 @@
 # ledger-live-desktop
 
-## 2.44.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [2012b5477]
-- Updated dependencies [e9decc277]
-  - @ledgerhq/live-common@24.0.0-nightly.3
-
-## 2.44.0-nightly.5
-
-### Patch Changes
-
-- ebb7deb1a: Fix regression when opening external windows from within a webview tag
-- Updated dependencies [e1f2f07a2]
-  - @ledgerhq/live-common@23.1.0-nightly.2
-
-## 2.44.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [e393b9bfa]
-- Updated dependencies [d22452817]
-- Updated dependencies [9c3e27f46]
-  - @ledgerhq/react-ui@0.8.0-nightly.0
-  - @ledgerhq/live-common@23.1.0-nightly.1
-
-## 2.44.0-nightly.3
-
-### Patch Changes
-
-- cdcee7ad9: Replace webpack with esbuild for production builds.
-
-## 2.44.0-nightly.2
+## 2.44.0
 
 ### Minor Changes
 
-- a35c6e9a3: Add Sentry support
+- 4db0f58ca: Updated learn feature url to be remote configurable
+- 9c3b16bcc: Fix infinite loading when NFTs are load in gallery mode
 
 ### Patch Changes
 
-- c5c3f48e4: Add basic support for macOS universal apps.
-- Updated dependencies [c5c3f48e4]
-  - @ledgerhq/hw-transport-node-hid-singleton@6.27.2-nightly.1
+- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
+- c78f7d6db: Fixed issue on Circulating Supply, removed currency in front of the value
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/live-common@23.1.0
+  - @ledgerhq/react-ui@0.7.8
 
-## 2.44.0-nightly.1
+## 2.44.0-next.6
 
 ### Patch Changes
 
-- 89e31c3c4: Fixed issue on CryptoCurrency Icon in transactions history (size issue)
-- Updated dependencies [22531f3c3]
-- Updated dependencies [1e4a5647b]
-  - @ledgerhq/live-common@23.0.1-nightly.0
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0-next.4
 
-## 2.44.0-nightly.0
+## 2.44.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/react-ui@0.7.8-next.0
+
+## 2.44.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
+## 2.44.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
+## 2.44.0-next.2
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+
+## 2.44.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [608010c9d]
+  - @ledgerhq/live-common@23.1.0-next.1
+
+## 2.44.0-next.0
 
 ### Minor Changes
 
@@ -61,7 +70,11 @@
 
 ### Patch Changes
 
+- 4a676321f: Remove unecessary 'sqlite' cleanup that no longer is needed after libcore sunset
 - c78f7d6db: Fixed issue on Circulating Supply, removed currency in front of the value
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+  - @ledgerhq/live-common@23.1.0-next.0
 
 ## 2.43.1
 

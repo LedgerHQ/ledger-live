@@ -1,33 +1,52 @@
 # @ledgerhq/live-common
 
-## 24.0.0-nightly.3
-
-### Major Changes
-
-- e9decc277: change tags for glif derivation modes
-
-### Patch Changes
-
-- 2012b5477: Drop deprecated "Portfolio V1"
-
-## 23.1.0-nightly.2
+## 23.1.0
 
 ### Minor Changes
 
-- e1f2f07a2: fix(LLC): cardano byron address validation
-
-## 23.1.0-nightly.1
-
-### Minor Changes
-
-- d22452817: Fix Tezos synchronisation with originating type
-
-## 23.0.1-nightly.0
+- 8861c4fe0: upgrade dependencies
+- ec5c4fa3d: Fix incremental sync for Cardano, use blockHeight from last operation instead of from account
 
 ### Patch Changes
 
-- 22531f3c3: Update expected steps labels for Cosmos device actions
-- 1e4a5647b: Patching shouldUpgrade & mustUpgrade logic to allow for pre-release tags that were considered always considered as false before
+- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+- 78a64769d: Fix experimental EIP712 variable not working correctly
+
+## 23.1.0-next.4
+
+### Patch Changes
+
+- 78a64769d: Fix experimental EIP712 variable not working correctly
+
+## 23.1.0-next.3
+
+### Minor Changes
+
+- ec5c4fa3d: Fix incremental sync for Cardano, use blockHeight from last operation instead of from account
+
+## 23.1.0-next.2
+
+### Patch Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+
+## 23.1.0-next.1
+
+### Patch Changes
+
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
+## 23.1.0-next.0
+
+### Minor Changes
+
+- 8861c4fe0: upgrade dependencies
+
+### Patch Changes
+
+- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
 
 ## 23.0.0
 
