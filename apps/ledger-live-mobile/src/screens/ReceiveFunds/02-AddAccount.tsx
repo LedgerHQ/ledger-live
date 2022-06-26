@@ -77,10 +77,10 @@ function AddAccountsAccounts({
 }: Props) {
   const { colors } = useTheme();
   const dispatch = useDispatch();
+  const {t} = useTranslation();
 
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
-  const [latestScannedAccount, setLatestScannedAccount] = useState(null);
   const [scannedAccounts, setScannedAccounts] = useState([]);
   const [cancelled, setCancelled] = useState(false);
 
@@ -172,6 +172,13 @@ function AddAccountsAccounts({
     [selectAccount],
   );
 
+  const renderHeader = useCallback(() => 
+    <Flex p={6}>
+      <LText fontSize="32px" fontFamily="InterMedium" semiBold>{t("transfer.receive.selectAccount.title")}</LText>
+      <LText variant="body" color="colore.neutral.70">{t("transfer.receive.selectAccount.subtitle", {currencyTicker: currency.ticker})}</LText>
+    </Flex>
+  , [currency.ticker, t])
+
   const keyExtractor = useCallback(item => item?.id, []);
 
   return (
@@ -186,6 +193,7 @@ function AddAccountsAccounts({
             <FlatList
             data={scannedAccounts}
             renderItem={renderItem}
+            ListHeaderComponent={renderHeader}
             keyExtractor={keyExtractor}
             showsVerticalScrollIndicator={false}
           />
@@ -210,16 +218,21 @@ function AddAccountsAccounts({
 function ScanLoading({ currency, scannedAccounts, stopSubscription }: {currency: Currency, scannedAccounts: Account[], stopSubscription: () => void}) {
   const { t } = useTranslation();
     return (
-      <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
-        <InfiniteLoader size={48} />
-        <LText mt={13} variant="h2">{t("transfer.receive.addAccount.title")}</LText>
-        <LText p={6} textAlign="center" variant="body" color="neutral.c80">{t("transfer.receive.addAccount.subtitle", {currencyTicker: currency?.ticker})}</LText>
+      <>
+        <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
+          <InfiniteLoader size={48} />
+          <LText mt={13} variant="h2">{t("transfer.receive.addAccount.title")}</LText>
+          <LText p={6} textAlign="center" variant="body" color="neutral.c80">{t("transfer.receive.addAccount.subtitle", {currencyTicker: currency?.ticker})}</LText>
+        </Flex>
+        <Flex minHeight={120} flexDirection="column" alignItems="stretch" m={6} justifyContent="flex-end">
         {
           scannedAccounts?.length > 0 ? <>
-          <LText textAlign="center" variant="body" color="neutral.c80">{t("transfer.receive.addAccount.foundAccounts", {count: scannedAccounts?.length})}</LText>
+          <LText textAlign="center" mb={6} variant="body" color="neutral.c80">{t("transfer.receive.addAccount.foundAccounts", {count: scannedAccounts?.length})}</LText>
           <Button type="secondary" onPress={stopSubscription}>{t("transfer.receive.addAccount.stopSynchronization")}</Button>
-          </> : null }
-      </Flex>
+          </> : null 
+        }
+        </Flex>
+      </>
     );
   }
 

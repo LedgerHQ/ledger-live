@@ -47,7 +47,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const [device, setDevice] = useState<?Device>();
+  const [device, setDevice] = useState<Device | undefined>();
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -69,21 +69,13 @@ export default function ConnectDevice({ navigation, route }: Props) {
       if (!account) {
         return null;
       }
-      return renderVerifyAddress({
-        t,
-        navigation,
-        currencyName: getAccountCurrency(account).name,
-        device: payload.device,
-        onPress: () => {
-          setDevice();
-          navigation.navigate(ScreenName.ReceiveConfirmation, {
-            ...route.params,
-            ...payload,
-          });
-        },
+      setDevice();
+      navigation.navigate(ScreenName.ReceiveVerifyAddress, {
+        ...route.params,
+        ...payload,
       });
     },
-    [navigation, t, route.params, account],
+    [navigation, route.params, account],
   );
 
   const onSkipDevice = useCallback(() => {
@@ -91,7 +83,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
     navigation.navigate(ScreenName.ReceiveConfirmation, {
       ...route.params,
     });
-  }, [account, navigation, parentAccount]);
+  }, [account, navigation, route.params]);
 
   const onClose = useCallback(() => {
     setDevice();
@@ -143,7 +135,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
       <DeviceActionModal
         action={action}
         device={device}
-        renderOnResult={onResult}
+        onResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
         appName={route.params.appName}

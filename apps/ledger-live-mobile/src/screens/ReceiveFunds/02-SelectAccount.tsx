@@ -1,24 +1,16 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 
 import { Flex } from "@ledgerhq/native-ui";
-import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import AccountCard from "../../components/AccountCard";
 import LText from "../../components/LText";
-
-const forceInset = { bottom: "always" };
-
-const StyledSaferAreaView = styled(SafeAreaView)`
-  flex: 1;
-  background-color: ${p => p.theme.colors.background.main};
-`;
 
 type Props = {
   navigation: any;
@@ -32,32 +24,56 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
   const accounts = useSelector(
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
   );
+  const parentAccounts = useSelector(
+    flattenAccountsByCryptoCurrencyScreenSelector(currency?.parentCurrency),
+  );
+
+  const aggregatedAccounts = useMemo(
+    () =>
+      currency.type === "TokenCurrency"
+        ? parentAccounts.reduce((accs, pa) => {
+            const tokenAccounts = pa.subAccounts.filter(
+              acc => acc.token.id === currency.id,
+            );
+
+            if (tokenAccounts.length > 0) {
+              accs.push(...tokenAccounts);
+            } else {
+              const tokenAcc = makeEmptyTokenAccount(pa, currency);
+              tokenAcc.parentAccount = pa;
+              tokenAcc.triggerCreateAccount = true;
+              accs.push(tokenAcc);
+            }
+
+            return accs;
+          }, [])
+        : accounts,
+    [accounts, currency, parentAccounts],
+  );
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
       navigation.navigate(ScreenName.ReceiveConfirmation, {
         ...route.params,
-        accountId: account.id,
+        accountId: account?.parentId || account.id,
+        createTokenAccount: account?.triggerCreateAccount,
       });
     },
     [navigation, route.params],
   );
 
-  useEffect(() => {
-    if (accounts.length === 1) {
-      selectAccount(accounts[0]);
-    } else if (accounts.length <= 0) {
-      navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-        ...route.params,
-        currency,
-      });
-    }
-  }, [accounts, currency, navigation, route.params, selectAccount]);
-
   const renderItem = useCallback(
     ({ item: account }: { item: SearchResult }) => (
       <Flex px={6}>
-        <AccountCard account={account} onPress={() => selectAccount(account)} />
+        <AccountCard
+          account={account}
+          AccountSubTitle={
+            account.parentAccount ? (
+              <LText color="neutral.c70">{account.parentAccount.name}</LText>
+            ) : null
+          }
+          onPress={() => selectAccount(account)}
+        />
       </Flex>
     ),
     [selectAccount],
@@ -65,24 +81,26 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const keyExtractor = useCallback(item => item?.id, []);
 
-  return accounts.length > 1 ? (
-    <StyledSaferAreaView forceInset={forceInset}>
+  return aggregatedAccounts.length > 1 ? (
+    <>
       <TrackScreen category="ReceiveFunds" name="SelectAccount" />
-      <LText variant="h2" px={6} mb={2}>
-        {t("transfer.receive.selectAccount.title")}
-      </LText>
-      <LText variant="body" color="neutral.c80" px={6} mb={6}>
-        {t("transfer.receive.selectAccount.subtitle", {
-          currencyTicker: currency?.ticker,
-        })}
-      </LText>
+      <Flex p={6}>
+        <LText fontSize="32px" fontFamily="InterMedium" semiBold>
+          {t("transfer.receive.selectAccount.title")}
+        </LText>
+        <LText variant="body" color="colore.neutral.70">
+          {t("transfer.receive.selectAccount.subtitle", {
+            currencyTicker: currency.ticker,
+          })}
+        </LText>
+      </Flex>
       <FlatList
-        data={accounts}
+        data={aggregatedAccounts}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-    </StyledSaferAreaView>
+    </>
   ) : null;
 }
 

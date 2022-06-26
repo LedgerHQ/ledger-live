@@ -104,6 +104,7 @@ export const ScreenName = {
 
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
+  ReceiveVerifyAddress: "ReceiveVerifyAddress",
   ReceiveSelectCrypto: "ReceiveSelectCrypto",
   ReceiveSelectAccount: "ReceiveSelectAccount",
   ReceiveAddAccountSelectDevice: "ReceiveAddAccountSelectDevice",
