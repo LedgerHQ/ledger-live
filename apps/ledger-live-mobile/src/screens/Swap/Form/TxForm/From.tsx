@@ -54,17 +54,9 @@ export function From({
     [account, currency],
   );
 
-  const onSelect = useCallback(
-    (account: Account) => {
-      setAccount(account);
-      navigation.goBack();
-    },
-    [navigation, setAccount],
-  );
-
   const onPress = useCallback(() => {
-    navigation.navigate("SwapSelectAccount", { target: "from", onSelect });
-  }, [navigation, onSelect]);
+    navigation.navigate("SwapSelectAccount", { target: "from" });
+  }, [navigation]);
 
   const fromUnit = account && getAccountUnit(account);
 
