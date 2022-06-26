@@ -81,7 +81,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       });
     } else if (currency.type === "TokenCurrency") {
         const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
+
         if (parentAccounts.length > 1) {
+          
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
             currency,
             createTokenAccount: true

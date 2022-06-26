@@ -1,8 +1,6 @@
 // @flow
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { of } from "rxjs";
-import { delay } from "rxjs/operators";
 import { TouchableOpacity, TouchableWithoutFeedback, Share } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
@@ -17,22 +15,13 @@ import {
   getAccountCurrency,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "styled-components/native";
-import { Flex, Text, Icons, Button } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import BottomModal from "../../components/BottomModal";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import SkipLock from "../../components/behaviour/SkipLock";
-import logger from "../../logger";
-import { rejectionOp } from "../../logic/debugReject";
-import GenericErrorView from "../../components/GenericErrorView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
@@ -65,19 +54,20 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const [verified, setVerified] = useState(false);
+  const verified = route.params?.verified;
   const [isModalOpened, setIsModalOpened] = useState(false);
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState();
   const [isToastDisplayed, setIsToastDisplayed] = useState(false);
+  const [isVerifiedToastDisplayed, setIsVerifiedToastDisplayed] = useState(verified);
   const onModalHide = useRef(() => {});
-  const [error, setError] = useState(null);
-  const [allowNavigation, setAllowNavigation] = useState(true);
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
-  const sub = useRef();
   const dispatch = useDispatch();
 
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
+  }, []);
+  const hideVerifiedToast = useCallback(() => {
+    setIsVerifiedToastDisplayed(false);
   }, []);
 
   const openAdditionalInfoModal = useCallback(() => {
@@ -89,39 +79,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     setIsAddionalInfoModalOpen(false);
   }, [setIsAddionalInfoModalOpen]);
 
-  const { onSuccess, onError } = route.params;
-
-  const verifyOnDevice = useCallback(
-    async (device: Device): Promise<void> => {
-      if (!account) return;
-      const mainAccount = getMainAccount(account, parentAccount);
-
-      sub.current = (mainAccount.id.startsWith("mock")
-        ? of({}).pipe(delay(1000), rejectionOp())
-        : getAccountBridge(mainAccount).receive(mainAccount, {
-            deviceId: device.deviceId,
-            verify: true,
-          })
-      ).subscribe({
-        complete: () => {
-          setVerified(true);
-          setAllowNavigation(true);
-          onSuccess && onSuccess(mainAccount.freshAddress);
-        },
-        error: error => {
-          if (error && error.name !== "UserRefusedAddress") {
-            logger.critical(error);
-          }
-          setError(error);
-          setIsModalOpened(true);
-          setAllowNavigation(true);
-          onError && onError();
-        },
-      });
-    },
-    [account, onError, onSuccess, parentAccount],
-  );
-
   const onRetry = useCallback(() => {
     if (isModalOpened) {
       setIsModalOpened(false);
@@ -131,25 +88,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     }
   }, [isModalOpened, navigation, route.params])
 
-  const onDone = useCallback(() => {
-    const n = navigation.getParent();
-    if (n) {
-      n.pop();
-    }
-  }, [navigation])
-
-  const onModalClose = useCallback(() => {
-    setIsModalOpened(false);
-    onModalHide.current = onDone;
-  }, [onDone])
-
-
-
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
-
 
   useEffect(() => {
     if(route.params?.createTokenAccount && !hasAddedTokenAccount) {
@@ -164,28 +106,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount])
 
   useEffect(() => {
-    if (!allowNavigation) {
-      navigation.setOptions({
-        headerLeft: null,
-        headerTitle: getAccountName(account),
-        headerRight: () => null,
-        gestureEnabled: false,
-      });
-    } else {
-      navigation.setOptions({
-        headerTitle: getAccountName(account),
-      });
-    }
-  }, [allowNavigation, colors, navigation, account]);
+    navigation.setOptions({
+      headerTitle: getAccountName(account),
+    });
+  }, [colors, navigation, account]);
 
   useEffect(() => {
-    const device = route.params.device;
-
-    if (device && !verified) {
-      verifyOnDevice(device);
-    }
-    setAllowNavigation(true);
-  }, [route.params, verified, verifyOnDevice]);
+    setIsVerifiedToastDisplayed(verified)
+  }, [verified])
 
   const onShare = useCallback(() => {
     if (mainAccount?.freshAddress) {
@@ -197,12 +125,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   return (
     <Flex flex={1}>
-      {allowNavigation ? null : (
-        <>
-          <PreventNativeBack />
-          <SkipLock />
-        </>
-      )}
       <NavigationScrollView style={{ flex: 1 }}>
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
@@ -250,11 +172,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <Flex
             alignItems="center"
             justifyContent="center"
-            width={QRSize*1/3}
-            height={QRSize*1/3}
+            width={QRSize*0.3}
+            height={QRSize*0.3}
             bg="constant.white"
             position="absolute"
-            borderRadius={16}
           >
             <CurrencyIcon
               currency={currency}
@@ -281,72 +202,34 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         </Text>
       </Flex>
       </NavigationScrollView>
-      <Button type="shade" outline size="large" m={6} mb={8} onPress={onShare}>
-        {t("transfer.receive.shareAddress")}
-      </Button>
+      <Flex
+       m={6}
+     >
       {isToastDisplayed ? (
-        <Flex
-          left={0}
-          right={0}
-          bottom={8}
-          position="absolute"
-          bg="neutral.c100"
-          mx={6}
-          borderRadius={8}
-        >
-          <TouchableWithoutFeedback onPress={openAdditionalInfoModal}>
-            <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            >
-              <Flex flex={1} px={6} py={7} borderRadius={8} alignItems="center">
-                <Icons.CircledCheckMedium color="neutral.c00" size={24} />
-              </Flex>
-              <Flex width="70%">
-                <Text variant="body" fontWeight="semiBold" color="neutral.c00">
-                  {t("transfer.receive.toastMessages.accountImported", { currencyTicker: currency.ticker })}
-                  <Text variant="body" fontWeight="semiBold" color="primary.c70" style={{ textDecorationLine: "underline" }}>
-                    {t("transfer.receive.toastMessages.why")}
-                  </Text>
-                </Text>
-              </Flex>
-              <TouchableWithoutFeedback onPress={hideToast}>
-                <Flex flex={1} py={7} pr={6} pl={3} borderRadius={8} alignItems="center">
-                  <Icons.CloseMedium color="neutral.c00" size={20} />
-                </Flex>
-              </TouchableWithoutFeedback>
-            </Flex>
-          </TouchableWithoutFeedback>
-        </Flex>
-       ) : null}
-      <ReceiveSecurityModal onVerifyAddress={onRetry} />
+        <Notification
+        Icon={Icons.CircledCheckMedium}
+        variant={"neutral"}
+        title={t("transfer.receive.toastMessages.accountImported", { currencyTicker: currency.ticker })}
+        onClose={hideToast}
+        linkText={t("transfer.receive.toastMessages.why")}
+        onLinkPress={openAdditionalInfoModal}
+        />
+       ) : isVerifiedToastDisplayed ? <Notification
+       Icon={Icons.CircledCheckMedium}
+       variant={"success"}
+       title={t("transfer.receive.toastMessages.addressVerified")}
+       onClose={hideVerifiedToast}
+       /> : <Button type="shade" outline size="large" onPress={onShare}>
+        {t("transfer.receive.shareAddress")}
+      </Button>}
+      </Flex>
+     {verified ? null : <ReceiveSecurityModal onVerifyAddress={onRetry} />}
+      
       <AdditionalInfoModal
         isOpen={isAddionalInfoModalOpen}
         onClose={closeAdditionalInfoModal}
         currencyTicker={currency.ticker}
       />
-      <BottomModal
-        id="ReceiveConfirmationModal"
-        isOpened={isModalOpened}
-        onClose={onModalClose}
-        onModalHide={onModalHide.current}
-      >
-        {error ? (
-          <Flex flexDirection="column">
-            <GenericErrorView error={error} />
-            <Flex flexDirection="row" justifyContent="flex-end" flexGrow={1} my={3}>
-              <Button
-                event="ReceiveRetry"
-                type="primary"
-                title={<Trans i18nKey="common.retry" />}
-                containerStyle={{ flexGrow: 2 }}
-                onPress={onRetry}
-              />
-            </Flex>
-          </Flex>
-        ) : null}
-      </BottomModal>
     </Flex>
   );
 }

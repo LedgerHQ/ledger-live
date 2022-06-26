@@ -2160,6 +2160,10 @@
       "selectCrypto": {
         "title": "Select a crypto"
       },
+      "stepperHeader": {
+        "range": "Step {{currentStep}} of {{totalSteps}}",
+        "connectDevice": "Connect Device"
+      },
       "selectAccount": {
         "title": "Select an account",
         "subtitle": "Your {{currencyTicker}} will be deposited into this account."
@@ -2169,6 +2173,15 @@
         "subtitle": "We are verifying if you already have an {{currencyTicker}} account on blockchain.",
         "foundAccounts": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization"
+      },
+      "verifyAddress": {
+        "title": "Verify address",
+        "subtitle": "Verify that the address displayed on your device matches this one below. Once you’re sure you can click approve on your device.",
+        "cancel": {
+          "title": "You just denied this address",
+          "subtitle": "If this was done by mistake, you can retry by clicking the button below.",
+          "info": "If you are sure the addresses don’t match, your phone may be comprimised. We recommend you <0>contact us as soon as possible.</0>"
+        }
       },
       "receiveConfirmation": {
         "title": "Receive {{currencyTicker}}",
@@ -2193,7 +2206,8 @@
       },
       "toastMessages": {
         "accountImported": "We've imported a {{currencyTicker}} account for you. ",
-        "why": "Tell me why."
+        "why": "Tell me why.",
+        "addressVerified": "Your address is now verified"
       },
       "additionalInfoModal": {
         "title": "Why we imported an account?",
