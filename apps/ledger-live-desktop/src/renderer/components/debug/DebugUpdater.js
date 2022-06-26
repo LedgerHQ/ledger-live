@@ -4,7 +4,7 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import { UpdaterContext } from "../Updater/UpdaterContext";
 import type { UpdateStatus, MaybeUpdateContextType } from "../Updater/UpdaterContext";
-import { Item, MockContainer } from "./shared";
+import { Item, MockContainer, MockedGlobalStyle } from "./shared";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
@@ -31,7 +31,7 @@ const ExposeUpdaterWhenInMock = () => {
     }
   }, [setStatus]);
 
-  return null;
+  return <MockedGlobalStyle />; // Still do the styles thingie
 };
 
 const DebugUpdater = () => {

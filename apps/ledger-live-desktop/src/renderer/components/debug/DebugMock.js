@@ -585,4 +585,4 @@ const DebugMock = () => {
   );
 };
 
-export default DebugMock;
+export default process.env.HIDE_DEBUG_MOCK ? MockedGlobalStyle : DebugMock;
