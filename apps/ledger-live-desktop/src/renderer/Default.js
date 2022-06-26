@@ -166,7 +166,7 @@ export default function Default() {
             <ModalsLayer />
             <DebugWrapper>
               {process.env.DEBUG_THEME ? <DebugTheme /> : null}
-              {process.env.MOCK ? <DebugMock /> : null}
+              {process.env.MOCK && !process.env.HIDE_DEBUG_MOCK ? <DebugMock /> : null}
               {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
               {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
               {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}

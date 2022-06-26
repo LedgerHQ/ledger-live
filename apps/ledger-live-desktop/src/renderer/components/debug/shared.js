@@ -1,17 +1,9 @@
 // @flow
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
-
-const MockedGlobalStyle = createGlobalStyle`
-  *, :before, :after {
-    caret-color: transparent !important;
-    transition-property: none !important;
-    animation: none !important;
-  }
-`;
 
 const Item: ThemedComponent<{}> = styled(Text)`
   color: white;
@@ -50,4 +42,4 @@ const DebugWrapper: ThemedComponent<{}> = styled.div`
   background: #dededeaa;
 `;
 
-export { Item, MockContainer, EllipsesText, MockedGlobalStyle, DebugWrapper };
+export { Item, MockContainer, EllipsesText, DebugWrapper };

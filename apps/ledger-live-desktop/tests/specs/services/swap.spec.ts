@@ -22,14 +22,13 @@ test("Swap", async ({ page }) => {
 
   await test.step("Select Max Spendable", async () => {
     await swapPage.sendMax();
-    await layout.waitForLoadingSpinner();
     await expect.soft(page).toHaveScreenshot("max-spendable-swap.png");
   });
 
   await test.step("Confirm Exchange", async () => {
     await swapPage.confirmExchange();
     await deviceAction.initiateSwap();
-    await expect.soft(page).toHaveScreenshot("initiate-swap.png");
+    await expect.soft(page).toHaveScreenshot("initiate-swap.png", { timeout: 20000 });
   });
 
   await test.step("Confirm swap with Nano App", async () => {

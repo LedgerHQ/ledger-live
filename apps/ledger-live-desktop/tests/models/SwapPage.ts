@@ -30,6 +30,7 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
+    await this.exchangeButton.isEnabled();
   }
 
   async confirmExchange() {
