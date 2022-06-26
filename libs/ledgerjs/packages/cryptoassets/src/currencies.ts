@@ -2067,6 +2067,36 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   },
   polygon: {
     type: "CryptoCurrency",
+    id: "candle",
+    coinType: 674,
+    name: "Candle",
+    managerAppName: "Candle",
+    ticker: "CNDL",
+    scheme: "candle",
+    color: "#6d29de",
+    family: "ethereum",
+    ethereumLikeInfo: {
+      baseChain: "mainnet",
+      chainId: 534,
+      networkId: 534,
+    },
+    units: [
+      {
+        name: "CNDL",
+        code: "CNDL",
+        magnitude: 18,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://candleexplorer.com/tx/$hash",
+        address: "https://candleexplorer.com/address/$address",
+        token: "https://candleexplorer.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  polygon: {
+    type: "CryptoCurrency",
     id: "polygon",
     coinType: 60,
     name: "Polygon",
