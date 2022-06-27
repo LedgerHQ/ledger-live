@@ -6,7 +6,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
-test("Swap", async ({ page }) => {
+test.fixme("Swap", async ({ page }) => {
   const swapPage = new SwapPage(page);
   const deviceAction = new DeviceAction(page);
   const layout = new Layout(page);
