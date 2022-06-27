@@ -16,7 +16,7 @@ on:
         default: ""
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}-${{ github.env.inputs.filter || "" }}
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}-${{ github.event.inputs.filter || "" }}
   cancel-in-progress: true
 
 jobs:
