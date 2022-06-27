@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Operation details",
+    "title" : "Transaction details",
     "account" : "Account",
     "date" : "Date",
     "confirmed" : "Confirmed",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "No Operations",
-    "noMoreOperations" : "No other Operations"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deselect all",
@@ -1763,7 +1763,7 @@
     "sell" : "Sell",
     "swap" : "Swap",
     "manage" : "Manage",
-    "lastOperations" : "Last operations",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "No crypto assets yet?",
       "desc" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
@@ -3285,6 +3285,19 @@
       "es" : "Spanish",
       "zh" : "Chinese",
       "de" : "German"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
     }
   },
   "FirmwareUpdateCheckId" : {
