@@ -512,7 +512,7 @@ test("Nano X BL >= 2", async () => {
     pinValidated: true,
   });
 });
-test("Nano X 1.2.6-4", async () => {
+test("Nano X 1.2.4-6", async () => {
   const t = await openTransportReplayer(
     RecordStore.fromString(`
     => b001000000
