@@ -55,8 +55,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [onNavigate],
   );
   const onReceiveFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.ReceiveFunds),
+    () => onNavigate(NavigatorName.ReceiveFunds),
     [onNavigate],
   );
   const onSwap = useCallback(
@@ -119,7 +118,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           }}
           title={t("transfer.receive.title")}
           description={t("transfer.receive.description")}
-          onPress={accountsCount > 0 ? onReceiveFunds : null}
+          onPress={onReceiveFunds}
           Icon={Icons.ArrowBottomMedium}
           disabled={readOnlyModeEnabled}
         />

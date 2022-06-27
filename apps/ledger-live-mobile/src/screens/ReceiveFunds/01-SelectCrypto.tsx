@@ -96,7 +96,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
           });
         } else {
           navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
-            currency: currency.parentCurrency,
+            currency,
             createTokenAccount: true
           });
         }
