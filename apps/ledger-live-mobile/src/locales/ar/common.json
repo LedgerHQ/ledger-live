@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "تفاصيل العملية",
+    "title" : "Transaction details",
     "account" : "حساب",
     "date" : "التاريخ",
     "confirmed" : "تم التأكيد",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "لا توجد عمليات",
-    "noMoreOperations" : "لا توجد عمليات أخرى"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "إلغاء تحديد الكل",
@@ -1763,7 +1763,7 @@
     "sell" : "بيع",
     "swap" : "مبادلة",
     "manage" : "إدارة",
-    "lastOperations" : "العمليات الأخيرة",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "لا توجد أصول مشفرة بعد؟",
       "desc" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
@@ -3287,6 +3287,19 @@
       "de" : "German"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "المُعرّف",
     "description" : "يرجى الضغط على الزرين معًا على جهاز {{fullDeviceName}} الخاص بك إذا كان يعرض نفس المُعرّف:"
@@ -4328,7 +4341,7 @@
     "marketList" : {
       "crypto" : "الأصول المشفرة",
       "price" : "السعر",
-      "change" : "Change",
+      "change" : "تغيير",
       "marketCap" : "الحد الأقصى للسوق",
       "last7d" : "Last 7 days"
     },
