@@ -12,7 +12,8 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
     url: `${baseURL()}/latest${direct ? "/direct" : "/indirect"}?pairs=${pairs
       .map(
         (p) =>
-          `${p.from.countervalueTicker ?? p.from.ticker}:${p.to.countervalueTicker ?? p.to.ticker
+          `${p.from.countervalueTicker ?? p.from.ticker}:${
+            p.to.countervalueTicker ?? p.to.ticker
           }`
       )
       .join(",")}`,
