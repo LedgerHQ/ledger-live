@@ -48,7 +48,7 @@ const setupMockBleTransportListen =
   };
 
 describe("useBleDevicesScanning", () => {
-  describe("When several devices are found by the scanner", () => {
+  describe("When several unique devices are found by the scanner", () => {
     const deviceIdA = "ID_A";
     const deviceIdB = "ID_B";
     const deviceIdC = "ID_C";
@@ -153,6 +153,68 @@ describe("useBleDevicesScanning", () => {
 
     describe("When the scanning reached the timeout without any result", () => {
       test.todo("should return an error ?");
+    });
+  });
+
+  describe("When the same device is being scanned several times", () => {
+    const deviceIdA = "ID_A";
+    const deviceIdB = "ID_B";
+
+    const mockEmitValuesByObserver = (observer: bleTransportListenObserver) => {
+      observer.next({
+        type: "add",
+        descriptor: aTransportBleDevice({ id: deviceIdA }),
+      });
+
+      setTimeout(() => {
+        observer.next({
+          type: "add",
+          descriptor: aTransportBleDevice({ id: deviceIdA }),
+        });
+      }, 1000);
+
+      setTimeout(() => {
+        observer.next({
+          type: "add",
+          descriptor: aTransportBleDevice({ id: deviceIdB }),
+        });
+      }, 2000);
+    };
+
+    it("should update the list of scanned devices without any duplicate", async () => {
+      const { result } = renderHook(() =>
+        useBleDevicesScanning({
+          bleTransportListen: setupMockBleTransportListen(
+            mockEmitValuesByObserver
+          ),
+        })
+      );
+
+      // The first time it gets the device from the scanning
+      expect(result.current.scannedDevices).toHaveLength(1);
+      expect(result.current.scannedDevices[0].deviceId).toBe(deviceIdA);
+      expect(result.current.scannedDevices[0].deviceModel.id).toBe(
+        DeviceModelId.nanoX
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      // The second time it gets the same device from the scanning
+      // It should not have been added to the list
+      expect(result.current.scannedDevices).toHaveLength(1);
+
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      // The third time it gets a new device
+      expect(result.current.scannedDevices).toHaveLength(2);
+      expect(result.current.scannedDevices[1].deviceId).toBe(deviceIdB);
+      expect(result.current.scannedDevices[1].deviceModel.id).toBe(
+        DeviceModelId.nanoX
+      );
     });
   });
 });
