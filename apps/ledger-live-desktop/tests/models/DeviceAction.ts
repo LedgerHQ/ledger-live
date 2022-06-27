@@ -97,15 +97,11 @@ export class DeviceAction {
   }
 
   async initiateSwap() {
-    await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
-    });
-    await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "complete" });
-    });
-    await this.page.evaluate(() => {
-      (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" });
-    });
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
+    await this.page.waitForTimeout(500);
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "complete" }));
+    await this.page.waitForTimeout(500);
+    await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }));
 
     await this.loader.waitFor({ state: "detached" });
     await this.swapSummary.waitFor({ state: "visible" });

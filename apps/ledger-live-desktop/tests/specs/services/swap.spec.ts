@@ -22,6 +22,7 @@ test("Swap", async ({ page }) => {
 
   await test.step("Select Max Spendable", async () => {
     await swapPage.sendMax();
+    await layout.waitForLoadingSpinner();
     await expect.soft(page).toHaveScreenshot("max-spendable-swap.png");
   });
 
