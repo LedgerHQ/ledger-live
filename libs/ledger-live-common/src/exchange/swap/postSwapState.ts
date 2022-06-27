@@ -20,11 +20,15 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     return null;
   }
 
-  await network({
-    method: "POST",
-    url: `${getSwapAPIBaseURL()}/swap/accepted`,
-    data: { provider, swapId, transactionId },
-  });
+  try {
+    await network({
+      method: "POST",
+      url: `${getSwapAPIBaseURL()}/swap/accepted`,
+      data: { provider, swapId, transactionId },
+    });
+  } catch (error) {
+    console.error(error);
+  }
 
   return null;
 };
@@ -43,11 +47,15 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     return null;
   }
 
-  await network({
-    method: "POST",
-    url: `${getSwapAPIBaseURL()}/swap/cancelled`,
-    data: { provider, swapId },
-  });
+  try {
+    await network({
+      method: "POST",
+      url: `${getSwapAPIBaseURL()}/swap/cancelled`,
+      data: { provider, swapId },
+    });
+  } catch (error) {
+    console.error(error);
+  }
 
   return null;
 };
