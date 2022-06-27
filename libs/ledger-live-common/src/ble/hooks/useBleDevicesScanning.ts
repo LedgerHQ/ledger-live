@@ -54,6 +54,10 @@ export type UseBleDevicesScanningOptions = {
   timeoutMs?: number;
 };
 
+// FIXME: The error coming from listen should be mapped to a BleScanningError
+// and having a property errorCode with defined possible error code
+export type BleScanningError = any;
+
 const DEFAULT_DEVICE_NAME = "Device";
 
 /**
@@ -71,8 +75,12 @@ export const useBleDevicesScanning = ({
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningTimedOut, setScanningTimedOut] = useState<boolean>(false);
-  const [scanningError, setScanningError] = useState<Error | null>(null);
+  const [scanningError, setScanningError] = useState<BleScanningError | null>(
+    null
+  );
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
+
+  console.log("BLE SCANNING HOOK being called");
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -151,9 +159,9 @@ export const useBleDevicesScanning = ({
             }
           }
         },
-        error: (error: Error) => {
+        error: (error: any) => {
           // eslint-disable-next-line no-console
-          console.log(`Error: ${JSON.stringify(error)}`);
+          console.log(`useBleDeviceScanning got an error: ${JSON.stringify(error)}`);
           setScanningError(error);
         },
       });
