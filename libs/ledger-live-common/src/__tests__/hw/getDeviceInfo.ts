@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 
 test("1.2.0", async () => {
@@ -513,5 +510,142 @@ test("Nano X BL >= 2", async () => {
     isBootloader: true,
     managerAllowed: false,
     pinValidated: true,
+  });
+});
+test("Nano X 1.2.6-4", async () => {
+  const t = await openTransportReplayer(
+    RecordStore.fromString(`
+    => b001000000
+    <= 01054f4c4f5300072e322e342d36009000
+    => e001000000
+    <= 3300000407312e322e342d3604a600000004322e31329000
+    `)
+  );
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "1.2.4-6",
+    mcuVersion: "2.12",
+    seVersion: "1.2.4-6",
+    majMin: "1.2",
+    providerName: null,
+    targetId: 855638020,
+    seTargetId: 855638020,
+    isOSU: false,
+    isBootloader: false,
+    isRecoveryMode: false,
+    managerAllowed: false,
+    pinValidated: true,
+    onboarded: true,
+  });
+});
+test("Nano X 2.0.0", async () => {
+  const t = await openTransportReplayer(
+    RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305322e302e309000
+    => e001000000
+    <= 3300000405322e302e3004a600000004322e323804312e313601009000
+    `)
+  );
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "2.0.0",
+    mcuVersion: "2.28",
+    seVersion: "2.0.0",
+    majMin: "2.0",
+    providerName: null,
+    targetId: 855638020,
+    seTargetId: 855638020,
+    isOSU: false,
+    isBootloader: false,
+    isRecoveryMode: false,
+    managerAllowed: false,
+    pinValidated: true,
+    onboarded: true,
+    bootloaderVersion: "1.16",
+    hardwareVersion: 0,
+  });
+});
+test("Nano X 2.1.0-lo2", async () => {
+  const t = await openTransportReplayer(
+    RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5309322e312e302d6c6f329000
+    => e001000000
+    <= 3300000409322e312e302d6c6f3204e600000004322e333004312e3136010001019000
+    `)
+  );
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "2.1.0-lo2",
+    mcuVersion: "2.30",
+    seVersion: "2.1.0-lo2",
+    majMin: "2.1",
+    providerName: null,
+    targetId: 855638020,
+    seTargetId: 855638020,
+    isOSU: false,
+    isBootloader: false,
+    isRecoveryMode: false,
+    managerAllowed: false,
+    pinValidated: true,
+    onboarded: true,
+    bootloaderVersion: "1.16",
+    hardwareVersion: 0,
+    languageId: 1,
+  });
+});
+test("Nano S 2.1.0", async () => {
+  const t = await openTransportReplayer(
+    RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305322e312e309000
+    => e001000000
+    <= 3110000405322e312e3004a600000004312e313204302e31319000
+    `)
+  );
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "2.1.0",
+    mcuVersion: "1.12",
+    seVersion: "2.1.0",
+    majMin: "2.1",
+    providerName: null,
+    targetId: 823132164,
+    seTargetId: 823132164,
+    isOSU: false,
+    isBootloader: false,
+    isRecoveryMode: false,
+    managerAllowed: false,
+    pinValidated: true,
+    onboarded: true,
+    bootloaderVersion: "0.11",
+  });
+});
+test("Nano S+ 1.0.2", async () => {
+  const t = await openTransportReplayer(
+    RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e302e329000
+    => e001000000
+    <= 3310000405312e302e3204a600000004342e303204332e31329000
+    `)
+  );
+  const res = await getDeviceInfo(t);
+  expect(res).toMatchObject({
+    version: "1.0.2",
+    mcuVersion: "4.02",
+    seVersion: "1.0.2",
+    majMin: "1.0",
+    providerName: null,
+    targetId: 856686596,
+    seTargetId: 856686596,
+    isOSU: false,
+    isBootloader: false,
+    isRecoveryMode: false,
+    managerAllowed: false,
+    pinValidated: true,
+    onboarded: true,
+    bootloaderVersion: "3.12",
   });
 });
