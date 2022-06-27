@@ -55,13 +55,74 @@ const stellar: AppSpec<Transaction> = {
 
         const updates: Array<Partial<Transaction>> = [
           {
+            recipient,
+            // Setting higher max fee here to make sure transaction doesn't
+            // time out.
+            fees: new BigNumber(MAX_FEE),
+          },
+          {
             amount,
           },
+        ];
+
+        if (Math.random() < 0.5) {
+          updates.push({
+            memoType: "MEMO_TEXT",
+            memoValue: "Ledger Live",
+          });
+        }
+
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ account, accountBeforeTransaction, operation, transaction }) => {
+        // We don't know what the final fee will be until after the tx is
+        // submitted. Using higher max fee to make sure tx doesn't time out.
+        expect(account.balance.toNumber()).toBeLessThanOrEqual(
+          accountBeforeTransaction.balance.minus(operation.value).toNumber()
+        );
+
+        if (transaction.memoValue) {
+          expect(operation.extra).toMatchObject({
+            memo: transaction.memoValue,
+          });
+        }
+
+        const getType = () => {
+          switch (transaction.mode) {
+            case "send":
+              return "send";
+            case "changeTrust":
+              return /change_trust/;
+            default:
+              return "";
+          }
+        };
+
+        expect(transaction.mode).toMatch(getType());
+      },
+    },
+    {
+      name: "Send max XLM",
+      maxRun: 2,
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(minAmountCutoff), "XLM balance is too low");
+
+        const transaction = bridge.createTransaction(account);
+        const sibling = pickSiblings(siblings, 4);
+        const recipient = sibling.freshAddress;
+
+        const updates: Array<Partial<Transaction>> = [
           {
             recipient,
             // Setting higher max fee here to make sure transaction doesn't
             // time out.
             fees: new BigNumber(MAX_FEE),
+          },
+          {
+            useAllAmount: true,
           },
         ];
 
@@ -177,10 +238,10 @@ const stellar: AppSpec<Transaction> = {
 
         const updates: Array<Partial<Transaction>> = [
           {
-            subAccountId: usdcSubAccount.id,
+            recipient,
           },
           {
-            recipient,
+            subAccountId: usdcSubAccount.id,
           },
           {
             amount,
