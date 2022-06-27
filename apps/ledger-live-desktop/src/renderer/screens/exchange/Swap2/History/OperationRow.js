@@ -5,7 +5,10 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import {
+  isSwapOperationPending,
+  operationStatusList,
+} from "@ledgerhq/live-common/lib/exchange/swap";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import React from "react";
@@ -24,15 +27,19 @@ import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 export const getStatusColor = (status: string, theme: any) => {
-  if (operationStatusList.pending.includes(status)) {
+  if (isSwapOperationPending(status)) {
     return status === "hold" ? theme.colors.orange : theme.colors.wallet;
-  } else if (operationStatusList.finishedOK.includes(status)) {
-    return theme.colors.positiveGreen;
-  } else if (operationStatusList.finishedKO.includes(status)) {
-    return theme.colors.alertRed;
-  } else {
-    return theme.colors.palette.shade50;
   }
+
+  if (operationStatusList.finishedOK.includes(status)) {
+    return theme.colors.positiveGreen;
+  }
+
+  if (operationStatusList.finishedKO.includes(status)) {
+    return theme.colors.alertRed;
+  }
+
+  return theme.colors.palette.shade50;
 };
 
 const Status: ThemedComponent<{}> = styled.div`
@@ -116,7 +123,7 @@ const OperationRow = ({
       <Tooltip content={<span style={{ textTransform: "capitalize" }}>{status}</span>}>
         <Status status={status}>
           <IconSwap size={12} />
-          {operationStatusList.pending.includes(status) ? (
+          {isSwapOperationPending(status) ? (
             <WrapperClock>
               <IconClock size={10} />
             </WrapperClock>

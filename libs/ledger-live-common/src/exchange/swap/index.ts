@@ -27,8 +27,12 @@ import submitKYC from "./submitKYC";
 export const operationStatusList = {
   finishedOK: ["finished"],
   finishedKO: ["refunded"],
-  pending: ["pending", "onhold", "expired", "unknown"],
 };
+
+// A swap operation is considered pending if it is not in a finishedOK or finishedKO state
+export const isSwapOperationPending: (status: string) => boolean = (status) =>
+  !operationStatusList.finishedOK.includes(status) &&
+  !operationStatusList.finishedKO.includes(status);
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
