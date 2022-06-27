@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Détails de l’opération",
+    "title" : "Détails de la transaction",
     "account" : "Compte",
     "date" : "Date",
     "confirmed" : "Confirmée",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
-    "noMoreOperations" : "Aucune autre opération"
+    "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tout désélectionner",
@@ -1763,7 +1763,7 @@
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
-    "lastOperations" : "Dernières opérations",
+    "lastTransactions" : "Dernières transactions",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
       "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
@@ -2132,11 +2132,11 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Entrez l’adresse."
+      "input" : "Entrer l’adresse"
     },
     "send" : {
       "title" : "Envoyer",
-      "description" : "Envoyez des cryptos vers un autre wallet."
+      "description" : "Envoyez des cryptos vers un autre wallet"
     },
     "fees" : {
       "title" : "Modifier les frais"
@@ -2147,7 +2147,7 @@
     },
     "receive" : {
       "title" : "Recevoir",
-      "description" : "Recevez des cryptos provenant d’un autre wallet.",
+      "description" : "Recevez des cryptos d’un autre wallet",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
       "titleDevice" : "Connecter l’appareil",
@@ -2176,18 +2176,18 @@
     },
     "buy" : {
       "title" : "Acheter",
-      "description" : "Achetez des cryptos en toute sécurité."
+      "description" : "Achetez des cryptos en toute sécurité"
     },
     "sell" : {
       "title" : "Vendre",
-      "description" : "Vendez des cryptos en toute sécurité."
+      "description" : "Vendez des cryptos en toute sécurité"
     },
     "exchange" : {
       "title" : "Acheter / Vendre"
     },
     "swap" : {
       "title" : "Swap",
-      "description" : "Échangez une crypto contre une autre.",
+      "description" : "Échangez une crypto contre une autre",
       "selectDevice" : "Sélectionnez votre appareil.",
       "broadcasting" : "Swap en cours",
       "loadingFees" : "Chargement des frais de réseau…",
@@ -2225,7 +2225,7 @@
           },
           "closed" : {
             "cta" : "Réinitialiser",
-            "title" : "Demande de vérification refusée",
+            "title" : "Demande de vérification rejetée",
             "subtitle" : "Wyre a refusé les données que vous avez fournies.",
             "link" : "En savoir plus sur la vérification d’identité"
           },
@@ -2405,7 +2405,7 @@
     "lending" : {
       "title" : "Prêter",
       "titleTransferTab" : "Gagnez",
-      "descriptionTransferTab" : "Générez des revenus passifs.",
+      "descriptionTransferTab" : "Générez des revenus passifs",
       "actionTitle" : "Prêter",
       "accountActions" : {
         "approve" : "Approuver",
@@ -2633,7 +2633,7 @@
     "recipient" : {
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
-      "input" : "Entrez l’adresse.",
+      "input" : "Entrer l’adresse",
       "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
     },
     "amount" : {
@@ -3285,6 +3285,19 @@
       "es" : "Espagnol",
       "zh" : "Chinois",
       "de" : "Allemand"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
     }
   },
   "FirmwareUpdateCheckId" : {
