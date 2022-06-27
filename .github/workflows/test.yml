@@ -20,6 +20,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-docs:
+    name: "Test Docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Install dependencies
+        run: pnpm i --filter="!./apps/**" --frozen-lockfile
+      - name: run doc
+        run: pnpm doc:ljs
+      - name: check if diff
+        run: git diff --exit-code || exit 1
+
   test-libraries:
     name: "Test Libraries"
     env:
