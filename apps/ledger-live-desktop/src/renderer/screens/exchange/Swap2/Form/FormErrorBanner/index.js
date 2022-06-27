@@ -1,6 +1,6 @@
 // @flow
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -9,9 +9,14 @@ import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSumma
 const FormErrorBanner = ({ provider, error }: { provider?: string, error: string }) => {
   const { t } = useTranslation();
 
-  if (!provider) return null;
+  const openProviderSupport = useCallback(() => {
+    if (!provider) {
+      return;
+    }
+    openURL(urls.swap.providers[provider]?.support);
+  }, [provider]);
 
-  const openProviderSupport = () => openURL(urls.swap.providers[provider]?.support);
+  if (!provider) return null;
 
   const ctaLabel = t("common.getSupport");
 

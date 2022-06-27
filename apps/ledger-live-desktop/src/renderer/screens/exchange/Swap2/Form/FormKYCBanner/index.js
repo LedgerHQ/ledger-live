@@ -1,7 +1,7 @@
 // @flow
 import type { KYCStatus } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { getProviderName, KYC_STATUS } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -17,6 +17,13 @@ const FormKYCBanner = ({
   onClick: Function,
 }) => {
   const { t } = useTranslation();
+
+  const openProviderSupport = useCallback(() => {
+    if (!provider) {
+      return;
+    }
+    openURL(urls.swap.providers[provider]?.support);
+  }, [provider]);
 
   // we render the component only if KYC is rejected or need to be upgraded
   // i.e: we don't render it if the KYC is "pending".
@@ -52,8 +59,6 @@ const FormKYCBanner = ({
    * This is specific partner logic
    */
   if (["ftx", "ftxus"].includes(provider) && status === KYC_STATUS.rejected) {
-    const openProviderSupport = () => openURL(urls.swap.providers[provider]?.support);
-
     message = t("swap2.form.providers.kyc.rejectedContactProviderSupport", {
       providerName: getProviderName(provider),
     });
