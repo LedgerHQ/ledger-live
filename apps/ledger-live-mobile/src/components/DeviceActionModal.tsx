@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { Alert, Flex } from "@ledgerhq/native-ui";
