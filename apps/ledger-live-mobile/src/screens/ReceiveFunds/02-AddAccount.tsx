@@ -98,7 +98,10 @@ function AddAccountsAccounts({
   }, []);
 
   const startSubscription = useCallback(() => {
-    const bridge = getCurrencyBridge(currency);
+    const c = currency.type === "TokenCurrency"
+      ? currency.parentCurrency
+      : currency;
+    const bridge = getCurrencyBridge(c);
     const syncConfig = {
       paginationConfig: {
         operation: 0,
@@ -108,9 +111,9 @@ function AddAccountsAccounts({
     // will be set to false if an existing account is found
 
     scanSubscription.current = concat(
-      from(prepareCurrency(currency)).pipe(ignoreElements()),
+      from(prepareCurrency(c)).pipe(ignoreElements()),
       bridge.scanAccounts({
-        currency,
+        currency: c,
         deviceId,
         syncConfig,
       }),
