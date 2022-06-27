@@ -25,7 +25,7 @@
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot",
-    "ci-test-bot": "pnpm jest --testMatch '**/*.bot.ts'"
+    "ci-test-bot": "env-cmd -f .ci.bot.env pnpm jest --ci"
   },
   "files": [
     "lib",
