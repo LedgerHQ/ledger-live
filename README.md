@@ -182,6 +182,12 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 
 A tool can be a github action, a shell script or a piece of JavaScript code that is used throughout this repository.
 
+### `/tests` - Tests
+
+> ⚠️ Collections of tests and tools. TBD
+
+Description tests TBD
+
 ## Contributing
 
 Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).

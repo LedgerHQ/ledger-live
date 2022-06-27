@@ -19,7 +19,6 @@ import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
 import { getEnv } from "../env";
 import deviceActions from "../generated/speculos-deviceActions";
-import type { AppCandidate } from "../load/speculos";
 import { getOperationConfirmationNumber } from "../operation";
 import { delay, promiseAllBatched } from "../promise";
 import type {
@@ -42,6 +41,7 @@ import {
   formatTime,
 } from "./formatters";
 import type {
+  AppCandidate,
   AppSpec,
   DeviceAction,
   MutationReport,

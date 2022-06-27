@@ -985,6 +985,7 @@ importers:
       ethereumjs-util: ^7.1.4
       events: ^3.3.0
       expect: ^27.4.6
+      express: ^4.17.2
       fs: ^0.0.1-security
       generic-pool: ^3.8.2
       glob: ^7.2.0
@@ -1117,6 +1118,7 @@ importers:
       ethereumjs-util: 7.1.4
       events: 3.3.0
       expect: 27.5.1
+      express: 4.18.1
       generic-pool: 3.8.2
       invariant: 2.2.4
       isomorphic-ws: 4.0.1_ws@7.5.7
@@ -1193,6 +1195,142 @@ importers:
       typescript-eslint-parser: 22.0.0_e4zyhrvfnqudwdx5bevnvkluy4
       ws: 7.5.7
 
+<<<<<<< HEAD
+=======
+  libs/ledger-live-common/cli:
+    specifiers:
+      '@ledgerhq/cryptoassets': workspace:^
+      '@ledgerhq/errors': workspace:^
+      '@ledgerhq/hw-app-btc': workspace:^
+      '@ledgerhq/hw-transport-http': workspace:^
+      '@ledgerhq/hw-transport-mocker': workspace:^
+      '@ledgerhq/hw-transport-node-ble': workspace:^
+      '@ledgerhq/hw-transport-node-hid': workspace:^
+      '@ledgerhq/hw-transport-node-speculos': workspace:^
+      '@ledgerhq/live-common': workspace:^
+      '@ledgerhq/logs': workspace:^
+      '@types/command-line-args': ^5.2.0
+      '@types/lodash': ^4.14.177
+      '@types/node': ^17.0.15
+      '@walletconnect/client': ^1.7.1
+      asciichart: ^1.5.25
+      bignumber.js: ^9.0.1
+      bip39: ^3.0.4
+      body-parser: ^1.19.1
+      command-line-args: ^5.2.1
+      cors: ^2.8.5
+      expo-modules-autolinking: ^0.5.5
+      express: ^4.17.2
+      lodash: ^4.17.21
+      lodash.product: ^18.9.19
+      qrcode-terminal: ^0.12.0
+      qrloop: ^1.2.0
+      react: ^17.0.2
+      react-dom: ^17.0.2
+      react-redux: ^7.2.6
+      rxjs: ^6.6.7
+      ts-node: ^10.4.0
+      typescript: ^4.5.5
+      winston: ^3.5.1
+    dependencies:
+      '@ledgerhq/cryptoassets': link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/errors': link:../../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-btc': link:../../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/hw-transport-http': link:../../ledgerjs/packages/hw-transport-http
+      '@ledgerhq/hw-transport-mocker': link:../../ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/hw-transport-node-hid': link:../../ledgerjs/packages/hw-transport-node-hid
+      '@ledgerhq/hw-transport-node-speculos': link:../../ledgerjs/packages/hw-transport-node-speculos
+      '@ledgerhq/live-common': link:..
+      '@ledgerhq/logs': link:../../ledgerjs/packages/logs
+      '@walletconnect/client': 1.7.8
+      asciichart: 1.5.25
+      bignumber.js: 9.0.2
+      bip39: 3.0.4
+      body-parser: 1.20.0
+      command-line-args: 5.2.1
+      cors: 2.8.5
+      expo-modules-autolinking: 0.5.5
+      express: 4.18.1
+      lodash: 4.17.21
+      lodash.product: 18.9.19_lodash@4.17.21
+      qrcode-terminal: 0.12.0
+      qrloop: 1.2.0
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-redux: 7.2.8_sfoxds7t5ydpegc3knd667wn6m
+      rxjs: 6.6.7
+      winston: 3.7.2
+    optionalDependencies:
+      '@ledgerhq/hw-transport-node-ble': link:../../ledgerjs/packages/hw-transport-node-ble
+    devDependencies:
+      '@types/command-line-args': 5.2.0
+      '@types/lodash': 4.14.182
+      '@types/node': 17.0.32
+      ts-node: 10.7.0_sm5zkxj4s52nbddwl76qwfh6ya
+      typescript: 4.6.4
+
+  libs/ledger-live-common/tools:
+    specifiers:
+      '@babel/plugin-proposal-class-properties': ^7.13.0
+      '@babel/plugin-syntax-import-meta': ^7.10.1
+      '@ledgerhq/cryptoassets': workspace:^
+      '@ledgerhq/hw-transport': workspace:^
+      '@ledgerhq/hw-transport-http': workspace:^
+      '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
+      '@ledgerhq/hw-transport-web-ble': workspace:^
+      '@ledgerhq/hw-transport-webhid': workspace:^
+      '@ledgerhq/hw-transport-webusb': workspace:^
+      '@ledgerhq/live-common': workspace:^
+      '@material-ui/core': ^4.11.3
+      '@open-wc/webpack-import-meta-loader': ^0.4.7
+      babel-polyfill: ^6.26.0
+      bignumber.js: ^9.0.1
+      flow-bin: ^0.145.0
+      prop-types: ^15.8.1
+      qrcode: ^1.4.2
+      react: ^17.0.2
+      react-app-rewired: ^2.1.8
+      react-dom: ^17.0.2
+      react-inspector: ^4.0.1
+      react-router: ^5.2.0
+      react-router-dom: ^5.2.0
+      react-scripts: 3.4.3
+      react-select: ^5.3.2
+      react-table: ^6.11.4
+      styled-components: ^4.4.0
+      webpack: '4.42'
+    dependencies:
+      '@ledgerhq/cryptoassets': link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/hw-transport': link:../../ledgerjs/packages/hw-transport
+      '@ledgerhq/hw-transport-http': link:../../ledgerjs/packages/hw-transport-http
+      '@ledgerhq/hw-transport-u2f': 5.36.0-deprecated
+      '@ledgerhq/hw-transport-web-ble': link:../../ledgerjs/packages/hw-transport-web-ble
+      '@ledgerhq/hw-transport-webhid': link:../../ledgerjs/packages/hw-transport-webhid
+      '@ledgerhq/hw-transport-webusb': link:../../ledgerjs/packages/hw-transport-webusb
+      '@ledgerhq/live-common': link:..
+      '@material-ui/core': 4.12.4_sfoxds7t5ydpegc3knd667wn6m
+      babel-polyfill: 6.26.0
+      bignumber.js: 9.0.2
+      flow-bin: 0.145.0
+      prop-types: 15.8.1
+      qrcode: 1.5.0
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-inspector: 4.0.1_react@17.0.2
+      react-router: 5.3.1_react@17.0.2
+      react-router-dom: 5.3.1_react@17.0.2
+      react-scripts: 3.4.3_react@17.0.2
+      react-select: 5.3.2_sfoxds7t5ydpegc3knd667wn6m
+      react-table: 6.11.5_oxfzelaz5ynxsop2v2nu2h2m64
+      styled-components: 4.4.1_sfoxds7t5ydpegc3knd667wn6m
+      webpack: 4.42.1
+    devDependencies:
+      '@babel/plugin-proposal-class-properties': 7.16.7
+      '@babel/plugin-syntax-import-meta': 7.10.4
+      '@open-wc/webpack-import-meta-loader': 0.4.7
+      react-app-rewired: 2.2.1_react-scripts@3.4.3
+
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
   libs/ledgerjs:
     specifiers:
       '@typescript-eslint/eslint-plugin': ^4.33.0
@@ -2656,6 +2794,153 @@ importers:
       tiny-glob: 0.2.9
       typescript: 4.6.4
 
+  tests/bot-rn:
+    specifiers:
+      '@babel/core': ^7.12.9
+      '@babel/preset-env': ^7.15.8
+      '@babel/runtime': ^7.12.5
+      '@jest/reporters': ^28.1.0
+      '@ledgerhq/devices': workspace:^
+      '@ledgerhq/live-common': workspace:^
+      '@react-native-async-storage/async-storage': ^1.16.2
+      '@react-native-community/cli-platform-android': ^6.3.0
+      '@react-native-community/cli-platform-ios': ^6.0.1
+      '@react-native-community/eslint-config': ^2.0.0
+      '@tradle/react-native-http': ^2.0.0
+      '@types/jest': ^26.0.23
+      '@types/react-native': ^0.66.15
+      '@types/react-test-renderer': ^17.0.1
+      '@typescript-eslint/eslint-plugin': ^5.7.0
+      '@typescript-eslint/parser': ^5.7.0
+      assert: ^1.1.1
+      asyncstorage-down: ^4.2.0
+      babel-jest: ^26.6.3
+      babel-plugin-module-resolver: ^4.1.0
+      babel-plugin-transform-inline-environment-variables: ^0.4.3
+      browserify-zlib: ~0.1.4
+      buffer: ^4.9.1
+      console-browserify: ^1.1.0
+      constants-browserify: ^1.0.0
+      cross-env: ^7.0.3
+      detox: ^19.7.0
+      dns.js: ^1.0.1
+      domain-browser: ^1.1.1
+      eslint: ^7.14.0
+      events: ^1.0.0
+      expo: ^43.0.1
+      expo-modules-autolinking: ^0.5.5
+      expo-modules-core: ^0.6.5
+      hermes-engine: 0.9.0
+      https-browserify: ~0.0.0
+      jest: ^28.1.0
+      jest-circus: ^28.1.0
+      jest-config: ^28.1.0
+      jest-environment-node: ^28.1.0
+      metro: ^0.67.0
+      metro-extra-config: workspace:*
+      metro-minify-uglify: ^0.67.0
+      metro-react-native-babel-preset: ^0.67.0
+      metro-resolver: ^0.67.0
+      metro-transform-worker: ^0.67.0
+      node-libs-react-native: ^1.2.1
+      path-browserify: 0.0.0
+      process: ^0.11.0
+      punycode: ^1.2.4
+      querystring-es3: ~0.2.0
+      react: 17.0.2
+      react-native: 0.67.3
+      react-native-config: ^1.4.5
+      react-native-crypto: ^2.2.0
+      react-native-level-fs: ^3.0.0
+      react-native-os: ^1.0.1
+      react-native-randombytes: ^3.6.1
+      react-native-tcp: ^4.0.0
+      react-test-renderer: 17.0.2
+      readable-stream: 1.0.33
+      rn-nodeify: ^10.3.0
+      stream-browserify: ^1.0.0
+      string_decoder: ~0.10.25
+      text-encoding-polyfill: ^0.6.7
+      timers-browserify: ^1.0.1
+      tty-browserify: 0.0.0
+      typescript: ^4.4.4
+      url: ~0.10.1
+      util: ~0.10.3
+      vm-browserify: 0.0.4
+    dependencies:
+      '@jest/reporters': 28.1.0_metro@0.67.0
+      '@ledgerhq/devices': link:../../libs/ledgerjs/packages/devices
+      '@ledgerhq/live-common': link:../../libs/ledger-live-common
+      '@react-native-async-storage/async-storage': 1.17.4_react-native@0.67.3
+      '@tradle/react-native-http': 2.0.1
+      assert: 1.5.0
+      asyncstorage-down: 4.2.0
+      babel-plugin-transform-inline-environment-variables: 0.4.4
+      browserify-zlib: 0.1.4
+      buffer: 4.9.2
+      console-browserify: 1.2.0
+      constants-browserify: 1.0.0
+      dns.js: 1.0.1
+      domain-browser: 1.2.0
+      events: 1.1.1
+      expo: 43.0.5_@babel+core@7.17.10
+      expo-modules-autolinking: 0.5.5
+      expo-modules-core: 0.6.5
+      hermes-engine: 0.9.0
+      https-browserify: 0.0.1
+      jest-circus: 28.1.0_metro@0.67.0
+      jest-config: 28.1.0_metro@0.67.0
+      jest-environment-node: 28.1.0
+      node-libs-react-native: 1.2.1
+      path-browserify: 0.0.0
+      process: 0.11.10
+      punycode: 1.4.1
+      querystring-es3: 0.2.1
+      react: 17.0.2
+      react-native: 0.67.3_2u55lygy5jd3vjnlyqpcaoyqlu
+      react-native-config: 1.4.5
+      react-native-crypto: 2.2.0_v72yjuw4rl7vyuxwtxvpeodopu
+      react-native-level-fs: 3.0.1_asyncstorage-down@4.2.0
+      react-native-os: 1.2.6
+      react-native-randombytes: 3.6.1
+      react-native-tcp: 4.0.0_react-native@0.67.3
+      readable-stream: 1.0.33
+      stream-browserify: 1.0.0
+      string_decoder: 0.10.31
+      text-encoding-polyfill: 0.6.7
+      timers-browserify: 1.4.2
+      tty-browserify: 0.0.0
+      url: 0.10.3
+      util: 0.10.4
+      vm-browserify: 0.0.4
+    devDependencies:
+      '@babel/core': 7.17.10
+      '@babel/preset-env': 7.17.10_@babel+core@7.17.10
+      '@babel/runtime': 7.17.9
+      '@react-native-community/cli-platform-android': 6.3.0
+      '@react-native-community/cli-platform-ios': 6.2.0
+      '@react-native-community/eslint-config': 2.0.0_pnkomzoudqnw52fnz27iasq6mu
+      '@types/jest': 26.0.24
+      '@types/react-native': 0.66.18
+      '@types/react-test-renderer': 17.0.2
+      '@typescript-eslint/eslint-plugin': 5.23.0_mb64btdtw33wm6tnwldrxlgg2m
+      '@typescript-eslint/parser': 5.23.0_e4zyhrvfnqudwdx5bevnvkluy4
+      babel-jest: 26.6.3_epmq4ny5eiwbyxkub5iqcapase
+      babel-plugin-module-resolver: 4.1.0
+      cross-env: 7.0.3
+      detox: 19.7.0_jest@28.1.0
+      eslint: 7.32.0
+      jest: 28.1.0_metro@0.67.0
+      metro: 0.67.0
+      metro-extra-config: link:../../tools/metro-extra-config
+      metro-minify-uglify: 0.67.0
+      metro-react-native-babel-preset: 0.67.0
+      metro-resolver: 0.67.0
+      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
+      react-test-renderer: 17.0.2_react@17.0.2
+      rn-nodeify: 10.3.0
+      typescript: 4.6.4
+
   tools/actions:
     specifiers:
       '@types/node': ^17.0.31
@@ -3060,7 +3345,11 @@ packages:
   /@babel/code-frame/7.8.3:
     resolution: {integrity: sha512-a9gxpmdXtZEInkCSHUJDLHZVBgb1QS0jhss4cPP93EW7s+uC5bikET2twEF3KV+7rDblJcmNvTR7VJejqd2C2g==}
     dependencies:
+<<<<<<< HEAD
       '@babel/highlight': 7.17.12
+=======
+      '@babel/highlight': 7.17.9
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/compat-data/7.17.10:
     resolution: {integrity: sha512-GZt/TCsG70Ms19gfZO1tM4CVnXsPgEPBCpJu+Qz3L0LUDsY5nZqFZglIoPC1kIYOtNBZlrnFT+klg12vFGZXrw==}
@@ -3257,6 +3546,7 @@ packages:
       '@babel/helper-validator-option': 7.16.7
       browserslist: 4.20.3
       semver: 6.3.0
+<<<<<<< HEAD
 
   /@babel/helper-compilation-targets/7.18.2_@babel+core@7.17.10:
     resolution: {integrity: sha512-s1jnPotJS9uQnzFtiZVBUxe67CuBa679oWFHpxYYnTpRL/1ffhyX44R9uYiXoa/pLXcY9H2moJta0iaanlk/rQ==}
@@ -3293,6 +3583,8 @@ packages:
       '@babel/helper-validator-option': 7.16.7
       browserslist: 4.21.0
       semver: 6.3.0
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/helper-create-class-features-plugin/7.17.9:
     resolution: {integrity: sha512-kUjip3gruz6AJKOq5i3nC6CoCEEF/oHH3cp6tOZhB+IyyyPyW0g1Gfsxn3mkk6S08pIA2y8GQh609v9G/5sHVQ==}
@@ -3695,7 +3987,11 @@ packages:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.16.7
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
+<<<<<<< HEAD
       '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.18.5
+=======
+      '@babel/plugin-proposal-optional-chaining': 7.16.7_@babel+core@7.9.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-async-generator-functions/7.16.8_@babel+core@7.17.10:
     resolution: {integrity: sha512-71YHIvMuiuqWJQkebWJtdhQTfd4Q4mF76q2IX37uZPkG9+olBxsX+rH1vkhFto4UeJZ9dPY2s+mDvhDm1u2BGQ==}
@@ -3905,7 +4201,11 @@ packages:
     dependencies:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.16.7
+<<<<<<< HEAD
       '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.18.5
+=======
+      '@babel/plugin-syntax-export-namespace-from': 7.8.3_@babel+core@7.9.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-json-strings/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-lNZ3EEggsGY78JavgbHsK9u5P3pQaW7k4axlgFLYkMd7UBsiNahCITShLjNQschPyjtO6dADrL24757IdhBrsQ==}
@@ -3925,7 +4225,11 @@ packages:
     dependencies:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.16.7
+<<<<<<< HEAD
       '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.18.5
+=======
+      '@babel/plugin-syntax-json-strings': 7.8.3_@babel+core@7.9.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-json-strings/7.16.7_@babel+core@7.9.0:
     resolution: {integrity: sha512-lNZ3EEggsGY78JavgbHsK9u5P3pQaW7k4axlgFLYkMd7UBsiNahCITShLjNQschPyjtO6dADrL24757IdhBrsQ==}
@@ -3955,7 +4259,11 @@ packages:
     dependencies:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.16.7
+<<<<<<< HEAD
       '@babel/plugin-syntax-logical-assignment-operators': 7.10.4_@babel+core@7.18.5
+=======
+      '@babel/plugin-syntax-logical-assignment-operators': 7.10.4_@babel+core@7.9.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-nullish-coalescing-operator/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-aUOrYU3EVtjf62jQrCj63pYZ7k6vns2h/DQvHPWGmsJRYzWXZ6/AsfgpiRy6XiuIDADhJzP2Q9MwSMKauBQ+UQ==}
@@ -4156,6 +4464,22 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.17.12
       '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.9.0
+<<<<<<< HEAD
+=======
+
+  /@babel/plugin-proposal-private-methods/7.16.11_@babel+core@7.16.12:
+    resolution: {integrity: sha512-F/2uAkPlXDr8+BHpZvo19w3hLFKge+k75XUprE6jaqKxjGkSYcK+4c+bup5PdW/7W/Rpjwql7FTVEDW+fRAQsw==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.16.12
+      '@babel/helper-plugin-utils': 7.16.7
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-private-methods/7.16.11_@babel+core@7.17.10:
     resolution: {integrity: sha512-F/2uAkPlXDr8+BHpZvo19w3hLFKge+k75XUprE6jaqKxjGkSYcK+4c+bup5PdW/7W/Rpjwql7FTVEDW+fRAQsw==}
@@ -4180,6 +4504,24 @@ packages:
       '@babel/helper-plugin-utils': 7.16.7
     transitivePeerDependencies:
       - supports-color
+<<<<<<< HEAD
+=======
+
+  /@babel/plugin-proposal-private-property-in-object/7.16.7_@babel+core@7.16.12:
+    resolution: {integrity: sha512-rMQkjcOFbm+ufe3bTZLyOfsOUOxyvLXZJCTARhJr+8UMSoZmqTe1K1BgkFcrW37rAchWg57yI69ORxiWvUINuQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-create-class-features-plugin': 7.17.9_@babel+core@7.16.12
+      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/plugin-syntax-private-property-in-object': 7.14.5_@babel+core@7.16.12
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-proposal-private-property-in-object/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-rMQkjcOFbm+ufe3bTZLyOfsOUOxyvLXZJCTARhJr+8UMSoZmqTe1K1BgkFcrW37rAchWg57yI69ORxiWvUINuQ==}
@@ -4270,7 +4612,6 @@ packages:
     dependencies:
       '@babel/core': 7.17.10
       '@babel/helper-plugin-utils': 7.16.7
-    dev: true
 
   /@babel/plugin-syntax-bigint/7.8.3_@babel+core@7.18.5:
     resolution: {integrity: sha512-wnTnFlG+YxQm3vDxpGE57Pj0srRU4sHE/mDkt1qv2YJJSeUAec2ma4WLUnUPeKjyrfntVwe/N6dCXpU+zL3Npg==}
@@ -4331,7 +4672,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-syntax-dynamic-import/7.8.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==}
@@ -4416,7 +4761,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-syntax-import-meta/7.10.4:
     resolution: {integrity: sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==}
@@ -4432,8 +4781,12 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.17.10
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
     dev: true
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-syntax-import-meta/7.10.4_@babel+core@7.18.5:
     resolution: {integrity: sha512-Yqfm+XDx0+Prh3VSeEQCPU81yC+JWZ2pDPFSS4ZdpfZhp4MkFMaDC1UqseovEKwSUpnIL7+vK+Clp7bfh0iD7g==}
@@ -4738,6 +5091,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.16.7
+<<<<<<< HEAD
 
   /@babel/plugin-syntax-typescript/7.17.12_@babel+core@7.18.5:
     resolution: {integrity: sha512-TYY0SXFiO31YXtNg3HtFwNJHjLsAyIIhAhNWkQ5whPPS7HWUFlg9z0Ta4qAQNjQbP1wsSt/oKkmZ/4/WWdMUpw==}
@@ -4748,6 +5102,8 @@ packages:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.17.12
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-transform-arrow-functions/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-9ffkFFMbvzTvv+7dTp/66xvZAWASuPD5Tl9LK3Z9vhOmANo6j94rik+5YMBt4CwHVMWLWpMsriIc2zsa3WW3xQ==}
@@ -5547,8 +5903,13 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/core': 7.9.0
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-transform-react-display-name/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-qgIg8BcZgd0G/Cz916D5+9kqX0c7nPZyXaP8R2tLNN5tkyIZdG5fEwBrxwplzSnjC1jvQmyMNVwUCZPcbGY7Pg==}
@@ -5583,7 +5944,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-transform-react-jsx-development/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-RMvQWvpla+xy6MlBpPlrKZCMRs2AGiHOGHY3xRwl0pEeim348dDyxeH4xBsMPbIMhujeq7ihE702eM2Ew0Wo+A==}
@@ -5638,7 +6003,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-transform-react-jsx-source/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-rONFiQz9vgbsnaMtQlZCjIRwhJvlrPET8TabIUK2hzlXw9B9s2Ieaxte1SCOOXMbWRHodbKixNf3BLcWVOQ8Bw==}
@@ -5665,7 +6034,11 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
+<<<<<<< HEAD
       '@babel/helper-plugin-utils': 7.17.12
+=======
+      '@babel/helper-plugin-utils': 7.16.7
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/plugin-transform-react-jsx/7.17.3_@babel+core@7.17.10:
     resolution: {integrity: sha512-9tjBm4O07f7mzKSIlEmPdiE6ub7kfIe6Cd+w+oQebpATfTQMAgW+YOuWxogbKVTulA+MEO7byMeIUtQ1z+z+ZQ==}
@@ -6365,10 +6738,17 @@ packages:
       '@babel/core': 7.18.5
       '@babel/helper-plugin-utils': 7.16.7
       '@babel/helper-validator-option': 7.16.7
+<<<<<<< HEAD
       '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.18.5
       '@babel/plugin-transform-react-jsx': 7.17.3_@babel+core@7.18.5
       '@babel/plugin-transform-react-jsx-development': 7.16.7_@babel+core@7.18.5
       '@babel/plugin-transform-react-pure-annotations': 7.16.7_@babel+core@7.18.5
+=======
+      '@babel/plugin-transform-react-display-name': 7.16.7_@babel+core@7.9.0
+      '@babel/plugin-transform-react-jsx': 7.17.3_@babel+core@7.9.0
+      '@babel/plugin-transform-react-jsx-development': 7.16.7_@babel+core@7.9.0
+      '@babel/plugin-transform-react-pure-annotations': 7.16.7_@babel+core@7.9.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/preset-react/7.9.1_@babel+core@7.9.0:
     resolution: {integrity: sha512-aJBYF23MPj0RNdp/4bHnAP0NVqqZRr9kl0NAOP4nJCex6OYVio59+dnQzsAWFuogdLyeaKA1hmfUIVZkY5J+TQ==}
@@ -6382,6 +6762,23 @@ packages:
       '@babel/plugin-transform-react-jsx-development': 7.16.7_@babel+core@7.9.0
       '@babel/plugin-transform-react-jsx-self': 7.16.7_@babel+core@7.9.0
       '@babel/plugin-transform-react-jsx-source': 7.16.7_@babel+core@7.9.0
+<<<<<<< HEAD
+=======
+
+  /@babel/preset-typescript/7.16.7_@babel+core@7.16.12:
+    resolution: {integrity: sha512-WbVEmgXdIyvzB77AQjGBEyYPZx+8tTsO50XtfozQrkW8QB2rLJpH2lgx0TRw5EJrBxOZQ+wCcyPVQvS8tjEHpQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.16.12
+      '@babel/helper-plugin-utils': 7.16.7
+      '@babel/helper-validator-option': 7.16.7
+      '@babel/plugin-transform-typescript': 7.16.8_@babel+core@7.16.12
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@babel/preset-typescript/7.16.7_@babel+core@7.17.10:
     resolution: {integrity: sha512-WbVEmgXdIyvzB77AQjGBEyYPZx+8tTsO50XtfozQrkW8QB2rLJpH2lgx0TRw5EJrBxOZQ+wCcyPVQvS8tjEHpQ==}
@@ -6555,7 +6952,6 @@ packages:
 
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-    dev: true
 
   /@cardano-foundation/ledgerjs-hw-app-cardano/5.0.0:
     resolution: {integrity: sha512-7hGGG1WqDnNCizg//UGBljDyM3qT9/MFdfH8vrnR3M1EQ34PzKgkqWlrQe245EwzHEpvOb7d7hjWvtrK8psNdQ==}
@@ -9186,12 +9582,10 @@ packages:
       get-package-type: 0.1.0
       js-yaml: 3.14.1
       resolve-from: 5.0.0
-    dev: true
 
   /@istanbuljs/schema/0.1.3:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
-    dev: true
 
   /@jest/console/24.9.0:
     resolution: {integrity: sha512-Zuj6b8TnKXi3q4ymac8EQfc3ea/uhLeCGThFqXeC8H9/raaH8ARPUTdId+XyGd03Z4In0/VjD2OYFcBF09fNLQ==}
@@ -9235,7 +9629,6 @@ packages:
       jest-message-util: 28.1.0
       jest-util: 28.1.0
       slash: 3.0.0
-    dev: true
 
   /@jest/console/28.1.1:
     resolution: {integrity: sha512-0RiUocPVFEm3WRMOStIHbRWllG6iW6E3/gUPnf4lkrVFyXIIDeCe+vlKeYyFOMhB2EPE6FLFCNADSOOQMaqvyA==}
@@ -9464,8 +9857,13 @@ packages:
       - ts-node
     dev: true
 
+<<<<<<< HEAD
   /@jest/core/28.1.1_ts-node@10.7.0:
     resolution: {integrity: sha512-3pYsBoZZ42tXMdlcFeCc/0j9kOlK7MYuXs2B1QbvDgMoW1K9NJ4G/VYvIbMb26iqlkTfPHo7SC2JgjDOk/mxXw==}
+=======
+  /@jest/core/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-/2PTt0ywhjZ4NwNO4bUqD9IVJfmFVhVKGlhvSpmEfUCuxYf/3NHcKmRFI+I71lYzbTT3wMuYpETDCTHo81gC/g==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
       node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
@@ -9473,6 +9871,7 @@ packages:
       node-notifier:
         optional: true
     dependencies:
+<<<<<<< HEAD
       '@jest/console': 28.1.1
       '@jest/reporters': 28.1.1
       '@jest/test-result': 28.1.1
@@ -9499,6 +9898,34 @@ packages:
       jest-watcher: 28.1.1
       micromatch: 4.0.5
       pretty-format: 28.1.1
+=======
+      '@jest/console': 28.1.0
+      '@jest/reporters': 28.1.0_metro@0.67.0
+      '@jest/test-result': 28.1.0
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+      '@types/node': 17.0.32
+      ansi-escapes: 4.3.2
+      chalk: 4.1.2
+      ci-info: 3.3.1
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      jest-changed-files: 28.0.2
+      jest-config: 28.1.0_yf3cg2odbh43cd2z24nrd3jmti
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-message-util: 28.1.0
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0_metro@0.67.0
+      jest-resolve-dependencies: 28.1.0_metro@0.67.0
+      jest-runner: 28.1.0_metro@0.67.0
+      jest-runtime: 28.1.0_metro@0.67.0
+      jest-snapshot: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      jest-watcher: 28.1.0
+      micromatch: 4.0.5
+      pretty-format: 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       rimraf: 3.0.2
       slash: 3.0.0
       strip-ansi: 6.0.1
@@ -9560,7 +9987,6 @@ packages:
       '@jest/types': 28.1.0
       '@types/node': 17.0.32
       jest-mock: 28.1.0
-    dev: true
 
   /@jest/environment/28.1.1:
     resolution: {integrity: sha512-9auVQ2GzQ7nrU+lAr8KyY838YahElTX9HVjbQPPS2XjlxQ+na18G113OoBhyBGBtD6ZnO/SrUy5WR8EzOj1/Uw==}
@@ -9577,7 +10003,6 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       jest-get-type: 28.0.2
-    dev: true
 
   /@jest/expect-utils/28.1.1:
     resolution: {integrity: sha512-n/ghlvdhCdMI/hTcnn4qV57kQuV9OTsZzH1TTCVARANKhl6hXJqLKUkwX69ftMGpsbpt96SsDD8n8LD2d9+FRw==}
@@ -9597,6 +10022,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /@jest/expect/28.1.1:
     resolution: {integrity: sha512-/+tQprrFoT6lfkMj4mW/mUIfAmmk/+iQPmg7mLDIFOf2lyf7EBHaS+x3RbeR0VZVMe55IvX7QRoT/2aK3AuUXg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -9607,6 +10033,17 @@ packages:
       - metro
       - supports-color
     dev: true
+=======
+  /@jest/expect/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-be9ETznPLaHOmeJqzYNIXv1ADEzENuQonIoobzThOYPuK/6GhrWNIJDVTgBLCrz3Am73PyEU2urQClZp0hLTtA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      expect: 28.1.0
+      jest-snapshot: 28.1.0_metro@0.67.0
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@jest/fake-timers/24.9.0:
     resolution: {integrity: sha512-eWQcNa2YSwzXWIMC5KufBh3oWRIijrQFROsIqt6v/NS9Io/gknw1jsAC9c+ih/RQX4A3O7SeWAhQeN0goKhT9A==}
@@ -9652,7 +10089,6 @@ packages:
       jest-message-util: 28.1.0
       jest-mock: 28.1.0
       jest-util: 28.1.0
-    dev: true
 
   /@jest/fake-timers/28.1.1:
     resolution: {integrity: sha512-BY/3+TyLs5+q87rGWrGUY5f8e8uC3LsVHS9Diz8+FV3ARXL4sNnkLlIB8dvDvRrp+LUCGM+DLqlsYubizGUjIA==}
@@ -9696,6 +10132,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /@jest/globals/28.1.1:
     resolution: {integrity: sha512-dEgl/6v7ToB4vXItdvcltJBgny0xBE6xy6IYQrPJAJggdEinGxCDMivNv7sFzPcTITGquXD6UJwYxfJ/5ZwDSg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -9707,6 +10144,18 @@ packages:
       - metro
       - supports-color
     dev: true
+=======
+  /@jest/globals/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-3m7sTg52OTQR6dPhsEQSxAvU+LOBbMivZBwOvKEZ+Rb+GyxVnXi9HKgOTYkx/S99T8yvh17U4tNNJPIEQmtwYw==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/environment': 28.1.0
+      '@jest/expect': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@jest/reporters/24.9.0:
     resolution: {integrity: sha512-mu4X0yjaHrffOsWmVLzitKmmmWSQ3GGuefgNscUSWNiUNcEOSEQk9k3pERKEQVBb0Cnn88+UESIsZEMH3o88Gw==}
@@ -9890,8 +10339,13 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /@jest/reporters/28.1.1:
     resolution: {integrity: sha512-597Zj4D4d88sZrzM4atEGLuO7SdA/YrOv9SRXHXRNC+/FwPCWxZhBAEzhXoiJzfRwn8zes/EjS8Lo6DouGN5Gg==}
+=======
+  /@jest/reporters/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-qxbFfqap/5QlSpIizH9c/bFCDKsQlM4uAKSOvZrP+nIdrjqre3FmKzpTtYyhsaVcOSNK7TTt2kjm+4BJIjysFA==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
       node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
@@ -9900,41 +10354,63 @@ packages:
         optional: true
     dependencies:
       '@bcoe/v8-coverage': 0.2.3
+<<<<<<< HEAD
       '@jest/console': 28.1.1
       '@jest/test-result': 28.1.1
       '@jest/transform': 28.1.1
       '@jest/types': 28.1.1
+=======
+      '@jest/console': 28.1.0
+      '@jest/test-result': 28.1.0
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       '@jridgewell/trace-mapping': 0.3.13
       '@types/node': 17.0.32
       chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
+<<<<<<< HEAD
       glob: 7.2.3
+=======
+      glob: 7.2.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       graceful-fs: 4.2.10
       istanbul-lib-coverage: 3.2.0
       istanbul-lib-instrument: 5.2.0
       istanbul-lib-report: 3.0.0
       istanbul-lib-source-maps: 4.0.1
       istanbul-reports: 3.1.4
+<<<<<<< HEAD
       jest-message-util: 28.1.1
       jest-util: 28.1.1
       jest-worker: 28.1.1
+=======
+      jest-util: 28.1.0
+      jest-worker: 28.1.0_metro@0.67.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       slash: 3.0.0
       string-length: 4.0.2
       strip-ansi: 6.0.1
       terminal-link: 2.1.1
+<<<<<<< HEAD
       v8-to-istanbul: 9.0.1
     transitivePeerDependencies:
       - metro
       - supports-color
     dev: true
+=======
+      v8-to-istanbul: 9.0.0
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@jest/schemas/28.0.2:
     resolution: {integrity: sha512-YVDJZjd4izeTDkij00vHHAymNXQ6WWsdChFRK86qck6Jpr3DCL5W3Is3vslviRlP+bLuMYRLbdp98amMvqudhA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       '@sinclair/typebox': 0.23.5
-    dev: true
 
   /@jest/source-map/24.9.0:
     resolution: {integrity: sha512-/Xw7xGlsZb4MJzNDgB7PW5crou5JqWiBQaz6xyPd3ArOg2nfn/PunV8+olXbbEZzNl591o5rWKE9BRDaFAuIBg==}
@@ -9969,7 +10445,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.13
       callsites: 3.1.0
       graceful-fs: 4.2.10
-    dev: true
 
   /@jest/test-result/24.9.0:
     resolution: {integrity: sha512-XEFrHbBonBJ8dGp2JmF8kP/nQI/ImPpygKHwQ/SY+es59Z3L5PI4Qb9TQQMAEeYsThG1xF0k6tmG0tIKATNiiA==}
@@ -10007,7 +10482,6 @@ packages:
       '@jest/types': 28.1.0
       '@types/istanbul-lib-coverage': 2.0.4
       collect-v8-coverage: 1.0.1
-    dev: true
 
   /@jest/test-result/28.1.1:
     resolution: {integrity: sha512-hPmkugBktqL6rRzwWAtp1JtYT4VHwv8OQ+9lE5Gymj6dHzubI/oJHMUpPOt8NrdVWSrz9S7bHjJUmv2ggFoUNQ==}
@@ -10089,6 +10563,7 @@ packages:
       - metro
     dev: true
 
+<<<<<<< HEAD
   /@jest/test-sequencer/28.1.1:
     resolution: {integrity: sha512-nuL+dNSVMcWB7OOtgb0EGH5AjO4UBCt68SLP08rwmC+iRhyuJWS9MtZ/MpipxFwKAlHFftbMsydXqWre8B0+XA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -10100,6 +10575,18 @@ packages:
     transitivePeerDependencies:
       - metro
     dev: true
+=======
+  /@jest/test-sequencer/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-tZCEiVWlWNTs/2iK9yi6o3AlMfbbYgV4uuZInSVdzZ7ftpHZhCMuhvk2HLYhCZzLgPFQ9MnM1YaxMnh3TILFiQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/test-result': 28.1.0
+      graceful-fs: 4.2.10
+      jest-haste-map: 28.1.0_metro@0.67.0
+      slash: 3.0.0
+    transitivePeerDependencies:
+      - metro
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@jest/transform/24.9.0:
     resolution: {integrity: sha512-TcQUmyNRxV94S0QpMOnZl0++6RMiqpbH/ZMccFB/amku6Uwvyb1cjYX7xkp5nGNkbX4QPH/FcB6q1HBTHynLmQ==}
@@ -10245,21 +10732,36 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /@jest/transform/28.1.1:
     resolution: {integrity: sha512-PkfaTUuvjUarl1EDr5ZQcCA++oXkFCP9QFUkG0yVKVmNObjhrqDy0kbMpMebfHWm3CCDHjYNem9eUSH8suVNHQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       '@babel/core': 7.18.5
       '@jest/types': 28.1.1
+=======
+  /@jest/transform/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-omy2xe5WxlAfqmsTjTPxw+iXRTRnf+NtX0ToG+4S0tABeb4KsKmPUHq5UBuwunHg3tJRwgEQhEp0M/8oiatLEA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@babel/core': 7.17.10
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       '@jridgewell/trace-mapping': 0.3.13
       babel-plugin-istanbul: 6.1.1
       chalk: 4.1.2
       convert-source-map: 1.8.0
       fast-json-stable-stringify: 2.1.0
       graceful-fs: 4.2.10
+<<<<<<< HEAD
       jest-haste-map: 28.1.1
       jest-regex-util: 28.0.2
       jest-util: 28.1.1
+=======
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-regex-util: 28.0.2
+      jest-util: 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       micromatch: 4.0.5
       pirates: 4.0.5
       slash: 3.0.0
@@ -10267,7 +10769,10 @@ packages:
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@jest/types/24.9.0:
     resolution: {integrity: sha512-XKK7ze1apu5JWQ5eZjHITP66AX+QsLlbaJRBGYr8pNzwcAE2JVkwnf0yqjHTsDRcjR0mujy/NmZMXw5kl+kGBw==}
@@ -10307,7 +10812,6 @@ packages:
       '@types/node': 17.0.32
       '@types/yargs': 17.0.10
       chalk: 4.1.2
-    dev: true
 
   /@jest/types/28.1.1:
     resolution: {integrity: sha512-vRXVqSg1VhDnB8bWcmvLzmg0Bt9CRKVgHPXqYwvWMX3TvAjeO+nRuK6+VdTKCtWOvYlmkF/HqNAL/z+N3B53Kw==}
@@ -12145,6 +12649,31 @@ packages:
       - typescript
     dev: true
 
+  /@react-native-community/eslint-config/2.0.0_pnkomzoudqnw52fnz27iasq6mu:
+    resolution: {integrity: sha512-vHaMMfvMp9BWCQQ0lNIXibOJTcXIbYUQ8dSUsMOsrXgVkeVQJj88OwrKS00rQyqwMaC4/a6HuDiFzYUkGKOpVg==}
+    peerDependencies:
+      eslint: '>=6'
+    dependencies:
+      '@react-native-community/eslint-plugin': 1.2.0
+      '@typescript-eslint/eslint-plugin': 3.10.1_3z7vojl37e4oxvwlh4ugr4qrou
+      '@typescript-eslint/parser': 3.10.1_e4zyhrvfnqudwdx5bevnvkluy4
+      babel-eslint: 10.1.0_eslint@7.32.0
+      eslint: 7.32.0
+      eslint-config-prettier: 6.15.0_eslint@7.32.0
+      eslint-plugin-eslint-comments: 3.2.0_eslint@7.32.0
+      eslint-plugin-flowtype: 2.50.3_eslint@7.32.0
+      eslint-plugin-jest: 22.4.1_eslint@7.32.0+jest@28.1.0
+      eslint-plugin-prettier: 3.1.2_lk2fkjavihlcu7p5a3tdxfycz4
+      eslint-plugin-react: 7.29.4_eslint@7.32.0
+      eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
+      eslint-plugin-react-native: 3.11.0_eslint@7.32.0
+      prettier: 2.6.2
+    transitivePeerDependencies:
+      - jest
+      - supports-color
+      - typescript
+    dev: true
+
   /@react-native-community/eslint-config/3.0.1_hcfsmds2fshutdssjqluwm76uu:
     resolution: {integrity: sha512-h0MRsaHkyfoQjEiTjG3a+Ie/p6AmQNAHXpYrVhtYMZNRF26TCwNOsQNp4/13QhKAq6vhS8EJppge0P43GnPmfQ==}
     peerDependencies:
@@ -12747,7 +13276,6 @@ packages:
 
   /@sinclair/typebox/0.23.5:
     resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
-    dev: true
 
   /@sindresorhus/is/0.14.0:
     resolution: {integrity: sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==}
@@ -12767,7 +13295,6 @@ packages:
     resolution: {integrity: sha512-xkNcLAn/wZaX14RPlwizcKicDk9G3F8m2nU3L7Ukm5zBgTwiT0wsoFAHx9Jq56fJA1z/7uKGtCRu16sOUCLIHQ==}
     dependencies:
       type-detect: 4.0.8
-    dev: true
 
   /@sinonjs/fake-timers/6.0.1:
     resolution: {integrity: sha512-MZPUxrmFubI36XS1DI3qmI0YdN1gks62JtFZvxR67ljjSNCeK6U08Zx4msEWOXuofgqUt6zPHSi1H9fbjR/NRA==}
@@ -12785,7 +13312,6 @@ packages:
     resolution: {integrity: sha512-BPS4ynJW/o92PUR4wgriz2Ud5gpST5vz6GQfMixEDK0Z8ZCUv2M7SkBLykH56T++Xs+8ln9zTGbOvNGIe02/jw==}
     dependencies:
       '@sinonjs/commons': 1.8.3
-    dev: true
 
   /@solana/buffer-layout-utils/0.2.0:
     resolution: {integrity: sha512-szG4sxgJGktbuZYDg2FfNmkMi0DYQoVjN2h7ta1W1hPrwzarcFLBq9UpX1UjNXsNpT9dn+chgprtWGioUAr4/g==}
@@ -16420,7 +16946,11 @@ packages:
     resolution: {integrity: sha512-JioXclZGhFIDL3ddn4Kiq8qEqYM2PyDKV0aYno8+IXTLuYt6TOgHUbUAAFvqtb0Xn37NwP0BTHglejFoYr8RZg==}
     engines: {node: '>=8'}
     dependencies:
+<<<<<<< HEAD
       '@babel/types': 7.18.4
+=======
+      '@babel/types': 7.17.10
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /@svgr/hast-util-to-babel-ast/5.5.0:
     resolution: {integrity: sha512-cAaR/CAiZRB8GP32N+1jocovUtvlj0+e65TB50/6Lcime+EA49m/8l+P2ko+XPJ4dw3xaPS3jOL4F2X4KWxoeQ==}
@@ -16632,7 +17162,7 @@ packages:
     dev: true
 
   /@tradle/react-native-http/2.0.1:
-    resolution: {integrity: sha1-rxniQOHlgL+iSVY5JNG+RyaG9Is=}
+    resolution: {integrity: sha512-pBLa/mlkD5HE4e8ndF6l8gj4ZUVYlrpRbrODeuxL0+ZFJ0TmBvQ9+bUNy8gNdWTS6kik2fW+u7eiYMeGaISkrA==}
     dependencies:
       Base64: 0.2.1
       inherits: 2.0.4
@@ -16963,7 +17493,6 @@ packages:
     dependencies:
       jest-diff: 26.6.2
       pretty-format: 26.6.2
-    dev: false
 
   /@types/jest/27.5.0:
     resolution: {integrity: sha512-9RBFx7r4k+msyj/arpfaa0WOOEcaAZNmN+j80KFbFCoSqCJGHTz7YMAMGQW9Xmqm5w6l5c25vbSjMwlikJi5+g==}
@@ -17159,7 +17688,6 @@ packages:
 
   /@types/prettier/2.6.0:
     resolution: {integrity: sha512-G/AdOadiZhnJp0jXCaBQU449W2h716OW/EoXeYkCytxKL06X1WCXB4DZpp8TpZ8eyIJVS1cw4lrlkkSYU21cDw==}
-    dev: true
 
   /@types/prettier/2.6.3:
     resolution: {integrity: sha512-ymZk3LEC/fsut+/Q5qejp6R9O1rMxz3XaRHDV6kX8MrGAhOSPqVARbDi+EZvInBpw+BnCX3TD240byVkOfQsHg==}
@@ -17373,6 +17901,15 @@ packages:
       '@types/react':
         optional: true
     dev: false
+
+  /@types/react-test-renderer/17.0.2:
+    resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dev: true
 
   /@types/react-test-renderer/17.0.2_@types+react@17.0.45:
     resolution: {integrity: sha512-+F1KONQTBHDBBhbHuT2GNydeMpPuviduXIVJRB7Y4nma4NR5DrTJfMMZ+jbhEHbpwL+Uqhs1WXh4KHiyrtYTPg==}
@@ -17595,7 +18132,6 @@ packages:
     resolution: {integrity: sha512-gmEaFwpj/7f/ROdtIlci1R1VYU1J4j95m8T+Tj3iBgiBFKg1foE/PSl93bBd5T9LDXNPo8UlNN6W0qwD8O5OaA==}
     dependencies:
       '@types/yargs-parser': 21.0.0
-    dev: true
 
   /@types/yauzl/2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
@@ -18904,7 +19440,6 @@ packages:
 
   /@yarnpkg/lockfile/1.1.0:
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
-    dev: false
 
   /@zeit/schemas/2.6.0:
     resolution: {integrity: sha512-uUrgZ8AxS+Lio0fZKAipJjAh415JyrOZowliZAzmnJSsf7piVL5w+G0+gFJ0KSu3QRhvui/7zuvpLz03YjXAhg==}
@@ -18918,7 +19453,7 @@ packages:
     dev: false
 
   /Base64/0.2.1:
-    resolution: {integrity: sha1-ujpCMHCOGGcFBl5mur3Uw1z2ACg=}
+    resolution: {integrity: sha512-reGEWshDmTDQDsCec/HduOO9Wyj6yMOupMfhIf3ugN1TDlK2NQW4DDJSqNNtp380SNcvRfXtO8HSCQot0d0SMw==}
     dev: false
 
   /JSONStream/1.3.5:
@@ -18946,16 +19481,16 @@ packages:
     dev: false
 
   /absolute-path/0.0.0:
-    resolution: {integrity: sha1-p4di+9rftSl76ZsV01p4Wy8JW/c=}
+    resolution: {integrity: sha512-HQiug4c+/s3WOvEnDRxXVmNtSG5s2gJM9r19BTcqjp7BWcE48PB+Y2G6jE65kqI0LpsQeMZygt/b60Gi4KxGyA==}
 
   /abstract-leveldown/0.12.4:
-    resolution: {integrity: sha1-KeGOYy5g5OIh1YECR4UqY9ey5BA=}
+    resolution: {integrity: sha512-TOod9d5RDExo6STLMGa+04HGkl+TlMfbDnTyN93/ETJ9DpQ0DaYLqcMZlbXvdc4W3vVo1Qrl+WhSp8zvDsJ+jA==}
     dependencies:
       xtend: 3.0.0
     dev: false
 
   /abstract-leveldown/2.6.1:
-    resolution: {integrity: sha1-+QFKVmm3RkGOFFFo3qSaBErhWQA=}
+    resolution: {integrity: sha512-z3y8+/Y5i90z+viZGYIg7Tu+muVO4qGHAeug7QQ7oQcMaS1RY+3ccwHTISI/vkVAK9r7snv8lMICNdmrYM/LkA==}
     dependencies:
       xtend: 4.0.2
     dev: false
@@ -19317,7 +19852,7 @@ packages:
     dev: true
 
   /any-promise/1.3.0:
-    resolution: {integrity: sha1-q8av7tzqUugJzcA3au0845Y10X8=}
+    resolution: {integrity: sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==}
 
   /anymatch/2.0.0:
     resolution: {integrity: sha512-5teOsQWABXHHBFP9y3skS5P3d/WfWXpv3FUpy+LorMrNYaT9pI4oLMQX7jzQ2KklNpGpWHzdCXTDT2Y3XGlZBw==}
@@ -19500,7 +20035,7 @@ packages:
     dev: false
 
   /argsarray/0.0.1:
-    resolution: {integrity: sha1-bnIHtOzbObCviDA/pa4ivajfYcs=}
+    resolution: {integrity: sha512-u96dg2GcAKtpTrBdDoFIM7PjcBA+6rSP0OR94MOReNRyUECL6MtQt5XXmRr4qrftYaef9+l5hcpO5te7sML1Cg==}
     dev: false
 
   /argv/0.0.2:
@@ -19530,10 +20065,22 @@ packages:
     dev: true
 
   /arity-n/1.0.4:
+<<<<<<< HEAD
     resolution: {integrity: sha512-fExL2kFDC1Q2DUOx3whE/9KoN66IzkY4b4zUHUBFM1ojEYjZZYDcUW3bek/ufGionX9giIKDC5redH2IlGqcQQ==}
+=======
+    resolution: {integrity: sha1-2edrEXM+CFacCEeuezmyhgswt0U=}
+
+  /arr-diff/2.0.0:
+    resolution: {integrity: sha1-jzuCf5Vai9ZpaX5KQlasPOrjVs8=}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      arr-flatten: 1.1.0
+    dev: true
+    optional: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /arr-diff/4.0.0:
-    resolution: {integrity: sha1-1kYQdP6/7HHn4VI1dhoyml3HxSA=}
+    resolution: {integrity: sha512-YVIQ82gZPGBebQV/a8dar4AitzCQs0jjXwMPZllpXMaGjXPYVUawSxQrRsjhjupyVxEvbHgUmIhKVlND+j02kA==}
     engines: {node: '>=0.10.0'}
 
   /arr-flatten/1.1.0:
@@ -19559,10 +20106,14 @@ packages:
     dev: false
 
   /array-equal/1.0.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-H3LU5RLiSsGXPhN+Nipar0iR0IofH+8r89G2y1tBKxQ/agagKyAjhkAFDRBfodP2caPrNKHpAWNIM/c9yeL7uA==}
+=======
+    resolution: {integrity: sha1-jCpe8kcv2ep0KwTHenUJO6J1fJM=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /array-filter/0.0.1:
-    resolution: {integrity: sha1-fajPLiZijtcygDWB/SH2fKzS7uw=}
+    resolution: {integrity: sha512-VW0FpCIhjZdarWjIz8Vpva7U95fl2Jn+b+mmFFMLn8PIVscOQcAgEznwUzTEuUHuqZqIxwzRlcaN/urTFFQoiw==}
 
   /array-find-index/1.0.2:
     resolution: {integrity: sha1-3wEKoSh+Fku9pvlyOwqWoexBh6E=}
@@ -19570,7 +20121,7 @@ packages:
     dev: true
 
   /array-flatten/1.1.1:
-    resolution: {integrity: sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=}
+    resolution: {integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==}
 
   /array-flatten/2.1.2:
     resolution: {integrity: sha512-hNfzcOV8W4NdualtqBFPyVO+54DSJuZGY9qT4pRroB6S9e3iiido2ISIC5h9R2sPJ8H3FHCIiEnsv1lPXO3KtQ==}
@@ -19590,10 +20141,10 @@ packages:
       is-string: 1.0.7
 
   /array-map/0.0.0:
-    resolution: {integrity: sha1-iKK6tz0c97zVwbEYoAP2b2ZfpmI=}
+    resolution: {integrity: sha512-123XMszMB01QKVptpDQ7x1m1pP5NmJIG1kbl0JSPPRezvwQChxAN0Gvzo7rvR1IZ2tOL2tmiy7kY/KKgnpVVpg==}
 
   /array-reduce/0.0.0:
-    resolution: {integrity: sha1-FziZ0//Rx9k4PkR5Ul2+J4yrXys=}
+    resolution: {integrity: sha512-8jR+StqaC636u7h3ye1co3lQRefgVVUQUhuAmRbDqIMeR2yuXzRvkCNQiQ5J/wbREmoBLNtp13dhaaVpZQDRUw==}
 
   /array-union/1.0.2:
     resolution: {integrity: sha512-Dxr6QJj/RdU/hCaBjOfxW+q6lyuVE6JFWIrAUpuOOhoJJoQ99cUn3igRaHVB5P9WrgFVN0FfArM3x0cueOU8ng==}
@@ -19610,7 +20161,7 @@ packages:
     engines: {node: '>=0.10.0'}
 
   /array-unique/0.3.2:
-    resolution: {integrity: sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=}
+    resolution: {integrity: sha512-SleRWjh9JUud2wH1hPs9rZBZ33H6T9HOiL0uwGnGx9FpE6wKGyfWugmbkEOIs6qWrZhg0LWeLziLrEwQJhs5mQ==}
     engines: {node: '>=0.10.0'}
 
   /array.prototype.flat/1.3.0:
@@ -19727,7 +20278,7 @@ packages:
     dev: false
 
   /assign-symbols/1.0.0:
-    resolution: {integrity: sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=}
+    resolution: {integrity: sha512-Q+JC7Whu8HhmTdBph/Tq59IoRtoy6KAm5zzPv00WdujX82lbAL8K7WVjne7vdCsAmbF4AYaDOPyO3k0kl8qIrw==}
     engines: {node: '>=0.10.0'}
 
   /ast-types-flow/0.0.7:
@@ -19819,7 +20370,11 @@ packages:
     dev: false
 
   /aws-sign2/0.7.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-08kcGqnYf/YmjoRhfxyu+CLxBjUtHLXLXX/vUfx9l2LYzG3c1m61nrpyFUZI6zeS+Li/wWMMidD9KgrqtGq3mA==}
+=======
+    resolution: {integrity: sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /aws4/1.11.0:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
@@ -19878,6 +20433,7 @@ packages:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
       follow-redirects: 1.15.0_debug@4.3.4
+<<<<<<< HEAD
     transitivePeerDependencies:
       - debug
 
@@ -19886,6 +20442,8 @@ packages:
     dependencies:
       follow-redirects: 1.15.0_debug@4.3.4
       form-data: 4.0.0
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     transitivePeerDependencies:
       - debug
     dev: false
@@ -20124,24 +20682,40 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /babel-jest/28.1.1_@babel+core@7.18.5:
     resolution: {integrity: sha512-MEt0263viUdAkTq5D7upHPNxvt4n9uLUGa6pPz3WviNBMtOmStb1lIXS3QobnoqM+qnH+vr4EKlvhe8QcmxIYw==}
+=======
+  /babel-jest/28.1.0_epmq4ny5eiwbyxkub5iqcapase:
+    resolution: {integrity: sha512-zNKk0yhDZ6QUwfxh9k07GII6siNGMJWVUU49gmFj5gfdqDKLqa2RArXOF2CODp4Dr7dLxN2cvAV+667dGJ4b4w==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
       '@babel/core': ^7.8.0
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.18.5
       '@jest/transform': 28.1.1
       '@types/babel__core': 7.1.19
       babel-plugin-istanbul: 6.1.1
       babel-preset-jest: 28.1.1_@babel+core@7.18.5
+=======
+      '@babel/core': 7.17.10
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@types/babel__core': 7.1.19
+      babel-plugin-istanbul: 6.1.1
+      babel-preset-jest: 28.0.2_@babel+core@7.17.10
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       chalk: 4.1.2
       graceful-fs: 4.2.10
       slash: 3.0.0
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /babel-loader/8.1.0_75n62ufazqjxgl2m7x3hhvau2y:
     resolution: {integrity: sha512-7q7nC1tYOrqvUrN3LQK4GwSk/TQorZSOlO9C+RZDZpODgyN4ZlCqE5q9cDsyWOliN+aU9B4JX01xK9eJXowJLw==}
@@ -20283,7 +20857,6 @@ packages:
       test-exclude: 6.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /babel-plugin-jest-hoist/24.9.0:
     resolution: {integrity: sha512-2EMA2P8Vp7lG0RAzr4HXqtYwacfMErOuv1U3wrvxHX6rD1sV6xS3WXG3r8TRQ2r6w8OhvSdWt+z41hQNwNm3Xw==}
@@ -20319,7 +20892,6 @@ packages:
       '@babel/types': 7.17.10
       '@types/babel__core': 7.1.19
       '@types/babel__traverse': 7.17.1
-    dev: true
 
   /babel-plugin-jest-hoist/28.1.1:
     resolution: {integrity: sha512-NovGCy5Hn25uMJSAU8FaHqzs13cFoOI4lhIujiepssjCKRsAo3TA734RDWSGxuFTsUJXerYOqQQodlxgmtqbzw==}
@@ -20492,10 +21064,18 @@ packages:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
 
   /babel-plugin-syntax-object-rest-spread/6.13.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-C4Aq+GaAj83pRQ0EFgTvw5YO6T3Qz2KGrNRwIj9mSoNHVvdZY4KO2uA6HNtNXCw993iSZnckY1aLW8nOi8i4+w==}
+=======
+    resolution: {integrity: sha1-/WU28rzhODb/o6VFjEkDpZe7O/U=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /babel-plugin-syntax-trailing-function-commas/7.0.0-beta.0:
     resolution: {integrity: sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==}
+
+  /babel-plugin-transform-inline-environment-variables/0.4.4:
+    resolution: {integrity: sha512-bJILBtn5a11SmtR2j/3mBOjX4K3weC6cq+NNZ7hG22wCAqpc3qtj/iN7dSe9HDiS46lgp1nHsQgeYrea/RUe+g==}
+    dev: false
 
   /babel-plugin-transform-object-rest-spread/6.26.0:
     resolution: {integrity: sha512-ocgA9VJvyxwt+qJB0ncxV8kb/CjfTcECUY4tQ5VT7nP6Aohzobm8CDFaQ5FHdvZQzLmf0sgDxB8iRXZXxwZcyA==}
@@ -20532,7 +21112,6 @@ packages:
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3_@babel+core@7.17.10
       '@babel/plugin-syntax-optional-chaining': 7.8.3_@babel+core@7.17.10
       '@babel/plugin-syntax-top-level-await': 7.14.5_@babel+core@7.17.10
-    dev: true
 
   /babel-preset-current-node-syntax/1.0.1_@babel+core@7.18.5:
     resolution: {integrity: sha512-M7LQ0bxarkxQoN+vz5aJPsLBn77n8QgTFmo8WK0/44auK2xlCXrYcUxHFxgU7qW5Yzw/CjmLRK2uJzaCd7LvqQ==}
@@ -20683,7 +21262,6 @@ packages:
       '@babel/core': 7.17.10
       babel-plugin-jest-hoist: 28.0.2
       babel-preset-current-node-syntax: 1.0.1_@babel+core@7.17.10
-    dev: true
 
   /babel-preset-jest/28.1.1_@babel+core@7.18.5:
     resolution: {integrity: sha512-FCq9Oud0ReTeWtcneYf/48981aTfXYuB9gbU4rBNNJVBSQ6ssv7E6v/qvbBxtOWwZFXjLZwpg+W3q7J6vhH25g==}
@@ -20716,6 +21294,23 @@ packages:
       babel-plugin-transform-react-remove-prop-types: 0.4.24
     transitivePeerDependencies:
       - supports-color
+<<<<<<< HEAD
+=======
+
+  /babel-register/6.26.0:
+    resolution: {integrity: sha1-btAhFz4vy0htestFxgCahW9kcHE=}
+    dependencies:
+      babel-core: 6.26.3
+      babel-runtime: 6.26.0
+      core-js: 2.6.12
+      home-or-tmp: 2.0.0
+      lodash: 4.17.21
+      mkdirp: 0.5.6
+      source-map-support: 0.4.18
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /babel-runtime/6.26.0:
     resolution: {integrity: sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==}
@@ -20784,7 +21379,7 @@ packages:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
   /base-64/0.1.0:
-    resolution: {integrity: sha1-eAqZyE59YAJgNhURxId2E78k9rs=}
+    resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
     dev: false
 
   /base-x/3.0.9:
@@ -20818,7 +21413,7 @@ packages:
     dev: false
 
   /base64-js/0.0.8:
-    resolution: {integrity: sha1-EQHpVE9KdrG8OybUUsqW16NeeXg=}
+    resolution: {integrity: sha512-3XSA2cR/h/73EzlXXdU6YNycmYI7+kicTxks4eJg2g39biHR84slg2+des+p7iHYhbRg/udIS4TD53WabcOUkw==}
     engines: {node: '>= 0.4'}
     dev: false
 
@@ -21039,7 +21634,7 @@ packages:
     dev: false
 
   /bl/0.8.2:
-    resolution: {integrity: sha1-yba8oI0bwuoA/Ir7Txpf0eHGbk4=}
+    resolution: {integrity: sha512-pfqikmByp+lifZCS0p6j6KreV6kNU6Apzpm2nKOk+94cZb/jvle55+JxWiByUQ0Wo/+XnDXEy5MxxKMb6r0VIw==}
     dependencies:
       readable-stream: 1.0.34
     dev: false
@@ -21405,6 +22000,12 @@ packages:
       readable-stream: 3.6.0
       safe-buffer: 5.2.1
 
+  /browserify-zlib/0.1.4:
+    resolution: {integrity: sha512-19OEpq7vWgsH6WkvkBJQDFvJS1uPcbFOQ4v9CU839dO+ZZXUZO6XpE6hNCqvlIIj+4fZvRiJ6DsAQ382GwiyTQ==}
+    dependencies:
+      pako: 0.2.9
+    dev: false
+
   /browserify-zlib/0.2.0:
     resolution: {integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==}
     dependencies:
@@ -21504,7 +22105,11 @@ packages:
     dev: false
 
   /buffer-crc32/0.2.13:
+<<<<<<< HEAD
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
+=======
+    resolution: {integrity: sha1-DTM+PwDqxQqhRUq9MO+MKl2ackI=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /buffer-equal-constant-time/1.0.1:
     resolution: {integrity: sha1-+OcRMvf/5uAaXJaXpMbz5I1cyBk=}
@@ -21548,7 +22153,7 @@ packages:
     dev: false
 
   /buffer-xor/1.0.3:
-    resolution: {integrity: sha1-JuYe0UIvtw3ULm42cp7VHYVf6Nk=}
+    resolution: {integrity: sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ==}
 
   /buffer/4.9.2:
     resolution: {integrity: sha512-xq+q3SRMOxGivLhBNaUdC64hDTQwejJ+H0T/NB1XMtTVEwNTrfFF3gAxiyW0Bu/xWEGhjVKgUcMhCrUy2+uCWg==}
@@ -21687,7 +22292,7 @@ packages:
     dev: true
 
   /bytes/3.0.0:
-    resolution: {integrity: sha1-0ygVQE1olpn4Wk6k+odV3ROpYEg=}
+    resolution: {integrity: sha512-pMhOfFDPiv9t5jjIXkHosWmkSyQbvsgEVNkz0ERHbuLh2T/7j4Mqqpz523Fe8MVY89KC6Sh/QfS2sM+SjgFDcw==}
     engines: {node: '>= 0.8'}
 
   /bytes/3.1.0:
@@ -21876,13 +22481,13 @@ packages:
     resolution: {integrity: sha512-wCyFsDQkKPwwF8BDwOiWNx/9K45L/hvggQiDbve+viMNMQnWhrlYIuBk09offfwCRtCO9P6XwUttufzU11WCVw==}
 
   /caller-callsite/2.0.0:
-    resolution: {integrity: sha1-hH4PzgoiN1CpoCfFSzNzGtMVQTQ=}
+    resolution: {integrity: sha512-JuG3qI4QOftFsZyOn1qq87fq5grLIyk1JYd5lJmdA+fG7aQ9pA/i3JIJGcO3q0MrRcHlOt1U+ZeHW8Dq9axALQ==}
     engines: {node: '>=4'}
     dependencies:
       callsites: 2.0.0
 
   /caller-path/2.0.0:
-    resolution: {integrity: sha1-Ro+DBE42mrIBD6xfBs7uFbsssfQ=}
+    resolution: {integrity: sha512-MCL3sf6nCSXOwCTzvPKhN18TU7AHTvdtam8DAogxcrJ8Rjfbbg7Lgng64H9Iy+vUV6VGFClN/TyxBkAebLRR4A==}
     engines: {node: '>=4'}
     dependencies:
       caller-callsite: 2.0.0
@@ -21983,7 +22588,11 @@ packages:
     dev: true
 
   /caseless/0.12.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
+=======
+    resolution: {integrity: sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /cashaddrjs/0.4.4:
     resolution: {integrity: sha512-xZkuWdNOh0uq/mxJIng6vYWfTowZLd9F4GMAlp2DwFHlcCqCm91NtuAc47RuV4L7r4PYcY5p6Cr2OKNb4hnkWA==}
@@ -22064,7 +22673,6 @@ packages:
   /char-regex/1.0.2:
     resolution: {integrity: sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==}
     engines: {node: '>=10'}
-    dev: true
 
   /character-entities-html4/1.1.4:
     resolution: {integrity: sha512-HRcDxZuZqMx3/a+qrzxdBKBPUpxWEq9xw2OPZ3a/174ihfrQKVsFhqtthBInFy1zZ9GgZyFXOatNujm8M+El3g==}
@@ -22133,7 +22741,7 @@ packages:
     dev: false
 
   /child-process-promise/2.2.1:
-    resolution: {integrity: sha1-RzChHvYQ+tRQuPIjx50x172tgHQ=}
+    resolution: {integrity: sha512-Fi4aNdqBsr0mv+jgWxcZ/7rAIC2mgihrptyVI4foh/rrjY/3BNjfP9+oaiFx/fzim+1ZyCNBae0DlyfQhSugog==}
     dependencies:
       cross-spawn: 4.0.2
       node-version: 1.2.0
@@ -22219,7 +22827,6 @@ packages:
 
   /ci-info/3.3.1:
     resolution: {integrity: sha512-SXgeMX9VwDe7iFFaEWkA5AstuER9YKqy4EhHqr4DVqkwmD9rpVimkMKWHdjn30Ja45txyjhSn63lVX69eVCckg==}
-    dev: true
 
   /ci-info/3.3.2:
     resolution: {integrity: sha512-xmDt/QIAdeZ9+nfdPsaBCpMvHNLFiLdjj59qjqn+6iPe6YmHGQ35sBnQ8uslRBXFmXkiZQOJRjvQeoGppoTjjg==}
@@ -22248,7 +22855,6 @@ packages:
 
   /cjs-module-lexer/1.2.2:
     resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
-    dev: true
 
   /class-is/1.1.0:
     resolution: {integrity: sha512-rhjH9AG1fvabIDoGRVH587413LPjTZgmDF9fOFCbFJQV4yuocX1mHxxvXI4g3cGwbVY9wAYIoKlg1N79frJKQw==}
@@ -22300,7 +22906,7 @@ packages:
     engines: {node: '>=6'}
 
   /cli-cursor/2.1.0:
-    resolution: {integrity: sha1-s12sN2R5+sw+lHR9QdDQ9SOP/LU=}
+    resolution: {integrity: sha512-8lgKz8LmCRYZZQDpRyT2m5rKJ08TnU4tR9FFFW2rxpxR1FzWi4PQ/NfyODchAatHaUgnSPVcx/R5w6NuTBzFiw==}
     engines: {node: '>=4'}
     dependencies:
       restore-cursor: 2.0.0
@@ -22516,7 +23122,6 @@ packages:
 
   /collect-v8-coverage/1.0.1:
     resolution: {integrity: sha512-iBPtljfCNcTKNAto0KEtDfZ3qzjJvqE3aTGZsbhjSBlorqpXJlaWWtPO35D+ZImoC3KWejX64o+yPGxhWSTzfg==}
-    dev: true
 
   /collection-visit/1.0.0:
     resolution: {integrity: sha1-S8A3PBZLwykbTTaMgpzxqApZ3KA=}
@@ -23054,7 +23659,11 @@ packages:
     dev: true
 
   /convert-source-map/0.3.5:
+<<<<<<< HEAD
     resolution: {integrity: sha512-+4nRk0k3oEpwUB7/CalD7xE2z4VmtEnnq0GO2IPTkrooTrAhEsWvuLF5iWP1dXrwluki/azwXV1ve7gtYuPldg==}
+=======
+    resolution: {integrity: sha1-8dgClQr33SYxof6+BZZVDIarMZA=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /convert-source-map/1.7.0:
     resolution: {integrity: sha512-4FJkXzKXEDB1snCFZlLP4gpC3JILicCpGbzG9f9G7tGqGCzETQ2hWPrcinA9oU4wtf2biUaEH5065UnMeR33oA==}
@@ -23332,7 +23941,7 @@ packages:
       - encoding
 
   /cross-spawn/4.0.2:
-    resolution: {integrity: sha1-e5JHYhwjrf3ThWAEqCPL45dCTUE=}
+    resolution: {integrity: sha512-yAXz/pA1tD8Gtg2S98Ekf/sewp3Lcp3YoFKJ4Hkp5h5yLWnKVTDU0kwjKJ8NDCYcfTLfyGkzTikst+jWypT1iA==}
     dependencies:
       lru-cache: 4.1.5
       which: 1.3.1
@@ -24103,7 +24712,10 @@ packages:
 
   /dedent/0.7.0:
     resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /deep-eql/3.0.1:
     resolution: {integrity: sha512-+QeIQyN5ZuO+3Uk5DYh6/1eKO0m0YmJFGNmFHGACpf1ClL1nmlV/p4gNgbl2pJGxgXb4faqo6UE+M5ACEMyVcw==}
@@ -24352,7 +24964,6 @@ packages:
   /detect-newline/3.1.0:
     resolution: {integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==}
     engines: {node: '>=8'}
-    dev: true
 
   /detect-node/2.1.0:
     resolution: {integrity: sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==}
@@ -24433,6 +25044,51 @@ packages:
       - utf-8-validate
     dev: true
 
+  /detox/19.7.0_jest@28.1.0:
+    resolution: {integrity: sha512-70a6IQCBQCJI21ITdK+qGUQ7fQL/CeOW+i0Vdr0ZFN5B5RylSE9d5shoJBtg2nb8XYG+S9BLqhn+uE02Nqymng==}
+    engines: {node: '>=8.3.0'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      jest: 26.0.x - 26.4.x || ^26.5.2 || 27.x.x || 28.x.x
+      mocha: '>=6.0.0'
+    peerDependenciesMeta:
+      jest:
+        optional: true
+      mocha:
+        optional: true
+    dependencies:
+      ajv: 8.11.0
+      bunyan: 1.8.15
+      bunyan-debug-stream: 2.0.1_bunyan@1.8.15
+      chalk: 2.4.2
+      child-process-promise: 2.2.1
+      find-up: 4.1.0
+      fs-extra: 4.0.3
+      funpermaproxy: 1.0.1
+      ini: 1.3.8
+      jest: 28.1.0_metro@0.67.0
+      lodash: 4.17.21
+      minimist: 1.2.6
+      proper-lockfile: 3.2.0
+      resolve-from: 5.0.0
+      sanitize-filename: 1.6.3
+      semver: 7.3.7
+      serialize-error: 8.1.0
+      shell-quote: 1.7.3
+      signal-exit: 3.0.7
+      tail: 2.2.4
+      telnet-client: 1.2.8
+      tempfile: 2.0.0
+      which: 1.3.1
+      ws: 7.5.7
+      yargs: 16.2.0
+      yargs-unparser: 2.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: true
+
   /dezalgo/1.0.3:
     resolution: {integrity: sha1-f3Qt4Gb8dIvI24IFad3c5Jvw1FY=}
     dependencies:
@@ -24455,7 +25111,6 @@ packages:
   /diff-sequences/28.0.2:
     resolution: {integrity: sha512-YtEoNynLDFCRznv/XDalsKGSZDoj0U5kLnXvY0JSq3nBboRrZXjD81+eSiwi+nzcZDwedMmcowcxNwwgFW23mQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dev: true
 
   /diff-sequences/28.1.1:
     resolution: {integrity: sha512-FU0iFaH/E23a+a718l8Qa/19bF9p06kgE0KipMOMadwa3SjnaElKzPaUC0vnibs6/B/9ni97s61mcejk8W1fQw==}
@@ -25013,7 +25668,6 @@ packages:
   /emittery/0.10.2:
     resolution: {integrity: sha512-aITqOwnLanpHLNXZJENbOgjUBeHocD+xsSJmNrjovKBW5HbSpW3d1pEls7GFQPUWXiwG9+0P4GtHfEqC/4M0Iw==}
     engines: {node: '>=12'}
-    dev: true
 
   /emittery/0.7.2:
     resolution: {integrity: sha512-A8OG5SR/ij3SsJdWDJdkkSYUjQdCUx6APQXem0SaEePBSRg4eymGYwBkKo1Y6DU+af/Jn2dBQqDBvjnr9Vi8nQ==}
@@ -25126,7 +25780,11 @@ packages:
     resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
     engines: {node: '>=8.6'}
     dependencies:
+<<<<<<< HEAD
       ansi-colors: 4.1.3
+=======
+      ansi-colors: 4.1.1
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /entities/2.2.0:
     resolution: {integrity: sha512-p92if5Nz619I0w+akJrLZH0MX0Pb5DX39XOwQTtXSdQQOaYH03S1uIQp4mhOZtAXrxq4ViO67YTiLBo2638o9A==}
@@ -26284,6 +26942,20 @@ packages:
       jest: 27.5.1_metro@0.67.0
     dev: true
 
+  /eslint-plugin-jest/22.4.1_eslint@7.32.0+jest@28.1.0:
+    resolution: {integrity: sha512-gcLfn6P2PrFAVx3AobaOzlIEevpAEf9chTpFZz7bYfc7pz8XRv7vuKTIE4hxPKZSha6XWKKplDQ0x9Pq8xX2mg==}
+    engines: {node: '>=6'}
+    peerDependencies:
+      eslint: '>=5'
+      jest: '*'
+    peerDependenciesMeta:
+      jest:
+        optional: true
+    dependencies:
+      eslint: 7.32.0
+      jest: 28.1.0_metro@0.67.0
+    dev: true
+
   /eslint-plugin-jest/22.4.1_eslint@8.15.0:
     resolution: {integrity: sha512-gcLfn6P2PrFAVx3AobaOzlIEevpAEf9chTpFZz7bYfc7pz8XRv7vuKTIE4hxPKZSha6XWKKplDQ0x9Pq8xX2mg==}
     engines: {node: '>=6'}
@@ -27416,7 +28088,6 @@ packages:
       jest-matcher-utils: 28.1.0
       jest-message-util: 28.1.0
       jest-util: 28.1.0
-    dev: true
 
   /expect/28.1.1:
     resolution: {integrity: sha512-/AANEwGL0tWBwzLNOvO0yUdy2D52jVdNXppOqswC49sxMN2cPWsGCQdzuIf9tj6hHoBQzNvx75JUYuQAckPo3w==}
@@ -28310,7 +28981,7 @@ packages:
     dev: true
 
   /fill-range/4.0.0:
-    resolution: {integrity: sha1-1USBHUKPmOsGpj3EAtJAPDKMOPc=}
+    resolution: {integrity: sha512-VcpLTWqWDiTerugjj8e3+esbg+skS3M9e54UuR3iCeIDMXCLTsAH8hTSzDQU/X6/6t3eYkOKoZSef2PlU6U1XQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       extend-shallow: 2.0.1
@@ -28469,6 +29140,10 @@ packages:
     dependencies:
       micromatch: 4.0.5
       pkg-dir: 4.2.0
+    dev: true
+
+  /findit/2.0.0:
+    resolution: {integrity: sha1-ZQnwEmr0wXhVHPqZOU4DLhOk1W4=}
     dev: true
 
   /firebase/9.8.1:
@@ -28713,7 +29388,11 @@ packages:
     dev: true
 
   /forever-agent/0.6.1:
+<<<<<<< HEAD
     resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
+=======
+    resolution: {integrity: sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /fork-ts-checker-webpack-plugin/3.1.1_s4p5obgc5rn2wrc7rinrdszb4m:
     resolution: {integrity: sha512-DuVkPNrM12jR41KM2e+N+styka0EgLkTnXmNcXdgOM37vtGeY+oCBK/Jx0hzSeEU6memFCtWb4htrHPMDfwwUQ==}
@@ -29049,6 +29728,14 @@ packages:
   /fs-constants/1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
 
+  /fs-extra/0.22.1:
+    resolution: {integrity: sha1-X9b4BJ3JdsoZ6yNV1lgXPKvM4FY=}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 2.4.0
+      rimraf: 2.7.1
+    dev: true
+
   /fs-extra/0.30.0:
     resolution: {integrity: sha1-8jP/zAjU2n1DLapEl3aYnbHfk/A=}
     dependencies:
@@ -29310,7 +29997,6 @@ packages:
   /get-package-type/0.1.0:
     resolution: {integrity: sha512-pjzuKtY64GYfWizNAJ0fr9VqttZkNiK2iS430LtIHzjBEr6bX8Am2zm4sW4Ro5wjWW5cAlRL1qAMTcXbjNAO2Q==}
     engines: {node: '>=8.0.0'}
-    dev: true
 
   /get-pkg-repo/4.2.1:
     resolution: {integrity: sha512-2+QbHjFRfGB74v/pYWjd5OhU3TDIC2Gv/YKUTk/tCvAz0pkn/Mz6P3uByuBimLOcPvN2jYdScl3xGFSrx0jEcA==}
@@ -29504,7 +30190,7 @@ packages:
     dev: true
 
   /glob/6.0.4:
-    resolution: {integrity: sha1-DwiGD2oVUSey+t1PnOJLGqtuTSI=}
+    resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
@@ -30533,6 +31219,10 @@ packages:
       resolve-alpn: 1.2.1
     dev: true
 
+  /https-browserify/0.0.1:
+    resolution: {integrity: sha1-P5E2XKvmC3ftDruiS0VOPgnZWoI=}
+    dev: false
+
   /https-browserify/1.0.0:
     resolution: {integrity: sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=}
 
@@ -30723,7 +31413,7 @@ packages:
     dev: true
 
   /imurmurhash/0.1.4:
-    resolution: {integrity: sha1-khi5srkoojixPcT7a21XbyMUU+o=}
+    resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
   /indent-string/3.2.0:
@@ -30836,11 +31526,14 @@ packages:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       through: 2.3.8
+<<<<<<< HEAD
 
   /int64-buffer/1.0.1:
     resolution: {integrity: sha512-+3azY4pXrjAupJHU1V9uGERWlhoqNswJNji6aD/02xac7oxol508AsMC5lxKhEqyZeDFy3enq5OGWXF4u75hiw==}
     engines: {node: '>= 4.5.0'}
     dev: false
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /internal-ip/4.3.0:
     resolution: {integrity: sha512-S1zBo1D6zcsyuC6PMmY5+55YMILQ9av8lotMx447Bq6SAgo/sDK6y6uUKmuYhW7eacnIhFfsPmCNYdDzsnnDCg==}
@@ -31245,7 +31938,7 @@ packages:
       has-tostringtag: 1.0.0
 
   /is-number/3.0.0:
-    resolution: {integrity: sha1-JP1iAaR4LPUFYcgQJ2r8fRLXEZU=}
+    resolution: {integrity: sha512-4cboCqIpliH+mAvFNegjZQ4kgKc3ZUhQVr3HvWbSh5q3WH2v82ct+T2Y1hdU5Gdtorx/cLifQjqCbL7bpznLTg==}
     engines: {node: '>=0.10.0'}
     dependencies:
       kind-of: 3.2.2
@@ -31440,7 +32133,7 @@ packages:
     dev: false
 
   /is-typedarray/1.0.0:
-    resolution: {integrity: sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=}
+    resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
 
   /is-unc-path/1.0.0:
     resolution: {integrity: sha512-mrGpVd0fs7WWLfVsStvgF6iEJnbjDFZh9/emhRDcGWTduTfNHd9CHeUwH3gYIjdbwo4On6hunkztwOaAw0yllQ==}
@@ -31568,7 +32261,11 @@ packages:
     dev: false
 
   /isstream/0.1.2:
+<<<<<<< HEAD
     resolution: {integrity: sha512-Yljz7ffyPbrLpLngrMtZ7NduUgVvi6wG9RJ9IUcyCd59YQ911PBJphODUcbOVbqYfxe1wuYf/LJ8PauMRwsM/g==}
+=======
+    resolution: {integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /istanbul-instrumenter-loader/3.0.1_webpack@5.73.0:
     resolution: {integrity: sha512-a5SPObZgS0jB/ixaKSMdn6n/gXSrK2S6q/UfRJBT3e6gQmVjwZROTODQsYW5ZNwOu78hG62Y3fWlebaVOL0C+w==}
@@ -31596,7 +32293,6 @@ packages:
   /istanbul-lib-coverage/3.2.0:
     resolution: {integrity: sha512-eOeJ5BHCmHYvQK7xt9GkdHuzuCGS1Y6g9Gvnx3Ym33fz/HpLRYxiS0wHNr+m/MBC8B647Xt608vCDEvhl9c6Mw==}
     engines: {node: '>=8'}
-    dev: true
 
   /istanbul-lib-hook/3.0.0:
     resolution: {integrity: sha512-Pt/uge1Q9s+5VAZ+pCo16TYMWPBIl+oaNIjgLQxcX0itS6ueeaA+pEfThZpH8WxhFgCiEb8sAJY6MdUKgiIWaQ==}
@@ -31656,7 +32352,6 @@ packages:
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /istanbul-lib-processinfo/2.0.2:
     resolution: {integrity: sha512-kOwpa7z9hme+IBPZMzQ5vdQj8srYgAtaRqeI48NGmAQ+/5yKiHLV0QbYqQpxsdEF0+w14SoB8YbnHKcXE2KnYw==}
@@ -31686,7 +32381,6 @@ packages:
       istanbul-lib-coverage: 3.2.0
       make-dir: 3.1.0
       supports-color: 7.2.0
-    dev: true
 
   /istanbul-lib-source-maps/3.0.6:
     resolution: {integrity: sha512-R47KzMtDJH6X4/YW9XTx+jrLnZnscW4VpNN+1PViSYTejLVPWv7oov+Duf8YQSPyVRUvueQqz1TcsC6mooZTXw==}
@@ -31709,7 +32403,6 @@ packages:
       source-map: 0.6.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /istanbul-reports/2.2.7:
     resolution: {integrity: sha512-uu1F/L1o5Y6LzPVSVZXNOoD/KXpJue9aeLRd0sM9uMXfZvzomB0WxVamWb5ue8kA2vVWEmW7EG+A5n3f1kqHKg==}
@@ -31723,7 +32416,6 @@ packages:
     dependencies:
       html-escaper: 2.0.2
       istanbul-lib-report: 3.0.0
-    dev: true
 
   /isurl/1.0.0:
     resolution: {integrity: sha512-1P/yWsxPlDtn7QeRD+ULKQPaIaN6yF368GZ2vDfv0AL0NwpStafjWCDDdn0k8wgFMWpVAqG7oJhxHnlud42i9w==}
@@ -31909,6 +32601,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-circus/28.1.1:
     resolution: {integrity: sha512-75+BBVTsL4+p2w198DQpCeyh1RdaS2lhEG87HkaFX/UG0gJExVq2skG2pT7XZEGBubNj2CytcWSPan4QEPNosw==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -31917,11 +32610,22 @@ packages:
       '@jest/expect': 28.1.1
       '@jest/test-result': 28.1.1
       '@jest/types': 28.1.1
+=======
+  /jest-circus/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-rNYfqfLC0L0zQKRKsg4n4J+W1A2fbyGH7Ss/kDIocp9KXD9iaL111glsLu7+Z7FHuZxwzInMDXq+N1ZIBkI/TQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/environment': 28.1.0
+      '@jest/expect': 28.1.0_metro@0.67.0
+      '@jest/test-result': 28.1.0
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       '@types/node': 17.0.32
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
       is-generator-fn: 2.1.0
+<<<<<<< HEAD
       jest-each: 28.1.1
       jest-matcher-utils: 28.1.1
       jest-message-util: 28.1.1
@@ -31929,13 +32633,25 @@ packages:
       jest-snapshot: 28.1.1
       jest-util: 28.1.1
       pretty-format: 28.1.1
+=======
+      jest-each: 28.1.0
+      jest-matcher-utils: 28.1.0
+      jest-message-util: 28.1.0
+      jest-runtime: 28.1.0_metro@0.67.0
+      jest-snapshot: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      pretty-format: 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       slash: 3.0.0
       stack-utils: 2.0.5
       throat: 6.0.1
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /jest-cli/24.9.0:
     resolution: {integrity: sha512-+VLRKyitT3BWoMeSUIHRxV/2g8y9gw91Jh5z2UmXZzkZKpbC08CSehVxgHUwTpy+HwGcns/tqafQDJW7imYvGg==}
@@ -32079,8 +32795,13 @@ packages:
       - ts-node
     dev: true
 
+<<<<<<< HEAD
   /jest-cli/28.1.1_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-+sUfVbJqb1OjBZ0OdBbI6OWfYM1i7bSfzYy6gze1F1w3OKWq8ZTEKkZ8a7ZQPq6G/G1qMh/uKqpdWhgl11NFQQ==}
+=======
+  /jest-cli/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-fDJRt6WPRriHrBsvvgb93OxgajHHsJbk4jZxiPqmZbMDRcHskfJBBfTyjFko0jjfprP544hOktdSi9HVgl4VUQ==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
     peerDependencies:
@@ -32089,18 +32810,32 @@ packages:
       node-notifier:
         optional: true
     dependencies:
+<<<<<<< HEAD
       '@jest/core': 28.1.1_ts-node@10.7.0
       '@jest/test-result': 28.1.1
       '@jest/types': 28.1.1
+=======
+      '@jest/core': 28.1.0_metro@0.67.0
+      '@jest/test-result': 28.1.0
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.10
       import-local: 3.1.0
+<<<<<<< HEAD
       jest-config: 28.1.1_csdo2gfejusb3n4cacufvlevtu
       jest-util: 28.1.1
       jest-validate: 28.1.1
       prompts: 2.4.2
       yargs: 17.5.1
+=======
+      jest-config: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      prompts: 2.4.2
+      yargs: 17.5.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -32184,7 +32919,7 @@ packages:
       '@jest/types': 27.5.1
       babel-jest: 27.5.1_epmq4ny5eiwbyxkub5iqcapase
       chalk: 4.1.2
-      ci-info: 3.3.0
+      ci-info: 3.3.1
       deepmerge: 4.2.2
       glob: 7.2.0
       graceful-fs: 4.2.10
@@ -32225,7 +32960,7 @@ packages:
       '@jest/types': 27.5.1
       babel-jest: 27.5.1_@babel+core@7.17.10
       chalk: 4.1.2
-      ci-info: 3.3.0
+      ci-info: 3.3.1
       deepmerge: 4.2.2
       glob: 7.2.0
       graceful-fs: 4.2.10
@@ -32333,8 +33068,13 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-config/28.1.1_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-tASynMhS+jVV85zKvjfbJ8nUyJS/jUSYZ5KQxLUN2ZCvcQc/OmhQl2j6VEL3ezQkNofxn5pQ3SPYWPHb0unTZA==}
+=======
+  /jest-config/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
       '@types/node': '*'
@@ -32345,6 +33085,7 @@ packages:
       ts-node:
         optional: true
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.18.5
       '@jest/test-sequencer': 28.1.1
       '@jest/types': 28.1.1
@@ -32376,6 +33117,36 @@ packages:
 
   /jest-config/28.1.1_r5rwvyw2qgx3fnijwswldzdnfy:
     resolution: {integrity: sha512-tASynMhS+jVV85zKvjfbJ8nUyJS/jUSYZ5KQxLUN2ZCvcQc/OmhQl2j6VEL3ezQkNofxn5pQ3SPYWPHb0unTZA==}
+=======
+      '@babel/core': 7.17.10
+      '@jest/test-sequencer': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+      babel-jest: 28.1.0_epmq4ny5eiwbyxkub5iqcapase
+      chalk: 4.1.2
+      ci-info: 3.3.1
+      deepmerge: 4.2.2
+      glob: 7.2.0
+      graceful-fs: 4.2.10
+      jest-circus: 28.1.0_metro@0.67.0
+      jest-environment-node: 28.1.0
+      jest-get-type: 28.0.2
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0_metro@0.67.0
+      jest-runner: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 28.1.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+
+  /jest-config/28.1.0_yf3cg2odbh43cd2z24nrd3jmti:
+    resolution: {integrity: sha512-aOV80E9LeWrmflp7hfZNn/zGA4QKv/xsn2w8QCBP0t0+YqObuCWTSgNbHJ0j9YsTuCO08ZR/wsvlxqqHX20iUA==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
       '@types/node': '*'
@@ -32386,6 +33157,7 @@ packages:
       ts-node:
         optional: true
     dependencies:
+<<<<<<< HEAD
       '@babel/core': 7.18.5
       '@jest/test-sequencer': 28.1.1
       '@jest/types': 28.1.1
@@ -32410,6 +33182,31 @@ packages:
       slash: 3.0.0
       strip-json-comments: 3.1.1
       ts-node: 10.7.0_sihq2egcoz3xk6sc4vk74xvt4u
+=======
+      '@babel/core': 7.17.10
+      '@jest/test-sequencer': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+      '@types/node': 17.0.32
+      babel-jest: 28.1.0_epmq4ny5eiwbyxkub5iqcapase
+      chalk: 4.1.2
+      ci-info: 3.3.1
+      deepmerge: 4.2.2
+      glob: 7.2.0
+      graceful-fs: 4.2.10
+      jest-circus: 28.1.0_metro@0.67.0
+      jest-environment-node: 28.1.0
+      jest-get-type: 28.0.2
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0_metro@0.67.0
+      jest-runner: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 28.1.0
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -32450,7 +33247,6 @@ packages:
       diff-sequences: 28.0.2
       jest-get-type: 28.0.2
       pretty-format: 28.1.0
-    dev: true
 
   /jest-diff/28.1.1:
     resolution: {integrity: sha512-/MUUxeR2fHbqHoMMiffe/Afm+U8U4olFRJ0hiVG2lZatPJcnGxx292ustVu7bULhjV65IYMxRdploAKLbcrsyg==}
@@ -32487,7 +33283,6 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       detect-newline: 3.1.0
-    dev: true
 
   /jest-docblock/28.1.1:
     resolution: {integrity: sha512-3wayBVNiOYx0cwAbl9rwm5kKFP8yHH3d/fkEaL02NPTkDojPtheGB7HZSFY4wzX+DxyrvhXz0KSCVksmCknCuA==}
@@ -32539,7 +33334,6 @@ packages:
       jest-get-type: 28.0.2
       jest-util: 28.1.0
       pretty-format: 28.1.0
-    dev: true
 
   /jest-each/28.1.1:
     resolution: {integrity: sha512-A042rqh17ZvEhRceDMi784ppoXR7MWGDEKTXEZXb4svt0eShMZvijGxzKsx+yIjeE8QYmHPrnHiTSQVhN4nqaw==}
@@ -32666,7 +33460,6 @@ packages:
       '@types/node': 17.0.32
       jest-mock: 28.1.0
       jest-util: 28.1.0
-    dev: true
 
   /jest-environment-node/28.1.1:
     resolution: {integrity: sha512-2aV/eeY/WNgUUJrrkDJ3cFEigjC5fqT1+fCclrY6paqJ5zVPoM//sHmfgUUp7WLYxIdbPwMiVIzejpN56MxnNA==}
@@ -32704,7 +33497,6 @@ packages:
   /jest-get-type/28.0.2:
     resolution: {integrity: sha512-ioj2w9/DxSYHfOm5lJKCdcAmPJzQXmbM/Url3rhlghrPvT3tt+7a/+oXc9azkKmLvoiXjtV83bEWqi+vs5nlPA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dev: true
 
   /jest-haste-map/24.9.0:
     resolution: {integrity: sha512-kfVFmsuWui2Sj1Rp1AJ4D9HqJwE4uwTlS/vO+eRUaMmd54BFpli2XhMQnPC2k4cHFVbB2Q2C+jtI1AGLgEnCjQ==}
@@ -32837,7 +33629,26 @@ packages:
       fsevents: 2.3.2
     transitivePeerDependencies:
       - metro
-    dev: true
+
+  /jest-haste-map/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-xyZ9sXV8PtKi6NCrJlmq53PyNVHzxmcfXNVvIRHpHmh1j/HChC4pwKgyjj7Z9us19JMw8PpQTJsFWOsIfT93Dw==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/types': 28.1.0
+      '@types/graceful-fs': 4.1.5
+      '@types/node': 17.0.32
+      anymatch: 3.1.2
+      fb-watchman: 2.0.1
+      graceful-fs: 4.2.10
+      jest-regex-util: 28.0.2
+      jest-util: 28.1.0
+      jest-worker: 28.1.0_metro@0.67.0
+      micromatch: 4.0.5
+      walker: 1.0.8
+    optionalDependencies:
+      fsevents: 2.3.2
+    transitivePeerDependencies:
+      - metro
 
   /jest-haste-map/28.1.1:
     resolution: {integrity: sha512-ZrRSE2o3Ezh7sb1KmeLEZRZ4mgufbrMwolcFHNRSjKZhpLa8TdooXOOFlSwoUzlbVs1t0l7upVRW2K7RWGHzbQ==}
@@ -32996,7 +33807,6 @@ packages:
     dependencies:
       jest-get-type: 28.0.2
       pretty-format: 28.1.0
-    dev: true
 
   /jest-leak-detector/28.1.1:
     resolution: {integrity: sha512-4jvs8V8kLbAaotE+wFR7vfUGf603cwYtFf1/PYEsyX2BAjSzj8hQSVTP6OWzseTl0xL6dyHuKs2JAks7Pfubmw==}
@@ -33052,7 +33862,6 @@ packages:
       jest-diff: 28.1.0
       jest-get-type: 28.0.2
       pretty-format: 28.1.0
-    dev: true
 
   /jest-matcher-utils/28.1.1:
     resolution: {integrity: sha512-NPJPRWrbmR2nAJ+1nmnfcKKzSwgfaciCCrYZzVnNoxVoyusYWIjkBMNvu0RHJe7dNj4hH3uZOPZsQA+xAYWqsw==}
@@ -33121,7 +33930,6 @@ packages:
       pretty-format: 28.1.0
       slash: 3.0.0
       stack-utils: 2.0.5
-    dev: true
 
   /jest-message-util/28.1.1:
     resolution: {integrity: sha512-xoDOOT66fLfmTRiqkoLIU7v42mal/SqwDKvfmfiWAdJMSJiU+ozgluO7KbvoAgiwIrrGZsV7viETjc8GNrA/IQ==}
@@ -33166,7 +33974,6 @@ packages:
     dependencies:
       '@jest/types': 28.1.0
       '@types/node': 17.0.32
-    dev: true
 
   /jest-mock/28.1.1:
     resolution: {integrity: sha512-bDCb0FjfsmKweAvE09dZT59IMkzgN0fYBH6t5S45NoJfd2DHkS3ySG2K+hucortryhO3fVuXdlxWcbtIuV/Skw==}
@@ -33221,7 +34028,6 @@ packages:
         optional: true
     dependencies:
       jest-resolve: 28.1.0
-    dev: true
 
   /jest-pnp-resolver/1.2.2_jest-resolve@28.1.1:
     resolution: {integrity: sha512-olV41bKSMm8BdnuMsewT4jqlZ8+3TCARAXjZGT9jcoSnrfUnRCqnMoF9XEeoWjbzObpqF9dRhHQj0Xb9QdF6/w==}
@@ -33251,7 +34057,6 @@ packages:
   /jest-regex-util/28.0.2:
     resolution: {integrity: sha512-4s0IgyNIy0y9FK+cjoVYoxamT7Zeo7MhzqRGx7YDYmaQn1wucY9rotiGkBzzcMXTtjrCAP/f7f+E0F7+fxPNdw==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dev: true
 
   /jest-resolve-dependencies/24.9.0:
     resolution: {integrity: sha512-Fm7b6AlWnYhT0BXy4hXpactHIqER7erNgIsIozDXWl5dVm+k8XdGVe1oTg1JyaFnOxarMEbax3wyRJqGP2Pq+g==}
@@ -33310,12 +34115,21 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-resolve-dependencies/28.1.1:
     resolution: {integrity: sha512-p8Y150xYJth4EXhOuB8FzmS9r8IGLEioiaetgdNGb9VHka4fl0zqWlVe4v7mSkYOuEUg2uB61iE+zySDgrOmgQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
       jest-regex-util: 28.0.2
       jest-snapshot: 28.1.1
+=======
+  /jest-resolve-dependencies/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-Ue1VYoSZquPwEvng7Uefw8RmZR+me/1kr30H2jMINjGeHgeO/JgrR6wxj2ofkJ7KSAA11W3cOrhNCbj5Dqqd9g==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      jest-regex-util: 28.0.2
+      jest-snapshot: 28.1.0_metro@0.67.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -33396,7 +34210,22 @@ packages:
       slash: 3.0.0
     transitivePeerDependencies:
       - metro
-    dev: true
+
+  /jest-resolve/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-vvfN7+tPNnnhDvISuzD1P+CRVP8cK0FHXRwPAcdDaQv4zgvwvag2n55/h5VjYcM5UJG7L4TwE5tZlzcI0X2Lhw==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      chalk: 4.1.2
+      graceful-fs: 4.2.10
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-pnp-resolver: 1.2.2_jest-resolve@28.1.0
+      jest-util: 28.1.0
+      jest-validate: 28.1.0
+      resolve: 1.22.0
+      resolve.exports: 1.1.0
+      slash: 3.0.0
+    transitivePeerDependencies:
+      - metro
 
   /jest-resolve/28.1.1:
     resolution: {integrity: sha512-/d1UbyUkf9nvsgdBildLe6LAD4DalgkgZcKd0nZ8XUGPyA/7fsnaQIlKVnDiuUXv/IeZhPEDrRJubVSulxrShA==}
@@ -33573,6 +34402,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-runner/28.1.1:
     resolution: {integrity: sha512-W5oFUiDBgTsCloTAj6q95wEvYDB0pxIhY6bc5F26OucnwBN+K58xGTGbliSMI4ChQal5eANDF+xvELaYkJxTmA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -33582,10 +34412,22 @@ packages:
       '@jest/test-result': 28.1.1
       '@jest/transform': 28.1.1
       '@jest/types': 28.1.1
+=======
+  /jest-runner/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-FBpmuh1HB2dsLklAlRdOxNTTHKFR6G1Qmd80pVDvwbZXTriqjWqjei5DKFC1UlM732KjYcE6yuCdiF0WUCOS2w==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/console': 28.1.0
+      '@jest/environment': 28.1.0
+      '@jest/test-result': 28.1.0
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       '@types/node': 17.0.32
       chalk: 4.1.2
       emittery: 0.10.2
       graceful-fs: 4.2.10
+<<<<<<< HEAD
       jest-docblock: 28.1.1
       jest-environment-node: 28.1.1
       jest-haste-map: 28.1.1
@@ -33596,12 +34438,27 @@ packages:
       jest-util: 28.1.1
       jest-watcher: 28.1.1
       jest-worker: 28.1.1
+=======
+      jest-docblock: 28.0.2
+      jest-environment-node: 28.1.0
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-leak-detector: 28.1.0
+      jest-message-util: 28.1.0
+      jest-resolve: 28.1.0_metro@0.67.0
+      jest-runtime: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+      jest-watcher: 28.1.0
+      jest-worker: 28.1.0_metro@0.67.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       source-map-support: 0.5.13
       throat: 6.0.1
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /jest-runtime/24.9.0:
     resolution: {integrity: sha512-8oNqgnmF3v2J6PVRM2Jfuj8oX3syKmaynlDMMKQ4iyzbQzIG6th5ub/lM2bCMTmoTKM3ykcUYI2Pw9xwNtjMnw==}
@@ -33771,6 +34628,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-runtime/28.1.1:
     resolution: {integrity: sha512-J89qEJWW0leOsqyi0D9zHpFEYHwwafFdS9xgvhFHtIdRghbadodI0eA+DrthK/1PebBv3Px8mFSMGKrtaVnleg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -33782,10 +34640,24 @@ packages:
       '@jest/test-result': 28.1.1
       '@jest/transform': 28.1.1
       '@jest/types': 28.1.1
+=======
+  /jest-runtime/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-wNYDiwhdH/TV3agaIyVF0lsJ33MhyujOe+lNTUiolqKt8pchy1Hq4+tDMGbtD5P/oNLA3zYrpx73T9dMTOCAcg==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@jest/environment': 28.1.0
+      '@jest/fake-timers': 28.1.0
+      '@jest/globals': 28.1.0_metro@0.67.0
+      '@jest/source-map': 28.0.2
+      '@jest/test-result': 28.1.0
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       chalk: 4.1.2
       cjs-module-lexer: 1.2.2
       collect-v8-coverage: 1.0.1
       execa: 5.1.1
+<<<<<<< HEAD
       glob: 7.2.3
       graceful-fs: 4.2.10
       jest-haste-map: 28.1.1
@@ -33795,12 +34667,26 @@ packages:
       jest-resolve: 28.1.1
       jest-snapshot: 28.1.1
       jest-util: 28.1.1
+=======
+      glob: 7.2.0
+      graceful-fs: 4.2.10
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-message-util: 28.1.0
+      jest-mock: 28.1.0
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.0_metro@0.67.0
+      jest-snapshot: 28.1.0_metro@0.67.0
+      jest-util: 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       slash: 3.0.0
       strip-bom: 4.0.0
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /jest-serializer/24.9.0:
     resolution: {integrity: sha512-DxYipDr8OvfrKH3Kel6NdED3OXxjvxXZ1uIY2I9OFbGg+vUkkg7AGvi65qbhbWNPvDckXmzMPbK3u3HaDO49bQ==}
@@ -33960,6 +34846,7 @@ packages:
       - supports-color
     dev: true
 
+<<<<<<< HEAD
   /jest-snapshot/28.1.1:
     resolution: {integrity: sha512-1KjqHJ98adRcbIdMizjF5DipwZFbvxym/kFO4g4fVZCZRxH/dqV8TiBFCa6rqic3p0karsy8RWS1y4E07b7P0A==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -33986,11 +34873,42 @@ packages:
       jest-util: 28.1.1
       natural-compare: 1.4.0
       pretty-format: 28.1.1
+=======
+  /jest-snapshot/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-ex49M2ZrZsUyQLpLGxQtDbahvgBjlLPgklkqGM0hq/F7W/f8DyqZxVHjdy19QKBm4O93eDp+H5S23EiTbbUmHw==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    dependencies:
+      '@babel/core': 7.17.10
+      '@babel/generator': 7.17.10
+      '@babel/plugin-syntax-typescript': 7.17.10_@babel+core@7.17.10
+      '@babel/traverse': 7.17.10
+      '@babel/types': 7.17.10
+      '@jest/expect-utils': 28.1.0
+      '@jest/transform': 28.1.0_metro@0.67.0
+      '@jest/types': 28.1.0
+      '@types/babel__traverse': 7.17.1
+      '@types/prettier': 2.6.0
+      babel-preset-current-node-syntax: 1.0.1_@babel+core@7.17.10
+      chalk: 4.1.2
+      expect: 28.1.0
+      graceful-fs: 4.2.10
+      jest-diff: 28.1.0
+      jest-get-type: 28.0.2
+      jest-haste-map: 28.1.0_metro@0.67.0
+      jest-matcher-utils: 28.1.0
+      jest-message-util: 28.1.0
+      jest-util: 28.1.0
+      natural-compare: 1.4.0
+      pretty-format: 28.1.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       semver: 7.3.7
     transitivePeerDependencies:
       - metro
       - supports-color
+<<<<<<< HEAD
     dev: true
+=======
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /jest-util/24.9.0:
     resolution: {integrity: sha512-x+cZU8VRmOJxbA1K5oDBdxQmdq0OIdADarLxk0Mq+3XS4jgvhG/oKGWcIDCtPG0HgjxOYvF+ilPJQsAyXfbNOg==}
@@ -34030,7 +34948,11 @@ packages:
       '@jest/types': 27.5.1
       '@types/node': 17.0.32
       chalk: 4.1.2
+<<<<<<< HEAD
       ci-info: 3.3.2
+=======
+      ci-info: 3.3.1
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
       graceful-fs: 4.2.10
       picomatch: 2.3.1
 
@@ -34044,7 +34966,6 @@ packages:
       ci-info: 3.3.1
       graceful-fs: 4.2.10
       picomatch: 2.3.1
-    dev: true
 
   /jest-util/28.1.1:
     resolution: {integrity: sha512-FktOu7ca1DZSyhPAxgxB6hfh2+9zMoJ7aEQA759Z6p45NuO8mWcqujH+UdHlCm/V6JTWwDztM2ITCzU1ijJAfw==}
@@ -34102,7 +35023,6 @@ packages:
       jest-get-type: 28.0.2
       leven: 3.1.0
       pretty-format: 28.1.0
-    dev: true
 
   /jest-validate/28.1.1:
     resolution: {integrity: sha512-Kpf6gcClqFCIZ4ti5++XemYJWUPCFUW+N2gknn+KgnDf549iLul3cBuKVe1YcWRlaF8tZV8eJCap0eECOEE3Ug==}
@@ -34181,7 +35101,6 @@ packages:
       emittery: 0.10.2
       jest-util: 28.1.0
       string-length: 4.0.2
-    dev: true
 
   /jest-watcher/28.1.1:
     resolution: {integrity: sha512-RQIpeZ8EIJMxbQrXpJQYIIlubBnB9imEHsxxE41f54ZwcqWLysL/A0ZcdMirf+XsMn3xfphVQVV4EW0/p7i7Ug==}
@@ -34289,7 +35208,20 @@ packages:
       '@types/node': 17.0.32
       merge-stream: 2.0.0
       supports-color: 8.1.1
-    dev: true
+
+  /jest-worker/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-ZHwM6mNwaWBR52Snff8ZvsCTqQsvhCxP/bT1I6T6DAnb6ygkshsyLQIMxFwHpYxht0HOoqt23JlC01viI7T03A==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    peerDependencies:
+      metro: '*'
+    peerDependenciesMeta:
+      metro:
+        optional: true
+    dependencies:
+      '@types/node': 17.0.32
+      merge-stream: 2.0.0
+      metro: 0.67.0
+      supports-color: 8.1.1
 
   /jest-worker/28.1.1:
     resolution: {integrity: sha512-Au7slXB08C6h+xbJPp7VIb6U0XX5Kc9uel/WFc6/rcTzGiaVCBRngBExSYuXSLFPULPSYU3cJ3ybS988lNFQhQ==}
@@ -34399,8 +35331,13 @@ packages:
       - ts-node
     dev: true
 
+<<<<<<< HEAD
   /jest/28.1.1_csdo2gfejusb3n4cacufvlevtu:
     resolution: {integrity: sha512-qw9YHBnjt6TCbIDMPMpJZqf9E12rh6869iZaN08/vpOGgHJSAaLLUn6H8W3IAEuy34Ls3rct064mZLETkxJ2XA==}
+=======
+  /jest/28.1.0_metro@0.67.0:
+    resolution: {integrity: sha512-TZR+tHxopPhzw3c3560IJXZWLNHgpcz1Zh0w5A65vynLGNcg/5pZ+VildAd7+XGOu6jd58XMY/HNn0IkZIXVXg==}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
     peerDependencies:
@@ -34409,10 +35346,16 @@ packages:
       node-notifier:
         optional: true
     dependencies:
+<<<<<<< HEAD
       '@jest/core': 28.1.1_ts-node@10.7.0
       '@jest/types': 28.1.1
       import-local: 3.1.0
       jest-cli: 28.1.1_csdo2gfejusb3n4cacufvlevtu
+=======
+      '@jest/core': 28.1.0_metro@0.67.0
+      import-local: 3.1.0
+      jest-cli: 28.1.0_metro@0.67.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -34527,7 +35470,11 @@ packages:
       argparse: 2.0.1
 
   /jsbn/0.1.1:
+<<<<<<< HEAD
     resolution: {integrity: sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg==}
+=======
+    resolution: {integrity: sha1-peZUwuWi3rXyAdls77yoDA7y9RM=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /jsc-android/245459.0.0:
     resolution: {integrity: sha512-wkjURqwaB1daNkDi2OYYbsLnIdC/lUM2nPXQKRs5pqEU9chDg435bjvo+LSaHotDENygHQDHe+ntUkkw2gwMtg==}
@@ -34852,7 +35799,7 @@ packages:
     dev: true
 
   /jsonfile/2.4.0:
-    resolution: {integrity: sha1-NzaitCi4e72gzIO1P6PWM6NcKug=}
+    resolution: {integrity: sha512-PKllAqbgLgxHaj8TElYymKCAgrASebJrWpTnEkOaTowt23VKXXN0sUeriJ+eh7y6ufb/CC5ap11pz71/cM0hUw==}
     optionalDependencies:
       graceful-fs: 4.2.10
 
@@ -36282,6 +37229,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       escape-string-regexp: 4.0.0
+<<<<<<< HEAD
+=======
+    optional: true
+
+  /math-random/1.0.4:
+    resolution: {integrity: sha512-rUxjysqif/BZQH2yhd5Aaq7vXMSx9NdEsQcyA07uEzIvxgI7zIr33gGsh+RU0/XjmQpCW7RsVof1vlkvQVCK5A==}
+    dev: true
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     optional: true
 
   /md5-file/3.2.3:
@@ -37465,6 +38420,7 @@ packages:
 
   /moment/2.29.3:
     resolution: {integrity: sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==}
+    requiresBuild: true
 
   /morgan/1.10.0:
     resolution: {integrity: sha512-AbegBVI4sh6El+1gNwvD5YIck7nSA36weD7xvIxG4in80j/UoK8AEGaWnnz8v1GxonMCltmlNs5ZKbGvl9b1XQ==}
@@ -37580,6 +38536,7 @@ packages:
   /mv/2.1.1:
     resolution: {integrity: sha512-at/ZndSy3xEGJ8i0ygALh8ru9qy7gWW1cmkaqBN29JmMlIvM//MEO9y1sk/avxuwnPcfhkejkLsuPxH81BrkSg==}
     engines: {node: '>=0.8.0'}
+    requiresBuild: true
     dependencies:
       mkdirp: 0.5.6
       ncp: 2.0.0
@@ -37649,10 +38606,10 @@ packages:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
 
   /natural-compare/1.4.0:
-    resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
+    resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
   /ncp/2.0.0:
-    resolution: {integrity: sha1-GVoh1sRuNh0vsSgbo4uR6d9727M=}
+    resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
     hasBin: true
     dev: true
 
@@ -38794,6 +39751,10 @@ packages:
       registry-url: 5.1.0
       semver: 6.3.0
 
+  /pako/0.2.9:
+    resolution: {integrity: sha1-8/dSL073gjSNqBYbrZ7P1Rv4OnU=}
+    dev: false
+
   /pako/1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
@@ -39068,7 +40029,11 @@ packages:
       sha.js: 2.4.11
 
   /pend/1.2.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
+=======
+    resolution: {integrity: sha1-elfrVQpng/kRUzH89GY9XI4AelA=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /performance-now/0.2.0:
     resolution: {integrity: sha1-M+8wxcd9TqIcWlOGnZG1bY8lVeU=}
@@ -40144,7 +41109,6 @@ packages:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 18.1.0
-    dev: true
 
   /pretty-format/28.1.1:
     resolution: {integrity: sha512-wwJbVTGFHeucr5Jw2bQ9P+VYHyLdAqedFLEkdQUVaBF/eiidDwH5OpilINq4mEfhbCjLnirt6HTTDhv1HaTIQw==}
@@ -40367,7 +41331,11 @@ packages:
     dev: true
 
   /proto-list/1.2.4:
+<<<<<<< HEAD
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
+=======
+    resolution: {integrity: sha1-IS1b/hMYMGpCD2QCuOJv85ZHqEk=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
     optional: true
 
   /protobufjs/6.10.1:
@@ -41087,7 +42055,6 @@ packages:
 
   /react-is/18.1.0:
     resolution: {integrity: sha512-Fl7FuabXsJnV5Q1qIOQwx/sagGF18kogb4gpfcG4gjLBWO0WDiiz1ko/ExayuxE7InyQkBLkxRFG5oxY6Uu3Kg==}
-    dev: true
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
@@ -41197,7 +42164,7 @@ packages:
     resolution: {integrity: sha512-k/944+0XD+8l7zDaiKfYabyEKmAmyZgS1mj+4LcSRPyHnrjgCHKrh/Y6jM6kucQ6xU1+1uyMmF/dSkikxK8i+Q==}
     dependencies:
       flow-parser: 0.121.0
-      glob: 8.0.1
+      glob: 7.2.0
       invariant: 2.2.4
       jscodeshift: 0.11.0
       nullthrows: 1.1.1
@@ -41206,8 +42173,30 @@ packages:
       - supports-color
     dev: false
 
+  /react-native-codegen/0.0.8_@babel+preset-env@7.17.10:
+    resolution: {integrity: sha512-k/944+0XD+8l7zDaiKfYabyEKmAmyZgS1mj+4LcSRPyHnrjgCHKrh/Y6jM6kucQ6xU1+1uyMmF/dSkikxK8i+Q==}
+    dependencies:
+      flow-parser: 0.121.0
+      glob: 7.2.0
+      invariant: 2.2.4
+      jscodeshift: 0.11.0_@babel+preset-env@7.17.10
+      nullthrows: 1.1.1
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - supports-color
+    dev: false
+
   /react-native-config/1.4.4:
     resolution: {integrity: sha512-bu47sJHn/HrB7COAWBI8DieAhrbFLINHFE2HBCcVkDu0Y5ScrMs6vL+jhIm+pMSgxouseLhXG8h7xYYpxE38PA==}
+    peerDependencies:
+      react-native-windows: '>=0.61'
+    peerDependenciesMeta:
+      react-native-windows:
+        optional: true
+    dev: false
+
+  /react-native-config/1.4.5:
+    resolution: {integrity: sha512-5oiAsoW88SOYDg/0cleJ2vJDqv98FJUbFQYEnH4sdMtEn3AAT3lb7BkTGW8HO/t3Vk9VOruwxUUnO4tzuxzCsw==}
     peerDependencies:
       react-native-windows: '>=0.61'
     peerDependenciesMeta:
@@ -41823,6 +42812,55 @@ packages:
       - utf-8-validate
     dev: true
 
+  /react-native/0.67.3_2u55lygy5jd3vjnlyqpcaoyqlu:
+    resolution: {integrity: sha512-epMVRMRH7dLCis97+YwiV4dmTVZO6qKmQgwcTNcxVt/kEMxAa+OYK7h81+99/n7XCeMFk/U2zYOBuQqc7c5Amg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      react: 17.0.2
+    dependencies:
+      '@jest/create-cache-key-function': 27.5.1
+      '@react-native-community/cli': 6.4.0_fazqo4unimqmfwpywzaiilj7ba
+      '@react-native-community/cli-platform-android': 6.3.0
+      '@react-native-community/cli-platform-ios': 6.2.0
+      '@react-native/assets': 1.0.0
+      '@react-native/normalize-color': 2.0.0
+      '@react-native/polyfills': 2.0.0
+      abort-controller: 3.0.0
+      anser: 1.4.10
+      base64-js: 1.5.1
+      event-target-shim: 5.0.1
+      hermes-engine: 0.9.0
+      invariant: 2.2.4
+      jsc-android: 250230.2.1
+      metro-react-native-babel-transformer: 0.67.0
+      metro-runtime: 0.67.0
+      metro-source-map: 0.66.2
+      mkdirp: 0.5.6
+      nullthrows: 1.1.1
+      pretty-format: 26.6.2
+      promise: 8.1.0
+      prop-types: 15.8.1
+      react: 17.0.2
+      react-devtools-core: 4.19.1
+      react-native-codegen: 0.0.8_@babel+preset-env@7.17.10
+      react-refresh: 0.4.3
+      regenerator-runtime: 0.13.9
+      scheduler: 0.20.2
+      stacktrace-parser: 0.1.10
+      use-subscription: 1.7.0_react@17.0.2
+      whatwg-fetch: 3.6.2
+      ws: 6.2.2
+    transitivePeerDependencies:
+      - '@babel/preset-env'
+      - bufferutil
+      - encoding
+      - metro-resolver
+      - metro-transform-worker
+      - supports-color
+      - utf-8-validate
+    dev: false
+
   /react-native/0.67.3_shn3lkepuadv4od4dudas6ijbq:
     resolution: {integrity: sha512-epMVRMRH7dLCis97+YwiV4dmTVZO6qKmQgwcTNcxVt/kEMxAa+OYK7h81+99/n7XCeMFk/U2zYOBuQqc7c5Amg==}
     engines: {node: '>=12'}
@@ -41847,7 +42885,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0
       metro-runtime: 0.67.0
       metro-source-map: 0.66.2
-      mkdirp: 1.0.4
+      mkdirp: 0.5.6
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.1.0
@@ -42431,6 +43469,15 @@ packages:
     dependencies:
       js-yaml: 4.1.0
       strip-bom: 4.0.0
+    dev: false
+
+  /readable-stream/1.0.33:
+    resolution: {integrity: sha1-OjYN1mwbHX/UcFOJhg7aHQ9hEmw=}
+    dependencies:
+      core-util-is: 1.0.3
+      inherits: 2.0.4
+      isarray: 0.0.1
+      string_decoder: 0.10.31
     dev: false
 
   /readable-stream/1.0.34:
@@ -43096,7 +44143,6 @@ packages:
   /resolve.exports/1.1.0:
     resolution: {integrity: sha512-J1l+Zxxp4XK3LUDZ9m60LRJF/mAe4z6a4xyabPHk7pvK5t35dACV32iIjJDFeWZFfZlO29w6SZ67knR0tHzJtQ==}
     engines: {node: '>=10'}
-    dev: true
 
   /resolve/1.1.7:
     resolution: {integrity: sha512-9znBF0vBcaSN3W2j7wKvdERPwqTxSpCq+if5C0WoTCyV9n24rua28jeuQ2pL/HOf+yUe/Mef+H/5p60K0Id3bg==}
@@ -43173,7 +44219,11 @@ packages:
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
   /rework-visit/1.0.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-W6V2fix7nCLUYX1v6eGPrBOZlc03/faqzP4sUxMAJMBMOPYhfV/RyLegTufn5gJKaOITyi+gvf0LXDZ9NzkHnQ==}
+=======
+    resolution: {integrity: sha1-mUWygD8hni96ygCtuLyfZA+ELJo=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /rework/1.0.1:
     resolution: {integrity: sha512-eEjL8FdkdsxApd0yWVZgBGzfCQiT8yqSc2H1p4jpZpQdtz7ohETiDMoje5PlM8I9WgkqkreVxFUKYOiJdVWDXw==}
@@ -43273,6 +44323,21 @@ packages:
     resolution: {integrity: sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==}
     hasBin: true
     dev: false
+
+  /rn-nodeify/10.3.0:
+    resolution: {integrity: sha512-EZB3M4M5i8yySCWF7AAZ31xU7cpdLuIKMlVxXji9t0aY8Ojy3BAyRt1sTp0OwBgy1ejShmlIu2L4f8mToJ+uvg==}
+    hasBin: true
+    dependencies:
+      '@yarnpkg/lockfile': 1.1.0
+      deep-equal: 1.1.1
+      findit: 2.0.0
+      fs-extra: 0.22.1
+      minimist: 1.2.6
+      object.pick: 1.3.0
+      run-parallel: 1.2.0
+      semver: 5.7.1
+      xtend: 4.0.2
+    dev: true
 
   /rn-range-slider/2.1.1:
     resolution: {integrity: sha512-tDfH8G4e/k+waGMMd+HaYTlpOqyh1dd3aWdDmqKo0WGh1BfHB+NXy0X2REyr1ZJDvsrq7WEeFZ+PBTdD6cisbw==}
@@ -44269,7 +45334,6 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
-    dev: true
 
   /source-map-support/0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
@@ -44610,6 +45674,13 @@ packages:
       readable-stream: 2.1.5
     dev: true
 
+  /stream-browserify/1.0.0:
+    resolution: {integrity: sha1-v5tKv7QrJ011FHnkTg/yZWtvEZM=}
+    dependencies:
+      inherits: 2.0.4
+      readable-stream: 1.0.34
+    dev: false
+
   /stream-browserify/2.0.2:
     resolution: {integrity: sha512-nX6hmklHs/gr2FuxYDltq8fJA1GDlxKQCz8O/IM4atRqBH8OORmBNgfvW5gG10GT/qQ9u0CzIvr2X5Pkt6ntqg==}
     dependencies:
@@ -44744,7 +45815,6 @@ packages:
     dependencies:
       char-regex: 1.0.2
       strip-ansi: 6.0.1
-    dev: true
 
   /string-natural-compare/3.0.1:
     resolution: {integrity: sha512-n3sPwynL1nwKi3WJ6AIsClwBMa0zTi54fn2oLU6ndfTSIO05xaznjSf15PcBZU6FNWbmN5Q6cxT4V5hGvB4taw==}
@@ -45258,7 +46328,6 @@ packages:
     dependencies:
       has-flag: 4.0.0
       supports-color: 7.2.0
-    dev: true
 
   /supports-preserve-symlinks-flag/1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
@@ -45566,7 +46635,6 @@ packages:
     dependencies:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.2.0
-    dev: true
 
   /terser-webpack-plugin/1.4.5_webpack@4.42.0:
     resolution: {integrity: sha512-04Rfe496lN8EYruwi6oPQkG0vo8C+HT49X687FZnpPF0qMAIHONI6HEXYPKDOE8e5HjXTyKfqRd/agHtH0kOtw==}
@@ -45812,7 +46880,6 @@ packages:
       '@istanbuljs/schema': 0.1.3
       glob: 7.2.3
       minimatch: 3.1.2
-    dev: true
 
   /text-encoding-polyfill/0.6.7:
     resolution: {integrity: sha512-/DZ1XJqhbqRkCop6s9ZFu8JrFRwmVuHg4quIRm+ziFkR3N3ec6ck6yBvJ1GYeEQZhLVwRW0rZE+C3SSJpy0RTg==}
@@ -45846,14 +46913,17 @@ packages:
       any-promise: 1.3.0
 
   /throat/4.1.0:
+<<<<<<< HEAD
     resolution: {integrity: sha512-wCVxLDcFxw7ujDxaeJC6nfl2XfHJNYs8yUYJnvMgtPEFlttP9tHSfRUv2vBe6C4hkVFPWoP1P6ZccbYjmSEkKA==}
+=======
+    resolution: {integrity: sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /throat/5.0.0:
     resolution: {integrity: sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==}
 
   /throat/6.0.1:
     resolution: {integrity: sha512-8hmiGIJMDlwjg7dlJ4yKGLK8EsYqKgPWbG3b4wjJddKNwc7N7Dpn08Df4szr/sZdMVeOstrdYSsqzX6BYbcB+w==}
-    dev: true
 
   /throttle-debounce/3.0.1:
     resolution: {integrity: sha512-dTEWWNu6JmeVXY0ZYoPuH5cRIwc0MeGbJwah9KUNYSJwommQpCzTySTpEe8Gs1J23aeWEuAobe4Ag7EHVt/LOg==}
@@ -45891,6 +46961,13 @@ packages:
 
   /timemachine/0.3.2:
     resolution: {integrity: sha512-JNKeKZXQJc8UC19JcIq0XziBud+fNNJfatZ57lwk+o1O9mpW2FmzWvRw7FTTOKuN6M0zsjGIlNi0O0QrF5WVRA==}
+
+  /timers-browserify/1.4.2:
+    resolution: {integrity: sha1-ycWLV1voQHN1y14kYtrO50NZ9B0=}
+    engines: {node: '>=0.6.0'}
+    dependencies:
+      process: 0.11.10
+    dev: false
 
   /timers-browserify/2.0.12:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}
@@ -46639,7 +47716,11 @@ packages:
     dev: false
 
   /tweetnacl/0.14.5:
+<<<<<<< HEAD
     resolution: {integrity: sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==}
+=======
+    resolution: {integrity: sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=}
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /tweetnacl/1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
@@ -47311,6 +48392,13 @@ packages:
     resolution: {integrity: sha1-FQWgOiiaSMvXpDTvuu7FBV9WM6k=}
     engines: {node: '>= 4'}
 
+  /url/0.10.3:
+    resolution: {integrity: sha1-Ah5NnHcF8hu/N9A861h2dAJ3TGQ=}
+    dependencies:
+      punycode: 1.3.2
+      querystring: 0.2.0
+    dev: false
+
   /url/0.11.0:
     resolution: {integrity: sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE=}
     dependencies:
@@ -47460,7 +48548,11 @@ packages:
       define-properties: 1.1.4
       for-each: 0.3.3
       has-symbols: 1.0.3
+<<<<<<< HEAD
       object.getownpropertydescriptors: 2.1.4
+=======
+      object.getownpropertydescriptors: 2.1.3
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /util/0.10.3:
     resolution: {integrity: sha512-5KiHfsmkqacuKjkRkdV7SsfDJ2EGiPsK92s2MhNSY0craxjTdKTtqKsJaCWp4LW33ZZ0OPUv1WO/TFvNQRiQxQ==}
@@ -47556,7 +48648,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.13
       '@types/istanbul-lib-coverage': 2.0.4
       convert-source-map: 1.8.0
-    dev: true
 
   /v8-to-istanbul/9.0.1:
     resolution: {integrity: sha512-74Y4LqY74kLE6IFyIjPtkSTWzUZmj8tdHT9Ii/26dvQ6K9Dl2NbEfj0XgU2sHCtKgt5VupqhlO/5aWuqS+IY1w==}
@@ -47620,7 +48711,11 @@ packages:
     dependencies:
       assert-plus: 1.0.0
       core-util-is: 1.0.2
+<<<<<<< HEAD
       extsprintf: 1.4.1
+=======
+      extsprintf: 1.3.0
+>>>>>>> 53b743645 (wip rework bot ios on monorepo)
 
   /verror/1.10.1:
     resolution: {integrity: sha512-veufcmxri4e3XSrT0xwfUR7kguIkaxBeosDg00yDWhk49wdwkSUrvvsm7nc75e1PUyvIeZj6nS8VQRYz2/S4Xg==}
@@ -48109,6 +49204,12 @@ packages:
 
   /vlq/1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
+
+  /vm-browserify/0.0.4:
+    resolution: {integrity: sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=}
+    dependencies:
+      indexof: 0.0.1
+    dev: false
 
   /vm-browserify/1.1.2:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
@@ -49569,7 +50670,6 @@ packages:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
-    dev: true
 
   /write/1.0.3:
     resolution: {integrity: sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==}

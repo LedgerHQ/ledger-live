@@ -18,16 +18,28 @@ function makeAppJSON(accounts: Account[]) {
   return JSON.stringify(jsondata);
 }
 
-export const botReportFolder = async (
-  BOT_REPORT_FOLDER: string,
-  body: string,
-  allAccountsBefore: Account[],
-  allAccountsAfter: Account[]
-) => {
+export const botReportFolder = async ({
+  BOT_REPORT_FOLDER,
+  body,
+  slackCommentTemplate,
+  allAccountsBefore,
+  allAccountsAfter,
+}: {
+  BOT_REPORT_FOLDER: string;
+  body: string;
+  slackCommentTemplate: string;
+  allAccountsBefore: Account[];
+  allAccountsAfter: Account[];
+}) => {
   await Promise.all([
     fs.promises.writeFile(
       path.join(BOT_REPORT_FOLDER, "full-report.md"),
       body,
+      "utf-8"
+    ),
+    fs.promises.writeFile(
+      path.join(BOT_REPORT_FOLDER, "slack-comment-template.md"),
+      slackCommentTemplate,
       "utf-8"
     ),
     fs.promises.writeFile(

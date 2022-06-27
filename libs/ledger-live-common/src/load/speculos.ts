@@ -16,6 +16,7 @@ import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
 import { delay } from "../promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
+import type { AppCandidate } from "../bot/types";
 
 let idCounter = 0;
 
@@ -204,13 +205,7 @@ export async function createSpeculosDevice(
     transport,
   };
 }
-export type AppCandidate = {
-  path: string;
-  model: DeviceModelId;
-  firmware: string;
-  appName: string;
-  appVersion: string;
-};
+
 const modelMap: Record<string, DeviceModelId> = {
   nanos: <DeviceModelId>"nanoS",
   nanox: <DeviceModelId>"nanoX",

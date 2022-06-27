@@ -1,0 +1,157 @@
+name: Bot 'android algorand on Phosphore'
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/LIVE-1162-bot-speculos-ios
+
+jobs:
+  start-runner:
+    name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance (Linux)"
+    needs: [start-runner, run-bot]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
+    if: ${{ always() }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  run-bot:
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: [start-runner]
+    steps:
+      - name: setup JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.6
+
+      - name: Set workflow variables
+        id: workflow-variables
+        run: |
+          echo "::set-output name=metro-cache::$HOME/.metro"
+          echo "::set-output name=yarn-cache-dir::$(yarn cache dir)"
+          echo "::set-output name=tempdir::$TMPDIR"
+
+      - name: Download Android Emulator Image
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-30;google_apis;x86_64"
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --force --name emu --device "Nexus 5X" -k 'system-images;android-30;google_apis;x86_64' -g google_apis
+          $ANDROID_HOME/emulator/emulator -list-avds
+
+      - name: Start Android Emulator
+        id: emu1
+        timeout-minutes: 5
+        continue-on-error: true
+        run: |
+          echo "Starting emulator"
+          nohup $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-snapshot -no-window &
+          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do sleep 1; done; input keyevent 82'
+          $ANDROID_HOME/platform-tools/adb devices
+          echo "Emulator started"
+
+      - name: env
+        working-directory: tests/bot-rn
+        run: |
+          echo GITHUB_RUN_ID=${{ github.run_id }} >> .ci.env
+          echo GITHUB_WORKFLOW=${{ github.workflow }} >> .ci.env
+          echo BOT_REPORT_FOLDER="not_used_but_needed_env"
+
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v3
+      - name: Retrieving coin apps
+        uses: actions/checkout@v3
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.GH_PAT }}
+          path: coin-apps
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: install tests/bot-rn
+        run: |
+          pnpm i --filter="tests/bot-rn" --filter="ledger-live" --frozen-lockfile
+
+      - name: Pre-fetch Javascript bundle
+        # Prebuild the bundle so that's fast when the app starts.
+        run: |
+          nohup pnpm dev:tests/bot-rn &
+          printf 'Waiting for packager to come online'
+          until curl --output /dev/null --silent --head --fail http://localhost:8081/status; do
+            printf '.'
+            sleep 2
+          done
+          echo "Packager is online! Preparing javascript bundle..."
+          curl --output /dev/null --silent --head --fail "http://localhost:8081/index.bundle?platform=android&dev=true&minify=false&inlineSourceMap=true"
+          echo "...javascript bundle ready."
+
+      - name: install and build
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm build:cli
+      - name: Bot Speculos
+        env:
+          SEED: ${{ secrets.SEED6 }}
+          BOT_REPORT_FOLDER: botreport
+          VERBOSE_FILE: botreport/logs_speculos.txt
+        run: |
+          mkdir libs/ledger-live-common/botreport
+          nohup COINAPPS=$PWD/coin-apps pnpm run:cli botSpeculosProxy -p 4337 &
+      - name: Bot Logger
+        env:
+          VERBOSE_FILE: botreport/logs.txt
+        run: |
+          mkdir libs/ledger-live-common/botreport
+          nohup pnpm run:cli botLogProxy -p 8331 &
+      - name: build bot
+        run: pnpm tests:bot-rn detox build e2e --configuration android
+
+      - name: Detox Test
+        # Detox uses Espresso to choreograph steps in reaction to UI events, so we need to send a stream of taps.
+        timeout-minutes: 40
+        run: |
+          $ANDROID_HOME/platform-tools/adb devices
+          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
+          pnpm tests:bot-rn test e2e --configuration android --cleanup --debug-synchronization 500 --detectOpenHandles --runInBand
+        shell: bash
+
+      - name: submit bot report
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+        with:
+          path: libs/ledger-live-common/botreport/
+          githubSha: ${{github.sha}}
+          githubToken: ${{github.token}}
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+          slackChannel: live-bot-mobile
+      - name: upload logs to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: libs/ledger-live-common/botreport/
+      - name: Test coverage
+        if: always()
+        run: npx codecov -F bot
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

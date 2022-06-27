@@ -11,8 +11,15 @@ import type {
   SignOperationEvent,
 } from "../types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { AppCandidate } from "../load/speculos";
-export type { AppCandidate };
+
+export type AppCandidate = {
+  path: string;
+  model: DeviceModelId;
+  firmware: string;
+  appName: string;
+  appVersion: string;
+};
+
 type DeviceActionEvent = {
   text: string;
   x: number;

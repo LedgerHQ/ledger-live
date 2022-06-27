@@ -4,4 +4,5 @@ packages:
   - "libs/ledgerjs/**"
   - "libs/ui/packages/*"
   - "libs/ledger-live-common/tools"
+  - "tests/bot-rn"
   - "tools/**"

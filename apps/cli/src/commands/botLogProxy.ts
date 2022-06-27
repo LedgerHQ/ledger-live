@@ -18,15 +18,9 @@ export default {
   ],
   job: (arg: any) =>
     new Observable(() => {
-      const BOT_LOG_PROXY_FILE = getEnv("BOT_LOG_PROXY_FILE");
-
-      if (!BOT_LOG_PROXY_FILE) {
-        throw new Error("BOT_LOG_PROXY_FILE env is needed to save the logs");
-      }
-
-      const file = process.env.BOT_LOG_PROXY_FILE;
+      const file = process.env.VERBOSE_FILE;
       if (!file) {
-        console.error("BOT_LOG_PROXY_FILE env is needed to save the logs");
+        console.error("VERBOSE_FILE env is needed to save the logs");
         process.exit(1);
       }
     

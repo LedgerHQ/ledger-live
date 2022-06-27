@@ -77,8 +77,7 @@ export default class SpeculosTransportProxy extends Transport {
         socket.onopen = () => {
           socket.send(
             JSON.stringify({
-              type: "open",
-              data: getEnv("BOT_SPECULOS_PROXY_TOKEN"),
+              type: "open"
             })
           );
         };

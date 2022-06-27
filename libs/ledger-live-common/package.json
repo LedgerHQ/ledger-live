@@ -138,6 +138,7 @@
     "ethereumjs-util": "^7.1.4",
     "events": "^3.3.0",
     "expect": "^27.4.6",
+    "express": "^4.17.2",
     "generic-pool": "^3.8.2",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",

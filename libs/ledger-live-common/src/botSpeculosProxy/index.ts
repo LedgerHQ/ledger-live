@@ -12,6 +12,9 @@ import WebSocket from "ws";
 import "./log-setup";
 import { getEnv } from "../env";
 
+import fs from "fs";
+import path from "path";
+
 const devicesList: Record<string, SpeculosTransport> = {};
 const clientList: Record<string, WebSocket> = {};
 
@@ -22,15 +25,7 @@ type MessageProxySpeculos =
     }
   | { type: "error"; error: string };
 
-const canAccess = (serverToken: string, receivedToken: string) => {
-  if (serverToken === "" || !serverToken || receivedToken === serverToken) {
-    return true;
-  }
-
-  return false;
-};
-
-export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
+export const botSpeculosProxy = ({ port = 4377, wsPort = 8435 }) => {
   const app = express();
   // app.use(morgan("tiny"));
   app.use(json());
@@ -42,7 +37,6 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
   if (!coinapps) {
     throw new Error("COINAPPS is not set");
   }
-  const speculosToken = token || getEnv("BOT_SPECULOS_PROXY_TOKEN");
 
   const websocketServer = new WebSocket.Server({
     port: wsPort,
@@ -84,13 +78,6 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
       try {
         switch (message.type) {
           case "open":
-            if (!canAccess(speculosToken, message.data)) {
-              sendToClient(
-                client,
-                JSON.stringify({ type: "error", error: "not authorized" })
-              );
-              client.close();
-            }
             sendToClient(client, JSON.stringify({ type: "opened" }));
             break;
 
@@ -123,9 +110,6 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
 
   app.post("/app-candidate", async (req, res) => {
     try {
-      if (!canAccess(speculosToken, req.body.token)) {
-        return res.status(401).send("not authorized");
-      }
       const appCandidates = await listAppCandidates(coinapps);
       const appCandidate = findAppCandidate(appCandidates, req.body);
 
@@ -142,9 +126,6 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
 
   app.post("/", async (req, res) => {
     try {
-      if (!canAccess(speculosToken, req.body.token)) {
-        return res.status(401).send("not authorized");
-      }
       const device = await createSpeculosDevice({
         ...req.body,
         seed: seed,
@@ -203,9 +184,6 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
 
   app.delete("/:id", async (req, res) => {
     try {
-      if (!canAccess(speculosToken, req.body.token)) {
-        return res.status(401).send("not authorized");
-      }
       await releaseSpeculosDevice(req.params.id);
 
       return res.json(`${req.params.id} is destroyed`);
@@ -214,6 +192,26 @@ export const botSpeculosProxy = ({ token, port = 4377, wsPort = 8435 }) => {
       return res.status(500).json({ error: e.message });
     }
   });
+
+  app.post("/logs", async(req, res) => {
+    try {
+      const BOT_REPORT_FOLDER = getEnv("BOT_REPORT_FOLDER");
+
+      if (!req.body.title || !req.body.data) {
+        return res.status(500).json({message: "data or title is empty"})
+      }
+
+      await fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, req.body.title),
+        req.body.data,
+        "utf-8"
+      )
+      return res.status(200);
+    } catch (e: any) {
+      console.error(e.message);
+      return res.status(500).json({ error: e.message });
+    }
+  })
 
   app.listen(port);
 };
