@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Observable, of } from "rxjs";
 import { concatAll } from "rxjs/operators";
 import { getInfosForServiceUuid } from "@ledgerhq/devices";
@@ -79,12 +79,14 @@ export const useBleDevicesScanning = ({
     null
   );
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
-
-  console.log("BLE SCANNING HOOK being called");
+  // To check for duplicates. The ref will persist for the full lifetime of the component
+  // in which the hook is called.
+  // We could use the current value of scannedDevices inside setScannedDevices
+  // but the check would only be done at the end of the process when calling setScannedDevices.
+  const scannedDevicesRef = useRef<ScannedDevice[]>([]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log("TimedOut");
       setScanningTimedOut(true);
     }, timeoutMs);
 
@@ -100,25 +102,19 @@ export const useBleDevicesScanning = ({
         }) => {
           const { type, descriptor } = event;
 
-          if (type === "remove") {
-            console.log(`📡 A remove: ${JSON.stringify(event)}`);
-          }
-
           if (type === "add" && descriptor) {
             clearTimeout(timeout);
 
             const transportDevice = descriptor;
 
             // To avoid duplicates
-            if (scannedDevices.some((d) => d.deviceId === transportDevice.id)) {
+            if (
+              scannedDevicesRef.current.some(
+                (d) => d.deviceId === transportDevice.id
+              )
+            ) {
               return;
             }
-
-            console.log(
-              `📡 Found a new device: ${transportDevice.id} <- with already ${
-                scannedDevices.length
-              } = ${JSON.stringify(scannedDevices)}`
-            );
 
             if (
               transportDevice.serviceUUIDs &&
@@ -140,8 +136,6 @@ export const useBleDevicesScanning = ({
                 return;
               }
 
-              console.log({ bleInfo });
-
               const newScannedDevice = {
                 deviceModel: bleInfo.deviceModel,
                 deviceName:
@@ -156,12 +150,11 @@ export const useBleDevicesScanning = ({
                 ...scannedDevices,
                 newScannedDevice,
               ]);
+              scannedDevicesRef.current.push(newScannedDevice);
             }
           }
         },
         error: (error: any) => {
-          // eslint-disable-next-line no-console
-          console.log(`useBleDeviceScanning got an error: ${JSON.stringify(error)}`);
           setScanningError(error);
         },
       });
@@ -170,11 +163,7 @@ export const useBleDevicesScanning = ({
       sub.unsubscribe();
       clearTimeout(timeout);
     };
-    // The useEffect should not be updated when scannedDevices is updated
-    // in order to be able to check scannedDevices when receiving a new event
-    // from the ble scanning.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bleTransportListen, setScannedDevices, timeoutMs]);
+  }, [bleTransportListen, filterByModelIds, setScannedDevices, timeoutMs]);
 
   return {
     scannedDevices,
