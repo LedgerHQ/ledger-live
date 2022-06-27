@@ -49,6 +49,7 @@ export type UseBleDevicesScanningDependencies = {
 };
 
 export type UseBleDevicesScanningOptions = {
+  stopBleScanning?: boolean;
   filterByModelIds?: DeviceModelId[];
   filterOutDeviceIds?: string[];
   timeoutMs?: number;
@@ -69,6 +70,7 @@ const DEFAULT_DEVICE_NAME = "Device";
  */
 export const useBleDevicesScanning = ({
   bleTransportListen,
+  stopBleScanning,
   filterByModelIds,
   filterOutDeviceIds,
   timeoutMs = 2000,
@@ -86,6 +88,10 @@ export const useBleDevicesScanning = ({
   const scannedDevicesRef = useRef<ScannedDevice[]>([]);
 
   useEffect(() => {
+    if (stopBleScanning) {
+      return;
+    }
+
     const timeout = setTimeout(() => {
       setScanningTimedOut(true);
     }, timeoutMs);
@@ -100,6 +106,7 @@ export const useBleDevicesScanning = ({
           type: DescriptorEventType;
           descriptor: TransportBleDevice | null;
         }) => {
+          setScanningError(null);
           const { type, descriptor } = event;
 
           if (type === "add" && descriptor) {
@@ -160,10 +167,17 @@ export const useBleDevicesScanning = ({
       });
 
     return () => {
+      console.log("🧹 unsubscribing !");
       sub.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [bleTransportListen, filterByModelIds, setScannedDevices, timeoutMs]);
+  }, [
+    bleTransportListen,
+    stopBleScanning,
+    filterByModelIds,
+    setScannedDevices,
+    timeoutMs,
+  ]);
 
   return {
     scannedDevices,

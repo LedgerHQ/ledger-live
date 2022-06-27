@@ -1,8 +1,9 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { StackScreenProps } from "@react-navigation/stack";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
+import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
 import type { ScannedDevice } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -13,6 +14,8 @@ import OnboardingView from "../Onboarding/OnboardingView";
 import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
+import RequiresBLE from "../../components/RequiresBLE";
+import LocationRequired from "../LocationRequired";
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
@@ -23,13 +26,31 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
   // const { t } = useTranslation();
 
   // const { filterByModelId } = route.params; 
+  const [locationDisabledError, setLocationDisabledError] = useState<boolean>(false);
+  const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
+  const [stopBleScanning, setStopBleScanning] = useState<boolean>(false);
 
   // const knownDeviceIds = useSelector(knownDevicesSelector).map((device) => device.id);
   // const setupNanoFTS = useCallback(() => {
   //   navigation.navigate(ScreenName.SyncOnboardingCompanion, { pairedDevice: null });
   // }, [navigation]);
 
-  const { scannedDevices } = useBleDevicesScanning({ bleTransportListen: TransportBLE.listen });
+  const { scannedDevices, scanningError } = useBleDevicesScanning({ bleTransportListen: TransportBLE.listen, stopBleScanning });
+
+  // Handles scanning error
+  useEffect(() => {
+    if (scanningError) {
+      if (scanningError?.errorCode === BleErrorCode.LocationServicesDisabled) {
+        setStopBleScanning(true);
+        setLocationDisabledError(true);
+      }
+
+      if (scanningError?.errorCode === BleErrorCode.BluetoothUnauthorized) {
+        setStopBleScanning(true);
+        setLocationUnauthorizedError(true);
+      }
+    }
+  }, [scanningError]);
 
   const onSelect = useCallback((_item, deviceMeta) => {
     console.log(`🥹 Selected device ${deviceMeta}`);
@@ -54,18 +75,34 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
     [onSelect],
   );
 
+  const onLocationFixed = useCallback(() => {
+    setLocationDisabledError(false);
+    setLocationUnauthorizedError(false);
+    setStopBleScanning(false);
+  }, [setLocationDisabledError, setLocationUnauthorizedError]);
+
+  if (locationDisabledError) {
+    return <LocationRequired onRetry={onLocationFixed} errorType="disabled" />;
+  }
+
+  if(locationUnauthorizedError) {
+    return <LocationRequired onRetry={onLocationFixed} errorType="unauthorized" />;
+  }
+
   return (
-    <OnboardingView
-      hasBackButton
-      title="Pair a nanoFTS"
-    >
-      <FlatList
-        data={scannedDevices}
-        renderItem={renderItem}
-        keyExtractor={item => `${item.deviceId}-${Math.random()}`}
-        ListEmptyComponent={<InfiniteLoader size={58} />}
-      />
-    </OnboardingView>
+    <RequiresBLE>
+      <OnboardingView
+        hasBackButton
+        title="Pair a nanoFTS"
+      >
+        <FlatList
+          data={scannedDevices}
+          renderItem={renderItem}
+          keyExtractor={item => `${item.deviceId}-${Math.random()}`}
+          ListEmptyComponent={<InfiniteLoader size={58} />}
+        />
+      </OnboardingView>
+    </RequiresBLE>
   );
 }
 
