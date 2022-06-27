@@ -49,6 +49,6 @@ test("Swap", async ({ page }) => {
   await test.step("Verify Swap details are present in the swap history", async () => {
     await swapPage.exitExchangeDrawer();
     await swapPage.verifyHistoricalSwapsHaveLoadedFully();
-    await expect.soft(page).toHaveScreenshot("verify-swap-history.png");
+    await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
   });
 });
