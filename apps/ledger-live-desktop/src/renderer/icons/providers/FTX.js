@@ -1,9 +1,9 @@
 // @flow
 
-import React from "react";
+import React, { memo } from "react";
 
-const FTX = (isUS: boolean = false) =>
-  function FTXLogo({ size }: { size: number }) {
+const FTX = (isUS: boolean = false) => {
+  const FTXLogo = ({ size }: { size: number }) => {
     return (
       <svg
         width={size}
@@ -43,5 +43,9 @@ const FTX = (isUS: boolean = false) =>
       </svg>
     );
   };
+
+  // $FlowFixMe
+  return memo(FTXLogo);
+};
 
 export default FTX;
