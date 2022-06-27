@@ -91,6 +91,7 @@ const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
   const [currentFlow, setCurrentFlow] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
+  const [isSendMaxLoading, setIsSendMaxLoading] = useState(false);
 
   const [error, setError] = useState();
   const { t } = useTranslation();
@@ -108,6 +109,7 @@ const SwapForm = () => {
   const swapTransaction = useSwapTransaction({
     accounts,
     setExchangeRate,
+    setIsSendMaxLoading,
     onNoRates: trackNoRates,
     ...locationState,
   });
@@ -376,6 +378,7 @@ const SwapForm = () => {
           reverseSwap={swapTransaction.reverseSwap}
           provider={provider}
           loadingRates={swapTransaction.swap.rates.status === "loading"}
+          isSendMaxLoading={isSendMaxLoading}
         />
         <SwapFormSummary
           swapTransaction={swapTransaction}

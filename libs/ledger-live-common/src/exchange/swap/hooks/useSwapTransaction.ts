@@ -65,6 +65,7 @@ export type OnNoRatesCallback = (arg: {
 export type SetExchangeRateCallback = (
   exchangeRate?: ExchangeRate | null
 ) => void;
+export type SetIsSendMaxLoading = (boolean) => void;
 
 export const useFromAmountError = (
   errors: Record<string, Error | undefined>
@@ -83,6 +84,7 @@ export const useFromAmountError = (
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
+  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
@@ -90,6 +92,7 @@ export const useSwapTransaction = ({
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
+  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
@@ -134,6 +137,7 @@ export const useSwapTransaction = ({
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
+    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates } = useProviderRates({
