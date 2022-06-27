@@ -8,12 +8,14 @@ const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
 const latest = async (pairs: TrackingPair[], direct?: boolean) => {
   const { data } = await network({
-    method: "POST",
-    url: `${baseURL()}/latest${direct ? "?method=direct" : ""}`,
-    data: pairs.map((p) => ({
-      from: p.from.countervalueTicker ?? p.from.ticker,
-      to: p.to.countervalueTicker ?? p.to.ticker,
-    })),
+    method: "GET",
+    url: `${baseURL()}/latest${direct ? "/direct" : "/indirect"}?pairs=${pairs
+      .map(
+        (p) =>
+          `${p.from.countervalueTicker ?? p.from.ticker}:${p.to.countervalueTicker ?? p.to.ticker
+          }`
+      )
+      .join(",")}`,
   });
   return data;
 };
