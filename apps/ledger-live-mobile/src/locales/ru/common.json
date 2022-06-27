@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Сведения об операции",
+    "title" : "Детали транзакции",
     "account" : "Счёт",
     "date" : "Дата",
     "confirmed" : "Подтверждена",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "Нет операций",
-    "noMoreOperations" : "Других операций нет"
+    "noMoreTransactions" : "Других транзакций нет"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Отменить все",
@@ -1763,7 +1763,7 @@
     "sell" : "Продать",
     "swap" : "Обменять",
     "manage" : "Управление",
-    "lastOperations" : "Последние операции",
+    "lastTransactions" : "Последние транзакции",
     "emptyState" : {
       "title" : "Ещё нет криптоактивов?",
       "desc" : "Убедитесь, что приложение <1><0>{{managerAppName}}</0></1> установлено на устройстве, чтобы вы могли получать",
@@ -1853,7 +1853,7 @@
       "addDelegation" : "Дополнить делегирование",
       "info" : {
         "title" : "Получение вознаграждения",
-        "cta" : "Получить вознаграждение"
+        "cta" : "Стейкинг"
       }
     },
     "claimReward" : {
@@ -3287,6 +3287,19 @@
       "de" : "Deutsch"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Идентификатор",
     "description" : "Одновременно нажмите обе кнопки на {{fullDeviceName}}, если показан тот же идентификатор:"
@@ -3622,7 +3635,7 @@
   "tezos" : {
     "AccountHeader" : {
       "title" : "Можно получать вознаграждения за делегирование счёта",
-      "btn" : "Получить вознаграждение"
+      "btn" : "Стейкинг"
     }
   },
   "tron" : {
