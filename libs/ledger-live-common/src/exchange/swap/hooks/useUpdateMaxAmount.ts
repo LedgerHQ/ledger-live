@@ -29,11 +29,12 @@ export const useUpdateMaxAmount = ({
   isMaxEnabled: SwapDataType["isMaxEnabled"];
   toggleMax: SwapTransactionType["toggleMax"];
 } => {
-  const [isMaxEnabled, setMax] = useState<SwapDataType["isMaxEnabled"]>(false);
+  const [isMaxEnabled, setIsMaxEnabled] =
+    useState<SwapDataType["isMaxEnabled"]>(false);
 
   const toggleMax: SwapTransactionType["toggleMax"] = useCallback(
     () =>
-      setMax((previous) => {
+      setIsMaxEnabled((previous) => {
         if (previous) {
           setFromAmount(ZERO);
           setIsSendMaxLoading?.(false);
