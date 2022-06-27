@@ -14,17 +14,17 @@ import {
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  installedLanguage: Language;
+  deviceLanguage: Language;
   selectedLanguage: Language;
   onSelectLanguage: (language: Language) => void;
   onConfirmInstall: () => void;
 };
 
 const DeviceLanguageSelection: React.FC<Props> = ({
-  installedLanguage,
+  deviceLanguage,
   selectedLanguage,
   onSelectLanguage,
-  onConfirmInstall
+  onConfirmInstall,
 }) => {
   const { t } = useTranslation();
 
@@ -41,7 +41,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
           >
             {Object.values(idsToLanguage).map(currentLanguage => {
               const isCurrentDeviceLanguage =
-                currentLanguage === installedLanguage;
+                currentLanguage === deviceLanguage;
               return (
                 <SelectableList.Element
                   value={currentLanguage}
@@ -61,7 +61,13 @@ const DeviceLanguageSelection: React.FC<Props> = ({
           </SelectableList>
         </ScrollContainer>
       </Flex>
-      <Button alignSelf="stretch" type="main" mt={5} onPress={onConfirmInstall}>
+      <Button
+        alignSelf="stretch"
+        type="main"
+        mt={5}
+        onPress={onConfirmInstall}
+        disabled={selectedLanguage === deviceLanguage}
+      >
         {t("deviceLocalization.changeLanguage")}
       </Button>
     </Flex>
