@@ -53,7 +53,7 @@ export function To({
   const CIcon = currency ? (
     <CurrencyIcon size={32} currency={currency} />
   ) : (
-    <BoxedIcon Icon={InfiniteLoader} variant="circle" badgeColor="tomato" />
+    <BoxedIcon Icon={<InfiniteLoader size="32" />} borderColor="transparent" />
   );
 
   return (
