@@ -35,22 +35,24 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
   //   navigation.navigate(ScreenName.SyncOnboardingCompanion, { pairedDevice: null });
   // }, [navigation]);
 
-  const { scannedDevices, scanningError } = useBleDevicesScanning({ bleTransportListen: TransportBLE.listen, stopBleScanning });
+  const { scannedDevices, scanningBleError } = useBleDevicesScanning({ bleTransportListen: TransportBLE.listen, stopBleScanning });
 
   // Handles scanning error
   useEffect(() => {
-    if (scanningError) {
-      if (scanningError?.errorCode === BleErrorCode.LocationServicesDisabled) {
+    if (scanningBleError) {
+      // Currently using the error code values from react-native-ble-plx
+      // It should be defined indenpendently, in live-common
+      if (scanningBleError?.errorCode === BleErrorCode.LocationServicesDisabled) {
         setStopBleScanning(true);
         setLocationDisabledError(true);
       }
 
-      if (scanningError?.errorCode === BleErrorCode.BluetoothUnauthorized) {
+      if (scanningBleError?.errorCode === BleErrorCode.BluetoothUnauthorized) {
         setStopBleScanning(true);
         setLocationUnauthorizedError(true);
       }
     }
-  }, [scanningError]);
+  }, [scanningBleError]);
 
   const onSelect = useCallback((_item, deviceMeta) => {
     console.log(`🥹 Selected device ${deviceMeta}`);
