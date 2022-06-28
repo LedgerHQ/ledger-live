@@ -81,12 +81,12 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       expectedValue: ({ account }) => account.freshAddress,
     },
     {
-      title: "Approve",
+      title: "APPROVE",
       button: "LRlr",
       final: true,
     },
     {
-      title: "Reject",
+      title: "REJECT",
     },
   ],
 });

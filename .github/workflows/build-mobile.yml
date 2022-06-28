@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-mobile/**
   pull_request:
@@ -70,11 +72,11 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -115,7 +117,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:llm:android --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -146,11 +148,11 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -191,7 +193,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:llm:android --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -218,11 +220,11 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7

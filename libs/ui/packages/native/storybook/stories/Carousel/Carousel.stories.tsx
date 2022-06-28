@@ -1,7 +1,10 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
+import { number, boolean } from "@storybook/addon-knobs";
+import { action } from "@storybook/addon-actions";
 import { storiesOf } from "../storiesOf";
 import { Flex, Carousel, Text, Button } from "../../../src";
+import StoriesIndicator from "../../../src/components/Navigation/StoriesIndicator";
 
 const description = `
 ### A simple responsive carousel.
@@ -61,7 +64,11 @@ const Item = ({ label }: { label: string }) => (
 
 const Default = (): JSX.Element => {
   return (
-    <Carousel>
+    <Carousel
+      scrollViewProps={{
+        style: { width: "100%" },
+      }}
+    >
       <Item label="primary" />
       <Item label="neutral" />
       <Item label="success" />
@@ -73,7 +80,14 @@ const Default = (): JSX.Element => {
 
 const AutoDelay = (): JSX.Element => {
   return (
-    <Carousel autoDelay={2000}>
+    <Carousel
+      autoDelay={2000}
+      scrollViewProps={{
+        style: {
+          width: "100%",
+        },
+      }}
+    >
       <Item label="primary" />
       <Item label="neutral" />
       <Item label="success" />
@@ -89,10 +103,10 @@ const WithProps = (): JSX.Element => {
     <Carousel
       containerProps={{
         p: 10,
-        backgroundColor: "neutral.c20",
+        backgroundColor: "red",
       }}
       scrollViewProps={{
-        style: { borderRadius: 20 },
+        style: { borderRadius: 20, width: "100%" },
       }}
       slideIndicatorContainerProps={{
         p: 4,
@@ -115,7 +129,15 @@ const Controlled = (): JSX.Element => {
 
   return (
     <>
-      <Carousel activeIndex={forceActiveIndex} onChange={setCarouselIndex}>
+      <Carousel
+        activeIndex={forceActiveIndex}
+        onChange={setCarouselIndex}
+        scrollViewProps={{
+          style: {
+            width: "100%",
+          },
+        }}
+      >
         <Item label="primary" />
         <Item label="neutral" />
         <Item label="success" />
@@ -135,6 +157,37 @@ const Controlled = (): JSX.Element => {
   );
 };
 
+const CustomIndicator = (): JSX.Element => {
+  return (
+    <Carousel
+      scrollOnSidePress={boolean("scrollOnSidePress", true)}
+      autoDelay={number("autoDelay", 5000)}
+      restartAfterEnd={boolean("restartAfterEnd", false)}
+      IndicatorComponent={StoriesIndicator}
+      onOverflow={action("onOverflow")}
+      onChange={action("onChange")}
+      scrollViewProps={{
+        style: {
+          width: "100%",
+        },
+      }}
+      slideIndicatorContainerProps={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        px: 7,
+      }}
+    >
+      <Item label="primary" />
+      <Item label="neutral" />
+      <Item label="success" />
+      <Item label="warning" />
+      <Item label="error" />
+    </Carousel>
+  );
+};
+
 storiesOf((story) =>
   story("Carousel", module)
     .add("Default", Default, {
@@ -147,5 +200,6 @@ storiesOf((story) =>
     })
     .add("AutoDelay", AutoDelay)
     .add("WithProps", WithProps)
-    .add("Controlled", Controlled),
+    .add("Controlled", Controlled)
+    .add("CustomIndicator - Story", CustomIndicator),
 );

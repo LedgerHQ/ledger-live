@@ -1,12 +1,151 @@
 # @ledgerhq/live-common
 
-## 22.2.1
+## 24.0.0-next.0
+
+### Major Changes
+
+- b1e396dd8: satstack issue fix Jira ticket: LIVE-2208 and LIVE-2170
+- e9decc277: change tags for glif derivation modes
+
+### Minor Changes
+
+- d22452817: Fix Tezos synchronisation with originating type
+- 10440ec3c: XRP: add retry to api call
+- e1f2f07a2: fix(LLC): cardano byron address validation
+- 508e4c23b: Update ledger-live-common dependency stellar-sdk to v10.1.1
 
 ### Patch Changes
 
-- 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+- 22531f3c3: Update expected steps labels for Cosmos device actions
+- 2012b5477: Drop deprecated "Portfolio V1"
+- 1e4a5647b: Patching shouldUpgrade & mustUpgrade logic to allow for pre-release tags that were considered always considered as false before
+- Updated dependencies [6e956f22b]
+  - @ledgerhq/cryptoassets@6.29.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.1-next.0
 
-## 22.2.1-hotfix.0
+## 23.1.0
+
+### Minor Changes
+
+- 8861c4fe0: upgrade dependencies
+- ec5c4fa3d: Fix incremental sync for Cardano, use blockHeight from last operation instead of from account
+
+### Patch Changes
+
+- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+- 78a64769d: Fix experimental EIP712 variable not working correctly
+
+## 23.1.0-next.4
+
+### Patch Changes
+
+- 78a64769d: Fix experimental EIP712 variable not working correctly
+
+## 23.1.0-next.3
+
+### Minor Changes
+
+- ec5c4fa3d: Fix incremental sync for Cardano, use blockHeight from last operation instead of from account
+
+## 23.1.0-next.2
+
+### Patch Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+
+## 23.1.0-next.1
+
+### Patch Changes
+
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
+## 23.1.0-next.0
+
+### Minor Changes
+
+- 8861c4fe0: upgrade dependencies
+
+### Patch Changes
+
+- 8323d2eaa: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+
+## 23.0.0
+
+### Major Changes
+
+- 64c2fdb06: fix collision between bip44 and glif nomral derivation modes
+
+### Minor Changes
+
+- a66fbe852: import fix for Cardano (ADA) when doing a send it may cause invalid address
+- 899aa3300: Use of the maxSpendable for bot testing instead of amount balance
+- 89e82ed79: Crypto Icons - Add support for Abachi tokens icons
+- 403ea8efe: Update cosmos snapshot
+- 98ecc6272: First integration of Cardano (sync/send/receive)
+- 64c2fdb06: Filecoin integration in LLD and LLM
+
+### Patch Changes
+
+- 09648db7f: refactor of the top perfs filter
+- 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- 8ee9c5568: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+- 9a86fe231: Fix the click on browse assets button on the market screen
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+- b688a592d: fix swap rate formula
+- 71ad84023: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+- Updated dependencies [c4be045f9]
+  - @ledgerhq/hw-app-eth@6.29.0
+
+## 23.0.0-next.4
+
+### Patch Changes
+
+- 8b2e24b6c: Fixing an issue with WalletConnect not accepting new connection after a first disconnection, resulting in an infite loading
+
+## 23.0.0-next.3
+
+### Minor Changes
+
+- a66fbe852: import fix for Cardano (ADA) when doing a send it may cause invalid address
+
+## 23.0.0-next.2
+
+### Patch Changes
+
+- 8ee9c5568: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
+
+## 23.0.0-next.1
+
+### Minor Changes
+
+- 98ecc6272: First integration of Cardano (sync/send/receive)
+
+## 23.0.0-next.0
+
+### Major Changes
+
+- 64c2fdb06: fix collision between bip44 and glif nomral derivation modes
+
+### Minor Changes
+
+- 899aa3300: Use of the maxSpendable for bot testing instead of amount balance
+- 89e82ed79: Crypto Icons - Add support for Abachi tokens icons
+- 403ea8efe: Update cosmos snapshot
+- 64c2fdb06: Filecoin integration in LLD and LLM
+
+### Patch Changes
+
+- 09648db7f: refactor of the top perfs filter
+- 0f59cfc10: Fix crash related to the way polkadot/crypto handles environments that lack WASM support.
+- 9a86fe231: Fix the click on browse assets button on the market screen
+- b688a592d: fix swap rate formula
+- 71ad84023: Track in Sentry the uncaught errors thrown in the bridge transaction flow.
+- Updated dependencies [c4be045f9]
+  - @ledgerhq/hw-app-eth@6.29.0-next.0
+
+## 22.2.1
 
 ### Patch Changes
 

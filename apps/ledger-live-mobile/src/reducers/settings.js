@@ -17,7 +17,6 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
@@ -76,6 +75,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasInstalledAnyApp: boolean,
   readOnlyModeEnabled: boolean,
+  hasOrderedNano: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   graphCountervalueFirst: boolean,
@@ -117,7 +117,9 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,
-  readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
+  // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
+  readOnlyModeEnabled: true,
+  hasOrderedNano: false,
   experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
@@ -411,6 +413,10 @@ const handlers: Object = {
     ...state,
     lastConnectedDevice,
   }),
+  SET_HAS_ORDERED_NANO: (state, action) => ({
+    ...state,
+    hasOrderedNano: action.enabled,
+  }),
   SET_MARKET_REQUEST_PARAMS: (state: SettingsState, { payload }) => ({
     ...state,
     marketRequestParams: {
@@ -619,6 +625,9 @@ export const starredMarketCoinsSelector = (state: State) =>
 
 export const lastConnectedDeviceSelector = (state: State) =>
   state.settings.lastConnectedDevice;
+
+export const hasOrderedNanoSelector = (state: State) =>
+  state.settings.hasOrderedNano;
 
 export const marketRequestParamsSelector = (state: State) =>
   state.settings.marketRequestParams;

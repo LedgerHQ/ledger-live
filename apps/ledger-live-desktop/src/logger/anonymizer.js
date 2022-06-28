@@ -1,24 +1,29 @@
 // @flow
 
 const configDir = (() => {
-  const { STORYBOOK_ENV } = process.env;
-  if (!STORYBOOK_ENV) return "__NOTHING_TO_REPLACE__";
   const { LEDGER_CONFIG_DIRECTORY } = process.env;
   if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
-  const electron = require("electron");
-  return (electron.app || electron.remote.app).getPath("userData") || "__NOTHING_TO_REPLACE__";
+  // $FlowFixMe
+  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
+  return electron.app.getPath("userData") || "__NOTHING_TO_REPLACE__";
 })();
 
-const cwd = typeof process === "object" ? process.cwd() || "." : "__NOTHING_TO_REPLACE__";
+const homeDir = (() => {
+  const { HOME_DIRECTORY } = process.env;
+  if (HOME_DIRECTORY) return HOME_DIRECTORY;
+  // $FlowFixMe
+  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
+  return electron.app.getPath("home") || "__NOTHING_TO_REPLACE__";
+})();
 
 // all the paths the app will use. we replace them to anonymize
 const basePaths = {
   $USER_DATA: configDir,
-  ".": cwd,
+  ".": homeDir,
 };
 
 function filepathReplace(path: string) {
-  if (!path) return path;
+  if (!path || path.startsWith("app://")) return path;
   const replaced = Object.keys(basePaths).reduce((path, name) => {
     const p = basePaths[name];
     return path
@@ -67,15 +72,6 @@ function filepathRecursiveReplacer(obj: mixed, seen: Array<*>) {
 }
 
 export default {
-  url: (url: ?string): ?string =>
-    url &&
-    url
-      .replace(/\/addresses\/[^/]+/g, "/addresses/<HIDDEN>")
-      .replace(/blockHash=[^&]+/g, "blockHash=<HIDDEN>"),
-
-  appURI: (uri: ?string): ?string => uri && uri.replace(/account\/[^/]+/g, "account/<HIDDEN>"),
-
   filepath: filepathReplace,
-
   filepathRecursiveReplacer: (obj: mixed) => filepathRecursiveReplacer(obj, []),
 };

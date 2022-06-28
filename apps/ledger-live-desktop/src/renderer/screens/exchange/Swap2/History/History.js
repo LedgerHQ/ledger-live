@@ -1,6 +1,7 @@
 // @flow
 
-import { remote, ipcRenderer } from "electron";
+import { ipcRenderer } from "electron";
+import * as remote from "@electron/remote";
 import React, { useMemo, useEffect, useState, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";

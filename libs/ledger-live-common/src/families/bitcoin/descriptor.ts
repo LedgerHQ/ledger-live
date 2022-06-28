@@ -23,6 +23,7 @@ const perDerivation: Partial<
   "": (fragment) => `pkh(${fragment})`,
   segwit: (fragment) => `sh(wpkh(${fragment}))`,
   native_segwit: (fragment) => `wpkh(${fragment})`,
+  taproot: (fragment) => `tr(${fragment})`,
 };
 
 function makeFingerprint(compressedPubKey) {

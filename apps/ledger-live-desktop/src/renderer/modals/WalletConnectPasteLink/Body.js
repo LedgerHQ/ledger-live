@@ -7,6 +7,7 @@ import StepPaste, { StepPasteFooter } from "./steps/StepPaste";
 import StepConfirm, { StepConfirmFooter } from "./steps/StepConfirm";
 import type { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
+// $FlowFixMe
 import { disconnect } from "~/renderer/screens/WalletConnect/Provider";
 
 type OwnProps = {|
@@ -39,7 +40,7 @@ const steps: Array<St> = [
 
 const Body = ({ onClose, data }: Props) => {
   const { t } = useTranslation();
-  const [link, setLink] = useState();
+  const [link, setLink] = useState("");
   const [stepId, setStepId] = useState("paste");
 
   const handleStepChange = useCallback(e => setStepId(e.id), [setStepId]);

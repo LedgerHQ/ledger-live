@@ -161,9 +161,17 @@ const ProviderCommon = ({
     });
   };
 
-  disconnect = () => {
+  disconnect = async () => {
     if (state.connector) {
-      state.connector.killSession();
+      // Workaround for an error while trying to kill the session and it returns a error
+      // It lets the user in a state where he can't connect anymore even after relaunching the live
+      // See ref: https://github.com/WalletConnect/walletconnect-monorepo/issues/315#issuecomment-830695953
+      try {
+        await state.connector.killSession();
+      } catch (e) {
+        // using optional chaining to prevent it from crashing on mobile
+        window?.localStorage?.removeItem("walletconnect");
+      }
     }
 
     if (state.status !== STATUS.DISCONNECTED) {

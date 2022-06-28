@@ -7,7 +7,8 @@ import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import i18n from "i18next";
-import { remote, webFrame, ipcRenderer } from "electron";
+import { webFrame, ipcRenderer } from "electron";
+import * as remote from "@electron/remote";
 import { render } from "react-dom";
 import moment from "moment";
 import each from "lodash/each";
@@ -22,7 +23,7 @@ import "~/renderer/i18n/init";
 import logger, { enableDebugLogger } from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-renderer";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
-import sentry from "~/sentry/browser";
+import sentry from "~/sentry/renderer";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import createStore from "~/renderer/createStore";
@@ -85,6 +86,15 @@ async function init() {
   const store = createStore({ dbMiddleware });
 
   sentry(() => sentryLogsSelector(store.getState()));
+
+  let notifiedSentryLogs = false;
+  store.subscribe(() => {
+    const next = sentryLogsSelector(store.getState());
+    if (next !== notifiedSentryLogs) {
+      notifiedSentryLogs = next;
+      ipcRenderer.send("sentryLogsChanged", next);
+    }
+  });
 
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
   ipcRenderer.once("deep-linking", (event, url) => {
