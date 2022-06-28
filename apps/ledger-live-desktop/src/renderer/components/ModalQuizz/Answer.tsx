@@ -20,7 +20,7 @@ const Answer = ({ Illustration, illustrationSize, title, description }: ResultSc
         </Text>
       )}
       {description && (
-        <Text variant="paragraph" fontWeight="medium" textAlign="center">
+        <Text variant="paragraph" fontWeight="medium" textAlign="center" width="318px">
           {description}
         </Text>
       )}

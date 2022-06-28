@@ -7,6 +7,7 @@ import { RadioContext } from "./index";
 
 const Label = styled(Text)`
   color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.neutral.c100});
+  width: 266px;
 `;
 
 const Input = styled.input`
