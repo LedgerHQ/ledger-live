@@ -1,5 +1,18 @@
 # @ledgerhq/react-ui
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- e393b9bfa: fix checkbox on ui:react
+- 9c3e27f46: add breakpoints to desktop ui
+
+### Patch Changes
+
+- ef01a3cc2: fix(Tip): missing colon in StyledIconContainer
+- Updated dependencies [429df1cff]
+  - @ledgerhq/icons-ui@0.2.6-next.0
+
 ## 0.7.8
 
 ### Patch Changes

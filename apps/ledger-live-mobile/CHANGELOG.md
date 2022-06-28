@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.3.1-next.0
+
+### Patch Changes
+
+- fbc32d3e2: AccountGraphCard : Add rounding when using counter value (to prevent too many decimals in crypto-value)
+- 4f43ac0e5: Add back navigation to NftViewer and fixed style issues on the view
+- 6bf75fa20: Updated naming for last operations to last transactions
+- 7bdf0091f: (internal) Filtering more errors to NOT be reported to Sentry – typically to ignore users-specific cases
+- Updated dependencies [22531f3c3]
+- Updated dependencies [d22452817]
+- Updated dependencies [2012b5477]
+- Updated dependencies [10440ec3c]
+- Updated dependencies [e1f2f07a2]
+- Updated dependencies [1e4a5647b]
+- Updated dependencies [508e4c23b]
+- Updated dependencies [b1e396dd8]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-next.0
+  - @ledgerhq/native-ui@0.8.1-next.0
+
 ## 3.3.0
 
 ### Minor Changes

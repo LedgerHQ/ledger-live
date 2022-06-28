@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.0
+
+### Major Changes
+
+- b1e396dd8: satstack issue fix Jira ticket: LIVE-2208 and LIVE-2170
+- e9decc277: change tags for glif derivation modes
+
+### Minor Changes
+
+- d22452817: Fix Tezos synchronisation with originating type
+- 10440ec3c: XRP: add retry to api call
+- e1f2f07a2: fix(LLC): cardano byron address validation
+- 508e4c23b: Update ledger-live-common dependency stellar-sdk to v10.1.1
+
+### Patch Changes
+
+- 22531f3c3: Update expected steps labels for Cosmos device actions
+- 2012b5477: Drop deprecated "Portfolio V1"
+- 1e4a5647b: Patching shouldUpgrade & mustUpgrade logic to allow for pre-release tags that were considered always considered as false before
+- Updated dependencies [6e956f22b]
+  - @ledgerhq/cryptoassets@6.29.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.1-next.0
+
 ## 23.1.0
 
 ### Minor Changes

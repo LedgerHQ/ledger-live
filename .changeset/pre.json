@@ -71,5 +71,32 @@
     "native-modules-tools": "1.0.0",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "angry-ads-obey",
+    "beige-lizards-leave",
+    "chilled-chairs-love",
+    "cold-papayas-speak",
+    "fair-seals-switch",
+    "few-fireants-cheer",
+    "fluffy-rats-laugh",
+    "fuzzy-lemons-breathe",
+    "gre-eats-bananas",
+    "great-poets-visit",
+    "happy-students-sleep",
+    "hungry-queens-beg",
+    "kind-pets-tickle",
+    "little-fishes-vanish",
+    "neat-fireants-lie",
+    "nervous-ads-explode",
+    "olive-camels-scream",
+    "plenty-shrimps-brush",
+    "real-trees-ring",
+    "shy-meals-yell",
+    "slimy-ghosts-tell",
+    "stale-llamas-cheer",
+    "stupid-kiwis-study",
+    "tasty-needles-wave",
+    "weak-geese-fetch",
+    "weak-gorillas-invent"
+  ]
 }
