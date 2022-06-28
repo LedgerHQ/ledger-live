@@ -42,6 +42,8 @@ setSupportedCurrencies([
   "cosmos",
   "crypto_org",
   "celo",
+  "avalanchecchain",
+  "avalanchepchain",
   "dash",
   "tron",
   "tezos",
