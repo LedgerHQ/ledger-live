@@ -10,6 +10,7 @@ import type {
   DescriptorEventType,
 } from "@ledgerhq/hw-transport";
 
+// Inspired by Device class from react-native-ble-plx
 // Should be exported from somewhere else
 export type TransportBleDevice = {
   // Device identifier: MAC address on Android and UUID on iOS.
@@ -29,6 +30,19 @@ export type TransportBleDevice = {
   [otherOptions: string]: unknown;
 };
 
+// Inspired by BleError class from react-native-ble-plx
+// BleError should be an error class which is guaranteed to be thrown by all functions
+// by our different implementations of Transport or at least of ble implementation of Transport
+// TODO: BleError as a class
+export type BleError = Error & {
+  // Platform independent error code.
+  // It is defined as an enum named BleErrorCode in react-native-ble-plx
+  // We should have our own mapping
+  errorCode: number;
+  // Allows any other properties
+  [otherOptions: string]: unknown;
+};
+
 export type ScannedDevice = {
   deviceId: string;
   deviceName: string;
@@ -39,7 +53,7 @@ export type ScannedDevice = {
 export type UseBleDevicesScanningResult = {
   scannedDevices: ScannedDevice[];
   scanningTimedOut: boolean;
-  scanningError: Error | null;
+  scanningBleError: BleError | null;
 };
 
 export type UseBleDevicesScanningDependencies = {
@@ -54,10 +68,6 @@ export type UseBleDevicesScanningOptions = {
   filterOutDeviceIds?: string[];
   timeoutMs?: number;
 };
-
-// FIXME: The error coming from listen should be mapped to a BleScanningError
-// and having a property errorCode with defined possible error code
-export type BleScanningError = any;
 
 const DEFAULT_DEVICE_NAME = "Device";
 
@@ -77,7 +87,7 @@ export const useBleDevicesScanning = ({
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
   const [scanningTimedOut, setScanningTimedOut] = useState<boolean>(false);
-  const [scanningError, setScanningError] = useState<BleScanningError | null>(
+  const [scanningBleError, setScanningBleError] = useState<BleError | null>(
     null
   );
   const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
@@ -106,7 +116,7 @@ export const useBleDevicesScanning = ({
           type: DescriptorEventType;
           descriptor: TransportBleDevice | null;
         }) => {
-          setScanningError(null);
+          setScanningBleError(null);
           const { type, descriptor } = event;
 
           if (type === "add" && descriptor) {
@@ -161,8 +171,11 @@ export const useBleDevicesScanning = ({
             }
           }
         },
-        error: (error: any) => {
-          setScanningError(error);
+        error: (error: BleError) => {
+          // TODO: we should be sure to have a BleError
+          if (error.errorCode) {
+            setScanningBleError(error);
+          }
         },
       });
 
@@ -182,6 +195,6 @@ export const useBleDevicesScanning = ({
   return {
     scannedDevices,
     scanningTimedOut,
-    scanningError,
+    scanningBleError,
   };
 };
