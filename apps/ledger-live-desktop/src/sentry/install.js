@@ -54,21 +54,12 @@ export function init(Sentry: any) {
     beforeSend(data: any, hint: any) {
       if (__DEV__) console.log("before-send", { data, hint });
       if (!shouldSendCallback()) return null;
-
       if (typeof data !== "object" || !data) return data;
-
       // $FlowFixMe
       delete data.server_name; // hides the user machine name
-
-      if (typeof data.request === "object" && data.request) {
-        const { request } = data;
-        if (typeof request.url === "string") {
-          // $FlowFixMe not sure why
-          request.url = anonymizer.appURI(request.url);
-        }
-      }
-
       anonymizer.filepathRecursiveReplacer(data);
+
+      console.log("SENTRY REPORT", data);
       return data;
     },
 
