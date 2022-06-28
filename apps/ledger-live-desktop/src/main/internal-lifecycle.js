@@ -14,6 +14,7 @@ const hydratedPerCurrency = {};
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
+const HOME_DIRECTORY = app.getPath("home");
 
 const internal = new InternalProcess({ timeout: 3000 });
 
@@ -35,6 +36,7 @@ const spawnCoreProcess = () => {
     ...process.env,
     IS_INTERNAL_PROCESS: 1,
     LEDGER_CONFIG_DIRECTORY,
+    HOME_DIRECTORY,
     INITIAL_SENTRY_ENABLED: String(!!sentryEnabled),
     SENTRY_USER_ID: userId,
   };

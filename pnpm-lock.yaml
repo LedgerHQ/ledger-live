@@ -933,6 +933,7 @@ importers:
       '@types/lodash': ^4.14.179
       '@types/node': 16.11.12
       '@types/object-hash': ^2.1.0
+      '@types/qs': ^6.9.7
       '@types/react': ^17
       '@typescript-eslint/eslint-plugin': ^4.33.0
       '@typescript-eslint/parser': ^4.33.0
@@ -993,6 +994,7 @@ importers:
       jest: ^28.1.1
       jest-file-snapshot: ^0.5.0
       json-rpc-2.0: ^0.2.19
+      jwt-decode: ^3.1.2
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
@@ -1001,6 +1003,7 @@ importers:
       performance-now: ^2.1.0
       prando: ^6.0.1
       prettier: 2.3.2
+      qs: ^6.10.1
       react: ^17.0.2
       react-dom: 17.0.2
       react-native: 0.65.1
@@ -1083,6 +1086,7 @@ importers:
       '@taquito/utils': 11.1.0-stablelib.0
       '@types/bchaddrjs': 0.4.0
       '@types/bs58check': 2.1.0
+      '@types/qs': 6.9.7
       '@walletconnect/client': 1.7.3
       '@xstate/react': 1.6.3_trxcr4ukgza3iqpu7qkdqadng4
       '@zondax/ledger-filecoin': 0.11.2
@@ -1121,6 +1125,7 @@ importers:
       invariant: 2.2.4
       isomorphic-ws: 4.0.1_ws@7.5.7
       json-rpc-2.0: 0.2.19
+      jwt-decode: 3.1.2
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
@@ -1128,6 +1133,7 @@ importers:
       object-hash: 2.2.0
       performance-now: 2.1.0
       prando: 6.0.1
+      qs: 6.10.3
       redux: 4.2.0
       reselect: 4.1.5
       ripemd160: 2.0.2
@@ -35314,6 +35320,10 @@ packages:
     dependencies:
       jwa: 1.4.1
       safe-buffer: 5.2.1
+    dev: false
+
+  /jwt-decode/3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /keccak/1.4.0:
