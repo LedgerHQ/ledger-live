@@ -3131,6 +3131,7 @@
         "link": "More about the recovery phrase",
         "title2": "What happens if I lose access to my Nano?",
         "paragraph3": "Don't worry and follow these steps:",
+        "paragraph4": "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
         "points": {
           "1": "Get a new hardware wallet.",
           "2": "Select “Restore recovery phrase on a new device” in the Ledger app",
@@ -3222,7 +3223,7 @@
             "paragraph1": "Restore your Nano from your recovery phrase to restore, replace or back up your Ledger hardware wallet.",
             "paragraph2": "Your Nano will restore your private keys and you will be able to access and manage your crypto.",
             "buttons": {
-              "next": "OK, I’m ready!",
+              "next": "OK, I'm ready!",
               "prev": "Previous step",
               "help": "Need help"
             }
@@ -3235,7 +3236,7 @@
               "3": "Stay alone, and choose a safe and quiet environment."
             },
             "buttons": {
-              "next": "OK, I’m ready!",
+              "next": "OK, I'm ready!",
               "prev": "Previous step"
             },
             "help": {
@@ -3512,9 +3513,9 @@
           "description": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
         },
         "setUpNanoWallet": {
-          "title": "Let’s set up your Nano!",
+          "title": "Let's set up your Nano!",
           "description": "We'll start by setting up your Nano security.",
-          "CTA": "Let’s do this!"
+          "CTA": "Let's do this!"
         }
       }
     },
@@ -3874,7 +3875,7 @@
         "title": "Now game on!",
         "descr": "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
         "buttons": {
-          "start": "Let’s take the quiz",
+          "start": "Let's take the quiz",
           "next": "Next question",
           "finish": "Finish quiz"
         },
