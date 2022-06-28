@@ -25,6 +25,7 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: false,
+      disableAutoRecoverErrors: true,
     });
 
     for (let i = 0; i < 7; i++) {
@@ -48,6 +49,7 @@ describe("API sanity", () => {
         },
       ],
       autofillGaps: true,
+      disableAutoRecoverErrors: true,
     });
     const currentValue = calculate(state, {
       disableRounding: true,
@@ -82,6 +84,7 @@ describe("extreme cases", () => {
         startDate: new Date(),
       })),
       autofillGaps: true,
+      disableAutoRecoverErrors: true,
     });
 
     const currenciesWithCVs = currencies
