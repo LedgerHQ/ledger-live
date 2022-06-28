@@ -34,6 +34,7 @@
     "doc:ljs": "pnpm turbo run doc --filter=\"./libs/ledgerjs/**\"",
     "watch:ljs": "pnpm turbo run watch --filter=\"./libs/ledgerjs/**\"",
     "watch:common": "pnpm turbo run watch --filter=live-common",
+    "watch:ui": "pnpm turbo run watch --filter=react-ui",
     "dev:cli": "pnpm turbo run watch --filter=live-cli",
     "dev:lld": "pnpm turbo run start --filter=ledger-live-desktop",
     "dev:llm": "pnpm turbo run start --filter=live-mobile",
