@@ -21,6 +21,7 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import Divider from "../../../components/Divider";
 import DeviceLanguage from "./DeviceLanguage";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
 
 const illustrations = {
   nanoS: NanoS,
@@ -83,6 +84,8 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
+  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -141,7 +144,7 @@ const DeviceCard = ({
           </VersionContainer>
         </Flex>
       </Flex>
-      {isLocalizationSupported && deviceInfo.languageId !== undefined && (
+      {deviceLocalizationFeatureFlag?.enabled && isLocalizationSupported && deviceInfo.languageId !== undefined && (
         <Flex px={6}>
           <Divider />
           <DeviceLanguage
