@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.43.2-next.1
+
+### Patch Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
 ## 2.43.2-next.0
 
 ### Patch Changes

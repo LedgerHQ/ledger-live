@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.2
+
+### Minor Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+
 ## 24.0.0-next.1
 
 ### Patch Changes

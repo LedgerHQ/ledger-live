@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.3.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
 ## 3.3.1-next.1
 
 ### Patch Changes
