@@ -32,7 +32,7 @@ export function PinCodeHowTo() {
         <Trans i18nKey="onboarding.screens.tutorial.screens.pinCode.title" />
       </Title>
       {steps.map((step, index) => (
-        <Bullet key={index} bulletText={index} text={step.text} subText={step.subText} />
+        <Bullet key={index} bulletText={index + 1} text={step.text} subText={step.subText} />
       ))}
     </Column>
   );
