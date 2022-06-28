@@ -121,7 +121,9 @@ jobs:
       - name: Install playwright dependencies
         run: npx @playwright/test install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm desktop build:testing
       - name: Run unit tests [Linux]
         if: matrix.os == 'ubuntu-latest'
         run: pnpm desktop test:jest
