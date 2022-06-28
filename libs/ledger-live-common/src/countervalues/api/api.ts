@@ -1,23 +1,37 @@
 import URL from "url";
 import { getEnv } from "../../env";
 import network from "../../network";
+import chunk from "lodash/chunk";
 import { formatPerGranularity } from "../helpers";
 import type { CounterValuesAPI, TrackingPair } from "../types";
+import { promiseAllBatched } from "../../promise";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
+const LATEST_CHUNK = 50;
+
 const latest = async (pairs: TrackingPair[], direct?: boolean) => {
-  const { data } = await network({
-    method: "GET",
-    url: `${baseURL()}/latest${direct ? "/direct" : "/indirect"}?pairs=${pairs
-      .map(
-        (p) =>
-          `${p.from.countervalueTicker ?? p.from.ticker}:${
-            p.to.countervalueTicker ?? p.to.ticker
-          }`
-      )
-      .join(",")}`,
-  });
+  const all = await promiseAllBatched(
+    4,
+    chunk(pairs, LATEST_CHUNK),
+    async (partial) => {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL()}/latest${
+          direct ? "/direct" : "/indirect"
+        }?pairs=${partial
+          .map(
+            (p) =>
+              `${p.from.countervalueTicker ?? p.from.ticker}:${
+                p.to.countervalueTicker ?? p.to.ticker
+              }`
+          )
+          .join(",")}`,
+      });
+      return data;
+    }
+  );
+  const data = all.reduce((acc, data) => acc.concat(data), []);
   return data;
 };
 
