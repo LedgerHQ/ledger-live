@@ -29,6 +29,7 @@ type FormInputsProps = {
   isSwapReversable: boolean,
   provider: ?string,
   loadingRates: boolean,
+  isSendMaxLoading: boolean,
 };
 
 const RoundButton = styled(Button)`
@@ -73,6 +74,7 @@ export default function FormInputs({
   isSwapReversable,
   provider,
   loadingRates,
+  isSendMaxLoading,
 }: FormInputsProps) {
   return (
     <Main>
@@ -86,6 +88,7 @@ export default function FormInputs({
           toggleMax={toggleMax}
           fromAmountError={fromAmountError}
           provider={provider}
+          isSendMaxLoading={isSendMaxLoading}
         />
       </Box>
       <Box horizontal justifyContent="center" alignContent="center">

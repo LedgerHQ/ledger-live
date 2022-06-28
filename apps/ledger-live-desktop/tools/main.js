@@ -49,6 +49,11 @@ const startDev = async argv => {
     define: buildMainEnv("development", argv),
     ...devConfig,
   };
+  const swapConnectWebviewPreloaderConfig = {
+    ...require("./config/swapConnectWebviewPreloader.esbuild"),
+    define: buildMainEnv("development", argv),
+    ...devConfig,
+  };
   const rendererConfig = buildRendererConfig(
     "development",
     require("./config/renderer.webpack.config"),
@@ -64,6 +69,7 @@ const startDev = async argv => {
     esbuild.build(mainConfig),
     esbuild.build(preloaderConfig),
     esbuild.build(webviewPreloaderConfig),
+    esbuild.build(swapConnectWebviewPreloaderConfig),
     new WebpackWorker("renderer", rendererConfig).serve(argv.port),
   ]);
 
@@ -108,6 +114,10 @@ const build = async argv => {
     }),
     esbuild.build({
       ...require("./config/webviewPreloader.esbuild"),
+      define: buildMainEnv("production", argv),
+    }),
+    esbuild.build({
+      ...require("./config/swapConnectWebviewPreloader.esbuild"),
       define: buildMainEnv("production", argv),
     }),
     esbuild.build({
