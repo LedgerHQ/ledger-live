@@ -15,10 +15,10 @@ export type LanguagePackage = {
 };
 
 export type LanguagePackageResponse = {
-  id: number,
-  language: Language,
-  language_package_version: LanguagePackage[]
-}
+  id: number;
+  language: Language;
+  language_package_version: LanguagePackage[];
+};
 
 export const languageIds: { [key in Language]: number } = {
   english: 0x00,
@@ -26,8 +26,10 @@ export const languageIds: { [key in Language]: number } = {
   spanish: 0x02,
 };
 
-export const idsToLanguage: { [key in typeof languageIds[Language]]: Language } = {
+export const idsToLanguage: {
+  [key in typeof languageIds[Language]]: Language;
+} = {
   0x00: "english",
   0x01: "french",
-  0x02: "spanish"
+  0x02: "spanish",
 };

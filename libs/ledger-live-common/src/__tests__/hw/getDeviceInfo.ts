@@ -1,4 +1,7 @@
-import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
+import {
+  openTransportReplayer,
+  RecordStore,
+} from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 
 test("1.2.0", async () => {
