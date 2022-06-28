@@ -7,7 +7,7 @@ import {
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 
-export type SwapProps = MaterialTopTabScreenProps<
+export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,
   "SwapForm"
 >;
@@ -23,17 +23,22 @@ export type SelectCurrencyProps = StackScreenProps<
 >;
 
 export type SwapNavParamList = {
-  Swap: {
-    account?: Account | TokenAccount;
-    currency?: CryptoCurrency | TokenCurrency;
-  };
+  Swap: undefined;
   SwapSelectAccount: {
+    accounts: Account[];
     target: "from" | "to";
+    provider: string;
   };
-  SwapSelectCurrency: undefined;
+  SwapSelectCurrency: {
+    currencies: (CryptoCurrency | TokenCurrency)[];
+    provider: string;
+  };
 };
 
 export type SwapFormNavParamList = {
-  SwapForm: undefined;
+  SwapForm: {
+    account?: Account | TokenAccount;
+    currency?: CryptoCurrency | TokenCurrency;
+  };
   SwapHistory: undefined;
 };

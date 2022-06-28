@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Account, TokenAccount } from "../../../types";
 import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
@@ -9,22 +9,26 @@ export const usePickDefaultAccount = (
   accounts: ((Account | TokenAccount) & { disabled?: boolean })[],
   fromAccount: Account | TokenAccount | null | undefined,
   setFromAccount: (account: Account | TokenAccount) => void
-): void => {
+): ((Account | TokenAccount) & { disabled?: boolean })[] => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const allCurrencies = useCurrenciesByMarketcap(list);
+  const availableAccounts = useMemo(() => {
+    return allCurrencies
+      .map(({ id }) =>
+        getAvailableAccountsById(id, accounts).filter((account) =>
+          account.balance.gt(0)
+        )
+      )
+      .flat(1)
+      .filter(Boolean);
+  }, [accounts.length, allCurrencies]);
 
   useEffect(() => {
-    if (!fromAccount && allCurrencies.length > 0) {
-      const defaultAccount: Account | TokenAccount | undefined = allCurrencies
-        .map(({ id }) =>
-          getAvailableAccountsById(id, accounts).filter((account) =>
-            account.balance.gt(0)
-          )
-        )
-        .flat(1)
-        .find(Boolean);
+    if (!fromAccount)
+      if (availableAccounts[0]) {
+        setFromAccount(availableAccounts[0]);
+      }
+  }, [availableAccounts, setFromAccount, fromAccount]);
 
-      if (defaultAccount) setFromAccount(defaultAccount);
-    }
-  }, [accounts, allCurrencies, fromAccount, setFromAccount]);
+  return availableAccounts;
 };

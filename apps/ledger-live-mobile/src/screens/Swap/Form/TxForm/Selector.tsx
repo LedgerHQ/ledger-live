@@ -7,11 +7,18 @@ interface Props {
   title: string;
   subTitle: string;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export function Selector({ Icon, title, subTitle, onPress }: Props) {
+export function Selector({
+  Icon,
+  title,
+  subTitle,
+  onPress,
+  disabled = false,
+}: Props) {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={onPress} disabled={disabled}>
       <Flex
         flexDirection="row"
         alignItems="center"

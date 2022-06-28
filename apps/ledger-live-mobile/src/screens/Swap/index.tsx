@@ -1,5 +1,4 @@
-import { useTheme } from "@react-navigation/native";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { StyleSheet } from "react-native";
 import Config from "react-native-config";
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
@@ -16,6 +15,7 @@ import {
   usePollKYCStatus,
   useSwapTransaction,
   useProviders,
+  useSelectableCurrencies,
 } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -25,14 +25,17 @@ import {
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { accountsSelector } from "../../reducers/accounts";
+import {
+  accountsSelector,
+  shallowAccountsSelector,
+} from "../../reducers/accounts";
 import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
 import { Loading, NotAvailable, TxForm } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
-import { SwapProps } from "./types";
+import { SwapFormProps } from "./types";
 
 export * from "./types";
 export * from "./SelectAccount";
@@ -47,11 +50,10 @@ enum ActionRequired {
   None,
 }
 
-export function SwapForm(_props: SwapProps) {
+export function SwapForm({ route: { params } }: SwapFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const { providers, error, pairs } = useProviders(
     Config.SWAP_DISABLED_PROVIDERS,
   );
@@ -65,6 +67,22 @@ export function SwapForm(_props: SwapProps) {
 
   const exchangeRatesState = swapTx.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
+
+  const currencyNames = useMemo(() => {
+    if (!swapTx.swap.from.currency) {
+      return pairs.map(p => p.to);
+    }
+
+    return pairs.reduce<string[]>(
+      (acc, p) =>
+        p.from === swapTx.swap.from.currency?.id ? [...acc, p.to] : acc,
+      [],
+    );
+  }, [pairs, swapTx.swap.from.currency]);
+
+  const currencies = useSelectableCurrencies({
+    allCurrencies: [...new Set(currencyNames)],
+  });
 
   const { provider, kyc } = useMemo<{
     provider?: string;
@@ -91,6 +109,17 @@ export function SwapForm(_props: SwapProps) {
   const [errorCode, setErrorCode] = useState<
     ValidCheckQuoteErrorCodes | undefined
   >();
+
+  useEffect(() => {
+    if (params?.currency) {
+      swapTx.setToCurrency(params.currency);
+    }
+
+    if (params?.account) {
+      swapTx.setFromAccount(params.account);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -137,7 +166,7 @@ export function SwapForm(_props: SwapProps) {
     if (swapTx.swap.to.currency && !swapTx.swap.to.account) {
       swapTx.setToCurrency(swapTx.swap.to.currency);
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts]);
 
   // FIXME: update usePollKYCStatus to use checkQuote for KYC status (?)
@@ -180,14 +209,6 @@ export function SwapForm(_props: SwapProps) {
       setCurrentFlow(undefined);
     }
   }, [kyc?.id, currentFlow]);
-
-  //   const onContinue = useCallback(() => {
-  //     swapTx.setConfirmed(true);
-  //   }, [swapTx]);
-
-  //   const onReset = useCallback(() => {
-  //     swapTx.setConfirmed(false);
-  //   }, [swapTx]);
 
   useEffect(() => {
     if (
@@ -286,10 +307,10 @@ export function SwapForm(_props: SwapProps) {
     exchangeRate &&
     swapTx.swap.to.account;
 
-  const onSubmit = () => {
+  const onSubmit = useCallback(() => {
     track("Page Swap Form - Request", {
-      sourceCurrency: sourceCurrency?.name,
-      targetCurrency: targetCurrency?.name,
+      sourceCurrency: swapTx.swap.from.currency?.name,
+      targetCurrency: swapTx.swap.to.currency?.name,
       provider,
       swapVersion: SWAP_VERSION,
     });
@@ -298,11 +319,15 @@ export function SwapForm(_props: SwapProps) {
     /*   { swapTransaction: swapTx, exchangeRate }, */
     /*   { preventBackdropClick: true }, */
     /* ); */
-  };
+  }, [swapTx, provider]);
 
-  const sourceAccount = swapTx.swap.from.account;
-  const sourceCurrency = swapTx.swap.from.currency;
-  const targetCurrency = swapTx.swap.to.currency;
+  //   const onContinue = useCallback(() => {
+  //     swapTx.setConfirmed(true);
+  //   }, [swapTx]);
+
+  //   const onReset = useCallback(() => {
+  //     swapTx.setConfirmed(false);
+  //   }, [swapTx]);
 
   /* switch (currentFlow) { */
   /*  case "LOGIN": */
@@ -334,7 +359,12 @@ export function SwapForm(_props: SwapProps) {
     return (
       <KeyboardView style={styles.root}>
         <TrackScreen category="Swap Form" providerName={provider} />
-        <TxForm swapTx={swapTx} pairs={pairs} />
+        <TxForm
+          swapTx={swapTx}
+          provider={provider}
+          accounts={accounts}
+          currencies={currencies}
+        />
 
         <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
           {t("common.exchange")}
@@ -348,127 +378,6 @@ export function SwapForm(_props: SwapProps) {
   }
 
   return <Loading />;
-  // return swapTx.showDeviceConnect ? (
-  //   <Connect provider={provider} setResult={swapTx.setDeviceMeta} />
-  // ) : (
-  //   <KeyboardView style={[styles.root, { backgroundColor: colors.background }]}>
-  //     <TrackScreen category="Swap Form" providerName={provider} />
-  //     <View>
-  //       <AccountAmountRow
-  //         navigation={navigation}
-  //         route={route}
-  //         swap={swapTx.swap}
-  //         transaction={swapTx.transaction}
-  //         setFromAccount={swapTx.setFromAccount}
-  //         setFromAmount={swapTx.setFromAmount}
-  //         setToCurrency={swapTx.setToCurrency}
-  //         useAllAmount={swapTx.swap.isMaxEnabled}
-  //         rate={swapTx.rate}
-  //         bridgePending={swapTx.bridgePending}
-  //         fromAmountError={swapError}
-  //         providers={swapTx.providers}
-  //         provider={provider}
-  //       />
-  //     </View>
-  //     <ScrollView contentContainerStyle={styles.scrollZone}>
-  //       <FormSummary
-  //         swapTx={swapTx}
-  //         kycStatus={kycStatus}
-  //         provider={provider}
-  //       />
-  //       {error && (
-  //         <GenericErrorBottomModal
-  //           error={error}
-  //           isOpened
-  //           onClose={swapTx.resetError}
-  //         />
-  //       )}
-  //     </ScrollView>
-  //     <View>
-  //       <View style={styles.available}>
-  //         <View style={styles.availableLeft}>
-  //           <LText>
-  //             <Trans i18nKey="transfer.swap.form.amount.available" />
-  //           </LText>
-  //           <LText semiBold>
-  //             {swapTx.maxSpendable ? (
-  //               <CurrencyUnitValue
-  //                 showCode
-  //                 unit={swapTx.fromUnit}
-  //                 value={swapTx.maxSpendable}
-  //               />
-  //             ) : (
-  //               "-"
-  //             )}
-  //           </LText>
-  //         </View>
-  //         {swapTx.maxSpendable ? (
-  //           <View style={styles.availableRight}>
-  //             <LText style={styles.maxLabel}>
-  //               <Trans i18nKey="transfer.swap.form.amount.useMax" />
-  //             </LText>
-  //             <Switch
-  //               style={styles.switch}
-  //               value={swapTx.swap.isMaxEnabled}
-  //               onValueChange={value => {
-  //                 Keyboard.dismiss();
-  //                 swapTx.toggleMax(value);
-  //               }}
-  //             />
-  //           </View>
-  //         ) : null}
-  //       </View>
-  //       <View style={styles.buttonContainer}>
-  //         <Button
-  //           containerStyle={styles.button}
-  //           event="Page Swap Form - CTA"
-  //           eventProperties={{
-  //             provider,
-  //             targetCurrency: swapTx.swap?.to?.currency?.id,
-  //             sourceCurrency: swapTx.swap?.from?.currency?.id,
-  //           }}
-  //           type="primary"
-  //           disabled={!swapTx.isSwapReady}
-  //           title={<Trans i18nKey="transfer.swap.form.tab" />}
-  //           onPress={onContinue}
-  //         />
-  //       </View>
-  //       {swapTx.confirmed ? (
-  //         swapTx.alreadyAcceptedTerms && swapTx.deviceMeta ? (
-  //           <>
-  //             <Track
-  //               onUpdate
-  //               event={"Swap Form - AcceptedSummaryDisclaimer"}
-  //               provider={provider}
-  //             />
-  //             <Confirmation
-  //               swap={swapTx.swap}
-  //               rate={swapTx.rate}
-  //               status={swapTx.status}
-  //               transaction={swapTx.transaction}
-  //               deviceMeta={swapTx.deviceMeta}
-  //               provider={swapTx.provider}
-  //               onError={e => {
-  //                 onReset();
-  //                 setError(e);
-  //               }}
-  //               onCancel={onReset}
-  //             />
-  //           </>
-  //         ) : !swapTx.alreadyAcceptedTerms ? (
-  //           <DisclaimerModal
-  //             provider={swapTx.provider}
-  //             onContinue={() => {
-  //               dispatch(swapAcceptProvider(swapTx.provider));
-  //               swapTx.setConfirmed(true);
-  //             }}
-  //             onClose={() => swapTx.setConfirmed(false)}
-  //           />
-  //         ) : null
-  //       ) : null}
-  //     </View>
-  //   </KeyboardView>
-  // );
 }
 
 const trackNoRates: OnNoRatesCallback = ({ toState }) => {
