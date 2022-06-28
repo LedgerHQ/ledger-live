@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { FirmwareInfo } from "../types/manager";
+import type { FirmwareInfo } from "@ledgerhq/types-live";
 
 /**
  * Retrieve targetId and firmware version from device

@@ -1,7 +1,7 @@
-import type { App } from "../types/manager";
 import type { InstalledItem } from "./types";
 import { getCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
+import type { App } from "@ledgerhq/types-live";
 
 export type SortOptions = {
   type?: "name" | "marketcap" | "default";

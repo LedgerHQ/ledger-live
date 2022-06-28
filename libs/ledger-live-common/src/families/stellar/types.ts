@@ -2,7 +2,7 @@ import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+} from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
   family: "stellar";

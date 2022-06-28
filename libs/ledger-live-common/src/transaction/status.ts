@@ -4,8 +4,9 @@ import { deserializeError, serializeError } from "@ledgerhq/errors";
 import type {
   TransactionStatusRaw,
   TransactionStatus,
-} from "../types/transaction";
-import type { Account, Transaction } from "../types";
+  Account,
+} from "@ledgerhq/types-live";
+import type { Transaction } from "../types";
 import { getAccountUnit } from "../account";
 import {
   fromBitcoinInputRaw,
@@ -16,6 +17,7 @@ import {
 import { formatCurrencyUnit } from "../currencies";
 import { formatOutput, formatInput } from "../families/bitcoin/account";
 import { getEnv } from "../env";
+import { BitcoinAccount } from "../families/bitcoin/types";
 
 const fromErrorRaw = (raw: string): Error => {
   return deserializeError(JSON.parse(raw));
@@ -78,7 +80,7 @@ export const formatTransactionStatus = (
       `\nTX INPUTS (${txInputs.length}):\n` +
       txInputs
         .slice(0, displayAll ? txInputs.length : n)
-        .map((o) => formatInput(mainAccount, o))
+        .map((o) => formatInput(mainAccount as BitcoinAccount, o))
         .join("\n");
 
     if (!displayAll) {
@@ -89,7 +91,9 @@ export const formatTransactionStatus = (
   if (txOutputs) {
     str +=
       `\nTX OUTPUTS (${txOutputs.length}):\n` +
-      txOutputs.map((o) => formatOutput(mainAccount, o)).join("\n");
+      txOutputs
+        .map((o) => formatOutput(mainAccount as BitcoinAccount, o))
+        .join("\n");
   }
 
   str +=

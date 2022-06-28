@@ -1,5 +1,4 @@
-import type { Transaction } from "./types";
-import type { Account } from "../../types";
+import type { ElrondAccount, Transaction } from "./types";
 import { getNonce } from "./logic";
 import { getNetworkConfig } from "./api";
 import { HASH_TRANSACTION } from "./constants";
@@ -7,10 +6,10 @@ import BigNumber from "bignumber.js";
 
 /**
  *
- * @param {Account} a
+ * @param {ElrondAccount} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (a: Account, t: Transaction) => {
+export const buildTransaction = async (a: ElrondAccount, t: Transaction) => {
   const address = a.freshAddress;
   const nonce = getNonce(a);
   const { gasPrice, gasLimit, chainId } = await getNetworkConfig();

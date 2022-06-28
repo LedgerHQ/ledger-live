@@ -1,10 +1,9 @@
 import { useMemo } from "react";
-import {
+import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
+import type {
   CryptoCurrency,
-  findCryptoCurrencyById,
-  findTokenById,
   TokenCurrency,
-} from "@ledgerhq/cryptoassets";
+} from "@ledgerhq/types-cryptoassets";
 
 export const useSelectableCurrencies = ({
   allCurrencies,

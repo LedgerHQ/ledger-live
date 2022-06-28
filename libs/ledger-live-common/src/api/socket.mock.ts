@@ -1,3 +1,4 @@
+import type { SocketEvent } from "@ledgerhq/types-live";
 import {
   Observable,
   Subject,
@@ -8,7 +9,6 @@ import {
   of,
 } from "rxjs";
 import { mergeMap, take, map, ignoreElements } from "rxjs/operators";
-import type { SocketEvent } from "../types/manager";
 export const socketErrorSubject: Subject<any> = new Subject();
 export const withSocketErrors = (
   observable: Observable<SocketEvent>

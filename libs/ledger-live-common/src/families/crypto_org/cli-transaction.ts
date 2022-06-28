@@ -1,6 +1,8 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction, AccountLike } from "../../types";
+import type { Transaction } from "../../types";
+import { CryptoOrgAccount } from "./types";
 const options = [
   {
     name: "mode",
@@ -28,8 +30,10 @@ function inferTransactions(
     }
 
     if (account.type === "Account") {
-      invariant(account.cryptoOrgResources, "unactivated account");
-      if (!account.cryptoOrgResources) throw new Error("unactivated account");
+      const cryptoOrgAccount = account as CryptoOrgAccount;
+      invariant(cryptoOrgAccount.cryptoOrgResources, "unactivated account");
+      if (!cryptoOrgAccount.cryptoOrgResources)
+        throw new Error("unactivated account");
     }
 
     return {

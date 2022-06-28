@@ -1,13 +1,12 @@
 import type { BigNumber } from "bignumber.js";
-import type { Unit } from "../../types";
+import type { TransactionMode, ModeModule } from "./modules";
+import type { Range, RangeRaw } from "../../range";
+import type { DerivationMode } from "../../derivation";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
-import type { TransactionMode, ModeModule } from "./modules";
-import type { Range, RangeRaw } from "../../range";
-import type { CryptoCurrency } from "../../types";
-import type { DerivationMode } from "../../derivation";
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 export type EthereumGasLimitRequest = {
   from?: string;

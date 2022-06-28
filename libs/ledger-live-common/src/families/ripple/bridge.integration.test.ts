@@ -3,7 +3,7 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 // import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { DatasetTest } from "../../types";
+import type { DatasetTest } from "@ledgerhq/types-live";
 import {
   // NotEnoughSpendableBalance,
   // NotEnoughBalanceBecauseDestinationNotCreated,

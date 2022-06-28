@@ -5,7 +5,7 @@ import type {
   AccountLike,
   Operation,
   OperationType,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { genOperation } from "../../mock/account";
 import { findCompoundToken } from "../../currencies";
 

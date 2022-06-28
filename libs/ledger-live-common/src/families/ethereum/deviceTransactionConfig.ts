@@ -1,5 +1,9 @@
 import type { DeviceTransactionField } from "../../transaction";
-import type { Account, AccountLike, TransactionStatus } from "../../types";
+import type {
+  Account,
+  AccountLike,
+  TransactionStatus,
+} from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { modes } from "./modules";
 

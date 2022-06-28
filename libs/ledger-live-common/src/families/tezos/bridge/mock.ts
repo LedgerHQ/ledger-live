@@ -13,7 +13,7 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
 import {
   scanAccounts,

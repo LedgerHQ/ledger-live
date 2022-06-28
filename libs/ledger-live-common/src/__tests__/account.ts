@@ -10,7 +10,7 @@ import {
   withoutToken,
 } from "../account";
 import { genAccount } from "../mock/account";
-import { Operation } from "../types";
+import { Operation } from "@ledgerhq/types-live";
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {

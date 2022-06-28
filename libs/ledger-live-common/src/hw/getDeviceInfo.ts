@@ -7,10 +7,10 @@ import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
 import getAppAndVersion from "./getAppAndVersion";
-import type { DeviceInfo } from "../types/manager";
 import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 export default async function getDeviceInfo(

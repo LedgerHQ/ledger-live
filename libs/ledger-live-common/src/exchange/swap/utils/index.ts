@@ -1,8 +1,11 @@
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { makeEmptyTokenAccount } from "../../../account";
-import { Account, SubAccount, TokenAccount } from "../../../types";
 import type { ExchangeRate } from "../types";
 import { getAccountCurrency } from "../../../account";
+import type { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 
 export const KYC_STATUS = {
   pending: "pending",

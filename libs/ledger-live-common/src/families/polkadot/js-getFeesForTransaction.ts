@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type { PolkadotAccount, Transaction } from "./types";
 import { getPaymentInfo } from "./cache";
 import { calculateAmount } from "./logic";
 import { buildTransaction } from "./js-buildTransaction";
@@ -17,7 +17,7 @@ const getEstimatedFees = async ({
   a,
   t,
 }: {
-  a: Account;
+  a: PolkadotAccount;
   t: Transaction;
 }): Promise<BigNumber> => {
   const transaction = {

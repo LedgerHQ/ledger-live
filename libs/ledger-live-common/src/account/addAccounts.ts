@@ -1,5 +1,5 @@
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
-import type { Account, DerivationMode } from "../types";
 import { validateNameEdition } from "./accountName";
 import { clearAccount } from "./helpers";
 import { findAccountMigration } from "./support";
@@ -62,7 +62,7 @@ export function groupAddAccounts(
       if (index !== -1) {
         scannedAccountsWithoutMigrate[index] =
           scannedAccountsWithoutMigrate[
-            scannedAccountsWithoutMigrate.length - 1
+          scannedAccountsWithoutMigrate.length - 1
           ];
         scannedAccountsWithoutMigrate.pop();
       }
@@ -118,13 +118,13 @@ export function groupAddAccounts(
       defaultSelected: false,
       data:
         context.preferredNewAccountSchemes &&
-        context.preferredNewAccountSchemes.length > 0
+          context.preferredNewAccountSchemes.length > 0
           ? creatableAccounts.filter(
-              (a) =>
-                context.preferredNewAccountSchemes &&
-                // Note: we could use a simple preferredNewAccountScheme param
-                a.derivationMode === context.preferredNewAccountSchemes[0]
-            )
+            (a) =>
+              context.preferredNewAccountSchemes &&
+              // Note: we could use a simple preferredNewAccountScheme param
+              a.derivationMode === context.preferredNewAccountSchemes[0]
+          )
           : creatableAccounts,
     });
   }

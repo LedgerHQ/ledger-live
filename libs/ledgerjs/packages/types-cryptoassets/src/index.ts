@@ -90,10 +90,12 @@ export type CryptoCurrency = CurrencyCommon & {
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
+  // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
   bitcoinLikeInfo?: {
     P2PKH: number;
     P2SH: number;
     XPUBVersion?: number;
+    // FIXME optional as we miss some data to fill
     hasTimestamp?: boolean;
   };
   ethereumLikeInfo?: {

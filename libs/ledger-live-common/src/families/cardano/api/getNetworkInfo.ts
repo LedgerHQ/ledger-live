@@ -1,11 +1,12 @@
 import network from "../../../network";
-import { Account, CryptoCurrency } from "../../../types";
 import { APINetworkInfo } from "./api-types";
 import { getEpoch, isTestnet } from "../logic";
 import {
   CARDANO_API_ENDPOINT,
   CARDANO_TESTNET_API_ENDPOINT,
 } from "../constants";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CardanoAccount } from "../types";
 
 async function fetchNetworkInfo(
   currency: CryptoCurrency
@@ -20,7 +21,7 @@ async function fetchNetworkInfo(
 }
 
 export async function getNetworkInfo(
-  a: Account | undefined,
+  a: CardanoAccount | undefined,
   currency: CryptoCurrency
 ): Promise<APINetworkInfo> {
   if (a && a.cardanoResources) {

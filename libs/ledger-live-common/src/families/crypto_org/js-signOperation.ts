@@ -8,7 +8,11 @@ import {
   CryptoOrgSignatureSize,
 } from "./errors";
 import type { Transaction } from "./types";
-import type { Account, Operation, SignOperationEvent } from "../../types";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../operation";
 import { withDevice } from "../../hw/deviceAccess";
 import { buildTransaction } from "./js-buildTransaction";

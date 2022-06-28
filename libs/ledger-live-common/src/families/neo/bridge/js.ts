@@ -2,9 +2,14 @@ import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import { log } from "@ledgerhq/logs";
 import { CurrencyNotSupported } from "@ledgerhq/errors";
-import type { Account, Operation, TransactionStatus } from "../../../types";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  TransactionStatus,
+} from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
-import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
 import network from "../../../network";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";

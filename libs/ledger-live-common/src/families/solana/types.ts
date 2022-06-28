@@ -1,7 +1,9 @@
-import type {
+import {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+} from "@ledgerhq/types-live";
 import { ValidatorsAppValidator } from "./validator-app";
 
 export type TransferCommand = {
@@ -241,3 +243,9 @@ export type SolanaValidatorWithMeta = {
 };
 
 export type StakeAction = "deactivate" | "activate" | "withdraw" | "reactivate";
+
+export type SolanaAccount = Account & { solanaResources: SolanaResources };
+
+export type SolanaAccountRaw = AccountRaw & {
+  solanaResources: SolanaResourcesRaw;
+};

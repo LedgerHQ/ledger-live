@@ -1,6 +1,6 @@
 import { getGasLimit } from "./transaction";
 import type { Transaction } from "./types";
-import type { FeeStrategy } from "../../types";
+import type { FeeStrategy } from "@ledgerhq/types-live";
 export function useFeesStrategy(t: Transaction): FeeStrategy[] {
   const networkInfo = t.networkInfo;
 

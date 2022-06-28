@@ -1,4 +1,4 @@
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import type { Command, Transaction } from "./types";
 import {
   buildTransferInstructions,

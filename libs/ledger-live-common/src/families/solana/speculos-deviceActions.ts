@@ -2,8 +2,9 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
-import { CryptoCurrency, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 function getMainCurrency(currency: CryptoCurrency) {
   if (currency.isTestnetFor !== undefined) {

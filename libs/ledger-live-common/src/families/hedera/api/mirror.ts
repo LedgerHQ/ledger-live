@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import network from "../../../network";
 import URL from "url";
 import { getAccountBalance } from "./network";
-import { Operation, OperationType } from "../../../types";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
 import { getEnv } from "../../../env";

@@ -1,5 +1,5 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Transport from "@ledgerhq/hw-transport";
-import type { CryptoCurrency } from "../../types";
 import type { DerivationMode } from "../../derivation";
 export type Result = {
   address: string;

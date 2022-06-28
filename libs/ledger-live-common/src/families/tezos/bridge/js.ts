@@ -26,14 +26,14 @@ import type {
   Account,
   TransactionStatus,
   AccountLike,
-} from "../../../types";
+} from "@ledgerhq/types-live";
 import {
   makeSync,
   makeScanAccounts,
   makeAccountBridgeReceive,
 } from "../../../bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
-import type { Transaction } from "../types";
+import type { TezosAccount, Transaction } from "../types";
 import { getAccountShape } from "../synchronisation";
 import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
 import { getEnv } from "../../../env";
@@ -188,7 +188,7 @@ const getTransactionStatus = async (
 };
 
 const prepareTransaction = async (
-  account: Account,
+  account: TezosAccount,
   transaction: Transaction
 ): Promise<Transaction> => {
   const { tezosResources } = account;
@@ -339,7 +339,7 @@ const estimateMaxSpendable = async ({
   parentAccount: Account | undefined;
   transaction: Transaction;
 }): Promise<BigNumber> => {
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount) as TezosAccount;
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,

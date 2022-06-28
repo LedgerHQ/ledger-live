@@ -11,7 +11,7 @@ import {
   NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
 import { StellarWrongMemoFormat, SourceHasMultiSign } from "../../../errors";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";

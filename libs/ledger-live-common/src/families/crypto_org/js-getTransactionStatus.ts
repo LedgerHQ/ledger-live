@@ -7,7 +7,7 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "../../types";
+import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { isValidAddress } from "./logic";
 

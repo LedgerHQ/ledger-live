@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import semver from "semver";
-import type { DeviceModelInfo } from "../types/manager";
 import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "../api/Manager";
+import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
 async function hasOudatedApps({
   deviceInfo,

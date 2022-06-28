@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { getEnv } from "../../env";
 import { makeLRUCache } from "../../cache";
 import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
-import type { CryptoCurrency } from "../../types";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getBaseApiUrl = (currency: CryptoCurrency) => {
   if (currency.id === "cosmos_testnet") {

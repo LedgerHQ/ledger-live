@@ -15,7 +15,7 @@ import {
   AccountAwaitingSendPendingOperations,
 } from "../../errors";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import {
   isAddressValid,

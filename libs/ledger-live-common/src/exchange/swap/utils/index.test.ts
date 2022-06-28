@@ -7,14 +7,13 @@ import {
 } from "./index";
 import { getMockExchangeRate } from "../mock";
 import { genAccount } from "../../../mock/account";
-import type {
-  Account,
-  CryptoCurrency,
-  SubAccount,
-  TokenCurrency,
-} from "../../../types";
 import { getCryptoCurrencyById } from "../../../currencies";
 import { getTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 
 describe("swap/utils/pickExchangeRate", () => {
   test("calls the callback function with null when no exchange rates are passed", () => {

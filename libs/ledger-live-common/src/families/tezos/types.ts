@@ -1,8 +1,10 @@
-import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+} from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export type TezosResources = {
   revealed: boolean;
@@ -44,4 +46,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   storageLimit: string | null | undefined;
   estimatedFees: string | null | undefined;
   taquitoError: string | null | undefined;
+};
+export type TezosAccount = Account & { tezosResources: TezosResources };
+export type TezosAccountRaw = AccountRaw & {
+  tezosResources: TezosResourcesRaw;
 };

@@ -3,12 +3,7 @@ import { scan, tap, catchError } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
-import type {
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-  Account,
-} from "../../types";
+import type { Transaction } from "../../types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
@@ -16,6 +11,11 @@ import type {
   InitSellResult,
   SellRequestEvent,
 } from "../../exchange/sell/types";
+import type {
+  Account,
+  AccountLike,
+  TransactionStatus,
+} from "@ledgerhq/types-live";
 
 type State = {
   initSellResult: InitSellResult | null | undefined;

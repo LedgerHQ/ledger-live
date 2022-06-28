@@ -22,10 +22,10 @@ import {
   getDates,
   getRanges,
 } from "../portfolio/v2/range";
-import type { AccountLike, Account } from "../types";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 setEnv("MOCK", "1");
 describe("Portfolio", () => {
   const rangeCount: [PortfolioRange, number][] = [

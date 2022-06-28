@@ -1,7 +1,5 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
-
-import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 import bitcoin_cash from "./datasets/bitcoin_cash";
 import bitcoin_gold from "./datasets/bitcoin_gold";
@@ -20,6 +18,7 @@ import stakenet from "./datasets/stakenet";
 import vertcoin from "./datasets/vertcoin";
 import viacoin from "./datasets/viacoin";
 import zcash from "./datasets/zcash";
+import { DatasetTest } from "@ledgerhq/types-live";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js", "mock"],

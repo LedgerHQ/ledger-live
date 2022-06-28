@@ -2,7 +2,7 @@ import { getMainAccount } from "../../account";
 import createTransaction from "./js-createTransaction";
 import prepareTransaction from "./js-prepareTransaction";
 import getTransactionStatus from "./js-getTransactionStatus";
-import type { Account, AccountLike } from "../../types";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 

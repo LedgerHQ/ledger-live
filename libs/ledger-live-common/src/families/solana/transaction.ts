@@ -16,7 +16,7 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getAccountUnit } from "../../account";
 import { formatCurrencyUnit, getTokenById } from "../../currencies";
 import { assertUnreachable } from "./utils";

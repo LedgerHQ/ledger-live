@@ -8,7 +8,7 @@ import type {
   AccountLike,
   AccountLikeArray,
   SubAccount,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import type { Baker } from "./bakers";
 import { listBakers, fetchAllBakers } from "./bakers";

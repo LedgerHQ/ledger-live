@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceInfo } from "../../types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 const deviceInfos: Record<
   string,
   {

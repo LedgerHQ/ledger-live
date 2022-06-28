@@ -1,7 +1,7 @@
 import {
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,
-} from "../../types";
+} from "@ledgerhq/types-live";
 
 export type NFTResourceQueued = {
   status: "queued";

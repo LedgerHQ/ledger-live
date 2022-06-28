@@ -1,9 +1,8 @@
 import type {
   CryptoCurrency,
   ExplorerView,
-  TokenAccount,
-  Account,
-} from "./types";
+} from "@ledgerhq/types-cryptoassets";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 export const getDefaultExplorerView = (
   currency: CryptoCurrency
 ): ExplorerView | null | undefined => currency.explorerViews[0];

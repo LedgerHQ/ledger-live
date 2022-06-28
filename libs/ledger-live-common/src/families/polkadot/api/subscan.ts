@@ -9,7 +9,7 @@ THIS FILE IS UNUSED AND PROVIDED AS EXAMPLE FOR USING SUBSCAN INDEXER.
 /* istanbul ignore file */
 import uniqBy from "lodash/uniqBy";
 import camelCase from "lodash/camelCase";
-import type { Operation } from "../../../types";
+import type { Operation } from "@ledgerhq/types-live";
 import network from "../../../network";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "../../../env";

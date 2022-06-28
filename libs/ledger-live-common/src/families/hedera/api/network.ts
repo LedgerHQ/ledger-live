@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import * as hedera from "@hashgraph/sdk";
-import { Account } from "../../../types";
+import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import { AccountId } from "@hashgraph/sdk";
 

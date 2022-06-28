@@ -1,5 +1,5 @@
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike, Operation } from "./types";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,

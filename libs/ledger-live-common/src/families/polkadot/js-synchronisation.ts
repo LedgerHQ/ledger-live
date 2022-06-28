@@ -1,4 +1,4 @@
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";

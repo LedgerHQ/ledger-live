@@ -4,7 +4,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { pickSiblings } from "../../bot/specs";
 import { AppSpec, TransactionTestInput } from "../../bot/types";
-import { Transaction } from "./types";
+import { SolanaAccount, Transaction } from "./types";
 import {
   acceptStakeCreateAccountTransaction,
   acceptStakeDelegateTransaction,
@@ -76,7 +76,7 @@ const solana: AppSpec<Transaction> = {
       maxRun: 1,
       deviceAction: acceptStakeCreateAccountTransaction,
       transaction: ({ account, bridge }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
         }
@@ -121,7 +121,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -151,7 +151,7 @@ const solana: AppSpec<Transaction> = {
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
         invariant(account.spendableBalance.gt(0), "not enough balance");
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -184,7 +184,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -213,7 +213,7 @@ const solana: AppSpec<Transaction> = {
       deviceAction: acceptStakeUndelegateTransaction,
       transaction: ({ account, bridge }) => {
         invariant(account.spendableBalance.gt(0), "not enough balance");
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -246,7 +246,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -275,7 +275,7 @@ const solana: AppSpec<Transaction> = {
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
         invariant(account.spendableBalance.gt(0), "not enough balance");
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -313,7 +313,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -344,7 +344,7 @@ const solana: AppSpec<Transaction> = {
       deviceAction: acceptStakeDelegateTransaction,
       transaction: ({ account, bridge }) => {
         invariant(account.spendableBalance.gt(0), "not enough balance");
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -382,7 +382,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -413,7 +413,7 @@ const solana: AppSpec<Transaction> = {
       deviceAction: acceptStakeWithdrawTransaction,
       transaction: ({ account, bridge }) => {
         invariant(account.spendableBalance.gt(0), "not enough balance");
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");
@@ -446,7 +446,7 @@ const solana: AppSpec<Transaction> = {
         };
       },
       test: ({ account, transaction }) => {
-        const { solanaResources } = account;
+        const { solanaResources } = account as SolanaAccount;
 
         if (solanaResources === undefined) {
           throw new Error("solana resources required");

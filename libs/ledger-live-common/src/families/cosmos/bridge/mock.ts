@@ -5,13 +5,12 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Account } from "../../../types";
 import type {
+  CosmosAccount,
   CosmosValidatorItem,
   StatusErrorMap,
   Transaction,
 } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
 import {
   scanAccounts,
   signOperation,
@@ -26,6 +25,7 @@ import {
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) =>
@@ -95,7 +95,7 @@ const getTransactionStatus = (account, t) => {
 };
 
 const prepareTransaction = async (
-  a: Account,
+  a: CosmosAccount,
   t: Transaction
 ): Promise<Transaction> => {
   if (!t.networkInfo) {

@@ -14,6 +14,7 @@ import type {
   Transaction,
   CosmosExtraTxInfo,
   CosmosPreloadData,
+  CosmosAccount,
 } from "./types";
 import {
   mapDelegations,
@@ -22,7 +23,6 @@ import {
 } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
-import type { Account } from "../../types";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
 export function useCosmosPreloadData(): CosmosPreloadData {
@@ -35,7 +35,7 @@ export function useCosmosPreloadData(): CosmosPreloadData {
 }
 
 export function useCosmosMappedDelegations(
-  account: Account,
+  account: CosmosAccount,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
   const { validators } = useCosmosPreloadData();
@@ -55,7 +55,7 @@ export function useCosmosMappedDelegations(
 }
 
 export function useCosmosDelegationsQuerySelector(
-  account: Account,
+  account: CosmosAccount,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
 ): {
@@ -147,7 +147,7 @@ export function useMappedExtraOperationDetails({
   account,
   extra,
 }: {
-  account: Account;
+  account: CosmosAccount;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
   const { validators } = useCosmosPreloadData();

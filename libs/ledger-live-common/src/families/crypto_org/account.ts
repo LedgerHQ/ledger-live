@@ -1,9 +1,9 @@
 import invariant from "invariant";
-import type { Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+import type { CryptoOrgAccount } from "./types";
 
-function formatAccountSpecifics(account: Account): string {
+function formatAccountSpecifics(account: CryptoOrgAccount): string {
   const { cryptoOrgResources } = account;
   invariant(cryptoOrgResources, "Crypto.org account expected");
   if (!cryptoOrgResources) throw new Error("Crypto.org account expected");

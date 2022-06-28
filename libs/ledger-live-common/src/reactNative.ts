@@ -4,7 +4,10 @@ import "@polkadot/wasm-crypto/initOnlyAsm";
 
 import * as icons from "./data/icons/reactNative";
 import * as flags from "./data/flags/reactNative";
-import type { CryptoCurrency, TokenCurrency } from "./types";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 type Icon = React.ComponentType<{
   size: number;

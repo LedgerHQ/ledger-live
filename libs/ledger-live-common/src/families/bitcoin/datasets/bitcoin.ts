@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 // import { FeeTooHigh } from "@ledgerhq/errors";
-import type { CurrenciesData } from "../../../types";
+import type { CurrenciesData } from "@ledgerhq/types-live";
 import type { NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./bitcoin.scanAccounts.1";

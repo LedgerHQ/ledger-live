@@ -1,10 +1,3 @@
-import type {
-  AccountLike,
-  Account,
-  Currency,
-  CryptoCurrency,
-  TokenCurrency,
-} from "../../types";
 import type { CounterValuesState } from "../../countervalues/types";
 import { calculate, calculateMany } from "../../countervalues/logic";
 import {
@@ -31,6 +24,12 @@ export const defaultAssetsDistribution = {
   showFirstThreshold: 0.95,
 };
 export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 export function getPortfolioCount(
   accounts: AccountLike[],

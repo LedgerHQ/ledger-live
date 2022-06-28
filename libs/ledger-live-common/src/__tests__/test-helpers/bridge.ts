@@ -4,18 +4,7 @@ import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
-import type {
-  Account,
-  Transaction,
-  AccountBridge,
-  SyncConfig,
-  DatasetTest,
-  CurrenciesData,
-  CryptoCurrency,
-  AccountLike,
-  SubAccount,
-  AccountRawLike,
-} from "../../types";
+import type { Transaction } from "../../types";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -34,6 +23,17 @@ import {
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
+import type {
+  Account,
+  AccountBridge,
+  AccountLike,
+  AccountRawLike,
+  SubAccount,
+  SyncConfig,
+  DatasetTest,
+  CurrenciesData,
+} from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);

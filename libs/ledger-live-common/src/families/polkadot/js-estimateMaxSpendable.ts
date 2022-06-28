@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import type { AccountLike, Account } from "../../types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import type { Transaction } from "./types";
+import type { PolkadotAccount, Transaction } from "./types";
 import { calculateAmount } from "./logic";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import createTransaction from "./js-createTransaction";
@@ -22,7 +22,7 @@ const estimateMaxSpendable = async ({
   transaction: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   await loadPolkadotCrypto();
-  const a = getMainAccount(account, parentAccount);
+  const a = getMainAccount(account, parentAccount) as PolkadotAccount;
   const t = { ...createTransaction(), ...transaction, useAllAmount: true };
   const fees = await getEstimatedFees({
     a,

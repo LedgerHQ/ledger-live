@@ -9,7 +9,7 @@ import type {
   ValidKYCStatus,
 } from "./types";
 import { getAccountUnit } from "../../account";
-import type { Transaction, TokenCurrency, CryptoCurrency } from "../../types";
+import type { Transaction } from "../../types";
 import { formatCurrencyUnit } from "../../currencies";
 import {
   SwapExchangeRateAmountTooLow,
@@ -17,6 +17,10 @@ import {
 } from "../../errors";
 import { Observable, of } from "rxjs";
 import { getSwapAPIBaseURL } from "./";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 
 export const getMockExchangeRate = ({
   provider = "changelly",

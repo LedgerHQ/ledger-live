@@ -1,5 +1,5 @@
 // @flow
-import { CryptoCurrency } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type MarketCoin = {
   id: string;

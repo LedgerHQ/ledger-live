@@ -1,4 +1,4 @@
-import { Account, Operation, SignedOperation } from "../../types";
+import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import * as hedera from "@hashgraph/sdk";
 import { broadcastTransaction } from "./api/network";
 import { patchOperationWithHash } from "../../operation";

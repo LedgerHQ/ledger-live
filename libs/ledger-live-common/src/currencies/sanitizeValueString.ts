@@ -1,4 +1,4 @@
-import type { Unit } from "../types/currencies";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { getSeparators } from "./localeUtility";
 const numbers = "0123456789";
 export const sanitizeValueString = (

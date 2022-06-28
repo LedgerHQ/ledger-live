@@ -1,8 +1,8 @@
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, of, throwError } from "rxjs";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
-import type { DeviceInfo, SocketEvent } from "../types/manager";
 import genuineCheck from "./genuineCheck";
+import { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 export default (
   transport: Transport,
   deviceInfo: DeviceInfo

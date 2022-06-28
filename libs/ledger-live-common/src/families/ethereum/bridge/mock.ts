@@ -7,7 +7,7 @@ import {
   GasLessThanEstimate,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account";
 import { getCryptoCurrencyById } from "../../../currencies";
 import {

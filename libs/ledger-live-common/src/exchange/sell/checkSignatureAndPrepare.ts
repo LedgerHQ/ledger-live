@@ -8,14 +8,14 @@ import { getCurrencyExchangeConfig } from "../";
 import perFamily from "../../generated/exchange";
 import type { SellRequestEvent } from "./types";
 import { ExchangeTypes } from "../hw-app-exchange/Exchange";
+import type { Transaction } from "../../types";
+import { getProvider } from "./index";
+import { delay } from "../../promise";
 import type {
   Account,
   AccountLike,
-  Transaction,
   TransactionStatus,
-} from "../../types";
-import { getProvider } from "./index";
-import { delay } from "../../promise";
+} from "@ledgerhq/types-live";
 
 type SellInput = {
   parentAccount: Account | null | undefined;

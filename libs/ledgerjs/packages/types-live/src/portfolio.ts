@@ -89,7 +89,7 @@ export type PortfolioRangeConfig = {
   granularityId: "HOUR" | "DAY" | "WEEK";
   // only supported here atm
   startOf: (arg0: Date) => Date;
-  increment: number;
+  increment: number; // FIXME it should be a Date=>Date
 };
 
 /**

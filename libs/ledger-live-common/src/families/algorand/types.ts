@@ -1,9 +1,12 @@
 import type { BigNumber } from "bignumber.js";
 import type {
+  Account,
+  AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
-import type { Operation, OperationRaw } from "../../types/operation";
+} from "@ledgerhq/types-live";
 
 export const AlgorandOperationTypeEnum = {
   PAYMENT: 0,
@@ -50,4 +53,10 @@ export type AlgorandExtraTxInfo = {
   rewards?: BigNumber;
   memo?: string;
   assetId?: string;
+};
+export type AlgorandAccount = Account & {
+  algorandResources: AlgorandResources;
+};
+export type AlgorandAccountRaw = AccountRaw & {
+  algorandResources: AlgorandResourcesRaw;
 };

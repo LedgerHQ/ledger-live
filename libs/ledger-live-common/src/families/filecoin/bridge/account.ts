@@ -18,14 +18,14 @@ import {
   SignOperationEvent,
   SignOperationFnSignature,
   TransactionStatus,
-} from "../../../types";
+  Operation,
+} from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import { getAccountShape, getAddress, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx, fetchBalances, fetchEstimatedFees } from "./utils/api";
 import { getMainAccount } from "../../../account";
 import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
-import { Operation } from "../../../types/operation";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
 import { getAddressRaw, validateAddress } from "./utils/addresses";

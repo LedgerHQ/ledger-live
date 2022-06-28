@@ -9,12 +9,7 @@ import { BigNumber } from "bignumber.js";
 import abi from "ethereumjs-abi";
 import values from "lodash/values";
 import { NotEnoughBalance, AmountRequired } from "@ledgerhq/errors";
-import type {
-  TokenAccount,
-  CryptoCurrency,
-  TokenCurrency,
-  OperationType,
-} from "../../../types";
+import type { TokenAccount, OperationType } from "@ledgerhq/types-live";
 import type { ModeModule } from "../types";
 import {
   getTokenById,
@@ -29,6 +24,10 @@ import { apiForCurrency } from "../../../api/Ethereum";
 import { inferTokenAccount } from "../transaction";
 import { getEnv } from "../../../env";
 import { DeviceTransactionField } from "../../../transaction";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 // global state that exists when compound is loaded
 let compoundPreloadedValue: CurrentRate[] | null | undefined;
 const compoundWhitelist = [

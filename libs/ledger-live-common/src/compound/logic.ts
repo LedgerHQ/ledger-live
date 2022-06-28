@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { findCompoundToken } from "../currencies";
-import type { TokenAccount, Account, Operation } from "../types";
 import type {
   CompoundAccountSummary,
   ClosedLoansHistory,
@@ -13,6 +12,7 @@ import {
   findCurrentRate,
   getEnabledAmount,
 } from "../families/ethereum/modules/compound";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 // to confirm in practice if this threshold is high enough / too high
 const unlimitedThreshold = new BigNumber(2).pow(250);
 export function getAccountCapabilities(account: TokenAccount):

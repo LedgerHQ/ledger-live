@@ -11,10 +11,9 @@ import type {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  CryptoCurrency,
   CurrencyBridge,
   SignOperationFnSignature,
-} from "../../../types";
+} from "@ledgerhq/types-live";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
@@ -25,12 +24,13 @@ import { hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
-import type { Transaction } from "../types";
+import type { SolanaAccount, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function prepareTransaction(
-    mainAccount: Account,
+    mainAccount: SolanaAccount,
     transaction: Transaction
   ) {
     const config: Config = {

@@ -1,5 +1,5 @@
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account } from "../../types";
+import type { SubAccount, Account } from "@ledgerhq/types-live";
 import type {
   UpdateAccountSwapStatus,
   SwapOperation,

@@ -1,7 +1,7 @@
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+} from "@ledgerhq/types-live";
 
 export type CoreStatics = Record<string, never>;
 export type CoreAccountSpecifics = Record<string, never>;

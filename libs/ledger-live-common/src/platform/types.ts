@@ -1,4 +1,4 @@
-import type { SignedOperation } from "../types";
+import type { SignedOperation } from "@ledgerhq/types-live";
 
 export type {
   Account as PlatformAccount,

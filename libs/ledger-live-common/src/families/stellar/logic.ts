@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import StellarSdk, { ServerApi } from "stellar-sdk";
 import type { CacheRes } from "../../cache";
 import { makeLRUCache } from "../../cache";
-import type { Account, Operation, OperationType } from "../../types";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";

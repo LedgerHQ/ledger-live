@@ -1,5 +1,5 @@
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type { ElrondAccount, Transaction } from "./types";
 import * as bech32 from "bech32";
 
 /**
@@ -56,7 +56,7 @@ export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
  *
  * @param {Account} a
  */
-export const getNonce = (a: Account): number => {
+export const getNonce = (a: ElrondAccount): number => {
   const lastPendingOp = a.pendingOperations[0];
   const nonce = Math.max(
     a.elrondResources?.nonce || 0,

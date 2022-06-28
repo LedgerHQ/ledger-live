@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 import { getEstimatedFees } from "./js-getFeesForTransaction";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
 
@@ -16,7 +15,7 @@ export const createTransaction = (): Transaction => ({
 });
 
 export const prepareTransaction = async (
-  account: Account,
+  account: AlgorandAccount,
   transaction: Transaction
 ): Promise<Transaction> => {
   let recipient: string;

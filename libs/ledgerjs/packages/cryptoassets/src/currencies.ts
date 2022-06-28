@@ -20,7 +20,8 @@
  * if the coin is in ethereum family, you must as well provide ethereumLikeInfo
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
-import type { CryptoCurrency, Unit } from "./types";
+
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
 

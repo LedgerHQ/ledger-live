@@ -10,9 +10,9 @@ import {
 } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
 import { getBTCValues } from "../countervalues/mock";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
 export const deviceInfo155 = {
   version: "1.5.5",

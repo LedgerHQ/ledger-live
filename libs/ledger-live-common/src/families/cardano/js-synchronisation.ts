@@ -1,4 +1,3 @@
-import type { Operation, TokenAccount } from "../../types";
 import {
   GetAccountShape,
   makeScanAccounts,
@@ -12,7 +11,7 @@ import Ada from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
-import { CardanoOutput, PaymentCredential } from "./types";
+import { CardanoAccount, CardanoOutput, PaymentCredential } from "./types";
 import {
   getAccountChange,
   getAccountStakeCredential,
@@ -28,6 +27,7 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
+import type { Operation, TokenAccount } from "@ledgerhq/types-live";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -171,7 +171,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   } = await getTransactions(
     xpub,
     accountIndex,
-    initialAccount,
+    initialAccount as CardanoAccount,
     syncFromBlockHeight,
     currency
   );
@@ -191,9 +191,9 @@ export const getAccountShape: GetAccountShape = async (info) => {
     }
   });
 
-  const stableUtxos = (initialAccount?.cardanoResources?.utxos || []).filter(
-    (u) => stableOperationsByIds[u.hash]
-  );
+  const stableUtxos = (
+    (initialAccount as CardanoAccount)?.cardanoResources?.utxos || []
+  ).filter((u) => stableOperationsByIds[u.hash]);
 
   const utxos = syncUtxos(newTransactions, stableUtxos, accountCredentialsMap);
   const accountBalance = utxos.reduce(
@@ -232,7 +232,10 @@ export const getAccountShape: GetAccountShape = async (info) => {
         stakeCred: stakeCredential,
       }).getBech32(),
     }));
-  const cardanoNetworkInfo = await getNetworkInfo(initialAccount, currency);
+  const cardanoNetworkInfo = await getNetworkInfo(
+    initialAccount as CardanoAccount,
+    currency
+  );
 
   return {
     id: accountId,

@@ -6,7 +6,7 @@ import {
   FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { AlgorandTransaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   scanAccounts,
   signOperation,

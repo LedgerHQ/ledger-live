@@ -6,13 +6,14 @@ import {
   getAccountName,
   getAccountUnit,
 } from ".";
-import type { Account, Operation, ProtoNFT, Unit } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import { getTagDerivationMode } from "../derivation";
 import byFamily from "../generated/account";
 import { nftsByCollections } from "../nft";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
 
 const styling = {
   bold: (str: string) => `\x1b[1m${str}\x1b[22m`,

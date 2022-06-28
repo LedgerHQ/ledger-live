@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
-} from "../types/transaction";
+} from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "../types";
 export const fromTransactionCommonRaw = (
   raw: TransactionRaw

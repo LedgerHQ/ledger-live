@@ -14,11 +14,15 @@ import type {
   SignedOperation,
   AccountLike,
   SignOperationEvent,
-} from "../../../types";
+  DeviceId,
+  CurrencyBridge,
+  AccountBridge,
+} from "@ledgerhq/types-live";
 import type {
   NetworkInfo,
   SuperRepresentative,
   Transaction,
+  TronAccount,
   TrongridExtraTxInfo,
 } from "../types";
 import {
@@ -27,11 +31,6 @@ import {
   getOperationTypefromMode,
   getEstimatedBlockSize,
 } from "../utils";
-import type {
-  CurrencyBridge,
-  AccountBridge,
-  DeviceId,
-} from "../../../types/bridge";
 import { withDevice } from "../../../hw/deviceAccess";
 import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
@@ -188,8 +187,9 @@ const signOperation = ({
                 : new BigNumber(transaction.amount || 0).plus(fee);
 
             case "claimReward":
-              return account.tronResources
-                ? account.tronResources.unwithdrawnReward
+              const tronAcc = account as TronAccount;
+              return tronAcc.tronResources
+                ? tronAcc.tronResources.unwithdrawnReward
                 : new BigNumber(0);
 
             default:
@@ -211,7 +211,7 @@ const signOperation = ({
             case "unfreeze":
               return {
                 unfreezeAmount: get(
-                  account.tronResources,
+                  (account as TronAccount).tronResources,
                   `frozen.${resource.toLocaleLowerCase()}.amount`,
                   new BigNumber(0)
                 ),
@@ -333,8 +333,9 @@ const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
     : new BigNumber(0);
   const cacheTransactionInfoById = {
     ...(info.initialAccount &&
-      info.initialAccount.tronResources &&
-      info.initialAccount.tronResources.cacheTransactionInfoById),
+      (info.initialAccount as TronAccount).tronResources &&
+      (info.initialAccount as TronAccount).tronResources
+        .cacheTransactionInfoById),
   };
   const operationsPageSize = Math.min(
     1000,
@@ -591,7 +592,7 @@ const getEstimatedFees = async (
 };
 
 const getTransactionStatus = async (
-  a: Account,
+  a: TronAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};

@@ -1,10 +1,9 @@
 import type {
-  Account,
-  AccountLike,
-  Currency,
   CryptoCurrency,
+  Currency,
   TokenCurrency,
-} from "../../types";
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
 import { useCountervaluesState } from "../../countervalues/react";
 import {

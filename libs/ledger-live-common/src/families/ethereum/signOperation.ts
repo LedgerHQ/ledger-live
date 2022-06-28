@@ -10,7 +10,11 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import ethLedgerServices from "@ledgerhq/hw-app-eth/lib/services/ledger";
 import type { Transaction } from "./types";
-import type { Operation, Account, SignOperationEvent } from "../../types";
+import type {
+  Operation,
+  Account,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import { getGasLimit, buildEthereumTx } from "./transaction";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";

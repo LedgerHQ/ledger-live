@@ -1,9 +1,11 @@
 import type { BigNumber } from "bignumber.js";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type {
+  Account,
+  AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types/transaction";
+} from "@ledgerhq/types-live";
 
 export enum PaymentChain {
   external = 0,
@@ -175,4 +177,10 @@ export type CardanoLikeNetworkParameters = {
  */
 export type CardanoPreloadData = {
   protocolParams: ProtocolParams;
+};
+
+export type CardanoAccount = Account & { cardanoResources: CardanoResources };
+
+export type CardanoAccountRaw = AccountRaw & {
+  cardanoResources: CardanoResourcesRaw;
 };

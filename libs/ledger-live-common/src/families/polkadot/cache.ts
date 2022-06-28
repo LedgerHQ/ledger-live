@@ -5,8 +5,8 @@ import { TypeRegistry } from "@polkadot/types";
 
 import { makeLRUCache } from "../../cache";
 import type { CacheRes } from "../../cache";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { Account } from "@ledgerhq/types-live";
+import type { PolkadotAccount, Transaction } from "./types";
 import {
   isNewAccount as apiIsNewAccount,
   isControllerAddress as apiIsControllerAddress,
@@ -26,7 +26,7 @@ import {
  * @returns {string} hash
  */
 const hashTransactionParams = (
-  a: Account,
+  a: PolkadotAccount,
   t: Transaction,
   signedTx: string
 ) => {
@@ -89,14 +89,14 @@ export const getTransactionParams: CacheRes<
 /**
  * Cache the payment info (fee estimate), with a hash depending on fees-changing transaction params and tx size.
  *
- * @param {Account} arg1.a
+ * @param {PolkadotAccount} arg1.a
  * @param {Transaction} arg1.t
  *
  * @returns {Promise<BigBumber>}
  */
 export const getPaymentInfo: CacheRes<
   Array<{
-    a: Account;
+    a: PolkadotAccount;
     t: Transaction;
     signedTx: string;
   }>,

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "../../../types";
+import type { Account } from "@ledgerhq/types-live";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 
 const account: Account = {

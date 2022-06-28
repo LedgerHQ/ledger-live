@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
 
-import type { AccountLike, Account } from "../../types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 
-import type { Transaction } from "./types";
+import type { CardanoAccount, Transaction } from "./types";
 
 import { createTransaction } from "./js-transaction";
 import {
@@ -30,7 +30,7 @@ const estimateMaxSpendable = async ({
     return account.balance;
   }
 
-  const a = getMainAccount(account, parentAccount);
+  const a = getMainAccount(account, parentAccount) as CardanoAccount;
   const t = {
     ...createTransaction(),
     ...transaction,

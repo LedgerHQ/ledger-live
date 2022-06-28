@@ -1,10 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import type { Currency, Account, AccountLike, Operation } from "./types";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "./countervalues/logic";
 import type { CounterValuesState } from "./countervalues/types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 type Field = {
   title: string;

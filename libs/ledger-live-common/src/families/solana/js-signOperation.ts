@@ -4,7 +4,7 @@ import type {
   Operation,
   OperationType,
   SignOperationEvent,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import type {
   Command,

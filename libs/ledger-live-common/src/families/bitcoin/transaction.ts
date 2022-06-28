@@ -5,7 +5,6 @@ import type {
   FeeItems,
   FeeItemsRaw,
 } from "./types";
-import type { Account } from "../../types";
 import { bitcoinPickingStrategy } from "./types";
 import { getEnv } from "../../env";
 import {
@@ -14,6 +13,7 @@ import {
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+import { Account } from "@ledgerhq/types-live";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map((fi) => ({
@@ -108,6 +108,8 @@ ${[
     .map((utxo) => `\nexclude ${utxo.hash} @${utxo.outputIndex}`)
     .join("")}`;
 };
+
+// TODO: Ajouter transactionStatus et transactionStatusRaw
 
 export default {
   fromTransactionRaw,

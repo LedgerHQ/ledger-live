@@ -1,10 +1,10 @@
-import type { Account } from "../types";
 import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
 import { findAccountMigration, checkAccountSupported } from "./support";
 import joinSwapHistories from "../exchange/swap/joinSwapHistories";
 import isEqual from "lodash/isEqual";
+import type { Account } from "@ledgerhq/types-live";
 const itemModeDisplaySort = {
   create: 1,
   update: 2,

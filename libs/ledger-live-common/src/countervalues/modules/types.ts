@@ -1,4 +1,4 @@
-import type { Currency } from "../../types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { RateGranularity, TrackingPair, RateMapRaw } from "../types";
 
 export type Pair = {

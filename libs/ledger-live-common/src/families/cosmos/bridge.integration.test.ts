@@ -1,7 +1,6 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData, DatasetTest } from "../../types";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -10,8 +9,9 @@ import {
 } from "@ledgerhq/errors";
 import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
-import type { Transaction } from "./types";
+import type { CosmosAccount, Transaction } from "./types";
 import transactionTransformer from "./transaction";
+import { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 
 const cosmos: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
@@ -115,7 +115,7 @@ const cosmos: CurrenciesData<Transaction> = {
             mode: "send",
           }),
           expectedStatus: (account) => {
-            const { cosmosResources } = account;
+            const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources)
               throw new Error("Should exist because it's cosmos");
             const totalSpent = account.balance.minus(
@@ -146,7 +146,7 @@ const cosmos: CurrenciesData<Transaction> = {
             mode: "send",
           }),
           expectedStatus: (account, t) => {
-            const { cosmosResources } = account;
+            const { cosmosResources } = account as CosmosAccount;
             if (!cosmosResources)
               throw new Error("Should exist because it's cosmos");
             invariant(t.memo === "test", "Should have a memo");
@@ -453,7 +453,7 @@ const cosmos: CurrenciesData<Transaction> = {
           unbondingBalance: "1000000",
           withdrawAddress: "",
         },
-      },
+      } as AccountRaw,
     },
   ],
 };

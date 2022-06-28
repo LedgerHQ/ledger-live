@@ -8,12 +8,12 @@ import {
   throttleTime,
 } from "rxjs/operators";
 import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
-import type { FirmwareUpdateContext } from "../types/manager";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import flash from "./flash";
 import installFinalFirmware from "./installFinalFirmware";
 import { hasFinalFirmware } from "./hasFinalFirmware";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 const wait2s = of({
   type: "wait",
 }).pipe(delay(2000));

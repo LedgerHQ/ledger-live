@@ -3,12 +3,6 @@ import { BigNumber } from "bignumber.js";
 import useBridgeTransaction, {
   Result as UseBridgeTransactionReturnType,
 } from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  TokenAccount,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../../../types";
 import { ExchangeRate } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
@@ -19,6 +13,11 @@ import {
   useToState,
 } from ".";
 import { useReverseAccounts } from "./useReverseAccounts";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 
 export type SwapSelectorStateType = {
   currency: null | undefined | TokenCurrency | CryptoCurrency;

@@ -2,7 +2,11 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import Stellar from "@ledgerhq/hw-app-str";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Account, Operation, SignOperationEvent } from "../../types";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";

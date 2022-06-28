@@ -1,5 +1,5 @@
-import type { CryptoCurrency } from "./currencies";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 // FIXME we need to clearly differentiate what is API types and what is our inner own type
 export type Id = number;
 export type LedgerScriptParams = {

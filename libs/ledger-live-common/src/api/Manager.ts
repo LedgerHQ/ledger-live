@@ -25,20 +25,22 @@ import {
   resultMock,
 } from "./socket.mock";
 import semver from "semver";
-import type { DeviceInfo, McuVersion, SocketEvent } from "../types/manager";
 import network from "../network";
 import { getEnv } from "../env";
-import type {
-  OsuFirmware,
-  DeviceVersion,
-  FinalFirmware,
-  ApplicationVersion,
-  Application,
-  Category,
-  Id,
-} from "../types/manager";
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
+import {
+  Application,
+  ApplicationVersion,
+  Category,
+  DeviceInfo,
+  DeviceVersion,
+  FinalFirmware,
+  Id,
+  McuVersion,
+  OsuFirmware,
+  SocketEvent,
+} from "@ledgerhq/types-live";
 
 declare global {
   namespace NodeJS {

@@ -3,7 +3,7 @@ import {
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
-} from "../../types";
+} from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
 type FamilyType = "filecoin";

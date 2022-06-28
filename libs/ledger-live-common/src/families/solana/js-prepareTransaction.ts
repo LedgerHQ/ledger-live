@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { findSubAccountById } from "../../account";
-import type { Account } from "../../types";
+import type { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import {
   getMaybeTokenAccount,
@@ -45,6 +45,7 @@ import {
 import { estimateTxFee } from "./tx-fees";
 import type {
   CommandDescriptor,
+  SolanaAccount,
   SolanaStake,
   StakeCreateAccountTransaction,
   StakeDelegateTransaction,
@@ -62,7 +63,7 @@ import type {
 import { assertUnreachable } from "./utils";
 
 async function deriveCommandDescriptor(
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   tx: Transaction,
   api: ChainAPI
 ): Promise<CommandDescriptor> {
@@ -100,7 +101,7 @@ async function deriveCommandDescriptor(
 }
 
 const prepareTransaction = async (
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   tx: Transaction,
   api: ChainAPI
 ): Promise<Transaction> => {
@@ -417,7 +418,7 @@ async function deriveStakeCreateAccountCommandDescriptor(
 }
 
 async function deriveStakeDelegateCommandDescriptor(
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   model: TransactionModel & { kind: StakeDelegateTransaction["kind"] },
   api: ChainAPI
 ): Promise<CommandDescriptor> {
@@ -475,7 +476,7 @@ async function deriveStakeDelegateCommandDescriptor(
 }
 
 async function deriveStakeUndelegateCommandDescriptor(
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   model: TransactionModel & { kind: StakeUndelegateTransaction["kind"] },
   api: ChainAPI
 ): Promise<CommandDescriptor> {
@@ -526,7 +527,7 @@ async function deriveStakeUndelegateCommandDescriptor(
 }
 
 async function deriveStakeWithdrawCommandDescriptor(
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   tx: Transaction,
   model: TransactionModel & { kind: StakeWithdrawTransaction["kind"] },
   api: ChainAPI
@@ -569,7 +570,7 @@ async function deriveStakeWithdrawCommandDescriptor(
 }
 
 async function deriveStakeSplitCommandDescriptor(
-  mainAccount: Account,
+  mainAccount: SolanaAccount,
   tx: Transaction,
   model: TransactionModel & { kind: StakeSplitTransaction["kind"] },
   api: ChainAPI
@@ -698,7 +699,7 @@ async function validateValidatorCommon(
 }
 
 function validateAndTryGetStakeAccount(
-  account: Account,
+  account: SolanaAccount,
   stakeAccAddr: string,
   errors: Record<string, Error>
 ): SolanaStake | undefined {

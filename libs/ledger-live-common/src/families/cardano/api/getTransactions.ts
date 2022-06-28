@@ -1,7 +1,7 @@
 import network from "../../../network";
 import * as ApiTypes from "./api-types";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { PaymentChain, PaymentCredential } from "../types";
+import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
 import { getEnv } from "../../../env";
 import {
   getBipPath,
@@ -11,12 +11,12 @@ import {
 } from "../logic";
 import range from "lodash/range";
 import chunk from "lodash/chunk";
-import { Account, CryptoCurrency } from "../../../types";
 import { APITransaction } from "./api-types";
 import {
   CARDANO_API_ENDPOINT,
   CARDANO_TESTNET_API_ENDPOINT,
 } from "../constants";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 async function fetchTransactions(
   paymentKeys: Array<string>,
@@ -186,7 +186,7 @@ async function getSyncedTransactionsByChain(
 export async function getTransactions(
   xpub: string,
   accountIndex: number,
-  initialAccount: Account | undefined,
+  initialAccount: CardanoAccount | undefined,
   blockHeight: number,
   currency: CryptoCurrency
 ): Promise<{

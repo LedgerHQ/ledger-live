@@ -11,12 +11,13 @@ import React, {
   useMemo,
 } from "react";
 import { getVotesCount, isUpToDateAccount } from "../../account";
-import type { SubAccount, Account, CryptoCurrency } from "../../types";
 import { getAccountBridge } from "..";
 import { getAccountCurrency } from "../../account";
 import { getEnv } from "../../env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 export type Props = {
   // this is a wrapping component that you need to put in your tree
   children: React.ReactNode;

@@ -1,6 +1,8 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
 import byFamily from "../generated/platformAdapter";
 
-import type { Account, CryptoCurrency, Transaction } from "../types";
+import type { Transaction } from "../types";
 import type {
   PlatformAccount,
   PlatformCurrency,

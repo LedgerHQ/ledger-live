@@ -1,6 +1,6 @@
-import type { AccountLikeArray, AccountLike, Operation } from "../types";
 import { flattenAccounts } from "./helpers";
 import { flattenOperationWithInternalsAndNfts } from "../operation";
+import type { AccountLike, AccountLikeArray, Operation } from "@ledgerhq/types-live";
 export type DailyOperationsSection = {
   day: Date;
   data: Operation[];
@@ -47,9 +47,9 @@ export function groupAccountsOperationsByDay(
   // Returns the next most recent operation from the account with current indexes
   function getNext():
     | {
-        ops: Operation[];
-        date: Date;
-      }
+      ops: Operation[];
+      date: Date;
+    }
     | null
     | undefined {
     let bestOp: Operation | null | undefined;

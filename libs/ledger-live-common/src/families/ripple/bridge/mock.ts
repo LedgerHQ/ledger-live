@@ -9,7 +9,11 @@ import {
   FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 import { getMainAccount } from "../../../account";
 import {
   scanAccounts,

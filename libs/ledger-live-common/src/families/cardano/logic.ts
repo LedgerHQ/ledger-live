@@ -31,11 +31,12 @@ import {
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
 import BigNumber from "bignumber.js";
 import { getNetworkParameters } from "./networks";
-import { CryptoCurrency, OperationType } from "../../types";
 import groupBy from "lodash/groupBy";
 import { APITransaction } from "./api/api-types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddress";
+import type { OperationType } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano

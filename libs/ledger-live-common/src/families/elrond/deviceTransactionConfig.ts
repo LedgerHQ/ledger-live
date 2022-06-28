@@ -1,4 +1,4 @@
-import type { TransactionStatus } from "../../types";
+import type { TransactionStatus } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "../../transaction";
 
 function getDeviceTransactionConfig({

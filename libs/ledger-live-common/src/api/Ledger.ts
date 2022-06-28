@@ -1,5 +1,5 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
-import type { CryptoCurrency } from "../types";
 import { getEnv } from "../env";
 import { getExplorerConfig } from "./explorerConfig";
 

@@ -1,5 +1,6 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import type { Transaction, AccountLike } from "../../types";
+import type { Transaction } from "../../types";
 const options = [
   {
     name: "fee",

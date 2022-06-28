@@ -10,7 +10,7 @@ import type {
   TrongridExtraTxInfo,
   TronResources,
 } from "./types";
-import type { Account, Operation, OperationType } from "../../types";
+import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 
 export const decode58Check = (base58: string): string =>
   Buffer.from(bs58check.decode(base58)).toString("hex");

@@ -1,11 +1,14 @@
-// TODO Portfolio: move to src/types/portfolio.js
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import type {
   AccountLike,
   AccountLikeArray,
-  CryptoCurrency,
-  TokenCurrency,
   GranularityId,
-} from "../../types";
+} from "@ledgerhq/types-live";
+
+// TODO Portfolio: move to src/types/portfolio.js
 export type BalanceHistoryData = {
   date: Date | null | undefined;
   value: number;

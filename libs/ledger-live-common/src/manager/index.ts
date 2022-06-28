@@ -4,15 +4,15 @@ import semver from "semver";
 import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
-import type {
-  ApplicationVersion,
-  DeviceInfo,
-  OsuFirmware,
-  FirmwareUpdateContext,
-} from "../types/manager";
 import { listCryptoCurrencies } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getProviderId } from "./provider";
+import type {
+  ApplicationVersion,
+  DeviceInfo,
+  FirmwareUpdateContext,
+  OsuFirmware,
+} from "@ledgerhq/types-live";
 export { getProviderId };
 const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
