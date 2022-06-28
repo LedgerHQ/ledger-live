@@ -298,7 +298,7 @@ export const createAction = (
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
-      if(state.languageInstalled) return;
+      if (state.languageInstalled) return;
 
       const impl = implementations[currentMode]({
         deviceSubject,
@@ -335,6 +335,6 @@ export const createAction = (
 
   return {
     useHook,
-    mapResult
+    mapResult,
   };
 };
