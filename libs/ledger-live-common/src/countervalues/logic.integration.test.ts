@@ -1,5 +1,13 @@
+import "../__tests__/test-helpers/setup";
 import { initialState, loadCountervalues, calculate } from "./logic";
-import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "../currencies";
+import {
+  getFiatCurrencyByTicker,
+  getCryptoCurrencyById,
+  findCurrencyByTicker,
+} from "../currencies";
+import { getBTCValues } from "../countervalues/mock";
+import { Currency } from "@ledgerhq/cryptoassets";
+
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
 const now = Date.now();
@@ -58,5 +66,23 @@ describe("API sanity", () => {
       });
       expect(value).not.toEqual(currentValue);
     }
+  });
+});
+
+describe("extreme cases", () => {
+  test("all tickers against BTC", async () => {
+    const currencies = Object.keys(getBTCValues())
+      .filter((t) => t !== "USD")
+      .map(findCurrencyByTicker)
+      .filter(Boolean) as Currency[];
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: currencies.map((from) => ({
+        from,
+        to: usd,
+        startDate: new Date(),
+      })),
+      autofillGaps: true,
+    });
+    expect(state).not.toBe(initialState);
   });
 });
