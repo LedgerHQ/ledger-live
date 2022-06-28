@@ -4,22 +4,37 @@ import { FirmwareInfo } from "../types/manager";
 import { satisfies as versionSatisfies } from "semver";
 import { isDeviceLocalizationSupported } from "../manager/localization";
 
-const deviceVersionRangesForBootloaderVersion: { [key in DeviceModelId]?: string } = {
+const deviceVersionRangesForBootloaderVersion: {
+  [key in DeviceModelId]?: string;
+} = {
   nanoS: ">=2.0.0",
   nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
   nanoSP: ">=1.0.0",
 };
-export const isBootloaderVersionSupported = (seVersion: string, modelId: DeviceModelId) =>
+export const isBootloaderVersionSupported = (
+  seVersion: string,
+  modelId: DeviceModelId
+) =>
   deviceVersionRangesForBootloaderVersion[modelId] &&
-  versionSatisfies(seVersion, deviceVersionRangesForBootloaderVersion[modelId] as string);
+  versionSatisfies(
+    seVersion,
+    deviceVersionRangesForBootloaderVersion[modelId] as string
+  );
 
-const deviceVersionRangesForHardwareVersion: { [key in DeviceModelId]?: string } = {
+const deviceVersionRangesForHardwareVersion: {
+  [key in DeviceModelId]?: string;
+} = {
   nanoX: ">=2.0.0 || 2.1.0-lo2", // TODO: remove pre-release version
 };
-export const isHardwareVersionSupported = (seVersion: string, modelId: DeviceModelId) =>
+export const isHardwareVersionSupported = (
+  seVersion: string,
+  modelId: DeviceModelId
+) =>
   deviceVersionRangesForHardwareVersion[modelId] &&
-  versionSatisfies(seVersion, deviceVersionRangesForHardwareVersion[modelId] as string);
-
+  versionSatisfies(
+    seVersion,
+    deviceVersionRangesForHardwareVersion[modelId] as string
+  );
 
 /**
  * Retrieve targetId and firmware version from device
@@ -32,7 +47,9 @@ const deviceTargetIds = {
   "33200004": DeviceModelId.nanoFTS,
 };
 
-export default async function getVersion(transport: Transport): Promise<FirmwareInfo> {
+export default async function getVersion(
+  transport: Transport
+): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
   const data = res.slice(0, res.length - 2);
   let i = 0;
@@ -96,7 +113,9 @@ export default async function getVersion(transport: Transport): Promise<Firmware
 
     // if SE: mcu version
     const mcuVersionLength = data[i++];
-    let mcuVersionBuf: Buffer = Buffer.from(data.slice(i, i + mcuVersionLength));
+    let mcuVersionBuf: Buffer = Buffer.from(
+      data.slice(i, i + mcuVersionLength)
+    );
     i += mcuVersionLength;
 
     if (mcuVersionBuf[mcuVersionBuf.length - 1] === 0) {
@@ -111,18 +130,25 @@ export default async function getVersion(transport: Transport): Promise<Firmware
 
       if (isBootloaderVersionSupported(seVersion, deviceModel)) {
         const bootloaderVersionLength = data[i++];
-        let bootloaderVersionBuf: Buffer = Buffer.from(data.slice(i, i + bootloaderVersionLength));
+        let bootloaderVersionBuf: Buffer = Buffer.from(
+          data.slice(i, i + bootloaderVersionLength)
+        );
         i += bootloaderVersionLength;
 
         if (bootloaderVersionBuf[bootloaderVersionBuf.length - 1] === 0) {
-          bootloaderVersionBuf = bootloaderVersionBuf.slice(0, bootloaderVersionBuf.length - 1);
+          bootloaderVersionBuf = bootloaderVersionBuf.slice(
+            0,
+            bootloaderVersionBuf.length - 1
+          );
         }
         bootloaderVersion = bootloaderVersionBuf.toString();
       }
 
       if (isHardwareVersionSupported(seVersion, deviceModel)) {
         const hardwareVersionLength = data[i++];
-        hardwareVersion = data.slice(i, i + hardwareVersionLength).readUIntBE(0, 1); // ?? string? number?
+        hardwareVersion = data
+          .slice(i, i + hardwareVersionLength)
+          .readUIntBE(0, 1); // ?? string? number?
         i += hardwareVersionLength;
       }
 
