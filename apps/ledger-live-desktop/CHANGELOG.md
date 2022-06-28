@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.44.0-next.3
+
+### Minor Changes
+
+- ce02e4e78: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1195]
+
 ## 2.44.0-next.2
 
 ### Minor Changes
