@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
