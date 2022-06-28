@@ -7,6 +7,7 @@ const modalStyleOverrides = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     margin: 0,
+    marginTop: 32,
   },
   safeContainer: {
     borderTopLeftRadius: 24,
