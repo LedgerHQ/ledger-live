@@ -1,53 +1,27 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
-import type { TFunction } from "react-i18next";
+import type { SendAmountProps } from "./types";
 
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Input from "~/renderer/components/Input";
 import Text from "~/renderer/components/Text";
 
-type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
-  onChangeTransaction: (*) => void,
-  status: TransactionStatus,
-  t: TFunction,
-};
-
-const MemoField = ({
-  account,
-  parentAccount,
-  transaction,
-  onChangeTransaction,
-  status,
-  t,
-}: Props) => {
+const MemoField = ({ account, transaction, onChange, status }: SendAmountProps) => {
+  const { t } = useTranslation();
   const MEMO_MAX_LENGTH = 100;
-
-  /**
-   * NOTE: lint doesn't like `React.useState` and `useCallback` being used
-   * conditionally (i.e. below the status check condition). Moved up here to fix that.
-   */
   const [memoLength, setMemoLength] = React.useState(0);
+  const bridge = getAccountBridge(account);
   const onMemoChange = useCallback(
     (memo: string) => {
-      const bridge = getAccountBridge(account, parentAccount);
-      onChangeTransaction(bridge.updateTransaction(transaction, { memo }));
+      onChange(bridge.updateTransaction(transaction, { memo }));
       setMemoLength(memo.length);
     },
-    [account, parentAccount, transaction, onChangeTransaction],
+    [bridge, transaction, onChange],
   );
 
   if (!status) return null;
