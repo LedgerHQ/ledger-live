@@ -569,7 +569,7 @@ export default function Tutorial({ useCase }: Props) {
         <PreferLedgerRecoverySeed onClose={() => setAlertPreferLedgerSeed} />
       </Popin>
       <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction="left">
-        <Flex px={40}>
+        <Flex px={40} height="100%">
           `
           <PinHelp
             handleNextInDrawer={() =>
@@ -583,7 +583,7 @@ export default function Tutorial({ useCase }: Props) {
         onClose={() => setHelpRecoveryPhrase(false)}
         direction="left"
       >
-        <Flex px={40}>
+        <Flex px={40} height="100%">
           <RecoverySeed
             handleNextInDrawer={() =>
               handleNextInDrawer(setHelpRecoveryPhrase, `${path}/${ScreenId.hideRecoveryPhrase}`)
@@ -596,7 +596,7 @@ export default function Tutorial({ useCase }: Props) {
         onClose={() => setHelpHideRecoveryPhrase(false)}
         direction="left"
       >
-        <Flex px={40}>
+        <Flex px={40} height="100%">
           <HideRecoverySeed
             handleNextInDrawer={() => {
               setQuizOpen(true);

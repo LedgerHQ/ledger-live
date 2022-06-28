@@ -8,30 +8,10 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 
-const PointContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 16px;
-`;
-
-const PointIconContainer = styled.div`
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  color: #6490f1;
-  background-color: #6490f110;
-`;
-
-type PointProps = {
-  children: string;
-};
-
 const PinHelpContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
@@ -81,6 +61,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
           {t("onboarding.drawers.recoverySeed.points.3")}
         </Text>
         <Button
+          mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}
           Icon={() => <Icons.ArrowRightMedium size={18} />}
