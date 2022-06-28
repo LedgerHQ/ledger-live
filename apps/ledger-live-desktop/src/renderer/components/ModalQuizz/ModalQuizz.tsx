@@ -166,6 +166,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
       >
         {choices.map(({ label, correct }: QuizzChoice, index: number) => (
           <RadioElement
+            outlined
             key={`${radioName}-choice-${index}`}
             label={label}
             value={`${index}`}
@@ -209,9 +210,10 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   );
 
   const [width, height] = [816, 486];
+  const style = { "max-width": width, width: width, height: height };
 
   return (
-    <Popin isOpen onClose={onClose} width={width} height={height} p={0} position="relative">
+    <Popin isOpen onClose={onClose} style={style} p={0} position="relative">
       {!started && StartScreen ? (
         <StartScreen onStart={() => setStarted(true)} />
       ) : (
