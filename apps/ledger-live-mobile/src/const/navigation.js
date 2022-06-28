@@ -1,6 +1,7 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
+
 export const ScreenName = {
   /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
@@ -15,14 +16,12 @@ export const ScreenName = {
   AddAccountsSuccess: "AddAccountsSuccess",
   AddAccountsTokenCurrencyDisclaimer: "AddAccountsTokenCurrencyDisclaimer",
   AdvancedLogs: "AdvancedLogs",
-  Asset: "Asset",
   BenchmarkQRStream: "BenchmarkQRStream",
   BitcoinEditCustomFees: "BitcoinEditCustomFees",
   ClaimRewardsConnectDevice: "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice: "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError: "ClaimRewardsValidationError",
   ClaimRewardsValidationSuccess: "ClaimRewardsValidationSuccess",
-  Coinify: "Coinify",
   ConfirmPassword: "ConfirmPassword",
   CountervalueSettings: "CountervalueSettings",
   CryptoAssetsSettings: "CryptoAssetsSettings",
@@ -55,7 +54,6 @@ export const ScreenName = {
   DeveloperSettings: "DeveloperSettings",
   DeveloperCustomManifest: "DeveloperCustomManifest",
   DisplayResult: "DisplayResult",
-  Distribution: "Distribution",
   EditAccountName: "EditAccountName",
   EditAccountUnits: "EditAccountUnits",
   EditDeviceName: "EditDeviceName",
@@ -63,13 +61,10 @@ export const ScreenName = {
   EthereumEditGasLimit: "EthereumEditGasLimit",
   Exchange: "Exchange",
   ExchangeBuy: "ExchangeBuy",
-  ExchangeCoinifyWidget: "ExchangeCoinifyWidget",
-  ExchangeConnectDevice: "ExchangeConnectDevice",
   ExchangeHistory: "ExchangeHistory",
   ExchangeSelectAccount: "ExchangeSelectAccount",
   ExchangeSelectCurrency: "ExchangeSelectCurrency",
   ExchangeSell: "ExchangeSell",
-  ExchangeSellConnectDevice: "ExchangeSellConnectDevice",
   ExperimentalSettings: "ExperimentalSettings",
   FallBackCameraScreen: "FallBackCameraScreen",
   FallbackCameraSend: "FallbackCameraSend",
@@ -85,6 +80,7 @@ export const ScreenName = {
   FreezeValidationError: "FreezeValidationError",
   FreezeValidationSuccess: "FreezeValidationSuccess",
   GeneralSettings: "GeneralSettings",
+  GetDevice: "GetDevice",
   HelpSettings: "HelpSettings",
   Manager: "Manager",
   ManagerDevice: "ManagerDevice",
@@ -103,6 +99,7 @@ export const ScreenName = {
   PasswordRemove: "PasswordRemove",
   Portfolio: "Portfolio",
   PortfolioOperationHistory: "PortfolioOperationHistory",
+  PurchaseDevice: "PurchaseDevice",
   RateProviderSettings: "RateProviderSettings",
   ReceiveConfirmation: "ReceiveConfirmation",
   ReceiveConnectDevice: "ReceiveConnectDevice",
@@ -171,6 +168,7 @@ export const ScreenName = {
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
+  CosmosDelegationValidatorSelect: "CosmosDelegationValidatorSelect",
   CosmosDelegationAmount: "CosmosDelegationAmount",
   CosmosDelegationSelectDevice: "CosmosDelegationSelectDevice",
   CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
@@ -280,6 +278,7 @@ export const ScreenName = {
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
   OnboardingWelcome: "OnboardingWelcome",
+  OnboardingDoYouHaveALedgerDevice: "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection: "OnboardingPostWelcomeSelection",
   OnboardingLanguage: "OnboardingLanguage",
   OnboardingStepLanguageGetStarted: "OnboardingStepLanguageGetStarted",
@@ -321,6 +320,8 @@ export const ScreenName = {
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
+  PlatformStartExchange: "PlatformStartExchange",
+  PlatformCompleteExchange: "PlatformCompleteExchange",
 
   WalletConnectScan: "WalletConnectScan",
   WalletConnectConnect: "WalletConnectConnect",
@@ -349,11 +350,18 @@ export const ScreenName = {
 
   // solana
   SolanaEditMemo: "SolanaEditMemo",
+  SolanaEditAmount: "SolanaEditAmount",
 
-  BuyDeviceScreen: "BuyDeviceScreen",
+  PostBuyDeviceScreen: "PostBuyDeviceScreen",
+  PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
+
+  NoDeviceWallScreen: "NoDeviceWallScreen",
 
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
+
+  // cardano
+  CardanoEditMemo: "CardanoEditMemo",
 };
 
 export const NavigatorName = {
@@ -367,10 +375,10 @@ export const NavigatorName = {
   AddAccounts: "AddAccounts",
   Analytics: "Analytics",
   Exchange: "Exchange",
-  ExchangeBuyFlow: "ExchangeBuyFlow",
-  ExchangeSellFlow: "ExchangeSellFlow",
+  ExchangeStack: "ExchangeStack",
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
+  BuyDevice: "BuyDevice",
   CosmosClaimRewardsFlow: "CosmosClaimRewardsFlow",
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
@@ -389,6 +397,9 @@ export const NavigatorName = {
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",
   Platform: "Platform",
+  ProviderList: "ProviderList",
+  ProviderView: "ProviderView",
+  PlatformExchange: "PlatformExchange",
   ReceiveFunds: "ReceiveFunds",
   SendFunds: "SendFunds",
   Settings: "Settings",
@@ -413,6 +424,9 @@ export const NavigatorName = {
   PolkadotRebondFlow: "PolkadotRebondFlow",
   PolkadotNominateFlow: "PolkadotNominateFlow",
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
+
+  // Solana
+  SolanaDelegationFlow: "SolanaDelegationFlow",
 
   NotificationCenter: "NotificationCenter",
   Market: "Market",

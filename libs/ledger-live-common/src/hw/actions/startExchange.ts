@@ -83,7 +83,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
   startExchangeExec: (arg0: {
-    deviceId?: string;
+    deviceId: string;
     exchangeType: ExchangeType;
   }) => Observable<ExchangeRequestEvent>
 ): StartExchangeAction => {
@@ -110,7 +110,8 @@ export const createAction = (
     const hasError = error || state.error;
     useEffect(() => {
       if (!opened || !device) {
-        setState({ ...initialState, isLoading: !hasError });
+        // isLoading should be false until we have a device to show the correct animation
+        setState({ ...initialState, isLoading: device ? !hasError : false });
         return;
       }
 
@@ -130,7 +131,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, opened, hasError, exchangeType]);
+    }, [device, opened, exchangeType, hasError]);
 
     return {
       ...appState,

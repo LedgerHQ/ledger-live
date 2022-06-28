@@ -15,6 +15,7 @@ const {
   addDependencies,
   addDevDependencies,
   addPeerDependencies,
+  removeDependencies,
 } = require("./tools/pnpm-utils");
 
 function readPackage(pkg, context) {
@@ -166,6 +167,10 @@ function readPackage(pkg, context) {
       addPeerDependencies("app-builder-lib", {
         "dmg-builder": "*",
         lodash: "*",
+      }),
+      // Try to prevent pnpm-lock.yaml flakiness
+      removeDependencies("follow-redirects", ["debug"], {
+        kind: "peerDependencies",
       }),
       /* Packages that are missing @types/* dependencies */
       addPeerDependencies("react-native-gesture-handler", {

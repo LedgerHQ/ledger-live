@@ -2,30 +2,22 @@ import React, { useState } from "react";
 import FastImage, {
   OnLoadEvent,
   FastImageProps,
+  ResizeMode,
 } from "react-native-fast-image";
 import { View, StyleSheet, Animated } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
 import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
-const ImageComponent = ({
-  ...props
-}: {
-  style: Object;
-} & FastImageProps) =>
+const ImageComponent: React.FC<FastImageProps> = props =>
   typeof props?.source === "object" && props?.source?.uri ? (
     <FastImage {...props} />
-  ) : (
-    <></>
-  );
+  ) : null;
 
-const NotFound = ({
-  colors,
-  onLayout,
-}: {
-  colors: Object;
+const NotFound: React.FC<{
+  colors: { [key: string]: string };
   onLayout: () => void;
-}) => {
+}> = ({ colors, onLayout }) => {
   const [iconWidth, setIconWidth] = useState(40);
 
   return (
@@ -50,19 +42,23 @@ type Props = {
   style?: Object;
   status: string;
   src: string;
-  resizeMode?: string;
+  resizeMode?: ResizeMode;
   colors: any;
+  useFallback: boolean;
+  setUseFallback: (_useFallback: boolean) => void;
 };
 
 type State = {
-  loadError: boolean;
+  error: boolean;
+  loading: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
   state = {
     beforeLoadDone: false,
-    loadError: false,
+    error: false,
     contentType: null,
+    loading: true,
   };
 
   opacityAnim = new Animated.Value(0);
@@ -72,22 +68,32 @@ class NftImage extends React.PureComponent<Props, State> {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    }).start();
+    }).start(({ finished }) => {
+      finished && this.setState({ loading: false });
+    });
   };
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
-      this.setState({ loadError: true });
+      if (!this.props.useFallback) {
+        this.props.setUseFallback(true);
+      } else {
+        this.setState({ loading: true, error: true });
+      }
     }
   };
 
   onError = () => {
-    this.setState({ loadError: true });
+    if (!this.props.useFallback) {
+      this.props.setUseFallback(true);
+    } else {
+      this.setState({ error: true });
+    }
   };
 
   render() {
     const { style, status, src, colors, resizeMode = "cover" } = this.props;
-    const { loadError } = this.state;
+    const { error, loading } = this.state;
 
     const noData = status === "nodata";
     const metadataError = status === "error";
@@ -95,7 +101,7 @@ class NftImage extends React.PureComponent<Props, State> {
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Skeleton style={styles.skeleton} loading={loading} />
         <Animated.View
           style={[
             styles.imageContainer,
@@ -104,14 +110,14 @@ class NftImage extends React.PureComponent<Props, State> {
             },
           ]}
         >
-          {noData || metadataError || noSource || loadError ? (
+          {noData || metadataError || noSource || error ? (
             <NotFound colors={colors} onLayout={this.startAnimation} />
           ) : (
             <ImageComponent
               style={[
                 styles.image,
                 {
-                  backgroundColor: colors.white,
+                  backgroundColor: colors.background.main,
                 },
               ]}
               resizeMode={resizeMode}

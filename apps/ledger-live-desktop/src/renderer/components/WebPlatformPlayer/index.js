@@ -1,5 +1,6 @@
 // @flow
-import { remote, WebviewTag, shell } from "electron";
+import { WebviewTag, shell } from "electron";
+import * as remote from "@electron/remote";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
@@ -494,6 +495,9 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     const webview = targetRef.current;
 
     if (webview) {
+      // For mysterious reasons, the webpreferences attribute does not
+      // pass through the styled component when added in the JSX.
+      webview.webpreferences = "nativeWindowOpen=no";
       webview.addEventListener("new-window", handleNewWindow);
       webview.addEventListener("did-finish-load", handleLoad);
     }

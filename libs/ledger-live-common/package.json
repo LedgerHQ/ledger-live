@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "22.2.0",
+  "version": "23.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
@@ -21,10 +21,11 @@
     "lint:fix": "pnpm lint --fix",
     "jest": "cross-env TZ=America/New_York jest",
     "typecheck": "tsc --noEmit -p src/tsconfig.json",
-    "test": "pnpm ci-test-common",
     "ci-lint": "pnpm lint",
-    "ci-test-common": "env-cmd -f ./.ci.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-bot": "env-cmd -f ./.ci.env pnpm jest --testMatch '**/*.bot.ts'"
+    "test": "pnpm ci-test-unit",
+    "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot",
+    "ci-test-bot": "env-cmd -f .ci.bot.env pnpm jest --ci"
   },
   "files": [
     "lib",
@@ -33,11 +34,11 @@
     "reactNative.js"
   ],
   "peerDependencies": {
+    "@types/react": "*",
     "react": ">=16",
     "react-dom": ">=16",
     "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "@types/react": "*"
+    "react-native-svg": ">=12.1.1"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -54,6 +55,7 @@
     "https": false
   },
   "dependencies": {
+    "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.0.0",
     "@celo/base": "^1.5.2",
     "@celo/connect": "^1.5.2",
     "@celo/contractkit": "^1.5.2",
@@ -88,13 +90,15 @@
     "@ledgerhq/json-bignumber": "^1.1.0",
     "@ledgerhq/live-app-sdk": "^0.6.1",
     "@ledgerhq/logs": "workspace:^",
-    "@polkadot/types": "8.1.1",
-    "@polkadot/types-known": "8.1.1",
-    "@polkadot/util": "9.1.1",
-    "@polkadot/util-crypto": "9.1.1",
+    "@polkadot/types": "8.5.1",
+    "@polkadot/types-known": "8.5.1",
+    "@polkadot/util": "9.2.1",
+    "@polkadot/util-crypto": "9.2.1",
     "@polkadot/wasm-crypto": "6.0.1",
     "@solana/spl-token": "^0.2.0",
-    "@solana/web3.js": "^1.41.4",
+    "@solana/web3.js": "1.41.3",
+    "@stricahq/bip32ed25519": "^1.0.3",
+    "@stricahq/typhonjs": "^1.2.4",
     "@taquito/ledger-signer": "stablelib",
     "@taquito/taquito": "stablelib",
     "@taquito/utils": "stablelib",
@@ -132,6 +136,7 @@
     "eth-sig-util": "3.0.1",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.4",
+    "events": "^3.3.0",
     "expect": "^27.4.6",
     "generic-pool": "^3.8.2",
     "invariant": "^2.2.2",
@@ -156,7 +161,7 @@
     "semver": "^7.3.5",
     "sha.js": "^2.4.11",
     "source-map-support": "^0.5.21",
-    "stellar-sdk": "^10.1.0",
+    "stellar-sdk": "^10.1.1",
     "superstruct": "0.14.2",
     "tiny-secp256k1": "^1.1.6",
     "triple-beam": "^1.3.0",
@@ -195,7 +200,7 @@
     "eslint-plugin-typescript": "^0.14.0",
     "fs": "^0.0.1-security",
     "glob": "^7.2.0",
-    "jest": "^27.5.1",
+    "jest": "^28.1.1",
     "jest-file-snapshot": "^0.5.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
@@ -204,7 +209,7 @@
     "react-native-svg": "^12.1.1",
     "react-test-renderer": "^17.0.2",
     "timemachine": "^0.3.2",
-    "ts-jest": "^27.1.3",
+    "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.5",
     "typescript-eslint-parser": "^22.0.0",

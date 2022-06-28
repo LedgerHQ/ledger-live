@@ -1,6 +1,6 @@
 // @flow
+import * as Sentry from "@sentry/node";
 import { unsubscribeSetup } from "./live-common-setup";
-
 import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { serializeError } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -10,13 +10,13 @@ import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
-import sentry from "~/sentry/node";
-// import uuid from 'uuid/v4'
+import sentry from "~/sentry/internal";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   unsubscribeAllCommands();
+  Sentry.close(2000);
 });
 
 logger.add(new LoggerTransport());
@@ -38,10 +38,9 @@ process.on("uncaughtException", err => {
 const defers = {};
 
 // eslint-disable-next-line no-unused-vars
-let sentryEnabled = !!process.env.INITIAL_SENTRY_ENABLED || false;
-if (process.env.SENTRY_USER_ID) {
-  sentry(() => sentryEnabled, process.env.SENTRY_USER_ID);
-}
+let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
+const userId = process.env.SENTRY_USER_ID || "";
+sentry(() => Boolean(userId) && sentryEnabled, userId);
 
 process.on("message", m => {
   switch (m.type) {
@@ -71,7 +70,12 @@ process.on("message", m => {
 
     case "sentryLogsChanged": {
       const { payload } = m;
-      sentryEnabled = payload.value;
+      sentryEnabled = payload;
+      break;
+    }
+
+    case "internalCrashTest": {
+      logger.critical(new Error("CrashTestInternal"));
       break;
     }
 
