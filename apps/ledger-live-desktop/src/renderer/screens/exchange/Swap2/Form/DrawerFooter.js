@@ -3,6 +3,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
+import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -43,8 +44,8 @@ export function DrawerFooter({ provider }: { provider: string }) {
                 onClick={onLinkClick}
                 style={{ textDecoration: "underline" }}
               >
-                <Text fontSize={13} color="palette.text.shade60" capitalize>
-                  {provider}
+                <Text fontSize={13} color="palette.text.shade60">
+                  {getProviderName(provider)}
                 </Text>
               </LinkWithExternalIcon>,
             ]}
