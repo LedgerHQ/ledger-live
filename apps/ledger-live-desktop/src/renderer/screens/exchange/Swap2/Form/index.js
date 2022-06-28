@@ -227,9 +227,7 @@ const SwapForm = () => {
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
             {t("common.exchange")}
           </Button>
-          {decentralizedSwapAvailable ? (
-            <DexSwapAvailableAlert swapTransaction={swapTransaction} />
-          ) : null}
+          {decentralizedSwapAvailable ? <DexSwapAvailableAlert /> : null}
         </Box>
       </Wrapper>
     );
@@ -240,7 +238,7 @@ const SwapForm = () => {
       <>
         <FormNotAvailable />
         <Box px="18px" maxWidth="500px">
-          <DexSwapAvailableAlert swapTransaction={swapTransaction} />
+          <DexSwapAvailableAlert />
         </Box>
       </>
     );
