@@ -11,6 +11,7 @@ import Button from "../../../../../components/PreventDoubleClickButton";
 
 import {
   installAppFirstTime,
+  setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../../../../actions/settings";
@@ -32,6 +33,7 @@ const ConnectNanoScene = ({
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
+      dispatch(setHasOrderedNano(false));
     },
     [dispatch],
   );
@@ -40,6 +42,7 @@ const ConnectNanoScene = ({
     device => {
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
+      dispatch(setHasOrderedNano(false));
       onNext();
     },
     [dispatch, onNext],
@@ -57,6 +60,7 @@ const ConnectNanoScene = ({
         dispatch(installAppFirstTime(hasAnyAppinstalled));
         setDevice(undefined);
         dispatch(setReadOnlyMode(false));
+        dispatch(setHasOrderedNano(false));
         onNext();
       }
     },
@@ -101,6 +105,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
       outline
       onPress={() => {
         dispatch(setReadOnlyMode(false));
+        dispatch(setHasOrderedNano(false));
         onNext();
       }}
     >

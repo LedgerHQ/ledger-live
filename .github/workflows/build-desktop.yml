@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:
@@ -207,7 +209,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -242,8 +244,6 @@ jobs:
           os: mac
 
       - name: build the app
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           eval "$(rbenv init - bash)"
           pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
