@@ -17,7 +17,6 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
