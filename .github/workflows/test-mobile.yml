@@ -49,7 +49,6 @@ jobs:
         TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         FORCE_COLOR: 3
-
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -76,13 +75,76 @@ jobs:
       - name: Rebuild detox
         run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -c ios.staging
+        run: pnpm mobile e2e:build -c ios.release
       - name: Test iOS app
         timeout-minutes: 15
         run: pnpm mobile e2e:test -c ios.staging --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
-        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-ios-artifacts
+          path: artifacts
+
+  detox-e2e-android:
+    name: "Ledger Live Mobile - Android Detox Tests"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      FORCE_COLOR: 3
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Check hash commit deps
+        uses: ledgerhq/actions/packages/has-hash-commit-deps@main
+        id: has-hash-commit-deps
+        with:
+          workspace: ${{ github.workspace }}
+      - name: Install dependencies
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
+      # - name: Gradle cache
+      #   uses: gradle/gradle-build-action@v2
+      # - name: AVD cache   
+      #   uses: actions/cache@v2
+      #   id: avd-cache
+      #   with:
+      #     path: |
+      #       ~/.android/avd/*
+      #       ~/.android/adb*
+      #     key: avd-api-30
+      - name: Build iOS app for Detox test run
+        run: pnpm mobile e2e:build -c android.release
+      - name: Run Android tests
+        timeout-minutes: 10
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          # force-avd-creation: false
+          avd-name: Nexus_6_API_30
+          emulator-options: -verbose -no-boot-anim -noaudio
+          ram-size: 2048
+          # disable-animations: true
+          script: |
+            mkdir ./temp
+            curl -f -o ./temp/test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk
+            adb install ./temp/test-butler-app.apk || adb install ./e2e/test-butler-app.apk
+            pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
+        # adb logcat -c
+        # adb logcat *:E &
+        # $ANDROID_HOME/platform-tools/adb devices
+        # yarn start & yarn detox test -c android.debug --loglevel verbose --record-logs failing --record-timeline all --take-screenshots failing
+        # adb logcat -c
+        # adb logcat *:E &
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-android-artifacts
           path: artifacts

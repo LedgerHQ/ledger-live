@@ -1,6 +1,6 @@
 // NOTE: It seems that we can't build the ios app in arm64 on M1
 const iosArch = "x86_64";
-// NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1
+// NOTE: Pass CI=1 if you want to build locally when you don't have a mac M1. This works better if you do export CI=1 for the whole session.
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
 
 module.exports = {
@@ -24,22 +24,20 @@ module.exports = {
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
         "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
+      // "launchArgs": "https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md",
     },
-    /* FIXME: It's not building and I don't know why, the directory is present.
-    ---
-    Output:
-    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/nabil.bourenane/Workspace/ledger-live/apps/ledger-live-mobile/ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app/PlugIns/ledgerlivemobileTests.xctest
-    /Users/nabil.bourenane/Workspace/ledger-live/apps/ledger-live-mobile/ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app/PlugIns/ledgerlivemobileTests.xctest: No such file or directory
-    Command CodeSign failed with a nonzero exit code
-    ---
-    "ios.release": {
+    "ios.staging": {
       type: "ios.app",
       build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
-        "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
-      // "launchArgs": "https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md",
+        "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
-    */
+    "ios.release": {
+      type: "ios.app",
+      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      binaryPath:
+        "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+    },
     "android.debug": {
       type: "android.apk",
       build:
@@ -55,7 +53,6 @@ module.exports = {
       binaryPath: `android/app/build/outputs/apk/stagingRelease/app-${androidArch}-stagingRelease.apk`,
       testBinaryPath:
         "android/app/build/outputs/apk/androidTest/stagingRelease/app-stagingRelease-androidTest.apk",
-      // "launchArgs": "https://github.com/wix/Detox/blob/master/docs/APIRef.LaunchArgs.md",
     },
   },
   devices: {
@@ -63,7 +60,6 @@ module.exports = {
       type: "ios.simulator",
       device: {
         type: "iPhone 11 Pro",
-        os: "iOS 15.5",
       },
       // bootArgs: "https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md",
     },
@@ -72,7 +68,6 @@ module.exports = {
       device: {
         avdName: "Nexus_6_API_30",
       },
-      // bootArgs: "https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md",
     },
   },
   configurations: {
@@ -81,20 +76,21 @@ module.exports = {
       app: "ios.debug",
       // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
+    "ios.sim.staging": {
+      device: "simulator",
+      app: "ios.staging",
+    },
     "ios.sim.release": {
       device: "simulator",
       app: "ios.release",
-      // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
     "android.emu.debug": {
       device: "emulator",
       app: "android.debug",
-      // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
     "android.emu.release": {
       device: "emulator",
       app: "android.release",
-      // artifacts: { https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#artifacts-configuration },
     },
   },
 };
