@@ -29,26 +29,6 @@ type PointProps = {
   children: string;
 };
 
-function Point({ children }: PointProps) {
-  return (
-    <PointContainer>
-      <PointIconContainer>
-        <ChevronRight size={12} />
-      </PointIconContainer>
-      <Text
-        ml="16px"
-        color="palette.text.shade100"
-        ff="Inter|Regular"
-        fontSize="14px"
-        lineHeight="21px"
-        style={{ flex: 1 }}
-      >
-        {children}
-      </Text>
-    </PointContainer>
-  );
-}
-
 const PinHelpContainer = styled.div`
   display: flex;
   flex-direction: column;
