@@ -21,7 +21,7 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
   const setupNanoFTS = useCallback(() => {
     // Prompts user to enable bluetooth. Not necessary as next screen handles the ble requirement, but it smooths the transition
     NativeModules.BluetoothHelperModule.prompt()
-      .then(() => navigation.navigate(ScreenName.BleDevicesScanning))
+      .then(() => navigation.navigate(ScreenName.BleDevicesScanning as "BleDevicesScanning"))
       .catch(() => {
       // ignore
     });
