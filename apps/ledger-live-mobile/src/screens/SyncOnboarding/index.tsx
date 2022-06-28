@@ -11,6 +11,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import {
+  ChevronBottomMedium,
   CloseMedium,
   ExternalLinkMedium,
   InfoMedium,
@@ -25,6 +26,8 @@ import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
+import { useTranslation } from "react-i18next";
+import LanguageSelect from "./LanguageSelect";
 
 type Step = {
   status: "completed" | "active" | "inactive";
@@ -107,6 +110,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     defaultOnboardingSteps,
   );
 
+  const {
+    i18n: { language: locale },
+  } = useTranslation();
+
   const { pairedDevice } = route.params;
 
   const {
@@ -123,7 +130,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   useEffect(() => {
     if (!pairedDevice) {
       // @ts-expect-error navigator typing issue
-      navigation.navigate(ScreenName.PairDevices, {
+      navigation.replace(ScreenName.PairDevices, {
         onlySelectDeviceWithoutFullAppPairing: true,
         onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
       });
@@ -173,6 +180,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     setDesyncDrawerOpen(true);
   }, [setDesyncDrawerOpen]);
 
+  const handleDesyncClose = useCallback(() => {
+    setDesyncDrawerOpen(false);
+    navigation.navigate(ScreenName.OnboardingWelcome);
+  }, [navigation]);
+
   // Triggered when a new paired device is passed when navigating to this screen
   // It avoids having a callback function passed to the PairDevices screen
   useEffect(() => {
@@ -197,8 +209,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
-      console.log("hello");
-      setStopPolling(false);
+      setStopPolling(true);
     }
   }, [isDesyncDrawerOpen]);
 
@@ -214,10 +225,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           isOpen={isHelpDrawerOpen}
           onClose={() => setHelpDrawerOpen(false)}
         />
-        <DesyncDrawer
-          isOpen={isDesyncDrawerOpen}
-          onClose={() => setDesyncDrawerOpen(false)}
-        />
+        <DesyncDrawer isOpen={isDesyncDrawerOpen} onClose={handleDesyncClose} />
         <ResyncOverlay isOpen={!!timer && !stopPolling} />
         <ScrollContainer>
           <ScrollContainerHeader>
@@ -227,9 +235,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
               pt={7}
               px={7}
             >
-              <Button type="main" outline>
-                EN
-              </Button>
+              <LanguageSelect />
               <Button type="default" Icon={CloseMedium} onPress={handleClose} />
             </Flex>
           </ScrollContainerHeader>
@@ -241,6 +247,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
               <Button
                 ml={2}
                 Icon={Question}
+                // size="small"
+
                 onPress={() => setHelpDrawerOpen(true)}
               />
             </Flex>
