@@ -9,7 +9,11 @@ import {
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import { Language, languageIds, LanguagePackageResponse } from "../types/languages";
+import {
+  Language,
+  languageIds,
+  LanguagePackageResponse,
+} from "../types/languages";
 import { getProviderId } from "../manager/provider";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
