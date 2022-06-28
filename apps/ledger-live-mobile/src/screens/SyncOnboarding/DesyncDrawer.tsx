@@ -13,7 +13,7 @@ const DesyncDrawer = ({ isOpen, onClose }: Props) => {
   const navigation = useNavigation();
 
   const handleRetryPress = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices, {
+    navigation.replace(ScreenName.PairDevices, {
       onlySelectDeviceWithoutFullAppPairing: true,
       onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
     });
@@ -24,8 +24,13 @@ const DesyncDrawer = ({ isOpen, onClose }: Props) => {
   }, []);
 
   return (
-    <BottomDrawer onClose={onClose} isOpen={isOpen}>
-      <Text variant="h4" fontWeight="semiBold" mb={4}>
+    <BottomDrawer
+      onClose={onClose}
+      isOpen={isOpen}
+      preventBackdropClick
+      noCloseButton
+    >
+      <Text variant="h4" fontWeight="semiBold" mb={4} mt={8}>
         We could not connect to your Nano
       </Text>
       <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
