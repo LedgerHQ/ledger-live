@@ -20,8 +20,6 @@ export function splitTransaction(
   let witnessScript, locktime;
   const isDecred = additionals.includes("decred");
   const transaction = Buffer.from(transactionHex, "hex");
-  console.log("uuuuuuuuuuuuuu");
-  console.log(transactionHex);
   const version = transaction.slice(offset, offset + 4);
   const overwinter =
     version.equals(Buffer.from([0x03, 0x00, 0x00, 0x80])) ||
@@ -48,10 +46,7 @@ export function splitTransaction(
     nVersionGroupId = transaction.slice(offset, 4 + offset);
     offset += 4;
   }
-  let branchid;
   if (zcashv5) {
-    branchid = transaction.slice(offset, offset + 4);
-    console.log("branchid", branchid);
     locktime = transaction.slice(offset + 4, offset + 8);
     nExpiryHeight = transaction.slice(offset + 8, offset + 12);
     offset += 12;
@@ -62,7 +57,6 @@ export function splitTransaction(
 
   for (let i = 0; i < numberInputs; i++) {
     const prevout = transaction.slice(offset, offset + 36);
-    console.log("prevout", prevout);
     offset += 36;
     let script = Buffer.alloc(0);
     let tree = Buffer.alloc(0);

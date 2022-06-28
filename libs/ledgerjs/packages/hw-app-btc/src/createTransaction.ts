@@ -155,10 +155,6 @@ export async function createTransaction(
 
   // first pass on inputs to get trusted inputs
   for (const input of inputs) {
-    console.log("===============================0======");
-    console.log(input[0]);
-    console.log("===============================1======");
-    console.log(input[1]);
     if (!resuming) {
       const trustedInput = await getTrustedInputCall(
         transport,
