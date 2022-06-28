@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { ScreenName } from "../../const";
 import { SyncOnboarding } from "../../screens/SyncOnboarding";
 import { DeviceModelSelection } from "../../screens/SyncOnboarding/DeviceModelSelection";
