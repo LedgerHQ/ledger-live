@@ -1,5 +1,52 @@
 # ledger-live-desktop
 
+## 2.43.2-next.1
+
+### Patch Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 2.43.2-next.0
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- 99cc5bbc1: Add loading spinner on "From amount" field in Swap form when using "Send max" toggle
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
+## 2.45.0-next.0
+
+### Minor Changes
+
+- a35c6e9a3: Add Sentry support
+
+### Patch Changes
+
+- cdcee7ad9: Replace webpack with esbuild for production builds.
+- ebb7deb1a: Fix regression when opening external windows from within a webview tag
+- 89e31c3c4: Fixed issue on CryptoCurrency Icon in transactions history (size issue)
+- c5c3f48e4: Add basic support for macOS universal apps.
+- Updated dependencies [22531f3c3]
+- Updated dependencies [e393b9bfa]
+- Updated dependencies [d22452817]
+- Updated dependencies [2012b5477]
+- Updated dependencies [10440ec3c]
+- Updated dependencies [e1f2f07a2]
+- Updated dependencies [9c3e27f46]
+- Updated dependencies [1e4a5647b]
+- Updated dependencies [c5c3f48e4]
+- Updated dependencies [ef01a3cc2]
+- Updated dependencies [508e4c23b]
+- Updated dependencies [b1e396dd8]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-next.0
+  - @ledgerhq/react-ui@0.8.0-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.27.2-next.0
+
 ## 2.44.0
 
 ### Minor Changes

@@ -1,9 +1,9 @@
 // @flow
 import type {
   RatesReducerState,
+  SwapDataType,
   SwapSelectorStateType,
 } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";

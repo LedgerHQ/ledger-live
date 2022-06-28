@@ -1,5 +1,5 @@
 // @flow
-import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

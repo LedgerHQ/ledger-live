@@ -6,6 +6,7 @@ import {
   SwapSelectorStateType,
   OnNoRatesCallback,
   SwapTransactionType,
+  SetIsSendMaxLoading,
 } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { useFromState } from "./useFromState";
@@ -20,6 +21,7 @@ export const selectorStateDefaultValues = {
   parentAccount: undefined,
   amount: undefined,
 };
+
 export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountError = (
@@ -39,6 +41,7 @@ export const useFromAmountError = (
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
+  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
@@ -46,6 +49,7 @@ export const useSwapTransaction = ({
 }: {
   accounts?: Account[];
   setExchangeRate?: SetExchangeRateCallback;
+  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
@@ -90,6 +94,7 @@ export const useSwapTransaction = ({
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
+    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates } = useProviderRates({

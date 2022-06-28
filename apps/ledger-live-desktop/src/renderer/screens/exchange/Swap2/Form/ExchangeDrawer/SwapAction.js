@@ -1,13 +1,11 @@
 // @flow
 import { getEnv } from "@ledgerhq/live-common/lib/env";
-import type {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import {
   toExchangeRateRaw,
   toExchangeRaw,
 } from "@ledgerhq/live-common/lib/exchange/swap/serialization";
+import type { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import { toTransactionRaw } from "@ledgerhq/live-common/lib/transaction";

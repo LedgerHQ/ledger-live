@@ -1,4 +1,4 @@
-name: "[Release] Prepare for releasing"
+name: "[Release](Mobile) Prepare for releasing"
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
         run: pnpm changeset pre exit
 
       - name: versioning
-        run: pnpm changeset version
+        run: pnpm changeset version --ignore ledger-live-desktop
 
       - name: commit
         run: |

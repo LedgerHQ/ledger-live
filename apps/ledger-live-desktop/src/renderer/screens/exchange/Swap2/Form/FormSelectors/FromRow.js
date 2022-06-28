@@ -60,6 +60,7 @@ type Props = {
   isMaxEnabled: boolean,
   fromAmountError?: Error,
   provider: ?string,
+  isSendMaxLoading: boolean,
 };
 
 /* @dev: Yeah, Im sorry if you read this, design asked us to
@@ -84,6 +85,7 @@ function FromRow({
   toggleMax,
   fromAmountError,
   provider,
+  isSendMaxLoading,
 }: Props) {
   const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
   const unit = fromAccount && getAccountUnit(fromAccount);
@@ -144,6 +146,7 @@ function FromRow({
         </Box>
         <InputSection width="50%">
           <InputCurrency
+            loading={isSendMaxLoading}
             value={fromAmount}
             onChange={setFromAmount}
             disabled={!fromAccount || isMaxEnabled}

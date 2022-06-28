@@ -9,7 +9,6 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { track } from "../../analytics";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";

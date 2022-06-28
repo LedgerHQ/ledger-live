@@ -323,3 +323,5 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
 export interface CustomMinOrMaxError extends Error {
   amount: BigNumber;
 }
+
+export type SetIsSendMaxLoading = (loading: boolean) => void;

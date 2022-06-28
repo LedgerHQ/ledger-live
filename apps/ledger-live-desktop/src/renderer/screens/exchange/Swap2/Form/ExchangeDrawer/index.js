@@ -4,10 +4,8 @@ import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/lib/exchange/swap";
 import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapHistory";
-import type {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { SwapTransactionType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+import type { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";

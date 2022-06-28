@@ -180,15 +180,11 @@ export const urls = {
       },
       ftx: {
         main: "https://ftx.com",
-        tos: "",
         support: "https://ftx.com/support",
-        kyc: "",
       },
       ftxus: {
         main: "https://ftx.us/",
-        tos: "",
         support: "https://help.ftx.us/hc/en-us",
-        kyc: "",
       },
     },
   },

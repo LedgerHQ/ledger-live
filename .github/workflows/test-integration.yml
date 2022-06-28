@@ -15,10 +15,6 @@ on:
         required: false
         default: ""
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   integration-tests:
     name: "Integration Tests"
