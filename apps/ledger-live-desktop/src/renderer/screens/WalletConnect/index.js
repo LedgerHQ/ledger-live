@@ -10,7 +10,9 @@ import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import { WaveContainer } from "~/renderer/components/Onboarding/Screens/Tutorial/shared";
 import { AnimatedWave } from "~/renderer/components/Onboarding/Screens/Tutorial/assets/AnimatedWave";
+// $FlowFixMe
 import { disconnect } from "./Provider";
+// $FlowFixMe
 import { context, STATUS } from "~/renderer/screens/WalletConnect/Provider";
 import WCLogo from "~/renderer/images/walletconnect.png";
 import CompanyLogo from "~/renderer/images/logo.png";

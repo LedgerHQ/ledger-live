@@ -11,7 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
 import { accountSelector } from "../../../reducers/accounts";
-import NftImage from "../../../components/Nft/NftImage";
+import NftMedia from "../../../components/Nft/NftMedia";
 import Skeleton from "../../../components/Skeleton";
 import { unhideNftCollection } from "../../../actions/settings";
 
@@ -19,7 +19,7 @@ const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
 `;
 
-const CollectionImage = styled(NftImage)`
+const CollectionImage = styled(NftMedia)`
   border-radius: 4px;
   width: 36px;
   aspect-ratio: 1;
@@ -64,7 +64,11 @@ const HiddenNftCollectionRow = ({
 
   return (
     <Flex p={6} flexDirection="row" alignItems="center">
-      <CollectionImage status={nftStatus} src={nftMetadata?.media} />
+      <CollectionImage
+        status={nftStatus}
+        metadata={nftMetadata}
+        mediaFormat={"preview"}
+      />
       <Flex
         flexDirection="row"
         alignItems="center"

@@ -34,6 +34,8 @@ export default {
         if (accounts.length === 0) throw new Error("no accounts!");
         const { currency } = accounts[0];
         return `
+import "../../__tests__/test-helpers/setup";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 
@@ -46,7 +48,7 @@ const dataset: CurrenciesData<Transaction> = {
   ],
 };
 
-export default dataset;
+testBridge(dataset);
 `;
       })
     );

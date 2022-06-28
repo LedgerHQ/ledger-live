@@ -1,6 +1,9 @@
+import winston from "winston";
+import { listen } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { setSupportedCurrencies } from "../../currencies";
 import { setPlatformVersion } from "../../platform/version";
+import { EnvName, setEnvUnsafe } from "../../env";
 
 jest.setTimeout(360000);
 
@@ -62,3 +65,39 @@ setSupportedCurrencies([
   "cardano",
   "cardano_testnet",
 ]);
+
+for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
+
+const { VERBOSE, VERBOSE_FILE } = process.env;
+const logger = winston.createLogger({
+  level: "debug",
+  transports: [],
+});
+const { format } = winston;
+const { combine, timestamp, json } = format;
+const winstonFormat = combine(timestamp(), json());
+
+if (VERBOSE_FILE) {
+  logger.add(
+    new winston.transports.File({
+      format: winstonFormat,
+      filename: VERBOSE_FILE,
+      level: "debug",
+    })
+  );
+}
+
+logger.add(
+  new winston.transports.Console({
+    format: winstonFormat,
+    silent: !VERBOSE,
+  })
+);
+// eslint-disable-next-line no-unused-vars
+listen(({ type, message, ...rest }) => {
+  logger.log("debug", {
+    message: type + (message ? ": " + message : ""),
+    // $FlowFixMe
+    ...rest,
+  });
+});

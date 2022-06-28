@@ -169,15 +169,17 @@ export const getAccountShape: GetAccountShape = async (
   const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
 
   const requiredConfirmations = 90;
-  let syncFromBlockHeight =
-    initialAccount?.blockHeight &&
-    initialAccount.blockHeight > requiredConfirmations
-      ? initialAccount.blockHeight - requiredConfirmations
-      : 0;
 
-  if (outdatedSyncHash) {
-    syncFromBlockHeight = 0;
-  }
+  const oldOperations = initialAccount?.operations || [];
+  const lastBlockHeight = oldOperations.length
+    ? (oldOperations[0].blockHeight || 0) + 1
+    : 0;
+
+  const syncFromBlockHeight = outdatedSyncHash
+    ? 0
+    : lastBlockHeight > requiredConfirmations
+    ? lastBlockHeight - requiredConfirmations
+    : 0;
 
   const {
     transactions: newTransactions,

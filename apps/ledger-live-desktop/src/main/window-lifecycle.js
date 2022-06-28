@@ -59,6 +59,8 @@ const defaultWindowOptions = {
     nodeIntegration: true,
     contextIsolation: false,
     spellcheck: false,
+    // Legacy - allows listening to the "new-window" even in webviews.
+    nativeWindowOpen: false,
   },
 };
 

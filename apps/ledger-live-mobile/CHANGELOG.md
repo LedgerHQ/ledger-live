@@ -1,5 +1,99 @@
 # live-mobile
 
+## 3.3.0
+
+### Minor Changes
+
+- 09f79c7b4: Add Cardano to mobile
+- 7ba2346a5: feat(LLM): multibuy 1.5 [LIVE-1710]
+- 4db0f58ca: Updated learn feature url to be remote configurable
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+- fe3c7a39c: Add Earn Rewards btn on Solana
+
+### Patch Changes
+
+- 3d71946fb: Fix deep linking logic for platform apps
+- 27c947ba4: fix(multibuy): remove fiat filter
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 95b4c2854: Fix hasOrderedNano state with Buy Nano screen
+- 3d1ab8511: Behavior fixed when clicking on the "My Ledger" button on the tab bar when on read only mode
+- 46994ebfd: Wording - small typos fixed
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+- 5bae58815: bugfix - webview reload crash issue related to ui rendering layout shift bugs
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [592ad2f7b]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [dd6a12c9b]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/live-common@23.1.0
+  - @ledgerhq/native-ui@0.8.0
+
+## 3.3.0-next.14
+
+### Patch Changes
+
+- 95b4c2854: Fix hasOrderedNano state with Buy Nano screen
+
+## 3.3.0-next.13
+
+### Patch Changes
+
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0-next.4
+
+## 3.3.0-next.12
+
+### Patch Changes
+
+- 5bae58815: bugfix - webview reload crash issue related to ui rendering layout shift bugs
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/native-ui@0.8.0-next.2
+
+## 3.3.0-next.11
+
+### Patch Changes
+
+- 46994ebfd: Wording - small typos fixed
+
+## 3.3.0-next.10
+
+### Patch Changes
+
+- 3d1ab8511: Behavior fixed when clicking on the "My Ledger" button on the tab bar when on read only mode
+
+## 3.3.0-next.9
+
+### Patch Changes
+
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
+## 3.3.0-next.8
+
+### Patch Changes
+
+- 27c947ba4: fix(multibuy): remove fiat filter
+
+## 3.3.0-next.7
+
+### Minor Changes
+
+- 7ba2346a5: feat(LLM): multibuy 1.5 [LIVE-1710]
+
+## 3.3.0-next.6
+
+### Minor Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+
 ## 3.2.1
 
 ### Patch Changes
@@ -10,7 +104,58 @@
 
 ### Patch Changes
 
-- fea7a4aa1: Fix bug of a conditionally called hook in the firmware retrieval
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
+## 3.3.0-next.5
+
+### Patch Changes
+
+- 3d71946fb: Fix deep linking logic for platform apps
+
+## 3.3.0-next.4
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+
+## 3.3.0-next.3
+
+### Minor Changes
+
+- fe3c7a39c: Add Earn Rewards btn on Solana
+
+## 3.3.0-next.2
+
+### Minor Changes
+
+- 09f79c7b4: Add Cardano to mobile
+
+## 3.3.0-next.1
+
+### Minor Changes
+
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
+### Patch Changes
+
+- Updated dependencies [592ad2f7b]
+- Updated dependencies [608010c9d]
+  - @ledgerhq/native-ui@0.8.0-next.1
+  - @ledgerhq/live-common@23.1.0-next.1
+
+## 3.2.1-next.0
+
+### Patch Changes
+
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [dd6a12c9b]
+  - @ledgerhq/live-common@23.1.0-next.0
+  - @ledgerhq/native-ui@0.7.19-next.0
 
 ## 3.2.0
 
