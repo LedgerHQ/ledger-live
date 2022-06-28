@@ -83,6 +83,18 @@ describe("extreme cases", () => {
       })),
       autofillGaps: true,
     });
-    expect(state).not.toBe(initialState);
+
+    const currenciesWithCVs = currencies
+      .map((from) =>
+        calculate(state, {
+          date: new Date(),
+          from,
+          to: usd,
+          value: 1000000,
+        })
+      )
+      .filter((v) => v && v > 0);
+
+    expect(currenciesWithCVs.length).toBeGreaterThan(0);
   });
 });
