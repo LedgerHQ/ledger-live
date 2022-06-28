@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { NativeModules } from "react-native";
 import { StackScreenProps } from "@react-navigation/stack";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
@@ -18,7 +19,12 @@ export const DeviceModelSelection = ({ navigation }: Props) => {
   // const { t } = useTranslation();
 
   const setupNanoFTS = useCallback(() => {
-    navigation.navigate(ScreenName.BleDevicesScanning);
+    // Prompts user to enable bluetooth. Not necessary as next screen handles the ble requirement, but it smooths the transition
+    NativeModules.BluetoothHelperModule.prompt()
+      .then(() => navigation.navigate(ScreenName.BleDevicesScanning))
+      .catch(() => {
+      // ignore
+    });
   }, [navigation]);
 
   const setupNanoX = () => {};
