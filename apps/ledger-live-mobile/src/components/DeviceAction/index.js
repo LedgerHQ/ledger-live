@@ -6,6 +6,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { Flex, Log } from "@ledgerhq/native-ui";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -30,7 +31,6 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
-import { Flex, Log } from "@ledgerhq/native-ui";
 
 type Props<R, H, P> = {
   onResult?: (payload: *) => Promise<void> | void,
@@ -199,8 +199,8 @@ export default function DeviceAction<R, H, P>({
     return renderAllowLanguageInstallation({
       t,
       theme,
-      device: selectedDevice
-    })
+      device: selectedDevice,
+    });
   }
 
   if (listingApps) {
