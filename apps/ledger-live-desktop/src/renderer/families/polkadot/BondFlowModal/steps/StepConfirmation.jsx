@@ -148,7 +148,7 @@ export function StepConfirmationFooter({
       </Button>
       {optimisticOperation ? (
         // FIXME make a standalone component!
-        <Button
+        
           primary
           ml={2}
           event="Bond Flow Step 3 View OpD Clicked"
