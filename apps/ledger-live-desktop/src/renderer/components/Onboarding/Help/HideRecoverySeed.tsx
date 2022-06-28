@@ -81,6 +81,7 @@ function Rule({ type, children }: RuleProps) {
 const HideRecoverySeedContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
@@ -118,6 +119,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
           </Trans>
         </Rule>
         <Button
+          mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}
           Icon={() => <Icons.ArrowRightMedium size={18} />}

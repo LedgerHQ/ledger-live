@@ -73,6 +73,7 @@ function Rule({ type, children }: RuleProps) {
 const PinHelpContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 export function PinHelp(props: { handleNextInDrawer: () => void }) {
@@ -120,6 +121,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
           </Trans>
         </Rule>
         <Button
+          mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}
           Icon={() => <Icons.ArrowRightMedium size={18} />}
