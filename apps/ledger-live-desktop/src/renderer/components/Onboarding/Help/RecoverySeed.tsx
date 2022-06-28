@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Text } from "@ledgerhq/react-ui";
+import { Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import ChevronRight from "~/renderer/icons/ChevronRight";
@@ -52,10 +52,9 @@ function Point({ children }: PointProps) {
 const PinHelpContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 76px;
 `;
 
-export function RecoverySeed() {
+export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 
   const onClickLink = useCallback(() => openURL(urls.whatIsARecoveryPhrase), []);
@@ -63,36 +62,19 @@ export function RecoverySeed() {
   return (
     <ScrollArea>
       <PinHelpContainer>
-        <Text
-          color="palette.text.shade100"
-          ff="Inter|SemiBold"
-          fontSize="22px"
-          lineHeight="26.63px"
-        >
+        <Text color="palette.text.shade100" variant="h3">
           {t("onboarding.drawers.recoverySeed.title1")}
         </Text>
-        <Text
-          mt="8px"
-          color="palette.text.shade100"
-          ff="Inter|Regular"
-          fontSize="14px"
-          lineHeight="19.5px"
-        >
+        <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">
           {t("onboarding.drawers.recoverySeed.paragraph1")}
         </Text>
-        <Text
-          mt="8px"
-          color="palette.text.shade100"
-          ff="Inter|Regular"
-          fontSize="14px"
-          lineHeight="19.5px"
-        >
+        <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">
           {t("onboarding.drawers.recoverySeed.paragraph2")}
         </Text>
         <FakeLink onClick={onClickLink}>
           <Text
             mt="8px"
-            color="palette.primary.main"
+            color="neutral.c100"
             ff="Inter|Regular"
             fontSize="14px"
             lineHeight="19.5px"
@@ -100,28 +82,31 @@ export function RecoverySeed() {
             {t("onboarding.drawers.recoverySeed.link")}
           </Text>
         </FakeLink>
-        <Text
-          mt="40px"
-          color="palette.text.shade100"
-          ff="Inter|SemiBold"
-          fontSize="22px"
-          lineHeight="26.63px"
-        >
+        <Text mt="40px" color="palette.text.shade100" variant="h3">
           {t("onboarding.drawers.recoverySeed.title2")}
         </Text>
-        <Text
-          mt="8px"
-          mb="32px"
-          color="palette.text.shade100"
-          ff="Inter|Regular"
-          fontSize="14px"
-          lineHeight="19.5px"
-        >
+        <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">
           {t("onboarding.drawers.recoverySeed.paragraph3")}
         </Text>
-        <Point>{t("onboarding.drawers.recoverySeed.points.1")}</Point>
-        <Point>{t("onboarding.drawers.recoverySeed.points.2")}</Point>
-        <Point>{t("onboarding.drawers.recoverySeed.points.3")}</Point>
+        <Text mt="8px" color="neutral.c80" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px">
+          {t("onboarding.drawers.recoverySeed.paragraph4")}
+        </Text>
+        <Text color="neutral.c100" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px" mt="8px">
+          {t("onboarding.drawers.recoverySeed.points.1")}
+        </Text>
+        <Text color="neutral.c100" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px" mt="8px">
+          {t("onboarding.drawers.recoverySeed.points.2")}
+        </Text>
+        <Text color="neutral.c100" ff="Inter|Regular" fontSize="14px" lineHeight="19.5px" mt="8px">
+          {t("onboarding.drawers.recoverySeed.points.3")}
+        </Text>
+        <Button
+          variant="main"
+          onClick={props.handleNextInDrawer}
+          Icon={() => <Icons.ArrowRightMedium size={18} />}
+        >
+          {t("v3.onboarding.screens.welcome.nextButton")}
+        </Button>
       </PinHelpContainer>
     </ScrollArea>
   );

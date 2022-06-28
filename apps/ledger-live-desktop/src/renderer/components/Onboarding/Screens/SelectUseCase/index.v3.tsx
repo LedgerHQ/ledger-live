@@ -128,7 +128,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               }
               description={t("v3.onboarding.screens.selectUseCase.options.1.description")}
               Illu={
-                <Illustration lightSource={setupNanoLight} darkSource={setupNanoDark} size={200} />
+                <Illustration lightSource={setupNanoLight} darkSource={setupNanoDark} size={220} />
               }
               onClick={() => {
                 track("Onboarding - Setup new");
@@ -167,7 +167,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 track("Onboarding - Connect");
                 setUseCase(UseCase.connectDevice);
                 history.push(`/onboarding/${UseCase.connectDevice}/${ScreenId.pairMyNano}`);
-                onWrappedUseCase();
+                // onWrappedUseCase();
               }}
             />
             <UseCaseOption
@@ -185,7 +185,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 <Illustration
                   lightSource={restorePhraseLight}
                   darkSource={restorePhraseDark}
-                  size={200}
+                  size={220}
                 />
               }
               onClick={() => {
@@ -194,7 +194,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 history.push(
                   `/onboarding/${UseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
-                onWrappedUseCase();
+                //onWrappedUseCase();
               }}
             />
           </RightColumn>

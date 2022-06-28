@@ -21,10 +21,10 @@ const SlideLogo = styled(Flex)<{ image?: string }>`
   min-height: 350px;
   min-width: 350px;
   margin-bottom: 40px;
-  background: url(${(p) => p.image}) no-repeat;
-  background-position: center center; 
+  background: url(${p => p.image}) no-repeat;
+  background-position: center center;
   background-size: contain;
-  z-index: ${(p) => p.theme.zIndexes[8]};
+  z-index: ${p => p.theme.zIndexes[8]};
 `;
 
 export type SlideProps = {
@@ -37,7 +37,14 @@ const Slide = ({ title, description, image }: SlideProps): React.ReactElement =>
   return (
     <Wrapper>
       <SlideLogo key={"key"} image={image} />
-      <Text mb={12} ff="Alpha|Medium" textTransform="uppercase" variant="h3" fontWeight="400" fontSize={28}>
+      <Text
+        mb={12}
+        ff="Alpha|Medium"
+        textTransform="uppercase"
+        variant="h3"
+        fontWeight="400"
+        fontSize={28}
+      >
         {title}
       </Text>
       <Text mb={76} variant="body" ff="Alpha|Medium" fontWeight="500" fontSize={14}>
@@ -61,10 +68,10 @@ const CarouselWrapper = styled.div`
 const Controllers = styled(Flex)`
   position: absolute;
   flex-direction: row;
-  right: ${(p) => p.theme.space[5]}px;
-  bottom: ${(p) => p.theme.space[4]}px;
-  column-gap: ${(p) => p.theme.space[4]}px;
-  color: ${(p) => p.theme.colors.palette.neutral.c00};
+  right: ${p => p.theme.space[5]}px;
+  bottom: ${p => p.theme.space[4]}px;
+  column-gap: ${p => p.theme.space[4]}px;
+  color: ${p => p.theme.colors.palette.neutral.c00};
 
   > div {
     &:hover {
@@ -76,22 +83,22 @@ const Controllers = styled(Flex)`
 const Bullets = styled.div<{ active?: number }>`
   position: absolute;
   display: flex;
-  left: ${(p) => p.theme.space[8]}px;
-  bottom: ${(p) => p.theme.space[8]}px;
-  column-gap: ${(p) => p.theme.space[2]}px;
+  left: ${p => p.theme.space[8]}px;
+  bottom: ${p => p.theme.space[8]}px;
+  column-gap: ${p => p.theme.space[2]}px;
   flex-direction: row;
 
   > div {
     position: relative;
-    height: ${(p) => p.theme.space[1]}px;
-    width: ${(p) => p.theme.space[8]}px;
-    background: ${(p) => p.theme.colors.palette.neutral.c00};
+    height: ${p => p.theme.space[1]}px;
+    width: ${p => p.theme.space[8]}px;
+    background: ${p => p.theme.colors.palette.neutral.c00};
     opacity: 0.5;
     &:hover {
       opacity: 0.75;
     }
 
-    &:nth-child(${(p) => p.active}) {
+    &:nth-child(${p => p.active}) {
       opacity: 1;
       &:hover {
         opacity: 0.75;
@@ -101,8 +108,8 @@ const Bullets = styled.div<{ active?: number }>`
     ::after {
       content: "";
       position: absolute;
-      top: -${(p) => p.theme.space[4]}px;
-      height: ${(p) => p.theme.space[7]}px;
+      top: -${p => p.theme.space[4]}px;
+      height: ${p => p.theme.space[7]}px;
       width: 100%;
     }
   }
@@ -114,22 +121,16 @@ export type Props = {
 };
 
 const DEFAULT_TIMEOUT = 7000;
-const Carousel = ({
-  timeout = DEFAULT_TIMEOUT,
-  queue,
-}: Props): React.ReactElement | null => {
+const Carousel = ({ timeout = DEFAULT_TIMEOUT, queue }: Props): React.ReactElement | null => {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
   const [direction, setDirection] = useState("right");
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const childFactory = useCallback(
-    (child) => React.cloneElement(child, { direction }),
-    [direction],
-  );
+  const childFactory = useCallback(child => React.cloneElement(child, { direction }), [direction]);
 
   const wrappedSetIndex = useCallback(
-    (newIndex) => {
+    newIndex => {
       setDirection(newIndex > index ? "left" : "right");
       setIndex(newIndex);
     },
