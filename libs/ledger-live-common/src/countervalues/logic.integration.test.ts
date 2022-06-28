@@ -72,7 +72,7 @@ describe("API sanity", () => {
 });
 
 describe("extreme cases", () => {
-  test("all tickers against BTC", async () => {
+  test("all tickers against USD", async () => {
     const currencies = Object.keys(getBTCValues())
       .filter((t) => t !== "USD")
       .map(findCurrencyByTicker)
@@ -93,6 +93,35 @@ describe("extreme cases", () => {
           date: new Date(),
           from,
           to: usd,
+          value: 1000000,
+        })
+      )
+      .filter((v) => v && v > 0);
+
+    expect(currenciesWithCVs.length).toBeGreaterThan(0);
+  });
+
+  test("all tickers against BTC", async () => {
+    const currencies = Object.keys(getBTCValues())
+      .filter((t) => t !== "BTC")
+      .map(findCurrencyByTicker)
+      .filter(Boolean) as Currency[];
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: currencies.map((from) => ({
+        from,
+        to: bitcoin,
+        startDate: new Date(),
+      })),
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+
+    const currenciesWithCVs = currencies
+      .map((from) =>
+        calculate(state, {
+          date: new Date(),
+          from,
+          to: bitcoin,
           value: 1000000,
         })
       )

@@ -255,7 +255,7 @@ export async function loadCountervalues(
           return null;
         })
     ),
-    fetchLatest(latestToFetch)
+    fetchLatest(latestToFetch, settings.disableAutoRecoverErrors)
       .then((rates) => {
         const out = {};
         let hasData = false;
