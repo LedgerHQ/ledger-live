@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Text } from "@ledgerhq/react-ui";
+import { Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
@@ -73,16 +73,15 @@ function Rule({ type, children }: RuleProps) {
 const PinHelpContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 76px;
 `;
 
-export function PinHelp() {
+export function PinHelp(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 
   return (
     <ScrollArea>
       <PinHelpContainer>
-        <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={22}>
+        <Text color="palette.text.shade100" variant="h3">
           {t("onboarding.drawers.pinHelp.title")}
         </Text>
         <Text mt="8px" mb="32px" color="palette.text.shade100" ff="Inter|Regular" fontSize={14}>
@@ -120,6 +119,13 @@ export function PinHelp() {
             <Text ff="Inter|Bold" />
           </Trans>
         </Rule>
+        <Button
+          variant="main"
+          onClick={props.handleNextInDrawer}
+          Icon={() => <Icons.ArrowRightMedium size={18} />}
+        >
+          {t("v3.onboarding.screens.welcome.nextButton")}
+        </Button>
       </PinHelpContainer>
     </ScrollArea>
   );
