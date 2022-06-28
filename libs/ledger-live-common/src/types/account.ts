@@ -38,6 +38,10 @@ import type {
   PortfolioRange,
 } from "./portfolio";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
+import {
+  CardanoResources,
+  CardanoResourcesRaw,
+} from "../families/cardano/types";
 import type { ProtoNFT } from "./nft";
 import { ProtoNFTRaw } from ".";
 // This is the old cache and now DEPRECATED (pre v2 portfoli)
@@ -213,6 +217,7 @@ export type Account = {
   tezosResources?: TezosResources;
   elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
+  cardanoResources?: CardanoResources;
   solanaResources?: SolanaResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
@@ -303,6 +308,7 @@ export type AccountRaw = {
   elrondResources?: ElrondResourcesRaw;
   tezosResources?: TezosResourcesRaw;
   cryptoOrgResources?: CryptoOrgResourcesRaw;
+  cardanoResources?: CardanoResourcesRaw;
   solanaResources?: SolanaResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;

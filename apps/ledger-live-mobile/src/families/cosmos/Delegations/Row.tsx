@@ -11,7 +11,8 @@ import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
+import ValidatorImage from "../shared/ValidatorImage";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;
@@ -41,8 +42,12 @@ export default function DelegationRow({
       ]}
       onPress={() => onPress(delegation)}
     >
-      <View style={[styles.icon, { backgroundColor: colors.lightLive }]}>
-        <FirstLetterIcon label={validator?.name ?? validatorAddress ?? ""} />
+      <View style={[styles.icon]}>
+        <ValidatorImage
+          size={42}
+          isLedger={validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+          name={validator?.name ?? validatorAddress ?? ""}
+        />
       </View>
 
       <View style={styles.nameWrapper}>

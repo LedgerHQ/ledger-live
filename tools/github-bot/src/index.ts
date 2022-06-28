@@ -29,6 +29,8 @@ export default (app: Probot) => {
     const { payload, octokit } = context;
     const repository = context.repo();
 
+    if (repository.repo !== "ledger-live") return;
+
     const branch = payload.pull_request.head.ref;
     const login = payload.pull_request.user.login;
 
@@ -36,6 +38,8 @@ export default (app: Probot) => {
 
     const isBranchValid = isValidBranchName(branch);
     const isBodyValid = isValidBody(payload.pull_request.body);
+
+    if (isBranchValid && isBodyValid) return;
 
     let body =
       `❌ @${login}\n\n` +
@@ -54,7 +58,7 @@ export default (app: Probot) => {
     }
 
     if (!isBodyValid) {
-      body += `- _you overrode or did not fill in the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md) properly_\n`;
+      body += `- _the description is missing or you removed or overrode one or more sections of the [pull request template](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/pull_request_template.md)_\n`;
     }
     comment = context.issue({
       body,
