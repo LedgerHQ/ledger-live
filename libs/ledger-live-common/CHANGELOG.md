@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- 99cc5bbc1: Add loading spinner on "From amount" field in Swap form when using "Send max" toggle
+
 ## 24.0.0-next.0
 
 ### Major Changes

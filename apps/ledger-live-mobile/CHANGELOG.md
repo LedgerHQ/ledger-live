@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.3.1-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
 ## 3.3.1-next.0
 
 ### Patch Changes
