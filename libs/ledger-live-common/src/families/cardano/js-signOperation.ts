@@ -83,8 +83,11 @@ const buildOptimisticOperation = (
     const memoMetadata = auxiliaryData.metadata.find(
       (m) => m.label === MEMO_LABEL
     );
-    if (memoMetadata && Array.isArray(memoMetadata.data)) {
-      memo = memoMetadata.data.join(", ");
+    if (memoMetadata && memoMetadata.data instanceof Map) {
+      const msg = memoMetadata.data.get("msg");
+      if (Array.isArray(msg) && msg.length) {
+        memo = msg.join(", ");
+      }
     }
   }
 
