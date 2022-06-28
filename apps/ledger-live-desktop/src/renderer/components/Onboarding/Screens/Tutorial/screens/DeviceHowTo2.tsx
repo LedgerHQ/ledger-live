@@ -29,7 +29,7 @@ export function DeviceHowTo2() {
     <Column>
       <Title>{t("onboarding.screens.tutorial.screens.deviceHowTo2.title")}</Title>
       {steps.map((step, index) => (
-        <Bullet key={index} bulletText={index} text={t(step.text)} subText={t(step.subText)} />
+        <Bullet key={index} bulletText={index + 1} text={t(step.text)} subText={t(step.subText)} />
       ))}
     </Column>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 
@@ -15,21 +16,17 @@ const DeviceSelectContainer = styled.div`
 const devices = [
   {
     id: "nanoS",
-    label: "LEDGER NANO S",
     enabled: true,
   },
   {
     id: "nanoSP",
-    label: "LEDGER NANO S 2",
     enabled: false,
   },
   {
     id: "nanoX",
-    label: "LEDGER NANO X",
     enabled: true,
   },
 ];
-
 interface DeviceSelectorProps {
   onClick: (arg1: DeviceModelId) => void;
 }
@@ -37,11 +34,11 @@ interface DeviceSelectorProps {
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
   return (
     <DeviceSelectContainer>
-      {devices.map(({ id, label, enabled }, index, arr) => (
+      {devices.map(({ id, enabled }, index, arr) => (
         <DeviceSelectorOption
           id={`device-${id}`}
           key={id}
-          label={label}
+          label={getDeviceModel(id as DeviceModelId).productName}
           Illu={<DeviceIllustration deviceId={id} />}
           onClick={() => enabled && onClick(id as DeviceModelId)}
           isFirst={index === 0}

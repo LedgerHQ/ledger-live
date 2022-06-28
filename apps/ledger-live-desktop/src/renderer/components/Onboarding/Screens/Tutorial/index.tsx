@@ -297,7 +297,7 @@ export default function Tutorial({ useCase }: Props) {
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
-            history.push(`${path}/${ScreenId.newRecoveryPhrase}`);
+            setHelpPinCode(true);
           }
           // useCase === UseCase.recoveryPhrase
           else {
@@ -359,7 +359,7 @@ export default function Tutorial({ useCase }: Props) {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Recovery step 3");
           }
-          history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
+          setHelpRecoveryPhrase(true);
         },
         previous: () => history.push(`${path}/${ScreenId.useRecoverySheet}`),
       },
@@ -376,9 +376,8 @@ export default function Tutorial({ useCase }: Props) {
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Recovery step 4");
-            setQuizOpen(true);
           }
-          history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
+          setHelpHideRecoveryPhrase(true);
         },
         previous: () => history.push(`${path}/${ScreenId.recoveryHowTo3}`),
       },
@@ -558,6 +557,11 @@ export default function Tutorial({ useCase }: Props) {
     history.push(`${path}/quiz-failure`);
   }, [history, path]);
 
+  function handleNextInDrawer(closeCurrentDrawer: any, targetPath: any) {
+    closeCurrentDrawer(false);
+    history.push(targetPath);
+  }
+
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
@@ -566,7 +570,12 @@ export default function Tutorial({ useCase }: Props) {
       </Popin>
       <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction="left">
         <Flex px={40}>
-          <PinHelp />
+          `
+          <PinHelp
+            handleNextInDrawer={() =>
+              handleNextInDrawer(setHelpPinCode, `${path}/${ScreenId.newRecoveryPhrase}`)
+            }
+          />
         </Flex>
       </Drawer>
       <Drawer
@@ -575,7 +584,11 @@ export default function Tutorial({ useCase }: Props) {
         direction="left"
       >
         <Flex px={40}>
-          <RecoverySeed />
+          <RecoverySeed
+            handleNextInDrawer={() =>
+              handleNextInDrawer(setHelpRecoveryPhrase, `${path}/${ScreenId.hideRecoveryPhrase}`)
+            }
+          />
         </Flex>
       </Drawer>
       <Drawer
@@ -584,7 +597,15 @@ export default function Tutorial({ useCase }: Props) {
         direction="left"
       >
         <Flex px={40}>
-          <HideRecoverySeed />
+          <HideRecoverySeed
+            handleNextInDrawer={() => {
+              setQuizOpen(true);
+              handleNextInDrawer(
+                setHelpHideRecoveryPhrase,
+                `${path}/${ScreenId.hideRecoveryPhrase}`,
+              );
+            }}
+          />
         </Flex>
       </Drawer>
       <Drawer

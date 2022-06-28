@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Text } from "@ledgerhq/react-ui";
+import { Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import ChevronRight from "~/renderer/icons/ChevronRight";
@@ -53,7 +53,7 @@ const HideRecoverySeedContainer = styled.div`
   margin-top: 76px;
 `;
 
-export function HideRecoverySeed() {
+export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 
   return (
@@ -85,6 +85,13 @@ export function HideRecoverySeed() {
         </Point>
         <Point>{t("onboarding.drawers.whereToHide.points.4")}</Point>
         <Point>{t("onboarding.drawers.whereToHide.points.5")}</Point>
+        <Button
+          variant="main"
+          onClick={props.handleNextInDrawer}
+          Icon={() => <Icons.ArrowRightMedium size={18} />}
+        >
+          {t("v3.onboarding.screens.welcome.nextButton")}
+        </Button>
       </HideRecoverySeedContainer>
     </ScrollArea>
   );
