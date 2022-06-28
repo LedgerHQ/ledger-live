@@ -1,37 +1,36 @@
 // @flow
-import React, { useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
-import { useSelector } from "react-redux";
-import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
-  getAccountUnit,
   getAccountCurrency,
   getAccountName,
+  getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
+import { isSwapOperationPending } from "@ledgerhq/live-common/lib/exchange/swap";
+import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import uniq from "lodash/uniq";
+import React, { useCallback } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { urls } from "~/config/urls";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import Link from "~/renderer/components/Link";
-import Tooltip from "~/renderer/components/Tooltip";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import Ellipsis from "~/renderer/components/Ellipsis";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import Ellipsis from "~/renderer/components/Ellipsis";
+import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
-import IconSwap from "~/renderer/icons/Swap";
-import IconArrowDown from "~/renderer/icons/ArrowDown";
-import { rgba } from "~/renderer/styles/helpers";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { getStatusColor } from "~/renderer/screens/exchange/swap/History/OperationRow";
-import IconClock from "~/renderer/icons/Clock";
+import Link from "~/renderer/components/Link";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import Text from "~/renderer/components/Text";
+import Tooltip from "~/renderer/components/Tooltip";
+import { DataList } from "~/renderer/drawers/OperationDetails";
 import {
   B,
   GradientHover,
@@ -39,14 +38,16 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
-import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import useTheme from "~/renderer/hooks/useTheme";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { DataList } from "~/renderer/drawers/OperationDetails";
-import uniq from "lodash/uniq";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import IconArrowDown from "~/renderer/icons/ArrowDown";
+import IconClock from "~/renderer/icons/Clock";
+import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
+import IconSwap from "~/renderer/icons/Swap";
+import { openURL } from "~/renderer/linking";
+import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
+import { rgba } from "~/renderer/styles/helpers";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
@@ -170,7 +171,7 @@ const SwapOperationDetails = ({
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
         <IconSwap size={18} />
-        {operationStatusList.pending.includes(status) ? (
+        {isSwapOperationPending(status) ? (
           <WrapperClock>
             <IconClock size={16} />
           </WrapperClock>
@@ -225,10 +226,9 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <LinkWithExternalIcon
             fontSize={12}
-            style={{ textTransform: "capitalize" }}
             onClick={() => openURL(urls.swap.providers[provider]?.main)}
           >
-            {provider}
+            {getProviderName(provider)}
           </LinkWithExternalIcon>
         </OpDetailsData>
       </OpDetailsSection>
