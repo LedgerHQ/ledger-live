@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 22.0.2-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [6e956f22b]
+- Updated dependencies [508e4c23b]
+  - @ledgerhq/cryptoassets@6.29.0-nightly.1
+  - @ledgerhq/live-common@24.0.0-nightly.1
+
 ## 22.0.2-nightly.0
 
 ### Patch Changes

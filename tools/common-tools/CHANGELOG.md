@@ -1,5 +1,14 @@
 # live-common-tools
 
+## 0.2.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [6e956f22b]
+- Updated dependencies [508e4c23b]
+  - @ledgerhq/cryptoassets@6.29.0-nightly.1
+  - @ledgerhq/live-common@24.0.0-nightly.1
+
 ## 0.2.0-nightly.0
 
 ### Minor Changes

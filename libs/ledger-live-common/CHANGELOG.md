@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 24.0.0-nightly.1
+
+### Minor Changes
+
+- 508e4c23b: Update ledger-live-common dependency stellar-sdk to v10.1.1
+
+### Patch Changes
+
+- Updated dependencies [6e956f22b]
+  - @ledgerhq/cryptoassets@6.29.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.29.1-nightly.0
+
 ## 24.0.0-nightly.0
 
 ### Major Changes
