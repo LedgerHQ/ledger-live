@@ -3,7 +3,7 @@ import Prando from "prando";
 import { Observable, of } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import { SyncError } from "@ledgerhq/errors";
-import { genAccount, genOperation } from "../mock/account";
+import { genAccount, genOperation, GenAccountOptions } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
 import { delay } from "../promise";
@@ -128,59 +128,77 @@ export const isInvalidRecipient = (recipient: string) => {
 const subtractOneYear = (date) =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
-export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
-  new Observable((o) => {
-    let unsubscribed = false;
+type MakeScanAccountsOpts = {
+  nbAccounts?: number;
+  genAccountGetParams?: (i: number) => GenAccountOptions | null;
+};
 
-    async function job() {
-      // TODO offer a way to mock a failure
-      const nbAccountToGen = 3;
+export const makeScanAccounts =
+  ({
+    nbAccounts,
+    genAccountGetParams,
+  }: MakeScanAccountsOpts = {}): CurrencyBridge["scanAccounts"] =>
+  ({ currency }) =>
+    new Observable((o) => {
+      let unsubscribed = false;
 
-      for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
-        const isLast = i === 2;
-        await delay(500);
-        const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
-          operationsSize: isLast ? 0 : 100,
-          currency,
-        });
-        account.unit = currency.units[0];
-        account.index = i;
-        account.operations = isLast
-          ? []
-          : account.operations.map((operation) => ({
-              ...operation,
-              date: subtractOneYear(operation.date),
-            }));
-        account.used = isLast ? false : account.used;
-        account.name = "";
-        account.name = validateNameEdition(account);
+      async function job() {
+        // TODO offer a way to mock a failure
+        const nbAccountToGen = nbAccounts || 3;
 
-        if (isLast) {
-          account.spendableBalance = account.balance = new BigNumber(0);
+        for (let i = 0; i < nbAccountToGen && !unsubscribed; i++) {
+          const isLast = i === 2;
+          await delay(500);
+          const opts = {
+            operationsSize: isLast ? 0 : 100,
+            currency,
+            ...(genAccountGetParams ? genAccountGetParams(i) : null),
+          };
+          const account = genAccount(
+            `${MOCK_DATA_SEED}_${currency.id}_${i}`,
+            opts
+          );
+          account.unit = currency.units[0];
+          account.index = i;
+          account.operations = isLast
+            ? []
+            : account.operations.map((operation) => ({
+                ...operation,
+                date: subtractOneYear(operation.date),
+              }));
+          account.used = isLast ? false : account.used;
+          account.name = "";
+          account.name = validateNameEdition(account);
+
+          if (isLast) {
+            account.spendableBalance = account.balance = new BigNumber(0);
+          }
+
+          const perFamilyOperation = perFamilyMock[currency.id];
+          const postScanAccount =
+            perFamilyOperation && perFamilyOperation.postScanAccount;
+          if (postScanAccount)
+            postScanAccount(account, {
+              isEmpty: isLast,
+            });
+          if (!unsubscribed)
+            o.next({
+              type: "discovered",
+              account,
+            });
         }
 
-        const perFamilyOperation = perFamilyMock[currency.id];
-        const postScanAccount =
-          perFamilyOperation && perFamilyOperation.postScanAccount;
-        if (postScanAccount)
-          postScanAccount(account, {
-            isEmpty: isLast,
-          });
-        if (!unsubscribed)
-          o.next({
-            type: "discovered",
-            account,
-          });
+        if (!unsubscribed) o.complete();
       }
 
-      if (!unsubscribed) o.complete();
-    }
+      job();
+      return () => {
+        unsubscribed = true;
+      };
+    });
 
-    job();
-    return () => {
-      unsubscribed = true;
-    };
-  });
+export const scanAccounts: CurrencyBridge["scanAccounts"] = makeScanAccounts();
+
 export const makeAccountBridgeReceive: () => (
   account: Account,
   arg1: {

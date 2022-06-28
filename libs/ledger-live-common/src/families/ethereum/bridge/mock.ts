@@ -11,7 +11,7 @@ import type { AccountBridge, CurrencyBridge } from "../../../types";
 import { getMainAccount } from "../../../account";
 import { getCryptoCurrencyById } from "../../../currencies";
 import {
-  scanAccounts,
+  makeScanAccounts,
   signOperation,
   broadcast,
   sync,
@@ -151,7 +151,12 @@ const accountBridge: AccountBridge<Transaction> = {
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve({}),
   hydrate: () => {},
-  scanAccounts,
+  scanAccounts: makeScanAccounts({
+    nbAccounts: 5,
+    genAccountGetParams: (i) => ({
+      subAccountsCount: Math.max(100 - 40 * i, 0),
+    }),
+  }),
 };
 export default {
   currencyBridge,

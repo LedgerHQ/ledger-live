@@ -286,7 +286,7 @@ export function genAddingOperationsInAccount(
  * @param id is a number or a string, used as an account identifier and as a seed for the generation.
  * @memberof mock/account
  */
-type GenAccountOptions = {
+export type GenAccountOptions = {
   operationsSize?: number;
   currency?: CryptoCurrency;
   subAccountsCount?: number;
@@ -409,9 +409,7 @@ export function genAccount(
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount
         : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
-      hardcodedMarketcap.includes(t.id)
-    );
+    const all = listTokensForCryptoCurrency(account.currency);
     const compoundReadyTokens = all.filter(findCompoundToken);
     const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
     // favorize the generation of compound tokens
