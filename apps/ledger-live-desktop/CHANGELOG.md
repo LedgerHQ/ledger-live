@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.44.0-next.2
+
+### Minor Changes
+
+- 0e076b0f3: feat: integration of alternate DEX on swap page [LIVE-2677]
+
 ## 2.43.2-next.1
 
 ### Patch Changes
