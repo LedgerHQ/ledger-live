@@ -4,6 +4,7 @@
   "license": "MIT",
   "private": true,
   "packageManager": "pnpm@7.3.0",
+  "repository": "https://github.com/LedgerHQ/ledger-live",
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",
