@@ -31,6 +31,7 @@ import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
+import { listTokensForCryptoCurrency } from "../../currencies";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -119,7 +120,10 @@ function prepareUtxos(
   return utxos;
 }
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async (
+  info,
+  { blacklistedTokenIds }
+) => {
   const {
     transport,
     currency,
@@ -155,16 +159,27 @@ export const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
+  // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
+  const syncHash =
+    JSON.stringify(blacklistedTokenIds || []) +
+    "_" +
+    listTokensForCryptoCurrency(currency, {
+      withDelisted: true,
+    }).length;
+  const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
+
   const requiredConfirmations = 90;
 
   const oldOperations = initialAccount?.operations || [];
   const lastBlockHeight = oldOperations.length
     ? (oldOperations[0].blockHeight || 0) + 1
     : 0;
-  const syncFromBlockHeight =
-    lastBlockHeight > requiredConfirmations
-      ? lastBlockHeight - requiredConfirmations
-      : 0;
+
+  const syncFromBlockHeight = outdatedSyncHash
+    ? 0
+    : lastBlockHeight > requiredConfirmations
+    ? lastBlockHeight - requiredConfirmations
+    : 0;
 
   const {
     transactions: newTransactions,
@@ -253,6 +268,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     balance: accountBalance,
     spendableBalance: accountBalance.minus(minAdaBalanceForTokens),
     operations: operations,
+    syncHash,
     subAccounts,
     freshAddresses,
     freshAddress: freshAddresses[0].address,
