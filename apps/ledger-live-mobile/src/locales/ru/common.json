@@ -80,7 +80,8 @@
     },
     "seeMore" : "Показать больше",
     "moreInfo" : "Подробнее",
-    "buyEth" : "Купить Эфириум"
+    "buyEth" : "Купить Эфириум",
+    "comingSoon" : "Скоро"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -872,7 +873,7 @@
         "desc" : "Получайте пассивный доход и приумножайте криптоактивы"
       }
     },
-    "comingSoon" : "скоро",
+    "comingSoon" : "Уже скоро",
     "mostPopular" : "Самые популярные"
   },
   "onboarding" : {
@@ -1788,7 +1789,7 @@
       "addDelegation" : "Дополнить делегирование",
       "info" : {
         "title" : "Получение вознаграждения",
-        "cta" : "Получить вознаграждение"
+        "cta" : "Стейкинг"
       }
     },
     "claimReward" : {
@@ -1980,6 +1981,31 @@
         "android" : "Просмотреть в Google Play"
       }
     },
+    "notifications" : {
+      "title" : "Уведомления",
+      "desc" : "Управляйте уведомлениями",
+      "allowed" : {
+        "title" : "Allow notifications",
+        "desc" : "Receive notifications about your crypto, market tendencies and more."
+      },
+      "transactions" : {
+        "title" : "Транзакции",
+        "desc" : "За перемещением криптоактивов."
+      },
+      "market" : {
+        "title" : "Рынок",
+        "desc" : "Получайте мгновенные уведомления об изменениях на крипторынке."
+      },
+      "announcement" : {
+        "title" : "Новости",
+        "desc" : "Получайте мгновенные уведомления об изменениях на крипторынке."
+      },
+      "price" : {
+        "title" : "Уведомления о курсах",
+        "desc" : "Получайте новости о любимых монетах",
+        "label" : "Уже скоро"
+      }
+    },
     "help" : {
       "title" : "Помощь",
       "header" : "Помощь",
@@ -2011,6 +2037,14 @@
       "customManifest" : {
         "title" : "Загрузить манифест пользовательской платформы"
       }
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Turn notifications on",
+      "desc" : "Get the latest updates on Ledger Live and Ledger products.",
+      "allow" : "Allow notifications",
+      "later" : "Maybe later"
     }
   },
   "migrateAccounts" : {
@@ -3524,7 +3558,7 @@
   "tezos" : {
     "AccountHeader" : {
       "title" : "Можно получать вознаграждения за делегирование счёта",
-      "btn" : "Получить вознаграждение"
+      "btn" : "Стейкинг"
     }
   },
   "tron" : {
@@ -3954,7 +3988,7 @@
         "1" : "Управлять активами можно в любое время",
         "2" : "Безопасно делегируйте средства на устройстве Ledger"
       },
-      "cta" : "Делегировать за вознаграждения"
+      "cta" : "Делегировать и получить вознаграждение"
     },
     "broadcastSuccessTitle" : {
       "delegate" : "Средства делегированы",
@@ -4163,7 +4197,7 @@
     "catalog" : {
       "title" : "Каталог приложений",
       "branch" : {
-        "soon" : "скоро",
+        "soon" : "уже скоро",
         "experimental" : "экспериментальная функция",
         "debug" : "отладка"
       },
