@@ -54,9 +54,16 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
     }
   }, [scanningBleError]);
 
-  const onSelect = useCallback((_item, deviceMeta) => {
-    console.log(`🥹 Selected device ${deviceMeta}`);
-  }, []);
+  const onSelect = useCallback((item: ScannedDevice, _deviceMeta) => {
+    const deviceToPair = {
+        deviceId: item.deviceId,
+        deviceName: item.deviceName,
+        modelId: item.deviceModel.id,
+        wired: false,
+    };
+    console.log(`🖖 Selected device = ${JSON.stringify(deviceToPair)}`);
+    navigation.navigate(ScreenName.BleDevicePairing as "BleDevicePairing", { deviceToPair } );
+  }, [navigation]);
 
   const renderItem = useCallback(
     ({ item }: { item: ScannedDevice }) => {
