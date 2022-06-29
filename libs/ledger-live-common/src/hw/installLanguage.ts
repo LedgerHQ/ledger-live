@@ -6,7 +6,6 @@ import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { Language, languageIds, LanguagePackage } from "../types/languages";
-import { getProviderId } from "../manager/provider";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
 import { AppAndVersion } from "./connectApp";
@@ -14,6 +13,7 @@ import appSupportsQuitApp from "../appSupportsQuitApp";
 import quitApp from "./quitApp";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
+import Transport from "@ledgerhq/hw-transport";
 
 export type InstallLanguageEvent =
   | {
@@ -70,6 +70,15 @@ export default function installLanguage({
             mergeMap(async (deviceInfo) => {
               timeoutSub.unsubscribe();
 
+              if (language === "english") {
+                await uninstallAllLanugages(transport);
+                subscriber.next({
+                  type: "languageInstalled",
+                });
+                subscriber.complete();
+                return;
+              }
+
               const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
 
               const packs: LanguagePackage[] = languages.filter((l: any) => l.language === language);
@@ -88,20 +97,7 @@ export default function installLanguage({
 
               const apdus = rawApdus.split(/\r?\n/).filter(Boolean);
 
-              // TODO: in a future FW version, this will be a single apdu
-              for (const id of Object.values(languageIds)) {
-                // do we want to reflect this on the UI? do we need to emit events here
-                // what about error handling, maybe unhandled promise rejection might happen
-                // at least try catch
-                await transport.send(
-                  0xe0,
-                  0x33,
-                  id,
-                  0x00,
-                  undefined,
-                  [0x9000, 0x5501] // Expected responses when uninstalling.
-                );
-              }
+              await uninstallAllLanugages(transport);
 
               for (let i = 0; i < apdus.length; i++) {
                 if (apdus[i].startsWith("e030")) {
@@ -174,3 +170,20 @@ export default function installLanguage({
 
   return sub;
 }
+
+const uninstallAllLanugages = async (transport: Transport) => {
+  // TODO: in a future FW version, this will be a single apdu
+  for (const id of Object.values(languageIds)) {
+    // do we want to reflect this on the UI? do we need to emit events here
+    // what about error handling, maybe unhandled promise rejection might happen
+    // at least try catch
+    await transport.send(
+      0xe0,
+      0x33,
+      id,
+      0x00,
+      undefined,
+      [0x9000, 0x5501] // Expected responses when uninstalling.
+    );
+  }
+};
