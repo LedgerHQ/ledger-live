@@ -43,11 +43,11 @@ jobs:
 
   detox-tests-ios:
     name: "Ledger Live Mobile - iOS Detox Tests"
-      env:
-        NODE_OPTIONS: "--max-old-space-size=7168"
-        TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-        TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        FORCE_COLOR: 3
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      FORCE_COLOR: 3
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
