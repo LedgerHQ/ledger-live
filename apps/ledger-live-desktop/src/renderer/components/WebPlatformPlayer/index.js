@@ -4,38 +4,45 @@ import * as remote from "@electron/remote";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { useTranslation } from "react-i18next";
 
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,
-  getPlatformTransactionSignFlowInfos
+  getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/lib/platform/converters";
 
 import type {
-  RawPlatformSignedTransaction, RawPlatformTransaction
+  RawPlatformSignedTransaction,
+  RawPlatformTransaction,
 } from "@ledgerhq/live-common/lib/platform/rawTypes";
 
 import {
-  deserializePlatformSignedTransaction, deserializePlatformTransaction, serializePlatformAccount, serializePlatformSignedTransaction
+  deserializePlatformSignedTransaction,
+  deserializePlatformTransaction,
+  serializePlatformAccount,
+  serializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
+
+import logger from "~/logger";
 
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import useTheme from "~/renderer/hooks/useTheme";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
@@ -43,8 +50,6 @@ import Box from "~/renderer/components/Box";
 import TopBar from "./TopBar";
 import * as tracking from "./tracking";
 
-import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
-import logger from "~/logger";
 import type { TopBarConfig } from "./type";
 
 const Container: ThemedComponent<{}> = styled.div`
