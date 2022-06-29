@@ -35,6 +35,7 @@ import type {
 import { makeLRUCache } from "../cache";
 import { getUserHashes } from "../user";
 import { LanguagePackage, LanguagePackageResponse } from "../types/languages";
+import { getProviderId } from "../manager/provider";
 
 declare global {
   namespace NodeJS {
@@ -188,10 +189,15 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
   return best;
 };
 
-const getLanguagePackages = async (
-  device_version: number,
-  current_se_firmware_final_version: number
-): Promise<LanguagePackage[]> => {
+const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<LanguagePackage[]> => {
+  const deviceVersion = await getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo));
+
+  const seFirmwareVersion = await getCurrentFirmware({
+    version: deviceInfo.version,
+    deviceId: deviceVersion.id,
+    provider: getProviderId(deviceInfo),
+  });
+
   const { data }: { data: LanguagePackageResponse[] } = await network({
     method: "GET",
     url: URL.format({
@@ -213,8 +219,7 @@ const getLanguagePackages = async (
 
   const packages = allPackages.filter(
     (pack) =>
-      pack.device_versions.includes(device_version) &&
-      pack.se_firmware_final_versions.includes(current_se_firmware_final_version)
+      pack.device_versions.includes(deviceVersion.id) && pack.se_firmware_final_versions.includes(seFirmwareVersion.id)
   );
 
   return packages;
@@ -523,7 +528,7 @@ const API = {
   listInstalledApps,
   listCategories,
   getMcus,
-  getLanguagePackages,
+  getLanguagePackagesForDevice,
   getLatestFirmware,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,
