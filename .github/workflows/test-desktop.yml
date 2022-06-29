@@ -121,6 +121,8 @@ jobs:
       - name: Install playwright dependencies
         run: npx @playwright/test install-deps
       - name: Build dependencies
+        env:
+          GOGC: 75
         run: |
           pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
           pnpm desktop build:testing
