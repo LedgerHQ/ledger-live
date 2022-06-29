@@ -48,18 +48,18 @@ function getOperationType(
 const convertTransactionToOperation = (
   accountId: string,
   type: OperationType,
-  eventContent: any, //todo fix this type
+  // eventContent: any, //todo fix this type
+  value: BigNumber,
   transaction: OsmosisAccountTransaction,
   senders: string[] = [],
   recipients: string[] = [],
   extra: Record<string, any>
 ): Operation => {
-  const fee = new BigNumber(getMicroOsmoAmount(transaction.transaction_fee));
   return {
     id: encodeOperationId(accountId, transaction.hash, type),
     accountId,
-    fee,
-    value: getOperationValue(eventContent, type, fee),
+    fee: new BigNumber(getMicroOsmoAmount(transaction.transaction_fee)),
+    value,
     type,
     hash: transaction.hash,
     blockHash: transaction.block_hash,
@@ -92,18 +92,6 @@ function getOperationValue(
     case "IN":
       amount = getMicroOsmoAmount(eventContent.recipient[0]?.amounts);
       break;
-    case "DELEGATE":
-      // per cosmos/js-synchronization, this is BigNumber(fees)
-      amount = fee;
-      break;
-    case "REDELEGATE":
-      // per cosmos/js-synchronization, this is BigNumber(fees)
-      amount = fee;
-      break;
-    case "UNDELEGATE":
-      // per cosmos/js-synchronization, this is BigNumber(fees)
-      amount = fee;
-      break;
     default:
       // defaults to received funds (i.e. no fee is added)
       // amount = getMicroOsmoAmount(eventContent.recipient[0]?.amounts);
@@ -127,6 +115,7 @@ export const getMicroOsmoAmount = (amounts: OsmosisAmount[]): BigNumber => {
 
 export class OsmosisAPI extends CosmosAPI {
   protected _defaultEndpoint: string = nodeEndpoint;
+  protected _namespace = "osmosis";
   private _defaultTransactionsLimit = 100;
 
   getOperations = async (
@@ -144,7 +133,7 @@ export class OsmosisAPI extends CosmosAPI {
       url: `${indexerEndpoint}/transactions_search/`,
       data: {
         network: "osmosis",
-        // type: ["begin_redelegate"],       // if no type is specified, all transaction types will be returned
+        type: [OsmosisTransactionTypeEnum.Redelegate], // if no type is specified, all transaction types will be returned
         account: [address],
         before_time: now,
         after_time: startDate !== null ? startDate.toISOString() : null,
@@ -194,11 +183,14 @@ export class OsmosisAPI extends CosmosAPI {
             const recipients = sendEvent.recipient[0]?.account?.id
               ? [sendEvent.recipient[0]?.account?.id]
               : [];
+            const fee = new BigNumber(
+              getMicroOsmoAmount(accountTransactions[i].transaction_fee)
+            );
             operations.push(
               convertTransactionToOperation(
                 accountId,
                 type,
-                sendEvent,
+                getOperationValue(sendEvent, type, fee),
                 accountTransactions[i],
                 senders,
                 recipients,
@@ -235,7 +227,7 @@ export class OsmosisAPI extends CosmosAPI {
               convertTransactionToOperation(
                 accountId,
                 type,
-                event,
+                extra.validators[0].amount,
                 accountTransactions[i],
                 [],
                 [],
@@ -245,15 +237,14 @@ export class OsmosisAPI extends CosmosAPI {
             break;
           }
           // TODO, refactor this terrible code duplication
-          case OsmosisTransactionTypeEnum.BeginRedelegate: {
+          case OsmosisTransactionTypeEnum.Redelegate: {
             if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
               break;
             }
             const eventContent: OsmosisStakingEventContent[] = events[j].sub;
             if (!(eventContent.length > 0)) break;
             const event = eventContent.find(
-              (event) =>
-                event.type[0] === OsmosisTransactionTypeEnum.BeginRedelegate
+              (event) => event.type[0] === OsmosisTransactionTypeEnum.Redelegate
             );
             if (event == null) break;
             const type = "REDELEGATE";
@@ -261,24 +252,45 @@ export class OsmosisAPI extends CosmosAPI {
               memo: memo,
               validators: [
                 {
-                  address: event.node.validator[0].id,
+                  address: event.node.validator_destination[0].id,
                   amount: new BigNumber(
                     getMicroOsmoAmount([event.amount.delegate])
                   ),
                 },
               ],
+              sourceValidator: event.node.validator_source[0].id,
             };
             operations.push(
               convertTransactionToOperation(
                 accountId,
                 type,
-                event,
+                extra.validators[0].amount,
                 accountTransactions[i],
                 [],
                 [],
                 extra
               )
             );
+            // Handle rewards that get withdrawn automatically when a redelegation happens
+            let amount = new BigNumber(0);
+            if (event.transfers != null) {
+              if (event.transfers.reward) {
+                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+              }
+            }
+            if (amount.gt(0)) {
+              operations.push(
+                convertTransactionToOperation(
+                  accountId,
+                  "REWARD",
+                  amount,
+                  accountTransactions[i],
+                  [],
+                  [],
+                  extra
+                )
+              );
+            }
             break;
           }
           case OsmosisTransactionTypeEnum.Undelegate: {
@@ -308,7 +320,47 @@ export class OsmosisAPI extends CosmosAPI {
               convertTransactionToOperation(
                 accountId,
                 type,
-                event,
+                extra.validators[0].amount,
+                accountTransactions[i],
+                [],
+                [],
+                extra
+              )
+            );
+            break;
+          }
+          case OsmosisTransactionTypeEnum.Reward: {
+            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
+              break;
+            }
+            const eventContent: OsmosisStakingEventContent[] = events[j].sub;
+            if (!(eventContent.length > 0)) break;
+            const event = eventContent.find(
+              (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
+            );
+
+            if (event == null) break;
+            const type = "REWARD";
+            let amount = new BigNumber(0);
+            if (event.transfers != null) {
+              if (event.transfers.reward) {
+                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+              }
+            }
+            const extra = {
+              memo: memo,
+              validators: [
+                {
+                  address: event.node.validator[0].id,
+                  amount,
+                },
+              ],
+            };
+            operations.push(
+              convertTransactionToOperation(
+                accountId,
+                type,
+                amount,
                 accountTransactions[i],
                 [],
                 [],

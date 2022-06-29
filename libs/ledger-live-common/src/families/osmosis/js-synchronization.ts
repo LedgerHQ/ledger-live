@@ -1,4 +1,5 @@
 import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
+import { decodeCloseAccountInstructionUnchecked } from "@solana/spl-token";
 import { BigNumber } from "bignumber.js";
 import { encodeAccountId } from "../../account";
 import {
@@ -37,6 +38,16 @@ const getAccountShape: GetAccountShape = async (info) => {
     unbondings,
     withdrawAddress,
   } = await osmosisAPI.getAccountInfo(xpubOrAddress, currency);
+  console.log(
+    `balances: ${balances}, blockHeight: ${blockHeight}, delegations: ${JSON.stringify(
+      delegations
+    )}, redelegations: ${JSON.stringify(
+      redelegations
+    )}, unbondings: ${JSON.stringify(
+      unbondings
+    )}, withdrawAddress: ${withdrawAddress},
+    `
+  );
 
   const oldOperations = initialAccount?.operations || [];
 
@@ -110,6 +121,8 @@ const getAccountShape: GetAccountShape = async (info) => {
       withdrawAddress,
     },
   };
+
+  console.log("shape.cosmosResources: ", JSON.stringify(shape.cosmosResources));
 
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {
     shape.spendableBalance = new BigNumber(0);

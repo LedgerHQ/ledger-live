@@ -4,8 +4,9 @@ export const OsmosisTransactionTypeEnum = {
   Send: "send",
   MultiSend: "multisend",
   Delegate: "delegate",
-  BeginRedelegate: "begin_redelegate",
+  Redelegate: "begin_redelegate",
   Undelegate: "undelegate",
+  Reward: "withdraw_delegator_reward",
 };
 
 export const OsmosisCurrency = "uosmo";

@@ -37,7 +37,7 @@ export class CosmosValidatorsManager {
   constructor(
     currency: CryptoCurrency,
     options?: {
-      // namespace?: string;
+      namespace?: string;
       // version?: string;
       endPoint?: EnvValue<EnvName>;
       rewardsState?: any;
@@ -47,9 +47,9 @@ export class CosmosValidatorsManager {
     this._endPoint = getBaseApiUrl(this._currency);
     this._minDenom = currency.id === "cosmos_testnet" ? "umuon" : "uatom";
 
-    // if (options?.namespace) {
-    //   this._namespace = options.namespace;
-    // }
+    if (options?.namespace) {
+      this._namespace = options.namespace;
+    }
     // if (options?.version) {
     //   this._version = options.version;
     // }
@@ -68,7 +68,7 @@ export class CosmosValidatorsManager {
     async (rewardState: CosmosRewardsState): Promise<CosmosValidatorItem[]> => {
       const currency = this._currency;
       if (isStargate(currency)) {
-        const url = `${this._endPoint}/${this._namespace}/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
+        const url = `${this._endPoint}/cosmos/staking/${this._version}/validators?status=BOND_STATUS_BONDED&pagination.limit=175`;
         const { data } = await network({
           url,
           method: "GET",
@@ -81,11 +81,10 @@ export class CosmosValidatorsManager {
             validatorAddress: validator.operator_address,
             name: validator.description.moniker,
             tokens: parseFloat(validator.tokens),
-            votingPower:
-              parseFloat(validator.tokens) /
-              (rewardState.actualBondedRatio *
-                rewardState.totalSupply *
-                1000000),
+            votingPower: this.validatorVotingPower(
+              validator.tokens,
+              rewardState
+            ),
             commission,
             estimatedYearlyRewardsRate: this.validatorEstimatedRate(
               commission,
@@ -108,11 +107,10 @@ export class CosmosValidatorsManager {
             validatorAddress: validator.operator_address,
             name: validator.description.moniker,
             tokens: parseFloat(validator.tokens),
-            votingPower:
-              parseFloat(validator.tokens) /
-              (rewardState.actualBondedRatio *
-                rewardState.totalSupply *
-                1000000),
+            votingPower: this.validatorVotingPower(
+              validator.tokens,
+              rewardState
+            ),
             commission,
             estimatedYearlyRewardsRate: this.validatorEstimatedRate(
               commission,
@@ -372,10 +370,34 @@ export class CosmosValidatorsManager {
     throw new Error("Unreachable code");
   };
 
+  validatorVotingPower = (
+    validatorTokens: string,
+    rewardsState: CosmosRewardsState
+  ): number => {
+    return (
+      parseFloat(validatorTokens) /
+      (rewardsState.actualBondedRatio * rewardsState.totalSupply * 1000000) // TODO validate that this is correct for Osmosis. Just because we get a valid number doesn't mean it's correct
+    );
+  };
+
+  _osmoValidatorEstimatedRate = (
+    validatorCommission: number,
+    rewardsState: CosmosRewardsState
+  ): number => {
+    return 0.15; // todo fix this obviously
+  };
+
   validatorEstimatedRate = (
     validatorCommission: number,
     rewardsState: CosmosRewardsState
   ): number => {
+    if (this._namespace === "osmosis") {
+      return this._osmoValidatorEstimatedRate(
+        validatorCommission,
+        rewardsState
+      );
+    }
+
     // This correction changes how inflation is computed vs. the value the network advertises
     const inexactBlockTimeCorrection =
       rewardsState.assumedTimePerBlock / rewardsState.averageTimePerBlock;
