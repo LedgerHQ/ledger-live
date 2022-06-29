@@ -1,11 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
-import type { ReactElement } from "react";
+import React from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 
 type Props = StackScreenProps<
@@ -15,11 +12,13 @@ type Props = StackScreenProps<
 
 const pollingPeriodMs = 1000;
 
-export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
+export const SyncOnboarding = ({ navigation, route }: Props) => {
   const { colors } = useTheme();
-  const [device, setDevice] = useState<Device | null>(null);
+  const { device } = route.params; 
 
-  const { pairedDevice } = route.params; 
+  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({ device, pollingPeriodMs });
+
+  console.log(`📝 OS = ${JSON.stringify(onboardingState)} - allowedError = ${JSON.stringify(allowedError)} - fatalError = ${JSON.stringify(fatalError)}`);
 
   return (
     <Flex
@@ -30,7 +29,7 @@ export const SyncOnboarding = ({ navigation, route }: Props): ReactElement => {
       flex={1}
       bg={colors.background}
     >
-      <Text>Sync Onboarding for {JSON.stringify(pairedDevice)}</Text>
+      <Text>Sync Onboarding for {JSON.stringify(device)}</Text>
     </Flex>
   );
 };
