@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.4.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
+## 3.3.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 3.3.1-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
 ## 3.3.1-next.0
 
 ### Patch Changes

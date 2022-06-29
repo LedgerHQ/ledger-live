@@ -1,17 +1,18 @@
 // @flow
 
-import React, { useMemo, useCallback, useState, memo } from "react";
+import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
 import {
   useNftMetadata,
   useNftCollectionMetadata,
-} from "@ledgerhq/live-common/lib/nft/NftMetadataProvider";
+  getFloorPrice,
+} from "@ledgerhq/live-common/lib/nft";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position } from "styled-system";
-
-import type { Account } from "@ledgerhq/live-common/lib/types";
-
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import type { Account, FloorPrice } from "@ledgerhq/live-common/lib/types";
+import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -128,7 +129,7 @@ const NFTAttribute = memo(
     separatorTop,
   }: {
     title: string,
-    value: string,
+    value: React$Node | string,
     skeleton?: boolean,
     separatorBottom?: boolean,
     separatorTop?: boolean,
@@ -186,7 +187,23 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
     nftStatus,
   ]);
   const contentType = useMemo(() => getMetadataMediaType(metadata, "big"), [metadata]);
+  const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
   const name = metadata?.nftName || protoNft.tokenId;
+  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
+  const [ticker, setTicker] = useState("");
+  const [floorPrice, setFloorPrice] = useState(null);
+
+  useEffect(() => {
+    setFloorPriceLoading(true);
+    getFloorPrice(protoNft, currency)
+      .then((result: FloorPrice | null) => {
+        if (result) {
+          setTicker(result.ticker);
+          setFloorPrice(result.value);
+        }
+      })
+      .finally(() => setFloorPriceLoading(false));
+  }, [protoNft, currency]);
 
   const onNFTSend = useCallback(() => {
     setDrawer();
@@ -336,6 +353,20 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                 />
               </React.Fragment>
             ) : null}
+            <FeatureToggle feature="counterValue">
+              {!floorPriceLoading && floorPrice ? (
+                <NFTAttribute
+                  separatorTop
+                  skeleton={floorPriceLoading}
+                  title={t("NFT.viewer.attributes.floorPrice")}
+                  value={
+                    <Text mb={1} lineHeight="15.73px" fontSize={4} color="palette.text.shade60">
+                      {floorPrice} {ticker}
+                    </Text>
+                  }
+                />
+              ) : null}
+            </FeatureToggle>
           </NFTAttributes>
         </NFTViewerDrawerContent>
       </NFTViewerDrawerContainer>

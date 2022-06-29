@@ -6,18 +6,20 @@ import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import SwapForm from "./Form";
 import SwapHistory from "./History";
-import SwapKyc from "./KYC";
 import SwapNavbar from "./Navbar";
 import Box from "~/renderer/components/Box";
 
 const Body = styled(Box)`
   flex: 1;
+  flex-direction: column;
 `;
 
 const Main = styled.main`
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 1;
+  flex-direction: column;
 
   background-color: ${p => p.theme.colors.palette.background.paper};
 
@@ -44,7 +46,6 @@ const Swap2 = () => {
         <Main>
           <Route path="/swap" render={props => <SwapForm {...props} />} exact />
           <Route path="/swap/history" render={props => <SwapHistory {...props} />} exact />
-          <Route path="/swap/kyc" render={props => <SwapKyc {...props} />} exact />
         </Main>
       </Body>
     </>

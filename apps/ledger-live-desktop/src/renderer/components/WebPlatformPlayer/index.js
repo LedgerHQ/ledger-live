@@ -1,53 +1,45 @@
 // @flow
-import { WebviewTag, shell } from "electron";
 import * as remote from "@electron/remote";
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import styled from "styled-components";
-import { JSONRPCRequest } from "json-rpc-2.0";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import TrackPage from "~/renderer/analytics/TrackPage";
-
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
-
+import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,
   getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/lib/platform/converters";
-
+import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 import type {
-  RawPlatformTransaction,
   RawPlatformSignedTransaction,
+  RawPlatformTransaction,
 } from "@ledgerhq/live-common/lib/platform/rawTypes";
-
 import {
-  serializePlatformAccount,
-  deserializePlatformTransaction,
-  serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
+  deserializePlatformTransaction,
+  serializePlatformAccount,
+  serializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
-
-import useTheme from "~/renderer/hooks/useTheme";
+import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import { WebviewTag } from "electron";
+import { JSONRPCRequest } from "json-rpc-2.0";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-
-import Box from "~/renderer/components/Box";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import BigSpinner from "~/renderer/components/BigSpinner";
-
-import * as tracking from "./tracking";
+import Box from "~/renderer/components/Box";
+import useTheme from "~/renderer/hooks/useTheme";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TopBar from "./TopBar";
-
+import * as tracking from "./tracking";
 import type { TopBarConfig } from "./type";
+import { handleMessageEvent, handleNewWindowEvent } from "./utils";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
@@ -447,14 +439,9 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
 
   const [receive] = useJSONRPCServer(handlers, handleSend);
 
-  const handleMessage = useCallback(
-    event => {
-      if (event.channel === "webviewToParent") {
-        receive(JSON.parse(event.args[0]));
-      }
-    },
-    [receive],
-  );
+  const handleMessage = useCallback(event => handleMessageEvent({ event, handler: receive }), [
+    receive,
+  ]);
 
   useEffect(() => {
     tracking.platformLoad(manifest);
@@ -484,12 +471,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     }
   }, [manifest]);
 
-  const handleNewWindow = useCallback(async e => {
-    const protocol = new URL(e.url).protocol;
-    if (protocol === "http:" || protocol === "https:") {
-      await shell.openExternal(e.url);
-    }
-  }, []);
+  const handleNewWindow = useCallback(handleNewWindowEvent, []);
 
   useEffect(() => {
     const webview = targetRef.current;

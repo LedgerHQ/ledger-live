@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+## 24.0.0-next.2
+
+### Minor Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+
+## 24.0.0-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- 99cc5bbc1: Add loading spinner on "From amount" field in Swap form when using "Send max" toggle
+
 ## 24.0.0-next.0
 
 ### Major Changes

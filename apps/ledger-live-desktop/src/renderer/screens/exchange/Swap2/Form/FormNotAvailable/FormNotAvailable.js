@@ -15,7 +15,6 @@ const Body = styled(Box).attrs({
   color: "palette.text.shade50",
 })`
   max-width: 25.5rem;
-  position: absolute;
   row-gap: 1.5rem;
 `;
 

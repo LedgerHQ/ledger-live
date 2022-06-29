@@ -1,5 +1,46 @@
 # ledger-live-desktop
 
+## 2.44.0-next.4
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
+## 2.44.0-next.3
+
+### Minor Changes
+
+- ce02e4e78: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1195]
+
+## 2.44.0-next.2
+
+### Minor Changes
+
+- 0e076b0f3: feat: integration of alternate DEX on swap page [LIVE-2677]
+
+## 2.43.2-next.1
+
+### Patch Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 2.43.2-next.0
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- 99cc5bbc1: Add loading spinner on "From amount" field in Swap form when using "Send max" toggle
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
 ## 2.45.0-next.0
 
 ### Minor Changes
