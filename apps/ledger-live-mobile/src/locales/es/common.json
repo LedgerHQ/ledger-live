@@ -80,7 +80,8 @@
     },
     "seeMore" : "Ver más",
     "moreInfo" : "Más información",
-    "buyEth" : "Comprar Ethereum"
+    "buyEth" : "Comprar Ethereum",
+    "comingSoon" : "Próximamente"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -1980,6 +1981,31 @@
         "android" : "Reseñar en Google Play Store"
       }
     },
+    "notifications" : {
+      "title" : "Notificaciones",
+      "desc" : "Gestiona tus notificaciones",
+      "allowed" : {
+        "title" : "Allow notifications",
+        "desc" : "Receive notifications about your crypto, market tendencies and more."
+      },
+      "transactions" : {
+        "title" : "Transacciones",
+        "desc" : "Recibe notificaciones de las transacciones de tus cripto."
+      },
+      "market" : {
+        "title" : "Mercado",
+        "desc" : "Recibe notificaciones push en tiempo real sobre el mercado de las cripto."
+      },
+      "announcement" : {
+        "title" : "Anuncio",
+        "desc" : "Recibe notificaciones push en tiempo real sobre el mercado de las cripto."
+      },
+      "price" : {
+        "title" : "Alertas de precios",
+        "desc" : "Recibe alertas de precios de tus monedas favoritas.",
+        "label" : "Próximamente"
+      }
+    },
     "help" : {
       "title" : "Ayuda",
       "header" : "Ayuda",
@@ -2011,6 +2037,14 @@
       "customManifest" : {
         "title" : "Cargar manifiesto de plataforma personalizada"
       }
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Turn notifications on",
+      "desc" : "Get the latest updates on Ledger Live and Ledger products.",
+      "allow" : "Allow notifications",
+      "later" : "Maybe later"
     }
   },
   "migrateAccounts" : {
