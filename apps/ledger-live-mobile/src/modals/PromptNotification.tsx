@@ -14,7 +14,7 @@ import PromptNotifGenericDark from "../images/illustration/Dark/_PromptNotifGene
 import PromptNotifGenericLight from "../images/illustration/Light/_PromptNotifGeneric.png";
 import PromptNotifMarketDark from "../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../images/illustration/Light/_PromptNotifMarket.png";
-import { TrackScreen } from "../analytics";
+import { track, TrackScreen } from "../analytics";
 
 type Props = {
   isOpen: boolean;
@@ -27,9 +27,23 @@ function PromptNotification({ isOpen, onClose, type = "generic" }: Props) {
   const route = useRoute();
 
   const onPressAllow = useCallback(() => {
-    if (onClose) onClose();
+    onClose();
     Linking.openSettings();
-  }, [onClose]);
+    track("button_clicked", {
+      button: "Allow",
+      screen: route.name,
+      drawer: "Notif",
+    });
+  }, [onClose, route.name]);
+
+  const onPressMaybeLater = useCallback(() => {
+    onClose();
+    track("button_clicked", {
+      button: "Maybe Later",
+      screen: route.name,
+      drawer: "Notif",
+    });
+  }, [onClose, route.name]);
 
   const NotifIllustration = () =>
     type === "market" ? (
@@ -72,7 +86,7 @@ function PromptNotification({ isOpen, onClose, type = "generic" }: Props) {
           <Button type={"main"} mt={8} mb={7} onPress={onPressAllow}>
             {t("notifications.prompt.allow")}
           </Button>
-          <TextLink type={"shade"} onPress={onClose}>
+          <TextLink type={"shade"} onPress={onPressMaybeLater}>
             {t("notifications.prompt.later")}
           </TextLink>
         </Flex>
