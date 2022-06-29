@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useBleDevicesScanning } from "./useBleDevicesScanning";
-import type { TransportBleDevice } from "./useBleDevicesScanning";
+import type { TransportBleDevice } from "../types";
 
 jest.useFakeTimers();
 
@@ -48,6 +48,10 @@ const setupMockBleTransportListen =
   };
 
 describe("useBleDevicesScanning", () => {
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
   describe("When several unique devices are found by the scanner", () => {
     const deviceIdA = "ID_A";
     const deviceIdB = "ID_B";
