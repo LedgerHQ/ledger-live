@@ -10,6 +10,7 @@ const defaultEndpoint = getEnv(
 
 export class CosmosAPI {
   protected _defaultEndpoint: string = defaultEndpoint;
+  protected _namespace = "cosmos";
 
   getAccountInfo = async (
     address: string,
@@ -230,6 +231,9 @@ export class CosmosAPI {
   };
 
   getTransactions = async (address: string): Promise<any> => {
+    if (this._namespace === "osmosis") {
+      return [];
+    }
     const receive = await network({
       method: "GET",
       url:

@@ -31,26 +31,26 @@ const getRewardsState = async (): Promise<OsmosisRewardsState> => {
   const totalSupply = parseUOsmoStrAsOsmoNumber(supply.amount);
   const pool = await _getPool();
 
-  // A lot of these values are hardcode and NOT for production!
-  const targetBondedRatio = 0.1;
+  const actualBondedRatio =
+    parseUOsmoStrAsOsmoNumber(pool.bonded_tokens) / totalSupply;
   const communityPoolCommission = parseFloat(distributionParams.community_tax);
+
+  // Hardcoded mock values
+  const targetBondedRatio = 0.1;
   const assumedTimePerBlock = 7;
   const inflationRateChange = 0.01;
   const inflationMaxRate = 0.01;
   const inflationMinRate = 0.01;
-  const actualBondedRatio =
-    parseUOsmoStrAsOsmoNumber(pool.bonded_tokens) / totalSupply;
   const averageTimePerBlock = 7;
   const averageDailyFees = 0;
   const currentValueInflation = 0.01;
 
   // This prints 53.49, so it can't be right. Maybe it's the APY?
-  const _currentValueInflation = await getInflation();
+  // const _currentValueInflation = await getInflation();
 
   console.log(`
     communityPoolCommission: ${communityPoolCommission},
     actualBondedRatio: ${actualBondedRatio},
-    currentValueInflation = ${_currentValueInflation}
     totalSupply = ${totalSupply}
   `);
 
@@ -228,6 +228,7 @@ const osmosisValidatorsManager = new CosmosValidatorsManager(
   osmosisCryptoCurrency,
   {
     endPoint: nodeEndpoint,
+    namespace: "osmosis",
     rewardsState: async () => getRewardsState(),
   }
 );
