@@ -72,10 +72,6 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -128,11 +124,6 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
-
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
