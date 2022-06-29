@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 
 export class SwapPage {
   readonly page: Page;
@@ -30,6 +30,7 @@ export class SwapPage {
 
   async sendMax() {
     await this.maxSpendableToggle.click();
+    await this.exchangeButton.isEnabled();
   }
 
   async confirmExchange() {
