@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useDispatch } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import {
   ChevronBottomMedium,
@@ -20,7 +21,7 @@ import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingSt
 import { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
@@ -28,6 +29,7 @@ import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import { useTranslation } from "react-i18next";
 import LanguageSelect from "./LanguageSelect";
+import { completeOnboarding } from "../../actions/settings";
 
 type Step = {
   status: "completed" | "active" | "inactive";
@@ -98,9 +100,10 @@ type Props = StackScreenProps<
 >;
 
 const pollingPeriodMs = 1000;
-const pollingTimeoutMs = 5000;
+const pollingTimeoutMs = 60000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
+  const dispatch = useDispatch();
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
@@ -185,6 +188,19 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     navigation.navigate(ScreenName.OnboardingWelcome);
   }, [navigation]);
 
+  const handleDeviceReady = useCallback(() => {
+    dispatch(completeOnboarding());
+
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.popToTop();
+    }
+
+    navigation.replace(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  }, [dispatch, navigation]);
+
   // Triggered when a new paired device is passed when navigating to this screen
   // It avoids having a callback function passed to the PairDevices screen
   useEffect(() => {
@@ -212,6 +228,18 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       setStopPolling(true);
     }
   }, [isDesyncDrawerOpen]);
+
+  useEffect(() => {
+    if (onboardingState?.currentOnboardingStep === OnboardingStep.Ready) {
+      setOnboardingSteps(
+        defaultOnboardingSteps.map(step => ({
+          ...step,
+          status: "completed",
+        })),
+      );
+      setTimeout(handleDeviceReady, 3000);
+    }
+  }, [onboardingState, handleDeviceReady]);
 
   if (!pairedDevice) {
     // TODO: do something better here
