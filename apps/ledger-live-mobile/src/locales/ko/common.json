@@ -80,7 +80,8 @@
     },
     "seeMore" : "더 보기",
     "moreInfo" : "자세한 정보",
-    "buyEth" : "이더리움 구매"
+    "buyEth" : "이더리움 구매",
+    "comingSoon" : "Coming soon"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -1980,6 +1981,31 @@
         "android" : "구글 플레이 스토어에서 리뷰"
       }
     },
+    "notifications" : {
+      "title" : "Notifications",
+      "desc" : "Manage your notifications",
+      "allowed" : {
+        "title" : "Allow notifications",
+        "desc" : "Receive notifications about your crypto, market tendencies and more."
+      },
+      "transactions" : {
+        "title" : "Transactions",
+        "desc" : "Get notified when your crypto moves."
+      },
+      "market" : {
+        "title" : "Market",
+        "desc" : "Receive live push notifications about the crypto market."
+      },
+      "announcement" : {
+        "title" : "Announcement",
+        "desc" : "Receive live push notifications about the crypto market."
+      },
+      "price" : {
+        "title" : "Price Alerts",
+        "desc" : "Receive alerts for your favorite coins",
+        "label" : "Coming soon"
+      }
+    },
     "help" : {
       "title" : "도움말",
       "header" : "도움말",
@@ -2011,6 +2037,14 @@
       "customManifest" : {
         "title" : "커스텀 플랫폼 Manifest 불러오기"
       }
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Turn notifications on",
+      "desc" : "Get the latest updates on Ledger Live and Ledger products.",
+      "allow" : "Allow notifications",
+      "later" : "Maybe later"
     }
   },
   "migrateAccounts" : {
