@@ -30,6 +30,7 @@ import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
+import { Button, Flex, Icon, Icons } from "@ledgerhq/react-ui";
 
 const illustrations = {
   nanoS: {
@@ -312,20 +313,33 @@ const DeviceStorage = ({
             </Tooltip>
           </Box>
         </Box>
-        <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-          {firmwareOutdated ? (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareAvailable"
-              values={{ version: deviceInfo.version }}
-            />
-          ) : (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareUpToDate"
-              values={{ version: deviceInfo.version }}
-            />
-          )}{" "}
-          {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
-        </Text>
+        <Flex justifyContent="space-between">
+          <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+            {firmwareOutdated ? (
+              <Trans
+                i18nKey="manager.deviceStorage.firmwareAvailable"
+                values={{ version: deviceInfo.version }}
+              />
+            ) : (
+              <Trans
+                i18nKey="manager.deviceStorage.firmwareUpToDate"
+                values={{ version: deviceInfo.version }}
+              />
+            )}{" "}
+            {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
+          </Text>
+          <Flex>
+            <Icons.LanguageMedium color="neutral.c80" size={24} />
+            <Flex ml={1}>
+              <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+                Language
+              </Text>
+            </Flex>
+            <Button Icon={Icons.ChevronRightMedium}>
+              English
+            </Button>
+          </Flex>
+        </Flex>
         <Separator />
         <Info>
           <div>
