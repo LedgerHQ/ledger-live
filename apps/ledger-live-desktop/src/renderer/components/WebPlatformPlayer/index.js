@@ -4,10 +4,8 @@ import * as remote from "@electron/remote";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { JSONRPCRequest } from "json-rpc-2.0";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
