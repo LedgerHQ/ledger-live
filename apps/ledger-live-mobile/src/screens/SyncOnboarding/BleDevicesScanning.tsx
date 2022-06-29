@@ -5,7 +5,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { InfiniteLoader } from "@ledgerhq/native-ui";
 import { BleErrorCode } from "react-native-ble-plx";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
-import type { ScannedDevice } from "@ledgerhq/live-common/lib/ble/hooks/useBleDevicesScanning";
+import type { ScannedDevice } from "@ledgerhq/live-common/lib/ble/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { knownDevicesSelector } from "../../reducers/ble";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
