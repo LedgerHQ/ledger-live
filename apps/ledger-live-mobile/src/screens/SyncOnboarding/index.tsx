@@ -8,19 +8,21 @@ import {
   VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
+import { useDispatch } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
+import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
-import { ScreenName } from "../../const";
+import { completeOnboarding } from "../../actions/settings";
 
 type Step = {
   status: "completed" | "active" | "inactive";
@@ -91,9 +93,10 @@ type Props = StackScreenProps<
 >;
 
 const pollingPeriodMs = 1000;
-const pollingTimeoutMs = 5000;
+const pollingTimeoutMs = 60000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
+  const dispatch = useDispatch();
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
@@ -155,6 +158,19 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     navigation.navigate(ScreenName.OnboardingWelcome);
   }, [navigation]);
 
+  const handleDeviceReady = useCallback(() => {
+    dispatch(completeOnboarding());
+
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.popToTop();
+    }
+
+    navigation.replace(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  }, [dispatch, navigation]);
+
   // useEffect(() => {
   //   console.log("Fatal error");
   //   setDesyncDrawerOpen(true);
@@ -174,6 +190,18 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       setStopPolling(true);
     }
   }, [isDesyncDrawerOpen]);
+
+  useEffect(() => {
+    if (onboardingState?.currentOnboardingStep === OnboardingStep.Ready) {
+      setOnboardingSteps(
+        defaultOnboardingSteps.map(step => ({
+          ...step,
+          status: "completed",
+        })),
+      );
+      setTimeout(handleDeviceReady, 3000);
+    }
+  }, [onboardingState, handleDeviceReady]);
 
   return (
     <SafeAreaView>
