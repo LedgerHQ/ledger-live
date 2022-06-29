@@ -19,6 +19,7 @@ import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
 import useNotifications from "../../../logic/notifications";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type NotificationRowProps = {
   disabled?: boolean;
@@ -116,7 +117,7 @@ function NotificationsSettings() {
 
   return (
     <SettingsNavigationScrollView>
-      <TrackScreen category="Settings" name="Notifications" />
+      <TrackScreen category="Settings" name="Notifications" source={usePreviousRouteName()} />
       {isNotifPermissionEnabled === null ||
       isNotifPermissionEnabled === undefined ? (
         <InfiniteLoader />
