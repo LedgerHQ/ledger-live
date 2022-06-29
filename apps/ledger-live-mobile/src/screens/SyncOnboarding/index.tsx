@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
   Button,
@@ -23,6 +23,7 @@ import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
+import SoftwareChecksStep from "./SoftwareChecksStep";
 
 type Step = {
   status: "completed" | "active" | "inactive";
@@ -30,62 +31,6 @@ type Step = {
   title: string;
   renderBody?: () => ReactNode;
 };
-
-const defaultOnboardingSteps: Step[] = [
-  {
-    status: "inactive",
-    deviceStates: [],
-    title: "Nano paired",
-  },
-  {
-    status: "inactive",
-    deviceStates: [
-      OnboardingStep.WelcomeScreen,
-      OnboardingStep.SetupChoice,
-      OnboardingStep.Pin,
-    ],
-    title: "Set your PIN",
-    renderBody: () => (
-      <Flex>
-        <Text
-          variant="bodyLineHeight"
-          mb={6}
-        >{`Your PIN can be 4 to 8 digits long.`}</Text>
-        <Text variant="bodyLineHeight">
-          {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
-        </Text>
-      </Flex>
-    ),
-  },
-  {
-    status: "inactive",
-    deviceStates: [
-      OnboardingStep.NewDevice,
-      OnboardingStep.NewDeviceConfirming,
-      OnboardingStep.RestoreSeed,
-      OnboardingStep.SafetyWarning,
-    ],
-    title: "Recovery phrase",
-    renderBody: () => (
-      <Text variant="bodyLineHeight">
-        {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
-      </Text>
-    ),
-  },
-  {
-    status: "inactive",
-    deviceStates: [],
-    title: "Software check",
-    renderBody: () => (
-      <Text variant="bodyLineHeight">{`We'll verify whether your Naimport { SafeAreaView } from 'react-native-safe-area-context';no is genuine. This should be quick and easy!`}</Text>
-    ),
-  },
-  {
-    status: "inactive",
-    deviceStates: [OnboardingStep.Ready],
-    title: "Nano is ready",
-  },
-];
 
 type Props = StackScreenProps<
   SyncOnboardingStackParamList,
@@ -96,7 +41,67 @@ const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
+  const defaultOnboardingSteps: Step[] = useMemo(
+    () => [
+      {
+        status: "inactive",
+        deviceStates: [],
+        title: "Nano paired",
+      },
+      {
+        status: "inactive",
+        deviceStates: [
+          OnboardingStep.WelcomeScreen,
+          OnboardingStep.SetupChoice,
+          OnboardingStep.Pin,
+        ],
+        title: "Set your PIN",
+        renderBody: () => (
+          <Flex>
+            <Text
+              variant="bodyLineHeight"
+              mb={6}
+            >{`Your PIN can be 4 to 8 digits long.`}</Text>
+            <Text variant="bodyLineHeight">
+              {`Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
+            </Text>
+          </Flex>
+        ),
+      },
+      {
+        status: "inactive",
+        deviceStates: [
+          OnboardingStep.NewDevice,
+          OnboardingStep.NewDeviceConfirming,
+          OnboardingStep.RestoreSeed,
+          OnboardingStep.SafetyWarning,
+        ],
+        title: "Recovery phrase",
+        renderBody: () => (
+          <Text variant="bodyLineHeight">
+            {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
+          </Text>
+        ),
+      },
+      {
+        status: "inactive",
+        deviceStates: [OnboardingStep.Ready],
+        title: "Software check",
+        renderBody: () => (
+          <SoftwareChecksStep onComplete={() => setOnboardingComplete(true)} />
+        ),
+      },
+      {
+        status: "inactive",
+        deviceStates: [],
+        title: "Nano is ready",
+      },
+    ],
+    [],
+  );
+
   const dispatch = useDispatch();
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean>(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
@@ -120,6 +125,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     const needToUpdateSteps = defaultOnboardingSteps.some(
       (step, index, steps) => {
         if (
+          !onboardingComplete &&
           onboardingState &&
           onboardingState.currentOnboardingStep &&
           step.deviceStates.includes(onboardingState.currentOnboardingStep)
@@ -140,10 +146,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
     );
 
-    if (needToUpdateSteps) {
+    if (needToUpdateSteps || onboardingComplete) {
       setOnboardingSteps(newStepState);
     }
-  }, [onboardingState]);
+  }, [onboardingState, onboardingComplete, defaultOnboardingSteps]);
 
   const handleClose = useCallback(() => {
     navigation.goBack();
@@ -172,6 +178,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [dispatch, navigation]);
 
   // useEffect(() => {
+  //   TODO: handle fatal errors
   //   console.log("Fatal error");
   //   setDesyncDrawerOpen(true);
   // }, [fatalError]);
@@ -192,16 +199,10 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [isDesyncDrawerOpen]);
 
   useEffect(() => {
-    if (onboardingState?.currentOnboardingStep === OnboardingStep.Ready) {
-      setOnboardingSteps(
-        defaultOnboardingSteps.map(step => ({
-          ...step,
-          status: "completed",
-        })),
-      );
+    if (onboardingComplete) {
       setTimeout(handleDeviceReady, 3000);
     }
-  }, [onboardingState, handleDeviceReady]);
+  }, [onboardingComplete, handleDeviceReady]);
 
   return (
     <SafeAreaView>
