@@ -36,7 +36,7 @@ const DeviceLanguageInstalled: React.FC<{
         })}
       </Text>
       <Button type="main" alignSelf="stretch" onPress={onContinue}>
-        Continue
+        {t("common.continue")}
       </Button>
     </Flex>
   );
