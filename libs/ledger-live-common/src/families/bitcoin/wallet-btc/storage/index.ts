@@ -1,4 +1,4 @@
-import { findLast, filter, uniqBy, findIndex, isEmpty } from "lodash";
+import { findLast, filter, uniqBy, findIndex } from "lodash";
 import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address } from "./types";
 
