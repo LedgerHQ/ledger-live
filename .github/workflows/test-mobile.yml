@@ -41,7 +41,7 @@ jobs:
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile"
 
-  detox-e2e-ios:
+  detox-tests-ios:
     name: "Ledger Live Mobile - iOS Detox Tests"
       env:
         NODE_OPTIONS: "--max-old-space-size=7168"
@@ -84,7 +84,7 @@ jobs:
           name: test-ios-artifacts
           path: artifacts
 
-  detox-e2e-android:
+  detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
