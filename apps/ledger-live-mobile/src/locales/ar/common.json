@@ -12,10 +12,10 @@
     "continue" : "متابعة",
     "retry" : "إعادة المحاولة",
     "done" : "تم",
-    "sortBy" : "ترتيب النتائج",
+    "sortBy" : "الفرز حسب",
     "signOut" : "تسجيل الخروج",
     "search" : "بحث",
-    "contactUs" : "الاتصال بدعم Ledger",
+    "contactUs" : "تواصل مع دعم Ledger",
     "device" : "جهاز",
     "cryptoAsset" : "الأصول المشفرة",
     "skip" : "تخطي",
@@ -25,17 +25,17 @@
     "editName" : "تعديل الاسم",
     "close" : "إغلاق",
     "confirm" : "تأكيد",
-    "poweredBy" : "مدعوم من ",
+    "poweredBy" : "يعمل بواسطة ",
     "received" : "تم الاستلام",
     "sent" : "تم الإرسال",
     "or" : "أو",
     "rename" : "إعادة تسمية",
     "learnMore" : "تعرّف على المزيد",
-    "checkItOut" : "تفقد هذا",
+    "checkItOut" : "تحقق من ذلك",
     "viewDetails" : "عرض التفاصيل",
     "today" : "اليوم",
-    "yesterday" : "أمس",
-    "upToDate" : "حتى الآن",
+    "yesterday" : "الأمس",
+    "upToDate" : "مُحدث",
     "transactionDate" : "تاريخ المعاملة",
     "outdated" : "قديم",
     "satPerByte" : "ساتوشي/بايت",
@@ -47,7 +47,7 @@
     "token" : "رمز توكن",
     "token_plural" : "رموز التوكن",
     "subaccount" : "حساب فرعي",
-    "subaccount_plural" : "الحسابات الفرعية",
+    "subaccount_plural" : "حسابات فرعية",
     "forgetDevice" : "إزالة الجهاز",
     "help" : "مساعدة",
     "saveLogs" : "حفظ السجلات",
@@ -80,7 +80,8 @@
     },
     "seeMore" : "رؤية المزيد",
     "moreInfo" : "مزيد من المعلومات",
-    "buyEth" : "شراء إثيريوم"
+    "buyEth" : "شراء إثيريوم",
+    "comingSoon" : "Coming soon"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -91,7 +92,7 @@
       "description" : "يرجى الانتظار حتى تكتمل العملية."
     },
     "AccountNameRequired" : {
-      "title" : "اسم الحساب مطلوب",
+      "title" : "مطلوب اسم حساب",
       "description" : "يرجى إدخال اسم الحساب."
     },
     "AccountNeedResync" : {
@@ -99,7 +100,7 @@
       "description" : "Account is outdated. A synchronisation is needed"
     },
     "AlgorandASANotOptInInRecipient" : {
-      "title" : "حساب المستلم لم ينضم إلى ASA الذي تم اختياره."
+      "title" : "لم يشترك حساب المستلم في ASA الذي تم اختياره."
     },
     "BluetoothRequired" : {
       "title" : "عذراً، تم تعطيل البلوتوث",
@@ -114,10 +115,10 @@
     },
     "CantOpenDevice" : {
       "title" : "عذراً، فشل الاتصال",
-      "description" : "يجب إلغاء قفل جهاز ليدجر الخاص بك كما يجب أن يكون ضمن النطاق المخصص لاستخدام خاصية البلوتوث."
+      "description" : "يجب إلغاء قفل جهازك Ledger وأن يكون داخل النطاق لاستخدام البلوتوث."
     },
     "CantScanQRCode" : {
-      "title" : "تعذر إجراء المسح الضوئي لرمز QR: التحقق التلقائي غير معتمد لهذا العنوان."
+      "title" : "تعذر فحص رمز الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
     },
     "ConnectAppTimeout" : {
       "title" : "عفوًا، لم يتم العثور على أي جهاز",
@@ -150,22 +151,22 @@
       "description" : ""
     },
     "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "لا يمكنك تقليل المبلغ الموافق عليه عند وجود إيداع نشط."
+      "title" : "لا يمكنك تقليل المبلغ المعتمد أثناء وجود إيداع نشط."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "حدث خطأ ما (الخطأ #1)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeTxDecode" : {
       "title" : "حدث خطأ ما (الخطأ #2)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeInvalidSequence" : {
       "title" : "تسلسل غير صالح",
       "description" : "يرجى إعادة المحاولة."
     },
     "CosmosBroadcastCodeUnauthorized" : {
-      "title" : "توقيع غير مؤذَن به",
+      "title" : "توقيع غير مصرح به",
       "description" : "هذا الحساب غير مؤذَن له بالتوقيع على هذه المعاملة."
     },
     "CosmosBroadcastCodeInsufficientFunds" : {
@@ -174,7 +175,7 @@
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "حدث خطأ ما (الخطأ #6)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeInvalidAddress" : {
       "title" : "عنوان غير صحيح",
@@ -182,7 +183,7 @@
     },
     "CosmosBroadcastCodeInvalidPubKey" : {
       "title" : "حدث خطأ ما (الخطأ #8)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeUnknownAddress" : {
       "title" : "عنوان غير معروف",
@@ -194,11 +195,11 @@
     },
     "CosmosBroadcastCodeInvalidCoins" : {
       "title" : "حدث خطأ ما (الخطأ #11)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeOutOfGas" : {
       "title" : "حدث خطأ ما (الخطأ #12)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeMemoTooLarge" : {
       "title" : "حقل الملاحظة أطول من المسموح",
@@ -206,19 +207,19 @@
     },
     "CosmosBroadcastCodeInsufficientFee" : {
       "title" : "حدث خطأ ما (الخطأ #14)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeTooManySignatures" : {
       "title" : "حدث خطأ ما (الخطأ #15)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeGasOverflow" : {
       "title" : "حدث خطأ ما (الخطأ #16)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "CosmosBroadcastCodeNoSignatures" : {
       "title" : "حدث خطأ ما (الخطأ #17)",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "افتح المدير لتحديث هذا التطبيق",
@@ -234,7 +235,7 @@
     },
     "DeviceNotGenuine" : {
       "title" : "من الوارد ألا يكون الجهاز أصليًا",
-      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+      "description" : "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمهم إلى فريق دعم Ledger."
     },
     "DeviceNameInvalid" : {
       "title" : "يرجى تسمية الجهاز دون استخدام '{{invalidCharacters}}'."
@@ -664,7 +665,7 @@
       "standard" : "اعتيادية",
       "low" : "منخفضة",
       "slow" : "بطيء",
-      "medium" : "medium",
+      "medium" : "متوسط",
       "fast" : "سريع",
       "custom" : "مُخصّص",
       "blockCount" : "{{blockCount}} كتل"
@@ -849,13 +850,13 @@
       "title" : "Certified security",
       "desc" : "Our products are the only hardware wallets certified for their security by national cyber security agencies."
     },
-    "title" : "GET YOUR LEDGER",
+    "title" : "احصل على Ledger",
     "desc" : "Protect your crypto & NFTs with industry-leading security",
     "cta" : "Buy your Ledger now",
     "footer" : "I already have a device, set it up now"
   },
   "discover" : {
-    "title" : "Discover",
+    "title" : "اكتشف",
     "desc" : "Explore the world of web3 included in Ledger Live",
     "link" : "Tell me more",
     "sections" : {
@@ -885,7 +886,7 @@
       "terms" : "By tapping “Get Started” you consent and agree to our",
       "termsLink" : "Terms of Service",
       "privacyLink" : "سياسة الخصوصية",
-      "and" : "and"
+      "and" : "و"
     },
     "postWelcomeStep" : {
       "title" : "لنبدأ",
@@ -937,7 +938,7 @@
       "chooseDevice" : "Choose your device"
     },
     "stepUseCase" : {
-      "title" : "مرحبًا!",
+      "title" : "مرحباً!",
       "or" : "أو",
       "firstUse" : {
         "title" : "First time using your Nano?",
@@ -989,10 +990,10 @@
       "4" : {
         "label" : "الأساسيات",
         "title" : "لنعد جهاز Nano الخاص بك!",
-        "desc" : "سنبدأ بإعداد أمان جهاز Nano الخاص بك."
+        "desc" : "سنبدأ بإعداد أمان Nano الخاصة بك."
       },
       "cta" : "هيا بنا!",
-      "title" : "BASICS"
+      "title" : "الأساسيات"
     },
     "stepSetupDevice" : {
       "start" : {
@@ -1156,7 +1157,7 @@
           }
         },
         "cta" : "إغلاق",
-        "finalCta" : "حسنًا، لقد انتهيت!",
+        "finalCta" : "حسنًاً، لقد انتهيت!",
         "infoModal" : {
           "label" : "تعلم كيف تقوم بإخفائها",
           "title" : "أين ينبغي أن أحتفظ بعبارة الاسترداد الخاصة بي؟",
@@ -1350,7 +1351,7 @@
       "step2" : "Press both buttons together to select <1><1>Setup as a new device.</1></1>",
       "step2-restore" : "Press both buttons together to select <1><1>Restore from recovery phrase.</1></1>",
       "step3" : "اضغط على الزر الأيسر أو الأيمن لتحديد رقم. اضغط الزرين معًا للتأكيد.",
-      "step4prefix" : "اختار ",
+      "step4prefix" : "اختيار ",
       "step4suffix1" : " لتأكيد رقم التعريف الشخصي PIN الخاص بك.",
       "step4suffix2" : " لمحو الرقم الأخير.",
       "modal" : {
@@ -1457,7 +1458,7 @@
     "manager" : "My Ledger",
     "settings" : "إعدادات",
     "platform" : "التطبيقات الحية",
-    "discover" : "Discover",
+    "discover" : "اكتشف",
     "nanoX" : "Nano X",
     "market" : "السوق",
     "learn" : "تعلّم"
@@ -1646,7 +1647,7 @@
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدققين",
       "storageLimit" : "Storage Limit",
-      "gasLimit" : "Gas Limit",
+      "gasLimit" : "حد الغاز",
       "id" : "Id"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
@@ -1773,7 +1774,7 @@
         "header" : "استيراد الحساب",
         "title" : "تمكين الكاميرا",
         "desc" : "يرجى تمكين الكاميرا في الإعدادات لإجراء المسح الضوئي لرموز QR.",
-        "buttonTitle" : "انتقل إلى الاعدادات"
+        "buttonTitle" : "انتقل إلى الإعدادات"
       }
     },
     "availableBalance" : "الرصيد المتاح",
@@ -1847,7 +1848,7 @@
       "desc" : "ابدأ هنا"
     },
     "helpCenter" : {
-      "title" : "دعم ليدجر (Ledger)",
+      "title" : "دعم Ledger",
       "desc" : "الحصول على المساعدة"
     },
     "ledgerAcademy" : {
@@ -1873,7 +1874,7 @@
   },
   "settings" : {
     "header" : "إعدادات",
-    "resources" : "موارد ليدجر",
+    "resources" : "موارد Ledger",
     "display" : {
       "title" : "عامة",
       "desc" : "تكوين إعدادات Ledger Live العامة.",
@@ -1980,18 +1981,43 @@
         "android" : "مراجعة في سوق جوجل بلاي"
       }
     },
+    "notifications" : {
+      "title" : "Notifications",
+      "desc" : "Manage your notifications",
+      "allowed" : {
+        "title" : "Allow notifications",
+        "desc" : "Receive notifications about your crypto, market tendencies and more."
+      },
+      "transactions" : {
+        "title" : "Transactions",
+        "desc" : "Get notified when your crypto moves."
+      },
+      "market" : {
+        "title" : "Market",
+        "desc" : "Receive live push notifications about the crypto market."
+      },
+      "announcement" : {
+        "title" : "Announcement",
+        "desc" : "Receive live push notifications about the crypto market."
+      },
+      "price" : {
+        "title" : "Price Alerts",
+        "desc" : "Receive alerts for your favorite coins",
+        "label" : "Coming soon"
+      }
+    },
     "help" : {
       "title" : "مساعدة",
       "header" : "مساعدة",
       "desc" : "تعرف أكثر على ليدجر لايف أو كيفية الحصول على المساعدة.",
-      "support" : "دعم ليدجر (Ledger)",
+      "support" : "دعم Ledger",
       "supportDesc" : "إذا كانت لديك مشكلة، فاحصل على المساعدة لاستخدام ليدجر لايف (Ledger Live) مع محفظتك للأجهزة.",
       "configureDevice" : "إعداد جهاز",
       "configureDeviceDesc" : "إعداد كجهاز جديد أو استعادة جهاز موجود. يتم الاحتفاظ بالحسابات والإعدادات.",
-      "clearCache" : "حذف الذاكرة المؤقتة",
+      "clearCache" : "حذف ذاكرة التخزين المؤقتة",
       "clearCacheDesc" : "سيتم فحص المعاملات على الشبكة وستتم إعادة حساب حساباتك.",
       "clearCacheModal" : "هل أنت متأكد؟",
-      "clearCacheModalDesc" : "سيتم إجراء فحص جديد وكامل للمعاملات على الشبكة. كما سيتم إعادة بناء سجلات الحسابات وإعادة حساب الأرصدة.",
+      "clearCacheModalDesc" : "سيتم إجراء فحص جديد وكامل للمعاملات على الشبكة. سيتم إعادة بناء سجلات الحسابات وإعادة حساب الأرصدة.",
       "clearCacheButton" : "حذف",
       "exportLogs" : "حفظ السجلات",
       "exportLogsDesc" : "قد تكون هناك حاجة لحفظ سجلات ليدجر لايف (Ledger Live) لأغراض استكشاف الأخطاء وإصلاحها.",
@@ -2011,6 +2037,14 @@
       "customManifest" : {
         "title" : "Load Custom Platform Manifest"
       }
+    }
+  },
+  "notifications" : {
+    "prompt" : {
+      "title" : "Turn notifications on",
+      "desc" : "Get the latest updates on Ledger Live and Ledger products.",
+      "allow" : "Allow notifications",
+      "later" : "Maybe later"
     }
   },
   "migrateAccounts" : {
@@ -2145,7 +2179,7 @@
             "city" : "المدينة",
             "state" : "الولاية",
             "country" : "الدولة",
-            "postalCode" : "Zip Code",
+            "postalCode" : "الرمز البريدي",
             "dateOfBirth" : "تاريخ الميلاد",
             "firstNamePlaceholder" : "Enter your first name",
             "lastNamePlaceholder" : "Enter your last name",
@@ -2223,7 +2257,7 @@
         "noAccounts" : {
           "title" : "لا يوجد {{ticker}} للمبادلة",
           "desc" : "حساباتك {{currencyName}} ليس لديها رصيد لمبادلته.",
-          "addAccountCta" : "إنشاء حساب",
+          "addAccountCta" : "إضافة حساب",
           "cta" : "إغلاق"
         },
         "outdatedApp" : {
@@ -2253,7 +2287,7 @@
         }
       },
       "operationDetails" : {
-        "swapId" : "معرّف المبادلة",
+        "swapId" : "مُعرّف المبادلة",
         "provider" : "المزود",
         "date" : "التاريخ",
         "from" : "من",
@@ -2423,7 +2457,7 @@
           "advanced" : "متقدم",
           "amount" : "أدخل المبلغ",
           "summary" : "الملخص",
-          "selectDevice" : "اختار جهاز",
+          "selectDevice" : "اختر جهاز",
           "connectDevice" : "توصيل الجهاز",
           "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
         },
@@ -2464,7 +2498,7 @@
         "stepperHeader" : {
           "amount" : "التوريد",
           "summary" : "الملخص",
-          "selectDevice" : "اختار جهاز",
+          "selectDevice" : "اختر جهاز",
           "connectDevice" : "توصيل الجهاز",
           "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
         },
@@ -2486,7 +2520,7 @@
         "stepperHeader" : {
           "amount" : "سحب",
           "summary" : "الملخص",
-          "selectDevice" : "اختار جهاز",
+          "selectDevice" : "اختر جهاز",
           "connectDevice" : "توصيل الجهاز",
           "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
         },
@@ -2522,7 +2556,7 @@
         "header" : "مسح ضوئي لرمز QR",
         "title" : "تمكين الكاميرا",
         "desc" : "يرجى تمكين الكاميرا في الإعدادات لإجراء المسح الضوئي لرموز QR.",
-        "buttonTitle" : "الذهاب إلى الإعدادات"
+        "buttonTitle" : "انتقل إلى الإعدادات"
       }
     },
     "stepperHeader" : {
@@ -2530,7 +2564,7 @@
       "recipientAddress" : "عنوان المستلم",
       "selectAmount" : "المبلغ",
       "summary" : "الملخص",
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}",
       "quantity" : "الكمية",
@@ -2625,7 +2659,7 @@
       "info" : "اكسب المكافآت",
       "selectAmount" : "تجميد",
       "summary" : "الملخص",
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
@@ -2636,7 +2670,7 @@
         "1" : "يمكنك إزالة تجميد أصولك بعد 3 أيام.",
         "2" : "قم بالتجميد والتصويت بأمان باستخدام جهازك من ليدجر (Ledger)."
       },
-      "howVotingWorks" : "كيفية عمل التصويت",
+      "howVotingWorks" : "كيف يعمل التصويت",
       "cta" : "متابعة"
     },
     "amount" : {
@@ -2663,7 +2697,7 @@
     "stepperHeader" : {
       "selectAmount" : "إزالة التجميد",
       "summary" : "الملخص",
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
@@ -2683,7 +2717,7 @@
   },
   "claimReward" : {
     "stepperHeader" : {
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
@@ -2699,7 +2733,7 @@
     "stepperHeader" : {
       "selectValidator" : "الإدلاء بالأصوات",
       "castVote" : "تصويتاتي",
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
@@ -2965,7 +2999,7 @@
     "noAppNeededForToken" : "تثبيت تطبيق {{appName}} لـ {{tokenName}}",
     "tokenAppDisclaimer" : "{{tokenName}} is an {{tokenType}} token using the {{appName}} app. To manage {{tokenName}}, <1>install the {{appName}} app</1> and send the tokens <3>to your {{appName}} account</3>.",
     "tokenAppDisclaimerInstalled" : "{{tokenName}} is an {{tokenType}} token using the {{appName}} app. To manage {{tokenName}}, <1>open the {{appName}} app</1> and send the tokens <3>to your {{appName}} account</3>.",
-    "goToAccounts" : "الذهاب إلى الحسابات",
+    "goToAccounts" : "الانتقال إلى الحسابات",
     "intallParentApp" : "تثبيت تطبيق {{appName}}",
     "readOnly" : {
       "title" : "Nano X",
@@ -2982,7 +3016,7 @@
       "searchAppsCatalog" : "ابحث عن التطبيق في القائمة...",
       "searchAppsInstalled" : "البحث في التطبيقات المثبتة...",
       "noAppsInstalled" : "لا توجد تطبيقات مثبتة على جهازك",
-      "noAppsDescription" : "الذهاب إلى كتالوج التطبيق لتثبيت التطبيقات",
+      "noAppsDescription" : "الانتقال إلى كتالوج التطبيقات لتثبيت التطبيقات",
       "noResultsFound" : "لم يتم العثور على نتائج",
       "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
       "versionNew" : "(جديد {{newVersion}})",
@@ -3048,7 +3082,7 @@
       },
       "done" : {
         "title" : "App Successfully installed",
-        "accounts" : "الذهاب إلى الحسابات",
+        "accounts" : "الانتقال إلى الحسابات",
         "description" : "You can now add your {{app}} account"
       },
       "dependency" : {
@@ -3160,7 +3194,7 @@
     },
     "newVersion" : "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate" : {
-      "title" : "Firmware Update",
+      "title" : "تحديث البرنامج الثابت",
       "description" : "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
     }
   },
@@ -3243,7 +3277,7 @@
             "success" : {
               "title" : "تمت المطالبة بالمكافآت بنجاح!",
               "text" : "تمت إضافة مكافآتك إلى رصيدك المتاح.",
-              "cta" : "الذهاب إلى الحساب"
+              "cta" : "الانتقال إلى الحساب"
             },
             "pending" : {
               "title" : "يتم بث المعاملة..."
@@ -3332,7 +3366,7 @@
         "amountSubTitle" : "المبلغ المراد تفويضه",
         "summary" : "الملخص",
         "verification" : "التحقق",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3396,7 +3430,7 @@
         "amountSubTitle" : "المبلغ المراد إعادة تفويضه",
         "amountTitle" : "{{from}} ← {{to}}",
         "summary" : "الملخص",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3432,7 +3466,7 @@
       "stepperHeader" : {
         "amountSubTitle" : "المبلغ المراد إلغاء تفويضه",
         "summary" : "الملخص",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3460,7 +3494,7 @@
         "validator" : "اختر المكافأة التي ستحصل عليها",
         "method" : "المطالبة بالمكافآت",
         "summary" : "الملخص",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3531,7 +3565,7 @@
     "voting" : {
       "earnRewars" : "اكسب المكافآت",
       "delegationEarn" : "يمكنك الآن كسب مكافآت من خلال التجميد والتصويت.",
-      "howItWorks" : "كيفية عمل التصويت",
+      "howItWorks" : "كيف يعمل التصويت",
       "startEarning" : "اكسب المكافآت",
       "title" : "المطالبة بالمكافآت",
       "header" : "الأصوات ({{total}})",
@@ -3750,7 +3784,7 @@
     "nominate" : {
       "stepperHeader" : {
         "validators" : "المدققون المراد ترشيحهم",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3786,7 +3820,7 @@
       "stepperHeader" : {
         "starter" : "اكسب المكافآت",
         "amount" : "المبلغ المراد تقيده",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3822,7 +3856,7 @@
     "rebond" : {
       "stepperHeader" : {
         "amount" : "المبلغ المراد إعادة تقيده",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3845,7 +3879,7 @@
     "unbond" : {
       "stepperHeader" : {
         "amount" : "المبلغ المراد إلغاء تقيده",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3884,7 +3918,7 @@
       },
       "stepperHeader" : {
         "info" : "معلومات",
-        "selectDevice" : "اختار جهاز",
+        "selectDevice" : "اختر جهاز",
         "connectDevice" : "توصيل الجهاز",
         "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
       },
@@ -3976,13 +4010,13 @@
   "ValidateOnDevice" : {
     "title" : {
       "send" : "يرجى تأكيد العملية على {{productName}} الخاص بك لإرسالها",
-      "freeze" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "unfreeze" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "claimReward" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "vote" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "delegate" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "redelegate" : "يرجى التأكيد على جهازك لإنهاء العملية",
-      "undelegate" : "يرجى التأكيد على جهازك لإنهاء العملية"
+      "freeze" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "unfreeze" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "claimReward" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "vote" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "delegate" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "redelegate" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "undelegate" : "يرجى التأكيد على جهازك لإتمام العملية"
     },
     "warning" : "تحقق دائمًا من أن العنوان المعروض لجهازك يطابق تمامًا العنوان المقدم لك من {{recipientWording}}",
     "recipientWording" : {
@@ -4121,7 +4155,7 @@
     "successDescription" : "لقد وقعت على الرسالة المستلمة من تطبيق لجهة خارجية",
     "stepperHeader" : {
       "summary" : "الملخص",
-      "selectDevice" : "اختار جهاز",
+      "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
       "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
@@ -4223,7 +4257,7 @@
     "marketList" : {
       "crypto" : "الأصول المشفرة",
       "price" : "السعر",
-      "change" : "Change",
+      "change" : "تغيير",
       "marketCap" : "الحد الأقصى للسوق",
       "last7d" : "Last 7 days"
     },
