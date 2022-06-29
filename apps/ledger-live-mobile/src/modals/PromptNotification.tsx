@@ -7,12 +7,14 @@ import {
   Flex,
   BottomDrawer,
 } from "@ledgerhq/native-ui";
+import { useRoute } from "@react-navigation/native";
 
 import Illustration from "../images/illustration/Illustration";
 import PromptNotifGenericDark from "../images/illustration/Dark/_PromptNotifGeneric.png";
 import PromptNotifGenericLight from "../images/illustration/Light/_PromptNotifGeneric.png";
 import PromptNotifMarketDark from "../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../images/illustration/Light/_PromptNotifMarket.png";
+import { TrackScreen } from "../analytics";
 
 type Props = {
   isOpen: boolean;
@@ -22,6 +24,7 @@ type Props = {
 
 function PromptNotification({ isOpen, onClose, type = "generic" }: Props) {
   const { t } = useTranslation();
+  const route = useRoute();
 
   const onPressAllow = useCallback(() => {
     if (onClose) onClose();
@@ -46,23 +49,35 @@ function PromptNotification({ isOpen, onClose, type = "generic" }: Props) {
     );
 
   return (
-    <BottomDrawer
-      id="PromptNotification"
-      isOpen={isOpen}
-      noCloseButton
-      title={t("notifications.prompt.title")}
-      description={t("notifications.prompt.desc")}
-      Icon={<NotifIllustration />}
-    >
-      <Flex alignItems={"center"}>
-        <Button type={"main"} mt={8} mb={7} onPress={onPressAllow}>
-          {t("notifications.prompt.allow")}
-        </Button>
-        <TextLink type={"shade"} onPress={onClose}>
-          {t("notifications.prompt.later")}
-        </TextLink>
-      </Flex>
-    </BottomDrawer>
+    <>
+      <TrackScreen
+        category="Notification Prompt"
+        name={
+          type === "generic"
+            ? "Notification Prompt 1 - Notif"
+            : "Notification Prompt 2 - Graph"
+        }
+        source={route.name}
+        type={"drawer"}
+      />
+      <BottomDrawer
+        id="PromptNotification"
+        isOpen={isOpen}
+        noCloseButton
+        title={t("notifications.prompt.title")}
+        description={t("notifications.prompt.desc")}
+        Icon={<NotifIllustration />}
+      >
+        <Flex alignItems={"center"}>
+          <Button type={"main"} mt={8} mb={7} onPress={onPressAllow}>
+            {t("notifications.prompt.allow")}
+          </Button>
+          <TextLink type={"shade"} onPress={onClose}>
+            {t("notifications.prompt.later")}
+          </TextLink>
+        </Flex>
+      </BottomDrawer>
+    </>
   );
 }
 
