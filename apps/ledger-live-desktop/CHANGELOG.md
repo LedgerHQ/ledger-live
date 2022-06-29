@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.44.0-next.4
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
 ## 2.44.0-next.3
 
 ### Minor Changes

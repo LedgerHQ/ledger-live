@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.4.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
 ## 3.3.1-next.2
 
 ### Patch Changes

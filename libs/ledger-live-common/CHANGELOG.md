@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
 ## 24.0.0-next.2
 
 ### Minor Changes
