@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 22.0.2-next.4
+
+### Patch Changes
+
+- Updated dependencies [bdc76d75f]
+  - @ledgerhq/live-common@24.0.0-next.4
+
 ## 22.0.2-next.3
 
 ### Patch Changes

@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 3.0.0-next.5
+
+### Major Changes
+
+- bdc76d75f: Bitcoin Rbf new implementation. Jira ticket: LIVE-1414, LIVE-1415, LIVE-1416
+
+### Patch Changes
+
+- Updated dependencies [bdc76d75f]
+  - @ledgerhq/live-common@24.0.0-next.4
+
 ## 2.44.0-next.4
 
 ### Minor Changes
