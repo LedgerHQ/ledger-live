@@ -12,7 +12,7 @@ import { BleDevicePairing } from "../../screens/SyncOnboarding/BleDevicePairing"
 // TODO: handle usb-connected device ?
 export type SyncOnboardingStackParamList = {
   // With USB transport pairedDevice is null
-  SyncOnboardingCompanion: { pairedDevice: Device | null };
+  SyncOnboardingCompanion: { device: Device };
   DeviceModelSelection: undefined; 
   BleDevicesScanning: { filterByModelId: DeviceModelId | null } | undefined;
   BleDevicePairing: { deviceToPair: Device };
