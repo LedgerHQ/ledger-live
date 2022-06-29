@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.1-nightly.2
+
+### Patch Changes
+
+- d9689451e: Fix bug when navigating to the Manager screen without params
+
 ## 3.3.1-nightly.1
 
 ### Patch Changes
