@@ -1,20 +1,11 @@
 import { Observable, from, of, throwError, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import {
-  DeviceOnDashboardExpected,
-  TransportError,
-  TransportStatusError,
-} from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, TransportError, TransportStatusError } from "@ledgerhq/errors";
 
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import {
-  Language,
-  languageIds,
-  LanguagePackage,
-  LanguagePackageResponse,
-} from "../types/languages";
+import { Language, languageIds, LanguagePackage } from "../types/languages";
 import { getProviderId } from "../manager/provider";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
@@ -42,10 +33,7 @@ export type InstallLanguageEvent =
       type: "languageInstalled";
     };
 
-const attemptToQuitApp = (
-  transport,
-  appAndVersion?: AppAndVersion
-): Observable<InstallLanguageEvent> =>
+const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<InstallLanguageEvent> =>
   appAndVersion && appSupportsQuitApp(appAndVersion)
     ? from(quitApp(transport)).pipe(
         concatMap(() =>
@@ -82,32 +70,11 @@ export default function installLanguage({
             mergeMap(async (deviceInfo) => {
               timeoutSub.unsubscribe();
 
-              const deviceVersion = await ManagerAPI.getDeviceVersion(
-                deviceInfo.targetId,
-                getProviderId(deviceInfo)
-              );
+              const languages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
 
-              const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
-                version: deviceInfo.version,
-                deviceId: deviceVersion.id,
-                provider: getProviderId(deviceInfo),
-              });
+              const packs: LanguagePackage[] = languages.filter((l: any) => l.language === language);
 
-              const languages = await ManagerAPI.getLanguagePackages(
-                deviceVersion.id,
-                seFirmwareVersion.id
-              );
-
-              console.log({languages});
-
-              const packs: LanguagePackage[] = languages.filter(
-                (l: any) => l.language === language
-              );
-
-              if (!packs.length)
-                return subscriber.error(
-                  new Error(`No language ${language} found`)
-                );
+              if (!packs.length) return subscriber.error(new Error(`No language ${language} found`));
 
               const pack = packs[0];
 
@@ -143,21 +110,15 @@ export default function installLanguage({
                   });
                 }
 
-                const response = await transport.exchange(
-                  Buffer.from(apdus[i], "hex")
-                );
+                const response = await transport.exchange(Buffer.from(apdus[i], "hex"));
                 const status = response.readUInt16BE(response.length - 2);
                 const statusStr = status.toString(16);
 
                 // Some error handling
                 if (status === 0x5501) {
-                  return subscriber.error(
-                    new LanguageInstallRefusedOnDevice(statusStr)
-                  );
+                  return subscriber.error(new LanguageInstallRefusedOnDevice(statusStr));
                 } else if (status !== 0x9000) {
-                  return subscriber.error(
-                    new TransportError("Unexpected device response", statusStr)
-                  );
+                  return subscriber.error(new TransportError("Unexpected device response", statusStr));
                 }
 
                 subscriber.next({
@@ -182,9 +143,7 @@ export default function installLanguage({
                     e.statusCode
                   ))
               ) {
-                const quitAppObservable = from(
-                  getAppAndVersion(transport)
-                ).pipe(
+                const quitAppObservable = from(getAppAndVersion(transport)).pipe(
                   concatMap((appAndVersion) => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
