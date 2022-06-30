@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, SubTitle, AsideFooter, CheckStep, Column, IllustrationContainer } from "../shared";
-import nanoPinCodeLight from "../assets/nanoPinCodeLight.svg";
+import nanoPinCode from "../assets/nanoPinCode.png";
 
 type Props = {
   toggleUserChosePinCodeHimself: () => void;
@@ -24,9 +24,7 @@ export function PinCode({ toggleUserChosePinCodeHimself, userChosePinCodeHimself
   );
 }
 
-PinCode.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={nanoPinCodeLight} />
-);
+PinCode.Illustration = <IllustrationContainer width="240px" height="245px" src={nanoPinCode} />;
 
 const Footer = (props: any) => {
   const { t } = useTranslation();
