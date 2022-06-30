@@ -31,26 +31,28 @@ export const botReportFolder = async ({
   allAccountsBefore: Account[];
   allAccountsAfter: Account[];
 }) => {
-  await Promise.all([
-    fs.promises.writeFile(
-      path.join(BOT_REPORT_FOLDER, "full-report.md"),
-      body,
-      "utf-8"
-    ),
-    fs.promises.writeFile(
-      path.join(BOT_REPORT_FOLDER, "slack-comment-template.md"),
-      slackCommentTemplate,
-      "utf-8"
-    ),
-    fs.promises.writeFile(
-      path.join(BOT_REPORT_FOLDER, "before-app.json"),
-      makeAppJSON(allAccountsBefore),
-      "utf-8"
-    ),
-    fs.promises.writeFile(
-      path.join(BOT_REPORT_FOLDER, "after-app.json"),
-      makeAppJSON(allAccountsAfter),
-      "utf-8"
-    ),
-  ]);
+  if (BOT_REPORT_FOLDER) {
+    await Promise.all([
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "full-report.md"),
+        body,
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "slack-comment-template.md"),
+        slackCommentTemplate,
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "before-app.json"),
+        makeAppJSON(allAccountsBefore),
+        "utf-8"
+      ),
+      fs.promises.writeFile(
+        path.join(BOT_REPORT_FOLDER, "after-app.json"),
+        makeAppJSON(allAccountsAfter),
+        "utf-8"
+      ),
+    ]);
+  }
 };

@@ -160,7 +160,6 @@ const envDefinitions = {
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
   },
-<<<<<<< HEAD:libs/ledger-live-common/src/env.ts
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -170,12 +169,11 @@ const envDefinitions = {
     def: "https://testnet-ledger.cardanoscan.io/api",
     parser: stringParser,
     desc: "Cardano API url",
-=======
+  },
   BOT_LOG_PROXY_FILE: {
     def: "",
     parser: stringParser,
     desc: "Bot log proxy path to save log file",
->>>>>>> 9404a9600 (IOS Bot on CI):src/env.ts
   },
   COINAPPS: {
     def: "",

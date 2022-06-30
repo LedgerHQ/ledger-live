@@ -12,6 +12,8 @@ describe('Run simple bot', () => {
   it('should show bot finished', async () => {
     await waitFor(element(by.id('done')))
       .toBeVisible()
-      .withTimeout(120 * 60 * 1000);
+      .withTimeout(500 * 60 * 1000);
+
+    expect(element(by.id('done'))).toHaveText('finished');
   });
 });

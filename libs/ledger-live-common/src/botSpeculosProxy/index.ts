@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import express, { json } from "express";
+import express, { json, urlencoded } from "express";
 // import morgan from "morgan";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
 import {
@@ -28,7 +28,8 @@ type MessageProxySpeculos =
 export const botSpeculosProxy = ({ port = 4377, wsPort = 8435 }) => {
   const app = express();
   // app.use(morgan("tiny"));
-  app.use(json());
+  app.use(json({ limit: "2000mb" }));
+  app.use(urlencoded({ limit: "2000mb", extended: true }));
   const seed = getEnv("SEED");
   if (!seed) {
     throw new Error("SEED is not set");
@@ -106,6 +107,10 @@ export const botSpeculosProxy = ({ port = 4377, wsPort = 8435 }) => {
     client.on("close", () => {
       deleteClient(id);
     });
+  });
+
+  app.get("/health", (req, res) => {
+    return res.status(200).send("OK");
   });
 
   app.post("/app-candidate", async (req, res) => {
@@ -193,25 +198,25 @@ export const botSpeculosProxy = ({ port = 4377, wsPort = 8435 }) => {
     }
   });
 
-  app.post("/logs", async(req, res) => {
+  app.post("/logs", async (req, res) => {
     try {
       const BOT_REPORT_FOLDER = getEnv("BOT_REPORT_FOLDER");
 
       if (!req.body.title || !req.body.data) {
-        return res.status(500).json({message: "data or title is empty"})
+        return res.status(500).json({ message: "data or title is empty" });
       }
 
       await fs.promises.writeFile(
         path.join(BOT_REPORT_FOLDER, req.body.title),
         req.body.data,
         "utf-8"
-      )
+      );
       return res.status(200);
     } catch (e: any) {
       console.error(e.message);
       return res.status(500).json({ error: e.message });
     }
-  })
+  });
 
   app.listen(port);
 };

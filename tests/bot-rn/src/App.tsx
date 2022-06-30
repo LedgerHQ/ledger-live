@@ -1,7 +1,7 @@
+import React, {useEffect} from 'react';
 import Config from 'react-native-config';
 import {listen, log} from '@ledgerhq/logs';
 import {bot} from '@ledgerhq/live-common/lib/bot';
-import React, {useEffect} from 'react';
 import {LogBox, Text, View} from 'react-native';
 import {useState} from 'react';
 
@@ -30,13 +30,17 @@ const launchBot = (setData: (returnValue: number) => void) => {
     }
 
     if (Config.BOT_FILTER_FAMILY) {
-      arg.family = Config.OT_FILTER_FAMILY;
+      arg.family = Config.BOT_FILTER_FAMILY;
     }
-    bot(arg).then(result => {
+
+    arg.family = 'algorand';
+
+    bot(arg).then((result: number) => {
+      console.log(result);
       setData(result);
     });
     // TODO inform upstream that it's finished
-  } catch (e: any) {
+  } catch (e) {
     setData(-1);
     log('critical', String(e));
   }
@@ -57,7 +61,7 @@ const App = () => {
       {data === 0 ? (
         <Text>Bot is running. Check the main console.</Text>
       ) : (
-        <Text testID="done">Bot has finished</Text>
+        <Text testID="done">Bot has {data === -1 ? 'failed' : 'finished'}</Text>
       )}
     </View>
   );
