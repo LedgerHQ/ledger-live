@@ -149,6 +149,7 @@ const DeviceCard = ({
           <Divider />
           <DeviceLanguage
             currentLanguage={idsToLanguage[deviceInfo.languageId]}
+            deviceInfo={deviceInfo}
             device={device}
           />
           <Divider />
