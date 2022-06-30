@@ -18,7 +18,7 @@
         - [Step 5 - Run test](#step-5---run-test)
     - [Playwright API](#playwright-api)
 - [Continuous Integration](#continuous-integration)
-    - [Workflow](#workflow)
+    - [Workflow](#workflow-1)
     - [Commands](#commands)
 - [Debugging](#debugging)
 - [Resources](#resources)
