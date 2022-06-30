@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": major
+"ledger-live-desktop": minor
 "@ledgerhq/live-common": major
 ---
 
