@@ -20,7 +20,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { cosmosResources } = mainAccount;
-  invariant(cosmosResources, "cosmos account expected");
+  console.log("cosmos Resources: ", cosmosResources);
+  invariant(cosmosResources, "Osmosis account with cosmosResources expected");
   const earnRewardEnabled = canDelegate(mainAccount);
 
   const hasDelegations = cosmosResources.delegations.length > 0;
@@ -28,13 +29,13 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const onClick = useCallback(() => {
     if (hasDelegations) {
       dispatch(
-        openModal("MODAL_COSMOS_DELEGATE", {
+        openModal("MODAL_OSMOSIS_DELEGATE", {
           account,
         }),
       );
     } else {
       dispatch(
-        openModal("MODAL_COSMOS_REWARDS_INFO", {
+        openModal("MODAL_OSMOSIS_REWARDS_INFO", {
           account,
         }),
       );
@@ -43,7 +44,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
 
   if (parentAccount) return null;
 
-  const disabledLabel = earnRewardEnabled ? "" : t("cosmos.delegation.minSafeWarning");
+  const disabledLabel = earnRewardEnabled ? "" : t("osmosis.delegation.minSafeWarning");
 
   return [
     {

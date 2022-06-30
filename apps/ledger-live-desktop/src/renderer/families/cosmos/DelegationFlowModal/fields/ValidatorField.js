@@ -39,7 +39,7 @@ const ValidatorField = ({
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
   const validators = useLedgerFirstShuffledValidatorsCosmos();
-
+  console.log("validators is: ", validators);
   const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
     return (
       <ValidatorRow

@@ -28,7 +28,9 @@ import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cos
 import { BigNumber } from "bignumber.js";
 
 import Stepper from "~/renderer/components/Stepper";
-import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
+import StepDelegation, {
+  StepDelegationFooter,
+} from "../../cosmos/DelegationFlowModal/steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
@@ -58,14 +60,14 @@ type Props = OwnProps & StateProps;
 const steps: Array<St> = [
   {
     id: "validator",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.validator.title" />,
+    label: <Trans i18nKey="osmosis.delegation.flow.steps.validator.title" />,
     component: StepDelegation,
     noScroll: true,
     footer: StepDelegationFooter,
   },
   {
     id: "amount",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.amount.title" />,
+    label: <Trans i18nKey="osmosis.delegation.flow.steps.amount.title" />,
     component: StepAmount,
     onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
     noScroll: true,
@@ -73,13 +75,13 @@ const steps: Array<St> = [
   },
   {
     id: "connectDevice",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.connectDevice.title" />,
+    label: <Trans i18nKey="osmosis.delegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
   },
   {
     id: "confirmation",
-    label: <Trans i18nKey="cosmos.delegation.flow.steps.confirmation.title" />,
+    label: <Trans i18nKey="osmosis.delegation.flow.steps.confirmation.title" />,
     component: StepConfirmation,
     footer: StepConfirmationFooter,
   },
@@ -121,7 +123,7 @@ const Body = ({
   } = useBridgeTransaction(() => {
     const { account } = params;
 
-    // invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
+    invariant(account && account.cosmosResources, "Osmosis: account and cosmosResources required");
 
     console.log("account: ", account);
     const bridge = getAccountBridge(account, undefined);
@@ -180,7 +182,7 @@ const Body = ({
   }
 
   const stepperProps = {
-    title: t("cosmos.delegation.flow.title"),
+    title: t("osmosis.delegation.flow.title"),
     device,
     account,
     parentAccount,

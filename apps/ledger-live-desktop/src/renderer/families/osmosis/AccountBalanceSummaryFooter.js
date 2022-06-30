@@ -21,10 +21,17 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
   if (!account.cosmosResources) return null;
 
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
+  console.log("account is: ", account);
+  console.log("spendableBalance  is: ", _spendableBalance);
+
   const {
     delegatedBalance: _delegatedBalance,
     unbondingBalance: _unbondingBalance,
   } = cosmosResources;
+
+  console.log("_delegatedBalance  is: ", _delegatedBalance);
+  console.log("_unbondingBalance  is: ", _unbondingBalance);
+
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,

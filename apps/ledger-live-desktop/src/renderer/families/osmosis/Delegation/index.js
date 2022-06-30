@@ -65,7 +65,7 @@ const Delegation = ({ account }: Props) => {
 
   const onEarnRewards = useCallback(() => {
     dispatch(
-      openModal("MODAL_COSMOS_REWARDS_INFO", {
+      openModal("MODAL_OSMOSIS_REWARDS_INFO", {
         account,
       }),
     );
@@ -73,7 +73,7 @@ const Delegation = ({ account }: Props) => {
 
   const onDelegate = useCallback(() => {
     dispatch(
-      openModal("MODAL_COSMOS_DELEGATE", {
+      openModal("MODAL_OSMOSIS_DELEGATE", {
         account,
       }),
     );
@@ -124,7 +124,7 @@ const Delegation = ({ account }: Props) => {
     <>
       <TableContainer mb={6}>
         <TableHeader
-          title={<Trans i18nKey="cosmos.delegation.header" />}
+          title={<Trans i18nKey="osmosis.delegation.header" />}
           titleProps={{ "data-e2e": "title_Delegation" }}
         >
           {hasDelegations || hasRewards ? (
@@ -132,7 +132,9 @@ const Delegation = ({ account }: Props) => {
               {hasDelegations ? (
                 <ToolTip
                   content={
-                    !delegationEnabled ? <Trans i18nKey="cosmos.delegation.minSafeWarning" /> : null
+                    !delegationEnabled ? (
+                      <Trans i18nKey="osmosis.delegation.minSafeWarning" />
+                    ) : null
                   }
                 >
                   <Button
@@ -146,14 +148,14 @@ const Delegation = ({ account }: Props) => {
                     <Box horizontal flow={1} alignItems="center">
                       <DelegateIcon size={12} />
                       <Box>
-                        <Trans i18nKey="cosmos.delegation.delegate" />
+                        <Trans i18nKey="osmosis.delegation.delegate" />
                       </Box>
                     </Box>
                   </Button>
                 </ToolTip>
               ) : null}
               <ToolTip
-                content={!hasRewards ? <Trans i18nKey="cosmos.delegation.noRewards" /> : null}
+                content={!hasRewards ? <Trans i18nKey="osmosis.delegation.noRewards" /> : null}
               >
                 <Button
                   id={"account-rewards-button"}
@@ -165,7 +167,7 @@ const Delegation = ({ account }: Props) => {
                   <Box horizontal flow={1} alignItems="center">
                     <ClaimRewards size={12} />
                     <Box>
-                      <Trans i18nKey="cosmos.delegation.claimRewards" />
+                      <Trans i18nKey="osmosis.delegation.claimRewards" />
                     </Box>
                   </Box>
                 </Button>
@@ -191,13 +193,13 @@ const Delegation = ({ account }: Props) => {
             <Box style={{ maxWidth: "65%" }}>
               <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
                 <Trans
-                  i18nKey="cosmos.delegation.emptyState.description"
+                  i18nKey="osmosis.delegation.emptyState.description"
                   values={{ name: account.currency.name }}
                 />
               </Text>
               <Box mt={2}>
                 <LinkWithExternalIcon
-                  label={<Trans i18nKey="cosmos.delegation.emptyState.info" />}
+                  label={<Trans i18nKey="osmosis.delegation.emptyState.info" />}
                   onClick={() => openURL(urls.stakingCosmos)}
                 />
               </Box>
@@ -205,14 +207,14 @@ const Delegation = ({ account }: Props) => {
             <Box>
               <ToolTip
                 content={
-                  !delegationEnabled ? <Trans i18nKey="cosmos.delegation.minSafeWarning" /> : null
+                  !delegationEnabled ? <Trans i18nKey="osmosis.delegation.minSafeWarning" /> : null
                 }
               >
                 <Button primary small disabled={!delegationEnabled} onClick={onEarnRewards}>
                   <Box horizontal flow={1} alignItems="center">
                     <IconChartLine size={12} />
                     <Box>
-                      <Trans i18nKey="cosmos.delegation.emptyState.delegation" />
+                      <Trans i18nKey="osmosis.delegation.emptyState.delegation" />
                     </Box>
                   </Box>
                 </Button>
@@ -224,9 +226,9 @@ const Delegation = ({ account }: Props) => {
       {hasUnbondings ? (
         <TableContainer mb={6}>
           <TableHeader
-            title={<Trans i18nKey="cosmos.undelegation.header" />}
+            title={<Trans i18nKey="osmosis.undelegation.header" />}
             titleProps={{ "data-e2e": "title_Undelegation" }}
-            tooltip={<Trans i18nKey="cosmos.undelegation.headerTooltip" />}
+            tooltip={<Trans i18nKey="osmosis.undelegation.headerTooltip" />}
           />
           <UnbondingHeader />
           {mappedUnbondings.map((delegation, index) => (
