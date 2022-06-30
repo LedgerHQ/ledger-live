@@ -45,40 +45,49 @@ type Props = {
   srcFallback: string;
   resizeMode?: ResizeMode;
   colors: any;
+  transaprency?: boolean;
 };
 
 type State = {
   error: boolean;
-  loading: boolean;
   usingFallback: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
+  static defaultProps = {
+    transaprency: false,
+  };
+
   state = {
     error: false,
     contentType: null,
-    loading: true,
     usingFallback: false,
   };
 
-  opacityAnim = new Animated.Value(0);
+  contentOpacityAnim = new Animated.Value(0);
+  skeletonOpacityAnim = new Animated.Value(1);
 
   startAnimation = () => {
-    Animated.timing(this.opacityAnim, {
+    Animated.timing(this.contentOpacityAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    }).start(({ finished }) => {
-      finished && this.setState({ loading: false });
-    });
+    }).start();
+
+    Animated.timing(this.skeletonOpacityAnim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+      delay: 250,
+    }).start();
   };
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
       if (this.state.usingFallback) {
-        this.setState({ loading: true, error: true });
+        this.setState({ error: true });
       } else {
-        this.setState({ loading: true, usingFallback: true });
+        this.setState({ usingFallback: true });
       }
     }
   };
@@ -99,8 +108,9 @@ class NftImage extends React.PureComponent<Props, State> {
       status,
       colors,
       resizeMode = "cover",
+      transaprency,
     } = this.props;
-    const { error, loading, usingFallback } = this.state;
+    const { error, usingFallback } = this.state;
 
     const noData = status === "nodata";
     const metadataError = status === "error";
@@ -108,12 +118,21 @@ class NftImage extends React.PureComponent<Props, State> {
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={loading} />
+        <Animated.View
+          style={[
+            styles.skeleton,
+            {
+              opacity: this.skeletonOpacityAnim,
+            },
+          ]}
+        >
+          <Skeleton style={styles.skeleton} loading={true} />
+        </Animated.View>
         <Animated.View
           style={[
             styles.imageContainer,
             {
-              opacity: this.opacityAnim,
+              opacity: this.contentOpacityAnim,
             },
           ]}
         >
@@ -125,7 +144,7 @@ class NftImage extends React.PureComponent<Props, State> {
               style={[
                 styles.image,
                 {
-                  backgroundColor: colors.background.main,
+                  backgroundColor: transaprency ? undefined : colors.background,
                 },
               ]}
               resizeMode={resizeMode}
