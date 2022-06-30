@@ -19,13 +19,13 @@ import { track } from "~/renderer/analytics/segment";
 import { ScreenId } from "../Tutorial";
 import { OnboardingContext, UseCase } from "../../index.v3";
 
-import connectNanoLight from "./assets/connectNanoLight.svg";
-import restorePhraseLight from "./assets/restorePhraseLight.svg";
-import setupNanoLight from "./assets/setupNanoLight.svg";
+import connectNanoLight from "./assets/connectNanoLight.png";
+import restorePhraseLight from "./assets/restorePhraseLight.png";
+import setupNanoLight from "./assets/setupNanoLight.png";
 
-import connectNanoDark from "./assets/connectNanoDark.svg";
-import restorePhraseDark from "./assets/restorePhraseDark.svg";
-import setupNanoDark from "./assets/setupNanoDark.svg";
+import connectNanoDark from "./assets/connectNanoDark.png";
+import restorePhraseDark from "./assets/restorePhraseDark.png";
+import setupNanoDark from "./assets/setupNanoDark.png";
 
 import Illustration from "~/renderer/components/Illustration";
 

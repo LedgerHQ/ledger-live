@@ -10,7 +10,7 @@ import {
   AsideFooter,
 } from "../shared";
 import { Button, Icons } from "@ledgerhq/react-ui";
-import hideRecoverySheet from "../assets/hideRecoverySheetLight.svg";
+import hideRecoverySheet from "../assets/hideRecoverySheet.png";
 type Props = {
   handleHelp: () => void;
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, SubTitle, Column, IllustrationContainer } from "../shared";
-import successQuizzLight from "../assets/successQuizzLight.svg";
+import successQuizz from "../assets/successQuizz.png";
 
 export function QuizSuccess() {
   const { t } = useTranslation();
@@ -15,7 +15,7 @@ export function QuizSuccess() {
 }
 
 QuizSuccess.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={successQuizzLight} />
+  <IllustrationContainer width="240px" height="245px" src={successQuizz} />
 );
 
 QuizSuccess.continueLabel = (

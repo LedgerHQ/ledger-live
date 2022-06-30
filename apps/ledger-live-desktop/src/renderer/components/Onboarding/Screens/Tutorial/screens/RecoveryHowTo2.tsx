@@ -27,7 +27,7 @@ export function RecoveryHowTo2() {
       {steps.map((step, index) => (
         <Bullet
           key={index}
-          bulletText={index}
+          bulletText={index + 3}
           text={t(step.text)}
           subText={step.subText ? t(step.subText) : null}
         />

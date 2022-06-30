@@ -9,11 +9,11 @@ import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel"
 import { urls } from "~/config/urls";
 import { Text, Button, Logos, Icons } from "@ledgerhq/react-ui";
 
-import accessCrypto from "./assets/access-crypto.svg";
-import ownPrivateKey from "./assets/own-private-key.svg";
-import setupNano from "./assets/setup-nano.svg";
-import stayOffline from "./assets/stay-offline.svg";
-import validateTransactions from "./assets/validate-transactions.svg";
+import accessCrypto from "./assets/accessCrypto.png";
+import ownPrivateKey from "./assets/ownPrivateKey.png";
+import setupNano from "./assets/setupNano.svg";
+import stayOffline from "./assets/stayOffline.png";
+import validateTransactions from "./assets/validateTransactions.png";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
