@@ -70,14 +70,16 @@ jobs:
       - name: Bump npm to latest
         run: npm i -g npm
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile
+      - name: Build LLM deps
+        run: pnpm build:llm:deps
       - name: Rebuild detox
         run: pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -c ios.sim.debug
+        run: pnpm mobile e2e:build -c ios.sim.release
       - name: Test iOS app
         timeout-minutes: 15
-        run: pnpm mobile e2e:test -c ios.sim.debug --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
+        run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -108,9 +110,11 @@ jobs:
         with:
           workspace: ${{ github.workspace }}
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile
+      - name: Build LLM deps
+        run: pnpm build:llm:deps
       - name: Build iOS app for Detox test run
-        run: pnpm mobile e2e:build -c android.emu.debug
+        run: pnpm mobile e2e:build -c android.emu.release
       - name: Run Android tests
         timeout-minutes: 10
         uses: reactivecircus/android-emulator-runner@v2
@@ -123,7 +127,7 @@ jobs:
             mkdir ./temp
             curl -f -o ./temp/test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk
             adb install ./temp/test-butler-app.apk || adb install ./e2e/test-butler-app.apk
-            pnpm mobile e2e:test -c android.emu.debug --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
+            pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
         with:
