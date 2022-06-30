@@ -10,8 +10,9 @@ const names = {};
 const transport = Config.MOCK
   ? makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
-      createTransportDeviceMock: (id, name) => {
+      createTransportDeviceMock: (id, name, serviceUUID) => {
         names[id] = name;
+        const serviceUUIDs=[serviceUUID];
         const apduMock = createAPDUMock({
           setDeviceName: name => {
             names[id] = name;
@@ -36,6 +37,7 @@ const transport = Config.MOCK
           id,
           name: names[id] || id,
           apduMock,
+          serviceUUIDs,
         };
       },
     })
