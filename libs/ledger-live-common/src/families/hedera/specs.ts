@@ -125,9 +125,15 @@ const hedera: AppSpec<Transaction> = {
 
         const transaction = bridge.createTransaction(account);
 
+        const amount = account.balance
+          .div(1.9 + 0.2 * Math.random())
+          .integerValue();
+
+        checkSendableToEmptyAccount(amount, sibling);
+
         return {
           transaction,
-          updates: [{ recipient }, { memo: memoTestMessage }],
+          updates: [{ recipient }, { amount }, { memo: memoTestMessage }],
         };
       },
       test: ({ transaction }: TransactionTestInput<Transaction>): void => {
