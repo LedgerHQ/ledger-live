@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.1-hotfix.0
+
+### Patch Changes
+
+- b8dad7183: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
 ## 3.3.0
 
 ### Minor Changes
