@@ -29,15 +29,11 @@ export const useBleDevicePairing = ({
     ).pipe(first());
 
     requestObservable.subscribe({
-      next: (value: FirmwareInfo) => {
-        console.log(`🦄 go paired value: ${value}`);
-
+      next: (_value: FirmwareInfo) => {
         setIsPaired(true);
         setPairingError(null);
       },
       error: (error: BleError) => {
-        console.log(`🦁 ERROR while pairing: ${error}`);
-
         setIsPaired(false);
         setPairingError(error);
       },

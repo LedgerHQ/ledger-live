@@ -70,8 +70,6 @@ describe("useBleDevicePairing", () => {
   describe("When the request sent with the BLE transport is rejected with an error", () => {
     beforeEach(() => {
       const bleError = new BleError("An error during pairing", 201);
-
-      console.log(`created ERROR: ${bleError}`);
       mockedGetVersion.mockRejectedValue(bleError);
     });
 
