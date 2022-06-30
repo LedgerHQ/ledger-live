@@ -1,7 +1,7 @@
 import { from, concat } from "rxjs";
 import { map, mergeMap, ignoreElements } from "rxjs/operators";
 import manager from "@ledgerhq/live-common/lib/manager";
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import openApp from "@ledgerhq/live-common/lib/hw/openApp";

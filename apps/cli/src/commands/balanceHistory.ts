@@ -3,7 +3,7 @@ import asciichart from "asciichart";
 import invariant from "invariant";
 import { map } from "rxjs/operators";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 import {
   getBalanceHistory,
   getPortfolioCount,

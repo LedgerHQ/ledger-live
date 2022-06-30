@@ -3,7 +3,7 @@ import { map, reduce } from "rxjs/operators";
 import { accountFormatters } from "@ledgerhq/live-common/lib/account";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/types-live";
 export default {
   description: "Generate a test for scan accounts (live-common dataset)",
   args: [

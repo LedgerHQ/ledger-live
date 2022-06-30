@@ -6,11 +6,13 @@ import shuffle from "lodash/shuffle";
 import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type {
-  TransactionStatus,
   Transaction,
-  AccountLike,
-  Account,
 } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLike,
+  TransactionStatus,
+} from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";

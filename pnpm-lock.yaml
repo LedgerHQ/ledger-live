@@ -43,6 +43,8 @@ importers:
       '@ledgerhq/hw-transport-node-speculos': workspace:^
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@types/command-line-args': ^5.2.0
       '@types/lodash': ^4.14.177
       '@types/node': ^17.0.15
@@ -100,6 +102,8 @@ importers:
     optionalDependencies:
       '@ledgerhq/hw-transport-node-ble': link:../../libs/ledgerjs/packages/hw-transport-node-ble
     devDependencies:
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@types/command-line-args': 5.2.0
       '@types/lodash': 4.14.182
       '@types/node': 17.0.32
@@ -132,6 +136,7 @@ importers:
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/react-ui': workspace:^
+      '@ledgerhq/types-live': workspace:^
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.22.2
@@ -398,6 +403,7 @@ importers:
       '@babel/preset-flow': 7.16.7_@babel+core@7.17.10
       '@babel/preset-react': 7.16.7_@babel+core@7.17.10
       '@babel/preset-typescript': 7.16.7_@babel+core@7.17.10
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@mapbox/node-pre-gyp': 1.0.9
       '@octokit/rest': 18.12.0
       '@playwright/test': 1.22.2

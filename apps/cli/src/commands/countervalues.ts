@@ -7,13 +7,13 @@ import asciichart from "asciichart";
 import invariant from "invariant";
 import { Observable } from "rxjs";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
+import type { PortfolioRange } from "@ledgerhq/types-live";
 import { getPortfolioCountByDate } from "@ledgerhq/live-common/lib/portfolio/v2";
 import {
   getRanges,
   getDates,
 } from "@ledgerhq/live-common/lib/portfolio/v2/range";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,

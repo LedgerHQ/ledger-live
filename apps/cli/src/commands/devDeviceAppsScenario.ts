@@ -12,7 +12,7 @@ import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import installApp from "@ledgerhq/live-common/lib/hw/installApp";
 import { deviceOpt } from "../scan";
-import { Application } from "@ledgerhq/live-common/lib/types/manager";
+import { Application } from "@ledgerhq/types-live";
 type Scenario = number[];
 // how to add a scenario:
 // wget https://manager.api.live.ledger.com/api/applications
@@ -22,8 +22,28 @@ type Scenario = number[];
 const scenarios: Record<string, Scenario> = {
   "nanos160-outdated-apps": [1679, 222, 2783, 3295, 3305],
   "nanos160-outdated-bitcoin-apps": [
-    3295, 3305, 3319, 3325, 3302, 3324, 3298, 3297, 3318, 3309, 3322, 3304,
-    3296, 3308, 3299, 3300, 3312, 3303, 3301, 3315, 3314, 3323,
+    3295,
+    3305,
+    3319,
+    3325,
+    3302,
+    3324,
+    3298,
+    3297,
+    3318,
+    3309,
+    3322,
+    3304,
+    3296,
+    3308,
+    3299,
+    3300,
+    3312,
+    3303,
+    3301,
+    3315,
+    3314,
+    3323,
   ],
 };
 const scenariosValues = Object.keys(scenarios).join(" | ");

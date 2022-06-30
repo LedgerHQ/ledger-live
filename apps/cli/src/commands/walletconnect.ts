@@ -18,7 +18,7 @@ import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/lib/hw/signMessage";
 import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
 import { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
-import { Operation, SignedOperation } from "@ledgerhq/live-common/lib/types";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 type Opts = ScanCommonOpts &
   Partial<{
     walletConnectURI: string;

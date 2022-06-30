@@ -8,7 +8,7 @@ import {
   findCompoundToken,
 } from "@ledgerhq/live-common/lib/currencies";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/lib/compound/logic";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/types-live";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 

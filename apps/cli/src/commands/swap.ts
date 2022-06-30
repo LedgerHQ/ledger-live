@@ -27,7 +27,7 @@ import {
   Account,
   SignedOperation,
   SubAccount,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/types-live";
 type SwapJobOpts = ScanCommonOpts & {
   amount: string;
   useAllAmount: boolean;

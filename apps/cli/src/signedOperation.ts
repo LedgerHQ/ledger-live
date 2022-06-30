@@ -1,7 +1,7 @@
 import type { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import invariant from "invariant";
-import type { SignedOperation, Account } from "@ledgerhq/live-common/lib/types";
+import type { SignedOperation, Account } from "@ledgerhq/types-live";
 import { fromSignedOperationRaw } from "@ledgerhq/live-common/lib/transaction";
 import { jsonFromFile } from "./stream";
 export type InferSignedOperationsOpts = Partial<{

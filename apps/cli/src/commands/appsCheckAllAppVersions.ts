@@ -19,7 +19,7 @@ import type {
   DeviceInfo,
   ApplicationVersion,
   Application,
-} from "@ledgerhq/live-common/lib/types/manager";
+} from "@ledgerhq/types-live";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/lib/apps";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import { delay } from "@ledgerhq/live-common/lib/promise";

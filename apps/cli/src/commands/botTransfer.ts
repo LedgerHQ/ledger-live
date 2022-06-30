@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/live-common/lib/bridge";
 import { getEnv, setEnv } from "@ledgerhq/live-common/lib/env";
 import { promiseAllBatched } from "@ledgerhq/live-common/lib/promise";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
 import {
   autoSignTransaction,
