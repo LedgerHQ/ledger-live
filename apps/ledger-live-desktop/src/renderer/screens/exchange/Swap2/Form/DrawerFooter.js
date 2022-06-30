@@ -1,9 +1,9 @@
 // @flow
 
+import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -28,6 +28,8 @@ export function DrawerFooter({ provider }: { provider: string }) {
     return null;
   }
 
+  const providerName = getProviderName(provider);
+
   return (
     <>
       <Separator />
@@ -35,7 +37,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
         <Terms>
           <Trans
             i18nKey={"DeviceAction.swap.acceptTerms"}
-            values={{ provider }}
+            values={{ provider: providerName }}
             components={[
               <LinkWithExternalIcon
                 key="termsExternalLink"
@@ -43,11 +45,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
                 color="palette.text.shade60"
                 onClick={onLinkClick}
                 style={{ textDecoration: "underline" }}
-              >
-                <Text fontSize={13} color="palette.text.shade60">
-                  {getProviderName(provider)}
-                </Text>
-              </LinkWithExternalIcon>,
+              />,
             ]}
           />
         </Terms>
