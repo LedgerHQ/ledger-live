@@ -73,10 +73,6 @@ async function init() {
     timemachine.config({
       dateString: require("../../tests/time").default,
     });
-
-    if (document.body) {
-      document.body.className += " spectron-run";
-    }
   }
 
   if (window.localStorage.getItem("hard-reset")) {

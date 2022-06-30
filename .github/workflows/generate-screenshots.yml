@@ -86,7 +86,11 @@ jobs:
       - name: Install playwright dependencies
         run: npx playwright install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        env:
+          GOGC: 75
+        run: |
+          pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+          pnpm desktop build:testing
       - name: Run playwright tests [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots

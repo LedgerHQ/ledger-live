@@ -38,6 +38,7 @@
     "test:playwright": "nyc playwright test --config=tests/playwright.config.ts",
     "test:playwright:update-snapshots": "pnpm test:playwright --update-snapshots",
     "test:playwright:recorder": "playwright test tests/specs/recorder.spec.ts",
+    "test:playwright:clean": "git clean -fdX tests/artifacts",
     "typecheck": "pnpm flow"
   },
   "dependencies": {
