@@ -4,46 +4,38 @@ import { Icons } from "@ledgerhq/react-ui";
 
 import Illustration from "~/renderer/components/Illustration";
 
-import cryptoStoredQuizzLight from "./assets/cryptoStoredQuizzLight.svg";
-import privateKeyQuizzLight from "./assets/privateKeyQuizzLight.svg";
-import recoveryPhraseQuizzLight from "./assets/recoveryPhraseQuizzLight.svg";
-import rightAnswerQuizzLight from "./assets/rightAnswerQuizzLight.svg";
-import wrongAnswerQuizzLight from "./assets/wrongAnswerQuizzLight.svg";
+import cryptoStoredQuizz from "./assets/cryptoStoredQuizz.png";
+import privateKeyQuizz from "./assets/privateKeyQuizz.png";
+import recoveryPhraseQuizz from "./assets/recoveryPhraseQuizz.png";
+import rightAnswerQuizz from "./assets/rightAnswerQuizz.png";
+import wrongAnswerQuizz from "./assets/wrongAnswerQuizz.png";
 
-const cryptoStoredQuizzLightIllustration = () => (
-  <Illustration
-    size={250}
-    lightSource={cryptoStoredQuizzLight}
-    darkSource={cryptoStoredQuizzLight}
-  />
+const cryptoStoredQuizzIllustration = () => (
+  <Illustration size={250} lightSource={cryptoStoredQuizz} darkSource={cryptoStoredQuizz} />
 );
 
-const privateKeyQuizzLightIllustration = () => (
-  <Illustration size={250} lightSource={privateKeyQuizzLight} darkSource={privateKeyQuizzLight} />
+const privateKeyQuizzIllustration = () => (
+  <Illustration size={250} lightSource={privateKeyQuizz} darkSource={privateKeyQuizz} />
 );
 
-const recoveryPhraseQuizzLightIllustration = () => (
-  <Illustration
-    size={250}
-    lightSource={recoveryPhraseQuizzLight}
-    darkSource={recoveryPhraseQuizzLight}
-  />
+const recoveryPhraseQuizzIllustration = () => (
+  <Illustration size={250} lightSource={recoveryPhraseQuizz} darkSource={recoveryPhraseQuizz} />
 );
 
-const rightAnswerQuizzLightIllustration = () => (
-  <Illustration size={250} lightSource={rightAnswerQuizzLight} darkSource={rightAnswerQuizzLight} />
+const rightAnswerQuizzIllustration = () => (
+  <Illustration size={250} lightSource={rightAnswerQuizz} darkSource={rightAnswerQuizz} />
 );
 
-const wrongAnswerQuizzLightIllustration = () => (
-  <Illustration size={250} lightSource={wrongAnswerQuizzLight} darkSource={wrongAnswerQuizzLight} />
+const wrongAnswerQuizzIllustration = () => (
+  <Illustration size={250} lightSource={wrongAnswerQuizz} darkSource={wrongAnswerQuizz} />
 );
 
 export const getQuizzSteps = (t: TFunction<"translation", undefined>) => [
   {
     title: t("v3.onboarding.quizz.questions.1.text"),
-    Illustration: cryptoStoredQuizzLightIllustration,
-    CorrectAnswerIllustration: rightAnswerQuizzLightIllustration,
-    IncorrectAnswerIllustration: wrongAnswerQuizzLightIllustration,
+    Illustration: cryptoStoredQuizzIllustration,
+    CorrectAnswerIllustration: rightAnswerQuizzIllustration,
+    IncorrectAnswerIllustration: wrongAnswerQuizzIllustration,
     choices: [
       {
         label: t("v3.onboarding.quizz.questions.1.answers.1"),
@@ -61,9 +53,9 @@ export const getQuizzSteps = (t: TFunction<"translation", undefined>) => [
   },
   {
     title: t("v3.onboarding.quizz.questions.2.text"),
-    Illustration: privateKeyQuizzLightIllustration,
-    CorrectAnswerIllustration: rightAnswerQuizzLightIllustration,
-    IncorrectAnswerIllustration: wrongAnswerQuizzLightIllustration,
+    Illustration: privateKeyQuizzIllustration,
+    CorrectAnswerIllustration: rightAnswerQuizzIllustration,
+    IncorrectAnswerIllustration: wrongAnswerQuizzIllustration,
     choices: [
       {
         label: t("v3.onboarding.quizz.questions.2.answers.1"),
@@ -81,9 +73,9 @@ export const getQuizzSteps = (t: TFunction<"translation", undefined>) => [
   },
   {
     title: t("v3.onboarding.quizz.questions.3.text"),
-    Illustration: recoveryPhraseQuizzLightIllustration,
-    CorrectAnswerIllustration: rightAnswerQuizzLightIllustration,
-    IncorrectAnswerIllustration: wrongAnswerQuizzLightIllustration,
+    Illustration: recoveryPhraseQuizzIllustration,
+    CorrectAnswerIllustration: rightAnswerQuizzIllustration,
+    IncorrectAnswerIllustration: wrongAnswerQuizzIllustration,
     choices: [
       {
         label: t("v3.onboarding.quizz.questions.3.answers.1"),
