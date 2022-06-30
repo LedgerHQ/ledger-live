@@ -36,8 +36,12 @@ const DEFAULT_DEVICE_NAME = "Device";
 /**
  * Scans the BLE devices around the user
  * @param filterByModelIds An array of model ids to filter on
- * @param timeoutMs todo
- * @returns todo
+ * @param stopBleScanning Flag to stop or continue the scanning
+ * @param timeoutMs TODO: Time after which if no device is found the scanning stops and the hooks notifies the consumer
+ * @returns An object containing:
+ * - scannedDevices: list of ScannedDevice found by the scanning
+ * - scanningTimedOut: boolean to notify consumer if the scanning timed out
+ * - scanningBleError: if an error occurred, a BleError, otherwise null
  */
 export const useBleDevicesScanning = ({
   bleTransportListen,
