@@ -149,8 +149,42 @@ describe("useBleDevicesScanning", () => {
       });
     });
 
-    describe("When the scanning reached the timeout without any result", () => {
-      test.todo("should return an error ?");
+    describe("and when the hook consumer stops the scanning", () => {
+      it("should stop the scanning", async () => {
+        let stopBleScanning = false;
+
+        const { result, rerender } = renderHook(() =>
+          useBleDevicesScanning({
+            bleTransportListen: setupMockBleTransportListen(
+              mockEmitValuesByObserver
+            ),
+            stopBleScanning,
+          })
+        );
+
+        // At first the scanning finds device(s)
+        expect(result.current.scannedDevices).toHaveLength(1);
+        expect(result.current.scannedDevices[0].deviceId).toBe(deviceIdA);
+        expect(result.current.scannedDevices[0].deviceModel.id).toBe(
+          DeviceModelId.nanoX
+        );
+
+        // Then the consumer stops the scanning
+        stopBleScanning = true;
+        rerender({
+          bleTransportListen: setupMockBleTransportListen(
+            mockEmitValuesByObserver
+          ),
+          stopBleScanning,
+        });
+
+        await act(async () => {
+          jest.advanceTimersByTime(2000);
+        });
+
+        // It should not find any new devices
+        expect(result.current.scannedDevices).toHaveLength(1);
+      });
     });
   });
 
