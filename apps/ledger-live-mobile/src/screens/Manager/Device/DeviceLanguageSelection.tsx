@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import {
   Button,
   Flex,
@@ -8,7 +8,6 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import {
-  idsToLanguage,
   Language,
 } from "@ledgerhq/live-common/lib/types/languages";
 import { useTranslation } from "react-i18next";
@@ -16,6 +15,7 @@ import { useTranslation } from "react-i18next";
 type Props = {
   deviceLanguage: Language;
   selectedLanguage: Language;
+  availableLanguages: Language[];
   onSelectLanguage: (language: Language) => void;
   onConfirmInstall: () => void;
 };
@@ -23,6 +23,7 @@ type Props = {
 const DeviceLanguageSelection: React.FC<Props> = ({
   deviceLanguage,
   selectedLanguage,
+  availableLanguages,
   onSelectLanguage,
   onConfirmInstall,
 }) => {
@@ -39,7 +40,7 @@ const DeviceLanguageSelection: React.FC<Props> = ({
             currentValue={selectedLanguage}
             onChange={onSelectLanguage}
           >
-            {Object.values(idsToLanguage).map(currentLanguage => {
+            {availableLanguages.map(currentLanguage => {
               const isCurrentDeviceLanguage =
                 currentLanguage === deviceLanguage;
               return (
