@@ -7,11 +7,14 @@ import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import useAvailableLanguagesForDevice from "@ledgerhq/live-common/lib/hooks/useAvailableLanguagesForDevice";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 
 type Props = {
   currentLanguage: Language;
   device: Device;
+  deviceInfo: DeviceInfo;
 };
 
 const DeviceLanguageInstalled: React.FC<{
@@ -42,7 +45,7 @@ const DeviceLanguageInstalled: React.FC<{
   );
 };
 
-const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device }) => {
+const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device, deviceInfo }) => {
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
@@ -53,6 +56,7 @@ const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device }) => {
   const [deviceLanguage, setDeviceLanguage] = useState<Language>(
     currentLanguage,
   );
+  const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
 
   const action = useMemo(
     () =>
@@ -100,9 +104,13 @@ const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device }) => {
             {t("deviceLocalization.language")}
           </Text>
         </Flex>
-        <Button Icon={Icons.DropdownMedium} onPress={openChangeLanguageModal}>
-          {t(`deviceLocalization.languages.${deviceLanguage}`)}
-        </Button>
+        {availableLanguages.length ? (
+          <Button Icon={Icons.DropdownMedium} onPress={openChangeLanguageModal}>
+            {t(`deviceLocalization.languages.${deviceLanguage}`)}
+          </Button>
+        ) : (
+          <Text>{t(`deviceLocalization.languages.${deviceLanguage}`)}</Text>
+        )}
       </Flex>
       <BottomModal
         isOpened={isChangeLanguageOpen}
@@ -113,6 +121,7 @@ const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device }) => {
           onSelectLanguage={setSelectedLanguage}
           selectedLanguage={selectedLanguage}
           onConfirmInstall={openDeviceActionModal}
+          availableLanguages={availableLanguages}
         />
       </BottomModal>
       <DeviceActionModal
