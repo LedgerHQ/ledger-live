@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.3.1-nightly.3
+
+### Patch Changes
+
+- 026d923ee: Update on Ledger Card CTA's (removed some, created one in the portfolio header)
+
 ## 3.3.1-nightly.2
 
 ### Patch Changes
