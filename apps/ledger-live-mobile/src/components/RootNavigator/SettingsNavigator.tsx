@@ -1,10 +1,13 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import {
   createStackNavigator,
   TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { TouchableOpacity } from "react-native";
+import { Box, Icons } from "@ledgerhq/native-ui";
+import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
 import DebugSwap from "../../screens/DebugSwap";
@@ -46,6 +49,8 @@ import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
 import DebugStoryly from "../../screens/DebugStoryly";
+import { track } from "../../analytics";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -53,6 +58,18 @@ export default function SettingsNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
+
+  const navigation = useNavigation();
+  const currentRoute = useCurrentRouteName();
+
+  const goBackFromAccount = useCallback(() => {
+    track("button_clicked", {
+      button: "Back Arrow",
+      screen: currentRoute,
+    });
+    navigation.goBack();
+  }, [navigation, currentRoute]);
+
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -102,6 +119,13 @@ export default function SettingsNavigator() {
         name={ScreenName.NotificationsSettings}
         component={NotificationsSettings}
         options={{
+          headerLeft: () => (
+            <Box ml={6}>
+              <TouchableOpacity onPress={goBackFromAccount}>
+                <Icons.ArrowLeftMedium size={24} />
+              </TouchableOpacity>
+            </Box>
+          ),
           title: t("settings.notifications.title"),
         }}
       />
