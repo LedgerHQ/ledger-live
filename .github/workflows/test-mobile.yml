@@ -82,6 +82,7 @@ jobs:
         run: pnpm mobile e2e:test -c ios.sim.release --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: test-ios-artifacts
           path: artifacts
@@ -130,6 +131,7 @@ jobs:
             pnpm mobile e2e:test -c android.emu.release --loglevel verbose --record-logs failing --record-timeline all --take-screenshots all --record-videos failing --detectOpenHandles
       - name: Upload test artifacts
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: test-android-artifacts
           path: artifacts
