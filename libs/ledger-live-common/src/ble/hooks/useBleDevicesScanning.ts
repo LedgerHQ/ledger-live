@@ -28,7 +28,6 @@ export type UseBleDevicesScanningDependencies = {
 export type UseBleDevicesScanningOptions = {
   stopBleScanning?: boolean;
   filterByModelIds?: DeviceModelId[];
-  filterOutDeviceIds?: string[];
   timeoutMs?: number;
 };
 
@@ -37,7 +36,6 @@ const DEFAULT_DEVICE_NAME = "Device";
 /**
  * Scans the BLE devices around the user
  * @param filterByModelIds An array of model ids to filter on
- * @param filterOutDeviceIds An array of device ids to filter out
  * @param timeoutMs todo
  * @returns todo
  */
@@ -45,7 +43,6 @@ export const useBleDevicesScanning = ({
   bleTransportListen,
   stopBleScanning,
   filterByModelIds,
-  filterOutDeviceIds,
   timeoutMs = 2000,
 }: UseBleDevicesScanningDependencies &
   UseBleDevicesScanningOptions): UseBleDevicesScanningResult => {
@@ -64,6 +61,7 @@ export const useBleDevicesScanning = ({
       return;
     }
 
+    // TODO: define timeout and stop the scanning
     const timeout = setTimeout(() => {
       setScanningTimedOut(true);
     }, timeoutMs);
@@ -142,7 +140,6 @@ export const useBleDevicesScanning = ({
       });
 
     return () => {
-      console.log("🧹 unsubscribing !");
       sub.unsubscribe();
       clearTimeout(timeout);
     };
