@@ -25,11 +25,13 @@ import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 
+type StepStatus = "completed" | "active" | "inactive";
+
 type Step = {
-  status: "completed" | "active" | "inactive";
+  status: StepStatus;
   deviceStates: OnboardingStep[];
   title: string;
-  renderBody?: () => ReactNode;
+  renderBody?: (status?: StepStatus) => ReactNode;
 };
 
 type Props = StackScreenProps<
@@ -87,8 +89,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
         deviceStates: [OnboardingStep.Ready],
         title: "Software check",
-        renderBody: () => (
-          <SoftwareChecksStep onComplete={() => setOnboardingComplete(true)} />
+        renderBody: (status?: StepStatus) => (
+          <SoftwareChecksStep
+            active={status === "active"}
+            onComplete={() => setOnboardingComplete(true)}
+          />
         ),
       },
       {
@@ -116,8 +121,12 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   const { device } = route.params;
 
-  const { onboardingState, allowedError, fatalError } =
-    useOnboardingStatePolling({ device, pollingPeriodMs, stopPolling });
+  const { onboardingState, allowedError, fatalErrorItem } =
+    useOnboardingStatePolling({
+      device,
+      pollingPeriodMs,
+      stopPolling,
+    });
 
   useEffect(() => {
     const newStepState: Step[] = [];
