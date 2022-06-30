@@ -18,11 +18,22 @@ import {
   setCosmosPreloadData,
 } from "../../cosmos/preloadedData";
 
-const preload = () => Promise.resolve({});
 const receive = makeAccountBridgeReceive();
+const getPreloadStrategy = (_currency) => ({
+  preloadMaxAge: 30 * 1000,
+});
 
 const currencyBridge: CurrencyBridge = {
-  preload,
+  getPreloadStrategy,
+  preload: async () => {
+    const validators = await osmosisValidatorsManager.getValidators();
+    setCosmosPreloadData({
+      validators,
+    });
+    return Promise.resolve({
+      validators,
+    });
+  },
   hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
     if (!data || typeof data !== "object") return;
     const { validators } = data;

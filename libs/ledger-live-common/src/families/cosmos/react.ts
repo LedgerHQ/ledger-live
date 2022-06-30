@@ -166,6 +166,8 @@ export function useMappedExtraOperationDetails({
 export function useLedgerFirstShuffledValidatorsCosmos() {
   const data = useCosmosPreloadData();
 
+  console.log("data is: ", data);
+
   return useMemo(() => {
     return reorderValidators(data?.validators ?? []);
   }, [data]);
