@@ -12,6 +12,4 @@ export type SendAmountProps = {
   transaction: Transaction,
   status: TransactionStatus,
   onChange: Transaction => void,
-  updateTransaction: (updater: any) => void,
-  mapStrategies?: FeeStrategy => FeeStrategy & { [string]: * },
 };
