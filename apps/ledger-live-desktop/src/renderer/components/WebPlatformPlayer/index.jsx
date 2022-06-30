@@ -410,8 +410,9 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     ({ accountId, message }: { accountId: string, message: string }) => {
       const account = accounts.find(account => account.id === accountId);
 
+      let formattedMessage: MessageData | null;
       try {
-        message = prepareMessageToSign(account, message);
+        formattedMessage = prepareMessageToSign(account, message);
       } catch (error) {
         return Promise.reject(error);
       }
@@ -419,7 +420,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       return new Promise((resolve, reject) => {
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
-            message,
+            message: formattedMessage,
             account,
             onConfirmationHandler: signature => {
               logger.info("Signature done");
@@ -430,7 +431,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
               reject(err);
             },
             onClose: () => {
-              reject(new Error("Signature aborted"));
+              reject(new Error("Signature aborted by user"));
             },
           }),
         );
