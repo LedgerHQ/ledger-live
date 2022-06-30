@@ -1,12 +1,5 @@
 # live-mobile
 
-## 3.4.0-next.4
-
-### Patch Changes
-
-- Updated dependencies [bdc76d75f]
-  - @ledgerhq/live-common@24.0.0-next.4
-
 ## 3.4.0-next.3
 
 ### Minor Changes
