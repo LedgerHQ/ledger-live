@@ -30,7 +30,9 @@ import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
-import { Button, Flex, Icon, Icons } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
+
+import DeviceLanguage from "./DeviceLanguage";
 
 const illustrations = {
   nanoS: {
@@ -275,6 +277,7 @@ export const StorageBar = ({
 type Props = {
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo,
+  device: Device,
   distribution: AppsDistribution,
   isIncomplete: boolean,
   installQueue: string[],
@@ -286,6 +289,7 @@ type Props = {
 const DeviceStorage = ({
   deviceModel,
   deviceInfo,
+  device,
   distribution,
   isIncomplete,
   installQueue,
@@ -328,17 +332,7 @@ const DeviceStorage = ({
             )}{" "}
             {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
           </Text>
-          <Flex>
-            <Icons.LanguageMedium color="neutral.c80" size={24} />
-            <Flex ml={1}>
-              <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-                Language
-              </Text>
-            </Flex>
-            <Button Icon={Icons.ChevronRightMedium}>
-              English
-            </Button>
-          </Flex>
+          <DeviceLanguage deviceInfo={deviceInfo} device={device} />
         </Flex>
         <Separator />
         <Info>
