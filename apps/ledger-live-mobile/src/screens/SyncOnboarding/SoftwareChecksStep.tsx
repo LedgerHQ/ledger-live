@@ -38,10 +38,11 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
 };
 
 export type Props = {
+  active: boolean;
   onComplete?: () => void;
 };
 
-const SoftwareChecksStep = ({ onComplete }: Props) => {
+const SoftwareChecksStep = ({ active, onComplete }: Props) => {
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<CheckStatus>(
     "inactive",
   );
@@ -64,27 +65,28 @@ const SoftwareChecksStep = ({ onComplete }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (genuineCheckStatus === "inactive") {
+    if (active && genuineCheckStatus === "inactive") {
       setGenuineCheckStatus("active");
       handleGenuineCheck();
     }
-  }, [genuineCheckStatus, handleGenuineCheck]);
+  }, [active, genuineCheckStatus, handleGenuineCheck]);
 
   useEffect(() => {
     if (
+      active &&
       genuineCheckStatus === "completed" &&
       firmwareUpdateStatus === "inactive"
     ) {
       setFirmwareUpdateStatus("active");
       handleFirmwareUpdate();
     }
-  }, [genuineCheckStatus, firmwareUpdateStatus, handleFirmwareUpdate]);
+  }, [active, genuineCheckStatus, firmwareUpdateStatus, handleFirmwareUpdate]);
 
   useEffect(() => {
-    if (onComplete && firmwareUpdateStatus === "completed") {
+    if (active && onComplete && firmwareUpdateStatus === "completed") {
       onComplete();
     }
-  }, [firmwareUpdateStatus, onComplete]);
+  }, [active, firmwareUpdateStatus, onComplete]);
 
   return (
     <Flex>

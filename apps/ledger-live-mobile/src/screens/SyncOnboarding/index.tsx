@@ -36,11 +36,13 @@ import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 
+type StepStatus = "completed" | "active" | "inactive";
+
 type Step = {
-  status: "completed" | "active" | "inactive";
+  status: StepStatus;
   deviceStates: OnboardingStep[];
   title: string;
-  renderBody?: () => ReactNode;
+  renderBody?: (status?: StepStatus) => ReactNode;
 };
 
 type Props = StackScreenProps<
@@ -98,8 +100,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
         deviceStates: [OnboardingStep.Ready],
         title: "Software check",
-        renderBody: () => (
-          <SoftwareChecksStep onComplete={() => setOnboardingComplete(true)} />
+        renderBody: (status?: StepStatus) => (
+          <SoftwareChecksStep
+            active={status === "active"}
+            onComplete={() => setOnboardingComplete(true)}
+          />
         ),
       },
       {
@@ -117,7 +122,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
-  const [device, setDevice] = useState<Device | null>(null);
   const [onboardingSteps, setOnboardingSteps] = useState(
     defaultOnboardingSteps,
   );
@@ -126,7 +130,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     i18n: { language: locale },
   } = useTranslation();
 
-  const { pairedDevice } = route.params;
+  const { device } = route.params;
 
   const {
     onboardingState,
@@ -137,17 +141,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     pollingPeriodMs,
     stopPolling,
   });
-
-  // Triggers the pairing if no pairedDevice was given
-  useEffect(() => {
-    if (!pairedDevice) {
-      // @ts-expect-error navigator typing issue
-      navigation.replace(ScreenName.PairDevices, {
-        onlySelectDeviceWithoutFullAppPairing: true,
-        onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
-      });
-    }
-  }, [navigation, pairedDevice]);
 
   useEffect(() => {
     const newStepState: Step[] = [];
@@ -185,10 +178,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     navigation.goBack();
   }, [navigation]);
 
-  const handleOnPaired = useCallback((pairedDevice: Device) => {
-    setDevice(pairedDevice);
-  }, []);
-
   const handleTimerRunsOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, [setDesyncDrawerOpen]);
@@ -210,14 +199,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       screen: NavigatorName.Main,
     });
   }, [dispatch, navigation]);
-
-  // Triggered when a new paired device is passed when navigating to this screen
-  // It avoids having a callback function passed to the PairDevices screen
-  useEffect(() => {
-    if (pairedDevice) {
-      handleOnPaired(pairedDevice);
-    }
-  }, [pairedDevice, handleOnPaired]);
 
   // useEffect(() => {
   //   TODO: handle fatal errors
@@ -245,11 +226,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       setTimeout(handleDeviceReady, 3000);
     }
   }, [onboardingComplete, handleDeviceReady]);
-
-  if (!pairedDevice) {
-    // TODO: do something better here
-    return <Flex />;
-  }
 
   return (
     <SafeAreaView>
