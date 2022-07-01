@@ -1536,7 +1536,7 @@
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-      "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>"
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
