@@ -62,7 +62,9 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
         wired: false,
     };
     console.log(`🖖 Selected device = ${JSON.stringify(deviceToPair)}`);
-    navigation.navigate(ScreenName.BleDevicePairing as "BleDevicePairing", { deviceToPair } );
+    // Replace to avoid going back to this screen without re-rendering 
+    // to make sure the list of scanning devices is reset
+    navigation.replace(ScreenName.BleDevicePairing as "BleDevicePairing", { deviceToPair } );
   }, [navigation]);
 
   const renderItem = useCallback(
