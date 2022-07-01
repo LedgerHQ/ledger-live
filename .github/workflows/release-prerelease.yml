@@ -56,7 +56,7 @@ jobs:
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
-      - name:
+      - name: versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
