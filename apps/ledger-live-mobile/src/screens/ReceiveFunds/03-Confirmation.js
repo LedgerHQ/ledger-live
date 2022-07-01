@@ -44,7 +44,7 @@ import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
-import byFamily from '../../generated/Confirmation';
+import byFamily from "../../generated/Confirmation";
 
 type Props = {
   account: ?(TokenAccount | Account),
@@ -172,7 +172,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   // check for coin specific UI
   const CustomConfirmation = byFamily[currency.family];
-  if (CustomConfirmation) return <CustomConfirmation { ...{ navigation, route } } />;
+  if (CustomConfirmation)
+    return <CustomConfirmation {...{ navigation, route }} />;
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

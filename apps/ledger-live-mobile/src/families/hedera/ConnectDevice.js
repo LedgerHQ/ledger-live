@@ -1,11 +1,9 @@
 // @flow
-import React  from "react";
 import { useSelector } from "react-redux";
 
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
-
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 
 type Props = {
   navigation: any,
@@ -24,8 +22,8 @@ type RouteParams = {
 
 export default function ConnectDevice({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
-  if (!account) return;
-  
+  if (!account) return null;
+
   // skip verifying device
   navigation.navigate(ScreenName.ReceiveConfirmation, {
     ...route.params,

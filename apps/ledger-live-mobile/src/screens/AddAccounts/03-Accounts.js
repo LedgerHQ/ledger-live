@@ -334,7 +334,8 @@ function AddAccountsAccounts({
     s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
   );
 
-  const CustomNoAssociatedAccounts = noAssociatedAccountsByFamily[currency.family];
+  const CustomNoAssociatedAccounts =
+    noAssociatedAccountsByFamily[currency.family];
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
       <LText style={styles.paddingHorizontal}>

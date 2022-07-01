@@ -115,7 +115,8 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   // check for coin specific UI
   const CustomConnectDevice = byFamily[currency.family];
-  if (CustomConnectDevice) return <CustomConnectDevice {...{ navigation, route }} />;
+  if (CustomConnectDevice)
+    return <CustomConnectDevice {...{ navigation, route }} />;
 
   if (readOnlyModeEnabled) {
     return <ReadOnlyWarning continue={onSkipDevice} />;

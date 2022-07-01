@@ -37,7 +37,6 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
@@ -66,12 +65,12 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors, dark } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-  const [verified, setVerified] = useState(false);
+  const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
   const onModalHide = useRef(() => {});
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
   const [zoom, setZoom] = useState(false);
-  const [allowNavigation, setAllowNavigation] = useState(true);
+  const [allowNavigation] = useState(true);
 
   function onRetry(): void {
     if (isModalOpened) {
@@ -115,10 +114,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       gestureEnabled: Platform.OS === "ios",
     });
   }, [allowNavigation, colors, navigation]);
-
-  useEffect(() => {
-    if (!account) return;
-  }, [route.params, verified]);
 
   if (!account) return null;
   const { width } = getWindowDimensions();
