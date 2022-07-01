@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   ScrollContainer,
-  ScrollContainerHeader,
   VerticalTimeline,
   Text,
 } from "@ledgerhq/native-ui";
@@ -14,7 +13,6 @@ import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-
 import { NavigatorName, ScreenName } from "../../const";
 import type { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
@@ -223,17 +221,15 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         <DesyncDrawer isOpen={isDesyncDrawerOpen} onClose={handleDesyncClose} />
         <ResyncOverlay isOpen={!!timer && !stopPolling} />
         <ScrollContainer>
-          <ScrollContainerHeader>
-            <Flex
-              flexDirection="row"
-              justifyContent="space-between"
-              pt={7}
-              px={7}
-            >
-              <LanguageSelect />
-              <Button type="default" Icon={CloseMedium} onPress={handleClose} />
-            </Flex>
-          </ScrollContainerHeader>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            pt={7}
+            px={7}
+          >
+            <LanguageSelect />
+            <Button type="default" Icon={CloseMedium} onPress={handleClose} />
+          </Flex>
           <Flex px={7} pt={7}>
             <Flex flexDirection="row" alignItems="center">
               <Text variant="h4" fontWeight="semiBold">
