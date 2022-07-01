@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.44.0-next.0
+
+### Minor Changes
+
+- [#502](https://github.com/LedgerHQ/ledger-live/pull/502) [`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Bitcoin Rbf new implementation. Jira ticket: LIVE-1414, LIVE-1415, LIVE-1416
+
+### Patch Changes
+
+- [#499](https://github.com/LedgerHQ/ledger-live/pull/499) [`6f2aaedab`](https://github.com/LedgerHQ/ledger-live/commit/6f2aaedabe97e313f8a0d5b9725324220582ddf4) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix swap TOS styling
+
+- Updated dependencies [[`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062)]:
+  - @ledgerhq/live-common@24.0.0-next.4
+
 ## 2.44.0-next.4
 
 ### Minor Changes

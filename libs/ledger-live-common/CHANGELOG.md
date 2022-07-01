@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.4
+
+### Major Changes
+
+- [#502](https://github.com/LedgerHQ/ledger-live/pull/502) [`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Bitcoin Rbf new implementation. Jira ticket: LIVE-1414, LIVE-1415, LIVE-1416
+
 ## 24.0.0-next.3
 
 ### Minor Changes
