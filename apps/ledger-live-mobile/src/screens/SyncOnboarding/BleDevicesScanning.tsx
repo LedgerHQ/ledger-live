@@ -71,7 +71,7 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
     ({ item }: { item: ScannedDevice }) => {
       const deviceMeta = {
         deviceId: item.deviceId,
-        deviceName: `${item.deviceName}, a ${item.deviceModel.id} with a signal ${item.bleRssi}`,
+        deviceName: `${item.deviceName}`,
         wired: false,
         modelId: item.deviceModel.id,
       };
@@ -104,7 +104,7 @@ export const BleDeviceScanning = ({ navigation, route }: Props) => {
     <RequiresBLE>
       <OnboardingView
         hasBackButton
-        title="Pair a nanoFTS"
+        title="Pair a nano"
       >
         <FlatList
           data={scannedDevices}
