@@ -2,27 +2,28 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
-import ReceiveConnectDevice from "../../screens/ReceiveFunds/02-ConnectDevice";
-import ReceiveSelectAccount from "../../screens/SelectAccount";
+import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
+import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
+import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
+
+import ReceiveAddAccountSelectDevice from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
+import ReceiveSelectAccount from "../../screens/ReceiveFunds/02-SelectAccount";
+import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
+
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
-
-const totalSteps = "3";
 
 export default function ReceiveFundsNavigator() {
-  const { t } = useTranslation();
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const stackNavigationConfig = useMemo(
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -30,56 +31,87 @@ export default function ReceiveFundsNavigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
+      <Stack.Screen
+        name={ScreenName.ReceiveSelectCrypto}
+        component={ReceiveSelectCrypto}
+        options={{
+          headerLeft: null,
+          headerTitle: "",
+        }}
+      />
+
+      {/* Select Account */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectAccount}
         component={ReceiveSelectAccount}
         options={{
+          headerTitle: "",
+        }}
+      />
+
+      {/* Select Account */}
+      <Stack.Screen
+        name={ScreenName.ReceiveAddAccountSelectDevice}
+        component={ReceiveAddAccountSelectDevice}
+        options={{
           headerTitle: () => (
             <StepHeader
-              title={t("transfer.receive.headerTitle")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
+              subtitle={t("transfer.receive.stepperHeader.range", {
+                currentStep: "2",
+                totalSteps: 3,
               })}
+              title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
         }}
-        initialParams={{
-          next: ScreenName.ReceiveConnectDevice,
-          category: "ReceiveFunds",
-        }}
-        {...noNanoBuyNanoWallScreenOptions}
       />
+
+      {/* Select Account */}
+      <Stack.Screen
+        name={ScreenName.ReceiveAddAccount}
+        component={ReceiveAddAccount}
+        options={{
+          headerTitle: "",
+        }}
+      />
+
+      {/* Select / Connect Device */}
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}
         component={ReceiveConnectDevice}
-        options={({ route }) => ({
+        options={{
           headerTitle: () => (
             <StepHeader
-              title={t(route.params?.title ?? "transfer.receive.titleDevice")}
-              subtitle={t("send.stepperHeader.stepRange", {
+              subtitle={t("transfer.receive.stepperHeader.range", {
                 currentStep: "2",
-                totalSteps,
+                totalSteps: 3,
               })}
+              title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-        })}
+        }}
       />
+      {/* Select / Connect Device */}
+      <Stack.Screen
+        name={ScreenName.ReceiveVerifyAddress}
+        component={ReceiveVerifyAddress}
+        options={{
+          headerTitle: "",
+          headerLeft: null,
+          headerRight: null,
+        }}
+      />
+      {/* Add account(s) automatically */}
+      {/* Receive Address */}
       <Stack.Screen
         name={ScreenName.ReceiveConfirmation}
         component={ReceiveConfirmation}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("account.receive")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps,
-              })}
-            />
-          ),
+          headerTitle: "",
         }}
       />
+      {/* Receive Address Device Verification */}
     </Stack.Navigator>
   );
 }
