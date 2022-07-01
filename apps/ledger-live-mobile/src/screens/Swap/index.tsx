@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
-import { Button } from "@ledgerhq/native-ui";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import {
   AvailableProviderV3,
   ExchangeRate,
@@ -33,9 +33,10 @@ import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
-import { Loading, NotAvailable, TxForm, Summary } from "./Form";
+import { Loading, NotAvailable, TxForm, Summary, LoginButton } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
 import { SwapFormProps } from "./types";
+import { ScreenName } from "../../const";
 
 export * from "./types";
 export * from "./SelectAccount";
@@ -50,7 +51,7 @@ enum ActionRequired {
   None,
 }
 
-export function SwapForm({ route: { params } }: SwapFormProps) {
+export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(shallowAccountsSelector);
@@ -102,7 +103,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   }, [exchangeRate, swapKYC]);
 
   // FIXME: should use enums for Flow and Banner values
-  const [currentFlow, setCurrentFlow] = useState();
+  const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
+    ActionRequired.None,
+  );
   const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
     ActionRequired.None,
   );
@@ -123,7 +126,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // On provider change, reset banner and flow
   useEffect(() => {
-    setCurrentFlow(undefined);
+    setCurrentFlow(ActionRequired.None);
     setCurrentBanner(ActionRequired.None);
     setErrorCode(undefined);
   }, [provider]);
@@ -205,8 +208,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
   useEffect(() => {
-    if (kyc?.id && currentFlow === "LOGIN") {
-      setCurrentFlow(undefined);
+    if (kyc?.id && currentFlow === ActionRequired.Login) {
+      setCurrentFlow(ActionRequired.None);
     }
   }, [kyc?.id, currentFlow]);
 
@@ -214,8 +217,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     if (
       !kyc?.id ||
       !exchangeRate?.rateId ||
-      currentFlow === "KYC" ||
-      currentFlow === "MFA"
+      currentFlow === ActionRequired.KYC ||
+      currentFlow === ActionRequired.MFA
     ) {
       return;
     }
@@ -247,7 +250,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         }
 
         // If status is ok, close login, kyc and mfa widgets even if open
-        setCurrentFlow(undefined);
+        setCurrentFlow(ActionRequired.None);
 
         dispatch(
           setSwapKYCStatus({
@@ -354,28 +357,49 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   /*    break; */
   /* } */
 
+  useEffect(() => {
+    if (currentFlow === ActionRequired.Login) {
+      navigation.navigate("SwapLogin");
+    }
+  }, [navigation, currentFlow]);
+
   if (providers) {
     return (
-      <KeyboardView style={styles.root}>
-        <TrackScreen category="Swap Form" providerName={provider} />
-        <TxForm
-          swapTx={swapTx}
-          provider={provider}
-          accounts={accounts}
-          currencies={currencies}
-          exchangeRate={exchangeRate}
-        />
+      <KeyboardView>
+        <Flex flex={1} justifyContent="space-between" padding={6}>
+          <Flex flex={10}>
+            <TrackScreen category="Swap Form" providerName={provider} />
+            <TxForm
+              swapTx={swapTx}
+              provider={provider}
+              accounts={accounts}
+              currencies={currencies}
+              exchangeRate={exchangeRate}
+            />
 
-        <Summary
-          provider={provider}
-          swapTx={swapTx}
-          exchangeRate={exchangeRate}
-          kyc={kyc}
-        />
+            <ScrollView>
+              <Summary
+                provider={provider}
+                swapTx={swapTx}
+                exchangeRate={exchangeRate}
+                kyc={kyc}
+              />
 
-        <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
-          {t("common.exchange")}
-        </Button>
+              {currentBanner === ActionRequired.Login && (
+                <LoginButton
+                  provider={provider}
+                  onPress={() => setCurrentFlow(ActionRequired.Login)}
+                />
+              )}
+            </ScrollView>
+          </Flex>
+
+          <Flex flex={1} paddingY={4}>
+            <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
+              {t("common.exchange")}
+            </Button>
+          </Flex>
+        </Flex>
       </KeyboardView>
     );
   }
@@ -392,41 +416,3 @@ const trackNoRates: OnNoRatesCallback = ({ toState }) => {
     sourceCurrency: toState.currency?.name,
   });
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    padding: 16,
-    justifyContent: "space-between",
-  },
-  scrollZone: {
-    flex: 1,
-  },
-  button: {
-    flex: 1,
-  },
-  buttonContainer: {
-    paddingTop: 24,
-    flexDirection: "row",
-  },
-  available: {
-    flexDirection: "row",
-    display: "flex",
-    flexGrow: 1,
-  },
-  availableRight: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    flexDirection: "row",
-  },
-  availableLeft: {
-    justifyContent: "center",
-    flexGrow: 1,
-  },
-  maxLabel: {
-    marginRight: 4,
-  },
-  switch: {
-    opacity: 0.99,
-  },
-});
