@@ -1,4 +1,4 @@
-name: Bot 'Filecoin on Mooncake'
+name: "[Bot] 'Filecoin on Mooncake'"
 on:
   push:
     branches:
@@ -81,8 +81,3 @@ jobs:
         with:
           name: botreport
           path: libs/ledger-live-common/botreport/
-      - name: Test coverage
-        if: always()
-        run: npx codecov -F bot
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
