@@ -35,6 +35,9 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI
     ? [["html", { open: "never", outputFolder: "artifacts/html-report" }], ["github"]]
     : "list",
+  expect: {
+    timeout: 15000,
+  },
 };
 
 export default config;
