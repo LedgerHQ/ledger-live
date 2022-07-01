@@ -81,16 +81,6 @@ const Item = ({
 
   const currentRoute = useCurrentRouteName();
 
-  const onClick = useCallback(
-    (value: string) => {
-      track("button_clicked", {
-        button: value,
-        screen: currentRoute,
-      });
-    },
-    [currentRoute],
-  );
-
   const pressExplore = useCallback(() => {
     exploreLedger();
     onClick("Explore without a device");

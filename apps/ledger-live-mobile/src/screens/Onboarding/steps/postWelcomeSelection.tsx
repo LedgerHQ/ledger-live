@@ -9,7 +9,6 @@ import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
-import { useTheme } from "styled-components/native";
 import {
   usePreviousRouteName,
   useCurrentRouteName,
@@ -62,7 +61,7 @@ const PostWelcomeDiscoverCard = ({
         mx: 0,
         borderWidth: 1,
         borderColor: "transparent",
-        ...(selectedOption.title === title && {
+        ...(selectedOption?.title === title && {
           borderColor: colors.primary.c80,
           backgroundColor: colors.primary.c10,
         }),
