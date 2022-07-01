@@ -32,7 +32,9 @@ jobs:
     if: ${{ needs.is-org-member.outputs.is-org-member }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
       INSTRUMENT_BUILD: true
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     strategy:
       fail-fast: false
       matrix:
@@ -84,7 +86,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
-        run: npx playwright install-deps
+        run: npx playwright install --with-deps chromium
       - name: Build dependencies
         env:
           GOGC: 75

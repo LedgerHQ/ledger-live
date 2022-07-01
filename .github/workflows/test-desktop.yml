@@ -66,6 +66,7 @@ jobs:
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: ${{ matrix.os }}
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     strategy:
@@ -119,7 +120,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
-        run: npx @playwright/test install-deps
+        run: npx playwright install --with-deps chromium
       - name: Build dependencies
         env:
           GOGC: 75
