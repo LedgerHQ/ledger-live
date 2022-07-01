@@ -33,7 +33,7 @@ import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
 import KeyboardView from "../../components/KeyboardView";
-import { Loading, NotAvailable, TxForm } from "./Form";
+import { Loading, NotAvailable, TxForm, Summary } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
 import { SwapFormProps } from "./types";
 
@@ -219,9 +219,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     ) {
       return;
     }
-    async function handleCheckQuote() {
-      if (!provider || !exchangeRate?.rateId || !kyc) return;
 
+    async function handleCheckQuote() {
       const status = await checkQuote({
         provider,
         quoteId: exchangeRate.rateId,
@@ -365,6 +364,13 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           accounts={accounts}
           currencies={currencies}
           exchangeRate={exchangeRate}
+        />
+
+        <Summary
+          provider={provider}
+          swapTx={swapTx}
+          exchangeRate={exchangeRate}
+          kyc={kyc}
         />
 
         <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>

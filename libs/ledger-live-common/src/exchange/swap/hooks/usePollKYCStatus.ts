@@ -4,15 +4,18 @@ import { getKYCStatus } from "..";
 
 // Poll the server to update the KYC status of a given provider.
 export const KYC_STATUS_POLLING_INTERVAL = 10000;
+
 export type KYCItem = {
   id: string;
   status: string;
 };
+
 export type UsePollKYCStatusProps = {
   provider?: string;
   kyc?: KYCItem;
   onChange: (item: KYCItem) => void;
 };
+
 export const usePollKYCStatus = (
   { provider, kyc, onChange }: UsePollKYCStatusProps,
   dependencies: React.DependencyList = []

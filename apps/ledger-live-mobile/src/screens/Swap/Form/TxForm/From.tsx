@@ -78,7 +78,12 @@ export function From({
   }
 
   return (
-    <Flex>
+    <Flex
+      borderBottomWidth={1}
+      borderColor="neutral.c70"
+      paddingBottom={4}
+      marginBottom={4}
+    >
       <Text>{t("transfer.swap2.form.from")}</Text>
       <Flex flexDirection="row" justifyContent="space-between">
         <Selector

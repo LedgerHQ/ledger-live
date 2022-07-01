@@ -26,13 +26,13 @@ export function CurrencyValue({ currency, amount }: Props) {
   return (
     <Flex alignItems="flex-end">
       <Flex paddingBottom={4}>
-        <Text variant="tiny">
+        <Text variant="tiny" color="neutral.c70">
           <CurrencyUnitValue unit={currency.units[0]} value={amount} />
         </Text>
       </Flex>
 
       <Flex>
-        <Text variant="tiny">
+        <Text variant="tiny" color="neutral.c70">
           <CounterValue currency={currency} value={amount} />
         </Text>
       </Flex>

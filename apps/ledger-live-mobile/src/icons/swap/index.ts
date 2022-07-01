@@ -1,10 +1,11 @@
+import React from "react";
 import { getFTXLogo } from "./FTX";
 import { Changelly } from "./Changelly";
 import { Wyre } from "./Wyre";
 
 export { Paraswap } from "./Paraswap";
 
-export const providerIcons = {
+export const providerIcons: Record<string, React.FC<{ size: number }>> = {
   changelly: Changelly,
   ftx: getFTXLogo(),
   ftxus: getFTXLogo(true),
