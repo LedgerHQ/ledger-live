@@ -128,7 +128,9 @@ const getDelegations = async (
     url: `${defaultEndpoint}/cosmos/staking/v1beta1/delegations/${address}`,
   });
 
-  data1.delegation_responses = data1.delegation_responses.filter((d) => d.balance.amount !== "0");
+  data1.delegation_responses = data1.delegation_responses.filter(
+    (d) => d.balance.amount !== "0"
+  );
 
   let status = "unbonded";
   const statusMap = {
