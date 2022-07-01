@@ -3,20 +3,23 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Route } from "react-router-dom";
 import styled from "styled-components";
-import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import SwapForm from "./Form";
 import SwapHistory from "./History";
 import SwapNavbar from "./Navbar";
+import Box from "~/renderer/components/Box";
 
 const Body = styled(Box)`
   flex: 1;
+  flex-direction: column;
 `;
 
 const Main = styled.main`
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 1;
+  flex-direction: column;
 
   background-color: ${p => p.theme.colors.palette.background.paper};
 
