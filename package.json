@@ -85,6 +85,7 @@
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.4.5",
     "@changesets/cli": "^2.23.0",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
