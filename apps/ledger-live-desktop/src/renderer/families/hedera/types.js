@@ -1,10 +1,6 @@
 // @flow
 
-import type {
-  Account,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/types";
 
 export type SendAmountProps = {
   account: Account,
