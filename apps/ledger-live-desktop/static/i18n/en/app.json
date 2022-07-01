@@ -4387,6 +4387,12 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    },
+    "send": {
+      "memo": {
+        "label": "Memo (optional)",
+        "characterCount": "{{memoLength}} / {{memoMaxLength}}"
+      }
     }
   }
 }
