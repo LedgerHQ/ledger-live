@@ -181,7 +181,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    navigation.navigate(ScreenName.OnboardingWelcome);
+    // Replace to avoid going back to this screen without re-rendering
+    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
   }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
@@ -210,7 +211,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       clearTimeout(timer);
       setTimer(null);
     }
-  }, [allowedError, timer]);
+  }, [allowedError, handleTimerRunsOut, timer]);
 
   useEffect(() => {
     if (isDesyncDrawerOpen) {
@@ -231,7 +232,11 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           isOpen={isHelpDrawerOpen}
           onClose={() => setHelpDrawerOpen(false)}
         />
-        <DesyncDrawer isOpen={isDesyncDrawerOpen} onClose={handleDesyncClose} />
+        <DesyncDrawer
+          isOpen={isDesyncDrawerOpen}
+          onClose={handleDesyncClose}
+          navigation={navigation}
+        />
         <ResyncOverlay isOpen={!!timer && !stopPolling} />
         <ScrollContainer>
           <Flex
