@@ -48,7 +48,6 @@ function getOperationType(
 const convertTransactionToOperation = (
   accountId: string,
   type: OperationType,
-  // eventContent: any, //todo fix this type
   value: BigNumber,
   transaction: OsmosisAccountTransaction,
   senders: string[] = [],
@@ -200,7 +199,6 @@ export class OsmosisAPI extends CosmosAPI {
             break;
           }
 
-          // TODO, refactor this terrible code duplication
           case OsmosisTransactionTypeEnum.Delegate: {
             if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
               break;
@@ -234,9 +232,17 @@ export class OsmosisAPI extends CosmosAPI {
                 extra
               )
             );
+            // Handle auto claimed rewards that may occur upon delegation
+            const rewardOperation = await this.handleRewardOperation(
+              event,
+              accountId,
+              accountTransactions[i],
+              extra
+            );
+            if (rewardOperation != null) operations.push(rewardOperation);
             break;
           }
-          // TODO, refactor this terrible code duplication
+
           case OsmosisTransactionTypeEnum.Redelegate: {
             if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
               break;
@@ -271,26 +277,14 @@ export class OsmosisAPI extends CosmosAPI {
                 extra
               )
             );
-            // Handle rewards that get withdrawn automatically when a redelegation happens
-            let amount = new BigNumber(0);
-            if (event.transfers != null) {
-              if (event.transfers.reward) {
-                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-              }
-            }
-            if (amount.gt(0)) {
-              operations.push(
-                convertTransactionToOperation(
-                  accountId,
-                  "REWARD",
-                  amount,
-                  accountTransactions[i],
-                  [],
-                  [],
-                  extra
-                )
-              );
-            }
+            // Handle auto claimed rewards that may occur upon redelegation
+            const rewardOperation = await this.handleRewardOperation(
+              event,
+              accountId,
+              accountTransactions[i],
+              extra
+            );
+            if (rewardOperation != null) operations.push(rewardOperation);
             break;
           }
           case OsmosisTransactionTypeEnum.Undelegate: {
@@ -327,6 +321,14 @@ export class OsmosisAPI extends CosmosAPI {
                 extra
               )
             );
+            // Handle auto claimed rewards that may occur upon undelegation
+            const rewardOperation = await this.handleRewardOperation(
+              event,
+              accountId,
+              accountTransactions[i],
+              extra
+            );
+            if (rewardOperation != null) operations.push(rewardOperation);
             break;
           }
           case OsmosisTransactionTypeEnum.Reward: {
@@ -378,33 +380,40 @@ export class OsmosisAPI extends CosmosAPI {
     return operations;
   };
 
+  // Sometimes the action of delegating, undelegating redelegating auto claims rewards, so we check if that's the case
+  // and add a REWARD operation to account for that
+  handleRewardOperation = async (
+    event: OsmosisStakingEventContent,
+    accountId: string,
+    transaction: OsmosisAccountTransaction,
+    extra: Record<string, any>
+  ): Promise<any> => {
+    let amount = new BigNumber(0);
+    let rewardOperation: Operation | undefined;
+    if (event.transfers != null) {
+      if (event.transfers.reward) {
+        amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+      }
+    }
+    if (amount.gt(0)) {
+      rewardOperation = convertTransactionToOperation(
+        accountId,
+        "REWARD",
+        amount,
+        transaction,
+        [],
+        [],
+        extra
+      );
+    }
+    return rewardOperation;
+  };
+
   queryMintParams = async (): Promise<OsmosisMintParams> => {
     const { data } = await network({
       method: "GET",
       url: `${this._defaultEndpoint}/osmosis/mint/v1beta1/params`,
     });
-
-    // const {
-    //   mint_denom,
-    //   genesis_epoch_provisions,
-    //   epoch_identifier,
-    //   reduction_period_in_epochs,
-    //   reduction_factor,
-    //   distribution_proportions,
-    //   weighted_developer_rewards_receivers,
-    // } = data?.params;
-
-    // return {
-    //   mint_denom,
-    //   genesis_epoch_provisions,
-    //   epoch_identifier,
-    //   reduction_period_in_epochs,
-    //   reduction_factor,
-    //   distribution_proportions: {
-    //     ...distribution_proportions,
-    //   },
-    //   weighted_developer_rewards_receivers,
-    // };
     return data?.params;
   };
 
