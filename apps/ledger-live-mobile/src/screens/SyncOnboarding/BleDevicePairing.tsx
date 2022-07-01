@@ -29,7 +29,8 @@ export const BleDevicePairing = ({ navigation, route }: Props) => {
   useEffect(() => {
     if (isPaired) {
       setTimeout(() => {
-        navigation.navigate(ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion", { device: deviceToPair });
+        // Replace to avoid going back to this screen without re-rendering 
+        navigation.replace(ScreenName.SyncOnboardingCompanion as "SyncOnboardingCompanion", { device: deviceToPair });
       }, TIMEOUT_AFTER_PAIRED_MS);
     }
   }, [isPaired, deviceToPair, navigation])
