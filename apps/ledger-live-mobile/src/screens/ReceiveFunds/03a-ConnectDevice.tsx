@@ -128,8 +128,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
         <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
-          onWithoutDevice={onSkipDevice}
-          withoutDevice
         />
       </NavigationScrollView>
       <DeviceActionModal
