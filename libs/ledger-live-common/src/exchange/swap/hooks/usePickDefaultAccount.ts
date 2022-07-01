@@ -21,7 +21,7 @@ export const usePickDefaultAccount = (
       )
       .flat(1)
       .filter(Boolean);
-  }, [accounts.length, allCurrencies]);
+  }, [accounts, allCurrencies]);
 
   useEffect(() => {
     if (!fromAccount)

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { BigNumber } from "bignumber.js";
 import {
   BoxedIcon,
   Flex,
@@ -8,7 +9,10 @@ import {
   InfiniteLoader,
   Text,
 } from "@ledgerhq/native-ui";
-import { getAccountName } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountName,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import {
   SwapSelectorStateType,
   Pair,
@@ -18,12 +22,14 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { usePickDefaultCurrency } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import { Selector } from "./Selector";
+import { CurrencyValue } from "./CurrencyValue";
 
 interface Props {
   to: SwapSelectorStateType;
   setCurrency: (currency: CryptoCurrency | TokenCurrency) => void;
   provider?: string;
   currencies: (CryptoCurrency | TokenCurrency)[];
+  amount?: BigNumber;
 }
 
 export function To({
@@ -31,6 +37,7 @@ export function To({
   setCurrency,
   provider,
   currencies,
+  amount,
 }: Props) {
   const { t } = useTranslation();
   // TODO
@@ -53,7 +60,7 @@ export function To({
   const CIcon = currency ? (
     <CurrencyIcon size={32} currency={currency} />
   ) : (
-    <BoxedIcon Icon={<InfiniteLoader size="32" />} borderColor="transparent" />
+    <BoxedIcon Icon={<InfiniteLoader size={32} />} borderColor="transparent" />
   );
 
   return (
@@ -68,14 +75,9 @@ export function To({
           disabled={!currency}
         />
 
-        {/* <Flex flex={1} justifyContent="center">
-          <AmountInput
-            value={amount}
-            editable={!isMaxEnabled}
-            unit={fromUnit}
-            onChange={setAmount}
-          />
-  </Flex> */}
+        <Flex flex={1} justifyContent="center">
+          <CurrencyValue currency={currency} amount={amount} />
+        </Flex>
       </Flex>
     </Flex>
   );

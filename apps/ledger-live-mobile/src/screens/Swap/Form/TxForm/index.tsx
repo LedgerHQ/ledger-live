@@ -8,6 +8,7 @@ import {
 import {
   SwapTransactionType,
   Pair,
+  ExchangeRate,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { From } from "./From";
 import { To } from "./To";
@@ -17,9 +18,16 @@ interface Props {
   provider?: string;
   accounts: Account[];
   currencies: (CryptoCurrency | TokenCurrency)[];
+  exchangeRate?: ExchangeRate;
 }
 
-export function TxForm({ swapTx, currencies, provider, accounts }: Props) {
+export function TxForm({
+  swapTx,
+  currencies,
+  provider,
+  accounts,
+  exchangeRate,
+}: Props) {
   return (
     <Flex>
       <From
@@ -32,6 +40,7 @@ export function TxForm({ swapTx, currencies, provider, accounts }: Props) {
       />
       <To
         to={swapTx.swap.to}
+        amount={exchangeRate?.toAmount}
         setCurrency={swapTx.setToCurrency}
         provider={provider}
         currencies={currencies}

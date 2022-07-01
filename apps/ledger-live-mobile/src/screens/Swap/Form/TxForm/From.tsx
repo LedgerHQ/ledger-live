@@ -71,7 +71,7 @@ export function From({
     });
   }, [navigation, accounts, provider]);
 
-  const fromUnit = account && getAccountUnit(account);
+  const unit = useMemo(() => account && getAccountUnit(account), [account]);
 
   if (!currency) {
     return null;
@@ -98,7 +98,7 @@ export function From({
           <AmountInput
             value={amount}
             editable={!isMaxEnabled}
-            unit={fromUnit}
+            unit={unit}
             onChange={setAmount}
           />
         </Flex>

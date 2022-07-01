@@ -364,6 +364,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           provider={provider}
           accounts={accounts}
           currencies={currencies}
+          exchangeRate={exchangeRate}
         />
 
         <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
