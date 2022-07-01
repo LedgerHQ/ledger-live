@@ -99,10 +99,12 @@ jobs:
       - name: push changes (push event)
         if: ${{ github.event_name == 'push' }}
         run: |
+          git pull --rebase
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
+          git pull --rebase
           git push origin ${{ github.event.inputs.ref }} --follow-tags
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
