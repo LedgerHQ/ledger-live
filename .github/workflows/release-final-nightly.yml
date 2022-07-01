@@ -51,6 +51,8 @@ jobs:
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
       - name: commit
         run: |
