@@ -2,21 +2,22 @@ import React, { useCallback } from "react";
 import { BottomDrawer, Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
+import { StackScreenProps } from "@react-navigation/stack";
+import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import { ScreenName } from "../../const";
 
 export type Props = {
   isOpen: boolean;
   onClose?: () => void;
-};
+} & Pick<
+  StackScreenProps<SyncOnboardingStackParamList, "SyncOnboardingCompanion">,
+  "navigation"
+>;
 
-const DesyncDrawer = ({ isOpen, onClose }: Props) => {
-  const navigation = useNavigation();
-
+const DesyncDrawer = ({ isOpen, onClose, navigation }: Props) => {
   const handleRetryPress = useCallback(() => {
-    navigation.replace(ScreenName.PairDevices, {
-      onlySelectDeviceWithoutFullAppPairing: true,
-      onDoneNavigateTo: ScreenName.SyncOnboardingCompanion,
-    });
+    // Replace to avoid going back to this screen without re-rendering
+    navigation.replace(ScreenName.BleDevicesScanning as "BleDevicesScanning");
   }, [navigation]);
 
   const handleSupportPress = useCallback(() => {
