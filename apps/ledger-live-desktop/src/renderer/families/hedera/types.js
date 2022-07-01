@@ -4,7 +4,6 @@ import type {
   Account,
   Transaction,
   TransactionStatus,
-  FeeStrategy,
 } from "@ledgerhq/live-common/lib/types";
 
 export type SendAmountProps = {
