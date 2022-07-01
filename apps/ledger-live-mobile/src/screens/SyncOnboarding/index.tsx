@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   ScrollContainer,
-  ScrollContainerHeader,
   VerticalTimeline,
   Text,
   NumberedList,
@@ -22,16 +21,14 @@ import {
   InfoMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
-import { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { useTranslation } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/SyncOnboardingNavigator";
 import Question from "../../icons/Question";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
-import { useTranslation } from "react-i18next";
 import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
 import SoftwareChecksStep from "./SoftwareChecksStep";
@@ -237,17 +234,15 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         <DesyncDrawer isOpen={isDesyncDrawerOpen} onClose={handleDesyncClose} />
         <ResyncOverlay isOpen={!!timer && !stopPolling} />
         <ScrollContainer>
-          <ScrollContainerHeader>
-            <Flex
-              flexDirection="row"
-              justifyContent="space-between"
-              pt={7}
-              px={7}
-            >
-              <LanguageSelect />
-              <Button type="default" Icon={CloseMedium} onPress={handleClose} />
-            </Flex>
-          </ScrollContainerHeader>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            pt={7}
+            px={7}
+          >
+            <LanguageSelect />
+            <Button type="default" Icon={CloseMedium} onPress={handleClose} />
+          </Flex>
           <Flex px={7} pt={7}>
             <Flex flexDirection="row" alignItems="center">
               <Text variant="h4" fontWeight="semiBold">
