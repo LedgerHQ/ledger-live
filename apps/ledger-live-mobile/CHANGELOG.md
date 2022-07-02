@@ -1,32 +1,23 @@
 # live-mobile
 
-## 3.3.1-nightly.3
+## 3.3.1
 
 ### Patch Changes
 
-- 026d923ee: Update on Ledger Card CTA's (removed some, created one in the portfolio header)
+- c3079243d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
+- bda266fc4: Fix an edge case where the readonly example portfolio would show up instead of the real one
 
-## 3.3.1-nightly.2
-
-### Patch Changes
-
-- d9689451e: Fix bug when navigating to the Manager screen without params
-
-## 3.3.1-nightly.1
+## 3.3.1-hotfix.1
 
 ### Patch Changes
 
-- Updated dependencies [508e4c23b]
-  - @ledgerhq/live-common@24.0.0-nightly.1
+- bb592ab1d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
 
-## 3.3.1-nightly.0
+## 3.3.1-hotfix.0
 
 ### Patch Changes
 
-- Updated dependencies [10440ec3c]
-- Updated dependencies [b1e396dd8]
-  - @ledgerhq/live-common@24.0.0-nightly.0
-  - @ledgerhq/native-ui@0.8.1-nightly.0
+- b8dad7183: Fix an edge case where the readonly example portfolio would show up instead of the real one
 
 ## 3.3.0
 
