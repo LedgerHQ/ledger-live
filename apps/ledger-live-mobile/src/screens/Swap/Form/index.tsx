@@ -27,18 +27,19 @@ import {
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { shallowAccountsSelector } from "../../reducers/accounts";
-import { swapKYCSelector } from "../../reducers/settings";
-import { setSwapKYCStatus } from "../../actions/settings";
-import { TrackScreen, track } from "../../analytics";
-import { Loading, NotAvailable, TxForm, Summary, Requirement } from "./Form";
-import { trackSwapError, SWAP_VERSION } from "./utils";
-import { SwapFormProps } from "./types";
+import { shallowAccountsSelector } from "../../../reducers/accounts";
+import { swapKYCSelector } from "../../../reducers/settings";
+import { setSwapKYCStatus } from "../../../actions/settings";
+import { TrackScreen, track } from "../../../analytics";
+import { Loading } from "./Loading";
+import { NotAvailable } from "./NotAvailable";
+import { TxForm } from "./TxForm";
+import { Summary } from "./Summary";
+import { Requirement } from "./Requirement";
+import { trackSwapError, SWAP_VERSION } from "../utils";
+import { SwapFormProps } from "../types";
 
-export * from "./types";
-export * from "./SelectAccount";
-export * from "./SelectCurrency";
-export * from "./Widget";
+export * from "./screens";
 
 export const ratesExpirationThreshold = 60000;
 
