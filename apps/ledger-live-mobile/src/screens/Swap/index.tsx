@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { KeyboardAvoidingView, ScrollView } from "react-native";
 import Config from "react-native-config";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import {
@@ -10,6 +11,7 @@ import {
   KYCStatus,
   ValidCheckQuoteErrorCodes,
   OnNoRatesCallback,
+  ActionRequired,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
   usePollKYCStatus,
@@ -25,33 +27,22 @@ import {
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import {
-  accountsSelector,
-  shallowAccountsSelector,
-} from "../../reducers/accounts";
+import { shallowAccountsSelector } from "../../reducers/accounts";
 import { swapKYCSelector } from "../../reducers/settings";
 import { setSwapKYCStatus } from "../../actions/settings";
 import { TrackScreen, track } from "../../analytics";
-import KeyboardView from "../../components/KeyboardView";
-import { Loading, NotAvailable, TxForm, Summary, LoginButton } from "./Form";
+import { Loading, NotAvailable, TxForm, Summary, Requirement } from "./Form";
 import { trackSwapError, SWAP_VERSION } from "./utils";
 import { SwapFormProps } from "./types";
-import { ScreenName } from "../../const";
 
 export * from "./types";
 export * from "./SelectAccount";
 export * from "./SelectCurrency";
+export * from "./Widget";
 
 export const ratesExpirationThreshold = 60000;
 
-enum ActionRequired {
-  Login,
-  KYC,
-  MFA,
-  None,
-}
-
-export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
+export function SwapForm({ route: { params } }: SwapFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(shallowAccountsSelector);
@@ -102,11 +93,7 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
     };
   }, [exchangeRate, swapKYC]);
 
-  // FIXME: should use enums for Flow and Banner values
-  const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
-    ActionRequired.None,
-  );
-  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
+  const [actionRequired, setActionRequired] = useState<ActionRequired>(
     ActionRequired.None,
   );
   const [errorCode, setErrorCode] = useState<
@@ -126,8 +113,7 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
 
   // On provider change, reset banner and flow
   useEffect(() => {
-    setCurrentFlow(ActionRequired.None);
-    setCurrentBanner(ActionRequired.None);
+    setActionRequired(ActionRequired.None);
     setErrorCode(undefined);
   }, [provider]);
 
@@ -135,17 +121,17 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
       // Don't show any flow banner on error to avoid double banner display
-      setCurrentBanner(ActionRequired.None);
+      setActionRequired(ActionRequired.None);
       return;
     }
 
     // Don't display login nor kyc banner if user needs to complete MFA
-    if (currentBanner === ActionRequired.MFA) {
+    if (actionRequired === ActionRequired.MFA) {
       return;
     }
 
     if (shouldShowLoginBanner({ provider, token: kyc?.id })) {
-      setCurrentBanner(ActionRequired.Login);
+      setActionRequired(ActionRequired.Login);
       return;
     }
 
@@ -156,12 +142,12 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
     // we display the KYC banner component if partner requiers KYC and is not yet approved
     // we don't display it if user needs to login first
     if (
-      currentBanner !== ActionRequired.Login &&
+      actionRequired !== ActionRequired.Login &&
       shouldShowKYCBanner({ provider, validKycStatus: kyc.status })
     ) {
-      setCurrentBanner(ActionRequired.KYC);
+      setActionRequired(ActionRequired.KYC);
     }
-  }, [error, provider, kyc, currentBanner]);
+  }, [error, provider, kyc, actionRequired]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
@@ -208,17 +194,17 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
   useEffect(() => {
-    if (kyc?.id && currentFlow === ActionRequired.Login) {
-      setCurrentFlow(ActionRequired.None);
+    if (kyc?.id && actionRequired === ActionRequired.Login) {
+      setActionRequired(ActionRequired.None);
     }
-  }, [kyc?.id, currentFlow]);
+  }, [kyc?.id, actionRequired]);
 
   useEffect(() => {
     if (
       !kyc?.id ||
       !exchangeRate?.rateId ||
-      currentFlow === ActionRequired.KYC ||
-      currentFlow === ActionRequired.MFA
+      actionRequired === ActionRequired.KYC ||
+      actionRequired === ActionRequired.MFA
     ) {
       return;
     }
@@ -232,11 +218,11 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
 
       // User needs to complete MFA on partner own UI / dedicated widget
       if (status.codeName === "MFA_REQUIRED") {
-        setCurrentBanner(ActionRequired.MFA);
+        setActionRequired(ActionRequired.MFA);
         return;
       }
       // No need to show MFA banner for other cases
-      setCurrentBanner(ActionRequired.None);
+      setActionRequired(ActionRequired.None);
 
       if (typeof provider === "undefined") {
         return;
@@ -250,7 +236,7 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
         }
 
         // If status is ok, close login, kyc and mfa widgets even if open
-        setCurrentFlow(ActionRequired.None);
+        setActionRequired(ActionRequired.None);
 
         dispatch(
           setSwapKYCStatus({
@@ -296,7 +282,7 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
     }
 
     handleCheckQuote();
-  }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
+  }, [kyc, exchangeRate, dispatch, provider, actionRequired]);
 
   const isSwapReady =
     !errorCode &&
@@ -305,7 +291,7 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
     swapTx.transaction &&
     !error &&
     !swapError &&
-    !currentBanner &&
+    actionRequired === ActionRequired.None &&
     exchangeRate &&
     swapTx.swap.to.account;
 
@@ -357,17 +343,11 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
   /*    break; */
   /* } */
 
-  useEffect(() => {
-    if (currentFlow === ActionRequired.Login) {
-      navigation.navigate("SwapLogin");
-    }
-  }, [navigation, currentFlow]);
-
   if (providers) {
     return (
-      <KeyboardView>
+      <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
-          <Flex flex={10}>
+          <Flex flex={1}>
             <TrackScreen category="Swap Form" providerName={provider} />
             <TxForm
               swapTx={swapTx}
@@ -385,22 +365,20 @@ export function SwapForm({ navigation, route: { params } }: SwapFormProps) {
                 kyc={kyc}
               />
 
-              {currentBanner === ActionRequired.Login && (
-                <LoginButton
-                  provider={provider}
-                  onPress={() => setCurrentFlow(ActionRequired.Login)}
-                />
-              )}
+              <Requirement
+                actionRequired={actionRequired}
+                provider={provider}
+              />
             </ScrollView>
           </Flex>
 
-          <Flex flex={1} paddingY={4}>
+          <Flex paddingY={4}>
             <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
               {t("common.exchange")}
             </Button>
           </Flex>
         </Flex>
-      </KeyboardView>
+      </KeyboardAwareScrollView>
     );
   }
 

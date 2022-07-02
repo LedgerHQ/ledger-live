@@ -24,7 +24,6 @@ export function SelectAccount({
     params: { accounts, target, provider, account, currencies },
   },
 }: SelectAccountProps) {
-  console.log(accounts.length);
   const { t } = useTranslation();
   const { colors } = useTheme();
 

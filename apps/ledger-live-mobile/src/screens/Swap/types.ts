@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/live-common/lib/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
+import { FTXProviders } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 
 export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,
@@ -22,8 +23,13 @@ export type SelectCurrencyProps = StackScreenProps<
   "SwapSelectCurrency"
 >;
 
+export type LoginProps = StackScreenProps<SwapNavParamList, "Login">;
+
 export type SwapNavParamList = {
   Swap: undefined;
+  Login: {
+    provider: FTXProviders;
+  };
   SwapSelectAccount: {
     accounts: Account[];
     target: "from" | "to";

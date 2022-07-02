@@ -6,6 +6,7 @@ import {
   SwapNavParamList,
   SelectAccount,
   SelectCurrency,
+  Login,
 } from "../../screens/Swap";
 import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -59,6 +60,14 @@ export default function SwapNavigator() {
         component={SelectCurrency}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
+          headerRight: undefined,
+        }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
           headerRight: undefined,
         }}
       />
