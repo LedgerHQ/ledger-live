@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 24.0.0-nightly.2
+
+### Minor Changes
+
+- [#346](https://github.com/LedgerHQ/ledger-live/pull/346) [`60fb9efdc`](https://github.com/LedgerHQ/ledger-live/commit/60fb9efdcc9dbf72f651fd7b388d175a12bf859b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Synchronized onboarding logic with:
+
+  - Function to extract the device onboarding state from byte flags
+  - Polling mechanism to retrieve the device onboarding state
+  - Polling mechanism available as a react hook for LLM and LLD
+
+### Patch Changes
+
+- Updated dependencies [[`89387dee6`](https://github.com/LedgerHQ/ledger-live/commit/89387dee6dfc2a63fa29665ab5524f3950d3ce0e)]:
+  - @ledgerhq/hw-app-btc@7.0.0-nightly.1
+
 ## 24.0.0-nightly.1
 
 ### Minor Changes
