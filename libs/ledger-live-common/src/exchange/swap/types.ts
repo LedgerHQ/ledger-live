@@ -327,8 +327,8 @@ export interface CustomMinOrMaxError extends Error {
 export type SetIsSendMaxLoading = (loading: boolean) => void;
 
 export enum ActionRequired {
-  Login,
-  KYC,
-  MFA,
-  None,
+  Login = "Login",
+  KYC = "KYC",
+  MFA = "MFA",
+  None = "None",
 }

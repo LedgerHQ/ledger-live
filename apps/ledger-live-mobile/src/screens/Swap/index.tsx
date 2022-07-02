@@ -93,9 +93,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     };
   }, [exchangeRate, swapKYC]);
 
-  const [actionRequired, setActionRequired] = useState<ActionRequired>(
-    ActionRequired.None,
-  );
+  const [required, setRequired] = useState<ActionRequired>(ActionRequired.None);
   const [errorCode, setErrorCode] = useState<
     ValidCheckQuoteErrorCodes | undefined
   >();
@@ -113,7 +111,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // On provider change, reset banner and flow
   useEffect(() => {
-    setActionRequired(ActionRequired.None);
+    setRequired(ActionRequired.None);
     setErrorCode(undefined);
   }, [provider]);
 
@@ -121,17 +119,17 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
       // Don't show any flow banner on error to avoid double banner display
-      setActionRequired(ActionRequired.None);
+      setRequired(ActionRequired.None);
       return;
     }
 
     // Don't display login nor kyc banner if user needs to complete MFA
-    if (actionRequired === ActionRequired.MFA) {
+    if (required === ActionRequired.MFA) {
       return;
     }
 
     if (shouldShowLoginBanner({ provider, token: kyc?.id })) {
-      setActionRequired(ActionRequired.Login);
+      setRequired(ActionRequired.Login);
       return;
     }
 
@@ -142,12 +140,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // we display the KYC banner component if partner requiers KYC and is not yet approved
     // we don't display it if user needs to login first
     if (
-      actionRequired !== ActionRequired.Login &&
+      required !== ActionRequired.Login &&
       shouldShowKYCBanner({ provider, validKycStatus: kyc.status })
     ) {
-      setActionRequired(ActionRequired.KYC);
+      setRequired(ActionRequired.KYC);
     }
-  }, [error, provider, kyc, actionRequired]);
+  }, [error, provider, kyc, required]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
@@ -194,17 +192,17 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
   useEffect(() => {
-    if (kyc?.id && actionRequired === ActionRequired.Login) {
-      setActionRequired(ActionRequired.None);
+    if (kyc?.id && required === ActionRequired.Login) {
+      setRequired(ActionRequired.None);
     }
-  }, [kyc?.id, actionRequired]);
+  }, [kyc?.id, required]);
 
   useEffect(() => {
     if (
       !kyc?.id ||
       !exchangeRate?.rateId ||
-      actionRequired === ActionRequired.KYC ||
-      actionRequired === ActionRequired.MFA
+      required === ActionRequired.KYC ||
+      required === ActionRequired.MFA
     ) {
       return;
     }
@@ -218,11 +216,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
       // User needs to complete MFA on partner own UI / dedicated widget
       if (status.codeName === "MFA_REQUIRED") {
-        setActionRequired(ActionRequired.MFA);
+        setRequired(ActionRequired.MFA);
         return;
       }
       // No need to show MFA banner for other cases
-      setActionRequired(ActionRequired.None);
+      setRequired(ActionRequired.None);
 
       if (typeof provider === "undefined") {
         return;
@@ -236,7 +234,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         }
 
         // If status is ok, close login, kyc and mfa widgets even if open
-        setActionRequired(ActionRequired.None);
+        setRequired(ActionRequired.None);
 
         dispatch(
           setSwapKYCStatus({
@@ -282,7 +280,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     handleCheckQuote();
-  }, [kyc, exchangeRate, dispatch, provider, actionRequired]);
+  }, [kyc, exchangeRate, dispatch, provider, required]);
 
   const isSwapReady =
     !errorCode &&
@@ -291,7 +289,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     swapTx.transaction &&
     !error &&
     !swapError &&
-    actionRequired === ActionRequired.None &&
+    required === ActionRequired.None &&
     exchangeRate &&
     swapTx.swap.to.account;
 
@@ -317,32 +315,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   //     swapTx.setConfirmed(false);
   //   }, [swapTx]);
 
-  /* switch (currentFlow) { */
-  /*  case "LOGIN": */
-  /*    return <Login provider={provider} onClose={() => setCurrentFlow(null)} />; */
-
-  /*  case "KYC": */
-  /*    return ( */
-  /*      <KYC */
-  /*        provider={provider} */
-  /*        onClose={() => { */
-  /*          setCurrentFlow(null); */
-  /*          /** */
-  /*           * Need to reset current banner in order to not display a KYC */
-  /*           * banner after completion of Wyre KYC */
-  /*           */
-  /*          setCurrentBanner(null); */
-  /*        }} */
-  /*      /> */
-  /*    ); */
-
-  /*  case "MFA": */
-  /*    return <MFA provider={provider} onClose={() => setCurrentFlow(null)} />; */
-
-  /*  default: */
-  /*    break; */
-  /* } */
-
   if (providers) {
     return (
       <KeyboardAwareScrollView>
@@ -365,10 +337,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
                 kyc={kyc}
               />
 
-              <Requirement
-                actionRequired={actionRequired}
-                provider={provider}
-              />
+              <Requirement required={required} provider={provider} />
             </ScrollView>
           </Flex>
 

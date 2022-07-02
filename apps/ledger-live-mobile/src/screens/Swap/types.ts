@@ -25,10 +25,15 @@ export type SelectCurrencyProps = StackScreenProps<
 
 export type LoginProps = StackScreenProps<SwapNavParamList, "Login">;
 
+export type KYCProps = StackScreenProps<SwapNavParamList, "KYC">;
+
 export type SwapNavParamList = {
   Swap: undefined;
   Login: {
     provider: FTXProviders;
+  };
+  KYC: {
+    provider: string;
   };
   SwapSelectAccount: {
     accounts: Account[];

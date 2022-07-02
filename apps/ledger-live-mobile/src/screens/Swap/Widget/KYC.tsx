@@ -4,24 +4,30 @@ import {
   getFTXURL,
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { WebView } from "react-native-webview";
-import { LoginProps } from "../types";
+import { KYCProps } from "../types";
 
-export function Login({
+export function KYC({
   route: {
     params: { provider },
   },
-}: LoginProps) {
+}: KYCProps) {
   switch (provider) {
     case "ftx":
     case "ftxus":
-      return <FTXLogin provider={provider} />;
+      return <FTXKYC provider={provider} />;
+    case "wyre":
+      return <WyreKYC />;
     default:
       return null;
   }
 }
 
-function FTXLogin({ provider }: { provider: FTXProviders }) {
-  const uri = useMemo(() => getFTXURL({ type: "login", provider }), [provider]);
+function FTXKYC({ provider }: { provider: FTXProviders }) {
+  const uri = useMemo(() => getFTXURL({ type: "kyc", provider }), [provider]);
 
   return <WebView source={{ uri }} />;
+}
+
+function WyreKYC() {
+  return null;
 }
