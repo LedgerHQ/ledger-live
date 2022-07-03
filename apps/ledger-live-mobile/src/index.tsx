@@ -18,6 +18,7 @@ import {
   Appearance,
   AppState,
   Platform,
+  LogBox,
 } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
 // Fixme until third parties address this themselves, still relevant?
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
+LogBox.ignoreAllLogs();
 
 type AppProps = {
   importDataString?: string;

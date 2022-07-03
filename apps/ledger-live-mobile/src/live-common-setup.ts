@@ -16,7 +16,8 @@ import { Platform } from "react-native";
 import axios from "axios";
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import BluetoothTransport from "./react-native-hw-transport-ble";
+import BleTransport from "./hw-transport-react-native-ble";
+
 import "./experimental";
 import logger from "./logger";
 
@@ -81,7 +82,8 @@ if (Config.VERBOSE) {
   });
 }
 
-if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
+if (Config.BLE_LOG_LEVEL) BleTransport.setLogLevel(Config.BLE_LOG_LEVEL);
+
 if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
 // Add support of HID (experimental until we stabilize it)
 registerTransportModule({
@@ -141,9 +143,10 @@ if (__DEV__ && Config.DEVICE_PROXY_URL) {
 registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
-  id: "ble",
-  open: id => BluetoothTransport.open(id),
-  disconnect: id => BluetoothTransport.disconnect(id),
+  id: "ble-bim",
+  open: id => BleTransport.open(id),
+  disconnect: id => BleTransport.disconnect(id),
+  canOpen: id => !id.includes("|"), // no prefix
 });
 
 if (process.env.NODE_ENV === "production") {

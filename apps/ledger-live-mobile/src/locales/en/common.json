@@ -106,7 +106,7 @@
     },
     "BluetoothRequired": {
       "title": "Sorry, Bluetooth is disabled",
-      "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
+      "description": "Please enable Bluetooth in your phone settings."
     },
     "FwUpdateBluetoothNotSupported": {
       "title": "Firmware updates are only supported for wired connections"

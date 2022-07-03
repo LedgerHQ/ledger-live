@@ -2,7 +2,7 @@
 // otherwise render an error
 import React, { Component } from "react";
 import { Observable } from "rxjs";
-import TransportBLE from "../../react-native-hw-transport-ble";
+import BleTransport from "../../hw-transport-react-native-ble";
 // eslint-disable-next-line import/no-unresolved
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
@@ -16,16 +16,13 @@ type State = {
 
 class RequiresBLE extends Component<Props, State> {
   state = {
-    type: "Unknown",
+    type: "PoweredOn",
   };
   sub: any;
 
   componentDidMount() {
-    this.sub = Observable.create(TransportBLE.observeState).subscribe({
-      next: ({ type }) =>
-        this.setState({
-          type,
-        }),
+    this.sub = Observable.create(BleTransport.observeState).subscribe({
+      next: ({ type }) => this.setState({ type }),
     });
   }
 
