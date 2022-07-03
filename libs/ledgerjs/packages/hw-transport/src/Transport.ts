@@ -55,6 +55,7 @@ export default class Transport {
   exchangeTimeout = 30000;
   unresponsiveTimeout = 15000;
   deviceModel: DeviceModel | null | undefined = null;
+  transportId = "not-specified";
 
   /**
    * Statically check if a transport is supported on the user's platform/browser.
