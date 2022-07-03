@@ -1,5 +1,5 @@
 import Config from "react-native-config";
-import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
+import BleTransport from "@ledgerhq/hw-transport-react-native-ble";
 import makeMock from "./makeMock";
 import createAPDUMock from "../logic/createAPDUMock";
 

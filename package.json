@@ -81,7 +81,6 @@
     "ljs:hw-transport-webusb": "pnpm --filter hw-transport-webusb",
     "ljs:logs": "pnpm --filter logs",
     "ljs:react-native-hid": "pnpm --filter react-native-hid",
-    "ljs:react-native-hw-transport-ble": "pnpm --filter react-native-hw-transport-ble",
     "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
     "ljs:types-devices": "pnpm --filter types-devices",
     "ljs:types-live": "pnpm --filter types-live",
