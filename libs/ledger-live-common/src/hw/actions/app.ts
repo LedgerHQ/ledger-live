@@ -590,6 +590,7 @@ export const createAction = (
         appRequest.currency && appRequest.currency.id,
       ]
     );
+
     useEffect(() => {
       if (state.opened) return;
       const impl = implementations[currentMode];
@@ -599,7 +600,7 @@ export const createAction = (
         params,
       })
         .pipe(
-          tap((e: Event) => log("actions-app-event", e.type, e)), // tap(e => console.log("connectApp event", e)),
+          // tap(e => console.log("connectApp event", e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()), // tap((s) => console.log("connectApp state", s)),
           // we debounce the UI state to not blink on the UI
@@ -624,6 +625,7 @@ export const createAction = (
         sub.unsubscribe();
       };
     }, [params, deviceSubject, state.opened, resetIndex, connectApp]);
+
     const onRetry = useCallback(() => {
       // After an error we can't guarantee dependencies are resolved
       dependenciesResolvedRef.current = false;
