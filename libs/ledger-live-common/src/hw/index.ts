@@ -31,6 +31,10 @@ export type TransportModule = {
     id: string,
     allow: boolean
   ) => Promise<void> | null | undefined;
+  // _without connecting to the device_ return whether the device is capable
+  // of handling a given deviceId for connection. This is used by BIM to know
+  // if a given device will be using that transport without modifying its ID
+  canOpen?: (id: string) => boolean | undefined;
   // optional observable that allows to discover a transport
   discovery?: Discovery;
 };
@@ -38,6 +42,10 @@ const modules: TransportModule[] = [];
 export const registerTransportModule = (module: TransportModule) => {
   modules.push(module);
 };
+export const resolveTransportModuleForDeviceId = (
+  deviceId: string
+): TransportModule | undefined =>
+  modules.find((m) => m.canOpen && m.canOpen(deviceId));
 export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true
 ): Discovery => {

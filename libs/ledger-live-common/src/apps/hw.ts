@@ -1,9 +1,27 @@
 import Transport from "@ledgerhq/hw-transport";
+import type { Observer } from "@ledgerhq/hw-transport";
 import { getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
-import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
+import {
+  Subject,
+  concat,
+  of,
+  EMPTY,
+  from,
+  Observable,
+  throwError,
+  defer,
+} from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
-import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
+import type {
+  Exec,
+  AppOp,
+  ListAppsEvent,
+  ListAppsResult,
+  RunnerEvent,
+} from "./types";
+import type { App, DeviceInfo } from "../types/manager";
+import { AppType } from "../types/manager";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
@@ -15,6 +33,7 @@ import {
   findCryptoCurrencyById,
 } from "../currencies";
 import ManagerAPI from "../api/Manager";
+import BIMAPI from "../api/BIM";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
 import { polyfillApp, polyfillApplication } from "./polyfill";
@@ -24,7 +43,7 @@ import {
   initState,
   predictOptimisticState,
 } from "../apps/logic";
-import { runAllWithProgress } from "../apps/runner";
+import { runAllWithProgress, getGlobalProgress } from "./runner";
 import type { ConnectAppEvent } from "../hw/connectApp";
 import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
 
@@ -36,6 +55,11 @@ export const execWithTransport =
   };
 
 const appsThatKeepChangingHashes = ["Fido U2F"];
+
+// TODO move this to types-devices when it's ready.
+interface BimCapableTransport extends Transport {
+  queue: (observer: Observer<any>, token: string, endpoint: string) => void;
+}
 
 export type StreamAppInstallEvent =
   | {
@@ -109,6 +133,28 @@ export const streamAppInstall = ({
             });
           }
 
+          // Transport instances now expose an optional transportId.
+          if (["BleTransport"].includes(transport.transportId)) {
+            const bimTransport = transport as BimCapableTransport;
+            const observable = new Subject<RunnerEvent>();
+            const queue = BIMAPI.buildQueueFromState(state);
+            return from(BIMAPI.getTokenFromQueue(queue)).pipe(
+              mergeMap((token) => {
+                bimTransport.queue(observable, token, getEnv("API_BIM"));
+                return concat(
+                  getGlobalProgress(observable, state).pipe(
+                    map((progress) => ({
+                      type: "stream-install",
+                      progress,
+                    }))
+                  ),
+                  defer(onSuccessObs || (() => EMPTY))
+                );
+              })
+            );
+          }
+
+          // JS Thread executor
           const exec = execWithTransport(transport);
           return concat(
             runAllWithProgress(state, exec).pipe(

@@ -40,6 +40,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
+  API_BIM: {
+    def: "https://bim-staging.api.ledger.com",
+    parser: stringParser,
+    desc: "Endpoint for long handling long running tasks",
+  },
   API_CELO_INDEXER: {
     def: "https://celo.coin.ledger.com/indexer/",
     parser: stringParser,

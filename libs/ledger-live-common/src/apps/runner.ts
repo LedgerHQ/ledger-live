@@ -1,4 +1,4 @@
-import { Observable, from, of, defer, concat } from "rxjs";
+import { Observable, from, of, defer, concat, Subject } from "rxjs";
 import {
   map,
   materialize,
@@ -75,24 +75,22 @@ export const runAppOp = (
   );
 };
 
-export const runAllWithProgress = (
+export const getGlobalProgress = (
+  observable: Observable<RunnerEvent> | Subject<RunnerEvent>,
   state: State,
-  exec: Exec,
   precision = 100
 ): Observable<number> => {
-  const total = state.uninstallQueue.length + state.installQueue.length;
+  // As we reduce the state, the total decreases and we near 1
+  const globalProgress = (s: State, localProgress = 0) => {
+    const installs = s.installQueue.length;
+    const uninstalls = s.uninstallQueue.length;
+    const total = installs + uninstalls;
 
-  function globalProgress(s, localProgress) {
-    let p =
-      1 -
-      (s.uninstallQueue.length + s.installQueue.length - localProgress) / total;
-    p = Math.round(p * precision) / precision;
-    return p;
-  }
+    const p = 1 - (uninstalls + installs - localProgress) / total;
+    return Math.round(p * precision) / precision;
+  };
 
-  return concat(
-    ...getActionPlan(state).map((appOp) => runAppOp(state, appOp, exec))
-  ).pipe(
+  return observable.pipe(
     map(
       (event) =>
         <Action>{
@@ -103,10 +101,24 @@ export const runAllWithProgress = (
     scan(reducer, state),
     mergeMap((s) => {
       const { currentProgressSubject } = s;
-      if (!currentProgressSubject) return of(globalProgress(s, 0));
+      if (!currentProgressSubject) return of(globalProgress(s));
       return currentProgressSubject.pipe(map((v) => globalProgress(s, v)));
     }),
     distinctUntilChanged()
+  );
+};
+
+export const runAllWithProgress = (
+  state: State,
+  exec: Exec,
+  precision = 100
+): Observable<number> => {
+  return getGlobalProgress(
+    concat(
+      ...getActionPlan(state).map((appOp) => runAppOp(state, appOp, exec))
+    ),
+    state,
+    precision
   );
 };
 // use for CLI, no change of the state over time

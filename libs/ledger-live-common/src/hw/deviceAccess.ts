@@ -118,12 +118,12 @@ export const withDevice =
             await transport.send(0, 0, 0, 0).catch(() => {});
           }
 
-          if (
-            transport.requestConnectionPriority &&
-            typeof transport.requestConnectionPriority === "function"
-          ) {
-            await transport.requestConnectionPriority("High");
-          }
+          // if (
+          //   transport.requestConnectionPriority &&
+          //   typeof transport.requestConnectionPriority === "function"
+          // ) {
+          //   await transport.requestConnectionPriority("High");
+          // }
 
           return transport;
         })
