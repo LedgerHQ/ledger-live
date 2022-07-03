@@ -72,7 +72,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
-    "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
+    "@ledgerhq/hw-transport-react-native-ble": "workspace:*",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

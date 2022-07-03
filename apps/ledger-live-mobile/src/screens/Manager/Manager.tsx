@@ -5,8 +5,9 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { CommonActions } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { CommonActions } from "@react-navigation/native";
+import BleTransport from "../../hw-transport-react-native-ble";
 import { useApps } from "./shared";
 // eslint-disable-next-line import/no-cycle
 import AppsScreen from "./AppsScreen";
@@ -120,6 +121,7 @@ const Manager = ({ navigation, route }: Props) => {
   const quitManager = useCallback(() => {
     navigation.dispatch(quitManagerAction);
     setQuitManagerAction(null);
+    BleTransport.disconnect(); // Fixme, do we need to do this?
   }, [quitManagerAction, setQuitManagerAction, navigation]);
 
   const closeErrorModal = useCallback(() => setError(null), [setError]);
