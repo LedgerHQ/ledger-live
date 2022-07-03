@@ -489,24 +489,30 @@ export const updateAllProgress = (state: State): number => {
   return Math.max(0, Math.min((total - current) / total, 1));
 };
 // a series of operation to perform on the device for current state
-export const getActionPlan = (state: State): AppOp[] =>
-  state.uninstallQueue
-    .map(
-      (name) =>
-        <AppOp>{
-          type: "uninstall",
-          name,
-        }
-    )
-    .concat(
-      state.installQueue.map(
-        (name) =>
-          <AppOp>{
-            type: "install",
-            name,
-          }
-      )
-    );
+// when building the action plan from the queues, respect the current operation
+// since it may already have started on the native side.
+export const getActionPlan = (state: State): AppOp[] => {
+  const { currentAppOp, uninstallQueue, installQueue } = state;
+  const actionPlan: AppOp[] = currentAppOp ? [currentAppOp] : [];
+  uninstallQueue.forEach((name) => {
+    if (name !== currentAppOp?.name) {
+      actionPlan.push({
+        type: "uninstall",
+        name,
+      });
+    }
+  });
+  installQueue.forEach((name) => {
+    if (name !== currentAppOp?.name) {
+      actionPlan.push({
+        type: "install",
+        name,
+      });
+    }
+  });
+
+  return actionPlan;
+};
 // get next operation to perform
 export const getNextAppOp = (state: State): AppOp | null | undefined => {
   if (state.uninstallQueue.length) {
