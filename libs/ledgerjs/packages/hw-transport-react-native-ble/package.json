@@ -1,0 +1,54 @@
+{
+  "name": "@ledgerhq/hw-transport-react-native-ble",
+  "version": "0.1.0",
+  "description": "Ledger Hardware Wallet Bluetooth implementation of the communication layer",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "bluetooth",
+    "ble",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledgerjs"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/BleTransport.js",
+  "module": "lib-es/BleTransport.js",
+  "types": "lib/BleTransport.d.ts",
+  "license": "Apache-2.0",
+  "react-native": "src/index",
+  "dependencies": {
+    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "rxjs": "^6.6.7"
+  },
+  "author": "Juan Cortes Ross <juan@bohem.io> (https://github.com/juan-cortes)",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  }
+}
