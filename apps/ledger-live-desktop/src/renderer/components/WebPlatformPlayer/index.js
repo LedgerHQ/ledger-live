@@ -428,7 +428,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
   );
 
   const signMessage = useCallback(
-    ({ accountId, message }: { accountId: string, message: string }) => {
+    ({ accountId, message, mock }: { accountId: string, message: string, mock: any }) => {
       const account = accounts.find(account => account.id === accountId);
 
       let formattedMessage: MessageData | null;
@@ -438,14 +438,17 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         return Promise.reject(error);
       }
 
+      const useMock = !!mock?.successResponse;
+
       return new Promise((resolve, reject) => {
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             message: formattedMessage,
             account,
+            useMock,
             onConfirmationHandler: signature => {
               logger.info("Signature done");
-              resolve(signature);
+              resolve(useMock ? mock.successResponse : signature);
             },
             onFailHandler: err => {
               logger.error(err);
