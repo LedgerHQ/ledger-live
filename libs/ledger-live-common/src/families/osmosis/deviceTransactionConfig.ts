@@ -164,14 +164,27 @@ function getDeviceTransactionConfig({
     });
   }
 
-  fields.push({
-    type: "text",
-    label: "Total",
-    value: formatCurrencyUnit(currency.units[0], totalSpent, {
-      showCode: true,
-      disableRounding: true,
-    }),
-  });
+  if (mode === "claimReward" || mode === "claimRewardCompound") {
+    let label = "Amount to be received";
+    label += mode === "claimRewardCompound" ? " and delegated" : "";
+    fields.push({
+      type: "text",
+      label,
+      value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
+        showCode: true,
+        disableRounding: true,
+      }),
+    });
+  } else {
+    fields.push({
+      type: "text",
+      label: "Total",
+      value: formatCurrencyUnit(currency.units[0], totalSpent, {
+        showCode: true,
+        disableRounding: true,
+      }),
+    });
+  }
 
   return fields;
 }
