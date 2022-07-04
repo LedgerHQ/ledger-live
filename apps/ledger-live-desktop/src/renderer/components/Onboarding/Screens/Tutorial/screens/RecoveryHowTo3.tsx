@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, IllustrationContainer } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
+import Animation from "~/renderer/animations";
+import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
+import { OnboardingContext } from "../../../index.v3";
 
 const steps = [
   {
@@ -32,9 +34,17 @@ export function RecoveryHowTo3() {
   );
 }
 
-RecoveryHowTo3.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={getStarted} />
-);
+const RecoveryHowTo3Animation = () => {
+  const { deviceModelId } = useContext(OnboardingContext);
+
+  return (
+    <AnimationContainer>
+      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
+    </AnimationContainer>
+  );
+};
+
+RecoveryHowTo3.Illustration = <RecoveryHowTo3Animation />;
 
 const Footer = (props: any) => {
   const { t } = useTranslation();
