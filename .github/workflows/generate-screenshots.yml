@@ -113,3 +113,13 @@ jobs:
           git pull --rebase &&
           git push ||
           echo ""
+      - name: Upload playwright results [On Failure]
+        uses: actions/upload-artifact@v3
+        if: failure() && !cancelled()
+        with:
+          name: ${{ format('playwright-results-{0}', matrix.os) }}
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
