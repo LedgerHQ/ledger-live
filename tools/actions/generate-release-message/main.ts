@@ -41,7 +41,7 @@ const main = async () => {
     }
   }
   const p = path.join(outputPath, `${name}.md`);
-  core.setOutput("changelog-path", p);
+  core.setOutput("path", p);
   await fs.writeFile(path.join(outputPath, `${name}.md`), saved, "utf8");
 };
 
