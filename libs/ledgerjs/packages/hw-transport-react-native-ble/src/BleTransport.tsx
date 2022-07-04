@@ -10,6 +10,7 @@ import {
   TransportError,
   BluetoothRequired,
   CantOpenDevice,
+  NetworkDown,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { type EventSubscription } from "react-native/Libraries/vendor/emitter/EventEmitter";
@@ -94,12 +95,7 @@ class Ble extends Transport {
           // we've completed a queue, complete the subject
           this.queueObserver.complete();
         } else if (type === "runError") {
-          this.queueObserver.next({
-            type: "runError",
-            appOp: {}, //Fixme?
-            error: Ble.remapError(data.code),
-          });
-          this.queueObserver.complete();
+          this.queueObserver.error(Ble.remapError(data.message));
         } else {
           const progress = Math.round((data?.progress || 0) * 100) / 100;
           this.queueObserver.next({
@@ -152,13 +148,6 @@ class Ble extends Transport {
       Ble.disconnect();
     }
   };
-
-  // close = async (): Promise<void> => {
-  //   return new Promise<void>((resolve) => {
-  //     Ble.log("close connection");
-  //     Ble.disconnect().then((_) => resolve());
-  //   });
-  // };
 
   static observeState = (
     observer: Observer<{ type: string }>
@@ -221,6 +210,7 @@ class Ble extends Transport {
       "pairing-failed": PairingFailed,
       "bluetooth-required": BluetoothRequired,
       "cant-open-device": CantOpenDevice,
+      "network-down": NetworkDown,
     };
 
     if (error?.code in mappedErrors)
@@ -228,7 +218,8 @@ class Ble extends Transport {
     return new TransportError(error?.code, error);
   };
 
-  /// Long running tasks below, buckle up.
+  /// Long running tasks below, buckle up, queues use runners internally
+  /// whereas the firmware update may just use runners, tbd
   static runner = (url: string): void => {
     Ble.log(`request to launch runner for url ${url}`);
     NativeBle.runner(url);

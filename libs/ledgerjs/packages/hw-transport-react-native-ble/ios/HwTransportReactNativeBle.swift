@@ -13,6 +13,7 @@ enum TransportError: String, CaseIterable {
     case bluetoothRequired = "bluetooth-required"
     case deviceAlreadyConnected = "device-already-connected"
     case deviceDisconnected = "device-disconnected"
+    case networkDown = "network-down"
     case cantOpenDevice = "cant-open-device"
     case pairingFailed = "pairingFailed"
     case userPendingAction = "userPendingAction"
@@ -114,7 +115,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
                 /// we use this to notify exchanges (background or foreground) about the disconnection.
                 if consumed {
                     if let rejectCallback = self.rejectCallback {
-//                        rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
+                        rejectCallback(TransportError.cantOpenDevice.rawValue, "", nil)
                         print("ble-verbose unhandled disconnect")
                     }
                     return
