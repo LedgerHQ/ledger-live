@@ -14,14 +14,10 @@ type Props = {
   transaction: Transaction,
 };
 
-export default function HederaSendRowsCustom({
-  account,
-  transaction,
-  navigation,
-}: Props) {
+export default function HederaSendRowsCustom({ account, transaction }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const editMemo = useCallback(() => {
     navigation.navigate(ScreenName.HederaEditMemo, {

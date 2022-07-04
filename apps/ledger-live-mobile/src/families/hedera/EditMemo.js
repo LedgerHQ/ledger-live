@@ -34,7 +34,7 @@ function HederaEditMemo({ navigation, route }: Props) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    navigation.navigate(ScreenName.Confirmation, {
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memo,
