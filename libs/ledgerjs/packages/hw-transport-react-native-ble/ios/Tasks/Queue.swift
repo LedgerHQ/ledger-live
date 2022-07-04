@@ -16,6 +16,7 @@ import BleTransport
 class Queue: NSObject  {
     let BIMWebsocketEndpoint: URL
     let BIMUnpackQueue: URL
+    let BIMHealth: URL
 
     var runner : Runner?                        /// Handler of the current task
     var pendingRequest: URLSessionDataTask?     /// Backend request to unpack a token
@@ -36,6 +37,7 @@ class Queue: NSObject  {
         let host = URL(string: endpoint)!.host ?? ""
         self.BIMWebsocketEndpoint = URL(string: "wss://\(host)/ws/channel")!
         self.BIMUnpackQueue = URL(string: "https://\(host)/unpacked-queue")!
+        self.BIMHealth = URL(string: "https://\(host)/_health")!
         super.init()
         self.resolveQueueFromToken(true)
     }
@@ -128,6 +130,7 @@ class Queue: NSObject  {
 
             self.runner = Runner(
                 endpoint: BIMWebsocketEndpoint,
+                health: BIMHealth,
                 onEvent: self.onEventWrapper,
                 onDone: self.onDoneWrapper,
                 withInitialMessage: "{\"token\":\"\(self.token)\",\"index\":\(self.index)}"
