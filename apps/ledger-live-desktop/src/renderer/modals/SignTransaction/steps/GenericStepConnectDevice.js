@@ -102,6 +102,7 @@ export const StepConnectDeviceFooter = ({
   device,
   eventType,
   currencyName,
+  onClose,
 }: any) => {
   return (
     <Box horizontal flow={2}>
@@ -109,7 +110,7 @@ export const StepConnectDeviceFooter = ({
       <Button
         onClick={() => {
           onTransactionError(new Error("Mocked tx sign error"));
-          transitionTo("confirmation");
+          onClose();
         }}
       >
         Mock tx sign error
