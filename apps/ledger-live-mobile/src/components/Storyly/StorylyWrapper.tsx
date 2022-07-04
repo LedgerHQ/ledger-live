@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { Storyly } from "storyly-react-native";
+import styled from "styled-components/native";
 import { languageSelector } from "../../reducers/settings";
 import { StorylyInstanceID } from "./shared"; // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
 
@@ -10,6 +11,10 @@ type Props = {
   shouldBlockVideoContentOnAndroid?: boolean; // videos not supported on Android for now, causing a crash if they load
   shouldFallbackToEnglishIfEmpty?: boolean;
 } & Omit<Storyly.Props, "storylyId">;
+
+const StyledStoryly = styled(Storyly)`
+  flex: 1; // necessary for touches to work
+`;
 
 const StorylyWrapper: React.FC<Props> = props => {
   const {
@@ -68,7 +73,7 @@ const StorylyWrapper: React.FC<Props> = props => {
   );
 
   return (
-    <Storyly
+    <StyledStoryly
       {...props}
       storylyId={blocked ? "" : instanceID}
       storylySegments={segments}
