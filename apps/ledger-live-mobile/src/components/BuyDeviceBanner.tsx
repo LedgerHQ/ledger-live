@@ -136,8 +136,10 @@ export default function BuyDeviceBanner({
             <Button
               onPress={onPress}
               size={buttonSize}
-              event={event}
-              eventProperties={eventProperties}
+              event={variant === "setup" ? undefined : event}
+              eventProperties={
+                variant === "setup" ? undefined : eventProperties
+              }
               type="main"
               flexShrink={0}
             >
