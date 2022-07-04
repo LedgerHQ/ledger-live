@@ -108,6 +108,25 @@ export const start = async (store: *) => {
   track("Start", extraProperties(store), true);
 };
 
+export const updateIdentify = async () => {
+  Sentry.addBreadcrumb({
+    category: "identify",
+    level: "debug",
+  });
+
+  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+    return;
+  }
+
+  if (ANALYTICS_LOGS)
+    console.log("analytics:identify", extraProperties(storeInstance), {
+      context,
+    });
+  if (!token) return;
+  const { user } = await getOrCreateUser();
+  analytics.identify(user.id, extraProperties(storeInstance), { context });
+};
+
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;

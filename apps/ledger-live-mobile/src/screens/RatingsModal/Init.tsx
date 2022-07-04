@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "../../analytics";
+import { track, TrackScreen, updateIdentify } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
@@ -28,6 +28,7 @@ const Init = ({ closeModal, setStep }: Props) => {
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
     handleSatisfied();
+    updateIdentify();
     track("button_clicked", {
       flow: "review",
       page: "review_step0",
@@ -43,6 +44,7 @@ const Init = ({ closeModal, setStep }: Props) => {
   ]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
+    updateIdentify();
     track("button_clicked", {
       flow: "review",
       page: "review_step0",
