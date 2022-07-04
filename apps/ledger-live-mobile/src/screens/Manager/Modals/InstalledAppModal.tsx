@@ -91,7 +91,10 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const onClose = useCallback(() => setHasBeenShown(true), []);
 
   return (
-    <BottomModal isOpened={successInstalls.length >= 1} onClose={onClose}>
+    <BottomModal
+      isOpened={successInstalls.length >= 1 && !state.currentError}
+      onClose={onClose}
+    >
       <Flex alignItems="center">
         <AppIcon app={app} size={48} radius={14} />
         <TextContainer>

@@ -70,12 +70,12 @@ const useBackgroundInstallSubject = (
       }).subscribe({
         next: onEventDispatch,
         error: (error) => {
-          cleanUp();
           onEventDispatch({
             type: "runError",
             appOp: {},
             error,
           });
+          cleanUp();
         },
         complete: cleanUp,
       });

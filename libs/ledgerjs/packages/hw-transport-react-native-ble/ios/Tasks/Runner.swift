@@ -11,6 +11,8 @@ import BleTransport
 
 class Runner: NSObject  {
     var endpoint : URL
+    var health : URL
+    var pendingRequest: URLSessionDataTask?     /// Backend request for network down
     
     var onEmit: ((RunnerAction, ExtraData?)->Void)?
     var onDone: ((String, String)->Void)?
@@ -37,20 +39,23 @@ class Runner: NSObject  {
 
     convenience init (
         endpoint : URL,
+        health: URL,
         onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
         onDone: ((String, String)->Void)?,
         withInitialMessage: String
     ) {
-        self.init(endpoint: endpoint, onEvent: onEvent, onDone: onDone)
+        self.init(endpoint: endpoint, health: health, onEvent: onEvent, onDone: onDone)
         self.initialMessage = withInitialMessage
     }
     
     public init (
         endpoint : URL,
+        health: URL,
         onEvent: @escaping ((RunnerAction, ExtraData?)->Void),
         onDone: ((String, String)->Void)?
     ) {
         self.endpoint = endpoint
+        self.health = health
         self.isRunning = true
         self.onEmit = onEvent
         self.onDone = onDone
@@ -63,16 +68,7 @@ class Runner: NSObject  {
     public func stop(_ onStop: @escaping (()->Void)) {
         self.stopped = true
         socket?.disconnect()
-
-        if self.APDUQueue.count > 0 && self.isInBulkMode && BleTransport.shared.isConnected {
-            self.onStop = onStop
-            self.APDUQueue = [
-                APDU(raw: "e0d800000120"),
-                APDU(raw: "b001000000"),
-            ]
-        } else {
-            onStop()
-        }
+        onStop();
     }
     
     /// Based on the apdu in/out we could infer some events that we need to emit up to javascript. Not all exchanges need an event.
@@ -86,83 +82,109 @@ class Runner: NSObject  {
         }
     }
     
-    private func startScriptRunner() -> Void {
-        var request = URLRequest(url: self.endpoint)
-        request.timeoutInterval = 60 // No idea if we need this much
-
-        socket = WebSocket(request: request)
-        print("BIM opening \(self.endpoint)")
-        socket!.connect()
-        socket!.onEvent = { event in
-            switch event {
-            case .connected(_):
-                // In the case of BIM, we should initiate the message exchange
-                if self.initialMessage != "" {
-                    print("BIM -> \(self.initialMessage)")
-                    self.socket!.write(string: self.initialMessage)
-                }
-                break
-            case .disconnected(let reason, _):
-                /// We need to communicate this **only** when have finished the device exchange.
-                /// Never forget that we are a bridge between a backend and the device and even though
-                /// the communication with the backend may over, we may very well still be communicating
-                /// with the device.
-                if !self.isInBulkMode {
-                    self.onDone!(reason, self.lastScriptRunnerMessage)
-                } else {
-                    self.pendingOnDone = true
-                }
-                break
-            case .text(let message):
-                self.lastScriptRunnerMessage = message
-                // Receive a message from the scriptrunner
-                let data = Data(message.utf8)
-
-                if ["CONTINUE", "TERMINATE"].contains(message) { return } /// OK cases
-                else if[                                                  /// KO cases
-                    "CANCELLED",
-                    "SR DISCONNECTION",
-                    "INDEX OUT OF BOUNDS",
-                    "NOT CONNECTED TO SCRIPT RUNNER"
-                ].contains(message) {
-                    self.onEmit!(
-                        RunnerAction.runError,
-                        ExtraData(message: message)
-                    )
-                    return
-                }
-
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        print("BIM <- \(json)")
-                        let query = json["query"] as? String;
-                        if (query == "bulk") {
-                            let rawAPDUs = json["data"] as? [String] ?? []
-                            self.APDUQueue = []
-                            self.isInBulkMode = true
-                            self.APDUMaxCount = rawAPDUs.count // Used for percentage reports
-                            
-                            for rawAPDU in rawAPDUs {
-                                self.APDUQueue.append(APDU(raw: rawAPDU));
-                            }
-                        } else {
-                            self.isInBulkMode = false
-                            self.APDUQueue = [APDU(raw: json["data"] as? String ?? "")]
-                            self.HSMNonce = json["nonce"] as? Int ?? 0;
-                        }
-                        self.handleNextAPDU();
-                    }
-                } catch {
-                    self.onEmit!(
-                        RunnerAction.runError,
-                        ExtraData(message: error.localizedDescription)
-                    )
-                }
-                break
-            default:
-                print("BIM ws \(event)")
-                break
+    /// This will detect global network down too but the main focus was to detect a dead bim server.
+    private func withBIM(_ callback: @escaping () -> Void, errorCallback: @escaping (_ error: Error?) -> Void) {
+        var request = URLRequest(url: self.health)
+        request.httpMethod = "GET"
+        if let task = self.pendingRequest {
+            task.cancel()
+        }
+        
+        let session = URLSession.shared
+        self.pendingRequest = session.dataTask(with: request) { (_, response, error) -> Void in
+            guard error == nil else {
+              errorCallback(error)
+              return
             }
+            callback()
+        }
+        self.pendingRequest!.resume()
+    }
+    
+    private func startScriptRunner() -> Void {
+        withBIM(){ [self] in
+            var request = URLRequest(url: endpoint)
+            request.timeoutInterval = 60 // No idea if we need this much
+            
+            socket = WebSocket(request: request)
+            print("BIM opening \(self.endpoint)")
+            socket!.connect()
+            socket!.onEvent = { [self] event in
+                switch event {
+                case .connected(_):
+                    // In the case of BIM, we should initiate the message exchange
+                    if initialMessage != "" {
+                        print("BIM -> \(initialMessage)")
+                        socket!.write(string: initialMessage)
+                    }
+                    break
+                case .disconnected(let reason, _):
+                    /// We need to communicate this **only** when have finished the device exchange.
+                    /// Never forget that we are a bridge between a backend and the device and even though
+                    /// the communication with the backend may over, we may very well still be communicating
+                    /// with the device.
+                    if !isInBulkMode {
+                        onDone!(reason, lastScriptRunnerMessage)
+                    } else {
+                        pendingOnDone = true
+                    }
+                    break
+                case .text(let message):
+                    lastScriptRunnerMessage = message
+                    // Receive a message from the scriptrunner
+                    let data = Data(message.utf8)
+
+                    if ["CONTINUE", "TERMINATE"].contains(message) { return } /// OK cases
+                    else if[                                                  /// KO cases
+                        "CANCELLED",
+                        "SR DISCONNECTION",
+                        "INDEX OUT OF BOUNDS",
+                        "NOT CONNECTED TO SCRIPT RUNNER"
+                    ].contains(message) {
+                        onEmit!(
+                            RunnerAction.runError,
+                            ExtraData(message: message)
+                        )
+                        return
+                    }
+
+                    do {
+                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            print("BIM <- \(json)")
+                            let query = json["query"] as? String;
+                            if (query == "bulk") {
+                                let rawAPDUs = json["data"] as? [String] ?? []
+                                APDUQueue = []
+                                isInBulkMode = true
+                                APDUMaxCount = rawAPDUs.count // Used for percentage reports
+                                
+                                for rawAPDU in rawAPDUs {
+                                    APDUQueue.append(APDU(raw: rawAPDU));
+                                }
+                            } else {
+                                isInBulkMode = false
+                                APDUQueue = [APDU(raw: json["data"] as? String ?? "")]
+                                HSMNonce = json["nonce"] as? Int ?? 0;
+                            }
+                            handleNextAPDU();
+                        }
+                    } catch {
+                        onEmit!(
+                            RunnerAction.runError,
+                            ExtraData(message: error.localizedDescription)
+                        )
+                    }
+                    break
+                default:
+                    print("BIM ws \(event)")
+                    break
+                }
+            }
+        } errorCallback: { [self] error in
+            onEmit!(
+                RunnerAction.runError,
+                ExtraData(message: TransportError.networkDown.rawValue)
+            )
         }
     }
     
