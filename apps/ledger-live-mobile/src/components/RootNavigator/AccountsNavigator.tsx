@@ -19,13 +19,17 @@ import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAccountHeaderRight from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderRight";
 import ReadOnlyAccountHeaderTitle from "../../screens/Account/ReadOnly/ReadOnlyAccountHeaderTitle";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
+import { accountsSelector } from "../../reducers/accounts";
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const accounts = useSelector(accountsSelector);
+  const readOnlyModeEnabled =
+    useSelector(readOnlyModeEnabledSelector) && accounts.length <= 0;
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
