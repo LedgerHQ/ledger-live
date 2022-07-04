@@ -160,6 +160,16 @@ const envDefinitions = {
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
   },
+  CARDANO_API_ENDPOINT: {
+    def: "https://cardano.coin.ledger.com/api",
+    parser: stringParser,
+    desc: "Cardano API url",
+  },
+  CARDANO_TESTNET_API_ENDPOINT: {
+    def: "https://testnet-ledger.cardanoscan.io/api",
+    parser: stringParser,
+    desc: "Cardano API url",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,
@@ -249,6 +259,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
+  },
+  EXPERIMENTAL_EIP712: {
+    def: false,
+    parser: boolParser,
+    desc: "enable experimental support for EIP712",
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,

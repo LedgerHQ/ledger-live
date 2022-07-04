@@ -1,4 +1,5 @@
 // @flow
+import * as remote from "@electron/remote";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
@@ -21,7 +22,7 @@ import {
   serializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import { remote, shell, WebviewTag } from "electron";
+import { shell, WebviewTag } from "electron";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
