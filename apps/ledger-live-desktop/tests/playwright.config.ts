@@ -4,7 +4,10 @@ const config: PlaywrightTestConfig = {
   testDir: "specs/",
   testIgnore: "specs/recorder.spec.ts",
   outputDir: "./artifacts/test-results",
-  timeout: process.env.CI ? 60000 : 600000,
+  timeout: process.env.CI ? 190000 : 600000,
+  expect: {
+    timeout: 30000,
+  },
   globalTimeout: 0,
   globalSetup: require.resolve("./utils/global-setup"),
   globalTeardown: require.resolve("./utils/global-teardown"),
@@ -35,9 +38,6 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI
     ? [["html", { open: "never", outputFolder: "artifacts/html-report" }], ["github"]]
     : "list",
-  expect: {
-    timeout: 15000,
-  },
 };
 
 export default config;
