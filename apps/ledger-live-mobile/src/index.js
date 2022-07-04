@@ -236,7 +236,7 @@ const linkingOptions = {
       Linking.removeEventListener("url", onReceiveURL);
     };
   },
-  prefixes: ["ledgerlive://"],
+  prefixes: ["ledgerlive://", "https://ledger.com"],
   config: {
     screens: {
       [NavigatorName.Base]: {
