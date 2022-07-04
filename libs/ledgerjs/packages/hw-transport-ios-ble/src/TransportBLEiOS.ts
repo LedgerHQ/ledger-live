@@ -18,20 +18,28 @@ export default class TransportBLEiOS extends Transport {
    * communicate with a BLE transport
    */
   async exchange(apdu: Buffer): Promise<Buffer> {
-    const response = await this.promisify(this.transport.exchange(apdu));
-    return Buffer.from(response);
+    try {
+      const response = await this.promisify(this.transport.exchange(apdu));
+      return Buffer.from(response);
+    } catch (error) {
+      throw error
+    }
   }
 
   promisify(callback: Callback): Promise<any> {
-    return new Promise((resolve) => {
-      callback(function (response) {
-        resolve(response);
+    return new Promise((resolve, reject) => {
+      callback(function (response, error) {
+        if (error == "") {
+          resolve(response);
+        } else {
+          reject(error)
+        }
       });
     });
   }
 }
 
-type Callback = (f: (response: unknown) => void) => void;
+type Callback = (f: (response: unknown, error: unknown) => void) => void;
 
 type SwiftTransportType = {
   exchange: (_: Buffer) => Callback;

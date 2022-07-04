@@ -1,7 +1,7 @@
 {
-  "name": "@ledgerhq/hw-transport-ios-ble-wrapper",
+  "name": "@ledgerhq/hw-transport-ios-ble-wrapper-solana",
   "version": "6.27.1",
-  "description": "Wrapper for the Ledger Hardware Wallet Bluetooth BLE transport for the Swift Native Module",
+  "description": "Solana wrapper for the Ledger Hardware Wallet Bluetooth BLE transport for the Swift Native Module",
   "keywords": [
     "Ledger",
     "LedgerWallet",
