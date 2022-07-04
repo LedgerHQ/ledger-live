@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.44.0-next.1
+
+### Patch Changes
+
+- [#499](https://github.com/LedgerHQ/ledger-live/pull/499) [`4de067e7c`](https://github.com/LedgerHQ/ledger-live/commit/4de067e7cffabf0fef5ee896f316b5374bed6365) Thanks [@github-actions](https://github.com/apps/github-actions)! - Swap: Fixes styling issues
+
 ## 2.44.0-next.0
 
 ### Minor Changes
