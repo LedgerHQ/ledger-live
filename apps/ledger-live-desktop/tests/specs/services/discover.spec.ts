@@ -2,6 +2,8 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
+import { Modal } from "tests/models/Modal";
+import { Drawer } from "tests/models/Drawer";
 
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
@@ -29,23 +31,23 @@ test("Discover", async ({ page }) => {
   if (!continueTest) return;
 
   const discoverPage = new DiscoverPage(page);
+  const drawer = new Drawer(page);
+  const modal = new Modal(page);
   const layout = new Layout(page);
 
   await test.step("Navigate to catalog", async () => {
-    await discoverPage.navigateToCatalog();
+    await layout.goToDiscover();
     await expect.soft(page).toHaveScreenshot("catalog.png");
   });
 
   await test.step("Open Test App", async () => {
     await discoverPage.openTestApp();
-    await discoverPage.waitForDisclaimerToBeVisible();
     await expect.soft(page).toHaveScreenshot("open-test-app.png");
   });
 
   await test.step("Accept Live App Disclaimer", async () => {
-    await discoverPage.acceptLiveAppDisclaimer();
+    await drawer.continue();
     await layout.waitForLoadingSpinner();
-    await discoverPage.waitForDisclaimerToBeHidden;
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
@@ -56,7 +58,6 @@ test("Discover", async ({ page }) => {
 
   await test.step("Request Account modal - open", async () => {
     await discoverPage.requestAccount();
-    await discoverPage.waitForSelectAccountModalToBeVisible();
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-1.png");
   });
 
@@ -71,7 +72,7 @@ test("Discover", async ({ page }) => {
   });
 
   await test.step("Request Account - single account output", async () => {
-    await discoverPage.exitModal();
+    await modal.continue();
     await discoverPage.letLiveAppLoad();
     await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
   });

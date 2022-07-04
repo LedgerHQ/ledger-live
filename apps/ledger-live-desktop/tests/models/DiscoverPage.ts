@@ -4,77 +4,29 @@ export class DiscoverPage {
   readonly page: Page;
   readonly discoverMenuButton: Locator;
   readonly testAppCatalogItem: Locator;
-  readonly liveAppDisclaimerContinueButton: Locator;
   readonly disclaimerText: Locator;
   readonly getAllAccountsButton: Locator;
   readonly requestAccountButton: Locator;
-  readonly modal: Locator;
   readonly selectAccountTitle: Locator;
   readonly selectAccountDropdown: Locator;
   readonly selectBtcAccount: Locator;
-  readonly modalContinueButton: Locator;
   readonly disclaimerCheckbox: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.discoverMenuButton = page.locator("data-test-id=drawer-catalog-button");
     this.testAppCatalogItem = page.locator("#platform-catalog-app-dummy-live-app");
-    this.liveAppDisclaimerContinueButton = page.locator("button:has-text('Continue')");
     this.disclaimerText = page.locator("text=External Application");
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
-    this.modal = page.locator("data-test-id=modal-container");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
     this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
     this.selectBtcAccount = page.locator("text=Bitcoin (BTC)");
-    this.modalContinueButton = page.locator("button:has-text('Continue')");
-    this.disclaimerCheckbox = page.locator("#dismiss-disclaimer");
-  }
-
-  async navigateToCatalog() {
-    await this.discoverMenuButton.click();
+    this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
   }
 
   async openTestApp() {
     await this.testAppCatalogItem.click();
-  }
-
-  async waitForDisclaimerToBeVisible() {
-    // Waits for rest of the app to be opaque, meaning the sidebar has loaded
-    await this.page.waitForFunction(() => {
-      const sideDrawer = document.querySelector(".sidedrawer");
-      let sideDrawerStyles;
-      if (sideDrawer) {
-        sideDrawerStyles = window.getComputedStyle(sideDrawer);
-        return sideDrawerStyles.getPropertyValue("opacity") === "1";
-      }
-    });
-
-    // Not really necessary for test but forces the drawer to be visible for the screenshot
-    await this.disclaimerCheckbox.click();
-  }
-
-  async waitForDisclaimerToBeHidden() {
-    await this.disclaimerText.waitFor({ state: "hidden" });
-  }
-
-  async acceptLiveAppDisclaimer() {
-    await this.liveAppDisclaimerContinueButton.click();
-  }
-
-  async waitForSelectAccountModalToBeVisible() {
-    await this.modal.waitFor({ state: "visible" });
-
-    await this.page.waitForFunction(() => {
-      const modal = document.querySelector("[data-test-id=modal-container]");
-      let modalStyles;
-      if (modal) {
-        modalStyles = window.getComputedStyle(modal);
-        return modalStyles.getPropertyValue("opacity") === "1";
-      }
-    });
-
-    await this.modal.click(); // hack to force the modal to be visible for the subsequent screenshot check
   }
 
   async getAccountsList() {
@@ -83,7 +35,6 @@ export class DiscoverPage {
 
   async requestAccount() {
     await this.clickWebviewElement("[data-test-id=request-single-account-button]");
-    await this.waitForSelectAccountModalToBeVisible();
   }
 
   async openAccountDropdown() {
@@ -94,11 +45,6 @@ export class DiscoverPage {
   async selectAccount() {
     // TODO: make this dynamic with passed in variable
     await this.selectBtcAccount.click({ force: true });
-  }
-
-  async exitModal() {
-    // TODO: use modal.ts model
-    await this.modalContinueButton.click({ force: true });
   }
 
   async verifyAddress() {

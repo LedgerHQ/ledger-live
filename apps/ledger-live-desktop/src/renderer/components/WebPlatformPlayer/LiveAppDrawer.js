@@ -83,7 +83,7 @@ export const LiveAppDrawer = () => {
                   onClick={() => setDismissDisclaimerChecked(!dismissDisclaimerChecked)}
                   style={{ flex: 1, cursor: "pointer" }}
                 >
-                  <CheckBox isChecked={dismissDisclaimerChecked} id="dismiss-disclaimer" />
+                  <CheckBox isChecked={dismissDisclaimerChecked} data-test-id="dismiss-disclaimer" />
                   <Text
                     ff="Inter|SemiBold"
                     fontSize={4}
@@ -93,7 +93,7 @@ export const LiveAppDrawer = () => {
                   </Text>
                 </Box>
 
-                <Button primary onClick={onContinue}>
+                <Button primary onClick={onContinue} data-test-id="drawer-continue-button">
                   {t("platform.disclaimer.CTA")}
                 </Button>
               </Box>
