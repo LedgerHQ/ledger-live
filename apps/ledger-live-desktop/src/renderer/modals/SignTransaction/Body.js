@@ -1,32 +1,31 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
-import { BigNumber } from "bignumber.js";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import type { TFunction } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import { Trans, withTranslation } from "react-i18next";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/lib/types";
-import type { PlatformTransaction } from "@ledgerhq/live-common/lib/platform/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import Stepper from "~/renderer/components/Stepper";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import { closeModal, openModal } from "~/renderer/actions/modals";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import Track from "~/renderer/analytics/Track";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import StepConnectDevice from "./steps/StepConnectDevice";
-import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
-import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import type { St, StepId } from "./types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/lib/types";
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useState } from "react";
+import { Trans, withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { createStructuredSelector } from "reselect";
 import logger from "~/logger/logger";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { closeModal, openModal } from "~/renderer/actions/modals";
+import Track from "~/renderer/analytics/Track";
+import Stepper from "~/renderer/components/Stepper";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { StepConnectDeviceFooter } from "./steps/GenericStepConnectDevice";
+import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
+import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
+import StepConnectDevice from "./steps/StepConnectDevice";
+import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
+import type { St } from "./types";
 
 type OwnProps = {|
   stepId: StepId,
@@ -37,6 +36,7 @@ type OwnProps = {|
     useApp?: string,
     account: ?AccountLike,
     transactionData: PlatformTransaction,
+    useMock: boolean,
     onResult: (signedOperation: SignedOperation) => void,
     onCancel: (reason: any) => void,
     parentAccount: ?Account,
@@ -61,7 +61,7 @@ type Props = {|
   ...StateProps,
 |};
 
-const createSteps = (canEditFees = false): St[] => {
+const createSteps = (canEditFees = false, useMock = false): St[] => {
   const steps = [
     {
       id: "summary",
@@ -74,6 +74,7 @@ const createSteps = (canEditFees = false): St[] => {
       id: "device",
       label: <Trans i18nKey="send.steps.device.title" />,
       component: StepConnectDevice,
+      footer: getEnv("MOCK_DEVICE") && useMock ? StepConnectDeviceFooter : undefined,
       onBack: ({ transitionTo }) => transitionTo("summary"),
     },
     {
@@ -136,10 +137,10 @@ const Body = ({
   params,
   accounts,
 }: Props) => {
-  const { canEditFees, transactionData } = params;
+  const { canEditFees, transactionData, useMock } = params;
 
   const openedFromAccount = !!params.account;
-  const [steps] = useState(() => createSteps(canEditFees));
+  const [steps] = useState(() => createSteps(canEditFees, useMock));
 
   const {
     transaction,

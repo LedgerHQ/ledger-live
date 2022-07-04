@@ -1,56 +1,42 @@
 // @flow
-import { WebviewTag, shell } from "electron";
-import * as remote from "@electron/remote";
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import styled from "styled-components";
-import { JSONRPCRequest } from "json-rpc-2.0";
-import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
-
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
-import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
-import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
-
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,
   getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/lib/platform/converters";
-
+import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
 import type {
   RawPlatformSignedTransaction,
   RawPlatformTransaction,
 } from "@ledgerhq/live-common/lib/platform/rawTypes";
-
 import {
   deserializePlatformSignedTransaction,
   deserializePlatformTransaction,
   serializePlatformAccount,
   serializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/lib/platform/serializers";
-
-import logger from "~/logger";
-
+import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import { remote, shell, WebviewTag } from "electron";
+import { JSONRPCRequest } from "json-rpc-2.0";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import styled from "styled-components";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import BigSpinner from "~/renderer/components/BigSpinner";
+import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
-import BigSpinner from "~/renderer/components/BigSpinner";
-import Box from "~/renderer/components/Box";
-
 import TopBar from "./TopBar";
 import * as tracking from "./tracking";
-
 import type { TopBarConfig } from "./type";
 
 const Container: ThemedComponent<{}> = styled.div`
@@ -167,10 +153,14 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     async ({
       accountId,
       signedTransaction,
+      mock,
     }: {
       accountId: string,
       signedTransaction: RawPlatformSignedTransaction,
+      mock: any,
     }) => {
+      const useMock = !!mock?.transactionHash;
+
       const account = accounts.find(account => account.id === accountId);
       if (!account) return null;
 
@@ -180,7 +170,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       let optimisticOperation = signedOperation.operation;
 
       // FIXME: couldn't we use `useBroadcast` here?
-      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+      if (!getEnv("DISABLE_TRANSACTION_BROADCAST") && !useMock) {
         try {
           optimisticOperation = await bridge.broadcast({
             account,
@@ -217,7 +207,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         },
       });
 
-      return optimisticOperation.hash;
+      return useMock ? mock.transactionHash : optimisticOperation.hash;
     },
     [manifest, accounts, pushToast, dispatch, t],
   );
@@ -259,10 +249,12 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       accountId,
       transaction,
       params = {},
+      mock,
     }: {
       accountId: string,
       transaction: RawPlatformTransaction,
       params: any,
+      mock: any,
     }) => {
       const platformTransaction = deserializePlatformTransaction(transaction);
 
@@ -280,6 +272,8 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         platformTransaction,
       );
 
+      const useMock = !!mock?.successResponse;
+
       return new Promise((resolve, reject) =>
         dispatch(
           openModal("MODAL_SIGN_TRANSACTION", {
@@ -289,9 +283,14 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
             useApp: params.useApp,
             account,
             parentAccount: null,
+            useMock,
             onResult: signedOperation => {
               tracking.platformSignTransactionRequested(manifest);
-              resolve(serializePlatformSignedTransaction(signedOperation));
+              resolve(
+                useMock
+                  ? mock.successResponse
+                  : serializePlatformSignedTransaction(signedOperation),
+              );
             },
             onCancel: error => {
               tracking.platformSignTransactionFail(manifest);
@@ -416,40 +415,6 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     [accounts, dispatch, manifest],
   );
 
-  const signMessage = useCallback(
-    ({ accountId, message }: { accountId: string, message: string }) => {
-      const account = accounts.find(account => account.id === accountId);
-
-      let formattedMessage: MessageData | null;
-      try {
-        formattedMessage = prepareMessageToSign(account, message);
-      } catch (error) {
-        return Promise.reject(error);
-      }
-
-      return new Promise((resolve, reject) => {
-        dispatch(
-          openModal("MODAL_SIGN_MESSAGE", {
-            message: formattedMessage,
-            account,
-            onConfirmationHandler: signature => {
-              logger.info("Signature done");
-              resolve(signature);
-            },
-            onFailHandler: err => {
-              logger.error(err);
-              reject(err);
-            },
-            onClose: () => {
-              reject(new Error("Signature aborted by user"));
-            },
-          }),
-        );
-      });
-    },
-    [accounts, dispatch],
-  );
-
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -460,7 +425,6 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
-      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -471,7 +435,6 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       broadcastTransaction,
       startExchange,
       completeExchange,
-      signMessage,
     ],
   );
 
@@ -535,9 +498,6 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
     const webview = targetRef.current;
 
     if (webview) {
-      // For mysterious reasons, the webpreferences attribute does not
-      // pass through the styled component when added in the JSX.
-      webview.webpreferences = "nativeWindowOpen=no";
       webview.addEventListener("new-window", handleNewWindow);
       webview.addEventListener("did-finish-load", handleLoad);
     }

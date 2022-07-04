@@ -12,36 +12,35 @@ type Props = {
 };
 
 const SignTransactionModal = ({ stepId, canEditFees, error }: Props) => {
-  const [state, setState] = useState({
-    stepId: stepId || "summary",
-    error: undefined,
-  });
+  const [stepIdState, setStepIdState] = useState(stepId || "summary");
+  const [errorState, setErrorState] = useState(undefined);
 
   const handleReset = () => {
-    setState({
-      ...state,
-      stepId: "summary",
-      error: undefined,
-    });
+    setStepIdState("summary");
+    setErrorState(undefined);
   };
 
-  const handleStepChange = (stepId: StepId) => setState({ ...state, stepId });
+  const handleStepChange = (stepId: StepId) => {
+    setStepIdState(stepId);
+  };
 
-  const setError = (error?: Error) => setState({ ...state, error });
+  const setError = (error?: Error) => {
+    setErrorState(error);
+  };
 
   return (
     <Modal
       name="MODAL_SIGN_TRANSACTION"
       centered
-      refocusWhenChange={state.stepId}
+      refocusWhenChange={stepIdState}
       onHide={handleReset}
       preventBackdropClick
       render={({ onClose, data }) => (
         <Body
-          stepId={state.stepId}
+          stepId={stepIdState}
           onClose={() => {
             if (data.onCancel) {
-              data.onCancel(state.error || new Error("Signature interrupted by user"));
+              data.onCancel(errorState || new Error("Signature interrupted by user"));
             }
             onClose();
           }}

@@ -1,7 +1,7 @@
-import { $ElementType } from "utility-types";
+import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
-import mapValues from "lodash/mapValues";
+import { $ElementType } from "utility-types";
 type EnvDef<V> = {
   desc: string;
   def: V;
@@ -77,7 +77,7 @@ const envDefinitions = {
   },
   API_FILECOIN_ENDPOINT: {
     parser: stringParser,
-    def: "https://filecoin.coin.ledger.com",
+    def: "https://live.ledger.dev.zondax.net/blockchain/filecoin", // FIXME Filecoin - Set the correct value for ledger proxy
     desc: "Filecoin API url",
   },
   API_POLKADOT_INDEXER: {
@@ -141,7 +141,7 @@ const envDefinitions = {
     desc: "base url for validators.app validator list",
   },
   SOLANA_TX_CONFIRMATION_TIMEOUT: {
-    def: 100 * 1000,
+    def: 30 * 1000,
     parser: intParser,
     desc: "solana transaction broadcast confirmation timeout",
   },
@@ -159,16 +159,6 @@ const envDefinitions = {
     def: 30 * 60 * 1000,
     parser: intParser,
     desc: "bot's default timeout for scanAccounts",
-  },
-  CARDANO_API_ENDPOINT: {
-    def: "https://cardano.coin.ledger.com/api",
-    parser: stringParser,
-    desc: "Cardano API url",
-  },
-  CARDANO_TESTNET_API_ENDPOINT: {
-    def: "https://testnet-ledger.cardanoscan.io/api",
-    parser: stringParser,
-    desc: "Cardano API url",
   },
   COINAPPS: {
     def: "",
@@ -259,11 +249,6 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
-  },
-  EXPERIMENTAL_EIP712: {
-    def: false,
-    parser: boolParser,
-    desc: "enable experimental support for EIP712",
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
@@ -394,6 +379,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
+  },
+  MOCK_DEVICE: {
+    def: false,
+    parser: boolParser,
+    desc: "mock device interactions for testing / integration without physical device",
   },
   MOCK_SWAP_KYC: {
     def: "",

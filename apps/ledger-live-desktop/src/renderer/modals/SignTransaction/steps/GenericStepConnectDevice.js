@@ -1,23 +1,25 @@
 // @flow
 
-import React from "react";
-import { Trans } from "react-i18next";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import StepProgress from "~/renderer/components/StepProgress";
-import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import type { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type {
   Account,
   AccountLike,
+  SignedOperation,
   Transaction,
   TransactionStatus,
-  SignedOperation,
 } from "@ledgerhq/live-common/lib/types";
-import type { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
+import React from "react";
+import { Trans } from "react-i18next";
 import { command } from "~/renderer/commands";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import Box from "~/renderer/components/Box";
+import Button from "~/renderer/components/Button";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import DeviceAction from "~/renderer/components/DeviceAction";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import StepProgress from "~/renderer/components/StepProgress";
 
 const connectAppExec = command("connectApp");
 
@@ -91,3 +93,27 @@ export default function StepConnectDevice({
     />
   );
 }
+
+export const StepConnectDeviceFooter = ({
+  t,
+  transitionTo,
+  onTransactionSigned,
+  onTransactionError,
+  device,
+  eventType,
+  currencyName,
+}: any) => {
+  return (
+    <Box horizontal flow={2}>
+      <Button onClick={() => onTransactionSigned()}>Mock tx sign success</Button>
+      <Button
+        onClick={() => {
+          onTransactionError(new Error("Mocked tx sign error"));
+          transitionTo("confirmation");
+        }}
+      >
+        Mock tx sign error
+      </Button>
+    </Box>
+  );
+};
