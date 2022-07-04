@@ -362,6 +362,9 @@ export const ScreenName = {
 
   // cardano
   CardanoEditMemo: "CardanoEditMemo",
+
+  // hedera
+  HederaEditMemo: "HederaEditMemo",
 };
 
 export const NavigatorName = {
