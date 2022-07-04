@@ -194,7 +194,7 @@ jobs:
           script: |
             const fs = require("fs");
 
-            const files = ["images-linux", "images-windows"];
+            const files = ["images-linux", "images-windows", "images-macos"];
 
             let result = {};
             for (const file of files) {
