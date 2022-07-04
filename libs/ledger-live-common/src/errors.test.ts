@@ -1,7 +1,7 @@
-import { AmountRequired } from "@ledgerhq/errors";
+import { AccessDeniedError } from "./errors";
 
 function functionA() {
-  throw new AmountRequired();
+  throw new AccessDeniedError();
 }
 
 describe("custom errors", () => {
@@ -9,13 +9,13 @@ describe("custom errors", () => {
     try {
       functionA();
     } catch (e: any) {
-      expect(e).toBeInstanceOf(AmountRequired);
+      expect(e).toBeInstanceOf(AccessDeniedError);
     }
   });
 
   test("promise error instanceof", () => {
-    expect(Promise.reject(new AmountRequired())).rejects.toBeInstanceOf(
-      AmountRequired
+    expect(Promise.reject(new AccessDeniedError())).rejects.toBeInstanceOf(
+      AccessDeniedError
     );
   });
 });
