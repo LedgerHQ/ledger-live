@@ -110,58 +110,15 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - name: Bump npm to latest
-        run: npm i -g npm@8.12.2
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx playwright install --with-deps chromium
-      - name: Build dependencies
-        env:
-          GOGC: 75
-        run: |
-          pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
-          pnpm desktop build:testing
-      - name: Run unit tests [Linux]
-        if: matrix.os == 'ubuntu-latest'
-        run: pnpm desktop test:jest
-      - name: Run playwright tests [Linux => xvfb-run]
-        if: matrix.os == 'ubuntu-latest'
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-        shell: bash
-      - name: Run playwright tests
-        if: matrix.os != 'ubuntu-latest'
-        run: pnpm desktop test:playwright
-        shell: bash
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
-        id: imgur
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
         with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-${{steps.os.outputs.result}}.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: ${{ format('playwright-results-{0}', matrix.os) }}
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
 
   report:
     needs: [test-desktop-app]
