@@ -15,7 +15,10 @@ import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
-import { setLastConnectedDevice } from "../../actions/settings";
+import {
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 
 type Props = {
   navigation: any,
@@ -40,6 +43,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     device => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
+      dispatch(setReadOnlyMode(false));
     },
     [dispatch],
   );

@@ -156,7 +156,7 @@ pnpm desktop test
 ### Run code quality checks
 
 ```bash
-pnpm desktop codecheck
+pnpm desktop test:codecheck
 ```
 
 ## File structure

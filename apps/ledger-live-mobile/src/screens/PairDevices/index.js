@@ -18,6 +18,7 @@ import { addKnownDevice } from "../../actions/ble";
 import {
   installAppFirstTime,
   setLastSeenDeviceInfo,
+  setReadOnlyMode,
 } from "../../actions/settings";
 import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 import type { DeviceLike } from "../../reducers/ble";
@@ -170,6 +171,8 @@ function PairDevicesInner({ navigation, route }: Props) {
               appsInstalled,
             }),
           );
+
+          dispatchRedux(setReadOnlyMode(false));
 
           if (unmounted.current) return;
           dispatch({ type: "paired", skipCheck: false });

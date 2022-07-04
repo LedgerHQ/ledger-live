@@ -12,7 +12,7 @@ import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
-import { setLastConnectedDevice } from "../actions/settings";
+import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
 
 const forceInset = { bottom: "always" };
@@ -44,6 +44,7 @@ export default function SelectDevice({ navigation, route }: Props) {
   const onSelect = useCallback(
     (device: Device) => {
       dispatchRedux(setLastConnectedDevice(device));
+      dispatchRedux(setReadOnlyMode(false));
       onNavigate(device);
     },
     [dispatchRedux, onNavigate],

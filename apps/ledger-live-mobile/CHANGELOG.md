@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.3.1
+
+### Patch Changes
+
+- c3079243d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
+- bda266fc4: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
+## 3.3.1-hotfix.1
+
+### Patch Changes
+
+- bb592ab1d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
+
+## 3.3.1-hotfix.0
+
+### Patch Changes
+
+- b8dad7183: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
 ## 3.3.0
 
 ### Minor Changes
