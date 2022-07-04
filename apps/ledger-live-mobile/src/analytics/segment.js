@@ -27,6 +27,7 @@ import {
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
+  sensitiveAnalyticsSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -42,9 +43,12 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = store => {
   const state: State = store.getState();
-  const systemLanguage = RNLocalize.getLocales()[0]?.languageTag;
-  const language = languageSelector(state);
-  const region = localeSelector(state);
+  const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
+  const systemLanguage = sensitiveAnalytics
+    ? null
+    : RNLocalize.getLocales()[0]?.languageTag;
+  const language = sensitiveAnalytics ? null : languageSelector(state);
+  const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
 
@@ -63,7 +67,7 @@ const extraProperties = store => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
-    systemLanguage,
+    systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,

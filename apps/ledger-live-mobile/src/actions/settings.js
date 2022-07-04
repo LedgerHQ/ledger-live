@@ -242,6 +242,11 @@ export const setMarketFilterByStarredAccounts = (payload: boolean) => ({
   payload,
 });
 
+export const setSensitiveAnalytics = (enabled: boolean) => ({
+  type: "SET_SENSITIVE_ANALYTICS",
+  enabled,
+});
+
 type PortfolioRangeOption = {
   key: PortfolioRange,
   value: string,

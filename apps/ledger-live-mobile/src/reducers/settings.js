@@ -103,6 +103,7 @@ export type SettingsState = {
   marketRequestParams: MarketListRequestParams,
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
+  sensitiveAnalytics: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -157,6 +158,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
+  sensitiveAnalytics: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -435,6 +437,10 @@ const handlers: Object = {
     ...state,
     marketFilterByStarredAccounts: payload,
   }),
+  SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
+    ...state,
+    sensitiveAnalytics: action.enabled,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -637,3 +643,6 @@ export const marketCounterCurrencySelector = (state: State) =>
 
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+
+export const sensitiveAnalyticsSelector = (state: State) =>
+  state.settings.sensitiveAnalytics;
