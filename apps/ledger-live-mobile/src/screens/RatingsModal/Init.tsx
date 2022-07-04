@@ -28,7 +28,6 @@ const Init = ({ closeModal, setStep }: Props) => {
   const goToEnjoy = useCallback(() => {
     setStep("enjoy");
     handleSatisfied();
-    updateIdentify();
     track("button_clicked", {
       flow: "review",
       page: "review_step0",
@@ -36,6 +35,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
+    updateIdentify();
   }, [
     setStep,
     handleSatisfied,
@@ -44,7 +44,6 @@ const Init = ({ closeModal, setStep }: Props) => {
   ]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
-    updateIdentify();
     track("button_clicked", {
       flow: "review",
       page: "review_step0",
@@ -56,6 +55,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       ratingsFeatureParams?.conditions?.disappointed_delay,
       { satisfaction: "disappointed" },
     );
+    updateIdentify();
   }, [
     setStep,
     ratingsHappyMoment?.route_name,
