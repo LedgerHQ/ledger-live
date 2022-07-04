@@ -23,3 +23,6 @@ function checkPrefixAndLength(
 export function isValidAddress(currencyPrefix: string, addr: string): boolean {
   return checkPrefixAndLength(currencyPrefix, addr, 43);
 }
+
+export const FIGMENT_OSMOSIS_VALIDATOR_ADDRESS =
+  "osmovaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpf6t4agt";

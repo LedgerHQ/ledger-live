@@ -24,7 +24,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header, UnbondingHeader } from "../../cosmos/Delegation/Header";
 import { Row, UnbondingRow } from "./Row";
 
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { FIGMENT_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/osmosis/utils";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
@@ -103,7 +103,7 @@ const Delegation = ({ account }: Props) => {
 
   const onExternalLink = useCallback(
     (address: string) => {
-      if (address === LEDGER_VALIDATOR_ADDRESS) {
+      if (address === FIGMENT_OSMOSIS_VALIDATOR_ADDRESS) {
         openURL(urls.ledgerValidator);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
