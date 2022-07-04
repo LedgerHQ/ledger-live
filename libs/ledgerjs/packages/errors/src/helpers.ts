@@ -26,6 +26,8 @@ export const createCustomErrorClass = (name: string): CustomErrorFunc => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       super(message || name, options);
+      // Set the prototype explicitly. See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+      Object.setPrototypeOf(this, CustomErrorClass.prototype);
       this.name = name;
       for (const k in fields) {
         this[k] = fields[k];
