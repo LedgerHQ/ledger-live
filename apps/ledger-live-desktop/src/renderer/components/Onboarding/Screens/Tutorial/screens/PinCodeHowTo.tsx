@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, IllustrationContainer } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
 
 import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 import NanoDeviceCancelIcon from "~/renderer/icons/NanoDeviceCancelIcon";
 import { useTheme } from "styled-components";
+
+import Animation from "~/renderer/animations";
+import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
+import { OnboardingContext } from "../../../index.v3";
 
 export function PinCodeHowTo() {
   const { colors } = useTheme();
@@ -38,7 +41,17 @@ export function PinCodeHowTo() {
   );
 }
 
-PinCodeHowTo.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+const PinCodeHowToAnimation = () => {
+  const { deviceModelId } = useContext(OnboardingContext);
+
+  return (
+    <AnimationContainer>
+      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
+    </AnimationContainer>
+  );
+};
+
+PinCodeHowTo.Illustration = <PinCodeHowToAnimation />;
 
 const Footer = (props: any) => {
   const { t } = useTranslation();

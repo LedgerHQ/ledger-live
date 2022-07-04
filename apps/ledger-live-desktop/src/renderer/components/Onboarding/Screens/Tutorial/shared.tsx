@@ -12,6 +12,10 @@ export const WaveContainer = styled.div`
   pointer-events: none;
 `;
 
+export const AnimationContainer = styled(Flex)`
+  width: 324px;
+`;
+
 export const IllustrationContainer = styled(Flex)<{ src: string }>`
   background: url(${({ src }) => src}) no-repeat center;
   background-size: contain;
