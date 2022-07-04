@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Bullet, Title, Column, IllustrationContainer, AsideFooter } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import { Bullet, Title, Column, AnimationContainer, AsideFooter } from "../shared";
+
+import Animation from "~/renderer/animations";
+import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
+import { OnboardingContext } from "../../../index.v3";
 
 const steps = [
   {
@@ -35,7 +38,17 @@ export function DeviceHowTo() {
   );
 }
 
-DeviceHowTo.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+const DeviceHowToAnimation = () => {
+  const { deviceModelId } = useContext(OnboardingContext);
+
+  return (
+    <AnimationContainer>
+      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
+    </AnimationContainer>
+  );
+};
+
+DeviceHowTo.Illustration = <DeviceHowToAnimation />;
 
 const Footer = (props: any) => {
   const { t } = useTranslation();

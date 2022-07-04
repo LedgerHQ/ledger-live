@@ -116,7 +116,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
         {illustration}
       </Aside>
       <FlowStepperContentContainer flexGrow={1} justifyContent="center">
-        <FlowStepperContent flexDirection="column">
+        <FlowStepperContent flexDirection="column" /* Agrandir ici */>
           {ProgressBar}
           <StepContent>{children}</StepContent>
           <Flex justifyContent="space-between">
@@ -297,12 +297,13 @@ export default function Tutorial({ useCase }: Props) {
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
-            setHelpPinCode(true);
+            //setHelpPinCode(true);
           }
+          setHelpPinCode(true);
           // useCase === UseCase.recoveryPhrase
-          else {
+          /*else {
             history.push(`${path}/${ScreenId.existingRecoveryPhrase}`);
-          }
+          }*/
         },
         previous: () => history.push(`${path}/${ScreenId.pinCode}`),
       },
@@ -348,7 +349,9 @@ export default function Tutorial({ useCase }: Props) {
         id: ScreenId.recoveryHowTo2,
         component: RecoveryHowTo2,
         useCases: [UseCase.recoveryPhrase],
-        next: () => history.push(`${path}/${ScreenId.pairMyNano}`),
+        next: () => {
+          setHelpRecoveryPhrase(true);
+        },
         previous: () => history.push(`${path}/${ScreenId.recoveryHowTo}`),
       },
       {
@@ -573,7 +576,12 @@ export default function Tutorial({ useCase }: Props) {
           `
           <PinHelp
             handleNextInDrawer={() =>
-              handleNextInDrawer(setHelpPinCode, `${path}/${ScreenId.newRecoveryPhrase}`)
+              handleNextInDrawer(
+                setHelpPinCode,
+                useCase === UseCase.setupDevice
+                  ? `${path}/${ScreenId.newRecoveryPhrase}`
+                  : `${path}/${ScreenId.existingRecoveryPhrase}`,
+              )
             }
           />
         </Flex>
@@ -586,7 +594,12 @@ export default function Tutorial({ useCase }: Props) {
         <Flex px={40} height="100%">
           <RecoverySeed
             handleNextInDrawer={() =>
-              handleNextInDrawer(setHelpRecoveryPhrase, `${path}/${ScreenId.hideRecoveryPhrase}`)
+              handleNextInDrawer(
+                setHelpRecoveryPhrase,
+                useCase === UseCase.setupDevice
+                  ? `${path}/${ScreenId.hideRecoveryPhrase}`
+                  : `${path}/${ScreenId.pairMyNano}`,
+              )
             }
           />
         </Flex>
