@@ -74,5 +74,7 @@ jobs:
           BOT_FILTER_FAMILY: bitcoin
           EXPERIMENTAL_EXPLORERS: true
           EXPERIMENTAL_CURRENCIES_JS_BRIDGE: bitcoin,bitcoin_cash,bsc,litecoin,dash,qtum,zcash,bitcoin_gold,stratis,dogecoin,digibyte,komodo,pivx,zencash,vertcoin,peercoin,viacoin,stakenet,stealthcoin,decred,bitcoin_testnet,tezosæ
-        run: mkdir botreport; COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        run: |
+          mkdir libs/ledger-live-common/botreport
+          COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
         timeout-minutes: 120
