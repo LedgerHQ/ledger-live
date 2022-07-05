@@ -15,6 +15,8 @@ type TestFixtures = {
   userdataDestinationPath: string;
   userdataOriginalFile: string;
   userdataFile: any;
+  manifest: any;
+  manifestFile: any;
   env: Record<string, any>;
   page: Page;
 };
@@ -34,8 +36,18 @@ const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     use(fullFilePath);
   },
+  manifest: undefined,
+  manifestFile: async ({ manifest }, use) => {
+    if (manifest) {
+      const fullFilePath = path.join(__dirname, "../manifest/", `${manifest}.json`)
+      const jsonFile = fs.readFileSync(fullFilePath, "utf-8");
+      use(JSON.parse(jsonFile));
+    } else {
+      use(false);
+    }
+  },
   page: async (
-    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, env }: TestFixtures,
+    { lang, theme, userdata, userdataDestinationPath, userdataOriginalFile, manifestFile, env }: TestFixtures,
     use: (page: Page) => void,
   ) => {
     // create userdata path
@@ -53,6 +65,7 @@ const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
+        PLATFORM_LOCAL_MANIFEST_JSON: manifestFile || "",
       },
       env,
     );
