@@ -16,7 +16,7 @@ import StoryGroup from "./StoryGroup";
 import StorylyWrapper, { Props as StorylyWrapperProps } from "./StorylyWrapper";
 
 type Props = StorylyWrapperProps & {
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
   scrollContainerStyle: StyleProp<ViewStyle>;
   /**
    * Controls whether the "state" state of the story groups affects the order in
