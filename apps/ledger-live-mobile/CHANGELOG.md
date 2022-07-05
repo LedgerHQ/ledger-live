@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.2
+
+### Patch Changes
+
+- [#373](https://github.com/LedgerHQ/ledger-live/pull/373) [`da3320c0a`](https://github.com/LedgerHQ/ledger-live/commit/da3320c0a65d6c5479eacf14e3a93ce85a42766c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing the architecture of NftMedia component
+
 ## 3.5.0-next.1
 
 ### Minor Changes
