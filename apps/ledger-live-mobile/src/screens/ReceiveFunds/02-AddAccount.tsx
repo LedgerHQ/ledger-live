@@ -217,7 +217,7 @@ function ScanLoading({
     <>
       <Flex flex={1} alignItems="center" justifyContent="center" m={6}>
         <InfiniteLoader size={48} />
-        <LText mt={13} variant="h2">
+        <LText mt={13} variant="h4" textAlign="center">
           {t("transfer.receive.addAccount.title")}
         </LText>
         <LText p={6} textAlign="center" variant="body" color="neutral.c80">

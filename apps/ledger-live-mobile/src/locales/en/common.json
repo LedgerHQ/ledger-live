@@ -2169,8 +2169,8 @@
         "subtitle": "Your {{currencyTicker}} will be deposited into this account."
       },
       "addAccount": {
-        "title": "Blockchain synchronization",
-        "subtitle": "We are verifying if you already have an {{currencyTicker}} account on blockchain.",
+        "title": "Searching the blockchain",
+        "subtitle": "Checking to see if you already own {{currencyTicker}} accounts.",
         "foundAccounts": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization"
       },
