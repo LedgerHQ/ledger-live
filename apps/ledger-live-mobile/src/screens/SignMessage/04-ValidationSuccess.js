@@ -2,19 +2,20 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
+/* eslint-disable import/named */
 import {
   // $FlowFixMe
   context as _wcContext,
   // $FlowFixMe
   setCurrentCallRequestResult,
 } from "../WalletConnect/Provider";
-
+/* eslint-enable import/named */
 type Props = {
   navigation: any,
   route: { params: RouteParams },

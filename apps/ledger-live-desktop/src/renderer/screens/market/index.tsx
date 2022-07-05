@@ -3,12 +3,12 @@ import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledger
 import { useSelector } from "react-redux";
 import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled from "styled-components";
 import CounterValueSelect from "./CountervalueSelect";
 import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
-import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import Track from "~/renderer/analytics/Track";
 
 const Container = styled(Flex).attrs({

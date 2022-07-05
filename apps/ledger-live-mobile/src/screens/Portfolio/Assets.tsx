@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { BalanceHistory } from "@ledgerhq/live-common/lib/types";
+import { BalanceHistory } from "@ledgerhq/live-common/types/index";
 import { useNavigation } from "@react-navigation/native";
 import AccountRow from "../Accounts/AccountRow";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";

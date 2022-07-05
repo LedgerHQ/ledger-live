@@ -6,12 +6,12 @@ import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { hasMinimumBondBalance } from "@ledgerhq/live-common/lib/families/polkadot/logic";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 
 import type { ModalInfo } from "../../modals/Info";
 import InfoModal from "../../modals/Info";

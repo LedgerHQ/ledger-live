@@ -4,30 +4,29 @@ import {
   accountWithMandatoryTokens,
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { getAbandonSeedAddress, findTokenById } from "@ledgerhq/cryptoassets";
 import { from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+import { delay } from "@ledgerhq/live-common/promise";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type {
   Exchange,
   ExchangeRate,
   InitSwapResult,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { initSwap } from "@ledgerhq/live-common/lib/exchange/swap";
-import { getExchangeRates } from "@ledgerhq/live-common/lib/exchange/swap";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { initSwap, getExchangeRates } from "@ledgerhq/live-common/exchange/swap/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import invariant from "invariant";
 import {
   Account,
   SignedOperation,
   SubAccount,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 type SwapJobOpts = ScanCommonOpts & {
   amount: string;
   useAllAmount: boolean;

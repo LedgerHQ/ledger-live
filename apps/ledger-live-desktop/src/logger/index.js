@@ -1,3 +1,1 @@
-const logger = require("./logger");
-
-module.exports = logger;
+export { default, enableDebugLogger, add, summarize } from "./logger";

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import { from } from "rxjs";
 import { mergeMap, filter, map } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import { reducer, runAll } from "@ledgerhq/live-common/lib/apps";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { reducer, runAll } from "@ledgerhq/live-common/apps/index";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
 import { deviceOpt } from "../scan";
 export default {
   description: "uninstall all apps in the device",

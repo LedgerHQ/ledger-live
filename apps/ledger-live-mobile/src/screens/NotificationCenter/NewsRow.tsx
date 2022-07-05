@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 
-import { Announcement } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/types";
+import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useTranslation } from "react-i18next";
 import { InfoMedium, WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Flex, Notification } from "@ledgerhq/native-ui";

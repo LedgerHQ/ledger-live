@@ -1,8 +1,8 @@
 import fs from "fs";
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import signMessage from "@ledgerhq/live-common/lib/hw/signMessage";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { currencyOpt, inferCurrency } from "../scan";
 export default {
   description:

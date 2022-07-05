@@ -17,7 +17,7 @@ import "react-native-url-polyfill/auto";
 import "text-encoding-polyfill";
 
 // import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
-import "@ledgerhq/live-common/lib/reactNative";
+import "@ledgerhq/live-common/reactNative";
 
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";

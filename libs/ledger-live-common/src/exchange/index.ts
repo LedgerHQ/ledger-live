@@ -46,6 +46,13 @@ export type ExchangeProviderNameAndSignature = {
   nameAndPubkey: Buffer;
   signature: Buffer;
 };
+
+export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
+  curve: string;
+  needsKYC: boolean;
+  needsBearerToken: boolean;
+};
+
 export const isExchangeSupportedByApp = (
   appName: string,
   appVersion: string
