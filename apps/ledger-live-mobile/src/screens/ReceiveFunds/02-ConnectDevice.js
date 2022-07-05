@@ -25,7 +25,7 @@ import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import SkipSelectDevice from "../SkipSelectDevice";
-import byFamily from "../../generated/ConnectDevice.js";
+import byFamily from "../../generated/ConnectDevice";
 
 type Props = {
   navigation: any,
