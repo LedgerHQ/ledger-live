@@ -8,9 +8,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Bump npm to latest
-      run: npm i -g npm@8.12.2
-      shell: bash
     - name: Install dependencies
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       shell: bash
