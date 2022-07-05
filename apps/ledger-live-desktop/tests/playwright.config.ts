@@ -7,6 +7,12 @@ const config: PlaywrightTestConfig = {
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
     timeout: 30000,
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01,
+    },
+    toMatchSnapshot: {
+      maxDiffPixelRatio: 0.01,
+    },
   },
   globalTimeout: 0,
   globalSetup: require.resolve("./utils/global-setup"),
