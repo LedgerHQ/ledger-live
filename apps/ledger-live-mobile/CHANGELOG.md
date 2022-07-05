@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.1
+
+### Minor Changes
+
+- [#582](https://github.com/LedgerHQ/ledger-live/pull/582) [`8aefbac63`](https://github.com/LedgerHQ/ledger-live/commit/8aefbac63188f72e8c3f6655b2f91fc45bf16004) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Refresh segment identify to take in account satisfaction user property change
+
 ## 3.4.1-next.0
 
 ### Patch Changes
