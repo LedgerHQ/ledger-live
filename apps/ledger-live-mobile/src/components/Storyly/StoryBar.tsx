@@ -1,7 +1,15 @@
-import { Flex } from "@ledgerhq/native-ui";
+import { Button, Flex } from "@ledgerhq/native-ui";
 import { isEqual } from "lodash";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { Platform, StyleProp, ViewStyle } from "react-native";
+import { PixelRatio, Platform, StyleProp, ViewStyle } from "react-native";
+import Animated, {
+  Easing,
+  FadeIn,
+  FadeInDown,
+  FadeOut,
+  Layout,
+  SlideOutLeft,
+} from "react-native-reanimated";
 import { Storyly } from "storyly-react-native";
 import styled from "styled-components/native";
 import StoryGroup from "./StoryGroup";
@@ -31,21 +39,29 @@ type StoryGroupInfo = {
   stories: StoryInfo[];
 };
 
-const PlaceholderContent: StoryGroupInfo[] = [
-  {
-    id: undefined,
-    title: "",
-    index: 0,
-    seen: true,
-    stories: [{ seen: true, id: undefined }],
-  },
-];
+const PlaceholderStoryGroup: StoryGroupInfo = {
+  id: undefined,
+  title: "",
+  index: 0,
+  seen: true,
+  stories: [{ seen: true, id: undefined }],
+};
+
+const PlaceholderContent: StoryGroupInfo[] = new Array(5).fill(
+  PlaceholderStoryGroup,
+);
 
 type StoryInfo = { seen: boolean; id?: string };
 
 const ScrollView = styled.ScrollView.attrs({ horizontal: true })`
   flex: 1;
 `;
+
+const AnimatedStoryGroupWrapper = Animated.createAnimatedComponent(
+  styled(Flex).attrs((p: { isLast: boolean }) => ({
+    mr: p.isLast ? 0 : "14px",
+  }))``,
+);
 
 const StoryBar: React.FC<Props> = props => {
   const { keepOriginalOrder = false, style } = props;
@@ -115,9 +131,10 @@ const StoryBar: React.FC<Props> = props => {
             storyGroup.stories?.find(story => !story.seen)?.id ??
             storyGroup.stories[0]?.id;
           return (
-            <Flex
+            <AnimatedStoryGroupWrapper
               key={storyGroup.id}
-              pr={index === arr.length - 1 ? 0 : "14px"}
+              layout={Layout.easing(Easing.inOut(Easing.quad)).duration(300)}
+              isLast={index === arr.length}
             >
               <StoryGroup
                 {...storyGroup}
@@ -125,7 +142,7 @@ const StoryBar: React.FC<Props> = props => {
                   handleStoryGroupPressed(storyGroup.id, firstUnseenStoryId)
                 }
               />
-            </Flex>
+            </AnimatedStoryGroupWrapper>
           );
         }),
     [storyGroupList, handleStoryGroupPressed, keepOriginalOrder],
