@@ -73,7 +73,6 @@ test("Discover", async ({ page }) => {
 
   await test.step("Request Account - single account output", async () => {
     await modal.continue();
-    await discoverPage.letLiveAppLoad();
     await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
   });
 });

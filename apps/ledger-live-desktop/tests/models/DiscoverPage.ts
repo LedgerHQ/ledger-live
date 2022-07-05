@@ -62,23 +62,5 @@ export class DiscoverPage {
     `,
       );
     }, elementName);
-
-    await this.letLiveAppLoad();
   }
-
-  async letLiveAppLoad() {
-    /* 
-      Pauses execution for 1 second.
-      The main reason is that it is tricky to wait for internal elements in the iframe
-      and the without a short pause after each Live App action the screenshots are very 
-      flaky. Adding a 1 second wait is not good practice but it will fix flakiness and it
-      should only be used in this cicumstance (hence the name 'letLiveAppLoad'). When 
-      waiting for elements in LLD we should always do proper waits. 
-    */
-    return new Promise(function(resolve) {
-      setTimeout(resolve, 1000);
-    });
-  }
-
-  // TODO: mocked device events for test
 }
