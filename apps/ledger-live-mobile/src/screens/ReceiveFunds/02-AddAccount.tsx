@@ -154,7 +154,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
         <LText fontSize="32px" fontFamily="InterMedium" semiBold>
           {t("transfer.receive.selectAccount.title")}
         </LText>
-        <LText variant="body" color="colore.neutral.70">
+        <LText variant="body" color="neutral.c70">
           {t("transfer.receive.selectAccount.subtitle", {
             currencyTicker: currency.ticker,
           })}
