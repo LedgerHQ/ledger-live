@@ -195,10 +195,20 @@ export const postBuildTransaction = async (
     },
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const registry = new Registry([
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     ["/cosmos.staking.v1beta1.MsgDelegate", MsgDelegate],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     ["/cosmos.staking.v1beta1.MsgUndelegate", MsgUndelegate],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     ["/cosmos.staking.v1beta1.MsgBeginRedelegate", MsgBeginRedelegate],
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     [
       "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
       MsgWithdrawDelegatorReward,
