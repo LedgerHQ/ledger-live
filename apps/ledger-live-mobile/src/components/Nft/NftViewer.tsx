@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 
 import {
   ScrollView,
@@ -12,13 +12,16 @@ import {
   decodeNftId,
   getNftCapabilities,
   useNftCollectionMetadata,
+  getFloorPrice,
 } from "@ledgerhq/live-common/lib/nft";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-community/clipboard";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { ProtoNFT, FloorPrice } from "@ledgerhq/live-common/lib/types";
+import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountSelector } from "../../reducers/accounts";
@@ -111,6 +114,9 @@ const NftViewer = ({ route }: Props) => {
     nft?.tokenId,
     nft?.currencyId,
   );
+  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [
+    nft.currencyId,
+  ]);
   const {
     status: collectionStatus,
     metadata: collectionMetadata,
@@ -126,6 +132,22 @@ const NftViewer = ({ route }: Props) => {
   const isLoading = nftStatus === "loading" || collectionStatus === "loading";
 
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
+
+  const [floorPriceLoading, setFloorPriceLoading] = useState(false);
+  const [ticker, setTicker] = useState("");
+  const [floorPrice, setFloorPrice] = useState(null);
+
+  useEffect(() => {
+    setFloorPriceLoading(true);
+    getFloorPrice(nft, currency)
+      .then((result: FloorPrice | null) => {
+        if (result) {
+          setTicker(result.ticker);
+          setFloorPrice(result.value);
+        }
+      })
+      .finally(() => setFloorPriceLoading(false));
+  }, [nft, currency]);
 
   const closeModal = () => {
     setBottomModalOpen(false);
@@ -354,6 +376,17 @@ const NftViewer = ({ route }: Props) => {
               </TouchableOpacity>
             </>
           )}
+          <FeatureToggle feature="counterValue">
+            {!floorPriceLoading && floorPrice ? (
+              <>
+                <View style={styles.hr} />
+                <Section
+                  title={t("nft.viewer.attributes.floorPrice")}
+                  value={`${floorPrice} ${ticker}`}
+                />
+              </>
+            ) : null}
+          </FeatureToggle>
         </View>
       </ScrollView>
       <NftLinksPanel

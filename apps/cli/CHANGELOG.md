@@ -1,5 +1,53 @@
 # @ledgerhq/live-cli
 
+## 22.0.2-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062)]:
+  - @ledgerhq/live-common@24.0.0-next.4
+
+## 22.0.2-next.3
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
+## 22.0.2-next.2
+
+### Patch Changes
+
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 22.0.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
+## 22.0.2-next.0
+
+### Patch Changes
+
+- 22531f3c3: Update expected steps labels for Cosmos device actions
+- 0616fe75d: Fix WS message now possibly being a Buffer instead of a string
+- Updated dependencies [22531f3c3]
+- Updated dependencies [6e956f22b]
+- Updated dependencies [d22452817]
+- Updated dependencies [2012b5477]
+- Updated dependencies [10440ec3c]
+- Updated dependencies [e1f2f07a2]
+- Updated dependencies [1e4a5647b]
+- Updated dependencies [508e4c23b]
+- Updated dependencies [b1e396dd8]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-next.0
+  - @ledgerhq/cryptoassets@6.29.0-next.0
+
 ## 22.0.1
 
 ### Patch Changes

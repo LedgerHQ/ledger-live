@@ -60,7 +60,6 @@ const transaction: Transaction = {
   family: "bitcoin",
   utxoStrategy: {
     strategy: 0,
-    pickUnconfirmedRBF: false,
     excludeUTXOs: [],
   },
   rbf: true,

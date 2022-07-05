@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.4.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062)]:
+  - @ledgerhq/live-common@24.0.0-next.4
+
+## 3.4.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
 ## 3.3.1
 
 ### Patch Changes
@@ -18,6 +36,42 @@
 ### Patch Changes
 
 - b8dad7183: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
+## 3.3.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 3.3.1-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
+## 3.3.1-next.0
+
+### Patch Changes
+
+- fbc32d3e2: AccountGraphCard : Add rounding when using counter value (to prevent too many decimals in crypto-value)
+- 4f43ac0e5: Add back navigation to NftViewer and fixed style issues on the view
+- 6bf75fa20: Updated naming for last operations to last transactions
+- 7bdf0091f: (internal) Filtering more errors to NOT be reported to Sentry – typically to ignore users-specific cases
+- Updated dependencies [22531f3c3]
+- Updated dependencies [d22452817]
+- Updated dependencies [2012b5477]
+- Updated dependencies [10440ec3c]
+- Updated dependencies [e1f2f07a2]
+- Updated dependencies [1e4a5647b]
+- Updated dependencies [508e4c23b]
+- Updated dependencies [b1e396dd8]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-next.0
+  - @ledgerhq/native-ui@0.8.1-next.0
 
 ## 3.3.0
 
