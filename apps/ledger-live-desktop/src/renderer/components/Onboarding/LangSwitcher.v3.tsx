@@ -18,6 +18,7 @@ const styles = {
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the MENU right aligned
   menu: (styles: any) => ({
     ...styles,
+    backgroundColor: "transparent",
     width: "fit-content",
   }),
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the VALUE right aligned
