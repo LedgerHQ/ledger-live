@@ -2,7 +2,7 @@
 
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import type { SendAmountProps } from "./types";
 
