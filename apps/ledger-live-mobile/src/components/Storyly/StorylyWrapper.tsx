@@ -30,7 +30,8 @@ export type Props = {
    * Default is true.
    */
   shouldFallbackToEnglishIfEmpty?: boolean;
-} & Omit<Storyly.Props, "storylyId">;
+  onFail: (event: String) => void;
+} & Omit<Storyly.Props, "storylyId" | "onFail">;
 
 // @ts-ignore idk how to fix this
 const StyledStoryly = styled(Storyly)`
@@ -50,7 +51,10 @@ const StorylyWrapper = forwardRef(
     } = props;
 
     const [fallbackToEnglish, setFallbackToEnglish] = useState(false);
-    const [blocked, setBlocked] = useState(false);
+    const [
+      instanceIdBlocked,
+      setInstanceIdBlocked,
+    ] = useState<StorylyInstanceID | null>(null);
 
     const language = useSelector(languageSelector);
 
@@ -72,23 +76,28 @@ const StorylyWrapper = forwardRef(
               storyGroup =>
                 !!storyGroup.stories.find(story => story.media.type !== 1),
             )
-          )
-            setBlocked(true);
+          ) {
+            setInstanceIdBlocked(instanceID);
+            onFail && onFail("StorylyWrapper: Video story blocked on Android");
+            return;
+          }
         }
         onLoad && onLoad(event);
       },
       [
+        onFail,
         onLoad,
         shouldFallbackToEnglishIfEmpty,
         setFallbackToEnglish,
         shouldBlockVideoContentOnAndroid,
-        setBlocked,
+        setInstanceIdBlocked,
+        instanceID,
       ],
     );
 
     const handleFail = useCallback(
       (event: String) => {
-        onFail && onFail(event);
+        onFail(event);
       },
       [onFail],
     );
@@ -104,7 +113,8 @@ const StorylyWrapper = forwardRef(
       <StyledStoryly
         ref={ref}
         {...props}
-        storylyId={blocked ? "" : instanceID}
+        key={segments.toString()}
+        storylyId={instanceIdBlocked === instanceID ? "" : instanceID}
         storylySegments={segments}
         onLoad={handleLoad}
         onFail={handleFail}

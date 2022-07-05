@@ -5,7 +5,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 
 export type Props = {
-  id: string;
+  id?: string;
   title: string;
   index: number;
   seen: boolean;
@@ -45,7 +45,12 @@ const StoryGroup: React.FC<Props> = props => {
   return (
     <Container>
       <Touchable seen={seen} onPress={onPress || undefined}>
-        <Flex height="72px" width="72px">
+        <Flex
+          height="72px"
+          width="72px"
+          borderRadius="72px"
+          backgroundColor="neutral.c30"
+        >
           <Illustration source={{ uri: iconUrl }} />
         </Flex>
       </Touchable>

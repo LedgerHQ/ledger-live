@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -33,7 +33,6 @@ import Carousel from "../../components/Carousel";
 import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
-import RequireTerms from "../../components/RequireTerms";
 import { NavigatorName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
@@ -47,6 +46,8 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import StoryBar from "../../components/Storyly/StoryBar";
+import { onboardingTipsStoryInstanceID } from "../../components/Storyly/shared";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -180,6 +181,11 @@ function PortfolioScreen({ navigation }: Props) {
           <AddAssetsCard />
         </Box>
       ),
+      <StoryBar
+        instanceID={onboardingTipsStoryInstanceID}
+        style={{ flex: 1, paddingVertical: 16 }}
+        scrollContainerStyle={{ paddingHorizontal: 16}}
+      />,
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}

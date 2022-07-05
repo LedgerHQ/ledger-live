@@ -23,7 +23,7 @@ type Props = StorylyWrapperProps & {
 };
 
 type StoryGroupInfo = {
-  id: string;
+  id?: string;
   title: string;
   index: number;
   seen: boolean;
@@ -33,15 +33,15 @@ type StoryGroupInfo = {
 
 const PlaceholderContent: StoryGroupInfo[] = [
   {
-    id: "",
+    id: undefined,
     title: "",
     index: 0,
     seen: true,
-    stories: [{ seen: true, id: "" }],
+    stories: [{ seen: true, id: undefined }],
   },
 ];
 
-type StoryInfo = { seen: boolean; id: string };
+type StoryInfo = { seen: boolean; id?: string };
 
 const ScrollView = styled.ScrollView.attrs({ horizontal: true })`
   flex: 1;
@@ -59,6 +59,10 @@ const StoryBar: React.FC<Props> = props => {
     false,
   );
 
+  const handleFail = useCallback(() => {
+    setStoryGroupList(PlaceholderContent);
+  }, [setStoryGroupList]);
+
   const handleLoad = useCallback(
     (event: Storyly.StoryLoadEvent) => {
       setRefreshingStorylyState(false);
@@ -73,7 +77,8 @@ const StoryBar: React.FC<Props> = props => {
   );
 
   const handleStoryGroupPressed = useCallback(
-    (storyGroupId: string, storyId: string) => {
+    (storyGroupId?: string, storyId?: string) => {
+      if (!storyGroupId || !storyId) return;
       storylyRef?.current?.openStoryWithId(
         // @ts-ignore the typing of storyly is broken, the iOS native module
         // actually expects numbers or it will crash.
@@ -136,6 +141,7 @@ const StoryBar: React.FC<Props> = props => {
           ref={storylyRef}
           {...props}
           onEvent={handleEvent}
+          onFail={handleFail}
           onLoad={handleLoad}
         />
         {refreshingStorylyState && (
