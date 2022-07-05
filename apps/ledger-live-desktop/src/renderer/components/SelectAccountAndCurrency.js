@@ -138,6 +138,7 @@ const SelectAccountAndCurrency = ({
                 }
               }}
               disabled={!account}
+              data-test-id="modal-continue-button"
             >
               {t("exchange.buy.coinify.continue")}
             </ConfirmButton>
