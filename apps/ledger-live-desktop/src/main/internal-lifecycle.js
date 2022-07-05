@@ -1,7 +1,7 @@
 // @flow
 import { app, ipcMain } from "electron";
 import path from "path";
-import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import logger from "~/logger";
 import { getMainWindow } from "./window-lifecycle";

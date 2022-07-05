@@ -15,8 +15,8 @@ import { useTheme } from "@react-navigation/native";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import type { SearchResult } from "../../../helpers/formatAccountSearchResults";
 import { accountsSelector } from "../../../reducers/accounts";

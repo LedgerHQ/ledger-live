@@ -9,16 +9,16 @@ import type {
   Account,
   AccountLike,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import {
   getAccountName,
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";

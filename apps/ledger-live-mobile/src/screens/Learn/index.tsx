@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Loading from "./Loading";
 import WebViewScreen from "../../components/WebViewScreen";
 

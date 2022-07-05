@@ -15,13 +15,29 @@
     }
   },
   "exports": {
-    ".": {
-      "require": "./lib/cjs/index.js",
-      "default": "./lib/index.js"
-    },
     "./": {
       "require": "./lib/cjs/",
       "default": "./lib/"
+    },
+    "./*/": {
+      "require": "./lib/cjs/*/index.js",
+      "default": "./lib/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/cjs/*.js",
+      "default": "./lib/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/cjs/*.js",
+      "default": "./lib/*.js"
+    },
+    "./*.woff2": {
+      "require": "./lib/cjs/*.woff2",
+      "default": "./lib/*.woff2"
+    },
+    ".": {
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },

@@ -1,7 +1,7 @@
 // @flow
 import { Observable } from "rxjs";
 import { log, listen } from "@ledgerhq/logs";
-import { open } from "@ledgerhq/live-common/lib/hw";
+import { open } from "@ledgerhq/live-common/hw/index";
 import WebSocket from "ws";
 
 type Input = {

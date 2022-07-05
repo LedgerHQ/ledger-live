@@ -1,13 +1,13 @@
 import React, { useCallback, useState, memo } from "react";
-import { useNftCollectionMetadata } from "@ledgerhq/live-common/lib/nft";
+import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
 import {
   ProtoNFT,
   NFTMetadata,
   Account,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
-import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftCard from "../../../components/Nft/NftCard";
 import Touchable from "../../../components/Touchable";
 import Skeleton from "../../../components/Skeleton";

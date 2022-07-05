@@ -1,12 +1,12 @@
 /* @flow */
 import invariant from "invariant";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useSupplyMax } from "@ledgerhq/live-common/lib/compound/react";
+import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useSupplyMax } from "@ledgerhq/live-common/compound/react";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 

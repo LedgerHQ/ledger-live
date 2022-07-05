@@ -2,13 +2,13 @@ import React, { ComponentType, memo } from "react";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,
-} from "@ledgerhq/live-common/lib/reactNative";
+} from "@ledgerhq/live-common/reactNative";
 
 import {
   CryptoCurrency,
   Currency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 

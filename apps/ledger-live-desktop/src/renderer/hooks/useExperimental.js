@@ -1,6 +1,6 @@
 // @flow
 import { useEffect, useState } from "react";
-import { changes } from "@ledgerhq/live-common/lib/env";
+import { changes } from "@ledgerhq/live-common/env";
 
 import { enabledExperimentalFeatures } from "./../experimental";
 
