@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { CryptoCurrency } from "@ledgerhq/live-common/src/types";
 
 type ListProps = {
   assets: CryptoCurrency[];

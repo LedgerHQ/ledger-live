@@ -44,7 +44,7 @@ import {
   RemoteLiveAppProvider,
   useRemoteLiveAppContext,
 } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
 
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
