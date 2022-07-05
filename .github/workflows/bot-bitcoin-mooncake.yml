@@ -78,3 +78,17 @@ jobs:
           mkdir libs/ledger-live-common/botreport
           COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
         timeout-minutes: 120
+      - name: submit bot report
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+        with:
+          path: libs/ledger-live-common/botreport/
+          githubSha: ${{github.sha}}
+          githubToken: ${{github.token}}
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+          slackChannel: ci-bitcoin-ll
+      - name: upload logs to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: libs/ledger-live-common/botreport/
