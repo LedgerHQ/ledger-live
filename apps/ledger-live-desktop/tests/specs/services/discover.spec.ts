@@ -52,8 +52,8 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("catalog.png");
   });
 
-  await test.step("Open Test App", async () => {
-    await discoverPage.openTestApp();
+  await test.step("Launch Test App", async () => {
+    await discoverPage.launchApp();
     await expect.soft(page).toHaveScreenshot("open-test-app.png");
   });
 
@@ -80,7 +80,7 @@ test("Discover", async ({ page }) => {
   });
 
   await test.step("Request Account - select BTC", async () => {
-    await discoverPage.selectAccount();
+    await discoverPage.selectAccount("BTC");
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-3.png");
   });
 
