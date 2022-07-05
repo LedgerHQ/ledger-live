@@ -33,7 +33,10 @@ class AmountCell extends PureComponent<Props> {
   render() {
     // eslint-disable-next-line no-unused-vars
     const { currency, unit, operation } = this.props;
-    const amount = getOperationAmountNumber(operation);
+    const amount =
+      currency.id === "cosmos"
+        ? operation.extra.validators[0]?.amount || getOperationAmountNumber(operation)
+        : getOperationAmountNumber(operation);
 
     // $FlowFixMe
     const specific = currency.family ? perFamilyOperationDetails[currency.family] : null;
