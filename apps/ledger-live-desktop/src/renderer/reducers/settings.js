@@ -146,7 +146,7 @@ export const getInitialLocale = () => {
 };
 
 const INITIAL_STATE: SettingsState = {
-  hasCompletedOnboarding: false,
+  hasCompletedOnboarding: Boolean(getEnv("SANDBOX_MODE") > 0),
   counterValue: "USD",
   language: getInitialLanguageLocale(),
   theme: null,

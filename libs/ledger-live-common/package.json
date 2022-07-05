@@ -145,7 +145,7 @@
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
     "lru-cache": "5.1.1",
-    "mm-app-eth": "github:lambertkevin/mm-app-eth#780eaa07fe443c7625a45e973def00d9b5616521",
+    "mm-app-eth": "https://github.com/lambertkevin/mm-app-eth.git#da6fce2e2de9b877b4e80aeadd169c871cdb0159",
     "numeral": "^2.0.6",
     "object-hash": "^2.2.0",
     "performance-now": "^2.1.0",

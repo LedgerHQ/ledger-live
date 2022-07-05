@@ -30,8 +30,8 @@ export type OnboardingState = {
 };
 
 const initialState: OnboardingState = {
-  stepIndex: 0,
-  stepName: getEnv("SKIP_ONBOARDING") ? "analytics" : "start",
+  stepIndex: getEnv("SKIP_ONBOARDING") || getEnv("SANDBOX_MODE") > 0 ? 9 : 0,
+  stepName: getEnv("SKIP_ONBOARDING") || getEnv("SANDBOX_MODE") > 0 ? "finish" : "start",
   genuine: {
     isDeviceGenuine: false,
     displayErrorScreen: false,

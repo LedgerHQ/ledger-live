@@ -14,6 +14,7 @@ import { withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 const EmptyStateAccounts = ({ theme }: { theme: any }) => {
   const { push } = useHistory();
@@ -32,6 +33,8 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
   const openAddMockAccount = useCallback(() => {
     dispatch(openModal("MODAL_ADD_MOCK_ACCOUNT"));
   }, [dispatch]);
+
+  const onSandboxMode = getEnv("SANDBOX_MODE") > 0;
 
   return (
     <Box alignItems="center" pb={8} style={{ margin: "auto" }}>
@@ -64,13 +67,15 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
           >
             {t("emptyState.accounts.buttons.addAccount")}
           </Button>
-          <Button
-            primary
-            onClick={openAddMockAccount}
-            data-test-id="portfolio-empty-state-add-account-button"
-          >
-            Add mock account
-          </Button>
+          {onSandboxMode ? (
+            <Button
+              primary
+              onClick={openAddMockAccount}
+              data-test-id="portfolio-empty-state-add-account-button"
+            >
+              Add mock account
+            </Button>
+          ) : null}
         </Box>
         <FakeLink
           underline

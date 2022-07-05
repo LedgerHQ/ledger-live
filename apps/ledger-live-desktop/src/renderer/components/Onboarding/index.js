@@ -207,6 +207,10 @@ const onboardingMachine = Machine({
         })),
       ],
     },
+    SKIP_ONBOARDING: {
+      target: "onboardingComplete",
+      actions: [],
+    },
   },
 });
 
@@ -255,7 +259,9 @@ export function Onboarding({ onboardingRelaunched }: { onboardingRelaunched: boo
 
   useEffect(() => {
     if (getEnv("SANDBOX_MODE") > 0) {
-      sendEvent("onboardingComplete");
+      sendEvent("SKIP_ONBOARDING");
+      dispatch(saveSettings({ hasCompletedOnboarding: true }));
+      dispatch(relaunchOnboarding(false));
     }
   }, [sendEvent]);
 

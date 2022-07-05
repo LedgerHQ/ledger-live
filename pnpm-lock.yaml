@@ -999,7 +999,7 @@ importers:
       leb128: ^0.0.5
       lodash: ^4.17.21
       lru-cache: 5.1.1
-      mm-app-eth: github:lambertkevin/mm-app-eth#780eaa07fe443c7625a45e973def00d9b5616521
+      mm-app-eth: https://github.com/lambertkevin/mm-app-eth.git#da6fce2e2de9b877b4e80aeadd169c871cdb0159
       numeral: ^2.0.6
       object-hash: ^2.2.0
       performance-now: ^2.1.0
@@ -1128,7 +1128,7 @@ importers:
       leb128: 0.0.5
       lodash: 4.17.21
       lru-cache: 5.1.1
-      mm-app-eth: github.com/lambertkevin/mm-app-eth/780eaa07fe443c7625a45e973def00d9b5616521
+      mm-app-eth: github.com/lambertkevin/mm-app-eth/da6fce2e2de9b877b4e80aeadd169c871cdb0159
       numeral: 2.0.6
       object-hash: 2.2.0
       performance-now: 2.1.0
@@ -22244,7 +22244,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -41009,7 +41009,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==}
@@ -51308,8 +51307,8 @@ packages:
       react-native: 0.67.3_shn3lkepuadv4od4dudas6ijbq
     dev: false
 
-  github.com/lambertkevin/mm-app-eth/780eaa07fe443c7625a45e973def00d9b5616521:
-    resolution: {tarball: https://codeload.github.com/lambertkevin/mm-app-eth/tar.gz/780eaa07fe443c7625a45e973def00d9b5616521}
+  github.com/lambertkevin/mm-app-eth/da6fce2e2de9b877b4e80aeadd169c871cdb0159:
+    resolution: {tarball: https://codeload.github.com/lambertkevin/mm-app-eth/tar.gz/da6fce2e2de9b877b4e80aeadd169c871cdb0159}
     name: mm-app-eth
     version: 1.0.0
     prepare: true
