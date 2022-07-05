@@ -1,8 +1,8 @@
 // @flow
 
 import React, { useEffect } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import TrackScreen from "../../analytics/TrackScreen";

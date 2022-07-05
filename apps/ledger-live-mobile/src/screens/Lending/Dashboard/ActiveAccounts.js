@@ -2,7 +2,7 @@
 
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { useTheme } from "@react-navigation/native";
 import Row from "./ActiveAccountRow";
 import EmptyState from "./EmptyState";

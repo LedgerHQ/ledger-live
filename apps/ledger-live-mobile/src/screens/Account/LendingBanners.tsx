@@ -2,11 +2,11 @@
 import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 
 import { useSelector } from "react-redux";
 import LText from "../../components/LText";

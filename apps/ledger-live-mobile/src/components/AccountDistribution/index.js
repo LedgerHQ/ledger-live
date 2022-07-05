@@ -3,8 +3,8 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import LText from "../LText";
 import Row from "./Row";
 

@@ -3,20 +3,20 @@ import { useMemo, useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { OutputSelector } from "reselect";
 import { createSelector } from "reselect";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { isAccountDelegating } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { reorderAccounts } from "~/renderer/actions/accounts";
-import type { FlattenAccountsOptions } from "@ledgerhq/live-common/lib/account";
+import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
-} from "@ledgerhq/live-common/lib/countervalues/react";
-import type { TrackingPair } from "@ledgerhq/live-common/lib/countervalues/types";
-import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/lib/portfolio/v2/react";
+} from "@ledgerhq/live-common/countervalues/react";
+import type { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
+import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
 import type { State } from "~/renderer/reducers";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";

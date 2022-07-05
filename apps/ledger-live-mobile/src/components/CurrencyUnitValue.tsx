@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { Unit } from "@ledgerhq/live-common/lib/types";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { Unit } from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { useLocale } from "../context/Locale";

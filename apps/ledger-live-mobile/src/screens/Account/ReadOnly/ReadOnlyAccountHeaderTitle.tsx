@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import {
   getCryptoCurrencyById,
   getTokenById,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";

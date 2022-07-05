@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Linking, ScrollView } from "react-native";
 import { track } from "../../analytics";
 import Track from "../../analytics/Track";
@@ -58,7 +58,7 @@ const ConfirmRecoveryStep = ({
           <Text variant="h2" fontWeight="semiBold" mb={4}>
             {t("FirmwareUpdateReleaseNotes.introTitle", {
               version: firmwareVersion,
-              deviceName: device.deviceName?.replace(/\u00a0/g, ' '),
+              deviceName: device.deviceName?.replace(/\u00a0/g, " "),
             })}
           </Text>
           <Alert

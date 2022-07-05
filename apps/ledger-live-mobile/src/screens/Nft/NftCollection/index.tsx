@@ -10,10 +10,10 @@ import {
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
+import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import Animated, { Value, event } from "react-native-reanimated";
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { Operation, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Operation, ProtoNFT } from "@ledgerhq/live-common/types/index";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
