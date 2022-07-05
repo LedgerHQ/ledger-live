@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.2.6-next.0
+
+### Patch Changes
+
+- 429df1cff: Enhance subpath exports to improve node17+ and jest compatibilty.
+
 ## 0.2.5
 
 ### Patch Changes

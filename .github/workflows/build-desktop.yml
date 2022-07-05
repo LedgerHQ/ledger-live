@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:
@@ -70,16 +72,12 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
@@ -126,17 +124,12 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
-
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
@@ -207,7 +200,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -226,7 +219,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
@@ -242,8 +235,6 @@ jobs:
           os: mac
 
       - name: build the app
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           eval "$(rbenv init - bash)"
           pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"

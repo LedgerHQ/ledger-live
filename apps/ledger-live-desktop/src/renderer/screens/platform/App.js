@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import useTheme from "~/renderer/hooks/useTheme";
 
@@ -23,7 +23,7 @@ type Props = {
 
 export default function PlatformApp({ match }: Props) {
   const history = useHistory();
-  const { state: urlParams } = useLocation();
+  const { state: urlParams, search } = useLocation();
   const { appId } = match.params;
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
@@ -32,7 +32,12 @@ export default function PlatformApp({ match }: Props) {
 
   console.log(appId, manifest);
 
-  const handleClose = useCallback(() => history.push(`/platform`), [history]);
+  const returnTo = useMemo(() => {
+    const params = new URLSearchParams(search);
+    return params.get("returnTo");
+  }, [search]);
+
+  const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
   const themeType = useTheme("colors.palette.type");
   const lang = useSelector(languageSelector);
   const params = {

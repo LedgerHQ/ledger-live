@@ -318,7 +318,8 @@ const handlers: Object = {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
-    if (id && status) {
+    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
+    if (id && typeof status !== "undefined") {
       KYC[provider] = { id, status };
     } else {
       delete KYC[provider];
@@ -355,6 +356,13 @@ const handlers: Object = {
   REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
   }),
 };
 

@@ -2,9 +2,8 @@
 
 import Color from "color";
 
-const context = require.context("./", true, /\.(json)$/);
-
-const regexp = /\.\/(.+).json/;
+import light from "./light.json";
+import dark from "./dark.json";
 
 const shades = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
@@ -60,12 +59,14 @@ const enrichPalette = (rawPalette: RawPalette): Theme => {
   };
 };
 
-const palettes = context.keys().reduce((acc, filename) => {
-  const name = filename.match(regexp)[1];
-  const rawPalette: RawPalette = context(filename);
-  acc[name] = enrichPalette(rawPalette);
+const palettes: { dark: RawPalette, light: RawPalette } = Object.entries({ light, dark }).reduce(
+  (acc, [name, value]) => {
+    const rawPalette: RawPalette = (value: any);
+    acc[name] = enrichPalette(rawPalette);
 
-  return acc;
-}, {});
+    return acc;
+  },
+  {},
+);
 
 export default palettes;

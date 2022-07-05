@@ -1,5 +1,53 @@
 # @ledgerhq/live-common
 
+## 24.0.0-next.4
+
+### Major Changes
+
+- [#502](https://github.com/LedgerHQ/ledger-live/pull/502) [`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Bitcoin Rbf new implementation. Jira ticket: LIVE-1414, LIVE-1415, LIVE-1416
+
+## 24.0.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+## 24.0.0-next.2
+
+### Minor Changes
+
+- c5714333b: Adding optimistic operations to NFT transfers
+
+## 24.0.0-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- 99cc5bbc1: Add loading spinner on "From amount" field in Swap form when using "Send max" toggle
+
+## 24.0.0-next.0
+
+### Major Changes
+
+- b1e396dd8: satstack issue fix Jira ticket: LIVE-2208 and LIVE-2170
+- e9decc277: change tags for glif derivation modes
+
+### Minor Changes
+
+- d22452817: Fix Tezos synchronisation with originating type
+- 10440ec3c: XRP: add retry to api call
+- e1f2f07a2: fix(LLC): cardano byron address validation
+- 508e4c23b: Update ledger-live-common dependency stellar-sdk to v10.1.1
+
+### Patch Changes
+
+- 22531f3c3: Update expected steps labels for Cosmos device actions
+- 2012b5477: Drop deprecated "Portfolio V1"
+- 1e4a5647b: Patching shouldUpgrade & mustUpgrade logic to allow for pre-release tags that were considered always considered as false before
+- Updated dependencies [6e956f22b]
+  - @ledgerhq/cryptoassets@6.29.0-next.0
+  - @ledgerhq/hw-app-eth@6.29.1-next.0
+
 ## 23.1.0
 
 ### Minor Changes
@@ -123,12 +171,6 @@
   - @ledgerhq/hw-app-eth@6.29.0-next.0
 
 ## 22.2.1
-
-### Patch Changes
-
-- 6bcf42ecd: Fix: Infinite Loading Spinner if no nano connected at start of funding flow [LIVE-2447]
-
-## 22.2.1-hotfix.0
 
 ### Patch Changes
 

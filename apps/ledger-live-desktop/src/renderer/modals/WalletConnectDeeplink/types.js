@@ -1,5 +1,6 @@
 // @flow
 import type { Account } from "@ledgerhq/live-common/lib/types";
+// $FlowFixMe
 import { STATUS } from "~/renderer/screens/WalletConnect/Provider";
 
 export type BodyProps = {

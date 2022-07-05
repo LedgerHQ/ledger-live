@@ -1,0 +1,18 @@
+{
+  "name": "esbuild-utils",
+  "version": "1.0.0",
+  "private": true,
+  "description": "esbuild utility functions and plugins",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "esbuild": "^0.14.42",
+    "esbuild-plugin-import-glob": "^0.1.1"
+  },
+  "devDependencies": {
+    "@craftamap/esbuild-plugin-html": "^0.4.0",
+    "esbuild-plugin-flow": "^0.3.2"
+  }
+}

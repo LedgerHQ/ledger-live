@@ -18,7 +18,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean, right?: any }) =>
   const location = useLocation();
   const latestFirmware = useSelector(latestFirmwareSelector);
   const visibleFirmwareVersion =
-    process.env.DEBUG_FW_VERSION ||
+    process.env.DEBUG_FW_VERSION ??
     (latestFirmware ? getCleanVersion(latestFirmware.final.name) : "");
 
   const onClick = () => {

@@ -248,7 +248,6 @@ const bitcoinLikeMutations = ({
           {
             utxoStrategy: {
               ...transaction.utxoStrategy,
-              pickUnconfirmedRBF: true,
             },
           },
           {
@@ -289,7 +288,6 @@ const bitcoinTestnet: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
-    appVersion: "2.0.0-beta",
   },
   test: genericTest,
   mutations: bitcoinLikeMutations({

@@ -46,7 +46,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -69,7 +68,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -92,7 +90,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
