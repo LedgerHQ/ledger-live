@@ -17,6 +17,8 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -24,8 +26,6 @@ import CopyLink from "../../components/CopyLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 
@@ -124,7 +124,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   if (!account || !currency || !mainAccount) return null;
 
   return (
-    <Flex flex={1}>
+    <Flex flex={1} mb={9}>
       <NavigationScrollView style={{ flex: 1 }}>
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
@@ -203,8 +203,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       </Flex>
       </NavigationScrollView>
       <Flex
-       m={6}
-     >
+        m={6}
+      >
       {isToastDisplayed ? (
         <Notification
         Icon={Icons.CircledCheckMedium}

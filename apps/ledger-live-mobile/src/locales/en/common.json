@@ -2207,7 +2207,7 @@
       "toastMessages": {
         "accountImported": "We've imported a {{currencyTicker}} account for you. ",
         "why": "Tell me why.",
-        "addressVerified": "Your address is now verified"
+        "addressVerified": "Your address is verified"
       },
       "additionalInfoModal": {
         "title": "Why we imported an account?",
