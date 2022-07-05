@@ -181,11 +181,6 @@ function PortfolioScreen({ navigation }: Props) {
           <AddAssetsCard />
         </Box>
       ),
-      <StoryBar
-        instanceID={onboardingTipsStoryInstanceID}
-        style={{ flex: 1, paddingVertical: 16 }}
-        scrollContainerStyle={{ paddingHorizontal: 16}}
-      />,
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
