@@ -33,6 +33,8 @@ import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider
 import { themeSelector } from "./actions/general";
 // $FlowFixMe
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
+// $FlowFixMe
+import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -73,6 +75,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: * }) => {
         <RemoteConfigProvider>
           <FirebaseRemoteConfigProvider>
             <FirebaseFeatureFlagsProvider>
+              <ConnectEnvsToSentry />
               <UpdaterProvider>
                 <CountervaluesProvider initialState={initialCountervalues}>
                   <ToastProvider>
