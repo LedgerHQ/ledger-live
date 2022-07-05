@@ -1,18 +1,18 @@
 import { BigNumber } from "bignumber.js";
-import { toAccountRaw } from "@ledgerhq/live-common/lib/account";
+import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import {
   toTransactionRaw,
   toSignedOperationRaw,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { listen } from "@ledgerhq/logs";
 import { from, defer, concat, EMPTY, Observable } from "rxjs";
 import { map, reduce, filter, switchMap, concatMap } from "rxjs/operators";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
-import { SignedOperation } from "@ledgerhq/live-common/lib/types";
+import { SignedOperation } from "@ledgerhq/live-common/types/index";
 
 const toJS = (obj) => {
   if (typeof obj === "object" && obj) {

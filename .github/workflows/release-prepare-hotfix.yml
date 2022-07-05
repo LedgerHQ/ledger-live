@@ -44,6 +44,8 @@ jobs:
         run: pnpm changeset pre exit
 
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
       - name: commit

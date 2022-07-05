@@ -2,13 +2,13 @@ import React, { memo, useCallback, useState } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
 
-import { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
-import { App } from "@ledgerhq/live-common/lib/types/manager";
+import { State, AppsDistribution } from "@ledgerhq/live-common/apps/index";
+import { App } from "@ledgerhq/live-common/types/manager";
 
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { CircledCheckMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";
-import { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
+import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "../../../images/devices/NanoS";

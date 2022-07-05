@@ -3,9 +3,9 @@ import { TouchableWithoutFeedback, StyleSheet } from "react-native";
 import {
   useNftMetadata,
   useNftCollectionMetadata,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { scrollToTop } from "../../../navigation/utils";
 import NftMedia from "../../../components/Nft/NftMedia";

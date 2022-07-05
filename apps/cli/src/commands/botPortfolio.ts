@@ -1,8 +1,8 @@
 import { from, defer, throwError } from "rxjs";
 import { catchError, filter, map, mergeAll, timeoutWith } from "rxjs/operators";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountFormatters } from "@ledgerhq/live-common/lib/account";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { accountFormatters } from "@ledgerhq/live-common/account/index";
 const blacklist = ["decred", "tezos", "stellar", "ethereum_classic"];
 export default {
   description:

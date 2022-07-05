@@ -4,6 +4,7 @@ export type FeatureId =
   | "pushNotifications"
   | "llmUsbFirmwareUpdate"
   | "ratings"
+  | "counterValue"
   | "buyDeviceFromLive"
   | string;
 

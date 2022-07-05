@@ -3,17 +3,17 @@ import {
   isAccountEmpty,
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
   Account,
   Currency,
-} from "@ledgerhq/live-common/lib/types";
-import { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
+} from "@ledgerhq/live-common/types/index";
+import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 
 import { Box } from "@ledgerhq/native-ui";
-import { isNFTActive } from "@ledgerhq/live-common/lib/nft";
+import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 
 import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";

@@ -2,7 +2,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import LText from "../../components/LText";
 import PendingContainer from "../PairDevices/PendingContainer";
 import { deviceNames } from "../../wording";
