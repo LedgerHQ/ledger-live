@@ -50,5 +50,5 @@ export const makeLRUCache = <A extends Array<any>, T>(
     cache.reset();
   };
 
-  return result;
+  return result as CacheRes<A, T>;
 };

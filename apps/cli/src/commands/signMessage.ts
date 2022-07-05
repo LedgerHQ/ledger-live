@@ -56,6 +56,7 @@ export default {
           case "string":
           default:
             arg.message = arg.message?.toString();
+            arg.rawMessage = arg.rawMessage || `0x${Buffer.from(arg.message).toString("hex")}`
             break;
         }
 

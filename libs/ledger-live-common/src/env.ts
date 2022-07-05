@@ -594,6 +594,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  SANDBOX_MODE: {
+    def: false,
+    parser: boolParser,
+    desc: "sandbox mode for dev only",
+  },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",
     parser: stringParser,

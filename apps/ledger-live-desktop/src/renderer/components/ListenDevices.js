@@ -1,4 +1,5 @@
 // @flow
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
@@ -10,6 +11,15 @@ const ListenDevices = () => {
     let sub;
     function syncDevices() {
       const devices = {};
+      if (getEnv("SANDBOX_MODE")) {
+        return dispatch(
+          addDevice({
+            deviceId: undefined,
+            modelId: "nanoMask",
+            wired: true,
+          }),
+        );
+      }
       sub = command("listenDevices")().subscribe(
         ({ device, deviceModel, type, descriptor }) => {
           if (device) {

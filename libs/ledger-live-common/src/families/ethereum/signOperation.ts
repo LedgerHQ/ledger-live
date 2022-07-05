@@ -7,6 +7,7 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
+import { Eth as MMEth, MetaMaskConnector } from "mm-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import ethLedgerServices from "@ledgerhq/hw-app-eth/lib/services/ledger";
 import type { Transaction } from "./types";
@@ -79,13 +80,25 @@ export const signOperation = ({
                 ? m.getResolutionConfig(account, transaction)
                 : {};
 
-              const resolution = await ethLedgerServices.resolveTransaction(
-                txHex,
-                loadConfig,
-                resolutionConfig
-              );
+              const resolution = getEnv("SANDBOX_MODE")
+                ? null
+                : await ethLedgerServices.resolveTransaction(
+                    txHex,
+                    loadConfig,
+                    resolutionConfig
+                  );
 
-              const eth = new Eth(transport);
+              const eth: Eth | MMEth = await (async () => {
+                if (getEnv("SANDBOX_MODE")) {
+                  const connector = new MetaMaskConnector({
+                    port: 3333,
+                  });
+                  o.next({ type: "device-signature-requested" });
+                  await connector.start();
+                  return new MMEth(connector.getProvider());
+                }
+                return new Eth(transport);
+              })();
               eth.setLoadConfig(loadConfig);
 
               // FIXME this part is still required for compound to correctly display info on the device
@@ -107,11 +120,22 @@ export const signOperation = ({
               }
 
               o.next({ type: "device-signature-requested" });
-              const result = await eth.signTransaction(
-                freshAddressPath,
-                txHex,
-                resolution
-              );
+              const result: {
+                r: string;
+                s: string;
+                v: string;
+                txHash?: string;
+              } = getEnv("SANDBOX_MODE")
+                ? await (eth as MMEth).signTransactionAndBroadCast(
+                    freshAddressPath,
+                    txHex,
+                    resolution
+                  )
+                : await eth.signTransaction(
+                    freshAddressPath,
+                    txHex,
+                    resolution
+                  );
               if (cancelled) return;
               o.next({ type: "device-signature-granted" });
               // Second, we re-set some tx fields from the device signature
@@ -128,7 +152,7 @@ export const signOperation = ({
               const signature = `0x${signedTx.serialize().toString("hex")}`;
 
               // build optimistic operation
-              const txHash = ""; // resolved at broadcast time
+              const txHash = result?.txHash || ""; // resolved at broadcast time
 
               const senders = [freshAddress];
               const recipients = [to];

@@ -1,5 +1,6 @@
 import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
+import { getEnv } from "../env";
 export default async (
   transport: Transport
 ): Promise<{
@@ -7,6 +8,13 @@ export default async (
   version: string;
   flags: number | Buffer;
 }> => {
+  if (getEnv("SANDBOX_MODE")) {
+    return {
+      name: "",
+      version: "",
+      flags: 0,
+    };
+  }
   const r = await transport.send(0xb0, 0x01, 0x00, 0x00);
   let i = 0;
   const format = r[i++];

@@ -40,6 +40,7 @@ import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import type { Result, GetAddressOptions } from "../hw/getAddress/types";
 import { withDevice } from "../hw/deviceAccess";
+import { getEnv } from "../env";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -422,7 +423,6 @@ export const makeScanAccounts =
               ? getAddressFn(transport)
               : (opts) => getAddress(transport, opts);
             const derivationModes = getDerivationModesForCurrency(currency);
-
             for (const derivationMode of derivationModes) {
               if (finished) break;
               const path = getSeedIdentifierDerivation(
@@ -465,6 +465,12 @@ export const makeScanAccounts =
                 derivationMode,
                 currency,
               });
+
+              if (getEnv("SANDBOX_MODE")) {
+                await stepAccount(1, result, derivationMode, "", transport);
+
+                return o.complete();
+              }
 
               const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
               const startsAt = getDerivationModeStartsAt(derivationMode);

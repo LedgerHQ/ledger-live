@@ -103,6 +103,17 @@ export const withDevice =
       deviceQueues[deviceId] = new Promise((resolve) => {
         finish = resolve;
       });
+
+      if (getEnv("SANDBOX_MODE")) {
+        const sub = job({} as any).subscribe(o);
+        finish();
+        return () => {
+          if (sub) {
+            sub.unsubscribe();
+          }
+        };
+      }
+
       // for any new job, we'll now wait the exec queue to be available
       deviceQueue
         .then(() => open(deviceId)) // open the transport
@@ -143,16 +154,16 @@ export const withDevice =
           }
 
           const cleanups = accessHooks.map((hook) => hook());
-          sub = job(transport) // $FlowFixMe
+          sub = job(transport)
             .pipe(
               catchError(initialErrorRemapping),
               catchError(errorRemapping), // close the transport and clean up everything
-              // $FlowFixMe
               transportFinally(() => finalize(transport, [...cleanups, finish]))
             )
             .subscribe(o);
         })
         .catch((error) => o.error(error));
+
       return () => {
         unsubscribed = true;
         if (sub) sub.unsubscribe();

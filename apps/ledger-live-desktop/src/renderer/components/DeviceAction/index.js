@@ -1,5 +1,6 @@
 // @flow
-import React, { useEffect, Component } from "react";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import React, { useEffect, Component, useMemo } from "react";
 import { createStructuredSelector } from "reselect";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
@@ -126,6 +127,8 @@ const DeviceAction = <R, H, P>({
   const type = useTheme("colors.palette.type");
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
+  const metamaskMode = useMemo(() => getEnv("SANDBOX_MODE"), []);
+
   useEffect(() => {
     if (modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));
@@ -309,6 +312,7 @@ const DeviceAction = <R, H, P>({
 
   if (request && device && deviceSignatureRequested) {
     const { account, parentAccount, status, transaction } = request;
+
     if (account && status && transaction) {
       return (
         <TransactionConfirm
@@ -317,6 +321,7 @@ const DeviceAction = <R, H, P>({
           parentAccount={parentAccount}
           transaction={transaction}
           status={status}
+          metamaskMode={metamaskMode}
         />
       );
     }
@@ -329,6 +334,7 @@ const DeviceAction = <R, H, P>({
         device={device}
         account={account}
         signMessageRequested={signMessageRequested}
+        metamaskMode={metamaskMode}
       />
     );
   }

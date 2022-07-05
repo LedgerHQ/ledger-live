@@ -1,5 +1,5 @@
 // @flow
-
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import React, { useEffect, PureComponent } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -31,6 +31,8 @@ import type { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import byFamily from "~/renderer/generated/NoAssociatedAccounts";
+import Link from "~/renderer/components/Link";
+import { openURL } from "~/renderer/linking";
 
 // $FlowFixMe
 const remapTransportError = (err: mixed, appName: string): Error => {
@@ -308,6 +310,8 @@ class StepImport extends PureComponent<StepProps, { showAllCreatedAccounts: bool
       creatable,
     };
 
+    const metamaskMode = getEnv("SANDBOX_MODE");
+
     return (
       <>
         <TrackPage category="AddAccounts" name="Step3" currencyName={currencyName} />
@@ -342,6 +346,28 @@ class StepImport extends PureComponent<StepProps, { showAllCreatedAccounts: bool
             );
           })}
 
+          {metamaskMode && scanStatus === "scanning" ? (
+            <Box
+              alignItems={"center"}
+              justifyContent={"center"}
+              fontSize={14}
+              style={{ paddingBottom: "10px" }}
+            >
+              <img
+                style={{ width: "50px" }}
+                src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+              />
+              <Text ff="Inter|SemiBold" color="white" textAlign="center">
+                <Link
+                  externalLink="http://localhost:3333"
+                  isInternal={false}
+                  onClick={() => openURL("http://localhost:3333")}
+                >
+                  Open in Sandbox mode with Metamask to start scanning
+                </Link>
+              </Text>
+            </Box>
+          ) : null}
           {scanStatus === "scanning" ? (
             <LoadingRow>
               <Spinner color="palette.text.shade60" size={16} />

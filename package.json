@@ -103,7 +103,8 @@
       "metro-runtime": "^0.67.0",
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*"
+      "remove-flow-types-loader>loader-utils": "*",
+      "iconv-lite": "0.6.0"
     }
   }
 }

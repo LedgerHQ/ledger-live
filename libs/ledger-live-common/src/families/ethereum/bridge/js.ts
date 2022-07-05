@@ -34,6 +34,7 @@ import { modes } from "../modules";
 import postSyncPatch from "../postSyncPatch";
 import { inferDynamicRange } from "../../../range";
 import { nftMetadata, collectionMetadata } from "../nftResolvers";
+import { getEnv } from "../../../env";
 
 const receive = makeAccountBridgeReceive();
 
@@ -42,7 +43,12 @@ const broadcast = async ({
   signedOperation: { operation, signature },
 }) => {
   const api = apiForCurrency(account.currency);
-  const hash = await api.broadcastTransaction(signature);
+  let hash;
+  if (getEnv("SANDBOX_MODE")) {
+    hash = operation.hash;
+  } else {
+    hash = await api.broadcastTransaction(signature);
+  }
   return patchOperationWithHash(operation, hash);
 };
 

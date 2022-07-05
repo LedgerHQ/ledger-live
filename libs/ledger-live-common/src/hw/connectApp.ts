@@ -27,6 +27,7 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import manager from "../manager";
+import { getEnv } from "../env";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -252,6 +253,19 @@ const cmd = ({
   withDevice(devicePath)(
     (transport) =>
       new Observable((o) => {
+        if (getEnv("SANDBOX_MODE")) {
+          o.next({
+            type: "opened",
+            app: {
+              name: "Metamask",
+              version: "99.9.9",
+              flags: 0,
+            },
+          } as ConnectAppEvent);
+
+          return;
+        }
+
         const timeoutSub = of({
           type: "unresponsiveDevice",
         })

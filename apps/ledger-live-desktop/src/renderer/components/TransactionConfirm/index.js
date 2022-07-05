@@ -18,11 +18,13 @@ import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import transactionConfirmFieldsPerFamily from "~/renderer/generated/TransactionConfirmFields";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
+import Link from "~/renderer/components/Link";
 import WarnBox from "~/renderer/components/WarnBox";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import TransactionConfirmField from "./TransactionConfirmField";
+import { openURL } from "~/renderer/linking";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -133,9 +135,18 @@ type Props = {
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
+  metamaskMode: boolean,
 };
 
-const TransactionConfirm = ({ t, device, account, parentAccount, transaction, status }: Props) => {
+const TransactionConfirm = ({
+  t,
+  device,
+  account,
+  parentAccount,
+  transaction,
+  status,
+  metamaskMode,
+}: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme("colors.palette.type");
 
@@ -176,6 +187,7 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
           <Trans i18nKey="TransactionConfirm.warning" values={{ recipientWording }} />
         </WarnBox>
       )}
+
       {Title ? (
         <Title
           account={account}
@@ -213,7 +225,25 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
 
       {Footer ? <Footer transaction={transaction} /> : null}
 
-      {renderVerifyUnwrapped({ modelId: device.modelId, type })}
+      {metamaskMode ? (
+        <>
+          <img
+            style={{ width: "50px" }}
+            src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+          />
+          <Text ff="Inter|SemiBold" color="white">
+            <Link
+              externalLink="http://localhost:3333"
+              isInternal={false}
+              onClick={() => openURL("http://localhost:3333")}
+            >
+              Open in Sandbox mode with Metamask
+            </Link>
+          </Text>
+        </>
+      ) : (
+        renderVerifyUnwrapped({ modelId: device.modelId, type })
+      )}
     </Container>
   );
 };

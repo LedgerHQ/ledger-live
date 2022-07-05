@@ -15,6 +15,8 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import SignMessageConfirmField from "./SignMessageConfirmField";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import Link from "~/renderer/components/Link";
+import { openURL } from "~/renderer/linking";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -53,9 +55,15 @@ type Props = {
   device: Device,
   account: AccountLike,
   signMessageRequested: TypedMessageData | MessageData,
+  metamaskMode: boolean,
 };
 
-const SignMessageConfirm = ({ device, account, signMessageRequested: message }: Props) => {
+const SignMessageConfirm = ({
+  device,
+  account,
+  signMessageRequested: message,
+  metamaskMode,
+}: Props) => {
   const type = useTheme("colors.palette.type");
   const { t } = useTranslation();
 
@@ -100,8 +108,25 @@ const SignMessageConfirm = ({ device, account, signMessageRequested: message }: 
           return <TextField key={i} field={field} account={account} />;
         })}
       </Box>
-
-      {renderVerifyUnwrapped({ modelId: device.modelId, type })}
+      {metamaskMode ? (
+        <>
+          <img
+            style={{ width: "50px" }}
+            src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+          />
+          <Text ff="Inter|SemiBold" color="white">
+            <Link
+              externalLink="http://localhost:3333"
+              isInternal={false}
+              onClick={() => openURL("http://localhost:3333")}
+            >
+              Open in Sandbox mode with Metamask
+            </Link>
+          </Text>
+        </>
+      ) : (
+        renderVerifyUnwrapped({ modelId: device.modelId, type })
+      )}
     </Container>
   );
 };

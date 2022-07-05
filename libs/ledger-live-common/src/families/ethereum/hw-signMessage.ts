@@ -2,6 +2,7 @@ import Eth from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
+import { Eth as MMEth, MetaMaskConnector } from "mm-app-eth";
 import { getEnv } from "../../env";
 import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData, TypedMessage } from "./types";
@@ -31,7 +32,16 @@ const resolver: EthResolver = async (
   // @ts-expect-error only available on MessageData. (type guard)
   { path, message, rawMessage }
 ) => {
-  const eth = new Eth(transport);
+  const eth: Eth | MMEth = await (async () => {
+    if (getEnv("SANDBOX_MODE")) {
+      const connector = new MetaMaskConnector({
+        port: 3333,
+      });
+      await connector.start();
+      return new MMEth(connector.getProvider());
+    }
+    return new Eth(transport);
+  })();
   let result;
 
   if (typeof message === "string") {
