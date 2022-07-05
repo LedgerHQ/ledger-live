@@ -3,30 +3,31 @@ import { Page, Locator } from "@playwright/test";
 export class DiscoverPage {
   readonly page: Page;
   readonly discoverMenuButton: Locator;
-  readonly testAppCatalogItem: Locator;
+  readonly app: Function;
   readonly disclaimerText: Locator;
   readonly getAllAccountsButton: Locator;
   readonly requestAccountButton: Locator;
   readonly selectAccountTitle: Locator;
   readonly selectAccountDropdown: Locator;
-  readonly selectBtcAccount: Locator;
+  readonly accountSelect: Function;
   readonly disclaimerCheckbox: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.discoverMenuButton = page.locator("data-test-id=drawer-catalog-button");
-    this.testAppCatalogItem = page.locator("#platform-catalog-app-dummy-live-app");
+    // NOTE: this.app expects selectors -> apps/ledger-live-desktop/src/renderer/screens/platform/Catalog.js
+    this.app = (name: string) : Locator => page.locator(`#platform-catalog-app-${name}`);
     this.disclaimerText = page.locator("text=External Application");
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
     this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
-    this.selectBtcAccount = page.locator("text=Bitcoin (BTC)");
+    this.accountSelect = (currency: string) : Locator => page.locator(`text=(${currency})`);
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
   }
 
-  async openTestApp() {
-    await this.testAppCatalogItem.click();
+  async launchApp(name: String = "dummy-live-app") {
+    await this.app(name).click();
   }
 
   async getAccountsList() {
@@ -42,9 +43,8 @@ export class DiscoverPage {
     await this.selectAccountDropdown.click({ force: true });
   }
 
-  async selectAccount() {
-    // TODO: make this dynamic with passed in variable
-    await this.selectBtcAccount.click({ force: true });
+  async selectAccount(currency: string) {
+    await this.accountSelect(currency).click({ force: true });
   }
 
   async verifyAddress() {
