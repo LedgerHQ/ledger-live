@@ -3,6 +3,8 @@ import {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
@@ -211,3 +213,9 @@ export type TronTransactionInfo = {
 export type TronTransactionInfoRaw = [number, number, number, number];
 export type TronAccount = Account & { tronResources: TronResources };
 export type TronAccountRaw = AccountRaw & { tronResources: TronResourcesRaw };
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "tron";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "tron";
+};

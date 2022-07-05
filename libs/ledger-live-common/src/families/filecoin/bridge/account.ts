@@ -15,12 +15,11 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
+  Operation,
   SignOperationEvent,
   SignOperationFnSignature,
-  TransactionStatus,
-  Operation,
 } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
+import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getAddress, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx, fetchBalances, fetchEstimatedFees } from "./utils/api";
 import { getMainAccount } from "../../../account";
@@ -68,7 +67,8 @@ const getTransactionStatus = async (
 
   const { balance } = a;
   const { address } = getAddress(a);
-  const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit } = t;
+  const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit, family } =
+    t;
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
@@ -99,6 +99,7 @@ const getTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
+    family,
   };
 };
 

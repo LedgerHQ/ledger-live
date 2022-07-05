@@ -8,9 +8,8 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
-import type { Account, TransactionStatus } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
-import type { PolkadotAccount, Transaction } from "./types";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
 import {
   PolkadotUnauthorizedOperation,
   PolkadotElectionClosed,
@@ -132,6 +131,7 @@ const getSendTransactionStatus = async (
     estimatedFees,
     amount: amount.lt(0) ? new BigNumber(0) : amount,
     totalSpent,
+    family: t.family,
   });
 };
 

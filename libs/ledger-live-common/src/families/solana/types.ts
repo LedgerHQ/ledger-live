@@ -3,6 +3,8 @@ import {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { ValidatorsAppValidator } from "./validator-app";
 
@@ -248,4 +250,12 @@ export type SolanaAccount = Account & { solanaResources: SolanaResources };
 
 export type SolanaAccountRaw = AccountRaw & {
   solanaResources: SolanaResourcesRaw;
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "solana";
+};
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "solana";
 };

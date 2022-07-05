@@ -3,7 +3,7 @@ import { scan, catchError, tap } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
-import type { Transaction } from "../../types";
+import type { Transaction, TransactionStatus } from "../../types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -16,7 +16,6 @@ import type {
   AccountLike,
   SignedOperation,
   SignOperationEvent,
-  TransactionStatus,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 type State = {

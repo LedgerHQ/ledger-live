@@ -24,7 +24,6 @@ import type {
   CurrencyBridge,
   AccountBridge,
   Account,
-  TransactionStatus,
   AccountLike,
 } from "@ledgerhq/types-live";
 import {
@@ -33,7 +32,7 @@ import {
   makeAccountBridgeReceive,
 } from "../../../bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
-import type { TezosAccount, Transaction } from "../types";
+import type { TezosAccount, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "../synchronisation";
 import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
 import { getEnv } from "../../../env";
@@ -176,6 +175,7 @@ const getTransactionStatus = async (
   }
 
   const result = {
+    family: t.family,
     errors,
     warnings,
     estimatedFees,

@@ -1,5 +1,5 @@
-import type { TransactionStatus } from "@ledgerhq/types-live";
 import type { DeviceTransactionField } from "../../transaction";
+import type { TransactionStatus } from "./types";
 
 function getDeviceTransactionConfig({
   status: { amount, estimatedFees },

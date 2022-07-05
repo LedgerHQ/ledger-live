@@ -1,8 +1,16 @@
-import type { Transaction, TransactionRaw } from "./types";
+import type {
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "./types";
 import { BigNumber } from "bignumber.js";
 import {
+  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon,
 } from "../../transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
@@ -31,6 +39,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : null,
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   return {
@@ -40,8 +49,16 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     fees: t.fees?.toString() || null,
   };
 };
+
+const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
+const toTransactionStatusRaw = toTransactionStatusRawCommon;
+const formatTransactionStatus = formatTransactionStatusCommon;
+
 export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };

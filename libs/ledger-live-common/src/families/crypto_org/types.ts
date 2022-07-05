@@ -3,6 +3,8 @@ import {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
@@ -42,4 +44,10 @@ export type CryptoOrgAccount = Account & {
 };
 export type CryptoOrgAccountRaw = AccountRaw & {
   cryptoOrgResources: CryptoOrgResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "crypto_org";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "crypto_org";
 };

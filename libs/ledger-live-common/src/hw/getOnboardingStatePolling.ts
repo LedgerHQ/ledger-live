@@ -17,7 +17,7 @@ import {
   DisconnectedDevice,
   CantOpenDevice,
 } from "@ledgerhq/errors";
-import { FirmwareInfo } from "../types/manager";
+import { FirmwareInfo } from "@ledgerhq/types-live";
 import {
   extractOnboardingState,
   OnboardingState,

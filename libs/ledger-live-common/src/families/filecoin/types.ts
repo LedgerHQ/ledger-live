@@ -3,6 +3,8 @@ import {
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
@@ -38,3 +40,10 @@ export type TransactionRaw = TransactionCommonRaw & {
 };
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "filecoin";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "filecoin";
+};

@@ -5,6 +5,8 @@ import type {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export enum PaymentChain {
@@ -183,4 +185,11 @@ export type CardanoAccount = Account & { cardanoResources: CardanoResources };
 
 export type CardanoAccountRaw = AccountRaw & {
   cardanoResources: CardanoResourcesRaw;
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "cardano";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "cardano";
 };

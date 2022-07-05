@@ -1,12 +1,8 @@
 import perFamily from "../generated/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField } from "../generated/deviceTransactionConfig";
-import type { Transaction } from "../types";
+import type { Transaction, TransactionStatus } from "../types";
 import { getMainAccount } from "../account";
-import type {
-  Account,
-  AccountLike,
-  TransactionStatus,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 type tooltipArgs = Record<string, string>;
 export type CommonDeviceTransactionField =
   | {

@@ -6,6 +6,8 @@ import {
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export type CosmosDelegationStatus =
@@ -162,14 +164,6 @@ export type StatusErrorMap = {
   feeTooHigh?: Error;
 };
 
-export type TransactionStatus = {
-  errors: StatusErrorMap;
-  warnings: StatusErrorMap;
-  estimatedFees: BigNumber;
-  amount: BigNumber;
-  totalSpent: BigNumber;
-};
-
 export type CosmosMappedDelegation = CosmosDelegation & {
   formattedAmount: string;
   formattedPendingRewards: string;
@@ -199,4 +193,10 @@ export type CosmosSearchFilter = (
 export type CosmosAccount = Account & { cosmosResources: CosmosResources };
 export type CosmosAccountRaw = AccountRaw & {
   cosmosResources: CosmosResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "cosmos";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "cosmos";
 };

@@ -3,6 +3,8 @@ import type {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
@@ -111,4 +113,10 @@ export type PolkadotAccount = Account & {
 };
 export type PolkadotAccountRaw = AccountRaw & {
   polkadotResources: PolkadotResourcesRaw;
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "polkadot";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "polkadot";
 };

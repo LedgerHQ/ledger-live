@@ -7,9 +7,8 @@ import type {
   AccountBridge,
   CurrencyBridge,
   Operation,
-  TransactionStatus,
 } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction, TransactionStatus } from "../types";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
 import network from "../../../network";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";

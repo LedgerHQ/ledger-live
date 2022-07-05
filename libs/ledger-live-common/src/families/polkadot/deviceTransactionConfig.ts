@@ -1,9 +1,5 @@
-import type {
-  AccountLike,
-  Account,
-  TransactionStatus,
-} from "@ledgerhq/types-live";
-import type { PolkadotAccount, Transaction } from "./types";
+import type { AccountLike, Account } from "@ledgerhq/types-live";
+import type { PolkadotAccount, Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getMainAccount } from "../../account";
 import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";

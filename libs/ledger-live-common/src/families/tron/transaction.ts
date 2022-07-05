@@ -1,8 +1,11 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import {
+  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon,
 } from "../../transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
@@ -79,8 +82,15 @@ ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
 TO ${t.recipient}`;
 };
 
+const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
+const toTransactionStatusRaw = toTransactionStatusRawCommon;
+const formatTransactionStatus = formatTransactionStatusCommon;
+
 export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };

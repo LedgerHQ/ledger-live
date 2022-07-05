@@ -2,6 +2,8 @@ import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
@@ -38,4 +40,11 @@ export type TransactionRaw = TransactionCommonRaw & {
   baseReserve: string | null | undefined;
   memoType: string | null | undefined;
   memoValue: string | null | undefined;
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "stellar";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "stellar";
 };

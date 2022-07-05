@@ -304,6 +304,7 @@ importers:
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
       '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/react-ui': link:../../libs/ui/packages/react
+      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/react-identicon': 0.89.2_fane7jikarojcev26y27hpbhu4
       '@sentry/electron': 3.0.7
       '@sentry/node': 7.1.1
@@ -403,7 +404,6 @@ importers:
       '@babel/preset-flow': 7.16.7_@babel+core@7.17.10
       '@babel/preset-react': 7.16.7_@babel+core@7.17.10
       '@babel/preset-typescript': 7.16.7_@babel+core@7.17.10
-      '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@mapbox/node-pre-gyp': 1.0.9
       '@octokit/rest': 18.12.0
       '@playwright/test': 1.22.2

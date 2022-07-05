@@ -3,6 +3,8 @@ import type {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
@@ -50,4 +52,11 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TezosAccount = Account & { tezosResources: TezosResources };
 export type TezosAccountRaw = AccountRaw & {
   tezosResources: TezosResourcesRaw;
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "tezos";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "tezos";
 };

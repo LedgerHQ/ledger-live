@@ -6,8 +6,8 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import { AccountId } from "@hashgraph/sdk";
-import type { Transaction } from "./types";
-import type { Account, TransactionStatus } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "./types";
+import type { Account } from "@ledgerhq/types-live";
 import { calculateAmount, estimatedFees } from "./utils";
 
 export default async function getTransactionStatus(
@@ -49,5 +49,6 @@ export default async function getTransactionStatus(
     estimatedFees,
     totalSpent,
     warnings: {},
+    family: transaction.family,
   };
 }

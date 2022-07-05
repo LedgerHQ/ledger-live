@@ -11,6 +11,7 @@ import type {
   CardanoResources,
   Token,
   Transaction,
+  TransactionStatus,
 } from "./types";
 import { isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
@@ -20,7 +21,6 @@ import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import { buildTransaction } from "./js-buildTransaction";
-import type { TransactionStatus } from "@ledgerhq/types-live";
 
 const getTransactionStatus = async (
   a: CardanoAccount,
@@ -122,6 +122,7 @@ const getTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
+    family: t.family,
   });
 };
 

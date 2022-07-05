@@ -1,6 +1,8 @@
 import type {
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export type CoreStatics = Record<string, never>;
@@ -26,3 +28,10 @@ export type TransactionRaw = TransactionCommonRaw & {
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 export const reflect = (_declare: any) => {};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "hedera";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "hedera";
+};

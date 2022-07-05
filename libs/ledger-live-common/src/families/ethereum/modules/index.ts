@@ -2,11 +2,10 @@ import values from "lodash/values";
 import type {
   TokenAccount,
   Account,
-  TransactionStatus,
   Operation,
   AccountLike,
 } from "@ledgerhq/types-live";
-import type { Transaction } from "../types";
+import type { Transaction, TransactionStatus } from "../types";
 import type { DeviceTransactionField } from "../../../transaction";
 // maintained union of all the modules
 import * as compound from "./compound";

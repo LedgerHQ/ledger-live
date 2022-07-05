@@ -1,4 +1,4 @@
-import { Transaction } from "./types";
+import { Transaction, TransactionStatus } from "./types";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "@celo/utils/lib/address";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 
 const getTransactionStatus = async (
   account: Account,
@@ -63,6 +63,7 @@ const getTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
+    family: transaction.family,
   });
 };
 

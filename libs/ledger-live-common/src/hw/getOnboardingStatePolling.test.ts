@@ -14,7 +14,7 @@ import {
   OnboardingState,
   OnboardingStep,
 } from "./extractOnboardingState";
-import { SeedPhraseType } from "../types/manager";
+import { SeedPhraseType } from "@ledgerhq/types-live";
 
 jest.mock("./deviceAccess");
 jest.mock("./getVersion");

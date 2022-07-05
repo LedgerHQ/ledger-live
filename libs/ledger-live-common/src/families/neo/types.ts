@@ -1,6 +1,8 @@
 import type {
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export type NetworkInfo = {
@@ -13,5 +15,11 @@ export type Transaction = TransactionCommon & {
   family: "neo";
 };
 export type TransactionRaw = TransactionCommonRaw & {
+  family: "neo";
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "neo";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
   family: "neo";
 };

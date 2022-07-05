@@ -10,7 +10,6 @@ import type {
   Operation,
   TokenAccount,
   SubAccount,
-  TransactionStatus,
   SignedOperation,
   AccountLike,
   SignOperationEvent,
@@ -22,6 +21,7 @@ import type {
   NetworkInfo,
   SuperRepresentative,
   Transaction,
+  TransactionStatus,
   TronAccount,
   TrongridExtraTxInfo,
 } from "../types";
@@ -597,7 +597,7 @@ const getTransactionStatus = async (
 ): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
-  const { mode, recipient, resource, votes, useAllAmount = false } = t;
+  const { family, mode, recipient, resource, votes, useAllAmount = false } = t;
   const tokenAccount = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
@@ -770,6 +770,7 @@ const getTransactionStatus = async (
     amount: amountSpent,
     estimatedFees,
     totalSpent,
+    family,
   });
 };
 

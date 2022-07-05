@@ -108,7 +108,7 @@ export type FeeStrategy = {
 /**
  * TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
  */
-export type TransactionStatus = {
+export type TransactionStatusCommon = {
   // potential error for each (user) field of the transaction
   errors: Record<string, Error>;
   // potential warning for each (user) field for a transaction
@@ -125,7 +125,7 @@ export type TransactionStatus = {
 /**
  *
  */
-export type TransactionStatusRaw = {
+export type TransactionStatusCommonRaw = {
   errors: Record<string, string>;
   warnings: Record<string, string>;
   estimatedFees: string;

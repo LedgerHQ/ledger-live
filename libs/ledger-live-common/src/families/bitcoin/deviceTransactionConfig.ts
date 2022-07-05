@@ -1,10 +1,6 @@
-import type { Transaction } from "./types";
+import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
-import type {
-  Account,
-  AccountLike,
-  TransactionStatus,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 function getDeviceTransactionConfig({
   status: { amount, estimatedFees },

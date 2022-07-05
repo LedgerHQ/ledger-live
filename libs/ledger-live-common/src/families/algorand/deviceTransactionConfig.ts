@@ -1,10 +1,10 @@
-import type { AlgorandTransaction } from "./types";
+import type { AlgorandTransaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit, findTokenById } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike, TransactionStatus } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 export const displayTokenValue = (token: TokenCurrency) =>
   `${token.name} (#${extractTokenId(token.id)})`;
 

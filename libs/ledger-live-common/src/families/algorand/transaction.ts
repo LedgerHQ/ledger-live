@@ -3,10 +3,15 @@ import type {
   AlgorandAccount,
   AlgorandTransaction,
   AlgorandTransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
 } from "./types";
 import {
+  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -77,8 +82,15 @@ const toTransactionRaw = (t: AlgorandTransaction): AlgorandTransactionRaw => {
   };
 };
 
+const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
+const toTransactionStatusRaw = toTransactionStatusRawCommon;
+const formatTransactionStatus = formatTransactionStatusCommon;
+
 export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };

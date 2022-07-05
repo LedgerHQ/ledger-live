@@ -5,6 +5,8 @@ import type { DerivationMode } from "../../derivation";
 import type {
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -90,4 +92,11 @@ export type TypedMessageData = {
   hashes: {
     stringHash: string;
   };
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "ethereum";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "ethereum";
 };

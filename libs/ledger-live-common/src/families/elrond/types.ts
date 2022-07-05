@@ -3,6 +3,8 @@ import {
   AccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 import { Range, RangeRaw } from "../../range";
@@ -78,4 +80,11 @@ export type ElrondAccount = Account & { elrondResources: ElrondResources };
 
 export type ElrondAccountRaw = AccountRaw & {
   elrondResources: ElrondResourcesRaw;
+};
+
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "elrond";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "elrond";
 };

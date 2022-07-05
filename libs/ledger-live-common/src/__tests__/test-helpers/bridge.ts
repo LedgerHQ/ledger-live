@@ -4,7 +4,7 @@ import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
-import type { Transaction } from "../../types";
+import type { Transaction, TransactionStatus } from "../../types";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -671,7 +671,9 @@ export function testBridge<T extends Transaction>(data: DatasetTest<T>): void {
                     }
                   }
 
-                  expect(toTransactionStatusRaw(s)).toMatchObject(restRaw);
+                  expect(
+                    toTransactionStatusRaw(s as TransactionStatus)
+                  ).toMatchObject(restRaw);
                 }
 
                 if (testFn) {

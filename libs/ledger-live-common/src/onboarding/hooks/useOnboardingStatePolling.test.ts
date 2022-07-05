@@ -8,7 +8,7 @@ import {
   OnboardingState,
   OnboardingStep,
 } from "../../hw/extractOnboardingState";
-import { SeedPhraseType } from "../../types/manager";
+import { SeedPhraseType } from "@ledgerhq/types-live";
 import { getOnboardingStatePolling } from "../../hw/getOnboardingStatePolling";
 
 jest.mock("../../hw/getOnboardingStatePolling");

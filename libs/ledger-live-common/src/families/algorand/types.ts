@@ -6,6 +6,8 @@ import type {
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 export const AlgorandOperationTypeEnum = {
@@ -40,6 +42,12 @@ export type AlgorandTransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
   assetId: string | null | undefined;
   memo: string | null | undefined;
+};
+export type TransactionStatus = TransactionStatusCommon & {
+  family: "algorand";
+};
+export type TransactionStatusRaw = TransactionStatusCommonRaw & {
+  family: "algorand";
 };
 export type Transaction = AlgorandTransaction;
 export type TransactionRaw = AlgorandTransactionRaw;

@@ -8,10 +8,10 @@ import type { Observable } from "rxjs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Account, AccountRaw } from "./account";
 import type {
-  TransactionStatus,
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
+  TransactionStatusCommon,
 } from "./transaction";
 import type { Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
@@ -147,7 +147,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   getTransactionStatus(
     account: Account,
     transaction: T
-  ): Promise<TransactionStatus>;
+  ): Promise<TransactionStatusCommon>;
   // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
   // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
@@ -193,16 +193,16 @@ export type CurrenciesData<T extends TransactionCommon> = {
       name: string;
       transaction: T | ((arg0: T, arg1: Account, arg2: AccountBridge<T>) => T);
       expectedStatus?:
-        | Partial<TransactionStatus>
+        | Partial<TransactionStatusCommon>
         | ((
             arg0: Account,
             arg1: T,
-            arg2: TransactionStatus
-          ) => Partial<TransactionStatus>);
+            arg2: TransactionStatusCommon
+          ) => Partial<TransactionStatusCommon>);
       test?: (
         arg0: ExpectFn,
         arg1: T,
-        arg2: TransactionStatus,
+        arg2: TransactionStatusCommon,
         arg3: AccountBridge<T>
       ) => any;
       apdus?: string;
@@ -211,7 +211,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
         arg1: SignedOperation,
         arg2: Account,
         arg3: T,
-        arg4: TransactionStatus,
+        arg4: TransactionStatusCommon,
         arg5: AccountBridge<T>
       ) => any;
     }>;

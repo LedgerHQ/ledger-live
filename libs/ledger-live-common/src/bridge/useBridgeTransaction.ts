@@ -4,8 +4,8 @@ import { log } from "@ledgerhq/logs";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
 import { delay } from "../promise";
-import { Account, AccountLike, TransactionStatus } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction, TransactionStatus } from "../types";
 export type State = {
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
@@ -36,6 +36,7 @@ const initial: State = {
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
+    family: "" as any,
   },
   statusOnTransaction: null,
   errorAccount: null,

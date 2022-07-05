@@ -7,6 +7,7 @@ import {
   SolanaStake,
   Transaction,
   TransactionModel,
+  TransactionStatus,
 } from "./types";
 import scanAccounts1 from "./datasets/solana.scanAccounts.1";
 import {
@@ -48,7 +49,6 @@ import type {
   Account,
   CurrenciesData,
   DatasetTest,
-  TransactionStatus,
 } from "@ledgerhq/types-live";
 
 // do not change real properties or the test will break
@@ -1093,6 +1093,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
     totalSpent: new BigNumber(testOnChainData.fees.lamportsPerSignature),
     errors: stakeTestSpec.expectedErrors,
     warnings: {},
+    family: preparedTx.family,
   };
 
   expect(status).toEqual(expectedStatus);

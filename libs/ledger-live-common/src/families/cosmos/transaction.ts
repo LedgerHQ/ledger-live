@@ -1,8 +1,16 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "./types";
+import type {
+  Transaction,
+  TransactionRaw,
+  TransactionStatus,
+  TransactionStatusRaw,
+} from "./types";
 import {
+  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
+  fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
+  toTransactionStatusRawCommon,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -95,8 +103,16 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       : [],
   };
 };
+
+const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
+const toTransactionStatusRaw = toTransactionStatusRawCommon;
+const formatTransactionStatus = formatTransactionStatusCommon;
+
 export default {
   formatTransaction,
   fromTransactionRaw,
   toTransactionRaw,
+  fromTransactionStatusRaw,
+  toTransactionStatusRaw,
+  formatTransactionStatus,
 };
