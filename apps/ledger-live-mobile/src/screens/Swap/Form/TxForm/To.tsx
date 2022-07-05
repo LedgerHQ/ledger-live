@@ -54,7 +54,7 @@ export function To({
   const balance = useMemo(() => currency?.units[0].code ?? "", [currency]);
 
   const onPress = useCallback(() => {
-    navigation.navigate("SwapSelectCurrency", { currencies, provider });
+    navigation.navigate("SelectCurrency", { currencies, provider });
   }, [navigation, currencies, provider]);
 
   const CIcon = currency ? (

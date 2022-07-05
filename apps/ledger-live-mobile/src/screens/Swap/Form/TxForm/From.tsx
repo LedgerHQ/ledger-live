@@ -1,34 +1,23 @@
 import React, { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
-import {
-  Account,
-  CryptoCurrency,
-  TokenAccount,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountName,
   getAccountUnit,
-  getAccountCurrency,
-  accountWithMandatoryTokens,
-  flattenAccounts,
 } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import { SwapSelectorStateType } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { swap } from "@ledgerhq/live-common/src/families/solana/utils";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
-import { flattenAccountsSelector } from "../../../../reducers/accounts";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 
 interface Props {
   from: SwapSelectorStateType;
-  setAccount: (account: Account | TokenAccount) => void;
+  setAccount: (account: AccountLike) => void;
   setAmount: (amount: BigNumber) => void;
   isMaxEnabled: boolean;
   accounts: Account[];
@@ -64,9 +53,9 @@ export function From({
   );
 
   const onPress = useCallback(() => {
-    navigation.navigate("SwapSelectAccount", {
+    navigation.navigate("SelectAccount", {
       target: "from",
-      accounts,
+      accounts: accounts.map(a => a.id),
       provider,
     });
   }, [navigation, accounts, provider]);
@@ -89,6 +78,7 @@ export function From({
         <Selector
           Icon={
             <BoxedIcon
+              size={32}
               Icon={<CurrencyIcon size={32} currency={currency} />}
               variant="circle"
               borderColor="transparent"

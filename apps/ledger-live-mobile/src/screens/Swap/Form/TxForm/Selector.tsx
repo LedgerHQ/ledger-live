@@ -26,7 +26,9 @@ export function Selector({
         paddingY={4}
       >
         <Flex flexDirection="row" alignItems="center">
-          <Flex>{Icon}</Flex>
+          <Flex alignItems="center" justifyContent="center">
+            {Icon}
+          </Flex>
 
           <Flex marginLeft={4} marginRight={4}>
             <Text variant="h3" marginBottom={2}>

@@ -8,7 +8,7 @@ import {
   Transaction,
   TransactionRaw,
 } from "../../types";
-import { Account, AccountLike, TokenAccount } from "../../types/account";
+import { Account, AccountLike } from "../../types/account";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon
@@ -278,7 +278,7 @@ export type InitSwapInputRaw = {
 
 export type SwapSelectorStateType = {
   currency: TokenCurrency | CryptoCurrency | undefined;
-  account: Account | TokenAccount | undefined;
+  account: AccountLike | undefined;
   parentAccount: Account | undefined;
   amount: BigNumber | undefined;
 };

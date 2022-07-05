@@ -18,8 +18,8 @@ import { providerIcons } from "../../../../icons/swap";
 interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
-  exchangeRate: ExchangeRate;
-  kyc: KYCStatus;
+  exchangeRate?: ExchangeRate;
+  kyc?: KYCStatus;
 }
 
 export function Summary({
@@ -59,7 +59,8 @@ export function Summary({
     !to.currency ||
     !targetAccountName ||
     !fees ||
-    !ProviderIcon
+    !ProviderIcon ||
+    !exchangeRate
   ) {
     return null;
   }

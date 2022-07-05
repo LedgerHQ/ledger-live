@@ -7,6 +7,8 @@ import {
   SelectAccount,
   SelectCurrency,
   Login,
+  KYC,
+  MFA,
 } from "../../screens/Swap";
 import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -34,32 +36,33 @@ export default function SwapNavigator() {
       <Stack.Screen
         name="Swap"
         component={SwapFormNavigator}
+        {...noNanoBuyNanoWallScreenOptions}
         options={{
+          ...noNanoBuyNanoWallScreenOptions.options,
           title: t("transfer.swap2.form.title"),
         }}
-        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name="SwapSelectAccount"
+        name="SelectAccount"
         component={SelectAccount}
-        options={({ route }) => ({
+        options={({
+          route: {
+            params: { target },
+          },
+        }) => ({
           headerTitle: () => (
-            <StepHeader
-              title={
-                route.params.target === "from"
-                  ? t("transfer.swap.form.from")
-                  : t("transfer.swap.form.to")
-              }
-            />
+            <StepHeader title={t(`transfer.swap2.form.edit.${target}.title`)} />
           ),
           headerRight: undefined,
         })}
       />
       <Stack.Screen
-        name="SwapSelectCurrency"
+        name="SelectCurrency"
         component={SelectCurrency}
         options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap2.form.edit.to.title")} />
+          ),
           headerRight: undefined,
         }}
       />
@@ -67,19 +70,35 @@ export default function SwapNavigator() {
         name="Login"
         component={Login}
         options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
+          headerTitle: () => (
+            <StepHeader
+              title={t("transfer.swap2.form.providers.login.title")}
+            />
+          ),
+          headerRight: undefined,
+        }}
+      />
+      <Stack.Screen
+        name="KYC"
+        component={KYC}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap2.form.providers.kyc.title")} />
+          ),
+          headerRight: undefined,
+        }}
+      />
+      <Stack.Screen
+        name="MFA"
+        component={MFA}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap2.form.providers.mfa.title")} />
+          ),
           headerRight: undefined,
         }}
       />
       {/* <Stack.Screen
-        name={ScreenName.SwapKYC}
-        component={SwapKYC}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerRight: null,
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.SwapKYCStates}
         component={SwapKYCStates}
         options={{

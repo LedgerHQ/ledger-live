@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/live-common/lib/types";
 import {
   SwapTransactionType,
-  Pair,
   ExchangeRate,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { From } from "./From";

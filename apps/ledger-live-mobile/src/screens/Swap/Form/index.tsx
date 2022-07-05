@@ -1,13 +1,10 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { KeyboardAvoidingView, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import {
-  AvailableProviderV3,
   ExchangeRate,
-  SwapTransaction,
   KYCStatus,
   ValidCheckQuoteErrorCodes,
   OnNoRatesCallback,
@@ -38,8 +35,6 @@ import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { trackSwapError, SWAP_VERSION } from "../utils";
 import { SwapFormProps } from "../types";
-
-export * from "./screens";
 
 export const ratesExpirationThreshold = 60000;
 
@@ -209,6 +204,10 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     async function handleCheckQuote() {
+      if (!provider || !exchangeRate?.rateId || !kyc) {
+        return;
+      }
+
       const status = await checkQuote({
         provider,
         quoteId: exchangeRate.rateId,
@@ -330,16 +329,14 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               exchangeRate={exchangeRate}
             />
 
-            <ScrollView>
-              <Summary
-                provider={provider}
-                swapTx={swapTx}
-                exchangeRate={exchangeRate}
-                kyc={kyc}
-              />
+            <Summary
+              provider={provider}
+              swapTx={swapTx}
+              exchangeRate={exchangeRate}
+              kyc={kyc}
+            />
 
-              <Requirement required={required} provider={provider} />
-            </ScrollView>
+            <Requirement required={required} provider={provider} />
           </Flex>
 
           <Flex paddingY={4}>

@@ -3,11 +3,11 @@ import { FlatList, StyleSheet } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { TFunction, useTranslation } from "react-i18next";
-import { TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import KeyboardView from "../../components/KeyboardView";
-import CurrencyRow from "../../components/CurrencyRow";
-import { SelectCurrencyProps } from "./types";
+import { TrackScreen } from "../../../analytics";
+import FilteredSearchBar from "../../../components/FilteredSearchBar";
+import KeyboardView from "../../../components/KeyboardView";
+import CurrencyRow from "../../../components/CurrencyRow";
+import { SelectCurrencyProps } from "../types";
 
 export function SelectCurrency({
   navigation,

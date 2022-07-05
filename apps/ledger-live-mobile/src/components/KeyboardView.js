@@ -18,7 +18,7 @@ type Props = {
   behavior?: string,
 };
 
-const KeyboardView = React.memo<Props>(
+const KeyboardView: React.FC<Props> = React.memo<Props>(
   ({ style = { flex: 1 }, children, behavior }: *) => {
     const isExperimental = useExperimental();
     const headerHeight = React.useContext(HeaderHeightContext) || 0;

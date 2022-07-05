@@ -2416,8 +2416,20 @@
           "noAccount": "Create an account to receive {{name}}",
           "noAccountCTA": "Add account"
         },
+        "edit": {
+          "from": {
+            "title": "From"
+          },
+          "to": {
+            "title": "To"
+          },
+          "provider": {
+            "title": "Provider"
+          }
+        },
         "providers": {
           "kyc": {
+            "title": "KYC",
             "required": "You need to complete your KYC",
             "complete": "Complete KYC",
             "update": "Refresh KYC",
@@ -2432,10 +2444,12 @@
             }
           },
           "login": {
+            "title": "Login",
             "required": "You need to login with this provider",
             "complete": "Login"
           },
           "mfa": {
+            "title": "MFA",
             "required": "You need to set up MFA with this provider",
             "complete": "Set up MFA"
           },

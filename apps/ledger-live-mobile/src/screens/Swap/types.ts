@@ -1,12 +1,6 @@
-import {
-  Account,
-  CryptoCurrency,
-  TokenAccount,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
-import { FTXProviders } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 
 export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,
@@ -15,40 +9,45 @@ export type SwapFormProps = MaterialTopTabScreenProps<
 
 export type SelectAccountProps = StackScreenProps<
   SwapNavParamList,
-  "SwapSelectAccount"
+  "SelectAccount"
 >;
 
 export type SelectCurrencyProps = StackScreenProps<
   SwapNavParamList,
-  "SwapSelectCurrency"
+  "SelectCurrency"
 >;
 
 export type LoginProps = StackScreenProps<SwapNavParamList, "Login">;
 
 export type KYCProps = StackScreenProps<SwapNavParamList, "KYC">;
 
+export type MFAProps = StackScreenProps<SwapNavParamList, "MFA">;
+
 export type SwapNavParamList = {
   Swap: undefined;
+  SelectAccount: {
+    target: "from" | "to";
+    accountIds: string[];
+    provider: string;
+  };
+  SelectCurrency: {
+    currencies: string[];
+    provider: string;
+  };
   Login: {
-    provider: FTXProviders;
+    provider: string;
   };
   KYC: {
     provider: string;
   };
-  SwapSelectAccount: {
-    accounts: Account[];
-    target: "from" | "to";
-    provider: string;
-  };
-  SwapSelectCurrency: {
-    currencies: (CryptoCurrency | TokenCurrency)[];
+  MFA: {
     provider: string;
   };
 };
 
 export type SwapFormNavParamList = {
   SwapForm: {
-    account?: Account | TokenAccount;
+    accountId?: string;
     currency?: CryptoCurrency | TokenCurrency;
   };
   SwapHistory: undefined;

@@ -3,7 +3,7 @@ import jwtDecode from "jwt-decode";
 import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
-import { Account, SubAccount, TokenAccount } from "../../../types";
+import { Account, SubAccount, AccountLike } from "../../../types";
 import type { CheckQuoteStatus, ValidKYCStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
@@ -53,8 +53,8 @@ export function getAccountTuplesForCurrency(
 
 export const getAvailableAccountsById = (
   id: string,
-  accounts: ((Account | TokenAccount) & { disabled?: boolean })[]
-): ((Account | TokenAccount) & {
+  accounts: (AccountLike & { disabled?: boolean })[]
+): (AccountLike & {
   disabled?: boolean | undefined;
 })[] =>
   accounts
