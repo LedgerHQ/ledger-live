@@ -2,7 +2,7 @@ name: "Update Snapshots Ledger Live Desktop"
 description: "Composite job to update playwright snapshots for Ledger Live Desktop"
 inputs:
   os:
-    description: "name of the os <macos | linux | windows>"
+    description: "name of the os (same as runs-on)"
     required: true
 
 runs:
@@ -21,16 +21,12 @@ runs:
         pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         pnpm desktop build:testing
       shell: bash
-    - name: Run unit tests [Linux]
-      if: inputs.os == 'linux'
-      run: pnpm desktop test:jest
-      shell: bash
     - name: Update playwright snapshots [Linux => xvfb-run]
-      if: inputs.os == 'linux'
+      if: inputs.os == 'ubuntu-latest'
       run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
       shell: bash
     - name: Update playwright snapshots
-      if: inputs.os != 'linux'
+      if: inputs.os != 'ubuntu-latest'
       run: pnpm desktop test:playwright:update-snapshots
       shell: bash
     - name: status
