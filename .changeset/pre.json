@@ -71,5 +71,13 @@
     "native-modules-tools": "1.0.1",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "blue-bags-train",
+    "brown-mugs-beam",
+    "hip-icons-jam",
+    "lucky-ants-reply",
+    "moody-moons-dance",
+    "neat-rabbits-applaud",
+    "popular-weeks-shake"
+  ]
 }
