@@ -11,7 +11,7 @@ const ListenDevices = () => {
     let sub;
     function syncDevices() {
       const devices = {};
-      if (getEnv("SANDBOX_MODE")) {
+      if (getEnv("SANDBOX_MODE") === 2) {
         return dispatch(
           addDevice({
             deviceId: undefined,

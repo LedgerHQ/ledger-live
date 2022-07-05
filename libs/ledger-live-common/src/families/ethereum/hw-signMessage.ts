@@ -5,7 +5,7 @@ import { bufferToHex } from "ethereumjs-util";
 import { Eth as MMEth, MetaMaskConnector } from "mm-app-eth";
 import { getEnv } from "../../env";
 import type { MessageData, Result } from "../../hw/signMessage/types";
-import type { TypedMessageData, TypedMessage } from "./types";
+import type { TypedMessage, TypedMessageData } from "./types";
 type EthResolver = (
   arg0: Transport,
   arg1: MessageData | TypedMessageData
@@ -33,7 +33,7 @@ const resolver: EthResolver = async (
   { path, message, rawMessage }
 ) => {
   const eth: Eth | MMEth = await (async () => {
-    if (getEnv("SANDBOX_MODE")) {
+    if (getEnv("SANDBOX_MODE") === 2) {
       const connector = new MetaMaskConnector({
         port: 3333,
       });

@@ -74,7 +74,7 @@ const createSteps = (canEditFees = false, useMock = false): St[] => {
       id: "device",
       label: <Trans i18nKey="send.steps.device.title" />,
       component: StepConnectDevice,
-      footer: getEnv("MOCK_DEVICE") && useMock ? StepConnectDeviceFooter : undefined,
+      footer: getEnv("SANDBOX_MODE") === 1 && useMock ? StepConnectDeviceFooter : undefined,
       onBack: ({ transitionTo }) => transitionTo("summary"),
     },
     {

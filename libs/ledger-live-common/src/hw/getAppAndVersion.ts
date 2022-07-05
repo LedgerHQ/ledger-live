@@ -1,6 +1,6 @@
-import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "../env";
+import { GetAppAndVersionUnsupportedFormat } from "../errors";
 export default async (
   transport: Transport
 ): Promise<{
@@ -8,7 +8,7 @@ export default async (
   version: string;
   flags: number | Buffer;
 }> => {
-  if (getEnv("SANDBOX_MODE")) {
+  if (getEnv("SANDBOX_MODE") === 2) {
     return {
       name: "",
       version: "",

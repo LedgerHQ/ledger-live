@@ -1,20 +1,20 @@
-import { Observable, throwError, timer } from "rxjs";
-import { retryWhen, mergeMap, catchError } from "rxjs/operators";
-import Transport from "@ledgerhq/hw-transport";
 import {
-  WrongDeviceForAccount,
-  WrongAppForCurrency,
-  CantOpenDevice,
-  UpdateYourApp,
   BluetoothRequired,
-  TransportWebUSBGestureRequired,
-  TransportInterfaceNotAvailable,
-  FirmwareOrAppUpdateRequired,
-  TransportStatusError,
+  CantOpenDevice,
   DeviceHalted,
+  FirmwareOrAppUpdateRequired,
+  TransportInterfaceNotAvailable,
+  TransportStatusError,
+  TransportWebUSBGestureRequired,
+  UpdateYourApp,
+  WrongAppForCurrency,
+  WrongDeviceForAccount,
 } from "@ledgerhq/errors";
+import Transport from "@ledgerhq/hw-transport";
+import { Observable, throwError, timer } from "rxjs";
+import { catchError, mergeMap, retryWhen } from "rxjs/operators";
+import { close, open, setAllowAutoDisconnect } from ".";
 import { getEnv } from "../env";
-import { open, close, setAllowAutoDisconnect } from ".";
 
 export type AccessHook = () => () => void;
 
@@ -104,7 +104,7 @@ export const withDevice =
         finish = resolve;
       });
 
-      if (getEnv("SANDBOX_MODE")) {
+      if (getEnv("SANDBOX_MODE") === 2) {
         const sub = job({} as any).subscribe(o);
         finish();
         return () => {

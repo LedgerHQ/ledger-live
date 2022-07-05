@@ -1,46 +1,46 @@
-import isEqual from "lodash/isEqual";
-import { BigNumber } from "bignumber.js";
-import { Observable, from } from "rxjs";
-import { log } from "@ledgerhq/logs";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
+import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import isEqual from "lodash/isEqual";
+import { from, Observable } from "rxjs";
 import {
-  getSeedIdentifierDerivation,
-  getDerivationModesForCurrency,
-  getDerivationScheme,
-  runDerivationScheme,
-  isIterableDerivationMode,
-  derivationModeSupportsIndex,
-  getMandatoryEmptyAccountSkip,
-  getDerivationModeStartsAt,
-} from "../derivation";
-import {
-  getAccountPlaceholderName,
-  getNewAccountPlaceholderName,
-  shouldRetainPendingOperation,
-  isAccountEmpty,
-  shouldShowNewAccount,
   clearAccount,
   emptyHistoryCache,
-  generateHistoryFromOperations,
-  recalculateAccountBalanceHistories,
   encodeAccountId,
+  generateHistoryFromOperations,
+  getAccountPlaceholderName,
+  getNewAccountPlaceholderName,
+  isAccountEmpty,
+  recalculateAccountBalanceHistories,
+  shouldRetainPendingOperation,
+  shouldShowNewAccount,
 } from "../account";
+import {
+  derivationModeSupportsIndex,
+  getDerivationModesForCurrency,
+  getDerivationModeStartsAt,
+  getDerivationScheme,
+  getMandatoryEmptyAccountSkip,
+  getSeedIdentifierDerivation,
+  isIterableDerivationMode,
+  runDerivationScheme,
+} from "../derivation";
+import { getEnv } from "../env";
 import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
+import { withDevice } from "../hw/deviceAccess";
+import getAddress from "../hw/getAddress";
+import type { GetAddressOptions, Result } from "../hw/getAddress/types";
 import type {
-  Operation,
   Account,
-  ScanAccountEvent,
-  SyncConfig,
   CryptoCurrency,
   DerivationMode,
+  Operation,
   ProtoNFT,
+  ScanAccountEvent,
+  SyncConfig,
 } from "../types";
-import type { CurrencyBridge, AccountBridge } from "../types/bridge";
-import getAddress from "../hw/getAddress";
-import type { Result, GetAddressOptions } from "../hw/getAddress/types";
-import { withDevice } from "../hw/deviceAccess";
-import { getEnv } from "../env";
+import type { AccountBridge, CurrencyBridge } from "../types/bridge";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -466,7 +466,7 @@ export const makeScanAccounts =
                 currency,
               });
 
-              if (getEnv("SANDBOX_MODE")) {
+              if (getEnv("SANDBOX_MODE") === 2) {
                 await stepAccount(1, result, derivationMode, "", transport);
 
                 return o.complete();

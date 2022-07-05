@@ -66,7 +66,7 @@ const createSteps = (useMock = false): St[] => {
       id: "sign",
       label: <Trans i18nKey="signmessage.steps.sign.title" />,
       component: StepSign,
-      footer: getEnv("MOCK_DEVICE") && useMock ? StepConnectDeviceFooter : undefined,
+      footer: getEnv("SANDBOX_MODE") === 1 && useMock ? StepConnectDeviceFooter : undefined,
       onBack: ({ transitionTo }: StepProps) => {
         transitionTo("summary");
       },

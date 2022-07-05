@@ -1,38 +1,38 @@
 // @flow
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import React, { useEffect, PureComponent } from "react";
-import { useDispatch } from "react-redux";
-import styled from "styled-components";
-import { Trans } from "react-i18next";
-import { concat, from } from "rxjs";
-import { ignoreElements, filter, map } from "rxjs/operators";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/lib/account";
-import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp } from "@ledgerhq/errors";
+import { groupAddAccounts, isAccountEmpty } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import React, { PureComponent, useEffect } from "react";
+import { Trans } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { concat, from } from "rxjs";
+import { filter, ignoreElements, map } from "rxjs/operators";
+import styled from "styled-components";
+import { openModal } from "~/renderer/actions/modals";
 
 import uniq from "lodash/uniq";
 import { urls } from "~/config/urls";
 import logger from "~/logger";
-import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import RetryButton from "~/renderer/components/RetryButton";
+import { prepareCurrency } from "~/renderer/bridge/cache";
+import AccountsList from "~/renderer/components/AccountsList";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
-import AccountsList from "~/renderer/components/AccountsList";
-import Spinner from "~/renderer/components/Spinner";
-import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import Spinner from "~/renderer/components/Spinner";
 import Switch from "~/renderer/components/Switch";
+import Text from "~/renderer/components/Text";
 
-import type { StepProps } from "..";
-import InfoCircle from "~/renderer/icons/InfoCircle";
+import Link from "~/renderer/components/Link";
 import ToolTip from "~/renderer/components/Tooltip";
 import byFamily from "~/renderer/generated/NoAssociatedAccounts";
-import Link from "~/renderer/components/Link";
+import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
+import type { StepProps } from "..";
 
 // $FlowFixMe
 const remapTransportError = (err: mixed, appName: string): Error => {
@@ -310,7 +310,7 @@ class StepImport extends PureComponent<StepProps, { showAllCreatedAccounts: bool
       creatable,
     };
 
-    const metamaskMode = getEnv("SANDBOX_MODE");
+    const metamaskMode = getEnv("SANDBOX_MODE") === 2;
 
     return (
       <>

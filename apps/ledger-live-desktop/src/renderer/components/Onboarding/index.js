@@ -1,40 +1,40 @@
 // @flow
 
-import React, { useEffect, useState } from "react";
 import { useMachine } from "@xstate/react";
-import { assign, Machine } from "xstate";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition } from "react-transition-group";
-import { Modal } from "~/renderer/components/Onboarding/Modal";
-import { saveSettings } from "~/renderer/actions/settings";
-import { useSelector, useDispatch } from "react-redux";
+import { assign, Machine } from "xstate";
+import { urls } from "~/config/urls";
+import { setNotSeededDeviceRelaunch } from "~/renderer/actions/application";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
+import { saveSettings } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
+import { Modal } from "~/renderer/components/Onboarding/Modal";
+import { openURL } from "~/renderer/linking";
 import { notSeededDeviceRelaunchSelector } from "~/renderer/reducers/application";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { setNotSeededDeviceRelaunch } from "~/renderer/actions/application";
-import { track } from "~/renderer/analytics/segment";
-import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
 
 // screens
-import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
-import { Terms } from "~/renderer/components/Onboarding/Screens/Terms";
 import { SelectDevice } from "~/renderer/components/Onboarding/Screens/SelectDevice";
 import { SelectUseCase } from "~/renderer/components/Onboarding/Screens/SelectUseCase";
+import { Terms } from "~/renderer/components/Onboarding/Screens/Terms";
 import {
-  SetupNewDevice,
   ConnectSetUpDevice,
+  SetupNewDevice,
   UseRecoveryPhrase,
 } from "~/renderer/components/Onboarding/Screens/Tutorial";
+import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
 
 import { pedagogyMachine } from "~/renderer/components/Onboarding/Pedagogy/state";
 
-import styled from "styled-components";
-import { Pedagogy } from "~/renderer/components/Onboarding/Pedagogy";
-import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarning";
-import { preloadAssets } from "~/renderer/components/Onboarding/preloadAssets";
-import { SideDrawer } from "../SideDrawer";
-import Box from "../Box";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
+import styled from "styled-components";
+import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarning";
+import { Pedagogy } from "~/renderer/components/Onboarding/Pedagogy";
+import { preloadAssets } from "~/renderer/components/Onboarding/preloadAssets";
+import Box from "../Box";
+import { SideDrawer } from "../SideDrawer";
 
 function LedgerLogo() {
   return (
@@ -254,7 +254,7 @@ export function Onboarding({ onboardingRelaunched }: { onboardingRelaunched: boo
   });
 
   useEffect(() => {
-    if (getEnv("SANDBOX_MODE")) {
+    if (getEnv("SANDBOX_MODE") > 0) {
       sendEvent("onboardingComplete");
     }
   }, [sendEvent]);

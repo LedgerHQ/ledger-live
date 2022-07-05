@@ -1,33 +1,33 @@
-import semver from "semver";
-import { Observable, concat, from, of, throwError, defer, merge } from "rxjs";
-import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import {
-  TransportStatusError,
-  FirmwareOrAppUpdateRequired,
-  UserRefusedOnDevice,
   BtcUnmatchedApp,
-  UpdateYourApp,
-  DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  FirmwareOrAppUpdateRequired,
+  TransportStatusError,
+  UpdateYourApp,
+  UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import type { DeviceModelId } from "@ledgerhq/devices";
+import { concat, defer, from, merge, Observable, of, throwError } from "rxjs";
+import { catchError, concatMap, delay, map, mergeMap } from "rxjs/operators";
+import semver from "semver";
+import { mustUpgrade } from "../apps";
+import { streamAppInstall } from "../apps/hw";
+import appSupportsQuitApp from "../appSupportsQuitApp";
+import { getCryptoCurrencyById } from "../currencies";
+import { getEnv } from "../env";
+import { LatestFirmwareVersionRequired } from "../errors";
+import manager from "../manager";
 import type { DerivationMode } from "../types";
 import type { DeviceInfo, FirmwareUpdateContext } from "../types/manager";
-import { getCryptoCurrencyById } from "../currencies";
-import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
-import { streamAppInstall } from "../apps/hw";
-import { isDashboardName } from "./isDashboardName";
+import getAddress from "./getAddress";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
-import getAddress from "./getAddress";
+import { isDashboardName } from "./isDashboardName";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
-import { LatestFirmwareVersionRequired } from "../errors";
-import { mustUpgrade } from "../apps";
-import manager from "../manager";
-import { getEnv } from "../env";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -253,7 +253,7 @@ const cmd = ({
   withDevice(devicePath)(
     (transport) =>
       new Observable((o) => {
-        if (getEnv("SANDBOX_MODE")) {
+        if (getEnv("SANDBOX_MODE") === 2) {
           o.next({
             type: "opened",
             app: {

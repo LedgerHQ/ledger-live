@@ -395,11 +395,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
-  MOCK_DEVICE: {
-    def: false,
-    parser: boolParser,
-    desc: "mock device interactions for testing / integration without physical device",
-  },
   MOCK_SWAP_KYC: {
     def: "",
     parser: stringParser,
@@ -445,9 +440,9 @@ const envDefinitions = {
     desc: "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
   },
   SANDBOX_MODE: {
-    def: false,
-    parser: boolParser,
-    desc: "allow the direct access to live feature for dev purposes",
+    def: 0,
+    parser: intParser,
+    desc: "allow the direct access to live feature for dev purposes.\nAvailable values are 0, 1 or 2\n 0: normal mode, no sandbox\n1: mock nano interactions with SDK\n2: metamask mode",
   },
   SATSTACK: {
     def: false,
@@ -598,11 +593,6 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
-  },
-  SANDBOX_MODE: {
-    def: false,
-    parser: boolParser,
-    desc: "sandbox mode for dev only",
   },
   MARKET_API_URL: {
     def: "https://proxycg.api.live.ledger.com/api/v3",

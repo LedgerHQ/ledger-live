@@ -1,25 +1,25 @@
-import invariant from "invariant";
-import { Observable, from, of } from "rxjs";
-import { mergeMap } from "rxjs/operators";
-import eip55 from "eip55";
-import { encode } from "rlp";
-import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
+import { Transaction as EthereumTx } from "@ethereumjs/tx";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
-import { Eth as MMEth, MetaMaskConnector } from "mm-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import ethLedgerServices from "@ledgerhq/hw-app-eth/lib/services/ledger";
-import type { Transaction } from "./types";
-import type { Operation, Account, SignOperationEvent } from "../../types";
-import { getGasLimit, buildEthereumTx } from "./transaction";
-import { apiForCurrency } from "../../api/Ethereum";
-import { withDevice } from "../../hw/deviceAccess";
-import { modes } from "./modules";
-import { isNFTActive } from "../../nft";
-import { getEnv } from "../../env";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { Transaction as EthereumTx } from "@ethereumjs/tx";
+import { log } from "@ledgerhq/logs";
+import { BigNumber } from "bignumber.js";
+import eip55 from "eip55";
+import invariant from "invariant";
+import { Eth as MMEth, MetaMaskConnector } from "mm-app-eth";
+import { encode } from "rlp";
+import { from, Observable, of } from "rxjs";
+import { mergeMap } from "rxjs/operators";
+import { apiForCurrency } from "../../api/Ethereum";
+import { getEnv } from "../../env";
+import { withDevice } from "../../hw/deviceAccess";
+import { isNFTActive } from "../../nft";
+import type { Account, Operation, SignOperationEvent } from "../../types";
+import { modes } from "./modules";
+import { buildEthereumTx, getGasLimit } from "./transaction";
+import type { Transaction } from "./types";
 export const signOperation = ({
   account,
   deviceId,
@@ -80,16 +80,17 @@ export const signOperation = ({
                 ? m.getResolutionConfig(account, transaction)
                 : {};
 
-              const resolution = getEnv("SANDBOX_MODE")
-                ? null
-                : await ethLedgerServices.resolveTransaction(
-                    txHex,
-                    loadConfig,
-                    resolutionConfig
-                  );
+              const resolution =
+                getEnv("SANDBOX_MODE") === 2
+                  ? null
+                  : await ethLedgerServices.resolveTransaction(
+                      txHex,
+                      loadConfig,
+                      resolutionConfig
+                    );
 
               const eth: Eth | MMEth = await (async () => {
-                if (getEnv("SANDBOX_MODE")) {
+                if (getEnv("SANDBOX_MODE") === 2) {
                   const connector = new MetaMaskConnector({
                     port: 3333,
                   });
@@ -125,17 +126,18 @@ export const signOperation = ({
                 s: string;
                 v: string;
                 txHash?: string;
-              } = getEnv("SANDBOX_MODE")
-                ? await (eth as MMEth).signTransactionAndBroadCast(
-                    freshAddressPath,
-                    txHex,
-                    resolution
-                  )
-                : await eth.signTransaction(
-                    freshAddressPath,
-                    txHex,
-                    resolution
-                  );
+              } =
+                getEnv("SANDBOX_MODE") === 2
+                  ? await (eth as MMEth).signTransactionAndBroadCast(
+                      freshAddressPath,
+                      txHex,
+                      resolution
+                    )
+                  : await eth.signTransaction(
+                      freshAddressPath,
+                      txHex,
+                      resolution
+                    );
               if (cancelled) return;
               o.next({ type: "device-signature-granted" });
               // Second, we re-set some tx fields from the device signature

@@ -1,40 +1,40 @@
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
 import {
-  NotEnoughGas,
   FeeNotLoaded,
   FeeRequired,
   GasLessThanEstimate,
+  NotEnoughGas,
 } from "@ledgerhq/errors";
-import type { CurrencyBridge, AccountBridge } from "../../../types";
-import {
-  makeSync,
-  makeScanAccounts,
-  makeAccountBridgeReceive,
-} from "../../../bridge/jsHelpers";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import { getMainAccount } from "../../../account";
-import { patchOperationWithHash } from "../../../operation";
-import { getCryptoCurrencyById } from "../../../currencies";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { getEstimatedFees } from "../../../api/Fees";
-import type { Transaction, NetworkInfo } from "../types";
 import {
-  getGasLimit,
-  inferEthereumGasLimitRequest,
-  estimateGasLimit,
-} from "../transaction";
-import { getAccountShape } from "../synchronisation";
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "../../../bridge/jsHelpers";
+import { getCryptoCurrencyById } from "../../../currencies";
+import { getEnv } from "../../../env";
+import { patchOperationWithHash } from "../../../operation";
+import { inferDynamicRange } from "../../../range";
+import type { AccountBridge, CurrencyBridge } from "../../../types";
 import {
-  preload,
   hydrate,
+  modes,
+  preload,
   prepareTransaction as prepareTransactionModules,
 } from "../modules";
-import { signOperation } from "../signOperation";
-import { modes } from "../modules";
+import { collectionMetadata, nftMetadata } from "../nftResolvers";
 import postSyncPatch from "../postSyncPatch";
-import { inferDynamicRange } from "../../../range";
-import { nftMetadata, collectionMetadata } from "../nftResolvers";
-import { getEnv } from "../../../env";
+import { signOperation } from "../signOperation";
+import { getAccountShape } from "../synchronisation";
+import {
+  estimateGasLimit,
+  getGasLimit,
+  inferEthereumGasLimitRequest,
+} from "../transaction";
+import type { NetworkInfo, Transaction } from "../types";
 
 const receive = makeAccountBridgeReceive();
 
@@ -44,7 +44,7 @@ const broadcast = async ({
 }) => {
   const api = apiForCurrency(account.currency);
   let hash;
-  if (getEnv("SANDBOX_MODE")) {
+  if (getEnv("SANDBOX_MODE") === 2) {
     hash = operation.hash;
   } else {
     hash = await api.broadcastTransaction(signature);
