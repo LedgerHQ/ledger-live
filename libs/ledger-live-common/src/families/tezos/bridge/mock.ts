@@ -169,6 +169,7 @@ const getTransactionStatus = (a, t) => {
     estimatedFees,
     amount,
     totalSpent,
+    family: t.family,
   });
 };
 

@@ -29,6 +29,7 @@ import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
 import { AlgorandAccount } from "../families/algorand/types";
 import { PolkadotAccount } from "../families/polkadot/types";
+import { TezosAccount } from "../families/tezos/types";
 
 function ensureNoNegative(operations) {
   let total = new BigNumber(0);
@@ -472,6 +473,13 @@ export function genAccount(
       unlockings: [],
       nominations: [],
       numSlashingSpans: 0,
+    };
+  }
+
+  if (currency.family === "tezos") {
+    (account as TezosAccount).tezosResources = {
+      revealed: true,
+      counter: 0,
     };
   }
 

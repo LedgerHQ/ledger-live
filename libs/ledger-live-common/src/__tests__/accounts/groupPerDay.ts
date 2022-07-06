@@ -1,5 +1,6 @@
 import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
+import { TezosAccountRaw } from "../../families/tezos/types";
 const account = fromAccountRaw({
   id: "libcore:1:tezos:A:tezbox",
   seedIdentifier: "B",
@@ -180,7 +181,11 @@ const account = fromAccountRaw({
   spendableBalance: "278000",
   xpub: "A",
   subAccounts: [],
-});
+  tezosResources: {
+    revealed: true,
+    counter: 0,
+  },
+} as TezosAccountRaw);
 test("pending operation are in order", () => {
   const byDay = groupAccountOperationsByDay(account, {
     count: 100,
