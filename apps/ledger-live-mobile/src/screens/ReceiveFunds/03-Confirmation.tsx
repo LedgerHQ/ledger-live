@@ -80,11 +80,12 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }, [setIsAddionalInfoModalOpen]);
 
   const onRetry = useCallback(() => {
+    const params = {...route.params, notSkippable: true}
     if (isModalOpened) {
       setIsModalOpened(false);
-      onModalHide.current = () => navigation.navigate(ScreenName.ReceiveConnectDevice, route.params);
+      onModalHide.current = () => navigation.navigate(ScreenName.ReceiveConnectDevice, params);
     } else {
-      navigation.navigate(ScreenName.ReceiveConnectDevice, route.params);
+      navigation.navigate(ScreenName.ReceiveConnectDevice, params);
     }
   }, [isModalOpened, navigation, route.params])
 

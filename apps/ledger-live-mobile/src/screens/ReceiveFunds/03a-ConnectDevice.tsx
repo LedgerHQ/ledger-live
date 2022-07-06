@@ -23,7 +23,6 @@ import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "../../components/GenericErrorView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import SkipSelectDevice from "../SkipSelectDevice";
 
 type Props = {
@@ -35,6 +34,7 @@ type RouteParams = {
   account?: AccountLike,
   accountId: string,
   parentId?: string,
+  notSkippable?: boolean,
   title: string,
   appName?: string,
   onSuccess?: () => void,
@@ -128,6 +128,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         <SkipSelectDevice route={route} onResult={setDevice} />
         <SelectDevice
           onSelect={setDevice}
+          onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
         />
       </NavigationScrollView>
       <DeviceActionModal
