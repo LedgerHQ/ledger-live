@@ -68,8 +68,8 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         <AccountCard
           account={account}
           AccountSubTitle={
-            account.parentAccount ? (
-              <LText color="neutral.c70">{account.parentAccount.name}</LText>
+            (account.parentAccount || account.token?.parentCurrency) ? (
+              <LText color="neutral.c70">{(account.parentAccount || account.token.parentCurrency).name}</LText>
             ) : null
           }
           onPress={() => selectAccount(account)}
