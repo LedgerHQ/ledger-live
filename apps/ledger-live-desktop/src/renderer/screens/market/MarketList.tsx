@@ -1,5 +1,5 @@
 import React, { useCallback, memo, useMemo } from "react";
-import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { Trans, useTranslation } from "react-i18next";
@@ -14,8 +14,8 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { useProviders } from "../exchange/Swap2/Form";
 import Track from "~/renderer/analytics/Track";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
 
@@ -110,10 +110,10 @@ export const TableRow = styled(Flex).attrs({
       background: ${p.theme.colors.neutral.c30};
     }
   `}
-  
+
   cursor: ${p => (p.disabled ? "default" : "pointer")};
- 
-  
+
+
 
   ${TableCellBase}:nth-child(1) {
     flex: 0 0 40px;
@@ -140,7 +140,7 @@ export const TableRow = styled(Flex).attrs({
     flex: 1 0 70px;
     justify-content: flex-end;
   }
-  
+
   ${TableCellBase}:nth-child(7) {
     flex: 0 0 40px;
     justify-content: flex-end;

@@ -1,13 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { mocked } from "ts-jest/utils";
 import { Account, Transaction } from "../../types";
 import getExchangeRates from "./getExchangeRates";
 import { Exchange, ExchangeRate } from "./types";
 
 jest.mock("axios");
-const mockedAxios = mocked(axios);
+const mockedAxios = jest.mocked(axios);
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
@@ -61,7 +60,6 @@ const transaction: Transaction = {
   family: "bitcoin",
   utxoStrategy: {
     strategy: 0,
-    pickUnconfirmedRBF: false,
     excludeUTXOs: [],
   },
   rbf: true,

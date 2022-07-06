@@ -1,5 +1,5 @@
 import { map, tap, scan as rxScan } from "rxjs/operators";
-import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 export default {
   args: [
     {
@@ -12,7 +12,8 @@ export default {
       name: "interactive",
       alias: "i",
       type: Boolean,
-      desc: "interactive mode that accumulate the events instead of showing them",
+      desc:
+        "interactive mode that accumulate the events instead of showing them",
     },
   ],
   job: ({

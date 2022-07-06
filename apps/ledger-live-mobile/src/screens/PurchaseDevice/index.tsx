@@ -1,12 +1,13 @@
 import React, { memo, useCallback, useState } from "react";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 
 import { Adjust, AdjustEvent } from "react-native-adjust";
+import Config from "react-native-config";
 import Button from "../../components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
@@ -14,11 +15,7 @@ import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
 import WebViewScreen from "../../components/WebViewScreen";
 import { NavigatorName, ScreenName } from "../../const";
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setReadOnlyMode,
-} from "../../actions/settings";
+import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
 import { urls } from "../../config/urls";
 
 const defaultURL = urls.buyNanoX;
@@ -48,7 +45,20 @@ const PurchaseDevice = () => {
   }, [setURLDrawerOpen]);
 
   const handleAdjustTracking = useCallback((data: PurchaseMessage) => {
-    const id = `${data.type}-${data.value?.deviceId}`;
+    const ids = {
+      nanoS: Config.ADJUST_BUY_NANOS_EVENT_ID,
+      nanoX: Config.ADJUST_BUY_NANOX_EVENT_ID,
+      nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
+    };
+    const id = data.value?.deviceId
+      ? // @ts-ignore issue in typing
+        ids[data.value.deviceId] || Config.ADJUST_BUY_GENERIC_EVENT_ID
+      : Config.ADJUST_BUY_GENERIC_EVENT_ID;
+
+    if (!id) {
+      return;
+    }
+
     const revenue = data.value?.price;
     const currency = data.value?.currency;
 
@@ -66,7 +76,6 @@ const PurchaseDevice = () => {
       if (data.type === "ledgerLiveOrderSuccess") {
         dispatch(setReadOnlyMode(true));
         dispatch(completeOnboarding());
-        dispatch(setHasOrderedNano(true));
       }
     },
     [dispatch],

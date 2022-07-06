@@ -4,19 +4,19 @@ import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
 
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/lib/families/polkadot/react";
+} from "@ledgerhq/live-common/explorers";
+import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {
   Account,
   Operation,
   Currency,
   Unit,
   OperationType,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";

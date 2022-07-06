@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Button from "../components/wrappedUi/Button";
 import { NavigatorName } from "../const";
+import { setHasOrderedNano } from "../actions/settings";
+import { useDispatch } from "react-redux";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -14,6 +16,7 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 
 export default function PostBuyDeviceScreen() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const onClose = useCallback(() => {
@@ -21,6 +24,10 @@ export default function PostBuyDeviceScreen() {
       screen: NavigatorName.Main,
     });
   }, [navigation]);
+
+  useEffect(() => {
+    dispatch(setHasOrderedNano(true));
+  }, []);
 
   return (
     <StyledSafeAreaView>

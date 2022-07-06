@@ -2,14 +2,14 @@ import { BigNumber } from "bignumber.js";
 import asciichart from "asciichart";
 import invariant from "invariant";
 import { map } from "rxjs/operators";
-import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
+import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
+import type { PortfolioRange } from "@ledgerhq/live-common/types/index";
 import {
   getBalanceHistory,
   getPortfolioCount,
-} from "@ledgerhq/live-common/lib/portfolio/v2";
-import { getRanges } from "@ledgerhq/live-common/lib/portfolio/v2/range";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/portfolio/v2/index";
+import { getRanges } from "@ledgerhq/live-common/portfolio/v2/range";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 const histoFormatters = {

@@ -56,6 +56,7 @@ export default function ManagerNavigator() {
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -75,7 +76,7 @@ export default function ManagerNavigator() {
           headerRight: null,
           gestureEnabled: false,
         }}
-      />      
+      />
       <Stack.Screen
         name={ScreenName.ManagerMain}
         component={ManagerMain}

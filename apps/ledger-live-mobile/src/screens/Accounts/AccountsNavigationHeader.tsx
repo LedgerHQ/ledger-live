@@ -5,7 +5,7 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Touchable from "../../components/Touchable";
-import { NavigatorName } from "../../const";
+import { ScreenName } from "../../const";
 
 type Props = {
   readOnly?: boolean;
@@ -16,7 +16,7 @@ function AccountsNavigationHeader({ readOnly }: Props) {
   const { t } = useTranslation();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
-    navigation.navigate(NavigatorName.BuyDevice);
+    navigation.navigate(ScreenName.NoDeviceWallScreen);
   }, [navigation]);
 
   return (

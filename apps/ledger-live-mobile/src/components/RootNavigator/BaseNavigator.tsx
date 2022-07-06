@@ -7,7 +7,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -106,13 +106,33 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NoDeviceWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
         component={PostBuyDeviceSetupNanoWallScreen}
-        options={{ headerShown: false, presentation: "transparentModal" }}
+        options={{
+          headerShown: false,
+          presentation: "transparentModal",
+          headerMode: "none",
+          mode: "modal",
+          transparentCard: true,
+          cardStyle: { opacity: 1 },
+          gestureEnabled: true,
+          headerTitle: null,
+          headerRight: null,
+          headerBackTitleVisible: false,
+          title: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
       />
       <Stack.Screen
         name={ScreenName.PostBuyDeviceScreen}
@@ -120,6 +140,7 @@ export default function BaseNavigator() {
         options={{
           title: t("postBuyDevice.headerTitle"),
           headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen

@@ -1,6 +1,10 @@
 // @flow
+
+require("@electron/remote/main").initialize();
+
+/* eslint-disable import/first */
 import "./setup";
-import { app, Menu, ipcMain } from "electron";
+import { app, Menu, ipcMain, session } from "electron";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -8,13 +12,12 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import "./internal-lifecycle";
+import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import logger from "~/logger";
-
-require("@electron/remote/main").initialize();
+import sentry from "~/sentry/main";
 
 app.allowRendererProcessReuse = false;
 
@@ -75,6 +78,23 @@ app.on("ready", async () => {
     await installExtensions();
   }
 
+  /**
+   * Clears the session’s HTTP cache
+   * Used to remove third party cached auth tokens, among other things
+   */
+  ipcMain.handle("clearStorageData", () => {
+    const defaultSession = session.defaultSession;
+
+    defaultSession.clearStorageData().then(
+      () => {
+        logger.log("session storageData cleared");
+      },
+      error => {
+        logger.error(error);
+      },
+    );
+  });
+
   db.init(userDataDirectory);
   app.dirname = __dirname;
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
@@ -128,6 +148,17 @@ app.on("ready", async () => {
 
   const windowParams = await db.getKey("windowParams", "MainWindow", {});
   const settings = await db.getKey("app", "settings");
+  const user = await db.getKey("app", "user");
+
+  const userId = user?.id;
+  if (userId) {
+    setUserId(userId);
+    sentry(() => {
+      const value = getSentryEnabled();
+      if (value === null) return settings?.sentryLogs;
+      return value;
+    }, userId);
+  }
 
   const window = await createMainWindow(windowParams, settings);
 
@@ -177,8 +208,12 @@ async function installExtensions() {
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
   const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload)),
-  ).catch(console.log);
+    extensions.map(name =>
+      installer.default(installer[name], {
+        loadExtensionOptions: { allowFileAccess: true, forceDownload },
+      }),
+    ),
+  ).catch(console.error);
 }
 
 function clearSessionCache(session) {

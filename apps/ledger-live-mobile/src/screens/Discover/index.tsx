@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";

@@ -911,7 +911,7 @@
   "postBuyDevice": {
     "headerTitle": "Purchase successful",
     "title": "Congratulations",
-    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation.",
+    "desc": "Your order is being processed.\nYou will receive your Ledger soon. Please check your email for your order confirmation."
   },
   "discover": {
     "title": "Discover",
@@ -937,7 +937,7 @@
   "onboarding": {
     "stepWelcome": {
       "title": "Welcome to Ledger",
-      "subtitle": "We make digital ownership secured and simple.",
+      "subtitle": "We make digital ownership secure and simple.",
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
@@ -954,7 +954,8 @@
     },
     "postWelcomeStep": {
       "title": "It's your choice",
-      "subtitle": "You can choose : take a look around the app first or buy a Nano X device",
+      "subtitle_yes": "You can choose to set up your Ledger or take a look around the app first",
+      "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
       "setupLedger": {
         "title": "Set up my Ledger",
@@ -962,7 +963,7 @@
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
-        "subtitle": "Your key to Web3 — Unlock the freedom to control your assets"
+        "subtitle": "A hardware wallet is the only way to ensure your assets are secure "
       },
       "discoverLedger": {
         "title": "Explore Ledger Live",
@@ -1655,7 +1656,7 @@
     }
   },
   "operationDetails": {
-    "title": "Operation details",
+    "title": "Transaction details",
     "account": "Account",
     "date": "Date",
     "confirmed": "Confirmed",
@@ -1721,7 +1722,7 @@
   },
   "operationList": {
     "noOperations": "No Operations",
-    "noMoreOperations": "No other Operations"
+    "noMoreTransactions": "No other transactions"
   },
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
@@ -1762,7 +1763,7 @@
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
-    "lastOperations": "Last operations",
+    "lastTransactions": "Last transactions",
     "emptyState": {
       "title": "No crypto assets yet?",
       "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
@@ -2139,10 +2140,6 @@
     },
     "fees": {
       "title": "Edit fees"
-    },
-    "manageCard": {
-      "title": "Manage CL Card",
-      "description": "Order and Manage CL Card"
     },
     "receive": {
       "title": "Receive",
@@ -4393,7 +4390,10 @@
       "tokenContractCopied": "Token Address copied !",
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal": {
       "viewOn": "View on",

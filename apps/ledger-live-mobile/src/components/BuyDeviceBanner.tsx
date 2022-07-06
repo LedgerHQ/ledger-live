@@ -137,6 +137,7 @@ export default function BuyDeviceBanner({
           borderRadius={2}
           overflow="hidden"
           imageContainerStyle={imageContainerStyle}
+          pointerEvents="none"
         >
           <Image
             resizeMode="contain"

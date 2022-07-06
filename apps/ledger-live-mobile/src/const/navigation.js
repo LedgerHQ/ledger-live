@@ -355,6 +355,8 @@ export const ScreenName = {
   PostBuyDeviceScreen: "PostBuyDeviceScreen",
   PostBuyDeviceSetupNanoWallScreen: "PostBuyDeviceSetupNanoWallScreen",
 
+  NoDeviceWallScreen: "NoDeviceWallScreen",
+
   DiscoverScreen: "DiscoverScreen",
   Learn: "Learn",
 

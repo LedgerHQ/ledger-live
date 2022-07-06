@@ -12,7 +12,6 @@ const createTransaction = (): Transaction => {
     amount: new BigNumber(0),
     utxoStrategy: {
       strategy: 0,
-      pickUnconfirmedRBF: false,
       excludeUTXOs: [],
     },
     recipient: "",

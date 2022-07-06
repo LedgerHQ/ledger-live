@@ -8,18 +8,18 @@ import {
   isAccountEmpty,
   groupAccountOperationsByDay,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   Account,
   AccountLike,
   TokenAccount,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
-} from "@ledgerhq/live-common/lib/compound/logic";
+} from "@ledgerhq/live-common/compound/logic";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { switchCountervalueFirst } from "../../actions/settings";
@@ -227,7 +227,7 @@ const AccountScreenInner = ({
       contentContainerStyle={styles.contentContainer}
       ListHeaderComponent={() => (
         <Text variant={"h3"} mt={8}>
-          <Trans i18nKey="account.lastOperations" />
+          <Trans i18nKey="account.lastTransactions" />
         </Text>
       )}
       ListFooterComponent={

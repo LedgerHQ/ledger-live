@@ -4,15 +4,15 @@ import { FlatList } from "react-native";
 import {
   listTokens,
   isCurrencySupported,
-} from "@ledgerhq/live-common/lib/currencies";
-import { distribute, Action, State } from "@ledgerhq/live-common/lib/apps";
-import { App } from "@ledgerhq/live-common/lib/types/manager";
-import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
+} from "@ledgerhq/live-common/currencies/index";
+import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
+import { App } from "@ledgerhq/live-common/types/manager";
+import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "react-i18next";
-import { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
+import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { ManagerTab } from "./Manager";
 
 import AppFilter from "./AppsList/AppFilter";

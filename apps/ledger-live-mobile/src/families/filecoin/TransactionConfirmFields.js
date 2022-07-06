@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { DeviceTransactionField } from "@ledgerhq/live-common/lib/transaction";
+import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 
 import LText from "../../components/LText";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";

@@ -4,11 +4,11 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 
-import type { CosmosMappedDelegation } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
 

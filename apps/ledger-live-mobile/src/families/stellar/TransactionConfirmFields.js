@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { StyleSheet } from "react-native";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 

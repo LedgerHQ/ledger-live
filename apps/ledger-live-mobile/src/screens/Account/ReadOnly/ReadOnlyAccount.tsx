@@ -7,8 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getCryptoCurrencyById,
   getTokenById,
-} from "@ledgerhq/live-common/lib/currencies";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/currencies/index";
+import { Currency } from "@ledgerhq/live-common/types/index";
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
@@ -96,8 +96,8 @@ function ReadOnlyAccount({ route }: Props) {
             mt={3}
           >
             <Trans
-              i18nKey={"account.readOnly.noTransaction.title"}
-              values={currency.name}
+              i18nKey={"account.readOnly.noTransaction.subtitle"}
+              values={{ assetName: currency.name }}
             />
           </Text>
         </Flex>

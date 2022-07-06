@@ -6,12 +6,12 @@ import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/i
 import {
   PolkadotNomination,
   PolkadotValidator,
-} from "@ledgerhq/live-common/lib/families/polkadot/types";
-import { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/polkadot/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
