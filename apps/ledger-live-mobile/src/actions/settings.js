@@ -189,7 +189,7 @@ export const setSwapSelectableCurrencies = (
 export const setSwapKYCStatus = (payload: {
   provider: string,
   id?: string,
-  status?: string,
+  status?: string | null,
 }) => ({
   type: "SET_SWAP_KYC",
   payload,

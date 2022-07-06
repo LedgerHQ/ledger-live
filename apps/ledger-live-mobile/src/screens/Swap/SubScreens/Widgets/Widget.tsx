@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function Widget({ provider, type }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const { dark } = useTheme();
 
@@ -25,8 +25,14 @@ export function Widget({ provider, type }: Props) {
 
   const preload = useMemo(
     () => `
+      ${authToken &&
+        `
+        localStorage.setItem("authToken", "${authToken}");
+      `}
+      localStorage.setItem("theme", "${dark ? "dark" : "light"}");
+
       window.ledger = { postMessage: window.ReactNativeWebView.postMessage };
-      
+
       window.ledger.setToken = token => {
         const message = JSON.stringify({
           type: "setToken",
@@ -34,7 +40,7 @@ export function Widget({ provider, type }: Props) {
         });
         window.ledger.postMessage(message);
       };
-      
+
       window.ledger.closeWidget = () => {
         const message = JSON.stringify({
           type: "closeWidget",
@@ -42,27 +48,22 @@ export function Widget({ provider, type }: Props) {
         window.ledger.postMessage(message);
       };
 
-      localStorage.setItem("authToken", "${authToken}");
-      localStorage.setItem("theme", "${dark ? "dark" : "light"}");
-  
       true;
     `,
     [authToken, dark],
   );
 
   const handleMessage = useCallback(
-    ({ nativeEvent: { data: dataStr } }) => {
+    e => {
       try {
-        const data: Message = JSON.parse(dataStr);
-        console.log(data);
-
+        const data: Message = JSON.parse(e.nativeEvent.data);
         switch (data.type) {
           case "setToken":
             dispatch(
               setSwapKYCStatus({
                 provider,
                 id: data?.token,
-                status: undefined,
+                status: null,
               }),
             );
             break;
@@ -80,14 +81,14 @@ export function Widget({ provider, type }: Props) {
   );
 
   return (
+    // @ts-expect-error
     <WebView
       source={{
-        // html: `<button onclick="window.ledger.setToken('fake-token')">click</button>`,
         uri,
       }}
+      incognito={true}
       injectedJavaScriptBeforeContentLoaded={preload}
       onMessage={handleMessage}
-      onError={console.error}
     />
   );
 }
