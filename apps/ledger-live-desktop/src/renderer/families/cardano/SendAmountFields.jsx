@@ -1,5 +1,4 @@
 // @flow
-import React from "react";
 import { Trans, withTranslation } from "react-i18next";
 import MemoValueField from "./MemoValueField";
 import Box from "~/renderer/components/Box";
