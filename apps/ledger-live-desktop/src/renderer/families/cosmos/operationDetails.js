@@ -77,6 +77,8 @@ export const OperationDetailsDelegation = ({
     unit,
   ]);
 
+  // this is where the 0.1 TO Figment comes from
+  console.log("mappedDelegationInfo is: ", mappedDelegationInfo);
   return (
     <OpDetailsSection>
       {!isTransactionField && (
@@ -123,6 +125,9 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const { validators: cosmosValidators } = useCosmosPreloadData();
+
+  const { claimedRewards } = extra;
+  console.log("claimedRewards: ", claimedRewards);
 
   const formatConfig = {
     disableRounding: true,
@@ -201,6 +206,11 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       );
 
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
+      const claimedRewardsAmount = formatCurrencyUnit(
+        unit,
+        BigNumber(claimedRewards?.amount),
+        formatConfig,
+      );
 
       ret = (
         <>
@@ -232,6 +242,12 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
               <Trans i18nKey={"operationDetails.extra.redelegatedAmount"} />
             </OpDetailsTitle>
             <OpDetailsData>{formattedAmount}</OpDetailsData>
+          </OpDetailsSection>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey={"operationDetails.extra.rewards"} />
+            </OpDetailsTitle>
+            <OpDetailsData>{claimedRewardsAmount}</OpDetailsData>
           </OpDetailsSection>
         </>
       );

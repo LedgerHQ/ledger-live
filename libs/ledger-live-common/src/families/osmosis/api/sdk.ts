@@ -221,6 +221,19 @@ export class OsmosisAPI extends CosmosAPI {
                 },
               ],
             };
+
+            // BEGIN EXPERIMENTAL ------------
+            let amount = new BigNumber(0);
+            if (event.transfers != null) {
+              if (event.transfers.reward) {
+                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+              }
+            }
+            if (amount.gt(0)) {
+              extra["claimedRewards"] = amount.toString();
+            }
+            // END EXPERIMENTAL ------------
+
             operations.push(
               convertTransactionToOperation(
                 accountId,
@@ -266,6 +279,17 @@ export class OsmosisAPI extends CosmosAPI {
               ],
               sourceValidator: event.node.validator_source[0].id,
             };
+            // BEGIN EXPERIMENTAL ------------
+            let amount = new BigNumber(0);
+            if (event.transfers != null) {
+              if (event.transfers.reward) {
+                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+              }
+            }
+            if (amount.gt(0)) {
+              extra["claimedRewards"] = amount.toString();
+            }
+            // END EXPERIMENTAL ------------
             operations.push(
               convertTransactionToOperation(
                 accountId,
@@ -310,6 +334,17 @@ export class OsmosisAPI extends CosmosAPI {
                 },
               ],
             };
+            // BEGIN EXPERIMENTAL ------------
+            let amount = new BigNumber(0);
+            if (event.transfers != null) {
+              if (event.transfers.reward) {
+                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
+              }
+            }
+            if (amount.gt(0)) {
+              extra["claimedRewards"] = amount.toString();
+            }
+            // END EXPERIMENTAL ------------
             operations.push(
               convertTransactionToOperation(
                 accountId,
