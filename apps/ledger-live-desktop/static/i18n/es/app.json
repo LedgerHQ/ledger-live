@@ -3105,6 +3105,7 @@
         "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
         "title2" : "¿Qué pasa si pierdo el acceso a mi Nano?",
         "paragraph3" : "No te preocupes, sigue estos pasos:",
+        "paragraph4" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
           "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
@@ -3196,7 +3197,7 @@
             "paragraph1" : "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
             "paragraph2" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus criptos y administrarlas.",
             "buttons" : {
-              "next" : "De acuerdo, ¡todo listo!",
+              "next" : "OK, I'm ready!",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
             }
@@ -3209,8 +3210,12 @@
               "3" : "Elige un entorno seguro y tranquilo en el que puedas estar a solas."
             },
             "buttons" : {
-              "next" : "De acuerdo, ¡todo listo!",
+              "next" : "OK, I'm ready!",
               "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo" : {
@@ -3234,9 +3239,14 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Esta es la mejor manera de hacerlo:",
             "turnOn" : {
               "title" : "Encendido del Nano",
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
@@ -3257,6 +3267,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pinCode" : {
@@ -3267,6 +3281,10 @@
               "next" : "Establecer un código PIN",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "quizSuccess" : {
@@ -3280,10 +3298,14 @@
           },
           "quizFailure" : {
             "title" : "Pronto tendrás nivel de profesional...",
-            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto tendrás completa seguridad con respecto a la protección de tus cripto. ¡Solo te queda un breve paso",
+            "paragraph" : "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás con completa seguridad con respecto a la protección de tus criptomonedas.\n\nSolo te queda un breve paso.",
             "buttons" : {
               "next" : "Siguiente paso",
               "prev" : "Paso anterior"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pinCodeHowTo" : {
@@ -3299,6 +3321,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3313,7 +3339,7 @@
             },
             "warning" : {
               "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
-              "desc" : "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
+              "desc" : "Tú y solo tú debes crear el código PIN y generar la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla o un código PIN ya existentes,no utilices el producto y ponte en contacto con el Soporte.",
               "supportLink" : "Ponte en contacto con Soporte"
             }
           },
@@ -3330,6 +3356,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "newRecoveryPhrase" : {
@@ -3341,6 +3371,10 @@
               "next" : "Frase de recuperación",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "recoveryHowTo" : {
@@ -3366,6 +3400,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "recoveryHowTo3" : {
@@ -3380,6 +3418,10 @@
               "next" : "Siguiente paso",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "genuineCheck" : {
@@ -3403,6 +3445,10 @@
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda",
               "learn" : "Aprende cómo ocultarla"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           },
           "pairMyNano" : {
@@ -3412,6 +3458,10 @@
               "next" : "Verificar mi Nano",
               "prev" : "Paso anterior",
               "help" : "Necesitas ayuda"
+            },
+            "help" : {
+              "help" : "Necesitas ayuda",
+              "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
             }
           }
         }
@@ -3437,9 +3487,9 @@
           "description" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
         },
         "setUpNanoWallet" : {
-          "title" : "¡Vamos a configurar tu Nano!",
+          "title" : "Vamos a configurar tu Nano.",
           "description" : "Empezaremos por configurar la seguridad de tu Nano.",
-          "CTA" : "¡Vamos!"
+          "CTA" : "Vamos."
         }
       }
     },
@@ -3696,7 +3746,9 @@
     "termsLabel" : "Términos del servicio",
     "privacyLabel" : "Política de privacidad",
     "switchLabel" : "He leído y acepto los Términos del Servicio y la Política de Privacidad",
-    "cta" : "Ingresa a la aplicación Ledger"
+    "cta" : "Ingresa a la aplicación Ledger",
+    "termsCheckboxLabel" : "He leído y acepto los Términos de uso.",
+    "privacyCheckboxLabel" : "He leído y acepto la Política de privacidad."
   },
   "updatedTerms" : {
     "title" : "Actualización de los términos de uso",
@@ -3707,6 +3759,156 @@
     },
     "link" : "Términos de uso",
     "cta" : "Continuar"
+  },
+  "v3" : {
+    "onboarding" : {
+      "screens" : {
+        "welcome" : {
+          "title" : "Te damos la bienvenida a Ledger Live",
+          "description" : "Administra de manera segura tus cripto desde tu PC.",
+          "nextButton" : "Get started",
+          "noDevice" : "¿No tienes un dispositivo?",
+          "buyLink" : "No device? Buy a Ledger Nano X",
+          "byTapping" : "By tapping \"Get Started\" you consent and agree to our",
+          "termsAndConditions" : "Terms and conditions",
+          "and" : "and",
+          "privacyPolicy" : "Privacy Policy",
+          "steps" : {
+            "0" : {
+              "title" : "Accede a tus cripto",
+              "desc" : "Tus activos cripto se almacenan en la cadena de bloques. Usa tu clave privada para acceder a ellos y gestionarlos."
+            },
+            "1" : {
+              "title" : "No compartas tu clave privada",
+              "desc" : "Tu clave privada se almacena dentro de tu Nano. Para tener el control de tu dinero, solo tú debes tenerlo en propiedad."
+            },
+            "2" : {
+              "title" : "Mantente sin conexión",
+              "desc" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras está conectada a Internet."
+            },
+            "3" : {
+              "title" : "Validar transacciones",
+              "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
+            },
+            "4" : {
+              "title" : "Vamos a configurar tu Nano.",
+              "desc" : "Empezaremos por configurar tu Nano."
+            }
+          }
+        },
+        "selectDevice" : {
+          "title" : "Selecciona tu dispositivo",
+          "selectLabel" : "Seleccionar"
+        },
+        "selectUseCase" : {
+          "hasNoRecovery" : "¿Es la primera vez que utilizas tu {{deviceName}}?",
+          "hasRecovery" : "¿Ya tienes una Frase de recuperación?",
+          "options" : {
+            "1" : {
+              "title" : "Configurar un nuevo {{deviceName}}",
+              "description" : "Comencemos y configuremos tu dispositivo."
+            },
+            "2" : {
+              "title" : "Conecta tu {{deviceName}}",
+              "description" : "¿Tu dispositivo ya está configurado? ¡Conéctalo a tu aplicación!"
+            },
+            "3" : {
+              "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
+              "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+            }
+          }
+        }
+      },
+      "pedagogy" : {
+        "heading" : "Nociones básicas",
+        "screens" : {
+          "accessYourCoins" : {
+            "title" : "Accede a tus cripto",
+            "description" : "Tus activos cripto se almacenan en la cadena de bloques. Necesitas una clave privada para acceder a ellos y administrarlos."
+          },
+          "ownYourPrivateKey" : {
+            "title" : "No compartas tu clave privada",
+            "description" : "Tu clave privada se almacena dentro de tu Nano. Debes ser su único propietario para poder mantener el control sobre tu dinero."
+          },
+          "stayOffline" : {
+            "title" : "Mantente sin conexión",
+            "description" : "Tu Nano funciona como una billetera de “almacenamiento en frío”. Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras estás conectado a Internet."
+          },
+          "validateTransactions" : {
+            "title" : "Validar transacciones",
+            "description" : "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar cripto con seguridad. Deberás validar cada transacción cripto con tu Nano."
+          },
+          "setUpNanoWallet" : {
+            "title" : "Vamos a configurar tu Nano.",
+            "description" : "Empezaremos por configurar la seguridad de tu Nano.",
+            "CTA" : "Vamos."
+          }
+        }
+      },
+      "quizz" : {
+        "heading" : "Cuestionario",
+        "title" : "¡Hora de jugar!",
+        "descr" : "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
+        "buttons" : {
+          "start" : "Let's take the quiz",
+          "next" : "Siguiente pregunta",
+          "finish" : "Terminar cuestionario"
+        },
+        "questions" : {
+          "1" : {
+            "text" : "Como usuario de Ledger, mis criptomonedas se almacenan:",
+            "answers" : {
+              "1" : "En mi Nano",
+              "2" : "En la cadena de bloques"
+            },
+            "results" : {
+              "success" : {
+                "title" : "¡Bien hecho!",
+                "text" : "Tus criptomonedas siempre se almacenan en la cadena de bloques. Tu billetera de hardware solo contiene tu clave privada, que te da acceso a tus criptomonedas."
+              },
+              "fail" : {
+                "title" : "¡Incorrecto!",
+                "text" : "Tus criptomonedas siempre se almacenan en la cadena de bloques. Tu billetera de hardware solo contiene tu clave privada, que te da acceso a tus criptomonedas."
+              }
+            }
+          },
+          "2" : {
+            "text" : "Si mi Frase de recuperación deja de ser secreta o estar protegida...",
+            "answers" : {
+              "1" : "Ningún problema, Ledger me manda una copia",
+              "2" : "Mis criptomonedas ya no están seguras y debo transferirlas a un lugar seguro"
+            },
+            "results" : {
+              "success" : {
+                "title" : "¡Bien hecho!",
+                "text" : "Cualquier persona que conozca tu Frase de recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptomonedas a un lugar seguro."
+              },
+              "fail" : {
+                "title" : "¡Incorrecto!",
+                "text" : "Cualquier persona que conozca tu Frase de recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptomonedas a un lugar seguro."
+              }
+            }
+          },
+          "3" : {
+            "text" : "Cuando conecto mi Nano a la aplicación Ledger, mi clave privada...",
+            "answers" : {
+              "1" : "Sigue sin conectarse a Internet",
+              "2" : "Se conecta brevemente a Internet"
+            },
+            "results" : {
+              "success" : {
+                "title" : "¡Bien hecho!",
+                "text" : "Tus claves privadas siempre permanecen sin conexión en tu billetera de hardware. Incluso al conectarse a tu Nano, la aplicación de Ledger no puede acceder a tus claves privadas. Siempre tendrás que autorizar físicamente cada transacción desde tu dispositivo."
+              },
+              "fail" : {
+                "title" : "¡Incorrecto!",
+                "text" : "Tus claves privadas siempre permanecen sin conexión en tu billetera de hardware. Incluso al conectarse a tu Nano, la aplicación de Ledger no puede acceder a tus claves privadas. Siempre tendrás que autorizar físicamente cada transacción desde tu dispositivo."
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "families" : {
     "cardano" : {
@@ -4342,7 +4544,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Tu transacción anterior todavía no se ha procesado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
     "SolanaTxConfirmationTimeout" : {
