@@ -67,7 +67,7 @@ class Queue: NSObject  {
         var request = URLRequest(url: BIMUnpackQueue)
         request.httpMethod = "GET"
         request.addValue(self.token, forHTTPHeaderField: "X-Bim-Token")
-
+        
         let session = URLSession.shared
         
         if let task = self.pendingRequest {
@@ -78,6 +78,9 @@ class Queue: NSObject  {
         self.pendingRequest = session.dataTask(with: request) { [self] (data, response, error) in
             if let error = error, let request = self.pendingRequest {
                 if request.progress.isCancelled { return }
+                if (error as NSError).code == NSURLErrorCancelled { // We cancelled because a new request was received.
+                    return
+                }
                 onEventWrapper(
                     RunnerAction.runError,
                     withData: ExtraData(message: String(describing:error))
