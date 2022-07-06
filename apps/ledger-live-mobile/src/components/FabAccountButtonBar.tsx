@@ -8,13 +8,16 @@ import React, {
 } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-
+import { useSelector } from "react-redux";
 import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
 import ChoiceButton from "./ChoiceButton";
 import InfoModal from "./InfoModal";
 import Button from "./wrappedUi/Button";
+import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { track } from "../analytics";
+import { useCurrentRouteName } from "../helpers/routeHooks";
 
 type ActionButtonEventProps = {
   navigationParams?: any[];
@@ -81,9 +84,17 @@ function FabAccountButtonBar({
     [account, parentAccount, navigation],
   );
 
+  const currentRoute = useCurrentRouteName();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
   const onPress = useCallback(
     (data: ActionButtonEventProps) => {
       const { navigationParams, confirmModalProps, linkUrl } = data;
+
+      if (readOnlyModeEnabled) {
+        track("button_clicked", { button: "Buy", screen: currentRoute });
+      }
+
       if (!confirmModalProps) {
         setInfoModalProps();
         if (linkUrl) {
@@ -96,7 +107,7 @@ function FabAccountButtonBar({
         setIsModalInfoOpened(true);
       }
     },
-    [onNavigate, setIsModalInfoOpened],
+    [onNavigate, setIsModalInfoOpened, readOnlyModeEnabled, currentRoute],
   );
 
   const onContinue = useCallback(() => {

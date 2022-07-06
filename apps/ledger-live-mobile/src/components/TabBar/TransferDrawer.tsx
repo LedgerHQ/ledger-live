@@ -115,7 +115,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <TransferButton
           eventProperties={{
             button: "transfer_send",
-            page,
+            screen: page,
             drawer: "trade",
           }}
           title={t("transfer.send.title")}
@@ -133,7 +133,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <TransferButton
           eventProperties={{
             button: "transfer_receive",
-            page,
+            screen: page,
             drawer: "trade",
           }}
           title={t("transfer.receive.title")}
@@ -147,7 +147,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <TransferButton
           eventProperties={{
             button: "transfer_buy",
-            page,
+            screen: page,
             drawer: "trade",
           }}
           title={t("transfer.buy.title")}
@@ -162,7 +162,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <TransferButton
           eventProperties={{
             button: "transfer_sell",
-            page,
+            screen: page,
             drawer: "trade",
           }}
           title={t("transfer.sell.title")}
@@ -176,7 +176,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
         <TransferButton
           eventProperties={{
             button: "transfer_swap",
-            page,
+            screen: page,
             drawer: "trade",
           }}
           title={t("transfer.swap.title")}
@@ -191,7 +191,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           <TransferButton
             eventProperties={{
               button: "transfer_lending",
-              page,
+              screen: page,
               drawer: "trade",
             }}
             title={t("transfer.lending.titleTransferTab")}
@@ -211,12 +211,11 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const bannerEventProperties = useMemo(
     () => ({
       banner: "You'll need a nano",
-      button: "Buy a device",
+      button: "Buy a Ledger",
       drawer: "transfer",
-      page,
-      screen: currentRoute,
+      screen: page,
     }),
-    [page, currentRoute],
+    [page],
   );
 
   useEffect(() => {

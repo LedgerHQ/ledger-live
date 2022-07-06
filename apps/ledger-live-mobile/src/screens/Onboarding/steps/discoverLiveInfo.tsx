@@ -48,6 +48,9 @@ const Item = ({
   const navigation = useNavigation();
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const currentRoute = useCurrentRouteName();
+
+  console.log("CURRENT ROUTE", currentRoute);
 
   const onClick = useCallback(
     (value: string) => {
@@ -78,8 +81,6 @@ const Item = ({
       screen: NavigatorName.Main,
     });
   }, [dispatch, navigation, onClick]);
-
-  const currentRoute = useCurrentRouteName();
 
   const pressExplore = useCallback(() => {
     exploreLedger();

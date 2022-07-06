@@ -31,6 +31,13 @@ function Discover() {
 
   const learn = useFeature("learn");
 
+  const readOnlyTrack = useCallback((bannerName: string) => {
+    track("banner_clicked", {
+      banner: `Dapp_${bannerName}`,
+      screen: "Discover",
+    });
+  }, []);
+
   const featuresList: {
     title: string;
     titleProps?: any;
@@ -68,6 +75,7 @@ function Discover() {
           title: t("discover.sections.learn.title"),
           subTitle: t("discover.sections.learn.desc"),
           onPress: () => {
+            readOnlyTrack("Learn");
             if (!learn?.enabled) {
               track("Discover - Learn - OpenUrl", {
                 url: urls.discover.academy,
@@ -92,6 +100,7 @@ function Discover() {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),
           onPress: () => {
+            readOnlyTrack("Earn");
             track("Discover - Earn - OpenUrl", { url: urls.discover.earn });
             Linking.openURL(urls.discover.earn);
           },
@@ -105,7 +114,7 @@ function Discover() {
           ),
         },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
-    [learn?.enabled, navigation, t],
+    [learn?.enabled, navigation, readOnlyTrack, t],
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo } from "react";
+import React, { useCallback, useMemo, memo, useEffect } from "react";
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
@@ -134,11 +134,7 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
 
   return (
     <TabBarSafeAreaView>
-      <TrackScreen
-        category="Accounts"
-        accountsLength={accounts.length}
-        source={previousRoute}
-      />
+      <TrackScreen category="ReadOnly" name="Assets" source={previousRoute} />
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FilteredSearchBar

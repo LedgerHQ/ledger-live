@@ -95,8 +95,12 @@ export default function BuyDeviceBanner({
       handleSetupCtaOnPress();
     } else {
       handleOnPress();
+      track("button_clicked", {
+        button: "Discover the Nano",
+        screen: currentRoute,
+      });
     }
-  }, [handleOnPress, handleSetupCtaOnPress, variant]);
+  }, [handleOnPress, handleSetupCtaOnPress, variant, currentRoute]);
 
   const pressMessage = useCallback(() => {
     track("message_clicked", {
