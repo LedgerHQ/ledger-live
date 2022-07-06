@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -21,7 +21,7 @@ import { Props as ModalProps } from "../BottomModal";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
-import { track, TrackScreen, useAnalytics } from "../../analytics";
+import { track, screen, useAnalytics } from "../../analytics";
 import { urls } from "../../config/urls";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
@@ -219,14 +219,12 @@ export default function TransferDrawer({ onClose }: ModalProps) {
     [page, currentRoute],
   );
 
+  useEffect(() => {
+    screen("ReadOnly", "Trade", { source: currentRoute, type: "drawer" });
+  }, []);
+
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
-      <TrackScreen
-        category="ReadOnly"
-        name="Trade"
-        source={currentRoute}
-        type="drawer"
-      />
       <ScrollView
         alwaysBounceVertical={false}
         style={{ opacity: readOnlyModeEnabled ? 0.3 : 1, width: "100%" }}
