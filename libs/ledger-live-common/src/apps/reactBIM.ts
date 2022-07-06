@@ -31,26 +31,41 @@ const useBackgroundInstallSubject = (
     [deviceId, pendingTransport, queueSize, token, transport]
   );
 
+  const onError = useCallback(
+    (error) => {
+      onEventDispatch({
+        type: "runError",
+        appOp: {},
+        error,
+      });
+    },
+    [onEventDispatch]
+  );
+
   useEffect(() => {
+    let completed = false;
+
     async function fetchToken() {
       const queue = BIM.buildQueueFromState(state);
-      const token = await BIM.getTokenFromQueue(queue).catch((error) => {
-        onEventDispatch({
-          type: "runError",
-          appOp: {},
-          error,
-        });
-      });
+      const token = await BIM.getTokenFromQueue(queue).catch(onError);
       setToken(token);
     }
     if (disabled) return;
+    if (completed) {
+      return;
+    }
+
     if (queueSize > lastSeenQueueSize.current) {
       // If the queue is larger, our token is no longer valid and we need a new one.
       fetchToken();
     }
     // Always update the last seen
     lastSeenQueueSize.current = queueSize;
-  }, [disabled, onEventDispatch, queueSize, setToken, state]);
+
+    return () => {
+      completed = true;
+    };
+  }, [disabled, onError, onEventDispatch, queueSize, setToken, state]);
 
   const cleanUp = useCallback(() => {
     setToken(undefined);
@@ -69,14 +84,7 @@ const useBackgroundInstallSubject = (
         return observable.current;
       }).subscribe({
         next: onEventDispatch,
-        error: (error) => {
-          onEventDispatch({
-            type: "runError",
-            appOp: {},
-            error,
-          });
-          cleanUp();
-        },
+        error: onError,
         complete: cleanUp,
       });
     }
@@ -84,7 +92,7 @@ const useBackgroundInstallSubject = (
     return () => {
       sub?.unsubscribe();
     };
-  }, [cleanUp, deviceId, onEventDispatch]);
+  }, [cleanUp, deviceId, onError, onEventDispatch]);
 
   useEffect(() => {
     if (disabled) return;
