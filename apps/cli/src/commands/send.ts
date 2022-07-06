@@ -71,7 +71,7 @@ export default {
                     defer(() => {
                       l(`✔️ transaction ${formatTransaction(t, account)}`);
                       l(
-                        `STATUS ${formatTransactionStatus(t, status, account)}`
+                        `STATUS ${formatTransactionStatus(t, { ...status, family: t.family}, account)}`
                       );
                       const bridge = getAccountBridge(account);
                       return bridge

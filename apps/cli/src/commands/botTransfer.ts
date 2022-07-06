@@ -238,14 +238,16 @@ export default {
               account,
               tx
             );
-            const status = await accountBridge.getTransactionStatus(
+            const statusCommon = await accountBridge.getTransactionStatus(
               account,
               transaction
             );
 
-            if (Object.keys(status.errors).length !== 0) {
+            if (Object.keys(statusCommon.errors).length !== 0) {
               continue;
             }
+
+            const status = { ...statusCommon, family: transaction.family };
 
             if (!r) {
               console.warn(

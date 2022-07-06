@@ -16,7 +16,7 @@ import {
   fromAccountRaw,
   fromAccountLikeRaw,
 } from "@ledgerhq/live-common/lib/account/serialization";
-import { fromTransactionStatusRaw } from "@ledgerhq/live-common/lib/transaction/status";
+import { fromTransactionStatusRaw } from "@ledgerhq/live-common/lib/transaction";
 type Input = {
   parentAccount: ?AccountRaw,
   account: AccountRawLike,

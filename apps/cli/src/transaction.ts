@@ -11,7 +11,7 @@ import type {
 import type {
   Account,
   AccountLike,
-  TransactionStatus,
+  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -102,7 +102,7 @@ export const inferTransactionsOpts = uniqBy(
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts
-): Promise<[Transaction, TransactionStatus][]> {
+): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = getAccountBridge(mainAccount, null);
   const specific = perFamily[mainAccount.currency.family];
 
@@ -148,7 +148,7 @@ export async function inferTransactions(
     all = shuffle(all);
   }
 
-  const transactions: [Transaction, TransactionStatus][] = await Promise.all(
+  const transactions: [Transaction, TransactionStatusCommon][] = await Promise.all(
     inferTransactions(all, opts, {
       inferAmount,
     }).map(async (transaction) => {
