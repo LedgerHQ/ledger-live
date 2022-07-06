@@ -8,10 +8,10 @@ import { useSelector } from "react-redux";
 import {
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/helpers";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";

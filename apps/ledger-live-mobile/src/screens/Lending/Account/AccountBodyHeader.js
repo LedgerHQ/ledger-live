@@ -1,8 +1,8 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/types/index";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";

@@ -1,17 +1,13 @@
 # @ledgerhq/hw-app-helium
 
-## 6.28.0-nightly.0
+## 6.28.0
+
+### Minor Changes
+
+- [#169](https://github.com/LedgerHQ/ledger-live/pull/169) [`0f378fff2`](https://github.com/LedgerHQ/ledger-live/commit/0f378fff2725c679c4223265e9ff8e25b799bdf7) Thanks [@matthewcarlreetz](https://github.com/matthewcarlreetz)! - Memo serialization has been fixed. The transaction memo field was incorrectly serialized which caused verification failures.
+
+## 6.28.0-next.0
 
 ### Minor Changes
 
 - 0f378fff2: Memo serialization has been fixed. The transaction memo field was incorrectly serialized which caused verification failures.
-
-## 6.27.2-nightly.0
-
-### Patch Changes
-
-- 47252169a: add dummy changesets
-- Updated dependencies [47252169a]
-  - @ledgerhq/errors@6.10.1-nightly.0
-  - @ledgerhq/hw-transport@6.27.2-nightly.0
-  - @ledgerhq/logs@6.10.1-nightly.0

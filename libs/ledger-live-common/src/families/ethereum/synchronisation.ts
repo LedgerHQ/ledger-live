@@ -20,6 +20,11 @@ import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
+import { encodeOperationId } from "../../operation";
+import {
+  encodeERC1155OperationId,
+  encodeERC721OperationId,
+} from "../../nft/nftOperationId";
 
 export const getAccountShape: GetAccountShape = async (
   infoInput,
@@ -167,7 +172,9 @@ export const getAccountShape: GetAccountShape = async (
   const nfts = isNFTActive(currency)
     ? mergeNfts(
         initialAccount?.nfts || [],
-        nftsFromOperations(operations).filter((n) => n.amount.gt(0))
+        nftsFromOperations(
+          mergeOps(operations, initialAccount?.pendingOperations || [])
+        ).filter((n) => n.amount.gt(0))
       )
     : undefined;
 
@@ -289,7 +296,7 @@ const txToOps =
           if (sending) {
             const type = "OUT";
             all.push({
-              id: `${accountId}-${hash}-${type}`,
+              id: encodeOperationId(accountId, hash, type),
               hash,
               type,
               value,
@@ -308,7 +315,7 @@ const txToOps =
           if (receiving) {
             const type = "IN";
             all.push({
-              id: `${accountId}-${hash}-${type}`,
+              id: encodeOperationId(accountId, hash, type),
               hash,
               type,
               value,
@@ -349,7 +356,7 @@ const txToOps =
             if (sending) {
               const type = "NFT_OUT";
               all.push({
-                id: `${nftId}-${hash}-${type}`,
+                id: encodeERC721OperationId(nftId, hash, type),
                 senders: [sender],
                 recipients: [receiver],
                 contract,
@@ -371,7 +378,7 @@ const txToOps =
             if (receiving) {
               const type = "NFT_IN";
               all.push({
-                id: `${nftId}-${hash}-${type}`,
+                id: encodeERC721OperationId(nftId, hash, type),
                 senders: [sender],
                 recipients: [receiver],
                 contract,
@@ -414,17 +421,12 @@ const txToOps =
             event.transfers.forEach((transfer, j) => {
               const tokenId = transfer.id;
               const value = new BigNumber(transfer.value);
-              const nftId = encodeNftId(
-                id,
-                event.contract,
-                tokenId,
-                currency.id
-              );
+              const nftId = encodeNftId(id, contract, tokenId, currency.id);
 
               if (sending) {
                 const type = "NFT_OUT";
                 all.push({
-                  id: `${nftId}-${hash}-${type}-i${i}_${j}`,
+                  id: encodeERC1155OperationId(nftId, hash, type, i, j),
                   senders: [sender],
                   recipients: [receiver],
                   contract,
@@ -447,7 +449,7 @@ const txToOps =
               if (receiving) {
                 const type = "NFT_IN";
                 all.push({
-                  id: `${nftId}-${hash}-${type}-i${i}_${j}`,
+                  id: encodeERC1155OperationId(nftId, hash, type, i, j),
                   senders: [sender],
                   recipients: [receiver],
                   contract,
@@ -481,7 +483,7 @@ const txToOps =
     if (sending) {
       const type = value.eq(0) ? "FEES" : "OUT";
       ops.push({
-        id: `${id}-${hash}-${type}`,
+        id: encodeOperationId(id, hash, type),
         hash,
         type,
         value: hasFailed ? new BigNumber(fee) : value.plus(fee),
@@ -502,10 +504,11 @@ const txToOps =
     }
 
     if (receiving) {
+      const type = "IN";
       ops.push({
-        id: `${id}-${hash}-IN`,
+        id: encodeOperationId(id, hash, type),
         hash: hash,
-        type: "IN",
+        type,
         value,
         fee,
         blockHeight,
@@ -531,10 +534,11 @@ const txToOps =
         subOperations.length ||
         nftOperations.length)
     ) {
+      const type = "NONE";
       ops.push({
-        id: `${id}-${hash}-NONE`,
+        id: encodeOperationId(id, hash, type),
         hash: hash,
-        type: "NONE",
+        type,
         value: new BigNumber(0),
         fee,
         blockHeight,

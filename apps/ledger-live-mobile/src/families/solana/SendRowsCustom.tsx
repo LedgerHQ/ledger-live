@@ -1,5 +1,5 @@
-import { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Transaction } from "@ledgerhq/live-common/families/solana/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";

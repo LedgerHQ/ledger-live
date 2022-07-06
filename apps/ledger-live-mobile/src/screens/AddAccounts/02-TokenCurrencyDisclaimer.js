@@ -5,9 +5,9 @@ import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 
-import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
 
-import { findTokenAccountByCurrency } from "@ledgerhq/live-common/lib/account";
+import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { accountsSelector } from "../../reducers/accounts";
 

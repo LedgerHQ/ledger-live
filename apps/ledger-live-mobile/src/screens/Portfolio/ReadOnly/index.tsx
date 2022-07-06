@@ -18,7 +18,7 @@ import {
   listSupportedCurrencies,
   listTokens,
   useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,
@@ -44,7 +44,7 @@ import BuyDeviceBanner, {
 } from "../../../components/BuyDeviceBanner";
 import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(

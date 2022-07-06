@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const DEFAULT_LEARN_URL = "https://www.ledger.com/ledger-live-learn";
 

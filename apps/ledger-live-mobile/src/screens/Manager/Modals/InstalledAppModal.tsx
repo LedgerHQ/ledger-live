@@ -2,8 +2,8 @@ import React, { useState, useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 
-import { State } from "@ledgerhq/live-common/lib/apps";
-import { isLiveSupportedApp } from "@ledgerhq/live-common/lib/apps/logic";
+import { State } from "@ledgerhq/live-common/apps/index";
+import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";

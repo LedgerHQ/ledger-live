@@ -13,22 +13,47 @@ export const addCustomErrorDeserializer = (
   deserializers[name] = deserializer;
 };
 
-type CustomErrorFunc = (
+export type CustomErrorFunc = (
   message?: string,
-  fields?: { [key: string]: any }
+  fields?: { [key: string]: any },
+  options?: any
 ) => void;
 
 export const createCustomErrorClass = (name: string): CustomErrorFunc => {
-  const C: CustomErrorFunc = function CustomError(message, fields): void {
-    Object.assign(this, fields);
-    this.name = name;
-    this.message = message || name;
-    this.stack = new Error().stack;
-  };
-  C.prototype = new Error();
-  errorClasses[name] = C;
-  return C;
+  class CustomErrorClass extends Error {
+    cause?: Error;
+    constructor(message, fields, options) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      super(message || name, options);
+      // Set the prototype explicitly. See https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+      Object.setPrototypeOf(this, CustomErrorClass.prototype);
+      this.name = name;
+      for (const k in fields) {
+        this[k] = fields[k];
+      }
+      if (isObject(options) && "cause" in options && !("cause" in this)) {
+        // .cause was specified but the superconstructor
+        // did not create an instance property.
+        const cause = options.cause;
+        this.cause = cause;
+        if ("stack" in cause) {
+          this.stack = this.stack + "\nCAUSE: " + cause.stack;
+        }
+      }
+    }
+  }
+
+  errorClasses[name] = CustomErrorClass;
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return CustomErrorClass;
 };
+
+function isObject(value) {
+  return value !== null && typeof value === "object";
+}
 
 // inspired from https://github.com/programble/errio/blob/master/index.js
 export const deserializeError = (object: any): Error => {

@@ -1,19 +1,13 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
-## 6.27.2-nightly.1
+## 6.27.2
+
+### Patch Changes
+
+- [#253](https://github.com/LedgerHQ/ledger-live/pull/253) [`c5c3f48e4`](https://github.com/LedgerHQ/ledger-live/commit/c5c3f48e42fe9b8e7d200e6d0161d990c84f23c1) Thanks [@elbywan](https://github.com/elbywan)! - Add basic support for macOS universal apps.
+
+## 6.27.2-next.0
 
 ### Patch Changes
 
 - c5c3f48e4: Add basic support for macOS universal apps.
-
-## 6.27.2-nightly.0
-
-### Patch Changes
-
-- 47252169a: add dummy changesets
-- Updated dependencies [47252169a]
-  - @ledgerhq/devices@6.27.2-nightly.0
-  - @ledgerhq/errors@6.10.1-nightly.0
-  - @ledgerhq/hw-transport@6.27.2-nightly.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.2-nightly.0
-  - @ledgerhq/logs@6.10.1-nightly.0

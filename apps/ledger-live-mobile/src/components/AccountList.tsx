@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatList } from "react-native";
 import { useTheme } from "styled-components/native";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Flex, Link } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Trans } from "react-i18next";
