@@ -37,17 +37,10 @@ const Slide = ({ title, description, image }: SlideProps): React.ReactElement =>
   return (
     <Wrapper>
       <SlideLogo key={"key"} image={image} />
-      <Text
-        mb={12}
-        ff="Alpha|Medium"
-        textTransform="uppercase"
-        variant="h3"
-        fontWeight="400"
-        fontSize={28}
-      >
+      <Text mb={12} variant="h3" color="palette.constant.black">
         {title}
       </Text>
-      <Text mb={76} variant="body" ff="Alpha|Medium" fontWeight="500" fontSize={14}>
+      <Text mb={76} variant="body" color="palette.constant.black">
         {description}
       </Text>
     </Wrapper>
@@ -71,7 +64,7 @@ const Controllers = styled(Flex)`
   right: ${p => p.theme.space[5]}px;
   bottom: ${p => p.theme.space[4]}px;
   column-gap: ${p => p.theme.space[4]}px;
-  color: ${p => p.theme.colors.palette.neutral.c00};
+  color: ${p => p.theme.colors.palette.constant.black};
 
   > div {
     &:hover {
@@ -92,7 +85,7 @@ const Bullets = styled.div<{ active?: number }>`
     position: relative;
     height: ${p => p.theme.space[1]}px;
     width: ${p => p.theme.space[8]}px;
-    background: ${p => p.theme.colors.palette.neutral.c00};
+    background: ${p => p.theme.colors.palette.constant.black};
     opacity: 0.5;
     &:hover {
       opacity: 0.75;
