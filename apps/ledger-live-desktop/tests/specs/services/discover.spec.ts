@@ -14,7 +14,7 @@ test.use({ userdata: "1AccountBTC1AccountETH" });
 let continueTest = false;
 
 test.beforeAll(async ({ request }) => {
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully (see playwright.config.ts 'webServer' option for more info)
+  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
     const port = await server.start();
     const response = await request.get(`http://localhost:${port}`);
