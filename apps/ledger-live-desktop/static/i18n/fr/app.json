@@ -32,7 +32,7 @@
       },
       "banner" : {
         "title" : "Découvrez le Catalogue d’apps Live",
-        "description" : "Nous mettons tout en œuvre pour vous permettre d’accéder au monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
+        "description" : "Nous mettons tout en œuvre pour vous ouvrir les portes du monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
       },
       "twitterBanner" : {
         "description" : "Indiquez-nous le service que vous rêvez de voir dans Ledger Live avec le hashtag",
@@ -301,7 +301,7 @@
         },
         "closed" : {
           "cta" : "Réinitialiser",
-          "title" : "Demande de vérification refusée",
+          "title" : "Demande de vérification rejetée",
           "subtitle" : "Wyre a refusé les données que vous avez fournies.",
           "link" : "En savoir plus"
         },
@@ -335,7 +335,7 @@
     "exchangeDrawer" : {
       "title" : "Confirmer l’échange",
       "completed" : {
-        "title" : "Transaction bien émise.",
+        "title" : "Transaction bien émise",
         "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
         "disclaimer" : "Notez bien l’identifiant de votre swap au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
         "seeDetails" : "Voir les détails"
@@ -411,7 +411,7 @@
         },
         "closed" : {
           "cta" : "Réinitialiser",
-          "title" : "Demande de vérification refusée",
+          "title" : "Demande de vérification rejetée",
           "subtitle" : "Wyre a refusé les données que vous avez fournies.",
           "link" : "En savoir plus"
         },
@@ -869,14 +869,14 @@
       "title" : "Approuver un compte",
       "steps" : {
         "selectAccount" : {
-          "title" : "Sélectionnez un compte.",
+          "title" : "Sélectionnez un compte",
           "selectLabel" : "Compte de prêt",
           "cta" : "Approuver",
           "alreadyEnabled" : "Compte approuvé"
         },
         "amount" : {
           "title" : "Montant",
-          "summary" : "J’autorise le contrat intelligent <0>{{contractName}}</0> à accéder à mon compte <0>{{accountName}}</0> pour un montant de <0>{{amount}}</0>.",
+          "summary" : "J’autorise le contrat intelligent <0>{{contractName}}</0> à accéder à mon compte <0>{{accountName}}</0> pour un montant <0>{{amount}}</0>.",
           "limit" : "limité à {{amount}}",
           "noLimit" : "sans limite de {{assetName}}",
           "contractName" : "Compound {{currencyName}}",
@@ -940,7 +940,7 @@
         "1" : {
           "subtitle" : "Approuver un compte pour permettre au protocole de",
           "subtitle2" : "traiter vos futurs prêts.",
-          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d'un compte permet au protocole de traiter les futurs prêts."
+          "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d’un compte permet au protocole de traiter les futurs prêts."
         },
         "2" : {
           "subtitle" : "Prêter des actifs pour gagner des intérêts",
@@ -1023,7 +1023,7 @@
     "title" : "Aide",
     "gettingStarted" : {
       "title" : "Premiers pas",
-      "desc" : "Commencez ici"
+      "desc" : "Commencez ici."
     },
     "status" : {
       "title" : "Statut de Ledger",
@@ -1031,11 +1031,11 @@
     },
     "helpCenter" : {
       "title" : "Assistance Ledger",
-      "desc" : "Obtenez de l’aide"
+      "desc" : "Obtenez de l’aide."
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "desc" : "En savoir plus sur les cryptos"
+      "desc" : "En savoir plus sur les cryptos."
     },
     "facebook" : {
       "title" : "Facebook",
@@ -1666,7 +1666,7 @@
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
       "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
       "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
-      "downloadingUpdateDesc" : "Merci de patienter pendant le téléchargement du programme d'installation des mises à jour"
+      "downloadingUpdateDesc" : "Merci de patienter pendant le téléchargement du programme d’installation des mises à jour"
     },
     "modal" : {
       "steps" : {
@@ -2061,7 +2061,7 @@
     "advanced" : "Options avancées",
     "ctaDisabled" : "Compte ne contenant pas d’UTXO",
     "whatIs" : "En savoir plus sur ce paramètre",
-    "rbf" : "Permettre à la transaction d'être remplaçable (Replace-By-Fee).",
+    "rbf" : "Permettre à la transaction d’être remplaçable (Replace-By-Fee).",
     "strategy" : "Stratégie de sélection des coins",
     "selected" : "Coins sélectionnés par stratégie",
     "amount" : "Montant à envoyer :",
@@ -2415,7 +2415,7 @@
       "rewardDestination" : {
         "label" : "Destination des récompenses",
         "stash" : "Solde disponible",
-        "stashDescription" : "Vos récompenses ont été ajoutées à votre solde disponible.",
+        "stashDescription" : "Vos récompenses sont ajoutées à votre solde disponible.",
         "staked" : "Solde lié",
         "stakedDescription" : "Les récompenses sont créditées sur votre solde lié.",
         "optionTitle" : "Note",
@@ -2805,7 +2805,7 @@
       "stock" : "Indicateur de marché régional",
       "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
       "carouselVisibility" : "Visibilité du carrousel",
-      "carouselVisibilityDesc" : "Afficher le carrousel sur le Portefeuille"
+      "carouselVisibilityDesc" : "Afficher le carrousel sur le Portefeuille."
     },
     "developer" : {
       "toast" : {
@@ -2813,9 +2813,9 @@
         "text" : "Bienvenue au pays des merveilles"
       },
       "debugApps" : "Autoriser les Apps Debug",
-      "debugAppsDesc" : "Afficher et autoriser l’ouverture des Platform Apps \"Debug\".",
+      "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
-      "experimentalAppsDesc" : "Afficher et autoriser l’ouverture des Platform Apps \"Expérimentales\".",
+      "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
       "catalogServer" : "Définir le fournisseur du Catalogue",
       "catalogServerDesc" : "Choisissez entre plusieurs sources pour les Platform Apps.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
@@ -2927,7 +2927,7 @@
     },
     "removeAccountModal" : {
       "title" : "Supprimer le compte",
-      "desc" : "Cela n’a pas d'effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
+      "desc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes existants.",
       "delete" : "Retirer du Portefeuille",
       "warning" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
     },
@@ -3105,6 +3105,7 @@
         "link" : "En savoir plus sur la phrase de récupération",
         "title2" : "Qu’arrive-t-il si je perds l’accès à mon Nano ?",
         "paragraph3" : "Pas d’inquiétude, suivez ces étapes :",
+        "paragraph4" : "Pour récupérer l’accès à vos cryptos, n’importe quel wallet peut utiliser votre phrase de récupération pour retrouver vos clés privées.",
         "points" : {
           "1" : "Achetez un nouveau wallet physique.",
           "2" : "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans l’application Ledger.",
@@ -3196,21 +3197,25 @@
             "paragraph1" : "Utilisez votre phrase de récupération afin de restaurer, remplacer ou sauvegarder votre wallet physique Ledger.",
             "paragraph2" : "Votre Nano va restaurer vos clés privées pour vous permettre d’accéder à vos cryptos et de les gérer.",
             "buttons" : {
-              "next" : "Je suis prêt(e)",
+              "next" : "OK, I'm ready!",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
             }
           },
           "howToGetStarted" : {
-            "title" : "Avant de démarrer la configuration de votre appareil :",
+            "title" : "Avant de démarrer la configuration :",
             "rules" : {
               "1" : "Comptez 30 minutes et prenez votre temps.",
               "2" : "Prenez un stylo et un papier pour écrire.",
               "3" : "Assurez-vous d’être seul(e) dans environnement sûr et calme."
             },
             "buttons" : {
-              "next" : "Je suis prêt(e)",
+              "next" : "OK, I'm ready!",
               "prev" : "Étape précédente"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "deviceHowTo" : {
@@ -3234,9 +3239,14 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "deviceHowTo2" : {
+            "title" : "Avant de démarrer la configuration :",
             "turnOn" : {
               "title" : "Allumer le Nano",
               "descr" : "Connectez votre appareil à votre ordinateur à l’aide d’un câble USB."
@@ -3257,6 +3267,10 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pinCode" : {
@@ -3267,6 +3281,10 @@
               "next" : "Configurer le code PIN",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "quizSuccess" : {
@@ -3284,6 +3302,10 @@
             "buttons" : {
               "next" : "Étape suivante",
               "prev" : "Étape précédente"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pinCodeHowTo" : {
@@ -3299,6 +3321,10 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3313,7 +3339,7 @@
             },
             "warning" : {
               "title" : "N’utilisez jamais une phrase de récupération que vous n’avez pas générée vous-même.",
-              "desc" : "Vous devez être la seule personne à configurer le code PIN et la phrase de récupération de votre wallet Ledger. Si vous avez reçu un appareil avec une phrase de récupération déjà existante ou un code PIN déjà configuré, n’utilisez pas l’appareil et contactez l’Assistance Ledger.",
+              "desc" : "Vous devez être la seule personne à configurer le code PIN et la phrase de récupération de votre wallet Ledger. Si vous avez reçu un appareil avec une phrase de récupération fournie ou un code PIN déjà configuré, n’utilisez pas l’appareil et contactez l’Assistance Ledger.",
               "supportLink" : "Contacter l’Assistance"
             }
           },
@@ -3330,6 +3356,10 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "newRecoveryPhrase" : {
@@ -3341,6 +3371,10 @@
               "next" : "Phrase de récupération",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "recoveryHowTo" : {
@@ -3366,6 +3400,10 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "recoveryHowTo3" : {
@@ -3380,6 +3418,10 @@
               "next" : "Étape suivante",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "genuineCheck" : {
@@ -3403,6 +3445,10 @@
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide",
               "learn" : "Apprendre à cacher votre phrase de récupération"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           },
           "pairMyNano" : {
@@ -3412,6 +3458,10 @@
               "next" : "Vérifier mon Nano",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
+            },
+            "help" : {
+              "help" : "Besoin d’aide",
+              "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
             }
           }
         }
@@ -3426,7 +3476,7 @@
         },
         "ownYourPrivateKey" : {
           "title" : "Détenez votre clé privée",
-          "description" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+          "description" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
         },
         "stayOffline" : {
           "title" : "Restez hors ligne",
@@ -3439,13 +3489,13 @@
         "setUpNanoWallet" : {
           "title" : "Configurez votre Nano",
           "description" : "Commencez par configurer les paramètres de votre nouveau Nano.",
-          "CTA" : "Configurer le Nano"
+          "CTA" : "Configurer"
         }
       }
     },
     "quizz" : {
       "heading" : "Quiz",
-      "title" : "Faire le quiz",
+      "title" : "Faites le quiz",
       "descr" : "Répondez à 3 questions rapides pour mieux comprendre votre wallet physique.",
       "buttons" : {
         "start" : "Répondre aux questions",
@@ -3515,7 +3565,7 @@
     "nextSolution" : "Solution suivante",
     "previousSolution" : "Solution précédente",
     "followSteps" : "Suivez ces étapes",
-    "supportArticle" : "cet article de l’Assistance",
+    "supportArticle" : "article de l’Assistance",
     "connecting" : "Connexion en cours...",
     "connected" : "Connecté",
     "backToPortfolio" : "Retour au Portefeuille",
@@ -3591,7 +3641,7 @@
         "windows" : {
           "title" : "Mettre à jour les pilotes USB",
           "bullets" : {
-            "0" : "Allez sur ce <0>{{link}}</0>",
+            "0" : "Allez sur cet <0>{{link}}</0>",
             "1" : "Suivez les instructions pour mettre à jour les pilotes USB.",
             "2" : "Connectez et déverrouillez votre appareil pour le détecter."
           }
@@ -3696,7 +3746,9 @@
     "termsLabel" : "Conditions d’utilisation",
     "privacyLabel" : "Politique de confidentialité",
     "switchLabel" : "J’ai lu et accepte les Conditions d’utilisation et la Politique de confidentialité",
-    "cta" : "Entrer dans Ledger Live"
+    "cta" : "Entrer dans Ledger Live",
+    "termsCheckboxLabel" : "J’ai lu et accepte les Conditions d’utilisation.",
+    "privacyCheckboxLabel" : "J’ai lu et accepte la Politique de confidentialité."
   },
   "updatedTerms" : {
     "title" : "Mise à jour des Conditions d’utilisation",
@@ -3705,8 +3757,158 @@
       "bulletPoints" : ["Précisions supplémentaires sur les services disponibles et leur fonctionnement", "Explications sur les frais applicables aux services", "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d’utilisation"],
       "agreement" : "En cliquant sur Continuer, vous reconnaissez avoir lu et accepté les Conditions d’utilisation ci-dessous."
     },
-    "link" : "Conditions d'utilisation",
+    "link" : "Conditions d’utilisation",
     "cta" : "Continuer"
+  },
+  "v3" : {
+    "onboarding" : {
+      "screens" : {
+        "welcome" : {
+          "title" : "Bienvenue sur Ledger Live",
+          "description" : "Gérez vos cryptos en toute sécurité depuis votre ordinateur.",
+          "nextButton" : "Get started",
+          "noDevice" : "Pas encore de wallet Ledger ?",
+          "buyLink" : "No device? Buy a Ledger Nano X",
+          "byTapping" : "By tapping \"Get Started\" you consent and agree to our",
+          "termsAndConditions" : "Terms and conditions",
+          "and" : "and",
+          "privacyPolicy" : "Privacy Policy",
+          "steps" : {
+            "0" : {
+              "title" : "Accédez à vos cryptos",
+              "desc" : "Vos crypto-actifs sont stockés sur la blockchain. Utilisez votre clé privée pour y accéder et les gérer."
+            },
+            "1" : {
+              "title" : "Détenez votre clé privée",
+              "desc" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+            },
+            "2" : {
+              "title" : "Restez hors ligne",
+              "desc" : "Votre Nano est un wallet physique de stockage à froid. Cela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+            },
+            "3" : {
+              "title" : "Validez vos transactions",
+              "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
+            },
+            "4" : {
+              "title" : "Configurez votre Nano",
+              "desc" : "Commencez par configurer votre nouveau Nano."
+            }
+          }
+        },
+        "selectDevice" : {
+          "title" : "Sélectionnez votre appareil",
+          "selectLabel" : "Sélectionner"
+        },
+        "selectUseCase" : {
+          "hasNoRecovery" : "Vous n’avez jamais utilisé votre {{deviceName}} ?",
+          "hasRecovery" : "Vous avez déjà une phrase de récupération ?",
+          "options" : {
+            "1" : {
+              "title" : "Configurer un {{deviceName}}",
+              "description" : "Commencez par configurer votre nouvel appareil."
+            },
+            "2" : {
+              "title" : "Connecter un {{deviceName}}",
+              "description" : "Si votre appareil est déjà configuré, connectez-le à l’application."
+            },
+            "3" : {
+              "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
+              "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
+            }
+          }
+        }
+      },
+      "pedagogy" : {
+        "heading" : "Les bases",
+        "screens" : {
+          "accessYourCoins" : {
+            "title" : "Accédez à vos cryptos",
+            "description" : "Vos crypto-actifs sont stockés sur la blockchain. Vous avez besoin d’une clé privée pour y accéder et les gérer."
+          },
+          "ownYourPrivateKey" : {
+            "title" : "Détenez votre clé privée",
+            "description" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+          },
+          "stayOffline" : {
+            "title" : "Restez hors ligne",
+            "description" : "Votre Nano est un wallet physique de stockage à froid. Cela signifie que votre clé privée n’est jamais exposée sur Internet, même lorsque vous utilisez Ledger Live."
+          },
+          "validateTransactions" : {
+            "title" : "Validez vos transactions",
+            "description" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+          },
+          "setUpNanoWallet" : {
+            "title" : "Configurez votre Nano",
+            "description" : "Commencez par configurer les paramètres de votre nouveau Nano.",
+            "CTA" : "Configurer"
+          }
+        }
+      },
+      "quizz" : {
+        "heading" : "Quiz",
+        "title" : "Faites le quiz",
+        "descr" : "Répondez à 3 questions rapides pour mieux comprendre votre wallet physique.",
+        "buttons" : {
+          "start" : "Let's take the quiz",
+          "next" : "Question suivante",
+          "finish" : "Finir le quiz"
+        },
+        "questions" : {
+          "1" : {
+            "text" : "Les cryptos sécurisées par mon appareil Ledger sont stockées :",
+            "answers" : {
+              "1" : "Sur mon Nano",
+              "2" : "Sur la blockchain"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Félicitations !",
+                "text" : "Vos cryptos sont toujours stockées sur la blockchain. Votre wallet physique ne détient que votre clé privée, qui vous donne accès à vos cryptos."
+              },
+              "fail" : {
+                "title" : "Incorrect",
+                "text" : "Vos cryptos sont toujours stockées sur la blockchain. Votre wallet physique ne détient que votre clé privée, qui vous donne accès à vos cryptos."
+              }
+            }
+          },
+          "2" : {
+            "text" : "Si ma phrase de récupération n’est plus en sécurité ou que quelqu’un la connaît :",
+            "answers" : {
+              "1" : "Pas de souci, Ledger m’en enverra une copie.",
+              "2" : "Mes cryptos ne sont plus en sécurité et je dois les transférer en lieu sûr."
+            },
+            "results" : {
+              "success" : {
+                "title" : "Félicitations !",
+                "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs. \nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr."
+              },
+              "fail" : {
+                "title" : "Incorrect",
+                "text" : "Toute personne qui connaît votre phrase de récupération peut voler vos crypto-actifs. \nSi vous la perdez, vous devez rapidement mettre vos cryptos en lieu sûr."
+              }
+            }
+          },
+          "3" : {
+            "text" : "Lorsque je connecte mon Nano à l’application Ledger Live, ma clé privée est :",
+            "answers" : {
+              "1" : "Toujours hors ligne",
+              "2" : "Brièvement connectée à Internet"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Félicitations !",
+                "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              },
+              "fail" : {
+                "title" : "Incorrect",
+                "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "families" : {
     "cardano" : {
@@ -4342,11 +4544,11 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Votre transaction précédente n’a pas encore été traitée. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "SolanaTxConfirmationTimeout" : {
-      "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l'historique des transactions avant de réessayer."
+      "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "NotEnoughNftOwned" : {
       "title" : "Nombre de tokens disponibles insuffisant"
