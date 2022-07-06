@@ -10,7 +10,6 @@ import {
 } from "../components/Storyly/shared";
 import StoryBar from "../components/Storyly/StoryBar";
 import LanguageSettingsRow from "./Settings/General/LanguageRow";
-import StorylyWrapper from "../components/Storyly/StorylyWrapper";
 
 const StyledStoryBar = styled(StoryBar).attrs({
   scrollContainerStyle: {
