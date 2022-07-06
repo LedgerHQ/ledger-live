@@ -127,7 +127,7 @@ const StoryBar: React.FC<Props> = props => {
       storyGroupList
         .sort((a, b) => (keepOriginalOrder ? a.index - b.index : 1)) // storyly reorders the array by default
         .map((storyGroup, index, arr) => {
-          const firstUnseenStoryId =
+          const nextStoryToShowId =
             storyGroup.stories?.find(story => !story.seen)?.id ??
             storyGroup.stories[0]?.id;
           return (
@@ -139,7 +139,7 @@ const StoryBar: React.FC<Props> = props => {
               <StoryGroup
                 {...storyGroup}
                 onPress={() =>
-                  handleStoryGroupPressed(storyGroup.id, firstUnseenStoryId)
+                  handleStoryGroupPressed(storyGroup.id, nextStoryToShowId)
                 }
               />
             </AnimatedStoryGroupWrapper>
