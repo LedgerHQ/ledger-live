@@ -3105,6 +3105,7 @@
         "link" : "Kurtarma ifadesi hakkında daha fazla bilgi",
         "title2" : "Nano cihazıma erişimimi kaybedersem ne olur?",
         "paragraph3" : "Endişelenmeyin ve şu adımları izleyin:",
+        "paragraph4" : "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
         "points" : {
           "1" : "Yeni bir donanım cüzdan alın.",
           "2" : "Ledger uygulamasında “Yeni bir cihazda kurtarma ifadesiyle geri yükle” seçeneğini seçin",
@@ -3196,7 +3197,7 @@
             "paragraph1" : "Ledger donanım cüzdanınızı geri yüklemek, değiştirmek veya yedeklemek için kurtarma ifadenizi kullanarak Nano'yu geri yükleyin.",
             "paragraph2" : "Nano cihazınız özel anahtarlarınızı geri yükleyecektir; bu sayede kriptolarınıza yeniden erişebilecek ve yönetebileceksiniz.",
             "buttons" : {
-              "next" : "Tamam, hazırım!",
+              "next" : "OK, I'm ready!",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
             }
@@ -3209,8 +3210,12 @@
               "3" : "Yalnız kalın ve güvenli ve sessiz bir ortam seçin."
             },
             "buttons" : {
-              "next" : "Tamam, hazırım!",
+              "next" : "OK, I'm ready!",
               "prev" : "Önceki adım"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo" : {
@@ -3234,9 +3239,14 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo2" : {
+            "title" : "The best way to get you started:",
             "turnOn" : {
               "title" : "Nano'yu açın",
               "descr" : "Cihazınızı USB kablosuyla bilgisayarınıza bağlayın."
@@ -3257,6 +3267,10 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCode" : {
@@ -3267,6 +3281,10 @@
               "next" : "PIN kodunu ayarla",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "quizSuccess" : {
@@ -3280,10 +3298,14 @@
           },
           "quizFailure" : {
             "title" : "İşin ustası olmanıza az kaldı...",
-            "paragraph" : "Merak etmeyin! Ledger, yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz konusunda çok daha rahat hissedeceksiniz.\n\nSadece küçük bir adım kaldı!",
+            "paragraph" : "Don't worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety.\n\nOnly one quick step left!",
             "buttons" : {
               "next" : "Sonraki adım",
               "prev" : "Önceki adım"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCodeHowTo" : {
@@ -3299,6 +3321,10 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3313,7 +3339,7 @@
             },
             "warning" : {
               "title" : "Bizzat oluşturmadığınız bir kurtarma ifadesini kullanmayın.",
-              "desc" : "Ledger donanım cüzdanınızın PIN kodu ve kurtarma ifadesi sadece ve sadece sizin elinizle oluşturulmalıdır. Anahtar kelimeleri önceden türetilmiş veya PIN kodu önceden belirlenmiş bir cihaz aldıysanız ürünü kullanmayın ve müşteri destek ekibimizle iletişime geçin.",
+              "desc" : "Your Ledger hardware wallet's pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
               "supportLink" : "Müşteri destek ekibiyle iletişime geç"
             }
           },
@@ -3330,6 +3356,10 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "newRecoveryPhrase" : {
@@ -3341,6 +3371,10 @@
               "next" : "Kurtarma ifadesi",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo" : {
@@ -3366,6 +3400,10 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo3" : {
@@ -3380,6 +3418,10 @@
               "next" : "Sonraki adım",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "genuineCheck" : {
@@ -3403,6 +3445,10 @@
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli",
               "learn" : "Nasıl gizleyeceğinizi öğrenin"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pairMyNano" : {
@@ -3412,6 +3458,10 @@
               "next" : "Nano cihazımı kontrol et",
               "prev" : "Önceki adım",
               "help" : "Yardım gerekli"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           }
         }
@@ -3437,9 +3487,9 @@
           "description" : "Ledger Live sayesinde güvenliğinizden feragat etmeden kripto alıp satabilir, yönetebilir, takas edebilir ve kazanabilirsiniz. Her kripto işleminizi Nano cihazınızla onaylıyor olacaksınız."
         },
         "setUpNanoWallet" : {
-          "title" : "Nano'nuzu kuralım!",
+          "title" : "Let's set up your Nano!",
           "description" : "Nano cihazınızın güvenliğini sağlayarak başlayacağız.",
-          "CTA" : "Haydi yapalım!"
+          "CTA" : "Let's do this!"
         }
       }
     },
@@ -3696,7 +3746,9 @@
     "termsLabel" : "Hizmet Şartları",
     "privacyLabel" : "Gizlilik Politikası",
     "switchLabel" : "Hizmet Şartları ve Gizlilik Politikasını okudum ve kabul ediyorum",
-    "cta" : "Ledger uygulamasına girin"
+    "cta" : "Ledger uygulamasına girin",
+    "termsCheckboxLabel" : "I have read and agree with the Terms of use",
+    "privacyCheckboxLabel" : "I have read and accepted the Privacy Policy"
   },
   "updatedTerms" : {
     "title" : "Kullanım Koşulları Güncellemesi",
@@ -3708,9 +3760,159 @@
     "link" : "Kullanım Koşulları",
     "cta" : "Devam"
   },
+  "v3" : {
+    "onboarding" : {
+      "screens" : {
+        "welcome" : {
+          "title" : "Welcome to Ledger Live",
+          "description" : "Safely manage your crypto from your computer.",
+          "nextButton" : "Get started",
+          "noDevice" : "No device?",
+          "buyLink" : "No device? Buy a Ledger Nano X",
+          "byTapping" : "By tapping \"Get Started\" you consent and agree to our",
+          "termsAndConditions" : "Terms and conditions",
+          "and" : "and",
+          "privacyPolicy" : "Privacy Policy",
+          "steps" : {
+            "0" : {
+              "title" : "Access your crypto",
+              "desc" : "Your crypto assets are stored on the blockchain. Use your private key to access and manage them"
+            },
+            "1" : {
+              "title" : "Own your private key",
+              "desc" : "Your private key is stored within your Nano You must be the only one to own it to be in control of your money"
+            },
+            "2" : {
+              "title" : "Stay offline",
+              "desc" : "Your Nano works as a \"cold storage\" wallet This means that it never exposes your private key online, even when using the app"
+            },
+            "3" : {
+              "title" : "Validate transactions",
+              "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
+            },
+            "4" : {
+              "title" : "Let's set up your nano",
+              "desc" : "We'll start by setting up your nano"
+            }
+          }
+        },
+        "selectDevice" : {
+          "title" : "Select your device",
+          "selectLabel" : "Select"
+        },
+        "selectUseCase" : {
+          "hasNoRecovery" : "First time using your {{deviceName}}?",
+          "hasRecovery" : "Already have a recovery phrase?",
+          "options" : {
+            "1" : {
+              "title" : "Setup a new {{deviceName}}",
+              "description" : "Let's start and set up your device"
+            },
+            "2" : {
+              "title" : "Connect your {{deviceName}}",
+              "description" : "is your device already set up? Connect it to the app!"
+            },
+            "3" : {
+              "title" : "Restore your recovery phrase on a new device",
+              "description" : "Use an existing recovery phrase to restore your private keys on a new Nano!"
+            }
+          }
+        }
+      },
+      "pedagogy" : {
+        "heading" : "Basics",
+        "screens" : {
+          "accessYourCoins" : {
+            "title" : "Access your crypto",
+            "description" : "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
+          },
+          "ownYourPrivateKey" : {
+            "title" : "Own your private key",
+            "description" : "Your private key is stored within your Nano. You must be the only one to own it to be in control of your money."
+          },
+          "stayOffline" : {
+            "title" : "Stay offline",
+            "description" : "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
+          },
+          "validateTransactions" : {
+            "title" : "Validate transactions",
+            "description" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
+          },
+          "setUpNanoWallet" : {
+            "title" : "Let's set up your Nano!",
+            "description" : "We'll start by setting up your Nano security.",
+            "CTA" : "Let's do this!"
+          }
+        }
+      },
+      "quizz" : {
+        "heading" : "Quiz",
+        "title" : "Now game on!",
+        "descr" : "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
+        "buttons" : {
+          "start" : "Let's take the quiz",
+          "next" : "Next question",
+          "finish" : "Finish quiz"
+        },
+        "questions" : {
+          "1" : {
+            "text" : "As a Ledger user, my crypto is stored:",
+            "answers" : {
+              "1" : "On my Nano",
+              "2" : "On the blockchain"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              }
+            }
+          },
+          "2" : {
+            "text" : "If my recovery phrase is no longer secure or private...",
+            "answers" : {
+              "1" : "No problem, Ledger can send me a copy",
+              "2" : "My crypto is no longer safe and I need to transfer them to a secure place"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              }
+            }
+          },
+          "3" : {
+            "text" : "When I connect my Nano to the Ledger app, my private key is...",
+            "answers" : {
+              "1" : "Still offline",
+              "2" : "Briefly connected to the internet"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "families" : {
     "cardano" : {
-      "memoPlaceholder" : "Optional",
+      "memoPlaceholder" : "Tercihe bağlı",
       "memo" : "Memo"
     },
     "stellar" : {
@@ -4342,8 +4544,8 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenin kaldığından emin olun"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
-      "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve ardından işlem geçmişini kontrol edip tekrar deneyin."
+    "SolanaTxSimulationFailedWhilePendingOp" : {
+      "title" : "Önceki işleminiz henüz tamamlanmadı. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
