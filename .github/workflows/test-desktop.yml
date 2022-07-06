@@ -115,7 +115,7 @@ jobs:
     name: "Ledger Live Desktop Tests (macos-latest)"
     needs:
       - is-org-member
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

@@ -29,7 +29,7 @@ jobs:
 
   generate-screenshots:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -74,7 +74,7 @@ jobs:
 
   generate-screenshots-mac-internal:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
