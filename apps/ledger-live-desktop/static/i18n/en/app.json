@@ -3864,6 +3864,7 @@
     "recipientWording": {
       "send": "recipient",
       "delegate": "validator",
+      "redelegate": "validator",
       "undelegate": "validator",
       "claimReward": "rewards recipient",
       "optIn": "recipient",
