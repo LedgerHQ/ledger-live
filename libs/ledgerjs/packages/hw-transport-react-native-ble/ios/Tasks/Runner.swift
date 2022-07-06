@@ -228,7 +228,10 @@ class Runner: NSObject  {
                 self.socket!.write(string: response)
             }
         case .failure(let error):
-            print(error) /// Disconnects are handled elsewhere
+            onEmit!(
+                RunnerAction.runError,
+                ExtraData(message: error.localizedDescription)
+            )
         }
     }
 }
