@@ -13,7 +13,12 @@ export const WaveContainer = styled.div`
 `;
 
 export const AnimationContainer = styled(Flex)`
+  overflow-x: clip;
   width: 324px;
+  > * {
+    transform: scale(1.7);
+    margin-left: 70px;
+  }
 `;
 
 export const IllustrationContainer = styled(Flex)<{ src: string }>`
@@ -89,7 +94,7 @@ export const CheckStep = ({
   checked: boolean;
   label: React.ReactNode;
 }) => (
-  <BorderFlex mt={12} p={4} {...props}>
+  <BorderFlex mt={12} p={4} {...props} width="fit-content" alignItems="center">
     <Switch onChange={props.onClick} name="checkbox" checked={checked} size="normal" />
     <Text ml={4} flex="1" variant="body">
       {label}
@@ -98,7 +103,7 @@ export const CheckStep = ({
 );
 
 const Footer = styled(Column).attrs({ flex: "1", p: 8 })`
-  border-top: 1px solid ${p => p.theme.colors.palette.primary.c80};
+  border-top: 1px solid ${p => p.theme.colors.palette.constant.black};
   cursor: pointer;
 `;
 
@@ -107,12 +112,14 @@ export const AsideFooter = ({ text, ...props }: { text: string }) => {
   return (
     <Footer {...props}>
       <Row mb={4}>
-        <Text mr={2} variant="large">
+        <Text mr={2} variant="large" color="palette.constant.black">
           {t("common.needHelp")}
         </Text>
-        <Icon name="LifeRing" size={18} />
+        <Icon name="LifeRing" size={18} color="palette.constant.black" />
       </Row>
-      <Text variant="small">{text}</Text>
+      <Text variant="small" color="palette.constant.black">
+        {text}
+      </Text>
     </Footer>
   );
 };
