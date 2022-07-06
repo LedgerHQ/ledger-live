@@ -4,7 +4,7 @@ require("@electron/remote/main").initialize();
 
 /* eslint-disable import/first */
 import "./setup";
-import { app, Menu, ipcMain } from "electron";
+import { app, Menu, ipcMain, session } from "electron";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -77,6 +77,23 @@ app.on("ready", async () => {
   if (__DEV__) {
     await installExtensions();
   }
+
+  /**
+   * Clears the session’s HTTP cache
+   * Used to remove third party cached auth tokens, among other things
+   */
+  ipcMain.handle("clearStorageData", () => {
+    const defaultSession = session.defaultSession;
+
+    defaultSession.clearStorageData().then(
+      () => {
+        logger.log("session storageData cleared");
+      },
+      error => {
+        logger.error(error);
+      },
+    );
+  });
 
   db.init(userDataDirectory);
   app.dirname = __dirname;

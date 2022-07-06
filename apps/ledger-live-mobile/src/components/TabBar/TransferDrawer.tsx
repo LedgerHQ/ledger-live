@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView, Linking } from "react-native";
@@ -12,9 +12,11 @@ import {
   hasLendEnabledAccountsSelector,
   accountsSelector,
 } from "../../reducers/accounts";
-import { hasOrderedNanoSelector } from "../../reducers/settings";
+import {
+  hasOrderedNanoSelector,
+  readOnlyModeEnabledSelector,
+} from "../../reducers/settings";
 import { Props as ModalProps } from "../BottomModal";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
@@ -85,12 +87,6 @@ export default function TransferDrawer({ onClose }: ModalProps) {
       }),
     [onNavigate],
   );
-  const onManageCard = useCallback(() => {
-    onNavigate(ScreenName.PlatformApp, {
-      platform: "cl-card",
-      name: "CL Card Powered by Ledger",
-    });
-  }, [onNavigate]);
 
   const buttons = (
     <>
@@ -188,15 +184,6 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           />
         </Box>
       ) : null}
-      <Box>
-        <TransferButton
-          title={t("transfer.manageCard.title")}
-          description={t("transfer.manageCard.description")}
-          Icon={Icons.CardMedium}
-          onPress={onManageCard}
-          disabled={readOnlyModeEnabled}
-        />
-      </Box>
     </>
   );
 

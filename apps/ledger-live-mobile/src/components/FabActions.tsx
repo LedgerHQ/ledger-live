@@ -4,18 +4,18 @@ import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import {
   filterRampCatalogEntries,
   getAllSupportedCryptoCurrencyIds,
-} from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+} from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 import {
   AccountLike,
   Account,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { Icons } from "@ledgerhq/native-ui";
 
@@ -39,7 +39,6 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
-const iconCard = Icons.CardMedium;
 
 export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   account,
@@ -394,19 +393,6 @@ const FabActions: React.FC<FabActionsProps> = ({
       disabled: areAccountsEmpty,
     };
 
-    const actionManageCard: ActionButton = {
-      event: "ManageCard",
-      label: t("transfer.manageCard.title"),
-      Icon: iconCard,
-      navigationParams: [
-        ScreenName.PlatformApp,
-        {
-          platform: "cl-card",
-          name: "CL Card Powered by Ledger",
-        },
-      ],
-    };
-
     return [
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferSwap]
@@ -416,7 +402,6 @@ const FabActions: React.FC<FabActionsProps> = ({
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferReceive, actionButtonTransferSend]
         : []),
-      actionManageCard,
     ];
   }, [hasAccounts, readOnlyModeEnabled, t, areAccountsEmpty]);
 

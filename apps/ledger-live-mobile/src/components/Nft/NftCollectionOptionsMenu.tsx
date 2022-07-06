@@ -9,7 +9,7 @@ import {
   Button,
   Flex,
 } from "@ledgerhq/native-ui";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { useTranslation } from "react-i18next";
 import { hideNftCollection } from "../../actions/settings";
 

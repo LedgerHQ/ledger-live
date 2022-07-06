@@ -1,4 +1,4 @@
-import repairFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
+import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { deviceOpt } from "../scan";
 export default {
   description: "Repair a firmware update",

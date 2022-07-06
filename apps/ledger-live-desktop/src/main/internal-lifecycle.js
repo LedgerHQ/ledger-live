@@ -1,7 +1,7 @@
 // @flow
 import { app, ipcMain } from "electron";
 import path from "path";
-import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import logger from "~/logger";
 import { getMainWindow } from "./window-lifecycle";
@@ -14,6 +14,7 @@ const hydratedPerCurrency = {};
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
+const HOME_DIRECTORY = app.getPath("home");
 
 const internal = new InternalProcess({ timeout: 3000 });
 
@@ -35,6 +36,7 @@ const spawnCoreProcess = () => {
     ...process.env,
     IS_INTERNAL_PROCESS: 1,
     LEDGER_CONFIG_DIRECTORY,
+    HOME_DIRECTORY,
     INITIAL_SENTRY_ENABLED: String(!!sentryEnabled),
     SENTRY_USER_ID: userId,
   };

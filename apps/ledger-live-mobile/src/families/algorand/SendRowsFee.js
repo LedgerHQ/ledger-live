@@ -1,14 +1,14 @@
 // @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/algorand/types";
+import type { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 import {
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";

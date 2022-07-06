@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { Unit } from "@ledgerhq/live-common/lib/types";
+import { Unit } from "@ledgerhq/live-common/types/index";
 import {
   PortfolioRange,
   ValueChange,
-} from "@ledgerhq/live-common/lib/portfolio/v2/types";
+} from "@ledgerhq/live-common/portfolio/v2/types";
 import { Text } from "@ledgerhq/native-ui";
 import {
   ArrowUpMedium,
