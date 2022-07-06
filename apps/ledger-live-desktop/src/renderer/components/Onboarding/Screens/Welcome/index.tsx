@@ -7,7 +7,7 @@ import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel";
 import { urls } from "~/config/urls";
-import { Text, Button, Logos, Icons } from "@ledgerhq/react-ui";
+import { Text, Button, Logos, Icons, InvertThemeV3 } from "@ledgerhq/react-ui";
 
 import accessCrypto from "./assets/accessCrypto.png";
 import ownPrivateKey from "./assets/ownPrivateKey.png";
@@ -19,7 +19,7 @@ import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { onboardingRelaunchedSelector } from "~/renderer/reducers/application";
-import { palettes } from "@ledgerhq/react-ui/styles";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
 registerAssets(stepLogos);
@@ -57,9 +57,10 @@ const ProductHighlight = styled.div`
   margin-bottom: 4px;
 `;
 
-const NoDevice = styled.div`
+const TermsAndConditionsText = styled.div`
   display: flex;
-  flex-direction: row;
+  width: fit-content;
+  flex-wrap: wrap;
   justify-content: center;
   margin-top: 24px;
 `;
@@ -71,7 +72,7 @@ const RightContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  background-color: ${p => p.theme.colors.palette.primary.c60};
+  background-color: ${p => p.theme.colors.palette.constant.purple};
 `;
 
 const CarouselTopBar = styled.div`
@@ -92,9 +93,20 @@ export function Welcome({}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { colors } = useTheme();
+  const locale = useSelector(languageSelector) || "en";
+
+  console.log(locale);
 
   const buyNanoX = useCallback(() => {
     openURL(urls.noDevice.buyNew);
+  }, []);
+
+  const openTermsAndConditions = useCallback(() => {
+    openURL(urls.terms[locale in urls.terms ? locale : "en"]);
+  }, []);
+
+  const openPrivacyPolicy = useCallback(() => {
+    openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
   }, []);
 
   const steps = stepLogos.map((logo, index) => ({
@@ -125,18 +137,32 @@ export function Welcome({}) {
         </Presentation>
         <ProductHighlight>
           <Button
-            data-testid="onboarding-get-started-button"
+            data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
             Icon={Icons.ArrowRightMedium}
             variant="main"
             onClick={() => history.push("/onboarding/select-device")}
+            mb="24px"
           >
             {t("v3.onboarding.screens.welcome.nextButton")}
           </Button>
-          <NoDevice>
-            <Text marginRight={2}>{t("v3.onboarding.screens.welcome.noDevice")}</Text>
-            <StyledLink onClick={buyNanoX}>{t("v3.onboarding.screens.welcome.buyLink")}</StyledLink>
-          </NoDevice>
+          <Button iconPosition="right" variant="main" onClick={buyNanoX} outline={true}>
+            {t("v3.onboarding.screens.welcome.buyLink")}
+          </Button>
+          <TermsAndConditionsText>
+            <Text marginRight={2} color={colors.neutral.c80}>
+              {t("v3.onboarding.screens.welcome.byTapping")}
+            </Text>
+            <StyledLink onClick={openTermsAndConditions} marginRight={2} color={colors.primary.c80}>
+              {t("v3.onboarding.screens.welcome.termsAndConditions")}
+            </StyledLink>
+            <Text marginRight={2} color={colors.neutral.c80}>
+              {t("v3.onboarding.screens.welcome.and")}
+            </Text>
+            <StyledLink onClick={openPrivacyPolicy} marginRight={2} color={colors.primary.c80}>
+              {t("v3.onboarding.screens.welcome.privacyPolicy")}
+            </StyledLink>
+          </TermsAndConditionsText>
         </ProductHighlight>
       </LeftContainer>
       <RightContainer>
@@ -146,7 +172,13 @@ export function Welcome({}) {
               {t("common.previous")}
             </Button>
           )}
-          <LangSwitcher />
+          {colors.palette.type === "dark" ? (
+            <InvertThemeV3>
+              <LangSwitcher />
+            </InvertThemeV3>
+          ) : (
+            <LangSwitcher />
+          )}
         </CarouselTopBar>
         <Carousel queue={steps} />
       </RightContainer>

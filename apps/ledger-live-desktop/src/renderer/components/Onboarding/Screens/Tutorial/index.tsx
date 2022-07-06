@@ -45,8 +45,10 @@ const FlowStepperContentContainer = styled(Flex)`
 `;
 
 const FlowStepperContent = styled(Flex)`
-  width: 514px;
+  min-width: 514px;
+  max-width: 1022px;
   height: 100%;
+  width: 70%;
 `;
 
 const StepContent = styled.div`
@@ -102,7 +104,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   return (
     <FlowStepperContainer>
       <Aside
-        backgroundColor="palette.primary.c60"
+        backgroundColor="palette.constant.purple"
         header={
           <Flex justifyContent="center">
             <Logos.LedgerLiveRegular />
@@ -131,6 +133,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
               {backLabel || t("common.back")}
             </Button>
             <Button
+              data-test-id="v3-tutorial-continue"
               onClick={handleContinue}
               disabled={disableContinue}
               variant="main"
