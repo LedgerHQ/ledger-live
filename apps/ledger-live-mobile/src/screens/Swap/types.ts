@@ -29,6 +29,7 @@ export type SwapNavParamList = {
     target: "from" | "to";
     accountIds: string[];
     provider: string;
+    currencyIds: string[];
   };
   SelectCurrency: {
     currencies: string[];

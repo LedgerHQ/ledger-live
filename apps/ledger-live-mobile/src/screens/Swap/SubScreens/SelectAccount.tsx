@@ -21,11 +21,11 @@ import { shallowAccountsSelector } from "../../../reducers/accounts";
 export function SelectAccount({
   navigation,
   route: {
-    params: { accountIds, provider },
+    params: { accountIds, provider, currencyIds },
   },
 }: {
   // TODO find proper prop for navigation
-  navigation: SelectAccountProps["navigation"];
+  navigation: any;
   route: SelectAccountProps["route"];
 }) {
   const { t } = useTranslation();
@@ -74,14 +74,14 @@ export function SelectAccount({
       screen: ScreenName.AddAccountsSelectCrypto,
       params: {
         returnToSwap: true,
-        // filterCurrencyIds: selectableCurrencies,
+        filterCurrencyIds: currencyIds,
         onSuccess: () => {
-          navigation.navigate("SelectAccount");
+          navigation.navigate("SwapForm");
         },
         analyticsPropertyFlow: "swap",
       },
     });
-  }, [navigation]);
+  }, [navigation, currencyIds]);
 
   const renderList = useCallback(
     items => {

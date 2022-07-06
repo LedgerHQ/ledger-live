@@ -3,7 +3,12 @@ import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { useNavigation } from "@react-navigation/native";
 import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import {
   getAccountName,
   getAccountUnit,
@@ -22,6 +27,7 @@ interface Props {
   isMaxEnabled: boolean;
   accounts: Account[];
   provider?: string;
+  currencies: (CryptoCurrency | TokenCurrency)[];
 }
 
 export function From({
@@ -31,12 +37,14 @@ export function From({
   isMaxEnabled,
   accounts: accountsProp,
   provider,
+  currencies,
 }: Props) {
   const { t } = useTranslation();
   // TODO: navigation type
   const navigation = useNavigation<any>();
 
   const accounts = usePickDefaultAccount(accountsProp, account, setAccount);
+  const currencyIds = useMemo(() => currencies.map(c => c.id), [currencies]);
 
   const name = useMemo(() => (account && getAccountName(account)) ?? "", [
     account,
@@ -55,10 +63,11 @@ export function From({
   const onPress = useCallback(() => {
     navigation.navigate("SelectAccount", {
       target: "from",
-      accounts: accounts.map(a => a.id),
+      accountIds: accounts.map(a => a.id),
       provider,
+      currencyIds,
     });
-  }, [navigation, accounts, provider]);
+  }, [navigation, accounts, provider, currencyIds]);
 
   const unit = useMemo(() => account && getAccountUnit(account), [account]);
 

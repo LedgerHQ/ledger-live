@@ -36,6 +36,7 @@ export function TxForm({
         setAmount={swapTx.setFromAmount}
         provider={provider}
         accounts={accounts}
+        currencies={currencies}
       />
       <To
         to={swapTx.swap.to}

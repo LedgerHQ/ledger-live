@@ -332,3 +332,7 @@ export enum ActionRequired {
   MFA = "MFA",
   None = "None",
 }
+
+export type Message =
+  | { type: "setToken"; token: string }
+  | { type: "closeWidget" };

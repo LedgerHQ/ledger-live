@@ -99,8 +99,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       swapTx.setToCurrency(params.currency);
     }
 
-    if (params?.account) {
-      swapTx.setFromAccount(params.account);
+    if (params?.accountId) {
+      const account = accounts.find(a => a.id === params?.accountId);
+      swapTx.setFromAccount(account);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
