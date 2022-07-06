@@ -166,6 +166,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
       >
         {choices.map(({ label, correct }: QuizzChoice, index: number) => (
           <RadioElement
+            data-test-id={`v3-quiz-answer-${index}`}
             outlined
             key={`${radioName}-choice-${index}`}
             label={label}
@@ -218,6 +219,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
         <StartScreen onStart={() => setStarted(true)} />
       ) : (
         <ModalStepperBody
+          dataTestId="v3-quiz-container"
           AsideLeft={AsideLeft}
           AsideRight={AsideRight}
           hideBackButton
