@@ -18,6 +18,7 @@ export type StepLeftSideProps = {
   AsideLeft?: React.ReactNode;
   continueLabel?: string;
   backLabel?: string;
+  dataTestId: string;
   hideContinueButton?: boolean;
   continueDisabled?: boolean;
   hideBackButton?: boolean;
@@ -37,6 +38,7 @@ const StepLeftSide = ({
   continueDisabled = false,
   backDisabled = false,
   hideBackButton = false,
+  dataTestId,
   onClickContinue,
   onClickBack,
 }: StepLeftSideProps) => {
@@ -59,6 +61,7 @@ const StepLeftSide = ({
       <FlexBox flexDirection="column">
         {!hideContinueButton && (
           <Button
+            data-test-id={dataTestId}
             disabled={continueDisabled}
             variant="main"
             Icon={Icons.ArrowRightRegular}
