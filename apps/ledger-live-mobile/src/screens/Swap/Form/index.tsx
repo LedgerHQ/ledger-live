@@ -89,7 +89,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     };
   }, [exchangeRate, swapKYC]);
 
-  const [required, setRequired] = useState<ActionRequired>(ActionRequired.None);
+  const [currentFlow, setCurrentFlow] = useState<ActionRequired>(
+    ActionRequired.None,
+  );
+  const [currentBanner, setCurrentBanner] = useState<ActionRequired>(
+    ActionRequired.None,
+  );
   const [errorCode, setErrorCode] = useState<
     ValidCheckQuoteErrorCodes | undefined
   >();
@@ -108,7 +113,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // On provider change, reset banner and flow
   useEffect(() => {
-    setRequired(ActionRequired.None);
+    setCurrentFlow(ActionRequired.None);
+    setCurrentBanner(ActionRequired.None);
     setErrorCode(undefined);
   }, [provider]);
 
@@ -116,17 +122,17 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // In case of error, don't show  login, kyc or mfa banner
     if (error) {
       // Don't show any flow banner on error to avoid double banner display
-      setRequired(ActionRequired.None);
+      setCurrentBanner(ActionRequired.None);
       return;
     }
 
     // Don't display login nor kyc banner if user needs to complete MFA
-    if (required === ActionRequired.MFA) {
+    if (currentBanner === ActionRequired.MFA) {
       return;
     }
 
     if (shouldShowLoginBanner({ provider, token: kyc?.id })) {
-      setRequired(ActionRequired.Login);
+      setCurrentBanner(ActionRequired.Login);
       return;
     }
 
@@ -137,12 +143,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // we display the KYC banner component if partner requiers KYC and is not yet approved
     // we don't display it if user needs to login first
     if (
-      required !== ActionRequired.Login &&
+      currentBanner !== ActionRequired.Login &&
       shouldShowKYCBanner({ provider, validKycStatus: kyc.status })
     ) {
-      setRequired(ActionRequired.KYC);
+      setCurrentBanner(ActionRequired.KYC);
     }
-  }, [error, provider, kyc, required]);
+  }, [error, provider, kyc, currentBanner]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
@@ -189,20 +195,21 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   // close login widget once we get a bearer token (i.e: the user is logged in)
   useEffect(() => {
-    if (kyc?.id && required === ActionRequired.Login) {
-      setRequired(ActionRequired.None);
+    if (kyc?.id && currentFlow === ActionRequired.Login) {
+      setCurrentFlow(ActionRequired.None);
     }
-  }, [kyc?.id, required]);
+  }, [kyc?.id, currentFlow]);
 
   useEffect(() => {
     if (
       !kyc?.id ||
       !exchangeRate?.rateId ||
-      required === ActionRequired.KYC ||
-      required === ActionRequired.MFA
+      currentFlow === ActionRequired.KYC ||
+      currentFlow === ActionRequired.MFA
     ) {
       return;
     }
+    handleCheckQuote();
 
     async function handleCheckQuote() {
       if (!provider || !exchangeRate?.rateId || !kyc) {
@@ -217,11 +224,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
       // User needs to complete MFA on partner own UI / dedicated widget
       if (status.codeName === "MFA_REQUIRED") {
-        setRequired(ActionRequired.MFA);
+        setCurrentBanner(ActionRequired.MFA);
         return;
       }
       // No need to show MFA banner for other cases
-      setRequired(ActionRequired.None);
+      setCurrentBanner(ActionRequired.None);
 
       if (typeof provider === "undefined") {
         return;
@@ -235,7 +242,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         }
 
         // If status is ok, close login, kyc and mfa widgets even if open
-        setRequired(ActionRequired.None);
+        setCurrentBanner(ActionRequired.None);
 
         dispatch(
           setSwapKYCStatus({
@@ -279,9 +286,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       // All other statuses are considered errors
       setErrorCode(status.codeName);
     }
-
-    handleCheckQuote();
-  }, [kyc, exchangeRate, dispatch, provider, required]);
+  }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
 
   const isSwapReady =
     !errorCode &&
@@ -290,7 +295,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     swapTx.transaction &&
     !error &&
     !swapError &&
-    required === ActionRequired.None &&
+    currentBanner === ActionRequired.None &&
     exchangeRate &&
     swapTx.swap.to.account;
 
@@ -337,7 +342,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               kyc={kyc}
             />
 
-            <Requirement required={required} provider={provider} />
+            <Requirement required={currentBanner} provider={provider} />
           </Flex>
 
           <Flex paddingY={4}>
