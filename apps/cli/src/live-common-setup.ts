@@ -17,11 +17,11 @@ import SpeculosTransport, {
 import {
   registerTransportModule,
   disconnect,
-} from "@ledgerhq/live-common/lib/hw";
-import { retry } from "@ledgerhq/live-common/lib/promise";
-import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import { closeAllSpeculosDevices } from "@ledgerhq/live-common/lib/load/speculos";
-import { disconnectAll } from "@ledgerhq/live-common/lib/api";
+} from "@ledgerhq/live-common/hw/index";
+import { retry } from "@ledgerhq/live-common/promise";
+import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
+import { disconnectAll } from "@ledgerhq/live-common/api/index";
 
 checkLibs({
   NotEnoughBalance,
@@ -173,9 +173,10 @@ async function init() {
     disconnect: async (query) =>
       query.startsWith("ble")
         ? cacheBle[query]
-          ? (
-              (await getTransport().constructor) as typeof TransportNodeBle
-            ).disconnect(cacheBle[query].id)
+          ? ((await getTransport()
+              .constructor) as typeof TransportNodeBle).disconnect(
+              cacheBle[query].id
+            )
           : Promise.resolve()
         : undefined,
   });

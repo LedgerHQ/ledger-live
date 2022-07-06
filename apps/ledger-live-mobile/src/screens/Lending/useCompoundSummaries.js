@@ -1,12 +1,12 @@
 // @flow
 import { useMemo } from "react";
-import type { AccountLikeArray } from "@ledgerhq/live-common/lib/types";
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/lib/compound/logic";
+import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
+import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 
-import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
+import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 
-import { isCompoundTokenSupported } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
+import { isCompoundTokenSupported } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 
 const makeSummaries = (accounts: AccountLikeArray): CompoundAccountSummary[] =>
   accounts

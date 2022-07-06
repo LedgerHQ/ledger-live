@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 // @ts-ignore
 import { useClock, timing } from "react-native-redash/lib/module/v1";
-import { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
+import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { Notification } from "@ledgerhq/native-ui";
 import { InfoMedium, WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import getWindowDimensions from "../../../logic/getWindowDimensions";

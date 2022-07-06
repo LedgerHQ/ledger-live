@@ -4,7 +4,7 @@ import type {
   ServiceStatusApi,
   ServiceStatusSummary,
   Incident,
-} from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider/types";
+} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 
 const statuses = {
   page: {

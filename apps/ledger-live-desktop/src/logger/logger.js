@@ -1,7 +1,6 @@
 // @flow
 import winston from "winston";
 import Transport from "winston-transport";
-import anonymizer from "./anonymizer";
 import pname from "./pname";
 
 const { format } = winston;
@@ -75,7 +74,7 @@ const captureBreadcrumb = (breadcrumb: any) => {
   if (!process.env.STORYBOOK_ENV) {
     try {
       if (typeof window !== "undefined") {
-        require("~/sentry/renderer").captureBreadcrumb(breadcrumb);
+        import("~/sentry/renderer").then(sentry => sentry.captureBreadcrumb(breadcrumb));
       } else if (process.title === "Ledger Live Internal") {
         require("~/sentry/internal").captureBreadcrumb(breadcrumb);
       } else {
@@ -90,7 +89,7 @@ const captureBreadcrumb = (breadcrumb: any) => {
 const captureException = (error: Error) => {
   try {
     if (typeof window !== "undefined") {
-      require("~/sentry/renderer").captureException(error);
+      import("~/sentry/renderer").then(sentry => sentry.captureException(error));
     } else if (process.title === "Ledger Live Internal") {
       require("~/sentry/internal").captureException(error);
     } else {
@@ -265,18 +264,10 @@ export default {
     status: number,
     responseTime: number,
   }) => {
-    const anonymURL = anonymizer.url(url);
-
     const log = `✔📡  HTTP ${status} ${method} ${url} – finished in ${responseTime.toFixed(0)}ms`;
     if (logNetwork) {
       logger.log("info", log, { type: "network-response" });
     }
-    captureBreadcrumb({
-      level: "debug",
-      category: "network",
-      message: "network success",
-      data: { url: anonymURL, status, method, responseTime },
-    });
   },
 
   networkError: ({
@@ -293,7 +284,6 @@ export default {
     error: string,
     responseTime: number,
   }) => {
-    const anonymURL = anonymizer.url(url);
     const log = `✖📡  HTTP ${status} ${method} ${url} – ${error} – failed after ${responseTime.toFixed(
       0,
     )}ms`;
@@ -301,12 +291,6 @@ export default {
       // $FlowFixMe
       logger.log("info", log, { type: "network-error", status, method, ...rest });
     }
-    captureBreadcrumb({
-      level: "debug",
-      category: "network",
-      message: "network error",
-      data: { url: anonymURL, status, method, responseTime },
-    });
   },
 
   networkDown: ({
@@ -322,11 +306,6 @@ export default {
     if (logNetwork) {
       logger.log("info", log, { type: "network-down" });
     }
-    captureBreadcrumb({
-      level: "error",
-      category: "network",
-      message: "network down",
-    });
   },
 
   analyticsStart: (id: string, props: Object) => {

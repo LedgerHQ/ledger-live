@@ -3,12 +3,15 @@ import { expect } from "@playwright/test";
 import { SwapPage } from "../../models/SwapPage";
 import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
+import { Drawer } from "tests/models/Drawer";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
+// FIXME: Sometimes, on slow machines, swap mock events are not emitted.
 test.fixme("Swap", async ({ page }) => {
   const swapPage = new SwapPage(page);
   const deviceAction = new DeviceAction(page);
+  const drawer = new Drawer(page);
   const layout = new Layout(page);
 
   let swapId: string;
@@ -48,7 +51,7 @@ test.fixme("Swap", async ({ page }) => {
   });
 
   await test.step("Verify Swap details are present in the swap history", async () => {
-    await swapPage.exitExchangeDrawer();
+    await drawer.close();
     await swapPage.verifyHistoricalSwapsHaveLoadedFully();
     await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
   });

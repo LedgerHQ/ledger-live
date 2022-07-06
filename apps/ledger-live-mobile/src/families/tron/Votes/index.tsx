@@ -6,18 +6,18 @@ import { BigNumber } from "bignumber.js";
 import {
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/helpers";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   useTronSuperRepresentatives,
   formatVotes,
   getNextRewardDate,
   getLastVotedDate,
   MIN_TRANSACTION_AMOUNT,
-} from "@ledgerhq/live-common/lib/families/tron/react";
-import { getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
-import { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/tron/react";
+import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { Box, Button, Text } from "@ledgerhq/native-ui";
 import { urls } from "../../../config/urls";
 import Row from "./Row";

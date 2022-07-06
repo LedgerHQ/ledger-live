@@ -2,14 +2,15 @@
 import React, { useCallback, useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+import type { Operation } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
+/* eslint-disable import/named */
 import {
   // $FlowFixMe
   context as _wcContext,
@@ -18,7 +19,7 @@ import {
   // $FlowFixMe
   STATUS,
 } from "../WalletConnect/Provider";
-
+/* eslint-enable import/named */
 type Props = {
   navigation: any,
   route: { params: RouteParams },

@@ -7,17 +7,17 @@ import {
   AccountLike,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+} from "@ledgerhq/live-common/account/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import {
   getDeviceTransactionConfig,
   DeviceTransactionField,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTheme } from "@react-navigation/native";

@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { ensureContrast } from "../colors";
 import CurrencyIcon from "./CurrencyIcon";

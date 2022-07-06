@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, NavigationProp } from "@react-navigation/native";
-import { useLocalLiveAppContext } from "@ledgerhq/live-common/src/platform/providers/LocalLiveAppProvider";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";

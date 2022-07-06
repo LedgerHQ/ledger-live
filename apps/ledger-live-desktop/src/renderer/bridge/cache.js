@@ -1,9 +1,9 @@
 // @flow
 import { ipcRenderer } from "electron";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import { logger } from "~/logger";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import logger from "~/logger";
 
 export function clearBridgeCache() {
   Object.keys(global.localStorage)

@@ -12,14 +12,14 @@ import {
   getMainAccount,
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 
 import type {
   Account,
   AccountLike,
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import LText from "./LText";
 import SummaryRow from "../screens/SendFunds/SummaryRow";
 import CheckBox from "./CheckBox";

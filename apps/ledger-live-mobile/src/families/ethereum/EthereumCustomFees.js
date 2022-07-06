@@ -6,9 +6,9 @@ import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { inferDynamicRange } from "@ledgerhq/live-common/lib/range";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getGasLimit } from "@ledgerhq/live-common/lib/families/ethereum/transaction";
+import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getGasLimit } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";

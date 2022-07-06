@@ -1,7 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { State } from ".";
 

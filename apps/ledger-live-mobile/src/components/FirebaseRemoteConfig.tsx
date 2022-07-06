@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { defaultFeatures } from "@ledgerhq/live-common/lib/featureFlags";
+import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
-import { FeatureId, DefaultFeatures } from "@ledgerhq/live-common/lib/types";
+import { FeatureId, DefaultFeatures } from "@ledgerhq/live-common/types/index";
 
 export const formatFeatureId = (id: FeatureId) => `feature_${snakeCase(id)}`;
 

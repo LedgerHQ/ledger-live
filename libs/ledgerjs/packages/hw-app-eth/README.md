@@ -115,7 +115,7 @@ You can sign a transaction and retrieve v, r, s given the raw transaction and th
 ##### Examples
 
 ```javascript
-import ledgerService from "@ledgerhq/hw-app-eth/lib/services/ledger"
+import { ledgerService } from "@ledgerhq/hw-app-eth"
 const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
 const resolution = await ledgerService.resolveTransaction(tx);
 const result = eth.signTransaction("44'/60'/0'/0/0", tx, resolution);

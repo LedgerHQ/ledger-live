@@ -4,18 +4,18 @@ import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import {
   filterRampCatalogEntries,
   getAllSupportedCryptoCurrencyIds,
-} from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+} from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 import {
   AccountLike,
   Account,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { Icons } from "@ledgerhq/native-ui";
 

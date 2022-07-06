@@ -8,7 +8,7 @@ import {
   listSupportedCurrencies,
   listTokens,
   useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import TrackScreen from "../../../analytics/TrackScreen";
 import NoResultsFound from "../../../icons/NoResultsFound";
 
@@ -22,7 +22,7 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 

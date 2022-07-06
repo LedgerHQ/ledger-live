@@ -31,6 +31,8 @@ import {
   EIP712Message,
 } from "./modules/EIP712";
 
+export { ledgerService };
+
 export type StarkQuantizationType =
   | "eth"
   | "erc20"
@@ -167,12 +169,12 @@ export default class Eth {
 
   /**
    * You can sign a transaction and retrieve v, r, s given the raw transaction and the BIP 32 path of the account to sign.
-   * 
+   *
    * @param path: the BIP32 path to sign the transaction on
    * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
    * @param resolution: resolution is an object with all "resolved" metadata necessary to allow the device to clear sign information. This includes: ERC20 token information, plugins, contracts, NFT signatures,... You must explicitly provide something to avoid having a warning. By default, you can use Ledger's service or your own resolution service. See services/types.js for the contract. Setting the value to "null" will fallback everything to blind signing but will still allow the device to sign the transaction.
    * @example
-   import ledgerService from "@ledgerhq/hw-app-eth/lib/services/ledger"
+   import { ledgerService } from "@ledgerhq/hw-app-eth"
    const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
    const resolution = await ledgerService.resolveTransaction(tx);
    const result = eth.signTransaction("44'/60'/0'/0/0", tx, resolution);
@@ -194,7 +196,7 @@ export default class Eth {
           "See https://github.com/LedgerHQ/ledgerjs/blob/master/packages/hw-app-eth/README.md " +
           "– the previous signature is deprecated and providing the 3rd 'resolution' parameter explicitly will become mandatory so you have the control on the resolution and the fallback mecanism (e.g. fallback to blind signing or not)." +
           "// Possible solution:\n" +
-          " + import ledgerService from '@ledgerhq/hw-app-eth/lib/services/ledger';\n" +
+          " + import { ledgerService } from '@ledgerhq/hw-app-eth';\n" +
           " + const resolution = await ledgerService.resolveTransaction(rawTxHex);"
       );
       resolution = await ledgerService
@@ -444,7 +446,7 @@ export default class Eth {
       primaryType: "Test",
       message: {contents: "Hello, Bob!"},
     })
-   * 
+   *
    * @param {String} path derivationPath
    * @param {Object} jsonMessage message to sign
    * @param {Boolean} fullImplem use the legacy implementation
