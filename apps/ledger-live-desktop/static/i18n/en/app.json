@@ -3795,9 +3795,13 @@
         "welcome": {
           "title": "Welcome to Ledger Live",
           "description": "Safely manage your crypto from your computer.",
-          "nextButton": "Continue",
+          "nextButton": "Get started",
           "noDevice": "No device?",
-          "buyLink": "Buy a Ledger Nano X",
+          "buyLink": "No device? Buy a Ledger Nano X",
+          "byTapping": "By tapping \"Get Started\" you consent and agree to our",
+          "termsAndConditions": "Terms and conditions",
+          "and": "and",
+          "privacyPolicy": "Privacy Policy",
           "steps": {
             "0": {
               "title": "Access your crypto",
@@ -3813,7 +3817,7 @@
             },
             "3": {
               "title": "Validate transactions",
-              "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected<br/>You will validate every crypto transaction with your Nano"
+              "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
             },
             "4": {
               "title": "Let's set up your nano",
