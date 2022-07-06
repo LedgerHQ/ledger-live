@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -7,7 +7,7 @@ import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { track, updateIdentify } from "../../../analytics";
+import { track, screen, updateIdentify } from "../../../analytics";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
 
@@ -60,6 +60,10 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
       },
     });
   }, [navigation]);
+
+  useEffect(() => {
+    screen("Onboarding", "Has Device?");
+  }, []);
 
   return (
     <SafeAreaView flex={1}>
