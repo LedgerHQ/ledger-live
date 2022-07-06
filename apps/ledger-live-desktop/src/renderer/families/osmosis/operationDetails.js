@@ -60,20 +60,36 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
 
   let ret = null;
 
+  const { claimedRewards } = extra;
+  console.log("claimedRewards: ", claimedRewards);
+  console.log("extra: ", extra);
+
   switch (type) {
     case "DELEGATE": {
       const { validators: delegations } = extra;
       if (!delegations || !delegations.length) return null;
 
       return (
-        <OperationDetailsDelegation
-          discreet={discreet}
-          unit={unit}
-          currency={currency}
-          delegations={delegations}
-          account={account}
-          validators={validators}
-        />
+        <>
+          <OperationDetailsDelegation
+            discreet={discreet}
+            unit={unit}
+            currency={currency}
+            delegations={delegations}
+            account={account}
+            validators={validators}
+          />
+          {claimedRewards != null ? (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey={"operationDetails.extra.rewards"} />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                {formatCurrencyUnit(unit, new BigNumber(claimedRewards), formatConfig)}
+              </OpDetailsData>
+            </OpDetailsSection>
+          ) : null}
+        </>
       );
     }
     case "UNDELEGATE": {
@@ -153,6 +169,16 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>{formattedAmount}</OpDetailsData>
           </OpDetailsSection>
+          {claimedRewards != null ? (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey={"operationDetails.extra.rewards"} />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                {formatCurrencyUnit(unit, new BigNumber(claimedRewards), formatConfig)}
+              </OpDetailsData>
+            </OpDetailsSection>
+          ) : null}
         </>
       );
       break;

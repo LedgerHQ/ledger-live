@@ -11,8 +11,9 @@ function formatOperationSpecifics(
   op: CosmosOperation,
   unit: Unit | null | undefined
 ): string {
-  const { validators } = op.extra;
-  return (validators || [])
+  const { validators, claimedRewards } = op.extra;
+  console.log("hello");
+  const validatorsString = (validators || [])
     .map(
       (v) =>
         `\n    to ${v.address} ${
@@ -25,6 +26,23 @@ function formatOperationSpecifics(
         }`
     )
     .join("");
+
+  const rewards = "";
+  // const rewards = (claimedRewards || [])
+  //   .map(
+  //     (r) =>
+  //       `\n auto claimed reward: ${
+  //         unit
+  //           ? formatCurrencyUnit(unit, new BigNumber(r.amount), {
+  //               showCode: true,
+  //               disableRounding: true,
+  //             }).padEnd(16)
+  //           : r.amount
+  //       }`
+  //   )
+  //   .join("");
+
+  return `${validatorsString} \n ${rewards}`;
 }
 
 export function formatAccountSpecifics(account: Account): string {
@@ -127,8 +145,9 @@ export function formatAccountSpecifics(account: Account): string {
 export function fromOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -136,14 +155,15 @@ export function fromOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export function toOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
+
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -151,8 +171,7 @@ export function toOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export default {
   formatAccountSpecifics,

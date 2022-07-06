@@ -143,6 +143,7 @@ export function useSortedValidators(
   return sr;
 }
 
+// Nothing using this function?
 export function useMappedExtraOperationDetails({
   account,
   extra,
@@ -160,6 +161,8 @@ export function useMappedExtraOperationDetails({
       ? mapDelegationInfo([extra.validator], validators, unit)[0]
       : undefined,
     sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
+    claimedRewards:
+      extra.claimedRewards != null ? extra.claimedRewards : "empty string",
   };
 }
 
