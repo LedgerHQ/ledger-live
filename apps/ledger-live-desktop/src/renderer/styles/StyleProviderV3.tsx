@@ -29,6 +29,7 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
           ...V3Palettes[v3SelectedPalettes],
           palette: { ...palettesAny[v3SelectedPalettes], ...V3Palettes[v3SelectedPalettes] },
         },
+        theme: v3SelectedPalettes,
       }),
       [palettesAny, v3SelectedPalettes],
   );
