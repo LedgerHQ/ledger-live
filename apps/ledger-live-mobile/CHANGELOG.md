@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.5
+
+### Patch Changes
+
+- [#592](https://github.com/LedgerHQ/ledger-live/pull/592) [`593cd6bc1`](https://github.com/LedgerHQ/ledger-live/commit/593cd6bc1dd146e99c7966aa03a9a20cac5af46a) Thanks [@Justkant](https://github.com/Justkant)! - fix: Inline app install not working [LIVE-2851]
+
 ## 3.5.0-next.4
 
 ### Patch Changes
