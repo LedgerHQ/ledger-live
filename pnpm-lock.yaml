@@ -1313,7 +1313,34 @@ importers:
       '@ledgerhq/logs': link:../packages/logs
       glob: 7.2.0
 
-  libs/ledgerjs/iOS-wrappers/ios-wrapper-solana:
+  libs/ledgerjs/iOS-wrappers/iOS-wrapper-eth:
+    specifiers:
+      '@ledgerhq/hw-app-eth': workspace:^
+      '@ledgerhq/hw-transport-ios-ble': workspace:^
+      '@types/jest': '*'
+      '@types/node': '*'
+      documentation: 13.2.4
+      jest: ^27.4.7
+      rimraf: '*'
+      source-map-support: '*'
+      ts-jest: ^27.1.2
+      ts-node: ^10.4.0
+      typescript: ^4
+    dependencies:
+      '@ledgerhq/hw-app-eth': link:../../packages/hw-app-eth
+      '@ledgerhq/hw-transport-ios-ble': link:../../packages/hw-transport-ios-ble
+    devDependencies:
+      '@types/jest': 27.5.1
+      '@types/node': 17.0.32
+      documentation: 13.2.4
+      jest: 27.5.1_ts-node@10.7.0
+      rimraf: 3.0.2
+      source-map-support: 0.5.21
+      ts-jest: 27.1.4_pdrvuo7u6tl7qvcjdj2nyomnem
+      ts-node: 10.7.0_wazxxhranimtr24fuoqlq3n3ba
+      typescript: 4.7.3
+
+  libs/ledgerjs/iOS-wrappers/iOS-wrapper-solana:
     specifiers:
       '@ledgerhq/hw-app-solana': workspace:^
       '@ledgerhq/hw-transport-ios-ble': workspace:^
@@ -1906,33 +1933,6 @@ importers:
       ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
       typescript: 4.6.4
 
-  libs/ledgerjs/packages/hw-transport-ios-ble-wrapper:
-    specifiers:
-      '@ledgerhq/hw-app-solana': workspace:^
-      '@ledgerhq/hw-transport-ios-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
-      documentation: 13.2.4
-      jest: ^27.4.7
-      rimraf: '*'
-      source-map-support: '*'
-      ts-jest: ^27.1.2
-      ts-node: ^10.4.0
-      typescript: ^4
-    dependencies:
-      '@ledgerhq/hw-app-solana': link:../hw-app-solana
-      '@ledgerhq/hw-transport-ios-ble': link:../hw-transport-ios-ble
-    devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
-      documentation: 13.2.4
-      jest: 27.5.1_ts-node@10.7.0
-      rimraf: 3.0.2
-      source-map-support: 0.5.21
-      ts-jest: 27.1.4_pdrvuo7u6tl7qvcjdj2nyomnem
-      ts-node: 10.7.0_wazxxhranimtr24fuoqlq3n3ba
-      typescript: 4.7.3
-
   libs/ledgerjs/packages/hw-transport-mocker:
     specifiers:
       '@ledgerhq/hw-transport': workspace:^
@@ -2272,33 +2272,6 @@ importers:
       ts-jest: 27.1.4_3y7pzupgu3ueocdatbfldfrs3i
       ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
       typescript: 4.6.4
-
-  libs/ledgerjs/packages/iOS-wrappers/hw-transport-ios-ble-solana-wrapper:
-    specifiers:
-      '@ledgerhq/hw-app-solana': workspace:^
-      '@ledgerhq/hw-transport-ios-ble': workspace:^
-      '@types/jest': '*'
-      '@types/node': '*'
-      documentation: 13.2.4
-      jest: ^27.4.7
-      rimraf: '*'
-      source-map-support: '*'
-      ts-jest: ^27.1.2
-      ts-node: ^10.4.0
-      typescript: ^4
-    dependencies:
-      '@ledgerhq/hw-app-solana': link:../../hw-app-solana
-      '@ledgerhq/hw-transport-ios-ble': link:../../hw-transport-ios-ble
-    devDependencies:
-      '@types/jest': 27.5.1
-      '@types/node': 17.0.32
-      documentation: 13.2.4
-      jest: 27.5.1_ts-node@10.7.0
-      rimraf: 3.0.2
-      source-map-support: 0.5.21
-      ts-jest: 27.1.4_pdrvuo7u6tl7qvcjdj2nyomnem
-      ts-node: 10.7.0_wazxxhranimtr24fuoqlq3n3ba
-      typescript: 4.7.3
 
   libs/ledgerjs/packages/logs:
     specifiers:
@@ -18784,14 +18757,14 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
     dev: false
@@ -18807,7 +18780,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
@@ -18822,14 +18795,14 @@ packages:
   /axios/0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
 
   /axios/0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
@@ -20694,7 +20667,7 @@ packages:
       mkdirp: 0.5.6
       move-concurrently: 1.0.1
       p-map: 3.0.0
-      promise-inflight: 1.0.1_bluebird@3.7.2
+      promise-inflight: 1.0.1
       rimraf: 2.7.1
       ssri: 7.1.1
       unique-filename: 1.1.1
@@ -27392,6 +27365,15 @@ packages:
       tabbable: 5.3.2
     dev: false
 
+  /follow-redirects/1.15.0:
+    resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   /follow-redirects/1.15.0_debug@4.3.2:
     resolution: {integrity: sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==}
     engines: {node: '>=4.0'}
@@ -27413,7 +27395,8 @@ packages:
       debug:
         optional: true
     dependencies:
-      debug: 4.3.4
+      debug: 4.3.4_supports-color@6.1.0
+    dev: false
 
   /fontfaceobserver/2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
@@ -29266,7 +29249,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -38585,7 +38568,6 @@ packages:
     peerDependenciesMeta:
       bluebird:
         optional: true
-    dev: true
 
   /promise-inflight/1.0.1_bluebird@3.7.2:
     resolution: {integrity: sha1-mEcocL8igTL8vdhoEputEsPAKeM=}
