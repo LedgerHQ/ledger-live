@@ -4,7 +4,16 @@ const config: PlaywrightTestConfig = {
   testDir: "specs/",
   testIgnore: "specs/recorder.spec.ts",
   outputDir: "./artifacts/test-results",
-  timeout: process.env.CI ? 60000 : 600000,
+  timeout: process.env.CI ? 190000 : 600000,
+  expect: {
+    timeout: 30000,
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01,
+    },
+    toMatchSnapshot: {
+      maxDiffPixelRatio: 0.01,
+    },
+  },
   globalTimeout: 0,
   globalSetup: require.resolve("./utils/global-setup"),
   globalTeardown: require.resolve("./utils/global-teardown"),
