@@ -3,11 +3,12 @@
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
 import type { SellRequestEvent } from "@ledgerhq/live-common/lib/exchange/sell/types";
-import type {
+import {
   AccountRaw,
   AccountRawLike,
   TransactionStatusRaw,
   TransactionRaw,
+  fromTransactionStatusRaw,
 } from "@ledgerhq/live-common/lib/types";
 import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
 import checkSignatureAndPrepare from "@ledgerhq/live-common/lib/exchange/sell/checkSignatureAndPrepare";
@@ -16,7 +17,6 @@ import {
   fromAccountRaw,
   fromAccountLikeRaw,
 } from "@ledgerhq/live-common/lib/account/serialization";
-import { fromTransactionStatusRaw } from "@ledgerhq/live-common/lib/transaction";
 type Input = {
   parentAccount: ?AccountRaw,
   account: AccountRawLike,
