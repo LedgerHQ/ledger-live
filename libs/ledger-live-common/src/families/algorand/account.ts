@@ -2,8 +2,8 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { AlgorandAccount, AlgorandResources } from "./types";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { AlgorandAccount, AlgorandResources } from "./types";
+import type { Operation } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(

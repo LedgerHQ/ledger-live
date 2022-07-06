@@ -1,4 +1,3 @@
-import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "./types";
 import getEstimatedFees from "./js-getFeesForTransaction";
 import { loadPolkadotCrypto } from "./polkadot-crypto";

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { PolkadotAccount, PolkadotResources } from "./types";

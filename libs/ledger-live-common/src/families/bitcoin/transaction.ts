@@ -19,9 +19,7 @@ import {
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { Account } from "@ledgerhq/types-live";
-import { deserializeError, serializeError } from "@ledgerhq/errors";
-import { mapValues } from "lodash";
+import type { Account } from "@ledgerhq/types-live";
 import {
   fromBitcoinInputRaw,
   fromBitcoinOutputRaw,

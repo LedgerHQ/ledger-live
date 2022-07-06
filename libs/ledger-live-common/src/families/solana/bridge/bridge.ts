@@ -7,7 +7,6 @@ import {
 } from "../../../bridge/jsHelpers";
 import { makeLRUCache } from "../../../cache";
 import type {
-  Account,
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,

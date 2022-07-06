@@ -11,7 +11,6 @@ import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const txToOps = (info: any, id: string, txs: any): Operation[] => {
   const { address, currency } = info;

@@ -1,11 +1,8 @@
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { BigNumber } from "bignumber.js";
-
 import { TypeRegistry } from "@polkadot/types";
-
 import { makeLRUCache } from "../../cache";
 import type { CacheRes } from "../../cache";
-import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "./types";
 import {
   isNewAccount as apiIsNewAccount,

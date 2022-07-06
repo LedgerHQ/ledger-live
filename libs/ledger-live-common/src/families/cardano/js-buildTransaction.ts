@@ -6,7 +6,7 @@ import {
   Token,
   Transaction,
 } from "./types";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import {
   Transaction as TyphonTransaction,
   types as TyphonTypes,

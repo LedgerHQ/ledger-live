@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { getTronSuperRepresentatives } from "../../api/Tron";
 import { BigNumber } from "bignumber.js";
 import type { SuperRepresentative, TronAccount, Vote } from "./types";
-import type { Account } from "@ledgerhq/types-live";
 import { useBridgeSync } from "../../bridge/react";
 import { oneTrx } from "./constants";
 

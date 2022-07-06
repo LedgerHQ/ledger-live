@@ -18,7 +18,7 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
-import { Account, CurrencyBridge } from "@ledgerhq/types-live";
+import { CurrencyBridge } from "@ledgerhq/types-live";
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {

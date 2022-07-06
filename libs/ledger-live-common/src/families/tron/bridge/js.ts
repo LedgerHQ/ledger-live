@@ -186,11 +186,12 @@ const signOperation = ({
                 ? fee
                 : new BigNumber(transaction.amount || 0).plus(fee);
 
-            case "claimReward":
+            case "claimReward": {
               const tronAcc = account as TronAccount;
               return tronAcc.tronResources
                 ? tronAcc.tronResources.unwithdrawnReward
                 : new BigNumber(0);
+            }
 
             default:
               return new BigNumber(0);

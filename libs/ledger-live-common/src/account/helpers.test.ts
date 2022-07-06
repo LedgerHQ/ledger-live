@@ -6,7 +6,7 @@ import {
   TronAccount,
   TronResources,
 } from "../families/tron/types";
-import { clearAccount, getVotesCount, isAccountEmpty } from "./helpers";
+import { isAccountEmpty } from "./helpers";
 
 const mockAccount = {} as Account;
 

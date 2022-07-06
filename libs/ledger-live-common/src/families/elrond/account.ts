@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";

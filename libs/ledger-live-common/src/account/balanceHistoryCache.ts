@@ -4,7 +4,8 @@ import type {
   BalanceHistoryDataCache,
   AccountLike,
   Account,
-  SubAccount } from '@ledgerhq/types-live';
+  SubAccount,
+} from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { granularities } from "../portfolio/v2/range";
 export const emptyHistoryCache = {

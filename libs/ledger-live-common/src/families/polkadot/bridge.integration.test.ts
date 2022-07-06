@@ -19,11 +19,7 @@ import {
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
 } from "./errors";
-import type {
-  Account,
-  CurrenciesData,
-  DatasetTest,
-} from "@ledgerhq/types-live";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "./transaction";
 import type { PolkadotAccount, Transaction } from "./types";
 const ACCOUNT_SAME_STASHCONTROLLER =

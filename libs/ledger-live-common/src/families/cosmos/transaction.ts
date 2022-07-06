@@ -1,10 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  Transaction,
-  TransactionRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-} from "./types";
+import type { Transaction, TransactionRaw } from "./types";
 import {
   formatTransactionStatusCommon,
   fromTransactionCommonRaw,

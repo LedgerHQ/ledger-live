@@ -291,21 +291,23 @@ export function patchAccount(
 
   switch (account.currency.id) {
     case "tron":
-      const tronAcc = account as TronAccount;
-      const tronUpdatedRaw = updatedRaw as TronAccountRaw;
-      if (
-        !isSameResources(
-          toTronResourcesRaw(tronAcc.tronResources),
-          tronUpdatedRaw.tronResources
-        )
-      ) {
-        (next as TronAccount).tronResources = fromTronResourcesRaw(
-          tronUpdatedRaw.tronResources
-        );
-        changed = true;
+      {
+        const tronAcc = account as TronAccount;
+        const tronUpdatedRaw = updatedRaw as TronAccountRaw;
+        if (
+          !isSameResources(
+            toTronResourcesRaw(tronAcc.tronResources),
+            tronUpdatedRaw.tronResources
+          )
+        ) {
+          (next as TronAccount).tronResources = fromTronResourcesRaw(
+            tronUpdatedRaw.tronResources
+          );
+          changed = true;
+        }
       }
       break;
-    case "cosmos":
+    case "cosmos": {
       const cosmosAcc = account as CosmosAccount;
       const cosmosUpdatedRaw = updatedRaw as CosmosAccountRaw;
       if (
@@ -320,7 +322,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "algorand":
+    }
+    case "algorand": {
       const algorandAcc = account as AlgorandAccount;
       const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
       if (
@@ -335,14 +338,16 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "bitcoin":
+    }
+    case "bitcoin": {
       if (shouldRefreshBitcoinResources(updatedRaw, account)) {
         (next as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(
           (updatedRaw as BitcoinAccountRaw).bitcoinResources
         );
       }
       break;
-    case "polkadot":
+    }
+    case "polkadot": {
       const polkadotAcc = account as PolkadotAccount;
       const polkadotUpdatedRaw = updatedRaw as PolkadotAccountRaw;
       if (
@@ -357,7 +362,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "tezos":
+    }
+    case "tezos": {
       const tezosAcc = account as TezosAccount;
       const tezosUpdatedRaw = updatedRaw as TezosAccountRaw;
       if (
@@ -372,7 +378,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "elrond":
+    }
+    case "elrond": {
       const elrondAcc = account as ElrondAccount;
       const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
       if (
@@ -387,7 +394,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "cardano":
+    }
+    case "cardano": {
       const cardanoAcc = account as CardanoAccount;
       const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
       if (
@@ -402,7 +410,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "crypto_org":
+    }
+    case "crypto_org": {
       const cryptoOrgAcc = account as CryptoOrgAccount;
       const cryptoOrgUpdatedRaw = updatedRaw as CryptoOrgAccountRaw;
       if (
@@ -416,7 +425,8 @@ export function patchAccount(
         changed = true;
       }
       break;
-    case "solana":
+    }
+    case "solana": {
       const solanaAcc = account as SolanaAccount;
       const solanaUpdatedRaw = updatedRaw as SolanaAccountRaw;
 
@@ -432,6 +442,7 @@ export function patchAccount(
         changed = true;
       }
       break;
+    }
   }
 
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);

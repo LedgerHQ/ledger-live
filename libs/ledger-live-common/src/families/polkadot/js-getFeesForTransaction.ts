@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "./types";
 import { getPaymentInfo } from "./cache";
 import { calculateAmount } from "./logic";

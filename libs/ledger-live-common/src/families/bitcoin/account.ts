@@ -2,7 +2,6 @@ import type { BitcoinOutput, BitcoinInput, BitcoinAccount } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
 import { perCoinLogic } from "./logic";
-import { Account } from "@ledgerhq/types-live";
 
 const sortUTXO = (a, b) => b.value.minus(a.value).toNumber();
 

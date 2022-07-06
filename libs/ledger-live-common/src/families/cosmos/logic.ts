@@ -16,8 +16,7 @@ import type {
 } from "./types";
 import type { Transaction } from "../../types";
 import { calculateFees } from "./js-prepareTransaction";
-import { Unit } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 export const COSMOS_MAX_REDELEGATIONS = 7;
 export const COSMOS_MAX_UNBONDINGS = 7;

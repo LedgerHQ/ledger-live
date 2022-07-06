@@ -3,8 +3,6 @@ import type {
   AlgorandAccount,
   AlgorandTransaction,
   AlgorandTransactionRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
 } from "./types";
 import {
   formatTransactionStatusCommon,

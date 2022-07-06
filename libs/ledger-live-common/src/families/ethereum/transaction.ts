@@ -6,7 +6,6 @@ import type {
   TransactionRaw,
   EthereumGasLimitRequest,
   TransactionStatus,
-  TransactionStatusRaw,
 } from "./types";
 import Common from "@ethereumjs/common";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
