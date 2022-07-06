@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
@@ -6,26 +7,23 @@ import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { track, identify } from "../../../analytics";
+import { track, updateIdentify } from "../../../analytics";
 import { useCurrentRouteName } from "../../../helpers/routeHooks";
-import getOrCreateUser from "../../../user";
+import { setFirstConnectionHasDevice } from "../../../actions/settings";
 
 const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
 
-type UserProperties = { [key: string]: any };
-
-async function identifyUser(properties: UserProperties) {
-  const { user } = await getOrCreateUser();
-  identify(user.id, properties);
-}
-
 function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  // TODO analytics : if device detected : track("Has at least 1 device", true);
+  const identifyUser = useCallback((hasDevice: boolean) => {
+    dispatch(setFirstConnectionHasDevice(hasDevice));
+    updateIdentify();
+  }, []);
 
   const nextHaveALedger = useCallback(() => {
-    identifyUser({ First_connection_has_device: true });
+    identifyUser(true);
 
     track("button_clicked", {
       button: "Yes",
@@ -45,7 +43,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const currentRoute = useCurrentRouteName();
 
   const nextDontHaveALedger = useCallback(() => {
-    identifyUser({ First_connection_has_device: false });
+    identifyUser(false);
 
     track("button_clicked", {
       First_connection_has_device: false,

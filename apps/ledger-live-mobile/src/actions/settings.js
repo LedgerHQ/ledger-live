@@ -247,6 +247,11 @@ export const setSensitiveAnalytics = (enabled: boolean) => ({
   enabled,
 });
 
+export const setFirstConnectionHasDevice = (payload: boolean) => ({
+  type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
+});
+
 type PortfolioRangeOption = {
   key: PortfolioRange,
   value: string,

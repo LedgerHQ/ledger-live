@@ -102,7 +102,6 @@ export default function BuyDeviceBanner({
     track("message_clicked", {
       message: "I already have a device, set it up",
       screen: currentRoute,
-      // TODO analytics : link: "",
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();

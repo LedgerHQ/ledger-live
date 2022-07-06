@@ -28,6 +28,7 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
+  firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -61,6 +62,7 @@ const extraProperties = store => {
         modelId: lastDevice.modelId,
       }
     : {};
+  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
 
   return {
     appVersion,
@@ -74,6 +76,7 @@ const extraProperties = store => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
+    firstConnectionHasDevice,
     ...deviceInfo,
     ...(satisfaction && { satisfaction }),
   };
