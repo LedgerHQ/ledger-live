@@ -25,10 +25,11 @@ type Props = {
   onClose: () => void;
   onFinish: () => void;
   dismissable?: boolean;
+  dataTestId: string;
 };
 
 const ModalStepper = (props: Props) => {
-  const { title, steps, onClose, onFinish, isOpen, dismissable = true } = props;
+  const { title, steps, onClose, onFinish, isOpen, dismissable = true, dataTestId } = props;
   const { t } = useTranslation();
   const [stepIndex, setStepIndex] = useState(0);
   const stepCount = steps.length;
@@ -58,6 +59,7 @@ const ModalStepper = (props: Props) => {
   return (
     <Popin isOpen={isOpen} onClose={onClose} style={style} p={0} position="relative">
       <ModalStepperBody
+        dataTestId={dataTestId}
         AsideLeft={step.AsideLeft}
         AsideRight={step.AsideRight}
         backDisabled={step.backDisabled}
