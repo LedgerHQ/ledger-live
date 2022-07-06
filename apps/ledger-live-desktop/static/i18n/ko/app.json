@@ -3105,6 +3105,7 @@
         "link" : "복구 문구에 대해 자세히 알아보기",
         "title2" : "Nano 접근 권한을 잃어버리면 어떻게 되나요?",
         "paragraph3" : "걱정하지 말고 다음 단계를 따르세요",
+        "paragraph4" : "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
         "points" : {
           "1" : "새 하드웨어 지갑을 구합니다.",
           "2" : "Ledger 앱에서 \"새 장치에서 복구 문구 복원하기\"를 선택합니다.",
@@ -3196,7 +3197,7 @@
             "paragraph1" : "복구 문구로 Nano를 복원하고, Ledger 하드웨어 지갑을 교체하거나 백업해 주세요.",
             "paragraph2" : "Nano가 귀하의 개인 키를 복원하여, 다시 암호화폐 접근과 관리가 가능해집니다.",
             "buttons" : {
-              "next" : "네, 준비되었습니다!",
+              "next" : "OK, I'm ready!",
               "prev" : "이전 단계",
               "help" : "도움 요청"
             }
@@ -3209,8 +3210,12 @@
               "3" : "혼자 있을 수 있는 안전하고 조용한 환경을 선택하세요."
             },
             "buttons" : {
-              "next" : "네, 준비되었습니다!",
+              "next" : "OK, I'm ready!",
               "prev" : "이전 단계"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo" : {
@@ -3234,9 +3239,14 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "deviceHowTo2" : {
+            "title" : "The best way to get you started:",
             "turnOn" : {
               "title" : "Nano 켜기",
               "descr" : "USB 케이블로 컴퓨터에 장치를 연결하세요."
@@ -3257,6 +3267,10 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCode" : {
@@ -3267,6 +3281,10 @@
               "next" : "PIN 코드 설정",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "quizSuccess" : {
@@ -3280,10 +3298,14 @@
           },
           "quizFailure" : {
             "title" : "금방 전문가처럼 사용하게 될 거예요...",
-            "paragraph" : "걱정 마세요, Ledger가 언제나 함께합니다. 암호화폐의 안전에 대해서라면, 곧 안심하게 될 거예요.\n\n이제 간단한 단계 하나만 남았네요!",
+            "paragraph" : "Don't worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety.\n\nOnly one quick step left!",
             "buttons" : {
               "next" : "다음 단계",
               "prev" : "이전 단계"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pinCodeHowTo" : {
@@ -3299,6 +3321,10 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "existingRecoveryPhrase" : {
@@ -3313,7 +3339,7 @@
             },
             "warning" : {
               "title" : "본인이 생성하지 않은 복구 문구를 사용하지 마세요.",
-              "desc" : "Ledger 하드웨어 지갑의 Pin 코드와 복구 문구는 본인이 직접 초기화해야 합니다. 기존 시드 단어가 있는 장치나 이미 초기화된 Pin 코드가 존재하는 장치를 수령한 경우, 제품을 사용하지 말고 고객 지원 부서로 문의 주시기 바랍니다.",
+              "desc" : "Your Ledger hardware wallet's pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
               "supportLink" : "고객 지원 문의"
             }
           },
@@ -3330,6 +3356,10 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "newRecoveryPhrase" : {
@@ -3341,6 +3371,10 @@
               "next" : "복구 문구",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo" : {
@@ -3366,6 +3400,10 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "recoveryHowTo3" : {
@@ -3380,6 +3418,10 @@
               "next" : "다음 단계",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "genuineCheck" : {
@@ -3403,6 +3445,10 @@
               "prev" : "이전 단계",
               "help" : "도움 요청",
               "learn" : "숨겨두는 방법 알아보기"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           },
           "pairMyNano" : {
@@ -3412,6 +3458,10 @@
               "next" : "내 Nano 확인하기",
               "prev" : "이전 단계",
               "help" : "도움 요청"
+            },
+            "help" : {
+              "help" : "Need help",
+              "descr" : "Don't know what you have to do? Get some help to close this step."
             }
           }
         }
@@ -3437,9 +3487,9 @@
           "description" : "Ledger Live로 암호화폐를 안전하게 구매, 판매, 교환, 취득할 수 있습니다. Nano로 모든 암호화폐 트랜잭션을 검증하세요."
         },
         "setUpNanoWallet" : {
-          "title" : "귀하의 Nano 설정을 시작합시다!",
+          "title" : "Let's set up your Nano!",
           "description" : "Nano 보안 설정부터 시작하겠습니다.",
-          "CTA" : "시작해 봅시다!"
+          "CTA" : "Let's do this!"
         }
       }
     },
@@ -3696,7 +3746,9 @@
     "termsLabel" : "이용 약관",
     "privacyLabel" : "개인 정보 보호 정책",
     "switchLabel" : "이용 약관과 개인 정보 보호 정책을 읽었으며 이에 동의합니다",
-    "cta" : "Ledger 앱 입력"
+    "cta" : "Ledger 앱 입력",
+    "termsCheckboxLabel" : "I have read and agree with the Terms of use",
+    "privacyCheckboxLabel" : "I have read and accepted the Privacy Policy"
   },
   "updatedTerms" : {
     "title" : "이용약관 업데이트",
@@ -3707,6 +3759,156 @@
     },
     "link" : "이용 약관",
     "cta" : "계속"
+  },
+  "v3" : {
+    "onboarding" : {
+      "screens" : {
+        "welcome" : {
+          "title" : "Welcome to Ledger Live",
+          "description" : "Safely manage your crypto from your computer.",
+          "nextButton" : "Get started",
+          "noDevice" : "No device?",
+          "buyLink" : "No device? Buy a Ledger Nano X",
+          "byTapping" : "By tapping \"Get Started\" you consent and agree to our",
+          "termsAndConditions" : "Terms and conditions",
+          "and" : "and",
+          "privacyPolicy" : "Privacy Policy",
+          "steps" : {
+            "0" : {
+              "title" : "Access your crypto",
+              "desc" : "Your crypto assets are stored on the blockchain. Use your private key to access and manage them"
+            },
+            "1" : {
+              "title" : "Own your private key",
+              "desc" : "Your private key is stored within your Nano You must be the only one to own it to be in control of your money"
+            },
+            "2" : {
+              "title" : "Stay offline",
+              "desc" : "Your Nano works as a \"cold storage\" wallet This means that it never exposes your private key online, even when using the app"
+            },
+            "3" : {
+              "title" : "Validate transactions",
+              "desc" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected You will validate every crypto transaction with your Nano"
+            },
+            "4" : {
+              "title" : "Let's set up your nano",
+              "desc" : "We'll start by setting up your nano"
+            }
+          }
+        },
+        "selectDevice" : {
+          "title" : "Select your device",
+          "selectLabel" : "Select"
+        },
+        "selectUseCase" : {
+          "hasNoRecovery" : "First time using your {{deviceName}}?",
+          "hasRecovery" : "Already have a recovery phrase?",
+          "options" : {
+            "1" : {
+              "title" : "Setup a new {{deviceName}}",
+              "description" : "Let's start and set up your device"
+            },
+            "2" : {
+              "title" : "Connect your {{deviceName}}",
+              "description" : "is your device already set up? Connect it to the app!"
+            },
+            "3" : {
+              "title" : "Restore your recovery phrase on a new device",
+              "description" : "Use an existing recovery phrase to restore your private keys on a new Nano!"
+            }
+          }
+        }
+      },
+      "pedagogy" : {
+        "heading" : "Basics",
+        "screens" : {
+          "accessYourCoins" : {
+            "title" : "Access your crypto",
+            "description" : "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
+          },
+          "ownYourPrivateKey" : {
+            "title" : "Own your private key",
+            "description" : "Your private key is stored within your Nano. You must be the only one to own it to be in control of your money."
+          },
+          "stayOffline" : {
+            "title" : "Stay offline",
+            "description" : "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
+          },
+          "validateTransactions" : {
+            "title" : "Validate transactions",
+            "description" : "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
+          },
+          "setUpNanoWallet" : {
+            "title" : "Let's set up your Nano!",
+            "description" : "We'll start by setting up your Nano security.",
+            "CTA" : "Let's do this!"
+          }
+        }
+      },
+      "quizz" : {
+        "heading" : "Quiz",
+        "title" : "Now game on!",
+        "descr" : "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
+        "buttons" : {
+          "start" : "Let's take the quiz",
+          "next" : "Next question",
+          "finish" : "Finish quiz"
+        },
+        "questions" : {
+          "1" : {
+            "text" : "As a Ledger user, my crypto is stored:",
+            "answers" : {
+              "1" : "On my Nano",
+              "2" : "On the blockchain"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto."
+              }
+            }
+          },
+          "2" : {
+            "text" : "If my recovery phrase is no longer secure or private...",
+            "answers" : {
+              "1" : "No problem, Ledger can send me a copy",
+              "2" : "My crypto is no longer safe and I need to transfer them to a secure place"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place."
+              }
+            }
+          },
+          "3" : {
+            "text" : "When I connect my Nano to the Ledger app, my private key is...",
+            "answers" : {
+              "1" : "Still offline",
+              "2" : "Briefly connected to the internet"
+            },
+            "results" : {
+              "success" : {
+                "title" : "Congrats!",
+                "text" : "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              },
+              "fail" : {
+                "title" : "Incorrect!",
+                "text" : "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device."
+              }
+            }
+          }
+        }
+      }
+    }
   },
   "families" : {
     "cardano" : {
@@ -4342,7 +4544,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "이전 트랜잭션이 아직 처리되지 않았습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "SolanaTxConfirmationTimeout" : {
