@@ -4,7 +4,7 @@ on:
     branches:
       - feat/bitcoin-js-*
       - support/bitcoin-js-*
-      - bigfix/bitcoin-js-*
+      - bugfix/bitcoin-js-*
 
 
 concurrency:
