@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.1.0-next.1
+
+### Patch Changes
+
+- [#408](https://github.com/LedgerHQ/ledger-live/pull/408) [`4c02cf2e0`](https://github.com/LedgerHQ/ledger-live/commit/4c02cf2e0c393ad8d9cc5339e7b63eefb297e2cb) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix reorg causing a failed incremental sync if latest stable operaton block hash doesn't exist on chain
+
 ## 24.1.0-next.0
 
 ### Minor Changes
