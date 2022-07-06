@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.4
+
+### Patch Changes
+
+- [#562](https://github.com/LedgerHQ/ledger-live/pull/562) [`41aa44fde`](https://github.com/LedgerHQ/ledger-live/commit/41aa44fde2ca4e0d127f82e622c4cdb3e96cfa90) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Empty analytics overlay when activating it
+
 ## 3.5.0-next.3
 
 ### Patch Changes
