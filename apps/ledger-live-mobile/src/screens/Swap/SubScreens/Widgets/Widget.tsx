@@ -33,14 +33,15 @@ export function Widget({ provider, type }: Props) {
           token,
         });
         window.ledger.postMessage(message);
-      }
+      };
       
       window.ledger.closeWidget = () => {
         const message = JSON.stringify({
           type: "closeWidget",
         });
         window.ledger.postMessage(message);
-k       }
+      };
+
       localStorage.setItem("authToken", "${authToken}");
       localStorage.setItem("theme", "${dark ? "dark" : "light"}");
   
@@ -72,7 +73,6 @@ k       }
             break;
         }
       } catch (e) {
-        // TODO: tracking
         console.error(e);
       }
     },
@@ -81,9 +81,11 @@ k       }
 
   return (
     <WebView
-      source={{ uri }}
+      source={{
+        // html: `<button onclick="window.ledger.setToken('fake-token')">click</button>`,
+        uri,
+      }}
       injectedJavaScriptBeforeContentLoaded={preload}
-      injectJavaScript={"alert('hi'); true;"}
       onMessage={handleMessage}
       onError={console.error}
     />
