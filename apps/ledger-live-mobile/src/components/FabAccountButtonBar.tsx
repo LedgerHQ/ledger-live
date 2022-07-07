@@ -17,7 +17,6 @@ import InfoModal from "./InfoModal";
 import Button from "./wrappedUi/Button";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import { track } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 
 type ActionButtonEventProps = {
   navigationParams?: any[];
@@ -84,7 +83,6 @@ function FabAccountButtonBar({
     [account, parentAccount, navigation],
   );
 
-  const currentRoute = useCurrentRouteName();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const onPress = useCallback(
@@ -92,7 +90,7 @@ function FabAccountButtonBar({
       const { navigationParams, confirmModalProps, linkUrl } = data;
 
       if (readOnlyModeEnabled) {
-        track("button_clicked", { button: "Buy", screen: currentRoute });
+        track("button_clicked", { button: "Buy/Sell", screen: "Market Coin" });
       }
 
       if (!confirmModalProps) {
@@ -107,7 +105,7 @@ function FabAccountButtonBar({
         setIsModalInfoOpened(true);
       }
     },
-    [onNavigate, setIsModalInfoOpened, readOnlyModeEnabled, currentRoute],
+    [onNavigate, setIsModalInfoOpened, readOnlyModeEnabled],
   );
 
   const onContinue = useCallback(() => {

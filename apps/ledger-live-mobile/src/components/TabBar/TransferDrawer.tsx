@@ -22,6 +22,7 @@ import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
 import { useAnalytics } from "../../analytics";
 import { urls } from "../../config/urls";
+import { useCurrentRouteName } from "../../helpers/routeHooks";
 
 export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -37,10 +38,12 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
     accounts,
   ]);
+  const currentRoute = useCurrentRouteName();
 
   const onNavigate = useCallback(
     (name: string, options?: { [key: string]: any }) => {
       navigation.navigate(name, options);
+      track("button_clicked", { button: "Close", screen: "Congratulations" });
 
       if (onClose) {
         onClose();
