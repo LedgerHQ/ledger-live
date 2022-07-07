@@ -3,13 +3,11 @@
 import React, { useCallback, memo } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { AccountList } from "./AccountList";
-import { setDrawer } from "../Provider";
 
 const AccountSelectorDrawerContainer = styled.div`
   display: flex;

@@ -3,7 +3,10 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { Currency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  Currency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";

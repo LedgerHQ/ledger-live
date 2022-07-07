@@ -3,12 +3,16 @@
 import React, { useMemo, useCallback } from "react";
 import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { useSelector, useDispatch } from "react-redux";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types/currencies";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";

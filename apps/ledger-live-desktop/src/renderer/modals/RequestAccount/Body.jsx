@@ -9,7 +9,7 @@ import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurr
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { closeModal } from "~/renderer/actions/modals";
 import { ModalBody } from "~/renderer/components/Modal";
-import { makeRe } from "@ledgerhq/live-common/lib/platform/filters";
+import { makeRe } from "@ledgerhq/live-common/platform/filters";
 
 type Props = {|
   onClose: () => void,

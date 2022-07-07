@@ -1,23 +1,24 @@
 // @flow
 
-import React, { useMemo, useState, memo } from "react";
+import React, { useMemo, useState, memo, useCallback } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { SearchInput } from "@ledgerhq/react-ui";
+import type { Account, AccountLike, Currency } from "@ledgerhq/live-common/types/index";
+import { setDrawer } from "../Provider";
 
 import Fuse from "fuse.js";
-
-import { Currency } from "@ledgerhq/live-common/lib/types";
 
 import {
   listSupportedCurrencies,
   listTokens,
   useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/lib/currencies";
-import { makeRe } from "@ledgerhq/live-common/lib/platform/filters";
+} from "@ledgerhq/live-common/currencies/index";
+import { makeRe } from "@ledgerhq/live-common/platform/filters";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { CurrencyList } from "./CurrencyList";
+import SelectAccountDrawer from "./SelectAccountDrawer";
 
 const options = {
   includeScore: false,
@@ -62,9 +63,10 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
 `;
 
 type SelectCurrencyDrawerProps = {
+  onClose: () => void,
   currencies?: string[],
   includeTokens?: boolean,
-  onCurrencySelected: (currency: Currency) => void,
+  onAccountSelected: (account: AccountLike, parentAccount?: Account) => void,
 };
 
 const SearchInputContainer = styled.div`
@@ -72,11 +74,9 @@ const SearchInputContainer = styled.div`
   flex: 0 1 auto;
 `;
 
-const SelectCurrencyDrawer = ({
-  currencies,
-  includeTokens,
-  onCurrencySelected,
-}: SelectCurrencyDrawerProps) => {
+const SelectCurrencyDrawer = (props: SelectCurrencyDrawerProps) => {
+  const { currencies, includeTokens, onAccountSelected, onClose } = props;
+
   const { t } = useTranslation();
 
   const cryptoCurrencies = useMemo(() => {
@@ -113,6 +113,38 @@ const SelectCurrencyDrawer = ({
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
 
+  const handleCurrencySelected = useCallback(
+    currency => {
+      setDrawer(
+        SelectAccountDrawer,
+        {
+          currency,
+          onAccountSelected,
+          onRequestBack: () =>
+            setDrawer(SelectCurrencyDrawer, props, {
+              onRequestClose: () => {
+                console.log("REQUEST CLOSE");
+                onClose();
+              },
+            }),
+        },
+        {
+          onRequestClose: () => {
+            console.log("REQUEST CLOSE");
+            onClose();
+          },
+        },
+      );
+    },
+    [onAccountSelected, props, onClose],
+  );
+
+  if (cryptoCurrencies.length === 1) {
+    return (
+      <SelectAccountDrawer currency={cryptoCurrencies[0]} onAccountSelected={onAccountSelected} />
+    );
+  }
+
   return (
     <SelectCurrencyDrawerContainer>
       <HeaderContainer>
@@ -129,7 +161,7 @@ const SelectCurrencyDrawer = ({
         <SearchInputContainer>
           <SearchInput value={searchValue} onChange={setSearchValue} />
         </SearchInputContainer>
-        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={onCurrencySelected} />
+        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
       </SelectorContent>
     </SelectCurrencyDrawerContainer>
   );
