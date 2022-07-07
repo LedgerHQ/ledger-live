@@ -35,13 +35,14 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TopBar from "./TopBar";
 import * as tracking from "./tracking";
 import type { TopBarConfig } from "./type";
 import { handleMessageEvent, handleNewWindowEvent } from "./utils";
 import logger from "~/logger";
-import prepareMessageToSign from "@ledgerhq/live-common/families/ethereum/signMessage";
+import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
