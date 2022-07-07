@@ -5,12 +5,11 @@ import { Alert, BottomDrawer, Button, Text, Switch } from "@ledgerhq/native-ui";
 import { GraphGrowAltMedium } from "@ledgerhq/native-ui/assets/icons";
 import { View } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
-import { setAnalytics, setHasOrderedNano } from "../../../actions/settings";
 import {
-  hasOrderedNanoSelector,
+  setHasOrderedNano,
   setSensitiveAnalytics,
-} from "../../../reducers/settings";
-import Track from "../../../analytics/Track";
+} from "../../../actions/settings";
+import { hasOrderedNanoSelector } from "../../../reducers/settings";
 import { useReboot } from "../../../context/Reboot";
 
 const HasOrderedNanoRow = () => {
@@ -22,7 +21,9 @@ const HasOrderedNanoRow = () => {
     (enabled: boolean) => {
       dispatch(setHasOrderedNano(enabled));
 
-      if (enabled) dispatch(setSensitiveAnalytics(true));
+      if (enabled) {
+        dispatch(setSensitiveAnalytics(true));
+      }
     },
     [dispatch],
   );
