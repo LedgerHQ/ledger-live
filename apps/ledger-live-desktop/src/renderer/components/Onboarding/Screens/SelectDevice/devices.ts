@@ -6,7 +6,7 @@ const devices = {
     productName: "Nano X",
   },
   nanoSP: {
-    productName: "Nano S 2",
+    productName: "Nano S Plus",
   },
 };
 
