@@ -2,7 +2,7 @@
 
 import React from "react";
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
-import type { AccountLike } from "@ledgerhq/live-common/types/account";
+import type { AccountLike } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";

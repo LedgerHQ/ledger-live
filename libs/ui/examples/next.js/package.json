@@ -20,5 +20,12 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.13.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "@ledgerhq/react-ui": "../../packages/react/lib",
+      "@ledgerhq/react-ui>@ledgerhq/ui-shared": "../../packages/shared",
+      "@ledgerhq/react-ui>@ledgerhq/icons-ui": "../../packages/icons"
+    }
   }
 }

@@ -3,7 +3,7 @@ import React, { memo, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { ListAppsResult, Exec, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import {
   predictOptimisticState,

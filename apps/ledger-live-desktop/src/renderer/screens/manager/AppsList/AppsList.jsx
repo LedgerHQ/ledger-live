@@ -8,7 +8,7 @@ import { Trans } from "react-i18next";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import type { TFunction } from "react-i18next";
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { State, Action, AppsDistribution } from "@ledgerhq/live-common/apps/types";
 import { currenciesSelector } from "~/renderer/reducers/accounts";
 import UpdateAllApps from "./UpdateAllApps";

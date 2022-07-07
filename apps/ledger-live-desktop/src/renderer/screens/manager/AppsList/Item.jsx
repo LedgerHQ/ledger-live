@@ -2,7 +2,7 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import type { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 
 import styled from "styled-components";

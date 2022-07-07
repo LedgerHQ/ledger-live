@@ -137,6 +137,7 @@ importers:
       '@ledgerhq/live-common': workspace:^
       '@ledgerhq/logs': workspace:^
       '@ledgerhq/react-ui': workspace:^
+      '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-live': workspace:^
       '@mapbox/node-pre-gyp': ^1.0.8
       '@octokit/rest': ^18.12.0
@@ -301,6 +302,7 @@ importers:
       '@ledgerhq/live-common': link:../../libs/ledger-live-common
       '@ledgerhq/logs': link:../../libs/ledgerjs/packages/logs
       '@ledgerhq/react-ui': link:../../libs/ui/packages/react
+      '@ledgerhq/types-cryptoassets': link:../../libs/ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live': link:../../libs/ledgerjs/packages/types-live
       '@polkadot/react-identicon': 0.89.2_fane7jikarojcev26y27hpbhu4
       '@sentry/electron': 3.0.7

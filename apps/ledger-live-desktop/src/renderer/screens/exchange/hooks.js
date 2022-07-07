@@ -3,8 +3,8 @@ import { useCallback, useMemo } from "react";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
-import type { AccountLike } from "@ledgerhq/live-common/types/account";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";

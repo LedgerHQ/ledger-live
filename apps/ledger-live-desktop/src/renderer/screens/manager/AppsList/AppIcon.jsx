@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import styled, { withTheme } from "styled-components";
 import manager from "@ledgerhq/live-common/manager/index";
 import { findCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import type { App } from "@ledgerhq/live-common/types/manager";
+import type { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";

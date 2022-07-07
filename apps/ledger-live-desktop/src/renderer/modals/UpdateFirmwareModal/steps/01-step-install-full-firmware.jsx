@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
-import type { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

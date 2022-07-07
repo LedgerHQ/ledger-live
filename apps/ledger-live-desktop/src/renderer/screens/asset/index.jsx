@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router";
-import type { Account } from "@ledgerhq/live-common/types/account";
+import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";

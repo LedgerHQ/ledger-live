@@ -7,7 +7,7 @@ import { Transition, TransitionGroup } from "react-transition-group";
 
 import manager from "@ledgerhq/live-common/manager/index";
 
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import type { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import type { DeviceModel } from "@ledgerhq/devices";

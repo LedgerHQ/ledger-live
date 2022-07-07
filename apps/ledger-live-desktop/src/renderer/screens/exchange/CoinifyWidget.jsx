@@ -8,7 +8,7 @@ import querystring from "querystring";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useTranslation } from "react-i18next";
 import Reset from "~/renderer/icons/Reset";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
