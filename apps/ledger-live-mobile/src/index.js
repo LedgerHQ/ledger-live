@@ -388,7 +388,10 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
   const removeLiveAppState = useRemoteLiveAppContext();
-  const filteredManifests = useFilteredManifests();
+  const filteredManifests = useFilteredManifests({
+    private: true,
+    branches: undefined, // will override & having it to undefined makes all branches valid
+  });
 
   const linking = useMemo(
     () => ({
