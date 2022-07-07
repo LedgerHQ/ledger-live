@@ -1,22 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import {
-  BoxedIcon,
-  Flex,
-  Icon,
-  Icons,
-  InfiniteLoader,
-  Text,
-} from "@ledgerhq/native-ui";
-import {
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import {
-  SwapSelectorStateType,
-  Pair,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { getAccountName } from "@ledgerhq/live-common/lib/account";
+import { SwapSelectorStateType } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { usePickDefaultCurrency } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
@@ -60,7 +47,9 @@ export function To({
   const CIcon = currency ? (
     <CurrencyIcon size={32} currency={currency} />
   ) : (
-    <BoxedIcon Icon={<InfiniteLoader size={32} />} borderColor="transparent" />
+    <Flex width={32} height={32} justifyContent="center">
+      <InfiniteLoader size={24} />
+    </Flex>
   );
 
   return (
