@@ -37,7 +37,7 @@ import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 
 import * as tracking from "./tracking";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
-// import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 
 type WebPlatformContext = {
   manifest: AppManifest;
@@ -335,7 +335,7 @@ export const signMessageCallback = ({ dispatch, accounts }: WebPlatformContext, 
 
   let formattedMessage: MessageData | null;
   try {
-    // formattedMessage = prepareMessageToSign(account, message);
+    formattedMessage = prepareMessageToSign(account, message);
   } catch (error) {
     return Promise.reject(error);
   }
