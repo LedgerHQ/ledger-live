@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
