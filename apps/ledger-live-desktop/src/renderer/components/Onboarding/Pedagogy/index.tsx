@@ -25,16 +25,19 @@ export function Pedagogy({ isOpen, onDone, onClose }: PedagogyProps) {
       title={t("v3.onboarding.pedagogy.heading")}
       steps={[
         {
+          bgColor: "palette.constant.purple",
           title: t("v3.onboarding.pedagogy.screens.accessYourCoins.title"),
           description: t("v3.onboarding.pedagogy.screens.accessYourCoins.description"),
           AsideRight: <Illustration size={280} lightSource={bitcoinBox} darkSource={bitcoinBox} />,
         },
         {
+          bgColor: "palette.constant.purple",
           title: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.title"),
           description: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.description"),
           AsideRight: <Illustration size={280} lightSource={keyInABall} darkSource={keyInABall} />,
         },
         {
+          bgColor: "palette.constant.purple",
           title: t("v3.onboarding.pedagogy.screens.stayOffline.title"),
           description: t("v3.onboarding.pedagogy.screens.stayOffline.description"),
           AsideRight: (
@@ -42,6 +45,7 @@ export function Pedagogy({ isOpen, onDone, onClose }: PedagogyProps) {
           ),
         },
         {
+          bgColor: "palette.constant.purple",
           title: t("v3.onboarding.pedagogy.screens.validateTransactions.title"),
           description: t("v3.onboarding.pedagogy.screens.validateTransactions.description"),
           AsideRight: (
@@ -49,6 +53,7 @@ export function Pedagogy({ isOpen, onDone, onClose }: PedagogyProps) {
           ),
         },
         {
+          bgColor: "palette.constant.purple",
           title: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.title"),
           description: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.description"),
           AsideRight: <Illustration size={280} lightSource={lnAndGlass} darkSource={lnAndGlass} />,

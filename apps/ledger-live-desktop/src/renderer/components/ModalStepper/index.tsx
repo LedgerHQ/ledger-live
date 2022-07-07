@@ -55,7 +55,6 @@ const ModalStepper = (props: Props) => {
 
   const [width, height] = [816, 486];
   const style = { "max-width": width, width: width, height: height };
-
   return (
     <Popin isOpen={isOpen} onClose={onClose} style={style} p={0} position="relative">
       <ModalStepperBody
