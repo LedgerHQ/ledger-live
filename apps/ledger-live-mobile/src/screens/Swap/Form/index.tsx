@@ -35,6 +35,7 @@ import { Summary } from "./Summary";
 import { Requirement } from "./Requirement";
 import { trackSwapError, SWAP_VERSION } from "../utils";
 import { SwapFormProps } from "../types";
+import { Max } from "./Max";
 
 export const ratesExpirationThreshold = 60000;
 
@@ -354,6 +355,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           </Flex>
 
           <Flex paddingY={4}>
+            <Max swapTx={swapTx} />
+
             <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
               {t("common.exchange")}
             </Button>

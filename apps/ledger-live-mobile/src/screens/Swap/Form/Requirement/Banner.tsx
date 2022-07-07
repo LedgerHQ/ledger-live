@@ -26,7 +26,6 @@ export function Banner({ provider, required }: Props) {
       justifyContent="space-between"
       padding={4}
       marginY={4}
-      border={1}
       borderRadius={4}
       backgroundColor="primary.c10"
     >

@@ -2401,6 +2401,10 @@
           "title": "Swap is not available yet in your area",
           "content": "Have a little more patience, we will launch this feature very soon"
         },
+        "amount": {
+          "useMax": "Use max",
+          "available": "Total available"
+        },
         "details": {
           "label": {
             "provider": "Provider",
