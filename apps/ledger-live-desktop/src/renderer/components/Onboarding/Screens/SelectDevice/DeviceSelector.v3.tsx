@@ -20,7 +20,7 @@ const devices = [
   },
   {
     id: "nanoSP",
-    enabled: false,
+    enabled: true,
   },
   {
     id: "nanoX",
