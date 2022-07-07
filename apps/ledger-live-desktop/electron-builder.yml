@@ -59,6 +59,7 @@ includeSubNodeModules: true
 files:
   # Include files
   - .webpack/**/*
+  - "!.webpack/**/*.js.map"
   - from: "dist/node_modules"
     to: "node_modules"
     filter:

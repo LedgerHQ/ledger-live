@@ -74,9 +74,11 @@ pnpm dev:lld
 
 # build all the required dependencies
 pnpm build:lld:deps
+# then use alias to trigger the `dist` script in ledger-live-desktop project 
+pnpm desktop build 
 
-# alias to trigger the `dist` script in ledger-live-desktop project 
-pnpm desktop dist 
+# or you can use the top level script (pnpm build:lld:deps not required in this case)
+pnpm build:lld
 ```
 
 ## Debug
@@ -154,7 +156,7 @@ pnpm desktop test
 ### Run code quality checks
 
 ```bash
-pnpm desktop codecheck
+pnpm desktop test:codecheck
 ```
 
 ## File structure

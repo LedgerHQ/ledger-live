@@ -1,7 +1,8 @@
 // @flow
 
 import React, { useEffect } from "react";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import type { StackScreenProps } from "@react-navigation/stack";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -11,8 +12,9 @@ const PlatformApp = ({ route }: StackScreenProps) => {
   const { dark } = useTheme();
   const { platform: appId, ...params } = route.params;
   const { setParams } = useNavigation();
-  const { manifests } = usePlatformApp();
-  const manifest = manifests.get(appId);
+  const localManifest = useLocalLiveAppManifest(appId);
+  const remoteManifest = useRemoteLiveAppManifest(appId);
+  const manifest = localManifest || remoteManifest;
   useEffect(() => {
     manifest?.name && setParams({ name: manifest.name });
   }, [manifest, setParams]);

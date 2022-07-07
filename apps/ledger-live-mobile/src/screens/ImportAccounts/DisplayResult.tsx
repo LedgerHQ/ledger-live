@@ -7,10 +7,10 @@ import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { Account } from "@ledgerhq/live-common/lib/types";
-import { Result } from "@ledgerhq/live-common/lib/cross";
-import { ImportItem } from "@ledgerhq/live-common/lib/account";
-import { importAccountsMakeItems } from "@ledgerhq/live-common/lib/account";
+import { Account } from "@ledgerhq/live-common/types/index";
+import { Result } from "@ledgerhq/live-common/cross";
+import { ImportItem } from "@ledgerhq/live-common/account/index";
+import { importAccountsMakeItems } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
 import { compose } from "redux";

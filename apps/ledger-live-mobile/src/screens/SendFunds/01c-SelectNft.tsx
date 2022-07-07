@@ -3,11 +3,11 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import {
   useNftMetadata,
   getNftCapabilities,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { BigNumber } from "bignumber.js";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   View,
   StyleSheet,
@@ -17,7 +17,7 @@ import {
   Platform,
 } from "react-native";
 import LoadingFooter from "../../components/LoadingFooter";
-import NftImage from "../../components/Nft/NftImage";
+import NftMedia from "../../components/Nft/NftMedia";
 import Skeleton from "../../components/Skeleton";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
@@ -58,10 +58,11 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
   return (
     <TouchableOpacity style={styles.nftRow} onPress={goToRecipientSelection}>
       <View style={styles.nftImageContainer}>
-        <NftImage
+        <NftMedia
           style={styles.nftImage}
-          src={metadata?.media}
+          metadata={metadata}
           status={status}
+          mediaFormat={"preview"}
         />
       </View>
       <View style={styles.nftNameContainer}>

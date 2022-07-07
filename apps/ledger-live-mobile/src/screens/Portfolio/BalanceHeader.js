@@ -3,8 +3,8 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

@@ -14,6 +14,8 @@ const illustrations = {
     market: require("../../images/illustration/Dark/_Market.png"),
     buy: require("../../images/illustration/Dark/_048.png"),
     lido: require("../../images/illustration/Dark/_Lido.png"),
+    discoverWeb3: require("../../images/illustration/Dark/_030.png"),
+    card: require("../../images/illustration/Dark/_082.png"),
   },
   light: {
     academy: require("../../images/illustration/Light/_063.png"),
@@ -23,6 +25,8 @@ const illustrations = {
     market: require("../../images/illustration/Light/_Market.png"),
     buy: require("../../images/illustration/Light/_048.png"),
     lido: require("../../images/illustration/Light/_Lido.png"),
+    discoverWeb3: require("../../images/illustration/Light/_030.png"),
+    card: require("../../images/illustration/Light/_082.png"),
   },
 };
 
@@ -183,7 +187,56 @@ const FamilyPackXSlide: SlideProps = {
   },
 };
 
+const ManageClCardSlide: SlideProps = {
+  url: "ledgerlive://discover/cl-card",
+  onPress: navigate => {
+    navigate(ScreenName.PlatformApp, {
+      platform: "cl-card",
+      name: "CL Card Powered by Ledger",
+    });
+  },
+  name: "ManageClCard",
+  title: "carousel.banners.manageCard.title",
+  description: "carousel.banners.manageCard.description",
+  cta: "carousel.banners.manageCard.cta",
+  icon: (
+    <Illustration
+      lightSource={illustrations.light.card}
+      darkSource={illustrations.dark.card}
+      size={84}
+    />
+  ),
+  position: {
+    bottom: 70,
+    left: 0,
+    width: 180,
+    height: 80,
+  },
+};
+
+const ExploreWeb3SlideProps: SlideProps = {
+  url: urls.discover.academy,
+  name: "DiscoverWeb3",
+  title: "carousel.banners.discoverWeb3.title",
+  description: "carousel.banners.discoverWeb3.description",
+  cta: "carousel.banners.discoverWeb3.cta",
+  icon: (
+    <Illustration
+      lightSource={illustrations.light.discoverWeb3}
+      darkSource={illustrations.dark.discoverWeb3}
+      size={84}
+    />
+  ),
+  position: {
+    bottom: 70,
+    left: 0,
+    width: 180,
+    height: 80,
+  },
+};
+
 export const SLIDES: SlideProps[] = [
+  ManageClCardSlide,
   SwapSlide,
   LidoSlide,
   BuySlide,
@@ -192,6 +245,8 @@ export const SLIDES: SlideProps[] = [
 ];
 
 export const WIDTH = width * 0.8;
+
+export const ExploreWeb3Slide = () => <Slide {...ExploreWeb3SlideProps} />;
 
 export const getDefaultSlides = () =>
   SLIDES.map(slide => ({

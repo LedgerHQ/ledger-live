@@ -1,32 +1,24 @@
 import React, { useCallback, useMemo } from "react";
-import { TouchableOpacity } from "react-native";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/account/index";
 import {
   Account,
   Currency,
   TokenAccount,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { Flex, ProgressLoader, Text, Tag } from "@ledgerhq/native-ui";
-import { useTheme } from "styled-components/native";
+} from "@ledgerhq/live-common/types/index";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
 import { BigNumber } from "bignumber.js";
 import { NavigatorName, ScreenName } from "../../const";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import { ensureContrast } from "../../colors";
-import Delta from "../../components/Delta";
 import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import { counterValueCurrencySelector } from "../../reducers/settings";
+import AccountRowLayout from "../../components/AccountRowLayout";
 
 type Props = {
   account: Account | TokenAccount;
@@ -53,8 +45,6 @@ const AccountRow = ({
 }: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-  const { colors, space } = useTheme();
-
   const currency = getAccountCurrency(account);
   const name = getAccountName(account);
   const unit = getAccountUnit(account);
@@ -63,11 +53,6 @@ const AccountRow = ({
     account.derivationMode !== undefined &&
     account.derivationMode !== null &&
     getTagDerivationMode(currency as CryptoCurrency, account.derivationMode);
-
-  const color = useMemo(
-    () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
-    [colors, currency],
-  );
 
   const counterValueCurrency: Currency = useSelector(
     counterValueCurrencySelector,
@@ -122,101 +107,19 @@ const AccountRow = ({
   }, [account, accountId, navigation, navigationParams]);
 
   return (
-    <TouchableOpacity onPress={onAccountPress}>
-      {topLink && (
-        <Flex
-          width="1px"
-          height={space[4]}
-          marginLeft="21px"
-          backgroundColor={colors.neutral.c40}
-          mb={2}
-        />
-      )}
-      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6}>
-        <Flex pr={4}>
-          <ProgressLoader
-            strokeWidth={2}
-            mainColor={color}
-            secondaryColor={colors.neutral.c40}
-            progress={portfolioPercentage}
-            radius={22}
-          >
-            <Flex
-              bg={color}
-              width={"32px"}
-              height={"32px"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              borderRadius={32}
-            >
-              <CurrencyIcon
-                currency={currency}
-                size={20}
-                color={colors.constant.white}
-              />
-            </Flex>
-          </ProgressLoader>
-        </Flex>
-        <Flex flex={1} justifyContent="center">
-          <Flex mb={1} flexDirection="row" justifyContent="space-between">
-            <Flex
-              flexGrow={1}
-              flexShrink={1}
-              flexDirection="row"
-              alignItems="center"
-            >
-              <Flex flexShrink={1}>
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  numberOfLines={1}
-                  flexShrink={1}
-                >
-                  {name}
-                </Text>
-              </Flex>
-              {tag && (
-                <Flex mx={3} flexShrink={0}>
-                  <Tag>{tag}</Tag>
-                </Flex>
-              )}
-            </Flex>
-            <Flex flexDirection="row" alignItems="flex-end" flexShrink={0}>
-              <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-                <CounterValue
-                  currency={currency}
-                  value={account.balance}
-                  joinFragmentsSeparator=""
-                />
-              </Text>
-            </Flex>
-          </Flex>
-          <Flex flexDirection="row" justifyContent="space-between">
-            <Text variant="body" fontWeight="medium" color="neutral.c70">
-              <CurrencyUnitValue showCode unit={unit} value={account.balance} />
-            </Text>
-            {hideDelta ? null : (
-              <Delta
-                percent
-                show0Delta={account.balance.toNumber() !== 0}
-                fallbackToPercentPlaceholder
-                valueChange={countervalueChange}
-              />
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
-      {bottomLink && (
-        <Flex
-          width="1px"
-          height={space[4]}
-          marginLeft="21px"
-          backgroundColor={colors.neutral.c40}
-          mt={2}
-        />
-      )}
-    </TouchableOpacity>
+    <AccountRowLayout
+      onPress={onAccountPress}
+      currency={currency}
+      currencyUnit={unit}
+      balance={account.balance}
+      name={name}
+      countervalueChange={countervalueChange}
+      tag={tag}
+      progress={portfolioPercentage}
+      topLink={topLink}
+      bottomLink={bottomLink}
+      hideDelta={hideDelta}
+    />
   );
 };
 

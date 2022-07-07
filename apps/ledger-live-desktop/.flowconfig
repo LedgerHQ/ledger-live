@@ -22,7 +22,8 @@ module.system.node.resolve_dirname=node_modules
 module.name_mapper='^~' ->'<PROJECT_ROOT>/src'
 module.name_mapper='^@ledgerhq/react-ui/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ui/packages/react/lib/\1'
 module.name_mapper='^@ledgerhq/react-ui' ->'<PROJECT_ROOT>/../../libs/ui/packages/react/lib'
-module.name_mapper='^@ledgerhq/live-common/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/\1'
+module.name_mapper='^@ledgerhq/live-common' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/lib'
+module.name_mapper='^@ledgerhq/live-common/\(.*\)' ->'<PROJECT_ROOT>/../../libs/ledger-live-common/lib/\1'
 munge_underscores=true
 esproposal.optional_chaining=enable
 
@@ -30,8 +31,5 @@ esproposal.optional_chaining=enable
 
 [untyped]
 .*/node_modules/react-select
-<PROJECT_ROOT>/node_modules/qrloop/lib/Buffer.js*
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/icons/react/*
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/partners/react.jsarn
-<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/lib/apps/hw.js*
 .*/libs/ledger-live-common/.*
+<PROJECT_ROOT>/node_modules/@ledgerhq/live-common/.*
