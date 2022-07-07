@@ -43,6 +43,7 @@ import type { TopBarConfig } from "./type";
 import { handleMessageEvent, handleNewWindowEvent } from "./utils";
 import logger from "~/logger";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
 const Container: ThemedComponent<{}> = styled.div`
   display: flex;
