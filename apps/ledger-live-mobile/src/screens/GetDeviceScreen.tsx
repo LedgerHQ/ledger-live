@@ -108,7 +108,6 @@ export default function GetDeviceScreen() {
     if (discreetMode) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        // TODO analytics : link: "",
         screen: currentRoute,
       });
     }

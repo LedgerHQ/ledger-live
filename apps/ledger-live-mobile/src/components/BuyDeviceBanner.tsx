@@ -24,7 +24,7 @@ type Props = {
   imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   variant?: "buy" | "setup";
-  screen: "Wallet" | "Asset";
+  screen: string;
 };
 
 const Container = styled(Flex).attrs({

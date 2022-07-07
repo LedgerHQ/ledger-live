@@ -257,7 +257,7 @@ export default function TransferDrawer({
       )}
       {readOnlyModeEnabled && hasOrderedNano ? (
         <Box mt={8} width={"100%"}>
-          <SetupDeviceBanner />
+          <SetupDeviceBanner screen={currentRoute} />
         </Box>
       ) : null}
     </Flex>

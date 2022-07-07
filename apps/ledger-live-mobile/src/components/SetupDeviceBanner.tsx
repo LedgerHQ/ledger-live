@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO_BOX } from "./BuyDeviceBanner";
 
 type Props = {
-  screen: "Wallet" | "Asset";
+  screen: string;
 };
 
 function SetupDeviceBanner({ screen }: Props) {

@@ -106,7 +106,7 @@ function ReadOnlyAccount({ route }: Props) {
     </Box>,
     <Box mt={8} mx={6}>
       {hasOrderedNano ? (
-        <SetupDeviceBanner />
+        <SetupDeviceBanner screen="Assets" />
       ) : (
         <BuyDeviceBanner
           style={{
@@ -119,10 +119,10 @@ function ReadOnlyAccount({ route }: Props) {
           event="button_clicked"
           eventProperties={{
             button: "Discover the Nano",
-            screen: "Asset",
+            screen: "Account",
             currency: currency.name,
           }}
-          screen="Wallet"
+          screen="Account"
           {...IMAGE_PROPS_BIG_NANO}
         />
       )}

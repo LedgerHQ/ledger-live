@@ -186,7 +186,7 @@ function PortfolioScreen({ navigation }: Props) {
     () => [
       hasOrderedNano && (
         <Box mx={6} mb={5} mt={6}>
-          <SetupDeviceBanner />
+          <SetupDeviceBanner screen="Wallet" />
         </Box>
       ),
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>

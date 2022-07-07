@@ -82,11 +82,7 @@ const animParams = { duration: DURATION_MS };
 /** Just for debugging */
 const initialIsModalOpened = false;
 
-type Props = {
-  screen: string;
-};
-
-export function TransferTabIcon({ screen }: Props) {
+export function TransferTabIcon() {
   const {
     colors: { type: themeType },
   } = useTheme();
