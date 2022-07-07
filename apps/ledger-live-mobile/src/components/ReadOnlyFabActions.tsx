@@ -19,7 +19,7 @@ function ReadOnlyFabActions() {
   const currentRoute = useCurrentRouteName();
   const currency = useCurrency().name;
 
-  const buyDevice = useCallback(() => navigate(ScreenName.BuyDeviceScreen), [
+  const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [
     navigate,
   ]);
 
