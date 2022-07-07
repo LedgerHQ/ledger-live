@@ -277,7 +277,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugStoryly}
         component={DebugStoryly}
         options={{
-          title: "Debug Lottie",
+          title: "Debug Storyly",
         }}
       />
       <Stack.Screen
