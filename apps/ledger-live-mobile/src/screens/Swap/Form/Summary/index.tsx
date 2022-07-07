@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Flex, Tag, Text, Icons } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
@@ -14,6 +14,8 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap";
+import { StatusTag } from "./StatusTag";
+import { Item } from "./Item";
 
 interface Props {
   provider?: string;
@@ -69,7 +71,7 @@ export function Summary({
     <Flex>
       <Item title={t("transfer.swap2.form.details.label.provider")}>
         <Flex flexDirection="row" alignItems="center">
-          <ProviderStatusTag kyc={kyc} />
+          <StatusTag kyc={kyc} />
           <Flex paddingRight={2}>
             <ProviderIcon size={14} />
           </Flex>
@@ -106,71 +108,6 @@ export function Summary({
       <Item title={t("transfer.swap2.form.details.label.target")}>
         <Text>{targetAccountName}</Text>
       </Item>
-    </Flex>
-  );
-}
-
-// TODO background color with opacity
-const statusThemeMap = {
-  pending: {
-    color: "warning.c100",
-    Icon: Icons.ClockRegular,
-  },
-  approved: {
-    color: "success.c100",
-    Icon: Icons.CircledCheckRegular,
-  },
-  closed: {
-    color: "error.c100",
-    Icon: Icons.InfoRegular,
-  },
-  upgradeRequired: {
-    color: "warning.c100",
-    Icon: Icons.ClockRegular,
-  },
-};
-
-function ProviderStatusTag({ kyc }: { kyc?: KYCStatus }) {
-  const { t } = useTranslation();
-
-  if (!kyc) {
-    return null;
-  }
-
-  // @ts-expect-error
-  const { color, Icon } = statusThemeMap[kyc.status] || {
-    color: null,
-    icon: null,
-  };
-
-  return (
-    <Flex
-      alignItems="center"
-      flexDirection="row"
-      borderRadius={4}
-      padding={2}
-      marginRight={2}
-    >
-      <Flex marginRight={2}>
-        <Text variant="small" color={color}>
-          {t(`transfer.swap2.form.providers.kyc.status.${kyc.status}`)}
-        </Text>
-      </Flex>
-      <Icon size={12} color={color} />
-    </Flex>
-  );
-}
-
-interface RowProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function Item({ title, children }: RowProps) {
-  return (
-    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
-      <Text color="neutral.c70">{title}</Text>
-      {children}
     </Flex>
   );
 }
