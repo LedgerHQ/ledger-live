@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import {
   SwapNavParamList,
   SelectAccount,
@@ -69,34 +70,32 @@ export default function SwapNavigator() {
       <Stack.Screen
         name="Login"
         component={Login}
-        options={{
+        options={({ route }) => ({
           headerTitle: () => (
-            <StepHeader
-              title={t("transfer.swap2.form.providers.login.title")}
-            />
+            <StepHeader title={getProviderName(route.params.provider)} />
           ),
           headerRight: undefined,
-        }}
+        })}
       />
       <Stack.Screen
         name="KYC"
         component={KYC}
-        options={{
+        options={({ route }) => ({
           headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.providers.kyc.title")} />
+            <StepHeader title={getProviderName(route.params.provider)} />
           ),
           headerRight: undefined,
-        }}
+        })}
       />
       <Stack.Screen
         name="MFA"
         component={MFA}
-        options={{
+        options={({ route }) => ({
           headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.providers.mfa.title")} />
+            <StepHeader title={getProviderName(route.params.provider)} />
           ),
           headerRight: undefined,
-        }}
+        })}
       />
       {/* <Stack.Screen
         name={ScreenName.SwapKYCStates}
