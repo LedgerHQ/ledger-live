@@ -1,12 +1,14 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef, useEffect } from "react";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import {
   WidgetTypes,
   getFTXURL,
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
+import { Icon, Flex } from "@ledgerhq/native-ui";
 import { Message } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { useDispatch, useSelector } from "react-redux";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
 
@@ -22,6 +24,8 @@ export function Widget({ provider, type }: Props) {
 
   const uri = useWidgetURL(provider, type);
   const authToken = useAuthToken(provider);
+
+  const ref = useRef<WebView>();
 
   const preload = useMemo(
     () => `
@@ -80,9 +84,24 @@ export function Widget({ provider, type }: Props) {
     [navigation, dispatch, provider],
   );
 
+  const reload = useCallback(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    ref.current.reload();
+  }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <HeaderRight onPress={reload} />,
+    });
+  }, [navigation, reload]);
+
   return (
     // @ts-expect-error
     <WebView
+      ref={ref}
       source={{
         uri,
       }}
@@ -111,4 +130,14 @@ function useWidgetURL(
         throw new Error(`widget is not supported by provider: ${provider}`);
     }
   }, [type, provider]);
+}
+
+function HeaderRight({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Flex marginRight={4}>
+        <Icon name="Reverse" size={24} color="neutral.c100" />
+      </Flex>
+    </TouchableOpacity>
+  );
 }
