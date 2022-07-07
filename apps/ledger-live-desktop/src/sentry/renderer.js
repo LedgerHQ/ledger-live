@@ -20,3 +20,7 @@ export const captureException = (e: Error) => {
 export const captureBreadcrumb = (o: *) => {
   Sentry.addBreadcrumb(o);
 };
+
+export const setTags = (tags: *) => {
+  Sentry.setTags(tags);
+};
