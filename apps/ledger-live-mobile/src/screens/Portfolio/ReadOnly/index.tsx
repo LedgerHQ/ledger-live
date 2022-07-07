@@ -252,11 +252,6 @@ function PortfolioScreen({ navigation }: Props) {
       <TabBarSafeAreaView>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="Portfolio"
-          accountsLength={topCryptoCurrencies.length}
-          discreet={discreetMode}
-        />
         <Box bg={"background.main"}>
           <Header
             counterValueCurrency={counterValueCurrency}
