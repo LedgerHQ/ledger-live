@@ -24,7 +24,7 @@ import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import VersionNumber from "react-native-version-number";
 
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { getEnv } from "@ledgerhq/live-common/env";
 import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App, { routingInstrumentation } from "./src";
 import { getEnabled } from "./src/components/HookSentry";
