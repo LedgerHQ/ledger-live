@@ -31,8 +31,6 @@ const ConnectNanoScene = ({
 
   const onSetDevice = useCallback(
     async device => {
-      await updateUser();
-      await updateIdentify();
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
@@ -42,7 +40,9 @@ const ConnectNanoScene = ({
   );
 
   const directNext = useCallback(
-    device => {
+    async device => {
+      await updateUser();
+      await updateIdentify();
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
