@@ -98,23 +98,15 @@ const SectionTitle = ({
   containerProps?: FlexBoxProps;
 }) => {
   const { t } = useTranslation();
-  const currentRoute = useCurrentRouteName();
   const onLinkPress = useCallback(() => {
     if (onSeeAllPress) {
       onSeeAllPress();
-      track("button_clicked", { button: "See All", screen: currentRoute });
+      track("button_clicked", { button: "See All", screen: "Wallet" });
     }
     if (navigation && navigatorName) {
       navigation.navigate(navigatorName, { screen: screenName, params });
     }
-  }, [
-    onSeeAllPress,
-    navigation,
-    navigatorName,
-    screenName,
-    params,
-    currentRoute,
-  ]);
+  }, [onSeeAllPress, navigation, navigatorName, screenName, params]);
 
   return (
     <Flex
@@ -215,7 +207,7 @@ function PortfolioScreen({ navigation }: Props) {
           navigatorName={NavigatorName.PortfolioAccounts}
           containerProps={{ mb: "9px" }}
         />
-        <ReadOnlyAssets assets={assetsToDisplay} />
+        <ReadOnlyAssets assets={assetsToDisplay} screen="Wallet" />
       </SectionContainer>,
       !hasOrderedNano && (
         <BuyDeviceBanner
@@ -232,6 +224,7 @@ function PortfolioScreen({ navigation }: Props) {
             button: "Discover the Nano",
             screen: currentRoute,
           }}
+          screen="Wallet"
           {...IMAGE_PROPS_BIG_NANO}
         />
       ),

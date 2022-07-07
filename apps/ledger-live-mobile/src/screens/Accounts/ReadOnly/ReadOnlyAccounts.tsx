@@ -30,11 +30,12 @@ const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 type Props = {
   navigation: any;
   route: { params?: { currency?: string; search?: string } };
+  screen: "Wallet" | "Assets";
 };
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAccounts({ navigation, route }: Props) {
+function ReadOnlyAccounts({ navigation, route, screen }: Props) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
@@ -57,7 +58,11 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoCurrency }) => (
-      <ReadOnlyAccountRow navigation={navigation} currency={item} />
+      <ReadOnlyAccountRow
+        navigation={navigation}
+        currency={item}
+        screen={screen}
+      />
     ),
     [navigation],
   );

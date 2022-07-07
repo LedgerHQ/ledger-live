@@ -24,6 +24,7 @@ type Props = {
   imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   variant?: "buy" | "setup";
+  screen: "Wallet" | "Asset";
 };
 
 const Container = styled(Flex).attrs({
@@ -72,6 +73,7 @@ export default function BuyDeviceBanner({
   imageContainerStyle,
   imageStyle,
   variant,
+  screen,
 }: Props) {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
@@ -105,11 +107,11 @@ export default function BuyDeviceBanner({
   const pressMessage = useCallback(() => {
     track("message_clicked", {
       message: "I already have a device, set it up",
-      screen: currentRoute,
+      screen,
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();
-  }, [currentRoute, handleSetupCtaOnPress, eventProperties]);
+  }, [handleSetupCtaOnPress, eventProperties]);
 
   return (
     <>

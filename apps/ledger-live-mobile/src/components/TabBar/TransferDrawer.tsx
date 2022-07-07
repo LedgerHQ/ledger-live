@@ -21,11 +21,14 @@ import { Props as ModalProps } from "../BottomModal";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
-import { track, screen, useAnalytics } from "../../analytics";
+import { track, screen as screenTrack, useAnalytics } from "../../analytics";
 import { urls } from "../../config/urls";
 import { useCurrentRouteName } from "../../helpers/routeHooks";
 
-export default function TransferDrawer({ onClose }: ModalProps) {
+export default function TransferDrawer({
+  onClose,
+  screen,
+}: ModalProps & { screen: string }) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -219,8 +222,8 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   );
 
   useEffect(() => {
-    screen("ReadOnly", "Trade", { source: currentRoute, type: "drawer" });
-  }, []);
+    screenTrack("ReadOnly", "Trade", { source: screen, type: "drawer" });
+  }, [screen]);
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
@@ -248,6 +251,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           buttonSize="small"
           event="button_clicked"
           eventProperties={bannerEventProperties}
+          screen={screen}
           {...IMAGE_PROPS_SMALL_NANO}
         />
       )}

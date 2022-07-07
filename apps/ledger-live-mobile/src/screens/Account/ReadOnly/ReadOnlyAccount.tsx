@@ -26,10 +26,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
-import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../../helpers/routeHooks";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 type RouteParams = {
   currencyId: string;
@@ -58,8 +55,6 @@ function ReadOnlyAccount({ route }: Props) {
   );
 
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  const currentRoute = useCurrentRouteName();
 
   const data = [
     <Box mx={6} my={6}>
@@ -124,9 +119,10 @@ function ReadOnlyAccount({ route }: Props) {
           event="button_clicked"
           eventProperties={{
             button: "Discover the Nano",
-            screen: currentRoute,
+            screen: "Asset",
             currency: currency.name,
           }}
+          screen="Wallet"
           {...IMAGE_PROPS_BIG_NANO}
         />
       )}

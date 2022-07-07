@@ -9,10 +9,6 @@ import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
-import {
-  usePreviousRouteName,
-  useCurrentRouteName,
-} from "../../../helpers/routeHooks";
 
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
@@ -112,27 +108,21 @@ function PostWelcomeSelection({
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
   }, [navigation]);
 
-  const previousRoute = usePreviousRouteName();
-  const currentRoute = useCurrentRouteName();
-
-  const onCardClick = useCallback(
-    (data: DataType, value: string) => {
-      setSelectedOption(data);
-      track("banner_clicked", {
-        banner: value,
-        screen: currentRoute,
-      });
-    },
-    [currentRoute],
-  );
+  const onCardClick = useCallback((data: DataType, value: string) => {
+    setSelectedOption(data);
+    track("banner_clicked", {
+      banner: value,
+      screen: "has device?",
+    });
+  }, []);
 
   const onContinue = useCallback(() => {
     selectedOption?.onValidate();
     track("button_clicked", {
       button: "Continue",
-      screen: currentRoute,
+      screen: "has device?",
     });
-  }, [currentRoute, selectedOption]);
+  }, [selectedOption]);
 
   const pressSetup = useCallback(
     (data: DataType) => onCardClick(data, "Setup my Ledger"),
@@ -153,12 +143,8 @@ function PostWelcomeSelection({
     <Flex flex={1} bg="background.main">
       <TrackScreen
         category="Onboarding"
-        name={
-          userHasDevice
-            ? "Choice With Device"
-            : "Choice No Device"
-        }
-        source={previousRoute}
+        name={userHasDevice ? "Choice With Device" : "Choice No Device"}
+        source={"Welcome"}
       />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>

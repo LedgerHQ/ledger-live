@@ -82,7 +82,11 @@ const animParams = { duration: DURATION_MS };
 /** Just for debugging */
 const initialIsModalOpened = false;
 
-export function TransferTabIcon() {
+type Props = {
+  screen: string;
+};
+
+export function TransferTabIcon({ screen }: Props) {
   const {
     colors: { type: themeType },
   } = useTheme();
@@ -206,7 +210,7 @@ export function TransferTabIcon() {
           translateYStyle,
         ]}
       >
-        <TransferDrawer onClose={closeModal} />
+        <TransferDrawer onClose={closeModal} screen={screen} />
       </AnimatedDrawerContainer>
       <MainButton
         activeOpacity={1}

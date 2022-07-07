@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Flex,
@@ -39,6 +39,7 @@ const Item = ({
   title,
   imageProps,
   displayNavigationButtons = false,
+  currentIndex,
 }: {
   title: string;
   imageProps: ImageProps;
@@ -48,18 +49,15 @@ const Item = ({
   const navigation = useNavigation();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const currentRoute = useCurrentRouteName();
-
-  console.log("CURRENT ROUTE", currentRoute);
 
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: currentRoute,
+        screen: `Reborn Story Step ${currentIndex}`,
       });
     },
-    [currentRoute],
+    [currentIndex],
   );
 
   const buyLedger = useCallback(() => {
@@ -151,12 +149,14 @@ const Item = ({
 
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
+  const [currentIndex, setCurrentIndex] = useState(1);
 
   const previousRoute = usePreviousRouteName();
 
   const onChange = useCallback(
     (index: number, skipped: boolean) => {
-      screen("Onboarding", `Reborn Story Step ${index}`, {
+      setCurrentIndex(index + 1);
+      screen("Onboarding", `Reborn Story Step ${index + 1}`, {
         skipped,
         flow: "Onboarding No Device",
         source: previousRoute,
@@ -199,6 +199,7 @@ function DiscoverLiveInfo() {
               source: image,
             }}
             displayNavigationButtons={slidesImages.length - 1 === index}
+            currentIndex={currentIndex}
           />
         ))}
       </Carousel>

@@ -8,7 +8,6 @@ import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { track, screen, updateIdentify } from "../../../analytics";
-import { useCurrentRouteName } from "../../../helpers/routeHooks";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
 
 const RenderVertical = require("../../../../apps/ledger-live-mobile/assets/images/devices/3DRenderVertical.png");
@@ -17,10 +16,13 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const identifyUser = useCallback((hasDevice: boolean) => {
-    dispatch(setFirstConnectionHasDevice(hasDevice));
-    updateIdentify();
-  }, []);
+  const identifyUser = useCallback(
+    (hasDevice: boolean) => {
+      dispatch(setFirstConnectionHasDevice(hasDevice));
+      updateIdentify();
+    },
+    [dispatch],
+  );
 
   const nextHaveALedger = useCallback(() => {
     identifyUser(true);
@@ -38,9 +40,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
         userHasDevice: true,
       },
     });
-  }, [navigation]);
-
-  const currentRoute = useCurrentRouteName();
+  }, [identifyUser, navigation]);
 
   const nextDontHaveALedger = useCallback(() => {
     identifyUser(false);
@@ -48,7 +48,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     track("button_clicked", {
       First_connection_has_device: false,
       button: "No",
-      screen: currentRoute,
+      screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
     });
 
     // TODO: FIX @react-navigation/native using Typescript
@@ -59,7 +59,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
         userHasDevice: false,
       },
     });
-  }, [navigation]);
+  }, [identifyUser, navigation]);
 
   useEffect(() => {
     screen("Onboarding", "Has Device?");
