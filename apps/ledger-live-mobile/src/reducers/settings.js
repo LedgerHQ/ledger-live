@@ -357,6 +357,7 @@ const handlers: Object = {
     ...state,
     locale: payload,
   }),
+  // TODO swap: remove
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
     swap: {
@@ -438,6 +439,13 @@ const handlers: Object = {
   ) => ({
     ...state,
     marketFilterByStarredAccounts: payload,
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
   }),
 };
 
