@@ -14,17 +14,18 @@ export class OnboardingPage {
   readonly stepperContinueButton: Locator;
   readonly stepperEndButton: Locator;
   readonly checkMyNanoButton: Locator;
-  readonly gotItButton: Locator;
   readonly continueButton: Locator;
   readonly leftArrowBasicsButton: Locator;
   readonly rightArrowBasicsButton: Locator;
   readonly tutorialContinueButton: Locator;
   readonly setupWalletButton: Locator;
   readonly getStartedCtaButton: Locator;
-  readonly beCarefulButton: Locator;
   readonly startSetupButton: Locator;
   readonly pinCodeCheckbox: Locator;
+  readonly pinCodeDrawer: Locator;
   readonly recoveryPhraseCheckbox: Locator;
+  readonly recoverySeedDrawer: Locator;
+  readonly hideSeedDrawer: Locator;
   readonly recoveryPhraseLossCheckbox: Locator;
   readonly recoverySetupButton: Locator;
   readonly writeRecoveryPhraseButton: Locator;
@@ -45,7 +46,6 @@ export class OnboardingPage {
     this.selectDeviceButton = (deviceId: string): Locator =>
       page.locator(`data-test-id=v3-device-${deviceId}`);
     this.checkMyNanoButton = page.locator('button:has-text("Check my Nano")');
-    this.gotItButton = page.locator('button:has-text("Got it")');
     this.continueButton = page.locator('button:has-text("Continue")');
     this.newDeviceButton = page.locator("data-test-id=v3-onboarding-new-device");
     this.connectDeviceButton = page.locator("data-test-id=v3-onboarding-initialized-device");
@@ -58,11 +58,13 @@ export class OnboardingPage {
     this.tutorialContinueButton = page.locator("data-test-id=v3-tutorial-continue");
     this.setupWalletButton = page.locator("data-test-id=v3-setup-nano-wallet-cta");
     this.getStartedCtaButton = page.locator("data-test-id=v3-get-started-cta");
-    this.beCarefulButton = page.locator("data-test-id=v3-be-careful-cta");
     this.startSetupButton = page.locator("data-test-id=v3-device-howto-cta");
     this.pinCodeCheckbox = page.locator("data-test-id=v3-private-pin-code-checkbox");
+    this.pinCodeDrawer = page.locator("data-test-id=v3-pin-code-drawer");
     this.recoveryPhraseCheckbox = page.locator("data-test-id=v3-recovery-phrase-checkbox");
     this.recoveryPhraseLossCheckbox = page.locator("data-test-id=v3-recovery-phrase-loss-checkbox");
+    this.recoverySeedDrawer = page.locator("data-test-id=v3-seed-drawer");
+    this.hideSeedDrawer = page.locator("data-test-id=v3-hide-seed-drawer");
     this.recoverySetupButton = page.locator("data-test-id=v3-device-recoveryphrase-cta");
     this.writeRecoveryPhraseButton = page.locator("data-test-id=v3-use-recovery-sheet");
     this.confirmRecoveryPhraseButton = page.locator("data-test-id=v3-recovery-howto-3");
@@ -83,17 +85,6 @@ export class OnboardingPage {
     expect(await this.page.screenshot()).toMatchSnapshot("v3-device-selection.png");
     await this.page.hover(`[data-test-id=v3-container-device-${device}]`);
     await this.selectDeviceButton(device).click();
-  }
-
-  async beCareful() {
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-be-careful.png");
-    await this.gotIt();
-  }
-
-  async warnings() {
-    await this.beCareful();
-    expect(await this.page.screenshot()).toMatchSnapshot("v3-recovery-warning.png");
-    await this.continue();
   }
 
   async connectDevice() {
@@ -133,6 +124,21 @@ export class OnboardingPage {
 
     expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-3.png"]);
     await this.continueTutorial();
+
+    expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-4.png"]);
+    await this.continuePinDrawer();
+  }
+
+  async continuePinDrawer() {
+    await this.pinCodeDrawer.click();
+  }
+
+  async continueRecoverySeedDrawer() {
+    await this.recoverySeedDrawer.click();
+  }
+
+  async continueHideSeedDrawer() {
+    await this.hideSeedDrawer.click();
   }
 
   async continueTutorial() {
@@ -185,10 +191,6 @@ export class OnboardingPage {
 
   async continue() {
     await this.continueButton.click();
-  }
-
-  async gotIt() {
-    await this.gotItButton.click();
   }
 
   async reachApp() {

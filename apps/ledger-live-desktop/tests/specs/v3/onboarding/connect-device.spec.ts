@@ -5,7 +5,7 @@ import { OnboardingPage } from "../../../models/v3/OnboardingPage";
 enum Nano {
   nanoX = "nanoX",
   nanoS = "nanoS",
-  nanoSP = "nanoSPlus",
+  nanoSP = "nanoSP",
 }
 
 const nanos = [Nano.nanoX, Nano.nanoS, Nano.nanoSP];
@@ -19,40 +19,25 @@ test.describe.parallel("Onboarding", () => {
         await onboardingPage.getStarted();
       });
 
-      await test.step("Terms of service", async () => {
-        await onboardingPage.acceptTermsAndConditions();
-      });
-
       await test.step(`[${nano}] Select Device`, async () => {
-        if (nano !== Nano.nanoSP) {
-          await onboardingPage.selectDevice(nano);
-        }
+        await onboardingPage.selectDevice(nano);
       });
 
       await test.step(`[${nano}] Already set up`, async () => {
-        if (nano !== Nano.nanoSP) {
-          expect(await page.screenshot()).toMatchSnapshot(`v3-device-connection-${nano}.png`);
-          await onboardingPage.connectDevice();
-          await onboardingPage.warnings();
-        }
+        expect(await page.screenshot()).toMatchSnapshot(`v3-device-connection-${nano}.png`);
+        await onboardingPage.connectDevice();
       });
 
       await test.step(`[${nano}] Device genuine check`, async () => {
-        if (nano !== Nano.nanoSP) {
-          await onboardingPage.checkDevice();
-        }
+        await onboardingPage.checkDevice();
       });
 
       await test.step("Pass genuine check", async () => {
-        if (nano !== Nano.nanoSP) {
-          await onboardingPage.genuineCheck();
-        }
+        await onboardingPage.genuineCheck();
       });
 
       await test.step("Reach app", async () => {
-        if (nano !== Nano.nanoSP) {
-          await onboardingPage.reachApp();
-        }
+        await onboardingPage.reachApp();
       });
     });
   }

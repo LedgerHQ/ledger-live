@@ -94,8 +94,6 @@ export function Welcome({}) {
   const { colors } = useTheme();
   const locale = useSelector(languageSelector) || "en";
 
-  console.log(locale);
-
   const buyNanoX = useCallback(() => {
     openURL(urls.noDevice.buyNew);
   }, []);

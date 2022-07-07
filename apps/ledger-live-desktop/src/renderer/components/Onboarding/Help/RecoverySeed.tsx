@@ -61,6 +61,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
           {t("onboarding.drawers.recoverySeed.points.3")}
         </Text>
         <Button
+          data-test-id="v3-seed-drawer"
           mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}

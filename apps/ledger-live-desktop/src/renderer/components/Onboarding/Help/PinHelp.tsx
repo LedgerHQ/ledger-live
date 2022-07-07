@@ -121,6 +121,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
           </Trans>
         </Rule>
         <Button
+          data-test-id="v3-pin-code-drawer"
           mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}
