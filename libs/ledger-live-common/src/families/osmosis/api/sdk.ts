@@ -158,252 +158,66 @@ export class OsmosisAPI extends CosmosAPI {
           transactionType
         ) {
           case OsmosisTransactionTypeEnum.Send: {
-            // Check sub array exists. Sub array contains transactions messages. If there isn't one, skip
-            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
-              break;
+            const operation = await this.convertSendTransactionToOperation(
+              accountId,
+              address,
+              events[j],
+              accountTransactions[i],
+              memo
+            );
+            if (operation != null) {
+              operations.push(operation);
             }
-
-            const eventContent: OsmosisSendEventContent[] = events[j].sub;
-            // Check that sub array is not empty
-            if (!(eventContent.length > 0)) break;
-
-            // Check eventContent contains at least one entry of type "send" using find() and retrieve it.
-            // More in depth: find() retrieves the (first) message, which contains sender, recipient and amount info
-            // First message because typically "send" transactions only have one sender and one recipient
-            // If no messages are found, skips the transaction altogether
-            const sendEvent = eventContent.find(
-              (event) => event.type[0] === OsmosisTransactionTypeEnum.Send
-            );
-            if (sendEvent == null) break;
-            const type = getOperationType(sendEvent, address);
-            const senders = sendEvent.sender[0]?.account?.id
-              ? [sendEvent.sender[0]?.account?.id]
-              : [];
-            const recipients = sendEvent.recipient[0]?.account?.id
-              ? [sendEvent.recipient[0]?.account?.id]
-              : [];
-            const fee = new BigNumber(
-              getMicroOsmoAmount(accountTransactions[i].transaction_fee)
-            );
-            operations.push(
-              convertTransactionToOperation(
-                accountId,
-                type,
-                getOperationValue(sendEvent, type, fee),
-                accountTransactions[i],
-                senders,
-                recipients,
-                { memo }
-              )
-            );
             break;
           }
 
           case OsmosisTransactionTypeEnum.Delegate: {
-            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
-              break;
-            }
-            const eventContent: OsmosisStakingEventContent[] = events[j].sub;
-            if (!(eventContent.length > 0)) break;
-            const event = eventContent.find(
-              (event) => event.type[0] === OsmosisTransactionTypeEnum.Delegate
-            );
-            if (event == null) break;
-            const type = "DELEGATE";
-            const extra = {
-              memo: memo,
-              validators: [
-                {
-                  address: event.node.validator[0].id,
-                  amount: new BigNumber(
-                    getMicroOsmoAmount([event.amount.delegate])
-                  ),
-                },
-              ],
-            };
-
-            // BEGIN EXPERIMENTAL ------------
-            let amount = new BigNumber(0);
-            if (event.transfers != null) {
-              if (event.transfers.reward) {
-                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-              }
-            }
-            if (amount.gt(0)) {
-              extra["claimedRewards"] = amount.toString();
-            }
-            // END EXPERIMENTAL ------------
-
-            operations.push(
-              convertTransactionToOperation(
-                accountId,
-                type,
-                extra.validators[0].amount,
-                accountTransactions[i],
-                [],
-                [],
-                extra
-              )
-            );
-            // Handle auto claimed rewards that may occur upon delegation
-            const rewardOperation = await this.handleRewardOperation(
-              event,
+            const ops = await this.convertDelegateTransactionToOperation(
               accountId,
+              events[j],
               accountTransactions[i],
-              extra
+              memo
             );
-            if (rewardOperation != null) operations.push(rewardOperation);
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
             break;
           }
 
           case OsmosisTransactionTypeEnum.Redelegate: {
-            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
-              break;
-            }
-            const eventContent: OsmosisStakingEventContent[] = events[j].sub;
-            if (!(eventContent.length > 0)) break;
-            const event = eventContent.find(
-              (event) => event.type[0] === OsmosisTransactionTypeEnum.Redelegate
-            );
-            if (event == null) break;
-            const type = "REDELEGATE";
-            const extra = {
-              memo: memo,
-              validators: [
-                {
-                  address: event.node.validator_destination[0].id,
-                  amount: new BigNumber(
-                    getMicroOsmoAmount([event.amount.delegate])
-                  ),
-                },
-              ],
-              sourceValidator: event.node.validator_source[0].id,
-            };
-            // BEGIN EXPERIMENTAL ------------
-            let amount = new BigNumber(0);
-            if (event.transfers != null) {
-              if (event.transfers.reward) {
-                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-              }
-            }
-            if (amount.gt(0)) {
-              extra["claimedRewards"] = amount.toString();
-            }
-            // END EXPERIMENTAL ------------
-            operations.push(
-              convertTransactionToOperation(
-                accountId,
-                type,
-                extra.validators[0].amount,
-                accountTransactions[i],
-                [],
-                [],
-                extra
-              )
-            );
-            // Handle auto claimed rewards that may occur upon redelegation
-            const rewardOperation = await this.handleRewardOperation(
-              event,
+            const ops = await this.convertRedelegateTransactionToOperation(
               accountId,
+              events[j],
               accountTransactions[i],
-              extra
+              memo
             );
-            if (rewardOperation != null) operations.push(rewardOperation);
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
             break;
           }
           case OsmosisTransactionTypeEnum.Undelegate: {
-            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
-              break;
-            }
-            const eventContent: OsmosisStakingEventContent[] = events[j].sub;
-            if (!(eventContent.length > 0)) break;
-            const event = eventContent.find(
-              (event) => event.type[0] === OsmosisTransactionTypeEnum.Undelegate
-            );
-
-            if (event == null) break;
-            const type = "UNDELEGATE";
-            const extra = {
-              memo: memo,
-              validators: [
-                {
-                  address: event.node.validator[0].id,
-                  amount: new BigNumber(
-                    getMicroOsmoAmount([event.amount.undelegate])
-                  ),
-                },
-              ],
-            };
-            // BEGIN EXPERIMENTAL ------------
-            let amount = new BigNumber(0);
-            if (event.transfers != null) {
-              if (event.transfers.reward) {
-                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-              }
-            }
-            if (amount.gt(0)) {
-              extra["claimedRewards"] = amount.toString();
-            }
-            // END EXPERIMENTAL ------------
-            operations.push(
-              convertTransactionToOperation(
-                accountId,
-                type,
-                extra.validators[0].amount,
-                accountTransactions[i],
-                [],
-                [],
-                extra
-              )
-            );
-            // Handle auto claimed rewards that may occur upon undelegation
-            const rewardOperation = await this.handleRewardOperation(
-              event,
+            const ops = await this.convertUndelegateTransactionToOperation(
               accountId,
+              events[j],
               accountTransactions[i],
-              extra
+              memo
             );
-            if (rewardOperation != null) operations.push(rewardOperation);
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
+            }
             break;
           }
           case OsmosisTransactionTypeEnum.Reward: {
-            if (!Object.prototype.hasOwnProperty.call(events[j], "sub")) {
-              break;
-            }
-            const eventContent: OsmosisStakingEventContent[] = events[j].sub;
-            if (!(eventContent.length > 0)) break;
-            const event = eventContent.find(
-              (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
+            const ops = await this.convertUndelegateTransactionToOperation(
+              accountId,
+              events[j],
+              accountTransactions[i],
+              memo
             );
-
-            if (event == null) break;
-            const type = "REWARD";
-            let amount = new BigNumber(0);
-            if (event.transfers != null) {
-              if (event.transfers.reward) {
-                amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-              }
+            if (ops.length > 0) {
+              ops.forEach((op) => operations.push(op));
             }
-            const extra = {
-              memo: memo,
-              validators: [
-                {
-                  address: event.node.validator[0].id,
-                  amount,
-                },
-              ],
-            };
-            operations.push(
-              convertTransactionToOperation(
-                accountId,
-                type,
-                amount,
-                accountTransactions[i],
-                [],
-                [],
-                extra
-              )
-            );
             break;
           }
           default:
@@ -413,6 +227,296 @@ export class OsmosisAPI extends CosmosAPI {
     }
 
     return operations;
+  };
+
+  convertSendTransactionToOperation = async (
+    accountId: string,
+    address: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation | undefined> => {
+    // Check "sub" array exists. The "sub" array contains transactions messages. If there isn't one, skip the tx
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return;
+    }
+
+    const eventContent: OsmosisSendEventContent[] = event.sub;
+    // Check that sub array is not empty
+    if (!(eventContent.length > 0)) return;
+
+    // Check eventContent contains at least one entry of type "send" using find() and retrieve it.
+    // find() retrieves the (first) message, which contains sender, recipient and amount info
+    // We get get the first message because typically "send" transactions only have one sender and one recipient
+    // If no messages are found, skip the tx
+    const sendEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Send
+    );
+    if (sendEvent == null) return;
+    const type = getOperationType(sendEvent, address);
+    const senders = sendEvent.sender[0]?.account?.id
+      ? [sendEvent.sender[0]?.account?.id]
+      : [];
+    const recipients = sendEvent.recipient[0]?.account?.id
+      ? [sendEvent.recipient[0]?.account?.id]
+      : [];
+    const fee = new BigNumber(getMicroOsmoAmount(tx.transaction_fee));
+    return convertTransactionToOperation(
+      accountId,
+      type,
+      getOperationValue(sendEvent, type, fee),
+      tx,
+      senders,
+      recipients,
+      { memo }
+    );
+  };
+
+  convertDelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const delegateEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Delegate
+    );
+    if (delegateEvent == null) return ops;
+    const type = "DELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: delegateEvent.node.validator[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([delegateEvent.amount.delegate])
+          ),
+        },
+      ],
+    };
+
+    // BEGIN EXPERIMENTAL ------------
+    let amount = new BigNumber(0);
+    if (delegateEvent.transfers != null) {
+      if (delegateEvent.transfers.reward) {
+        amount = getMicroOsmoAmount(delegateEvent.transfers.reward[0].amounts);
+      }
+    }
+    let rewardOperation;
+    if (amount.gt(0)) {
+      // Option 1: Append rewards to extra
+      extra["claimedRewards"] = amount.toString();
+      // Option 2: Return additional operation
+      rewardOperation = convertTransactionToOperation(
+        accountId,
+        "REWARD",
+        amount,
+        tx,
+        [],
+        [],
+        extra
+      );
+      if (rewardOperation != null) ops.push(rewardOperation);
+    }
+    // END EXPERIMENTAL ------------
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  convertRedelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const redelegEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Redelegate
+    );
+    if (redelegEvent == null) return ops;
+    const type = "REDELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: redelegEvent.node.validator_destination[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([redelegEvent.amount.delegate])
+          ),
+          sourceValidator: redelegEvent.node.validator_source[0].id,
+        },
+      ],
+    };
+
+    // BEGIN EXPERIMENTAL ------------
+    let amount = new BigNumber(0);
+    if (redelegEvent.transfers != null) {
+      if (redelegEvent.transfers.reward) {
+        amount = getMicroOsmoAmount(redelegEvent.transfers.reward[0].amounts);
+      }
+    }
+    let rewardOperation;
+    if (amount.gt(0)) {
+      // Option 1: Append rewards to extra
+      extra["claimedRewards"] = amount.toString();
+      // Option 2: Return additional operation
+      rewardOperation = convertTransactionToOperation(
+        accountId,
+        "REWARD",
+        amount,
+        tx,
+        [],
+        [],
+        extra
+      );
+      if (rewardOperation != null) ops.push(rewardOperation);
+    }
+    // END EXPERIMENTAL ------------
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  convertUndelegateTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const undelegEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Undelegate
+    );
+    if (undelegEvent == null) return ops;
+    const type = "UNDELEGATE";
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: undelegEvent.node.validator[0].id,
+          amount: new BigNumber(
+            getMicroOsmoAmount([undelegEvent.amount.undelegate])
+          ),
+        },
+      ],
+    };
+
+    // BEGIN EXPERIMENTAL ------------
+    let amount = new BigNumber(0);
+    if (undelegEvent.transfers != null) {
+      if (undelegEvent.transfers.reward) {
+        amount = getMicroOsmoAmount(undelegEvent.transfers.reward[0].amounts);
+      }
+    }
+    let rewardOperation;
+    if (amount.gt(0)) {
+      // Option 1: Append rewards to extra
+      extra["claimedRewards"] = amount.toString();
+      // Option 2: Return additional operation
+      rewardOperation = convertTransactionToOperation(
+        accountId,
+        "REWARD",
+        amount,
+        tx,
+        [],
+        [],
+        extra
+      );
+      if (rewardOperation != null) ops.push(rewardOperation);
+    }
+    // END EXPERIMENTAL ------------
+
+    ops.push(
+      convertTransactionToOperation(
+        accountId,
+        type,
+        extra.validators[0].amount,
+        tx,
+        [],
+        [],
+        extra
+      )
+    );
+    return ops;
+  };
+
+  convertRewardTransactionToOperation = async (
+    accountId: string,
+    event: any,
+    tx: OsmosisAccountTransaction,
+    memo: string
+  ): Promise<Operation[]> => {
+    const ops: Operation[] = [];
+
+    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+      return ops;
+    }
+    const eventContent: OsmosisStakingEventContent[] = event.sub;
+    if (!(eventContent.length > 0)) return ops;
+    const rewardEvent = eventContent.find(
+      (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
+    );
+    if (rewardEvent == null) return ops;
+    const type = "REWARD";
+    let amount = new BigNumber(0);
+    if (rewardEvent.transfers != null) {
+      if (rewardEvent.transfers.reward) {
+        amount = getMicroOsmoAmount(rewardEvent.transfers.reward[0].amounts);
+      }
+    }
+    const extra = {
+      memo: memo,
+      validators: [
+        {
+          address: rewardEvent.node.validator[0].id,
+          amount,
+        },
+      ],
+    };
+    ops.push(
+      convertTransactionToOperation(accountId, type, amount, tx, [], [], extra)
+    );
+    return ops;
   };
 
   // Sometimes the action of delegating, undelegating redelegating auto claims rewards, so we check if that's the case
