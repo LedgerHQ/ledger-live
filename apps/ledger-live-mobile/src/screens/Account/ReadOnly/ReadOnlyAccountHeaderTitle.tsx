@@ -1,11 +1,6 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import styled from "styled-components/native";
-import {
-  getCryptoCurrencyById,
-  getTokenById,
-} from "@ledgerhq/live-common/lib/currencies";
 import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
