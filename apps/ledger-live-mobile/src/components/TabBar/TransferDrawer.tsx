@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -15,20 +15,15 @@ import {
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
-  discreetModeSelector,
 } from "../../reducers/settings";
 import { Props as ModalProps } from "../BottomModal";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
-import { track, screen as screenTrack, useAnalytics } from "../../analytics";
+import { useAnalytics } from "../../analytics";
 import { urls } from "../../config/urls";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
 
-export default function TransferDrawer({
-  onClose,
-  screen,
-}: ModalProps & { screen: string }) {
+export default function TransferDrawer({ onClose }: ModalProps) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -42,8 +37,6 @@ export default function TransferDrawer({
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
     accounts,
   ]);
-  const currentRoute = useCurrentRouteName();
-  const discreetMode = useSelector(discreetModeSelector);
 
   const onNavigate = useCallback(
     (name: string, options?: { [key: string]: any }) => {
@@ -56,61 +49,44 @@ export default function TransferDrawer({
     [navigation, onClose],
   );
 
-  const trackClick = useCallback(
-    (buttonTitle: string) => {
-      if (discreetMode) {
-        track("button_clicked", {
-          button: buttonTitle,
-          screen: currentRoute,
-          drawer: "trade",
-        });
-      }
-    },
-    [currentRoute, discreetMode],
+  const onSendFunds = useCallback(
+    () =>
+      onNavigate(NavigatorName.SendFunds, {
+        screen: ScreenName.SendCoin,
+      }),
+    [onNavigate],
   );
-
-  const onSendFunds = useCallback(() => {
-    trackClick("Send");
-    onNavigate(NavigatorName.SendFunds, {
-      screen: ScreenName.SendCoin,
-    });
-  }, [onNavigate, trackClick]);
-
-  const onReceiveFunds = useCallback(() => {
-    trackClick("Receive");
-    onNavigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveSelectAccount,
-    });
-  }, [onNavigate, trackClick]);
-
-  const onSwap = useCallback(() => {
-    trackClick("Swap");
-    onNavigate(NavigatorName.Swap, {
-      screen: ScreenName.Swap,
-    });
-  }, [onNavigate, trackClick]);
-
-  const onBuy = useCallback(() => {
-    trackClick("Buy");
-    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy });
-  }, [onNavigate, trackClick]);
-
-  const onSell = useCallback(() => {
-    trackClick("Sell");
-    onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell });
-  }, [onNavigate, trackClick]);
-
-  const onLending = useCallback(() => {
-    trackClick("Lending");
-    onNavigate(NavigatorName.Lending, {
-      screen: ScreenName.LendingDashboard,
-    });
-  }, [onNavigate, trackClick]);
-
-  const onManageCard = useCallback(() => {
-    trackClick("Manage Card");
-    Linking.openURL(urls.manageClCard);
-  }, [trackClick]);
+  const onReceiveFunds = useCallback(
+    () =>
+      onNavigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+      }),
+    [onNavigate],
+  );
+  const onSwap = useCallback(
+    () =>
+      onNavigate(NavigatorName.Swap, {
+        screen: ScreenName.Swap,
+      }),
+    [onNavigate],
+  );
+  const onBuy = useCallback(
+    () =>
+      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
+    [onNavigate],
+  );
+  const onSell = useCallback(
+    () =>
+      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
+    [onNavigate],
+  );
+  const onLending = useCallback(
+    () =>
+      onNavigate(NavigatorName.Lending, {
+        screen: ScreenName.LendingDashboard,
+      }),
+    [onNavigate],
+  );
 
   const buttons = (
     <>
@@ -118,7 +94,7 @@ export default function TransferDrawer({
         <TransferButton
           eventProperties={{
             button: "transfer_send",
-            screen: page,
+            page,
             drawer: "trade",
           }}
           title={t("transfer.send.title")}
@@ -136,7 +112,7 @@ export default function TransferDrawer({
         <TransferButton
           eventProperties={{
             button: "transfer_receive",
-            screen: page,
+            page,
             drawer: "trade",
           }}
           title={t("transfer.receive.title")}
@@ -150,7 +126,7 @@ export default function TransferDrawer({
         <TransferButton
           eventProperties={{
             button: "transfer_buy",
-            screen: page,
+            page,
             drawer: "trade",
           }}
           title={t("transfer.buy.title")}
@@ -165,7 +141,7 @@ export default function TransferDrawer({
         <TransferButton
           eventProperties={{
             button: "transfer_sell",
-            screen: page,
+            page,
             drawer: "trade",
           }}
           title={t("transfer.sell.title")}
@@ -179,7 +155,7 @@ export default function TransferDrawer({
         <TransferButton
           eventProperties={{
             button: "transfer_swap",
-            screen: page,
+            page,
             drawer: "trade",
           }}
           title={t("transfer.swap.title")}
@@ -194,7 +170,7 @@ export default function TransferDrawer({
           <TransferButton
             eventProperties={{
               button: "transfer_lending",
-              screen: page,
+              page,
               drawer: "trade",
             }}
             title={t("transfer.lending.titleTransferTab")}
@@ -214,16 +190,12 @@ export default function TransferDrawer({
   const bannerEventProperties = useMemo(
     () => ({
       banner: "You'll need a nano",
-      button: "Buy a Ledger",
+      button: "Buy a device",
       drawer: "transfer",
-      screen: page,
+      page,
     }),
     [page],
   );
-
-  useEffect(() => {
-    screenTrack("ReadOnly", "Trade", { source: screen, type: "drawer" });
-  }, [screen]);
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9}>
@@ -251,7 +223,6 @@ export default function TransferDrawer({
           buttonSize="small"
           event="button_clicked"
           eventProperties={bannerEventProperties}
-          screen={screen}
           {...IMAGE_PROPS_SMALL_NANO}
         />
       )}

@@ -13,7 +13,6 @@ import Animated, {
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
-import { useSelector } from "react-redux";
 import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
@@ -22,8 +21,6 @@ import { useTrack } from "../../analytics";
 
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
-import { useCurrentRouteName } from "../../helpers/routeHooks";
-import { discreetModeSelector } from "../../reducers/settings";
 
 const MainButton = proxyStyled(Touchable).attrs({
   backgroundColor: "primary.c80",
@@ -143,31 +140,15 @@ export function TransferTabIcon() {
     });
   }, [openAnimValue]);
 
-  const discreetMode = useSelector(discreetModeSelector);
-  const currentRoute = useCurrentRouteName();
-
   const onPressButton = useCallback(() => {
     if (getIsModalOpened()) {
       closeModal();
-      if (discreetMode) {
-        track("button_clicked", {
-          button: "Close Trade",
-          screen: currentRoute,
-          drawer: "trade",
-        });
-      }
+      track("button_clicked", { button: "close_trade" });
     } else {
       openModal();
       track("button_clicked", { button: "trade", drawer: "trade" });
     }
-  }, [
-    getIsModalOpened,
-    closeModal,
-    track,
-    currentRoute,
-    openModal,
-    discreetMode,
-  ]);
+  }, [track, getIsModalOpened, closeModal, openModal]);
 
   const handleBackPress = useCallback(() => {
     if (!getIsModalOpened()) return false;
@@ -206,7 +187,7 @@ export function TransferTabIcon() {
           translateYStyle,
         ]}
       >
-        <TransferDrawer onClose={closeModal} screen={screen} />
+        <TransferDrawer onClose={closeModal} />
       </AnimatedDrawerContainer>
       <MainButton
         activeOpacity={1}
