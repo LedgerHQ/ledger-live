@@ -49,6 +49,7 @@ type Props = StackScreenProps<
 
 const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
+const resyncDelay = 2000;
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
   const defaultOnboardingSteps: Step[] = useMemo(
@@ -248,7 +249,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           <Button type="default" Icon={CloseMedium} onPress={handleClose} />
         </Flex>
         <Flex flex={1}>
-          <ResyncOverlay isOpen={!!timer && !stopPolling} />
+          <ResyncOverlay isOpen={!!timer && !stopPolling} delay={resyncDelay} />
           <ScrollContainer>
             <Flex px={7} pt={2}>
               <Flex mb={7} flexDirection="row" alignItems="center">
