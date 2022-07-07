@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap";
+import { Loading } from "../Loading";
 
 interface Props {
   provider?: string;

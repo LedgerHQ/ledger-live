@@ -335,14 +335,22 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               exchangeRate={exchangeRate}
             />
 
-            <Summary
-              provider={provider}
-              swapTx={swapTx}
-              exchangeRate={exchangeRate}
-              kyc={kyc}
-            />
+            {swapTx.swap.rates.status === "loading" ? (
+              <Flex height={200}>
+                <Loading size={20} />
+              </Flex>
+            ) : (
+              <>
+                <Summary
+                  provider={provider}
+                  swapTx={swapTx}
+                  exchangeRate={exchangeRate}
+                  kyc={kyc}
+                />
 
-            <Requirement required={currentBanner} provider={provider} />
+                <Requirement required={currentBanner} provider={provider} />
+              </>
+            )}
           </Flex>
 
           <Flex paddingY={4}>
