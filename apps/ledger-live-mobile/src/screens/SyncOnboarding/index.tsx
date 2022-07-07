@@ -227,7 +227,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
 
   return (
     <SafeAreaView>
-      <Flex height="100%" position="relative">
+      <Flex bg="background.main" height="100%" position="relative">
         <HelpDrawer
           isOpen={isHelpDrawerOpen}
           onClose={() => setHelpDrawerOpen(false)}
