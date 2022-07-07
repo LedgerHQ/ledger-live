@@ -59,7 +59,6 @@ const ProductHighlight = styled.div`
 
 const TermsAndConditionsText = styled.div`
   display: flex;
-  width: fit-content;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 24px;
