@@ -1,15 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 
 type Props = {
   isOpen: boolean;
+  delay?: number;
 };
 
-const ResyncOverlay = ({ isOpen }: Props) => {
+const ResyncOverlay = ({ isOpen, delay = 0 }: Props) => {
+  const [showContent, setShowContent] = useState<boolean>(false);
   const { colors, radii } = useTheme();
 
-  if (!isOpen) {
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        setShowContent(true);
+      }, delay);
+    }
+  }, [isOpen, delay]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setShowContent(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen || !showContent) {
     return null;
   }
 
