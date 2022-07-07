@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 
 import TimelineItem from "./TimelineItem";
 import { Flex } from "../..";
+import { BaseStyledProps } from "src/components/styled";
 
 export type ItemStatus = "inactive" | "active" | "completed";
 
@@ -11,13 +12,13 @@ export type Item = {
   renderBody?: (status?: ItemStatus) => ReactNode;
 };
 
-export type Props = {
+export type Props = BaseStyledProps & {
   steps?: Item[];
 };
 
-export default function VerticalTimeline({ steps }: Props) {
+export default function VerticalTimeline({ steps, ...props }: Props) {
   return (
-    <Flex flexDirection="column">
+    <Flex {...props} flexDirection="column">
       {steps?.map((step, index) => (
         <TimelineItem
           key={step.title}
