@@ -119,6 +119,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
           </Trans>
         </Rule>
         <Button
+          data-test-id="v3-hide-seed-drawer"
           mt="auto"
           variant="main"
           onClick={props.handleNextInDrawer}
