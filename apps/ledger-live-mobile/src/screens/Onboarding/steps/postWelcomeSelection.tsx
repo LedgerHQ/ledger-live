@@ -85,6 +85,9 @@ function PostWelcomeSelection({
   route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
 }) {
   const { userHasDevice } = route.params;
+  const screenName = `Onboarding Choice ${
+    userHasDevice ? "with Device" : "No Device"
+  }`;
 
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -112,7 +115,7 @@ function PostWelcomeSelection({
     setSelectedOption(data);
     track("banner_clicked", {
       banner: value,
-      screen: "has device?",
+      screen: screenName,
     });
   }, []);
 
@@ -120,7 +123,7 @@ function PostWelcomeSelection({
     selectedOption?.onValidate();
     track("button_clicked", {
       button: "Continue",
-      screen: "has device?",
+      screen: screenName,
     });
   }, [selectedOption]);
 

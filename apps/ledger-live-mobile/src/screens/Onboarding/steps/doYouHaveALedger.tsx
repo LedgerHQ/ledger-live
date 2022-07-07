@@ -3,10 +3,10 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Image } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { track, screen, updateIdentify } from "../../../analytics";
 import { setFirstConnectionHasDevice } from "../../../actions/settings";
 
@@ -29,7 +29,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
     track("button_clicked", {
       button: "Yes",
-      screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
+      screen: "has device?",
     });
 
     // TODO: FIX @react-navigation/native using Typescript
@@ -48,7 +48,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     track("button_clicked", {
       First_connection_has_device: false,
       button: "No",
-      screen: ScreenName.OnboardingDoYouHaveALedgerDevice,
+      screen: "has device?",
     });
 
     // TODO: FIX @react-navigation/native using Typescript

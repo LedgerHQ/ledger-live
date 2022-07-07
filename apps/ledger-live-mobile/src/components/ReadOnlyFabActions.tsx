@@ -16,7 +16,6 @@ const iconReceive = Icons.ArrowBottomMedium;
 function ReadOnlyFabActions() {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
-  const currentRoute = useCurrentRouteName();
   const currency = useCurrency().name;
 
   const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [
@@ -27,12 +26,12 @@ function ReadOnlyFabActions() {
     (buttonTitle: string) => {
       track("button_clicked", {
         button: buttonTitle,
-        screen: currentRoute,
+        screen: "Account",
         currency,
       });
       buyDevice();
     },
-    [buyDevice, currency, currentRoute],
+    [buyDevice, currency],
   );
 
   const pressBuy = useCallback(() => handleOnPress("+ Buy"), [handleOnPress]);

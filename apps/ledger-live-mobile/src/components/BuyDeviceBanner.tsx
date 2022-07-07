@@ -77,7 +77,6 @@ export default function BuyDeviceBanner({
 }: Props) {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
-  const currentRoute = useCurrentRouteName();
 
   const handleOnPress = useCallback(() => {
     navigate(NavigatorName.BuyDevice);
@@ -99,10 +98,10 @@ export default function BuyDeviceBanner({
       handleOnPress();
       track("button_clicked", {
         button: "Discover the Nano",
-        screen: currentRoute,
+        screen: "Wallet",
       });
     }
-  }, [handleOnPress, handleSetupCtaOnPress, variant, currentRoute]);
+  }, [handleOnPress, handleSetupCtaOnPress, variant]);
 
   const pressMessage = useCallback(() => {
     track("message_clicked", {
