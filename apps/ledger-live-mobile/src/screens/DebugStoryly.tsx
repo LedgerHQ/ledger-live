@@ -22,7 +22,7 @@ const StyledStoryBar = styled(StoryBar).attrs({
 const DebugStoryly = () => (
   <SafeAreaView>
     <ScrollView>
-      <Flex backgroundColor="background" flex={1}>
+      <Flex backgroundColor="background.main" flex={1}>
         <Alert
           type="warning"
           learnMoreUrl={
