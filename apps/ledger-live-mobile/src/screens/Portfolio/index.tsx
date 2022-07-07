@@ -46,8 +46,6 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
-import StoryBar from "../../components/Storyly/StoryBar";
-import { onboardingTipsStoryInstanceID } from "../../components/Storyly/shared";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 

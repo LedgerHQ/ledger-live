@@ -4,10 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Alert from "../components/Alert";
-import {
-  storyInstancesIDsMap,
-  StorylyInstanceID,
-} from "../components/Storyly/shared";
+import { storyInstancesIDsMap } from "../components/Storyly/shared";
 import StoryBar from "../components/Storyly/StoryBar";
 import LanguageSettingsRow from "./Settings/General/LanguageRow";
 
@@ -37,7 +34,7 @@ const DebugStoryly = () => (
           This is a tool provided as-is for the team to validate storyly
           instances used in the app.
           {Platform.OS === "android"
-            ? "\n\nOn Android, this **will** crash in case there is a video, but outside of this debug screen, stories containing a video will be disabled by default. There is ongoing work to fix this and no stories will be added in app until this is solved."
+            ? "\n\nOn Android, stories **will** crash in case there is a video, so they are disabled and will be replaced dynamically by a placeholder. There is ongoing work to fix this and no stories will be added in app until this is solved."
             : ""}
         </Alert>
         <LanguageSettingsRow />
@@ -45,7 +42,6 @@ const DebugStoryly = () => (
           <Flex key={index} py={5} flex={1}>
             <Text>{key}</Text>
             <StyledStoryBar
-              shouldBlockVideoContentOnAndroid={false}
               instanceID={storyInstancesIDsMap[key]}
               onFail={() => {}}
             />
