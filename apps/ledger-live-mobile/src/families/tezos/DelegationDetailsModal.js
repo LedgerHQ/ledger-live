@@ -9,16 +9,16 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import type { Delegation } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+} from "@ledgerhq/live-common/explorers";
+import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import type { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Icon from "react-native-vector-icons/dist/Feather";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import IconReceive from "../../icons/Receive";

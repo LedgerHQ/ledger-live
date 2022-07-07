@@ -2,7 +2,7 @@ import { Page, Locator } from "@playwright/test";
 import {
   deviceInfo155 as deviceInfo,
   mockListAppsResult as innerMockListAppResult,
-} from "@ledgerhq/live-common/lib/apps/mock";
+} from "@ledgerhq/live-common/apps/mock";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
@@ -15,7 +15,7 @@ const mockListAppsResult = (...params) => {
 
 // fromTransactionRaw doesn't work as expected but I'm not sure why it produces the following error:
 // page.evaluate: ReferenceError: _transaction is not defined
-// import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
+// import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 export class DeviceAction {
   readonly page: Page;
@@ -119,7 +119,7 @@ export class DeviceAction {
               amount: { s: 1, e: 0, c: [1] },
               recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
               rbf: false,
-              utxoStrategy: { strategy: 0, pickUnconfirmedRBF: false, excludeUTXOs: [] },
+              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
               family: "bitcoin",
               feePerByte: { s: 1, e: 0, c: [1] },
               networkInfo: {

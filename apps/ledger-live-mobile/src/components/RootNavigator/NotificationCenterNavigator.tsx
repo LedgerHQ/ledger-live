@@ -4,7 +4,7 @@ import {
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
-import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
+import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";

@@ -11,26 +11,19 @@ import * as core from "@actions/core";
 
 const main = async function(): Promise<void> {
   const username = core.getInput("username");
-  const organisation = core.getInput("organisation");
+  const org = core.getInput("organisation");
   const token = core.getInput("token");
   const octokit = github.getOctokit(token);
 
   try {
-    const { data: orgs } = await octokit.rest.orgs.listForUser({
+    await octokit.rest.orgs.checkMembershipForUser({
+      org,
       username,
-      per_page: 100,
     });
 
-    core.info(JSON.stringify(orgs, null, 2));
-
-    const isMember = orgs.some(
-      ({ login }) => login.toLowerCase() === organisation.toLowerCase()
-    );
-
-    core.setOutput("is-org-member", isMember);
+    core.setOutput("is-org-member", true);
   } catch (error) {
-    core.info(JSON.stringify(error, null, 2));
-    core.setFailed("Error fetching informations");
+    core.setOutput("is-org-member", false);
   }
 };
 

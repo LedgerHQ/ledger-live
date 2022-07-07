@@ -1,7 +1,7 @@
 // @flow
 
 import type { Observable } from "rxjs";
-import prepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
+import prepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 type Input = {

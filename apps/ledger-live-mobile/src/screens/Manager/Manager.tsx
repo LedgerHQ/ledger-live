@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
-import { predictOptimisticState } from "@ledgerhq/live-common/lib/apps";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
+import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -154,7 +154,7 @@ const Manager = ({
         return CommonActions.reset({ ...state, routes });
       });
       if(restoreApps) {
-        // we renavigate to the manager to force redetection of the apps and restore apps if needed        
+        // we renavigate to the manager to force redetection of the apps and restore apps if needed
         navigation.replace(ScreenName.Manager, {
           device,
           appsToRestore: installedApps,

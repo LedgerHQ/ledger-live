@@ -6,16 +6,16 @@ import styled, { useTheme } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import counterValueFormatter from "@ledgerhq/live-common/lib/market/utils/countervalueFormatter";
+import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { TableCell, TableRow } from "./MarketList";
 import { SmallMarketItemChart } from "./MarketItemChart";
-import { CurrencyData } from "@ledgerhq/live-common/lib/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { Button } from ".";
 import { useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;

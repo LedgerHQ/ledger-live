@@ -74,3 +74,8 @@ export type NFTCollectionMetadataResponse = {
     tokenName: string | null;
   } | null;
 };
+
+export type FloorPrice = {
+  ticker: string;
+  value: number;
+};

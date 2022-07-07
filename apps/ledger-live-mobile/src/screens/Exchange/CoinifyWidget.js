@@ -3,15 +3,15 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
 import { ActivityIndicator, Linking, StyleSheet, View } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/helpers";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import DeviceAction from "../../components/DeviceAction";

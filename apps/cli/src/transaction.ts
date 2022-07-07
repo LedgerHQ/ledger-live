@@ -7,16 +7,16 @@ import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type {
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/lib/types/index";
 import type {
   Account,
   AccountLike,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/parseCurrencyUnit";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/index";
 
 const inferAmount = (account: AccountLike, str: string): BigNumber => {
   const currency = getAccountCurrency(account);

@@ -3,11 +3,11 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch as useReduxDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";

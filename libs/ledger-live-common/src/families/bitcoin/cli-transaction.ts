@@ -10,11 +10,6 @@ const options = [
     desc: "how much fee per byte",
   },
   {
-    name: "pickUnconfirmedRBF",
-    type: Boolean,
-    desc: "also pick unconfirmed replaceable txs",
-  },
-  {
     name: "excludeUTXO",
     alias: "E",
     type: String,
@@ -53,7 +48,6 @@ function inferTransactions(
       rbf: opts.rbf || false,
       utxoStrategy: {
         strategy: bitcoinPickingStrategy[opts["bitcoin-pick-strategy"]] || 0,
-        pickUnconfirmedRBF: opts.pickUnconfirmedRBF || false,
         excludeUTXOs: (opts.excludeUTXO || []).map((str) => {
           const [hash, index] = str.split("@");
           invariant(

@@ -3,7 +3,7 @@ import flatMap from "lodash/flatMap";
 import groupBy from "lodash/groupBy";
 import { from } from "rxjs";
 import { concatMap, reduce } from "rxjs/operators";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { Account } from "@ledgerhq/types-live";

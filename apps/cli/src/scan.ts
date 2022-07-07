@@ -17,31 +17,33 @@ import type {
   CryptoCurrency
 } from "@ledgerhq/types-cryptoassets";
 import {
-  fromAccountRaw,
   encodeAccountId,
   decodeAccountId,
-  emptyHistoryCache,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/lib/account/accountId";
+import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/balanceHistoryCache";
+import {
+  fromAccountRaw,
+} from "@ledgerhq/live-common/lib/account/serialization";
 import { asDerivationMode, DerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import {
   getAccountBridge,
   getCurrencyBridge,
-} from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/bridge/index";
 import {
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyById,
   getCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import {
   runDerivationScheme,
   getDerivationScheme,
-} from "@ledgerhq/live-common/lib/derivation";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
-import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+} from "@ledgerhq/live-common/derivation";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
+import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
-import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import fs from "fs";
 export const deviceOpt = {
   name: "device",

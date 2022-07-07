@@ -149,7 +149,7 @@ const formatNetworkInfo = (
 
 export const formatTransaction = (t: Transaction, account: Account): string => {
   const n = getEnv("DEBUG_UTXO_DISPLAY");
-  const { excludeUTXOs, strategy, pickUnconfirmedRBF } = t.utxoStrategy;
+  const { excludeUTXOs, strategy } = t.utxoStrategy;
   const displayAll = excludeUTXOs.length <= n;
   return `
 SEND ${
@@ -168,7 +168,7 @@ ${[
   Object.keys(bitcoinPickingStrategy).find(
     (k) => bitcoinPickingStrategy[k] === strategy
   ),
-  pickUnconfirmedRBF && "pick-unconfirmed",
+  "pick-unconfirmed",
   t.rbf && "RBF-enabled",
 ]
   .filter(Boolean)

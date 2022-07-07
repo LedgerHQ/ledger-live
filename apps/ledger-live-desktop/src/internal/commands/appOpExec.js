@@ -1,9 +1,9 @@
 // @flow
 import type { Observable } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import type { App } from "@ledgerhq/types-live";
-import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import type { AppOp } from "@ledgerhq/live-common/lib/apps";
+import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import type { AppOp } from "@ledgerhq/live-common/apps/index";
 
 type Input = {
   deviceId: string,

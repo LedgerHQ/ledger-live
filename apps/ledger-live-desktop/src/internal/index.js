@@ -1,10 +1,10 @@
 // @flow
 import * as Sentry from "@sentry/node";
 import { unsubscribeSetup } from "./live-common-setup";
-import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { log } from "@ledgerhq/logs";
 import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";

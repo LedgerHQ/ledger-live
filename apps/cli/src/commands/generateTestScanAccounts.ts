@@ -1,6 +1,6 @@
 import { listen } from "@ledgerhq/logs";
 import { map, reduce } from "rxjs/operators";
-import { accountFormatters } from "@ledgerhq/live-common/lib/account";
+import { accountFormatters } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import { Account } from "@ledgerhq/types-live";

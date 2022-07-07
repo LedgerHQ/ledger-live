@@ -7,9 +7,9 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 // @ts-ignore
 import { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import { AccountLikeArray, Operation } from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account/groupOperations";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account/helpers";
+import { AccountLikeArray, Operation } from "@ledgerhq/live-common/types/index";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/groupOperations";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { useRefreshAccountsOrdering } from "../../actions/general";

@@ -7,7 +7,7 @@ import QRCode from "react-native-qrcode-svg";
 import VersionNumber from "react-native-version-number";
 import { createStructuredSelector } from "reselect";
 
-import { encode } from "@ledgerhq/live-common/lib/cross";
+import { encode } from "@ledgerhq/live-common/cross";
 import { dataToFrames } from "qrloop";
 
 import { accountsSelector } from "../../../reducers/accounts";

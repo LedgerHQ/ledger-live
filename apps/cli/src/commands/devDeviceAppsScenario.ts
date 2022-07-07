@@ -1,16 +1,16 @@
 import { from, concat, defer, Observable } from "rxjs";
 import { mergeMap, filter, map, ignoreElements } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import {
   initState,
   ListAppsResult,
   reducer,
   runAll,
-} from "@ledgerhq/live-common/lib/apps";
-import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import installApp from "@ledgerhq/live-common/lib/hw/installApp";
+} from "@ledgerhq/live-common/apps/index";
+import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import installApp from "@ledgerhq/live-common/hw/installApp";
 import { deviceOpt } from "../scan";
 import { Application } from "@ledgerhq/types-live";
 type Scenario = number[];
