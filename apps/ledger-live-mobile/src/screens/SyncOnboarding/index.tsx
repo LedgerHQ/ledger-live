@@ -237,39 +237,34 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
           onClose={handleDesyncClose}
           navigation={navigation}
         />
-        <ResyncOverlay isOpen={!!timer && !stopPolling} />
-        <ScrollContainer>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            pt={7}
-            px={7}
-          >
-            <LanguageSelect />
-            <Button type="default" Icon={CloseMedium} onPress={handleClose} />
-          </Flex>
-          <Flex px={7} pt={7}>
-            <Flex flexDirection="row" alignItems="center">
-              <Text variant="h4" fontWeight="semiBold">
-                Setup Manual
-              </Text>
-              <Button
-                ml={2}
-                Icon={Question}
-                // size="small"
-
-                onPress={() => setHelpDrawerOpen(true)}
-              />
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          pt={7}
+          px={7}
+          pb={4}
+        >
+          <LanguageSelect />
+          <Button type="default" Icon={CloseMedium} onPress={handleClose} />
+        </Flex>
+        <Flex flex={1}>
+          <ResyncOverlay isOpen={!!timer && !stopPolling} />
+          <ScrollContainer>
+            <Flex px={7} pt={2}>
+              <Flex mb={7} flexDirection="row" alignItems="center">
+                <Text variant="h4" fontWeight="semiBold">
+                  Setup your Nano
+                </Text>
+                <Button
+                  ml={2}
+                  Icon={Question}
+                  onPress={() => setHelpDrawerOpen(true)}
+                />
+              </Flex>
+              <VerticalTimeline steps={onboardingSteps} />
             </Flex>
-            <Text variant="body" color="neutral.c80">
-              Continue setting up on your Nano.
-            </Text>
-            <Text mb={8} variant="body" color="neutral.c80">
-              Check back here for tips and information.
-            </Text>
-            <VerticalTimeline steps={onboardingSteps} />
-          </Flex>
-        </ScrollContainer>
+          </ScrollContainer>
+        </Flex>
       </Flex>
     </SafeAreaView>
   );
