@@ -2416,15 +2416,12 @@
           "noAccount": "Create an account to receive {{name}}",
           "noAccountCTA": "Add account"
         },
-        "edit": {
+        "select": {
           "from": {
             "title": "From"
           },
           "to": {
             "title": "To"
-          },
-          "provider": {
-            "title": "Provider"
           }
         },
         "providers": {

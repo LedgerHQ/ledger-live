@@ -12,6 +12,7 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
+import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap";
 import { StatusTag } from "./StatusTag";
@@ -33,6 +34,7 @@ export function Summary({
   exchangeRate,
   kyc,
 }: Props) {
+  const navigation = useNavigation<any>();
   const { t } = useTranslation();
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
@@ -69,7 +71,11 @@ export function Summary({
 
   return (
     <Flex>
-      <Item title={t("transfer.swap2.form.details.label.provider")}>
+      {}
+      <Item
+        title={t("transfer.swap2.form.details.label.provider")}
+        onEdit={() => navigation.navigate("SelectProvider")}
+      >
         <Flex flexDirection="row" alignItems="center">
           <StatusTag kyc={kyc} />
           <Flex paddingRight={2}>
@@ -99,13 +105,19 @@ export function Summary({
         </Text>
       </Item>
 
-      <Item title={t("transfer.swap2.form.details.label.fees")}>
+      <Item
+        title={t("transfer.swap2.form.details.label.fees")}
+        onEdit={() => navigation.navigate("SelectFees")}
+      >
         <Text>
           <CurrencyUnitValue unit={fromUnit} value={fees} />
         </Text>
       </Item>
 
-      <Item title={t("transfer.swap2.form.details.label.target")}>
+      <Item
+        title={t("transfer.swap2.form.details.label.target")}
+        onEdit={() => navigation.navigate("SelectAccount", { target: "to" })}
+      >
         <Text>{targetAccountName}</Text>
       </Item>
     </Flex>

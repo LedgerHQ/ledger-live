@@ -7,6 +7,8 @@ import {
   SwapNavParamList,
   SelectAccount,
   SelectCurrency,
+  SelectProvider,
+  SelectFees,
   Login,
   KYC,
   MFA,
@@ -43,6 +45,7 @@ export default function SwapNavigator() {
           title: t("transfer.swap2.form.title"),
         }}
       />
+
       <Stack.Screen
         name="SelectAccount"
         component={SelectAccount}
@@ -52,21 +55,49 @@ export default function SwapNavigator() {
           },
         }) => ({
           headerTitle: () => (
-            <StepHeader title={t(`transfer.swap2.form.edit.${target}.title`)} />
+            <StepHeader
+              title={t(`transfer.swap2.form.select.${target}.title`)}
+            />
           ),
           headerRight: undefined,
         })}
       />
+
       <Stack.Screen
         name="SelectCurrency"
         component={SelectCurrency}
         options={{
           headerTitle: () => (
-            <StepHeader title={t("transfer.swap2.form.edit.to.title")} />
+            <StepHeader title={t("transfer.swap2.form.select.to.title")} />
           ),
           headerRight: undefined,
         }}
       />
+
+      <Stack.Screen
+        name="SelectProvider"
+        component={SelectProvider}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("transfer.swap2.form.details.label.provider")}
+            />
+          ),
+          headerRight: undefined,
+        }}
+      />
+
+      <Stack.Screen
+        name="SelectFees"
+        component={SelectFees}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap2.form.details.label.fees")} />
+          ),
+          headerRight: undefined,
+        }}
+      />
+
       <Stack.Screen
         name="Login"
         component={Login}
@@ -77,6 +108,7 @@ export default function SwapNavigator() {
           headerRight: undefined,
         })}
       />
+
       <Stack.Screen
         name="KYC"
         component={KYC}
@@ -87,6 +119,7 @@ export default function SwapNavigator() {
           headerRight: undefined,
         })}
       />
+
       <Stack.Screen
         name="MFA"
         component={MFA}
@@ -97,6 +130,7 @@ export default function SwapNavigator() {
           headerRight: undefined,
         })}
       />
+
       {/* <Stack.Screen
         name={ScreenName.SwapKYCStates}
         component={SwapKYCStates}

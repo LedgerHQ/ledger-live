@@ -35,6 +35,8 @@ export type SwapNavParamList = {
     currencies: string[];
     provider: string;
   };
+  SelectProvider: undefined;
+  SelectFees: undefined;
   Login: {
     provider: string;
   };
