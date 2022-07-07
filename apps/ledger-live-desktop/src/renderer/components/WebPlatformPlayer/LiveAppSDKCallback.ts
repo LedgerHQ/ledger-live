@@ -3,7 +3,6 @@ import { TFunction } from "react-i18next";
 
 import {
   Account,
-  CryptoCurrency,
   Operation,
   SignedOperation,
   Transaction,
@@ -17,27 +16,28 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import {
   accountToPlatformAccount,
-  currencyToPlatformCurrency,
   getPlatformTransactionSignFlowInfos,
-} from "@ledgerhq/live-common/lib/platform/converters";
+} from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
   deserializePlatformTransaction,
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
-} from "@ledgerhq/live-common/lib/platform/serializers";
-import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+} from "@ledgerhq/live-common/platform/serializers";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
-} from "@ledgerhq/live-common/lib/platform/rawTypes";
-import { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
+} from "@ledgerhq/live-common/platform/rawTypes";
+import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { openModal } from "../../actions/modals";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 
 import * as tracking from "./tracking";
+import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+// import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 
 type WebPlatformContext = {
   manifest: AppManifest;
@@ -329,3 +329,33 @@ export const completeExchangeCallback = (
     ),
   );
 };
+
+export const signMessageCallback = ({ dispatch, accounts }: WebPlatformContext, accountId: string, message: string ) => {
+  const account = accounts.find(account => account.id === accountId);
+
+  let formattedMessage: MessageData | null;
+  try {
+    // formattedMessage = prepareMessageToSign(account, message);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  return new Promise((resolve, reject) => {
+    dispatch(
+      openModal("MODAL_SIGN_MESSAGE", {
+        message: formattedMessage,
+        account,
+        onConfirmationHandler: (signature: string) => {
+          resolve(signature);
+        },
+        onFailHandler: (err: Error) => {
+          reject(err);
+        },
+        onClose: () => {
+          reject(new Error("Signature aborted by user"));
+        },
+      }),
+    );
+  });
+}
+

@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
@@ -39,6 +38,7 @@ import {
   CompleteExchangeRequest,
   completeExchangeCallback,
   RequestAccountParams,
+  signMessageCallback
 } from "./LiveAppSDKCallback";
 
 const Container = styled.div`
@@ -174,6 +174,13 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
     [accounts, dispatch, manifest],
   );
 
+  const signMessage = useCallback(
+    (accountId: string, message: string) => {
+      return signMessageCallback({ manifest, dispatch, accounts }, accountId, message);
+    },
+    [accounts, dispatch]
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -184,6 +191,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -194,6 +202,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       broadcastTransaction,
       startExchange,
       completeExchange,
+      signMessage,
     ],
   );
 
