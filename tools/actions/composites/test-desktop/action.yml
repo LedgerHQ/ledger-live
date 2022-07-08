@@ -23,6 +23,7 @@ runs:
       shell: bash
     - name: Build Dummy SDK app for testing
       run: pnpm --filter"dummy-live-app" i && pnpm --filter"dummy-live-app" build
+      shell: bash
     - name: Run unit tests [Linux]
       if: inputs.os == 'linux'
       run: pnpm desktop test:jest
