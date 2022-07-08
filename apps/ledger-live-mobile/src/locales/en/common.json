@@ -2393,6 +2393,11 @@
     },
     "swap2": {
       "form": {
+        "ratesDrawer": {
+          "title": "Rate",
+          "quote": "Quote",
+          "receive": "Receive"
+        },
         "title": "Exchange",
         "from": "From",
         "to": "To",

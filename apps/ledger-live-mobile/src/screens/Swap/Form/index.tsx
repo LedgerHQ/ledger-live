@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import { swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
+// eslint-disable-next-line import/named
 import { TrackScreen, track } from "../../../analytics";
 import { Loading } from "./Loading";
 import { NotAvailable } from "./NotAvailable";
@@ -99,6 +100,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const [errorCode, setErrorCode] = useState<
     ValidCheckQuoteErrorCodes | undefined
   >();
+
+  useEffect(() => {
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+  }, [params?.rate]);
 
   useEffect(() => {
     if (params?.currency) {
@@ -324,6 +331,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   if (providers) {
     return (
+      // @ts-ignore-error
       <KeyboardAwareScrollView>
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>

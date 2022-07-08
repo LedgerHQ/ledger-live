@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
+// eslint-disable-next-line import/no-unresolved, import/named
 import { providerIcons } from "../../../../icons/swap";
 import { StatusTag } from "./StatusTag";
 import { Item } from "./Item";
@@ -27,10 +28,7 @@ interface Props {
 
 export function Summary({
   provider,
-  swapTx: {
-    swap: { from, to },
-    status,
-  },
+  swapTx: { swap, status },
   exchangeRate,
   kyc,
 }: Props) {
@@ -44,6 +42,8 @@ export function Summary({
     [provider],
   );
 
+  const { from, to } = swap;
+
   const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [
     from.account,
   ]);
@@ -56,6 +56,14 @@ export function Summary({
   );
 
   const fees = useMemo(() => status?.estimatedFees ?? "", [status]);
+
+  const onEditProvider = useCallback(() => {
+    navigation.navigate("SelectProvider", {
+      swap,
+      provider,
+      selectedId: exchangeRate?.rateId,
+    });
+  }, [navigation, swap, provider, exchangeRate]);
 
   if (
     !provider ||
@@ -71,10 +79,9 @@ export function Summary({
 
   return (
     <Flex>
-      {}
       <Item
         title={t("transfer.swap2.form.details.label.provider")}
-        onEdit={() => navigation.navigate("SelectProvider")}
+        onEdit={onEditProvider}
       >
         <Flex flexDirection="row" alignItems="center">
           <StatusTag kyc={kyc} />
