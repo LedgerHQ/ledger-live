@@ -13,7 +13,7 @@ export function Item({ title, children, onEdit }: RowProps) {
     <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
       <Text color="neutral.c70">{title}</Text>
 
-      <Flex flexDirection="row">
+      <Flex flexDirection="row" alignItems="center">
         {children}
 
         {onEdit && (

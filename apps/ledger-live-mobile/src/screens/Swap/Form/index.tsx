@@ -102,12 +102,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   >();
 
   useEffect(() => {
-    if (params?.rate) {
-      setExchangeRate(params.rate);
-    }
-  }, [params?.rate]);
-
-  useEffect(() => {
     if (params?.currency) {
       swapTx.setToCurrency(params.currency);
     }
@@ -115,6 +109,14 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     if (params?.accountId) {
       const account = accounts.find(a => a.id === params?.accountId);
       swapTx.setFromAccount(account);
+    }
+
+    if (params?.rate) {
+      setExchangeRate(params.rate);
+    }
+
+    if (params?.transaction) {
+      swapTx.setTransaction(params.transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);

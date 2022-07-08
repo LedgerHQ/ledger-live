@@ -2417,11 +2417,6 @@
             "fees": "Network fees",
             "target": "Target account"
           },
-          "tooltip": {
-            "provider": "lorem ipsum",
-            "rate": "lorem ipsum",
-            "fees": "lorem ipsum"
-          },
           "noAccount": "Create an account to receive {{name}}",
           "noAccountCTA": "Add account"
         },

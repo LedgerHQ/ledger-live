@@ -28,7 +28,7 @@ interface Props {
 
 export function Summary({
   provider,
-  swapTx: { swap, status },
+  swapTx: { swap, status, transaction },
   exchangeRate,
   kyc,
 }: Props) {
@@ -114,7 +114,7 @@ export function Summary({
 
       <Item
         title={t("transfer.swap2.form.details.label.fees")}
-        onEdit={() => navigation.navigate("SelectFees")}
+        onEdit={() => navigation.navigate("SelectFees", { transaction, swap })}
       >
         <Text>
           <CurrencyUnitValue unit={fromUnit} value={fees} />
@@ -123,7 +123,9 @@ export function Summary({
 
       <Item
         title={t("transfer.swap2.form.details.label.target")}
-        onEdit={() => navigation.navigate("SelectAccount", { target: "to" })}
+        onEdit={() =>
+          navigation.navigate("SelectAccount", { target: "to", accountIds: [] })
+        }
       >
         <Text>{targetAccountName}</Text>
       </Item>

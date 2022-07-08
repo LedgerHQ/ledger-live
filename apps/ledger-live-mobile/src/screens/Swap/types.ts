@@ -2,7 +2,11 @@ import {
   ExchangeRate,
   SwapDataType,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 
@@ -26,6 +30,8 @@ export type SelectProviderProps = StackScreenProps<
   "SelectProvider"
 >;
 
+export type SelectFeesProps = StackScreenProps<SwapNavParamList, "SelectFees">;
+
 export type LoginProps = StackScreenProps<SwapNavParamList, "Login">;
 
 export type KYCProps = StackScreenProps<SwapNavParamList, "KYC">;
@@ -48,7 +54,12 @@ export type SwapNavParamList = {
     swap: SwapDataType;
     selectedId: string;
   };
-  SelectFees: undefined;
+  SelectFees: {
+    swap: SwapDataType;
+    rate: ExchangeRate;
+    provider: string;
+    transaction: Transaction;
+  };
   Login: {
     provider: string;
   };
@@ -64,7 +75,8 @@ export type SwapFormNavParamList = {
   SwapForm: {
     accountId?: string;
     currency?: CryptoCurrency | TokenCurrency;
-    rate: ExchangeRate;
+    rate?: ExchangeRate;
+    transaction?: Transaction;
   };
   SwapHistory: undefined;
 };
