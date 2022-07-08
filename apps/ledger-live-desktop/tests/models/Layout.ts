@@ -125,7 +125,7 @@ export class Layout {
     await this.loadingSpinner.waitFor({ state: "detached" });
   }
 
-  async waitForLoadingToHaveDisappeared() {
+  async waitForLoadingSpinnerToHaveDisappeared() {
     await this.loadingSpinner.waitFor({ state: "detached" });
   }
 }
