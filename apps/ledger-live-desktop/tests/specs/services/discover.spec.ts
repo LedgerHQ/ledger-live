@@ -4,6 +4,7 @@ import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
 import { Modal } from "tests/models/Modal";
 import { Drawer } from "tests/models/Drawer";
+import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
@@ -13,16 +14,27 @@ test.use({ userdata: "1AccountBTC1AccountETH" });
 let continueTest = false;
 
 test.beforeAll(async ({ request }) => {
-  // Check that dummy app in tests/utils/dummy-app-build has been started successfully (see playwright.config.ts 'webServer' option for more info)
+  // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const response = await request.get("http://localhost:3001");
-    if (response.ok() === true) {
+    const port = await server.start();
+    const response = await request.get(`http://localhost:${port}`);
+    if (response.ok()) {
       continueTest = true;
-      console.info("========> Dummy test app successfully running on port 3001! <=========");
+      console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.manifest(port));
+    } else {
+      throw new Error("Ping response != 200, got: " + response.status);
     }
   } catch (error) {
-    console.warn("========> Dummy test app not running on port 3001! <=========");
+    console.warn(`========> Dummy test app not running! <=========`);
+    console.error(error);
   }
+});
+
+test.afterAll(() => {
+  server.stop();
+  console.info(`========> Dummy test app stopped <=========`);
+  delete process.env.MOCK_REMOTE_LIVE_MANIFEST;
 });
 
 // Due to flakiness on different OS's and CI, we won't run the screenshots where unncessary for testing
@@ -47,7 +59,8 @@ test("Discover", async ({ page }) => {
 
   await test.step("Accept Live App Disclaimer", async () => {
     await drawer.continue();
-    await layout.waitForLoadingSpinner();
+    await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
+    await layout.waitForLoadingSpinnerToHaveDisappeared();
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
