@@ -12269,7 +12269,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.18.9
       '@polkadot/util': 10.1.3
-      '@polkadot/x-bigint': 10.0.2
+      '@polkadot/x-bigint': 10.1.3
     dev: false
 
   /@polkadot/types-create/8.12.2:
@@ -12290,7 +12290,7 @@ packages:
       '@polkadot/types': 8.12.2
       '@polkadot/types-codec': 8.12.2
       '@polkadot/types-create': 8.12.2
-      '@polkadot/util': 10.0.2
+      '@polkadot/util': 10.1.3
     dev: false
 
   /@polkadot/types/8.12.2:
@@ -12302,8 +12302,8 @@ packages:
       '@polkadot/types-augment': 8.12.2
       '@polkadot/types-codec': 8.12.2
       '@polkadot/types-create': 8.12.2
-      '@polkadot/util': 10.0.2
-      '@polkadot/util-crypto': 10.0.2
+      '@polkadot/util': 10.1.3
+      '@polkadot/util-crypto': 10.1.3
       rxjs: 7.5.5
     dev: false
 
@@ -12509,16 +12509,6 @@ packages:
       '@polkadot/util': 8.7.1
     dev: false
 
-  /@polkadot/wasm-crypto-asmjs/6.1.1_@polkadot+util@10.0.2:
-    resolution: {integrity: sha512-gG4FStVumkyRNH7WcTB+hn3EEwCssJhQyi4B1BOUt+eYYmw9xJdzIhqjzSd9b/yF2e5sRaAzfnMj2srGufsE6A==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': '*'
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@polkadot/util': 10.0.2
-    dev: false
-
   /@polkadot/wasm-crypto-asmjs/6.1.1_@polkadot+util@9.2.1:
     resolution: {integrity: sha512-gG4FStVumkyRNH7WcTB+hn3EEwCssJhQyi4B1BOUt+eYYmw9xJdzIhqjzSd9b/yF2e5sRaAzfnMj2srGufsE6A==}
     engines: {node: '>=14.0.0'}
@@ -12604,17 +12594,6 @@ packages:
       '@polkadot/util': 8.7.1
     dev: false
 
-  /@polkadot/wasm-crypto-wasm/6.1.1_@polkadot+util@10.0.2:
-    resolution: {integrity: sha512-zkz5Ct4KfTBT+YNEA5qbsHhTV58/FAxDave8wYIOaW4TrBnFPPs+J0WBWlGFertgIhPkvjFnQC/xzRyhet9prg==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': '*'
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@polkadot/util': 10.0.2
-      '@polkadot/wasm-util': 6.1.1_@polkadot+util@10.0.2
-    dev: false
-
   /@polkadot/wasm-crypto-wasm/6.1.1_@polkadot+util@9.2.1:
     resolution: {integrity: sha512-zkz5Ct4KfTBT+YNEA5qbsHhTV58/FAxDave8wYIOaW4TrBnFPPs+J0WBWlGFertgIhPkvjFnQC/xzRyhet9prg==}
     engines: {node: '>=14.0.0'}
@@ -12669,10 +12648,10 @@ packages:
       '@polkadot/util': '*'
       '@polkadot/x-randomvalues': '*'
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@polkadot/util': 10.0.2
-      '@polkadot/wasm-crypto-asmjs': 6.1.1_@polkadot+util@10.0.2
-      '@polkadot/wasm-crypto-wasm': 6.1.1_@polkadot+util@10.0.2
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.0.2
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.0.2
     dev: false
 
   /@polkadot/wasm-crypto/6.1.1_jwiyhc4ttror3chirgtagw2t5q:
@@ -12724,16 +12703,6 @@ packages:
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.3
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.3
       '@polkadot/x-randomvalues': 10.1.3
-    dev: false
-
-  /@polkadot/wasm-util/6.1.1_@polkadot+util@10.0.2:
-    resolution: {integrity: sha512-DgpLoFXMT53UKcfZ8eT2GkJlJAOh89AWO+TP6a6qeZQpvXVe5f1yR45WQpkZlgZyUP+/19+kY56GK0pQxfslqg==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': '*'
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@polkadot/util': 10.0.2
     dev: false
 
   /@polkadot/wasm-util/6.1.1_@polkadot+util@9.2.1:
@@ -28863,7 +28832,7 @@ packages:
     engines: {node: '>=6'}
     peerDependencies:
       eslint: '>=5'
-      jest: ^24.0.0
+      jest: '*'
     peerDependenciesMeta:
       jest:
         optional: true
@@ -28876,7 +28845,7 @@ packages:
     engines: {node: '>=6'}
     peerDependencies:
       eslint: '>=5'
-      jest: ^24.0.0
+      jest: '*'
     peerDependenciesMeta:
       jest:
         optional: true
@@ -42728,7 +42697,7 @@ packages:
     resolution: {integrity: sha512-7Wjy+9E3WwLOEL30D+m8TSTF7qJJUJLONBnwQp0518siuMxUQUbgZwssaFX+QKlZkjHZcw/IpZCt/H0srrntSg==}
     engines: {node: '>=6'}
     dependencies:
-      ts-pnp: 1.2.0
+      ts-pnp: 1.2.0_typescript@4.6.4
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -51568,6 +51537,18 @@ packages:
       typescript:
         optional: true
 
+  /ts-pnp/1.2.0_typescript@4.6.4:
+    resolution: {integrity: sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==}
+    engines: {node: '>=6'}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.6.4
+    dev: true
+
   /tsconfig-paths/3.14.1:
     resolution: {integrity: sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ==}
     dependencies:
@@ -55504,7 +55485,7 @@ packages:
     dev: false
 
   github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e:
-    resolution: {tarball: https://codeload.github.com/LedgerHQ/compressjs/tar.gz/d9e8e4d994923e0ea76a32b97289bcccfe71b82e}
+    resolution: {commit: d9e8e4d994923e0ea76a32b97289bcccfe71b82e, repo: git+ssh://git@github.com/LedgerHQ/compressjs.git, type: git}
     name: '@ledgerhq/compressjs'
     version: 1.3.1
     hasBin: true

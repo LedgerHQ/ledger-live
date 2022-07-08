@@ -9,7 +9,6 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 
-
 /**
  * This class is in charge of receiving the call from react-native side and in turn calling a
  * headlessJS service that will run our code in the background.

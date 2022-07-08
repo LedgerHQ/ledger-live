@@ -4,3 +4,4 @@ node_modules
 .pnpm-*
 /temp
 .idea
+apps/ledger-live-mobile/android/github.properties

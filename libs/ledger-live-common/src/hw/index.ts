@@ -46,6 +46,7 @@ export const resolveTransportModuleForDeviceId = (
   deviceId: string
 ): TransportModule | undefined =>
   modules.find((m) => m.canOpen && m.canOpen(deviceId));
+
 export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true
 ): Discovery => {
