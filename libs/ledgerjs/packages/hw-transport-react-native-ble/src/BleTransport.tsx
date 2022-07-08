@@ -88,7 +88,8 @@ class Ble extends Transport {
   };
 
   private onBridgeEvent = (rawEvent) => {
-    const { event, type, data } = JSON.parse(rawEvent);
+    const { event, type, data } = rawEvent;
+    Ble.log("raw bridge", rawEvent)
     if (event === "task") {
       if (this.queueObserver) {
         if (type === "runComplete") {
@@ -109,9 +110,8 @@ class Ble extends Transport {
   };
 
   static onBridgeGlobalEvent(rawEvent): void {
-    const { event, type, data } = JSON.parse(rawEvent);
+    const { event, type, data } = rawEvent;
     if (event === "new-device") {
-      console.log("BIMBIM new device ", data);
       Ble.scanObserver?.next({
         type: "add",
         descriptor: {
@@ -139,7 +139,7 @@ class Ble extends Transport {
     }
 
     try {
-      const _uuid = await NativeBle.connect(uuid, "no_longer_used");
+      const _uuid = await NativeBle.connect(uuid);
       Ble.log(`connected to (${_uuid})`);
       return new Ble(_uuid);
     } catch (error) {
@@ -154,6 +154,10 @@ class Ble extends Transport {
   ): Subscription => {
     Ble.stateObserver = observer;
     NativeBle.observeBluetooth();
+
+    AppState.addEventListener("change", (state) => {
+      NativeBle.onAppStateChange(state === "active");
+    });
 
     return {
       unsubscribe: () => {

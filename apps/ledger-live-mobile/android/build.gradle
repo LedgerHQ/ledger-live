@@ -4,9 +4,10 @@ buildscript {
     ext {
         buildToolsVersion = "30.0.3"
         minSdkVersion = 24
-        compileSdkVersion = 30
-        targetSdkVersion = 30
-        kotlinVersion = "1.6.0"
+        compileSdkVersion = 32
+        targetSdkVersion = 32
+        ndkVersion = "21.4.7075529"
+        kotlinVersion = "1.7.0"
         androidXCore = "1.6.0"
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -26,7 +27,7 @@ buildscript {
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
-        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.gms:google-services:4.3.13'
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
@@ -50,6 +51,21 @@ allprojects {
             }
         }
         google()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/LedgerHQ/hw-transport-android-ble")
+
+            def buildProperties = new Properties()
+            rootProject.file("github.properties").withInputStream {
+                stream -> buildProperties.load(stream)
+            }
+            //Add the credentials in your github.properties file
+            credentials {
+                username = buildProperties["ghp.usr"]
+                password = buildProperties["ghp.key"]
+            }
+
+        }
         maven { url 'https://jitpack.io' }
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
