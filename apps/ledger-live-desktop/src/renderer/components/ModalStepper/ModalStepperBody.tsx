@@ -1,7 +1,8 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { noop } from "lodash";
+import { InvertThemeV3 } from "@ledgerhq/react-ui";
 import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
 import ProgressBar from "./ProgressBar";
 import StepLeftSide, { StepLeftSideProps } from "./StepLeftSide";
@@ -40,6 +41,7 @@ export default function ModalStepperBody({
   dataTestId,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const stepsProps = { stepIndex, stepCount };
 
@@ -64,7 +66,14 @@ export default function ModalStepperBody({
           stepIndex !== stepCount - 1 ? "v3-modal-stepper-continue" : "v3-modal-stepper-end"
         }
       />
-      <StepRightSide AsideRight={AsideRight} rightSideBgColor={rightSideBgColor} />
+      {colors.palette.type === "dark" ? (
+        <InvertThemeV3>
+          <StepRightSide AsideRight={AsideRight} rightSideBgColor={rightSideBgColor} />
+        </InvertThemeV3>
+      ) : (
+        <StepRightSide AsideRight={AsideRight} rightSideBgColor={rightSideBgColor} />
+      )}
+
       <ProgressBar {...stepsProps} />
     </StepContainer>
   );

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import connectNano from "../assets/connectNano.png";
 
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
@@ -64,7 +64,9 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   );
 }
 
-GenuineCheck.Illustration = <IllustrationContainer width="240px" height="245px" src={getStarted} />;
+GenuineCheck.Illustration = (
+  <IllustrationContainer width="240px" height="245px" src={connectNano} />
+);
 
 const Footer = (props: any) => {
   const { t } = useTranslation();

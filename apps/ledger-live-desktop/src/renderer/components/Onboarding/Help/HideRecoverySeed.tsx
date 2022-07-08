@@ -88,46 +88,50 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <ScrollArea>
-      <HideRecoverySeedContainer>
-        <Text mb="32px" color="palette.text.shade100" variant="h3">
-          {t("onboarding.drawers.whereToHide.title")}
-        </Text>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.whereToHide.points.1">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.whereToHide.points.2">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="success">
-          <Trans i18nKey="onboarding.drawers.whereToHide.points.3">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="warning">
-          <Trans i18nKey="onboarding.drawers.whereToHide.points.4">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="warning">
-          <Trans i18nKey="onboarding.drawers.whereToHide.points.5">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Button
-          data-test-id="v3-hide-seed-drawer"
-          mt="auto"
-          variant="main"
-          onClick={props.handleNextInDrawer}
-          Icon={() => <Icons.ArrowRightMedium size={18} />}
-        >
-          {t("v3.onboarding.screens.welcome.nextButton")}
-        </Button>
-      </HideRecoverySeedContainer>
-    </ScrollArea>
+    <>
+      <ScrollArea>
+        <HideRecoverySeedContainer>
+          <Text mb="32px" color="palette.text.shade100" variant="h3">
+            {t("onboarding.drawers.whereToHide.title")}
+          </Text>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.whereToHide.points.1">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.whereToHide.points.2">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="success">
+            <Trans i18nKey="onboarding.drawers.whereToHide.points.3">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="warning">
+            <Trans i18nKey="onboarding.drawers.whereToHide.points.4">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="warning">
+            <Trans i18nKey="onboarding.drawers.whereToHide.points.5">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+        </HideRecoverySeedContainer>
+      </ScrollArea>
+      <Button
+        data-test-id="v3-hide-seed-drawer"
+        mt="auto"
+        left="-258px"
+        width="248px"
+        variant="main"
+        onClick={props.handleNextInDrawer}
+        Icon={() => <Icons.ArrowRightMedium size={18} />}
+      >
+        {t("v3.onboarding.screens.welcome.nextButton")}
+      </Button>
+    </>
   );
 }

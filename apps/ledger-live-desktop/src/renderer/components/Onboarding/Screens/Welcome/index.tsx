@@ -11,7 +11,7 @@ import { Text, Button, Logos, Icons, InvertThemeV3 } from "@ledgerhq/react-ui";
 
 import accessCrypto from "./assets/accessCrypto.png";
 import ownPrivateKey from "./assets/ownPrivateKey.png";
-import setupNano from "./assets/setupNano.svg";
+import setupNano from "./assets/setupNano.png";
 import stayOffline from "./assets/stayOffline.png";
 import validateTransactions from "./assets/validateTransactions.png";
 

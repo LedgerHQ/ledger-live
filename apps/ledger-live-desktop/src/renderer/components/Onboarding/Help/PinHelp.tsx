@@ -80,56 +80,60 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <ScrollArea>
-      <PinHelpContainer>
-        <Text color="palette.text.shade100" variant="h3">
-          {t("onboarding.drawers.pinHelp.title")}
-        </Text>
-        <Text mt="8px" mb="32px" color="palette.text.shade100" ff="Inter|Regular" fontSize={14}>
-          {t("onboarding.drawers.pinHelp.intro")}
-        </Text>
-        <Rule type="success">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.1">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="success">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.2">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="success">{t("onboarding.drawers.pinHelp.rules.3")}</Rule>
-        <Rule type="success">{t("onboarding.drawers.pinHelp.rules.4")}</Rule>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.5">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.6">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.7">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Rule type="error">
-          <Trans i18nKey="onboarding.drawers.pinHelp.rules.8">
-            <Text ff="Inter|Bold" />
-          </Trans>
-        </Rule>
-        <Button
-          data-test-id="v3-pin-code-drawer"
-          mt="auto"
-          variant="main"
-          onClick={props.handleNextInDrawer}
-          Icon={() => <Icons.ArrowRightMedium size={18} />}
-        >
-          {t("v3.onboarding.screens.welcome.nextButton")}
-        </Button>
-      </PinHelpContainer>
-    </ScrollArea>
+    <>
+      <ScrollArea>
+        <PinHelpContainer>
+          <Text color="palette.text.shade100" variant="h3">
+            {t("onboarding.drawers.pinHelp.title")}
+          </Text>
+          <Text mt="8px" mb="32px" color="palette.text.shade100" ff="Inter|Regular" fontSize={14}>
+            {t("onboarding.drawers.pinHelp.intro")}
+          </Text>
+          <Rule type="success">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.1">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="success">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.2">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="success">{t("onboarding.drawers.pinHelp.rules.3")}</Rule>
+          <Rule type="success">{t("onboarding.drawers.pinHelp.rules.4")}</Rule>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.5">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.6">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.7">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+          <Rule type="error">
+            <Trans i18nKey="onboarding.drawers.pinHelp.rules.8">
+              <Text ff="Inter|Bold" />
+            </Trans>
+          </Rule>
+        </PinHelpContainer>
+      </ScrollArea>
+      <Button
+        data-test-id="v3-pin-code-drawer"
+        mt="auto"
+        left="-258px"
+        width="248px"
+        variant="main"
+        onClick={props.handleNextInDrawer}
+        Icon={() => <Icons.ArrowRightMedium size={18} />}
+      >
+        {t("v3.onboarding.screens.welcome.nextButton")}
+      </Button>
+    </>
   );
 }
