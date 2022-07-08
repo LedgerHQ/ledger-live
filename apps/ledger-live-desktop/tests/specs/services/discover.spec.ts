@@ -4,12 +4,13 @@ import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
 import { Modal } from "tests/models/Modal";
 import { Drawer } from "tests/models/Drawer";
+import { DeviceAction } from "tests/models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
 // Comment out to disable recorder
-// process.env.PWDEBUG = "1";
+process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
 
 let continueTest = false;
 
@@ -46,6 +47,7 @@ test("Discover", async ({ page }) => {
   const drawer = new Drawer(page);
   const modal = new Modal(page);
   const layout = new Layout(page);
+  const deviceAction = new DeviceAction(page);
 
   await test.step("Navigate to catalog", async () => {
     await layout.goToDiscover();
@@ -87,5 +89,36 @@ test("Discover", async ({ page }) => {
   await test.step("Request Account - single account output", async () => {
     await modal.continue();
     await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
+  });
+
+  await test.step("List currencies", async () => {
+    await discoverPage.listCurrencies();
+    await expect.soft(page).toHaveScreenshot("live-app-list-currencies.png");
+  });
+
+  await test.step("Verify Address - waiting for nano", async () => {
+    await discoverPage.verifyAddress();
+    await expect.soft(page).toHaveScreenshot("live-app-verify-address-1.png");
+  });
+
+  await test.step("Verify Address - verify address", async () => {
+    await deviceAction.openApp();
+    await expect.soft(page).toHaveScreenshot("live-app-verify-address-2.png");
+  });
+
+  await test.step("Verify Address - address output", async () => {
+    await modal.waitForModalToDisappear();
+    await expect.soft(page).toHaveScreenshot("live-app-verify-address-3.png");
+  });
+
+  await test.step("Sign Transaction - info screen", async () => {
+    await discoverPage.signTransaction();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-1.png");
+  });
+
+  await test.step("Sign Transaction - waiting for nano", async () => {
+    // await page.pause();
+    await modal.continueToSignTransaction();
+    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-2.png");
   });
 });
