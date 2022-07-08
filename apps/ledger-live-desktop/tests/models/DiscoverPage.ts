@@ -48,7 +48,15 @@ export class DiscoverPage {
   }
 
   async verifyAddress() {
-    await this.clickWebviewElement("[data-test-id=verify-address-button]]");
+    await this.clickWebviewElement("[data-test-id=verify-address-button]");
+  }
+
+  async listCurrencies() {
+    await this.clickWebviewElement("[data-test-id=list-currencies-button]");
+  }
+
+  async signTransaction() {
+    await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
   }
 
   async clickWebviewElement(elementName: string) {
