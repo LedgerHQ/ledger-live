@@ -86,9 +86,9 @@ const Bullets = styled.div<{ active?: number }>`
     height: ${p => p.theme.space[1]}px;
     width: ${p => p.theme.space[8]}px;
     background: ${p => p.theme.colors.palette.constant.black};
-    opacity: 0.5;
+    opacity: 0.3;
     &:hover {
-      opacity: 0.75;
+      opacity: 1;
     }
 
     &:nth-child(${p => p.active}) {

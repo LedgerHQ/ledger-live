@@ -3793,8 +3793,8 @@
     "onboarding": {
       "screens": {
         "welcome": {
-          "title": "Welcome to Ledger Live",
-          "description": "Safely manage your crypto from your computer.",
+          "title": "The most secure cryptocurrency & NFT wallet",
+          "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
           "nextButton": "Get started",
           "noDevice": "No device?",
           "buyLink": "No device? Buy a Ledger Nano X",
