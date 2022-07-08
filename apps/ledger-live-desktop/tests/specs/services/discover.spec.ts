@@ -59,7 +59,8 @@ test("Discover", async ({ page }) => {
 
   await test.step("Accept Live App Disclaimer", async () => {
     await drawer.continue();
-    await layout.waitForLoadingSpinner();
+    await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
+    await layout.waitForLoadingSpinnerToHaveDisappeared();
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
 
