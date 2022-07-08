@@ -70,6 +70,7 @@
   "dependencies": {
     "@floating-ui/react-dom": "^0.4.0",
     "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/color": "^3.0.2",

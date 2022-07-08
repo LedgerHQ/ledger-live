@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@types/color": "^3.0.3",
     "@types/react": "^17.0.39",
