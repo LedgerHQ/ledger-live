@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo, useEffect } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
@@ -9,7 +9,6 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import TrackScreen from "../../../analytics/TrackScreen";
 import NoResultsFound from "../../../icons/NoResultsFound";
 
@@ -23,6 +22,7 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
+import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
