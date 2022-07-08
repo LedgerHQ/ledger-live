@@ -207,7 +207,7 @@ function PortfolioScreen({ navigation }: Props) {
           navigatorName={NavigatorName.PortfolioAccounts}
           containerProps={{ mb: "9px" }}
         />
-        <ReadOnlyAssets assets={assetsToDisplay} screen="Wallet" />
+        <ReadOnlyAssets assets={assetsToDisplay} />
       </SectionContainer>,
       !hasOrderedNano && (
         <BuyDeviceBanner
