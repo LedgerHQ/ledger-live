@@ -29,7 +29,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
 
     track("button_clicked", {
       button: "Yes",
-      screen: "has device?",
+      screen: "Has Device?",
     });
 
     // TODO: FIX @react-navigation/native using Typescript
@@ -48,7 +48,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     track("button_clicked", {
       First_connection_has_device: false,
       button: "No",
-      screen: "has device?",
+      screen: "Has Device?",
     });
 
     // TODO: FIX @react-navigation/native using Typescript
