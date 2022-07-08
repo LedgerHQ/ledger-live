@@ -14,7 +14,6 @@ export class Modal {
   readonly doneButton: Locator;
   readonly closeButton: Locator;
   readonly backButton: Locator;
-  readonly signContinueButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -30,7 +29,6 @@ export class Modal {
     this.doneButton = page.locator('data-test-id=modal-done-button');
     this.closeButton = page.locator('data-test-id=modal-close-button');
     this.backButton = page.locator('data-test-id=modal-back-button');
-    this.signContinueButton = page.locator('data-test-id=sign-summary-continue-button');
   }
 
   async continue() {
@@ -63,9 +61,5 @@ export class Modal {
 
   async waitForModalToDisappear() {
     await this.container.waitFor({state: "detached"})
-  }
-
-  async continueToSignTransaction() {
-    await this.signContinueButton.click();
   }
 }

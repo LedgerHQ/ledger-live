@@ -11,6 +11,7 @@ export class DiscoverPage {
   readonly selectAccountDropdown: Locator;
   readonly selectBtcAccount: Locator;
   readonly disclaimerCheckbox: Locator;
+  readonly signContinueButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,6 +24,7 @@ export class DiscoverPage {
     this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
     this.selectBtcAccount = page.locator("text=Bitcoin (BTC)");
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
+    this.signContinueButton = page.locator('data-test-id=sign-summary-continue-button');
   }
 
   async openTestApp() {
@@ -57,6 +59,10 @@ export class DiscoverPage {
 
   async signTransaction() {
     await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
+  }
+
+  async continueToSignTransaction() {
+    await this.signContinueButton.click({force: true});
   }
 
   async clickWebviewElement(elementName: string) {
