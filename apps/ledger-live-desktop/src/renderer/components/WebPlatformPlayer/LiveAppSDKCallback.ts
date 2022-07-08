@@ -330,7 +330,11 @@ export const completeExchangeCallback = (
   );
 };
 
-export const signMessageCallback = ({ dispatch, accounts }: WebPlatformContext, accountId: string, message: string ) => {
+export const signMessageCallback = (
+  { dispatch, accounts }: WebPlatformContext,
+  accountId: string,
+  message: string,
+) => {
   const account = accounts.find(account => account.id === accountId);
 
   let formattedMessage: MessageData | null;
@@ -357,5 +361,4 @@ export const signMessageCallback = ({ dispatch, accounts }: WebPlatformContext, 
       }),
     );
   });
-}
-
+};

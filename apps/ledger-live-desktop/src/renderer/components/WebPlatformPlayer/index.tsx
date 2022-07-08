@@ -38,7 +38,7 @@ import {
   CompleteExchangeRequest,
   completeExchangeCallback,
   RequestAccountParams,
-  signMessageCallback
+  signMessageCallback,
 } from "./LiveAppSDKCallback";
 
 const Container = styled.div`
@@ -178,7 +178,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
     (accountId: string, message: string) => {
       return signMessageCallback({ manifest, dispatch, accounts }, accountId, message);
     },
-    [accounts, dispatch]
+    [accounts, dispatch],
   );
 
   const handlers = useMemo(
