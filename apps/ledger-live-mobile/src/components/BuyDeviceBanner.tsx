@@ -10,7 +10,6 @@ import ForceTheme from "./theme/ForceTheme";
 
 import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
 import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
-import { useCurrentRouteName } from "../helpers/routeHooks";
 import { track } from "../analytics";
 
 type Props = {
@@ -98,10 +97,10 @@ export default function BuyDeviceBanner({
       handleOnPress();
       track("button_clicked", {
         button: "Discover the Nano",
-        screen: "Wallet",
+        screen,
       });
     }
-  }, [handleOnPress, handleSetupCtaOnPress, variant]);
+  }, [handleOnPress, handleSetupCtaOnPress, screen, variant]);
 
   const pressMessage = useCallback(() => {
     track("message_clicked", {
@@ -110,7 +109,7 @@ export default function BuyDeviceBanner({
       currency: eventProperties?.currency,
     });
     handleSetupCtaOnPress();
-  }, [handleSetupCtaOnPress, eventProperties]);
+  }, [screen, eventProperties?.currency, handleSetupCtaOnPress]);
 
   return (
     <>
