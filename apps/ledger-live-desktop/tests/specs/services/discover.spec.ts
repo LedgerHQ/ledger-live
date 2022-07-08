@@ -118,7 +118,7 @@ test("Discover", async ({ page }) => {
 
   await test.step("Sign Transaction - waiting for nano", async () => {
     // await page.pause();
-    await modal.continueToSignTransaction();
+    await discoverPage.continueToSignTransaction();
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-2.png");
   });
 });
