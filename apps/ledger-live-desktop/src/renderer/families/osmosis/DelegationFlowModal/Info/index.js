@@ -32,7 +32,7 @@ export default function OsmosisEarnRewardsInfoModal({ name, account, parentAccou
   }, [parentAccount, account, dispatch, name]);
 
   const onLearnMore = useCallback(() => {
-    openURL(urls.cosmosStakingRewards);
+    openURL(urls.osmosisStakingRewards);
   }, []);
 
   return (
