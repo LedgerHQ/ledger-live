@@ -44,6 +44,7 @@ import HelpButton from "../../screens/Settings/HelpButton";
 import OnboardingStepLanguage from "../../screens/Onboarding/steps/language";
 import { GenerateMockAccountSelectScreen } from "../../screens/Settings/Debug/GenerateMockAccountsSelect";
 import HiddenNftCollections from "../../screens/Settings/Accounts/HiddenNftCollections";
+import DebugStoryly from "../../screens/DebugStoryly";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -270,6 +271,13 @@ export default function SettingsNavigator() {
         component={DebugLottie}
         options={{
           title: "Debug Lottie",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStoryly}
+        component={DebugStoryly}
+        options={{
+          title: "Debug Storyly",
         }}
       />
       <Stack.Screen
