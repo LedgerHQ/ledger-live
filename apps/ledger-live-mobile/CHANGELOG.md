@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.4.0-next.6
+
+### Patch Changes
+
+- [#315](https://github.com/LedgerHQ/ledger-live/pull/315) [`093792ebb`](https://github.com/LedgerHQ/ledger-live/commit/093792ebb70704cfcba7f12f1511930d0cd33a05) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Reborn analytics
+
 ## 3.5.0-next.5
 
 ### Patch Changes
