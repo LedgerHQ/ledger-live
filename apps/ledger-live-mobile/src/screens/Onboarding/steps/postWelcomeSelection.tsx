@@ -86,7 +86,7 @@ function PostWelcomeSelection({
 }) {
   const { userHasDevice } = route.params;
   const screenName = `Onboarding Choice ${
-    userHasDevice ? "with Device" : "No Device"
+    userHasDevice ? "With Device" : "No Device"
   }`;
 
   const navigation = useNavigation();
@@ -108,16 +108,21 @@ function PostWelcomeSelection({
     track("Onboarding PostWelcome - Explore Live");
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
-    navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-  }, [navigation]);
-
-  const onCardClick = useCallback((data: DataType, value: string) => {
-    setSelectedOption(data);
-    track("banner_clicked", {
-      banner: value,
-      screen: screenName,
+    navigation.navigate(ScreenName.OnboardingModalDiscoverLive, {
+      source: screenName,
     });
-  }, []);
+  }, [navigation, screenName]);
+
+  const onCardClick = useCallback(
+    (data: DataType, value: string) => {
+      setSelectedOption(data);
+      track("banner_clicked", {
+        banner: value,
+        screen: screenName,
+      });
+    },
+    [screenName],
+  );
 
   const onContinue = useCallback(() => {
     selectedOption?.onValidate();
@@ -125,7 +130,7 @@ function PostWelcomeSelection({
       button: "Continue",
       screen: screenName,
     });
-  }, [selectedOption]);
+  }, [screenName, selectedOption]);
 
   const pressSetup = useCallback(
     (data: DataType) => onCardClick(data, "Setup my Ledger"),
@@ -147,7 +152,7 @@ function PostWelcomeSelection({
       <TrackScreen
         category="Onboarding"
         name={userHasDevice ? "Choice With Device" : "Choice No Device"}
-        source={"Welcome"}
+        source={"Has Device"}
       />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>

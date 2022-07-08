@@ -8,7 +8,7 @@ import {
   StoriesIndicator,
   Box,
 } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
@@ -16,12 +16,8 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName } from "../../../const";
 import { screen, track } from "../../../analytics";
-import {
-  useCurrentRouteName,
-  usePreviousRouteName,
-} from "../../../helpers/routeHooks";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -150,8 +146,7 @@ const Item = ({
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(1);
-
-  const previousRoute = usePreviousRouteName();
+  const { params } = useRoute<any>();
 
   const onChange = useCallback(
     (index: number, skipped: boolean) => {
@@ -159,10 +154,10 @@ function DiscoverLiveInfo() {
       screen("Onboarding", `Reborn Story Step ${index + 1}`, {
         skipped,
         flow: "Onboarding No Device",
-        source: previousRoute,
+        source: params.source,
       });
     },
-    [previousRoute],
+    [params.source],
   );
 
   const autoChange = useCallback((index: number) => onChange(index, false), [
