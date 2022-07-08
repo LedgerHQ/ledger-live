@@ -57,7 +57,7 @@ const PostWelcomeDiscoverCard = ({
         mx: 0,
         borderWidth: 1,
         borderColor: "transparent",
-        ...(selectedOption.title === title && {
+        ...(selectedOption?.title === title && {
           borderColor: colors.primary.c80,
           backgroundColor: colors.primary.c10,
         }),
@@ -73,16 +73,25 @@ const PostWelcomeDiscoverCard = ({
   );
 };
 
+type DataType = {
+  title: string;
+  event: string;
+  onValidate: () => void;
+};
+
 function PostWelcomeSelection({
   route,
 }: {
   route: RouteProp<{ params: { userHasDevice: boolean } }, "params">;
 }) {
   const { userHasDevice } = route.params;
+  const screenName = `Onboarding Choice ${
+    userHasDevice ? "with Device" : "No Device"
+  }`;
 
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const [selectedOption, setSelectedOption] = useState({});
+  const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
 
   const setupLedger = useCallback(() => {
     // TODO: FIX @react-navigation/native using Typescript
@@ -102,8 +111,44 @@ function PostWelcomeSelection({
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
   }, [navigation]);
 
+  const onCardClick = useCallback((data: DataType, value: string) => {
+    setSelectedOption(data);
+    track("banner_clicked", {
+      banner: value,
+      screen: screenName,
+    });
+  }, []);
+
+  const onContinue = useCallback(() => {
+    selectedOption?.onValidate();
+    track("button_clicked", {
+      button: "Continue",
+      screen: screenName,
+    });
+  }, [selectedOption]);
+
+  const pressSetup = useCallback(
+    (data: DataType) => onCardClick(data, "Setup my Ledger"),
+    [onCardClick],
+  );
+
+  const pressExplore = useCallback(
+    (data: DataType) => onCardClick(data, "Explore LL"),
+    [onCardClick],
+  );
+
+  const pressBuy = useCallback(
+    (data: DataType) => onCardClick(data, "Buy a Nano X"),
+    [onCardClick],
+  );
+
   return (
     <Flex flex={1} bg="background.main">
+      <TrackScreen
+        category="Onboarding"
+        name={userHasDevice ? "Choice With Device" : "Choice No Device"}
+        source={"Welcome"}
+      />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>
           {t("onboarding.postWelcomeStep.title")}
@@ -123,7 +168,7 @@ function PostWelcomeSelection({
             event="Onboarding PostWelcome - Setup Ledger"
             testID={`Onboarding PostWelcome - Selection|SetupLedger`}
             selectedOption={selectedOption}
-            onPress={setSelectedOption}
+            onPress={pressSetup}
             onValidate={setupLedger}
             imageSource={setupLedgerImg}
           />
@@ -134,7 +179,7 @@ function PostWelcomeSelection({
           event="Onboarding PostWelcome - Explore Ledger"
           testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
           selectedOption={selectedOption}
-          onPress={setSelectedOption}
+          onPress={pressExplore}
           onValidate={exploreLedger}
           imageSource={discoverLiveImg}
         />
@@ -145,7 +190,7 @@ function PostWelcomeSelection({
             event="Onboarding PostWelcome - Buy Nano"
             testID={`Onboarding PostWelcome - Selection|BuyNano`}
             selectedOption={selectedOption}
-            onPress={setSelectedOption}
+            onPress={pressBuy}
             onValidate={buyLedger}
             imageSource={buyNanoImg}
           />
@@ -157,7 +202,7 @@ function PostWelcomeSelection({
           type="main"
           outline={false}
           event={selectedOption.event}
-          onPress={selectedOption.onValidate}
+          onPress={onContinue}
           size="large"
           m={6}
           mb={8}
