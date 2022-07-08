@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Flex, Popin, Radio, Text } from "@ledgerhq/react-ui";
+import { Flex, Popin, Radio, Text, InvertThemeV3 } from "@ledgerhq/react-ui";
 import RadioElement from "@ledgerhq/react-ui/components/form/Radio/RadioElement";
 import ModalStepperBody from "../ModalStepper/ModalStepperBody";
 import Answer from "./Answer";
+import { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import CloseButton from "../ModalStepper/CloseButton";
 import { track } from "~/renderer/analytics/segment";
@@ -104,6 +105,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   const stepCount = steps.length;
 
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const [userChoiceIndex, setUserChoiceIndex] = useState();
 
@@ -216,7 +218,13 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   return (
     <Popin isOpen onClose={onClose} style={style} p={0} position="relative">
       {!started && StartScreen ? (
-        <StartScreen onStart={() => setStarted(true)} />
+        colors.palette.type === "dark" ? (
+          <InvertThemeV3>
+            <StartScreen onStart={() => setStarted(true)} />
+          </InvertThemeV3>
+        ) : (
+          <StartScreen onStart={() => setStarted(true)} />
+        )
       ) : (
         <ModalStepperBody
           dataTestId="v3-quiz-container"
