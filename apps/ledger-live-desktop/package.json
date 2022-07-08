@@ -86,8 +86,6 @@
     "measure-scrollbar": "^1.1.0",
     "moment": "^2.29.1",
     "openpgp": "^4.10.10",
-    "os-locale": "^5.0.0",
-    "os-name": "^4.0.1",
     "prando": "^5.1.2",
     "prop-types": "^15.8.1",
     "qrcode": "^1.4.4",

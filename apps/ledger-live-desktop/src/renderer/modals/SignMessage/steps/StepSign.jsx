@@ -29,10 +29,11 @@ export default function StepSign({
       action={action}
       request={{
         account,
-        message: message,
+        message,
       }}
       onResult={result => {
         dispatch(closeModal("MODAL_SIGN_MESSAGE"));
+
         if (result.error) {
           onFailHandler(result.error);
         } else if (result.signature) {
