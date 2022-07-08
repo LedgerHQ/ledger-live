@@ -32,7 +32,7 @@ const StartScreen = ({ onStart }: Props) => {
         <Button
           data-test-id="v3-quiz-start-button"
           variant="main"
-          Icon={Icons.PlusMedium}
+          Icon={Icons.TrophyRegular}
           iconPosition="left"
           onClick={onStart}
         >
