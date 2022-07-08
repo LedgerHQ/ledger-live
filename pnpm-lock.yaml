@@ -2672,8 +2672,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/download-workflow-artifacts:
@@ -2682,8 +2682,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/extract-live-common-version:
@@ -2693,8 +2693,8 @@ importers:
       '@vercel/ncc': ^0.33.1
       isomorphic-unfetch: ^3.1.0
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       isomorphic-unfetch: 3.1.0
 
@@ -2705,8 +2705,8 @@ importers:
       '@vercel/ncc': ^0.33.1
       isomorphic-unfetch: ^3.1.0
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       isomorphic-unfetch: 3.1.0
 
@@ -2716,8 +2716,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/get-package-infos:
@@ -2728,8 +2728,8 @@ importers:
       isomorphic-unfetch: ^3.1.0
       semver: ^7.3.5
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       isomorphic-unfetch: 3.1.0
       semver: 7.3.7
@@ -2740,8 +2740,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/get-release-by-tag:
@@ -2750,8 +2750,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/get-workflow-artifacts-id:
@@ -2760,8 +2760,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/has-hash-commit-deps:
@@ -2780,8 +2780,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/prepare-comment:
@@ -2791,8 +2791,8 @@ importers:
       '@vercel/ncc': ^0.33.1
       isomorphic-unfetch: ^3.1.0
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       isomorphic-unfetch: 3.1.0
 
@@ -2802,8 +2802,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/publish-release:
@@ -2812,8 +2812,8 @@ importers:
       '@actions/github': ^5.0.0
       '@vercel/ncc': ^0.33.1
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
   tools/actions/submit-bot-report:
@@ -2823,8 +2823,8 @@ importers:
       '@vercel/ncc': ^0.33.1
       isomorphic-unfetch: ^3.1.0
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       isomorphic-unfetch: 3.1.0
 
@@ -2836,8 +2836,8 @@ importers:
       form-data: ^4.0.0
       isomorphic-unfetch: ^3.1.0
     dependencies:
-      '@actions/core': 1.8.0
-      '@actions/github': 5.0.1
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
       form-data: 4.0.0
       isomorphic-unfetch: 3.1.0
@@ -3015,6 +3015,12 @@ packages:
     dependencies:
       '@actions/http-client': 1.0.11
 
+  /@actions/core/1.9.0:
+    resolution: {integrity: sha512-5pbM693Ih59ZdUhgk+fts+bUWTnIdHV3kwOSr+QIoFHMLg7Gzhwm0cifDY/AG68ekEJAkHnQVpcy4f6GjmzBCA==}
+    dependencies:
+      '@actions/http-client': 2.0.1
+    dev: false
+
   /@actions/github/5.0.1:
     resolution: {integrity: sha512-JZGyPM9ektb8NVTTI/2gfJ9DL7Rk98tQ7OVyTlgTuaQroariRBsOnzjy0I2EarX4xUZpK88YyO503fhmjFdyAg==}
     dependencies:
@@ -3025,10 +3031,27 @@ packages:
     transitivePeerDependencies:
       - encoding
 
+  /@actions/github/5.0.3:
+    resolution: {integrity: sha512-myjA/pdLQfhUGLtRZC/J4L1RXOG4o6aYdiEq+zr5wVVKljzbFld+xv10k1FX6IkIJtNxbAq44BdwSNpQ015P0A==}
+    dependencies:
+      '@actions/http-client': 2.0.1
+      '@octokit/core': 3.6.0
+      '@octokit/plugin-paginate-rest': 2.17.0_@octokit+core@3.6.0
+      '@octokit/plugin-rest-endpoint-methods': 5.13.0_@octokit+core@3.6.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /@actions/http-client/1.0.11:
     resolution: {integrity: sha512-VRYHGQV1rqnROJqdMvGUbY/Kn8vriQe/F9HR2AlYHzmKuM/p3kjNuXhmdBfcVgsvRWTz5C5XW5xvndZrVBuAYg==}
     dependencies:
       tunnel: 0.0.6
+
+  /@actions/http-client/2.0.1:
+    resolution: {integrity: sha512-PIXiMVtz6VvyaRsGY268qvj57hXQEpsYogYOu2nrQhlf+XCGmZstmuZBbAybUl1nQGnvS1k1eEsQ69ZoD7xlSw==}
+    dependencies:
+      tunnel: 0.0.6
+    dev: false
 
   /@ampproject/remapping/2.2.0:
     resolution: {integrity: sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w==}
@@ -22494,7 +22517,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /concat-stream/1.5.2:
     resolution: {integrity: sha1-cIl4Yk2FavQaWnQd790mHadSwmY=}
