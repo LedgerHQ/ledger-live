@@ -3867,6 +3867,7 @@
       "redelegate": "validator",
       "undelegate": "validator",
       "claimReward": "rewards recipient",
+      "claimRewardCompound": "validator that will receive the rewards",
       "optIn": "recipient",
       "nominate": "validator",
       "erc721": {
