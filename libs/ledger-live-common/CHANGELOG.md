@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.0.0-nightly.1
+
+### Minor Changes
+
+- [#602](https://github.com/LedgerHQ/ledger-live/pull/602) [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Accept new message.sign call from the live-app-sdk
+
 ## 25.0.0-nightly.0
 
 ### Major Changes

@@ -72,16 +72,20 @@
     "esbuild-utils": "1.0.0"
   },
   "changesets": [
+    "afraid-experts-brush",
     "blue-bags-train",
     "brave-ears-teach",
     "brown-mugs-beam",
+    "four-terms-reflect",
     "hip-icons-jam",
     "hot-avocados-dream",
+    "long-toes-sing",
     "lucky-ants-reply",
     "moody-moons-dance",
     "neat-rabbits-applaud",
     "odd-pigs-admire",
     "popular-weeks-shake",
+    "shiny-swans-tickle",
     "wild-spies-cry"
   ]
 }

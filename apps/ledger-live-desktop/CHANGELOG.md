@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.45.0-nightly.5
+
+### Minor Changes
+
+- [#602](https://github.com/LedgerHQ/ledger-live/pull/602) [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Accept new message.sign call from the live-app-sdk
+
+### Patch Changes
+
+- [#386](https://github.com/LedgerHQ/ledger-live/pull/386) [`8917ca143`](https://github.com/LedgerHQ/ledger-live/commit/8917ca1436e780e3a52f66f968f8224ad35362b4) Thanks [@gre](https://github.com/gre)! - Log experimental and feature flags in Sentry error reports.
+
+- Updated dependencies [[`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a)]:
+  - @ledgerhq/live-common@25.0.0-nightly.1
+
 ## 2.44.1-nightly.4
 
 ### Patch Changes

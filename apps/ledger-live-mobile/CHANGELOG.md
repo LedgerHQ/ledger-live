@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.4.1-nightly.2
+
+### Patch Changes
+
+- [#576](https://github.com/LedgerHQ/ledger-live/pull/576) [`bffa2a48f`](https://github.com/LedgerHQ/ledger-live/commit/bffa2a48fe17b5ab8f44803621a714a4bedea518) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Integration of storyly-react-native (Storyly SDK)
+
+* [#576](https://github.com/LedgerHQ/ledger-live/pull/576) [`bffc1b90a`](https://github.com/LedgerHQ/ledger-live/commit/bffc1b90a76c4b9db2664971c5b1bc097d8a32d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Android: bump targetSdkVersion and compileSdkVersion to 31
+
+- [#386](https://github.com/LedgerHQ/ledger-live/pull/386) [`8917ca143`](https://github.com/LedgerHQ/ledger-live/commit/8917ca1436e780e3a52f66f968f8224ad35362b4) Thanks [@gre](https://github.com/gre)! - Log experimental and feature flags in Sentry error reports.
+
+- Updated dependencies [[`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a)]:
+  - @ledgerhq/live-common@25.0.0-nightly.1
+
 ## 3.4.1-nightly.1
 
 ### Patch Changes
