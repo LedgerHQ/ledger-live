@@ -370,7 +370,7 @@ export const NavigatorName = {
   /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
   Accounts: "AccountsNavigator",
-  Portfolio: "PorfolioNavigator",
+  Portfolio: "PortfolioNavigator",
   PortfolioAccounts: "PortfolioAccountsNavigator",
   AccountSettings: "AccountSettings",
   AddAccounts: "AddAccounts",
