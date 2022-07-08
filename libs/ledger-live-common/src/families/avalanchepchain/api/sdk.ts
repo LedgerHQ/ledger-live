@@ -7,6 +7,8 @@ import { KeyPair as AVMKeyPair } from 'avalanche/dist/apis/avm';
 import BinTools from 'avalanche/dist/utils/bintools';
 import { avalancheClient } from "./client";
 import type { AddressBatch } from "../types";
+import { makeLRUCache } from '../../../cache';
+import { HDHelper } from "../hdhelper";
 
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
@@ -17,6 +19,7 @@ const INDEX_RANGE = 20;
 const SCAN_RANGE = 80;
 const P_IMPORT = "p_import";
 const P_EXPORT = "p_export";
+export const AVAX_HRP = "fuji"; //"fuji" for testnet
 
 /**
  * Fetch operation list from indexer
@@ -25,12 +28,21 @@ const fetchOperations = async (
     addresses: string[],
     startHeight: number
 ) => {
-    const rawAddresses = addresses.map(removeChainPrefix).join(",");
+    const ADDRESS_SIZE = 1024;
+    const selection = addresses.slice(0, ADDRESS_SIZE);
+    const remaining = addresses.slice(ADDRESS_SIZE);
 
-    const { data } = await network({
+    const rawAddresses = selection.map(removeChainPrefix).join(",");
+
+    let { data } = await network({
         method: "GET",
         url: getIndexerUrl(`/transactions?address=${rawAddresses}&start_height=${startHeight}&limit=100`),
     });
+
+    if (remaining.length > 0) {
+        const nextOperations = await fetchOperations(remaining, startHeight);
+        data.push(...nextOperations);
+    }
 
     return data;
 };
@@ -40,7 +52,7 @@ const fetchOperations = async (
  * @param address - "P-avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn"
  * @returns avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn
  */
-const removeChainPrefix = (address) => address.split('-')[1];
+const removeChainPrefix = (address: string) => address.split('-')[1];
 
 const convertTransactionToOperation = (transaction, accountId): Operation => {
     const type = getOperationType(transaction.type);
@@ -79,17 +91,11 @@ const getOperationType = (type: string): OperationType => {
     }
 };
 
-export const getOperations = async (hdKey, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
-    let operations: Operation[] = [];
+export const getOperations = async (publicKey: string, chainCode: string, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
+    const hdHelper = await HDHelper.getInstance(publicKey, chainCode);
+    const addresses = hdHelper.getAllDerivedAddresses();
 
-    const batchFunction = async (batch: AddressBatch) => {
-        const batchedAddresses = batch.nonChange.addresses.concat(batch.change.addresses);
-        const batchOperations = await fetchOperations(batchedAddresses, blockStartHeight);
-
-        operations = [...operations, ...batchOperations];
-    };
-
-    await getUsedKeys(hdKey, batchFunction);
+    let operations: Operation[] = await fetchOperations(addresses, blockStartHeight);
 
     const pChainOperations = operations.filter(getPChainOperations);
     return pChainOperations.map(o => convertTransactionToOperation(o, accountId));
@@ -97,42 +103,121 @@ export const getOperations = async (hdKey, blockStartHeight: number, accountId: 
 
 const getPChainOperations = ({ type }) => type === P_IMPORT || type === P_EXPORT;
 
-export const getAccount = async (hdKey) => {
-    const balance = await fetchBalances(hdKey);
+export const getAccount = async (publicKey, chainCode) => {
+    const hdHelper = await HDHelper.getInstance(publicKey, chainCode);
+    const { available, locked, lockedStakeable, multisig } = await hdHelper.fetchBalances();
+    const stakedBalance = await hdHelper.fetchStake();
+    const balance = available.plus(locked).plus(lockedStakeable).plus(multisig);
 
     return {
-        balance: new BigNumber(balance),
+        balance,
+        stakedBalance
     }
 }
+
+export const getValidators = async () => {
+    return await cacheValidators();
+};
+
+const cacheValidators = makeLRUCache(
+    async () => {
+        const { data } = await network({
+            method: "GET",
+            url: getIndexerUrl('/validators'),
+        });
+
+        return data;
+    }
+);
+
+//TODO: replace this with HdHelper
+//OR, see walletPlatformBalance in assets.ts in avalanche-wallet
+//Should be able to easily calculate all P chain balances
+//To get stake amount, see getStakeForAddresses in utxo_helper.ts
+//Will need this info for "Staking info Dashboard" ticket
 
 /**
  * @param hdKey 
  * @returns Total balance of this wallet's P-chain addresses
  */
-export const fetchBalances = async (hdKey) => {
+// export const fetchBalances = async (hdKey) => {
 
-    let balanceTotal = new BigNumber(0);
-    const assetID = await avalancheClient().PChain().getAVAXAssetID();
+//     let balanceTotal = new BigNumber(0);
+//     const assetID = await avalancheClient().PChain().getAVAXAssetID();
 
-    const batchFunction = async (batch: AddressBatch) => {
-        for (const [_, utxoids] of Object.entries<{}>(batch.utxoset.addressUTXOs)) {
-            let balance = new BigNumber(0);
+//     const batchFunction = async (batch: AddressBatch) => {
+//         for (const [_, utxoids] of Object.entries<{}>(batch.utxoset.addressUTXOs)) {
+//             let balance = new BigNumber(0);
 
-            for (const utxoid of Object.keys(utxoids)) {
-                const utxo = batch.utxoset.utxos[utxoid];
+//             for (const utxoid of Object.keys(utxoids)) {
+//                 const utxo = batch.utxoset.utxos[utxoid];
 
-                if (utxo.getAssetID().equals(assetID)) {
-                    balance = balance.plus(utxo.getOutput().getAmount());
-                }
-                balanceTotal = balanceTotal.plus(balance);
-            }
-        }
-    }
+//                 if (utxo.getAssetID().equals(assetID)) {
+//                     balance = balance.plus(utxo.getOutput().getAmount());
+//                 }
+//                 balanceTotal = balanceTotal.plus(balance);
+//             }
+//         }
+//     }
 
-    await getUsedKeys(hdKey, batchFunction);
+//     await getUsedKeys(hdKey, batchFunction);
 
-    return balanceTotal;
-}
+//     return balanceTotal;
+// }
+
+//walletPlatformBalance
+// export const getPChainBalances = async (publicKey, chainCode) => {
+//     const balances = {
+//         available: new BN(0),
+//         locked: new BN(0),
+//         lockedStakeable: new BN(0),
+//         multisig: new BN(0),
+//     };
+
+//     const hdHelper = HDHelper.getInstance(publicKey, chainCode);
+//     const utxoSet: UTXOSet = await hdHelper.fetchUTXOs();
+//     const now = UnixNow();
+
+//     const utxos = utxoSet.getAllUTXOs();
+
+//     for (let n = 0; n < utxos.length; n++) {
+//         const utxo = utxos[n];
+//         const utxoOut = utxo.getOutput();
+//         const outId = utxoOut.getOutputID();
+//         const threshold = utxoOut.getThreshold();
+
+//         if (threshold > 1) {
+//             balances.multisig.iadd((utxoOut as AmountOutput).getAmount());
+//             continue;
+//         }
+
+//         const isStakeableLock = outId === PlatformVMConstants.STAKEABLELOCKOUTID;
+
+//         let locktime;
+//         if (isStakeableLock) {
+//             locktime = (utxoOut as StakeableLockOut).getStakeableLocktime();
+//         } else {
+//             locktime = (utxoOut as AmountOutput).getLocktime();
+//         }
+
+//         if (locktime.lte(now)) {
+//             balances.available.iadd((utxoOut as AmountOutput).getAmount());
+//         }
+//         else if (!isStakeableLock) {
+//             balances.locked.iadd((utxoOut as AmountOutput).getAmount());
+//         }
+//         else if (isStakeableLock) {
+//             balances.lockedStakeable.iadd((utxoOut as AmountOutput).getAmount());
+//         }
+//     }
+
+//     return {
+//         available: new BigNumber(balances.available.toString()),
+//         locked: new BigNumber(balances.locked.toString()),
+//         lockedStakeable: new BigNumber(balances.lockedStakeable.toString()),
+//         multisig: new BigNumber(balances.multisig.toString()))
+//     };
+// }
 
 /**
  * Liberally inspired by avalanche-wallet-cli
@@ -159,8 +244,8 @@ const getUsedKeys = async (hdKey, batchFunction) => {
 
             const publicKeyHash = AVMKeyPair.addressFromPublicKey(child.publicKey);
             const changePublicKeyHash = AVMKeyPair.addressFromPublicKey(changeChild.publicKey);
-            const address = binTools.addressToString("avax", "P", publicKeyHash);
-            const changeAddress = binTools.addressToString("avax", "P", changePublicKeyHash);
+            const address = binTools.addressToString(AVAX_HRP, "P", publicKeyHash);
+            const changeAddress = binTools.addressToString(AVAX_HRP, "P", changePublicKeyHash);
 
             batch.nonChange.pkhs.push(publicKeyHash);
             batch.change.pkhs.push(changePublicKeyHash);
@@ -180,4 +265,4 @@ const getUsedKeys = async (hdKey, batchFunction) => {
         index += INDEX_RANGE;
         allAddressesAreUnused = batch.utxoset.getAllUTXOs().length === 0;
     }
-} 
+};

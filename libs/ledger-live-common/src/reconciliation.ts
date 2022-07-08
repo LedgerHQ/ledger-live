@@ -27,6 +27,7 @@ import {
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromAvalanchePChainResourcesRaw,
   fromNFTRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
@@ -385,6 +386,17 @@ export function patchAccount(
 
   if (updatedRaw.solanaResources) {
     next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.avalanchePChainResources &&
+    // @ts-expect-error
+    account.avalanchePChainResources !== updatedRaw.avalanchePChainResources
+  ) {
+    next.avalanchePChainResources = fromAvalanchePChainResourcesRaw(
+      updatedRaw.avalanchePChainResources
+    );
     changed = true;
   }
 

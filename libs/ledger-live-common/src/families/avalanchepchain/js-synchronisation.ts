@@ -14,13 +14,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     const publicKey = info.rest?.publicKey || info.initialAccount?.avalanchePChainResources?.publicKey;
     const chainCode = info.rest?.chainCode || info.initialAccount?.avalanchePChainResources?.chainCode;
 
-    const publicKeyBuffer = Buffer.from(publicKey, 'hex');
-    const chainCodeBuffer = Buffer.from(chainCode, 'hex');
-
-    const hdKey = new HDKey();
-    hdKey.publicKey = publicKeyBuffer;
-    hdKey.chainCode = chainCodeBuffer;
-
     const oldOperations = initialAccount?.operations || [];
 
     const startAt = oldOperations.length
@@ -35,11 +28,12 @@ const getAccountShape: GetAccountShape = async (info) => {
         derivationMode,
     });
 
-    const { balance } = await getAccount(hdKey);
+    const { balance, stakedBalance } = await getAccount(publicKey, chainCode);
     let operations = oldOperations;
 
     const newOperations = await getOperations(
-        hdKey,
+        publicKey,
+        chainCode,
         startAt,
         accountId,
     );
@@ -48,12 +42,13 @@ const getAccountShape: GetAccountShape = async (info) => {
 
     const shape = {
         id: accountId,
-        balance,
+        balance: balance.plus(stakedBalance),
         spendableBalance: balance,
         operationsCount: operations.length,
         avalanchePChainResources: {
-            publicKey: publicKeyBuffer.toString('hex'),
-            chainCode: chainCodeBuffer.toString('hex')
+            publicKey,
+            chainCode,
+            stakedBalance
         }
     };
 
