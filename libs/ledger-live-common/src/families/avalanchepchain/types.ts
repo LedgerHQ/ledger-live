@@ -13,9 +13,14 @@ export type NetworkInfoRaw = {
 };
 export type Transaction = TransactionCommon & {
     family: "avalanchepchain";
+    fees: BigNumber | null;
+    mode: string;
 };
+
 export type TransactionRaw = TransactionCommonRaw & {
     family: "avalanchepchain";
+    fees: string | null;
+    mode: string;
 };
 
 export interface AddressBatch {
@@ -33,9 +38,11 @@ export interface AddressBatch {
 export type AvalanchePChainResources = {
     publicKey: string;
     chainCode: string;
+    stakedBalance: BigNumber;
 }
 
 export type AvalanchePChainResourcesRaw = {
     publicKey: string;
     chainCode: string;
+    stakedBalance: string;
 }
