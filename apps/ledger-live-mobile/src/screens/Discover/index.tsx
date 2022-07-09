@@ -120,7 +120,7 @@ function Discover() {
           subTitle: t("discover.sections.mint.desc"),
           onPress: () => {
             readOnlyTrack("Mint");
-              track("Discover - Mint - OpenUrl", { url: urls.discover.lmarket});
+              track("Discover - Mint - OpenUrl", { url: urls.discover.mint});
               Linking.openURL(urls.discover.mint);
 
           },
