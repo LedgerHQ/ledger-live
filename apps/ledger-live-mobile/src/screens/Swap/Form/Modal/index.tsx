@@ -1,25 +1,29 @@
 import React, { useMemo, useCallback } from "react";
 import { SwapTransactionType } from "@ledgerhq/live-common/src/exchange/swap/types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { Terms } from "./Terms";
-import { Confirmation } from "./Confirmation";
+import { Confirmation, DeviceMeta } from "./Confirmation";
 import { swapAcceptProvider } from "../../../../actions/settings";
-import { swapAcceptedProvidersSelector } from "../../../../reducers/settings";
 
 export function Modal({
   provider,
   confirmed,
   onClose,
+  termsAccepted,
   swapTx,
+  deviceMeta,
+  exchangeRate,
 }: {
   provider?: string;
   confirmed: boolean;
+  termsAccepted: boolean;
   onClose: () => void;
   swapTx: SwapTransactionType;
+  deviceMeta?: DeviceMeta;
+  exchangeRate?: ExchangeRate;
 }) {
   const dispatch = useDispatch();
-  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
-  const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const target = useMemo(() => {
     if (!confirmed) {
       return Target.None;
@@ -29,8 +33,12 @@ export function Modal({
       return Target.Terms;
     }
 
+    if (!deviceMeta) {
+      return Target.None;
+    }
+
     return Target.Confirmation;
-  }, [confirmed, termsAccepted]);
+  }, [confirmed, termsAccepted, deviceMeta]);
 
   const onAcceptTerms = useCallback(() => {
     if (!provider) {
@@ -39,6 +47,9 @@ export function Modal({
 
     dispatch(swapAcceptProvider(provider));
   }, [dispatch, provider]);
+
+  // TODO: swap
+  const onError = useCallback(() => {}, []);
 
   if (!provider) {
     return null;
@@ -53,12 +64,17 @@ export function Modal({
         isOpen={target === Target.Terms}
       />
 
-      {/* <Confirmation
-        isOpened={target === Target.Confirmation}
-        provider={provider}
-        onCancel={onClose}
-        swapTx={swapTx}
-      /> */}
+      {deviceMeta && (
+        <Confirmation
+          isOpen={target === Target.Confirmation}
+          provider={provider}
+          onCancel={onClose}
+          swapTx={swapTx}
+          exchangeRate={exchangeRate}
+          deviceMeta={deviceMeta}
+          onError={onError}
+        />
+      )}
     </>
   );
 }

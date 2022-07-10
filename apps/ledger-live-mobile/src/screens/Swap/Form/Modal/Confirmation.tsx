@@ -4,7 +4,9 @@ import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import {
+  Exchange,
   ExchangeRate,
+  SwapTransaction,
   SwapTransactionType,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
@@ -20,6 +22,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { AccountLike, Transaction } from "@ledgerhq/live-common/src/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { ScreenName } from "../../../../const";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
@@ -40,33 +43,33 @@ export type DeviceMeta = {
 
 interface Props {
   swapTx: SwapTransactionType;
-  rate: ExchangeRate;
+  exchangeRate?: ExchangeRate;
   provider: string;
   deviceMeta: DeviceMeta;
   onError: (error: Error) => void;
   onCancel: () => void;
-  isOpened: boolean;
+  isOpen: boolean;
 }
 
 export function Confirmation({
   swapTx,
-  rate,
+  exchangeRate,
   provider,
   onError,
   onCancel,
   deviceMeta,
-  isOpened,
+  isOpen,
 }: Props) {
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
     to: { account: toAccount, parentAccount: toParentAccount },
   } = swapTx.swap;
 
-  const exchange = useMemo(
+  const exchange = useMemo<Exchange>(
     () => ({
-      fromAccount,
+      fromAccount: fromAccount as AccountLike,
       fromParentAccount,
-      toAccount,
+      toAccount: toAccount as AccountLike,
       toParentAccount,
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
@@ -86,25 +89,32 @@ export function Confirmation({
     fromAccount && fromAccount.type === "TokenAccount"
       ? fromAccount.token
       : null;
-  const targetCurrency = getAccountCurrency(toAccount);
+  const targetCurrency = useMemo(
+    () => toAccount && getAccountCurrency(toAccount),
+    [toAccount],
+  );
   const navigation = useNavigation();
 
   const onComplete = useCallback(
     result => {
+      if (!fromAccount || !targetCurrency) {
+        return;
+      }
       const { operation, swapId } = result;
       const mainAccount = getMainAccount(fromAccount, fromParentAccount);
 
-      if (!mainAccount) return;
+      if (!mainAccount || !exchangeRate) return;
       dispatch(
+        // @ts-expect-error
         updateAccountWithUpdater(mainAccount.id, account =>
           addPendingOperation(
             addToSwapHistory({
               account,
               operation,
-              transaction,
+              transaction: swapTx.transaction as Transaction,
               swap: {
                 exchange,
-                exchangeRate: rate,
+                exchangeRate,
               },
               swapId,
             }),
@@ -112,9 +122,10 @@ export function Confirmation({
           ),
         ),
       );
+      // @ts-expect-error
       navigation.replace(ScreenName.SwapPendingOperation, {
         swapId,
-        provider: rate.provider,
+        provider: exchangeRate.provider,
         targetCurrency: targetCurrency.name,
         operation,
         fromAccount,
@@ -126,9 +137,9 @@ export function Confirmation({
       fromParentAccount,
       dispatch,
       navigation,
-      rate,
-      targetCurrency.name,
-      transaction,
+      exchangeRate,
+      targetCurrency,
+      swapTx.transaction,
       exchange,
     ],
   );
@@ -152,7 +163,7 @@ export function Confirmation({
   return (
     <BottomModal
       id="SwapConfirmationFeedback"
-      isOpened={isOpened}
+      isOpened={isOpen}
       preventBackdropClick
       onClose={onCancel}
     >
@@ -164,15 +175,14 @@ export function Confirmation({
               renderLoading({ t, description: t("transfer.swap.broadcasting") })
             ) : !swapData ? (
               <DeviceAction
-                onClose={() => undefined}
                 key={"initSwap"}
                 action={swapAction}
                 device={deviceMeta.device}
                 onError={onError}
                 request={{
                   exchange,
-                  exchangeRate: rate,
-                  transaction,
+                  exchangeRate: exchangeRate as ExchangeRate,
+                  transaction: swapTx.transaction as SwapTransaction,
                   userId: providerKYC?.id,
                 }}
                 onResult={({ initSwapResult, initSwapError }) => {
@@ -189,11 +199,12 @@ export function Confirmation({
                 action={silentSigningAction}
                 device={deviceMeta.device}
                 request={{
-                  status,
+                  status: swapTx.status,
                   tokenCurrency,
                   parentAccount: fromParentAccount,
-                  account: fromAccount,
-                  transaction: swapData.transaction,
+                  account: fromAccount as AccountLike,
+                  // @ts-expect-error
+                  transaction: swapData.transaction as Transaction,
                   appName: "Exchange",
                 }}
                 onResult={({ transactionSignError, signedOperation }) => {

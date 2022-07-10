@@ -25,7 +25,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
-import { swapKYCSelector } from "../../../reducers/settings";
+import {
+  swapAcceptedProvidersSelector,
+  swapKYCSelector,
+} from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
 // eslint-disable-next-line import/named
 import { TrackScreen, track } from "../../../analytics";
@@ -38,6 +41,8 @@ import { trackSwapError, SWAP_VERSION } from "../utils";
 import { SwapFormProps } from "../types";
 import { Max } from "./Max";
 import { Modal } from "./Modal";
+import { Connect } from "./Connect";
+import { DeviceMeta } from "./Modal/Confirmation";
 
 export const ratesExpirationThreshold = 60000;
 
@@ -308,7 +313,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     swapTx.transaction &&
     !error &&
     !swapError &&
-    currentBanner === ActionRequired.None &&
+    // TODO: currentBanner === ActionRequired.None &&
     exchangeRate &&
     swapTx.swap.to.account;
 
@@ -325,6 +330,14 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
   }, []);
+
+  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
+  const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
+  const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
+
+  if (confirmed && termsAccepted && !deviceMeta) {
+    return <Connect provider={provider} setResult={setDeviceMeta} />;
+  }
 
   if (providers) {
     return (
@@ -372,7 +385,10 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           swapTx={swapTx}
           provider={provider}
           confirmed={confirmed}
+          termsAccepted={termsAccepted}
           onClose={onCloseModal}
+          deviceMeta={deviceMeta}
+          exchangeRate={exchangeRate}
         />
       </KeyboardAwareScrollView>
     );

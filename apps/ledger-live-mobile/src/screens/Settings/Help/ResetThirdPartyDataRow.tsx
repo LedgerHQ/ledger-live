@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { BottomDrawer } from "@ledgerhq/native-ui";
-import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
+import { BottomDrawer, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import Button from "../../../components/wrappedUi/Button";
@@ -38,7 +37,7 @@ export default function ResetThirdPartyDataRow() {
         id="ResetThirdPartyDataRow"
         isOpen={isModalOpened}
         onClose={onRequestClose}
-        Icon={InfoMedium}
+        Icon={Icons.InfoMedium}
         iconColor={"primary.c80"}
         title={t("settings.help.resetThirdPartyDataModal")}
         description={t("settings.help.resetThirdPartyDataModalDesc")}
