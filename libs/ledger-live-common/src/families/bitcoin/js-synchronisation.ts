@@ -259,7 +259,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
 
-  const paramXpub = initialAccount?.xpub;
+  const paramXpub = initialAccount?.id.split(":")[3];
 
   let generatedXpub;
   if (!paramXpub) {
