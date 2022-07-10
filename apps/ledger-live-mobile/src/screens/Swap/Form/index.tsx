@@ -37,6 +37,7 @@ import { Requirement } from "./Requirement";
 import { trackSwapError, SWAP_VERSION } from "../utils";
 import { SwapFormProps } from "../types";
 import { Max } from "./Max";
+import { Modal } from "./Modal";
 
 export const ratesExpirationThreshold = 60000;
 
@@ -100,6 +101,8 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const [errorCode, setErrorCode] = useState<
     ValidCheckQuoteErrorCodes | undefined
   >();
+
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     if (params?.currency) {
@@ -316,20 +319,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       provider,
       swapVersion: SWAP_VERSION,
     });
-    /* setDrawer( */
-    /*   ExchangeDrawer, */
-    /*   { swapTransaction: swapTx, exchangeRate }, */
-    /*   { preventBackdropClick: true }, */
-    /* ); */
+    setConfirmed(true);
   }, [swapTx, provider]);
 
-  //   const onContinue = useCallback(() => {
-  //     swapTx.setConfirmed(true);
-  //   }, [swapTx]);
-
-  //   const onReset = useCallback(() => {
-  //     swapTx.setConfirmed(false);
-  //   }, [swapTx]);
+  const onCloseModal = useCallback(() => {
+    setConfirmed(false);
+  }, []);
 
   if (providers) {
     return (
@@ -372,6 +367,13 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
             </Button>
           </Flex>
         </Flex>
+
+        <Modal
+          swapTx={swapTx}
+          provider={provider}
+          confirmed={confirmed}
+          onClose={onCloseModal}
+        />
       </KeyboardAwareScrollView>
     );
   }

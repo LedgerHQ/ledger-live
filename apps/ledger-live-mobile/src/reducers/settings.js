@@ -94,8 +94,8 @@ export type SettingsState = {
   locale: ?string,
   swap: {
     hasAcceptedIPSharing: false,
-    acceptedProviders: [],
-    selectableCurrencies: [],
+    acceptedProviders: string[],
+    selectableCurrencies: string[],
     KYC: {
       [key: string]: KYCStatus,
     },

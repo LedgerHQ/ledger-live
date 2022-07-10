@@ -65,6 +65,7 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "react/jsx-no-bind": 0,
+    "jsx-a11y/anchor-is-valid": 0,
     // for importing detox
     "import/no-extraneous-dependencies": [
       "error",

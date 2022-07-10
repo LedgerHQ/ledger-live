@@ -1,77 +1,66 @@
-// @flow
-
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
-import type {
-  Exchange,
+import {
   ExchangeRate,
+  SwapTransactionType,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
 import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-
 import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapHistory";
 import {
   addPendingOperation,
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
-
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-
-import { renderLoading } from "../../components/DeviceAction/rendering";
-import { ScreenName } from "../../const";
-import { updateAccountWithUpdater } from "../../actions/accounts";
-import DeviceAction from "../../components/DeviceAction";
-import BottomModal from "../../components/BottomModal";
-import ModalBottomAction from "../../components/ModalBottomAction";
-import { useBroadcast } from "../../components/useBroadcast";
-import { swapKYCSelector } from "../../reducers/settings";
+import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { renderLoading } from "../../../../components/DeviceAction/rendering";
+import { ScreenName } from "../../../../const";
+import { updateAccountWithUpdater } from "../../../../actions/accounts";
+import DeviceAction from "../../../../components/DeviceAction";
+import BottomModal from "../../../../components/BottomModal";
+import ModalBottomAction from "../../../../components/ModalBottomAction";
+import { useBroadcast } from "../../../../components/useBroadcast";
+import { swapKYCSelector } from "../../../../reducers/settings";
 
 const silentSigningAction = createAction(connectApp);
 const swapAction = initSwapCreateAction(connectApp, initSwap);
 
 export type DeviceMeta = {
-  result: { installed: any },
-  device: Device,
-  deviceInfo: DeviceInfo,
+  result: { installed: any };
+  device: Device;
+  deviceInfo: DeviceInfo;
 };
 
-type Props = {
-  swap: Exchange,
-  rate: ExchangeRate,
-  provider: string,
-  transaction: Transaction,
-  deviceMeta: DeviceMeta,
-  onError: (error: Error) => void,
-  onCancel: () => void,
-  status: TransactionStatus,
-};
-const Confirmation = ({
-  swap,
+interface Props {
+  swapTx: SwapTransactionType;
+  rate: ExchangeRate;
+  provider: string;
+  deviceMeta: DeviceMeta;
+  onError: (error: Error) => void;
+  onCancel: () => void;
+  isOpened: boolean;
+}
+
+export function Confirmation({
+  swapTx,
   rate,
   provider,
-  transaction,
   onError,
   onCancel,
   deviceMeta,
-  status,
-}: Props) => {
+  isOpened,
+}: Props) {
   const {
     from: { account: fromAccount, parentAccount: fromParentAccount },
     to: { account: toAccount, parentAccount: toParentAccount },
-  } = swap;
+  } = swapTx.swap;
 
   const exchange = useMemo(
     () => ({
@@ -163,7 +152,7 @@ const Confirmation = ({
   return (
     <BottomModal
       id="SwapConfirmationFeedback"
-      isOpened={true}
+      isOpened={isOpened}
       preventBackdropClick
       onClose={onCancel}
     >
@@ -222,12 +211,10 @@ const Confirmation = ({
       />
     </BottomModal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: "row",
   },
 });
-
-export default Confirmation;

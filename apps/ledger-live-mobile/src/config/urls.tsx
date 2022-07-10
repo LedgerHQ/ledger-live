@@ -94,6 +94,17 @@ export const urls = {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",
       },
+      ftx: {
+        main: "https://ftx.com",
+        support: "https://ftx.com/support",
+        tos:
+          "https://help.ftx.com/hc/en-us/articles/360024788391-FTX-Terms-of-Service",
+      },
+      ftxus: {
+        main: "https://ftx.us/",
+        support: "https://help.ftx.us/hc/en-us",
+        tos: "https://ftx.us/legal/terms-of-service",
+      },
     },
   },
   // Banners

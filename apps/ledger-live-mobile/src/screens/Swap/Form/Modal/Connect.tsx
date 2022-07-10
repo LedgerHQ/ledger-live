@@ -1,14 +1,12 @@
-// @flow
-
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
 import { useTheme } from "@react-navigation/native";
-import SelectDevice from "../../components/SelectDevice";
-import DeviceActionModal from "../../components/DeviceActionModal";
-import { TrackScreen } from "../../analytics";
-import SkipSelectDevice from "../SkipSelectDevice";
+import SelectDevice from "../../../../components/SelectDevice";
+import DeviceActionModal from "../../../../components/DeviceActionModal";
+import { TrackScreen } from "../../../../analytics";
+import SkipSelectDevice from "../../../SkipSelectDevice";
 
 const action = createAction(connectManager);
 
@@ -16,8 +14,8 @@ const Connect = ({
   setResult,
   provider,
 }: {
-  setResult: (result: any) => void,
-  provider?: string,
+  setResult: (result: any) => void;
+  provider?: string;
 }) => {
   const [device, setDevice] = useState(null);
   const [result] = useState();
