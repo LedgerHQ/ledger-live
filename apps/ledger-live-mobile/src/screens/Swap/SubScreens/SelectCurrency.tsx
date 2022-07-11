@@ -64,7 +64,7 @@ export function SelectCurrency({
 
 function renderEmptyList(t: TFunction) {
   return () => (
-    <Flex>
+    <Flex padding={4} alignItems="center">
       <Text>{t("common.noCryptoFound")}</Text>
     </Flex>
   );

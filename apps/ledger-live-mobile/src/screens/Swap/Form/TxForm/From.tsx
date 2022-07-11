@@ -15,7 +15,10 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import { SwapSelectorStateType } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import {
+  SwapSelectorStateType,
+  Pair,
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
@@ -28,6 +31,7 @@ interface Props {
   accounts: Account[];
   provider?: string;
   currencies: (CryptoCurrency | TokenCurrency)[];
+  pairs: Pair[];
 }
 
 export function From({
@@ -38,12 +42,18 @@ export function From({
   accounts: accountsProp,
   provider,
   currencies,
+  pairs,
 }: Props) {
   const { t } = useTranslation();
   // TODO: navigation type
   const navigation = useNavigation<any>();
 
-  const accounts = usePickDefaultAccount(accountsProp, account, setAccount);
+  const accounts = usePickDefaultAccount(
+    accountsProp,
+    account,
+    setAccount,
+    pairs,
+  );
   const currencyIds = useMemo(() => currencies.map(c => c.id), [currencies]);
 
   const name = useMemo(() => (account && getAccountName(account)) ?? "", [
@@ -63,7 +73,7 @@ export function From({
   const onPress = useCallback(() => {
     navigation.navigate("SelectAccount", {
       target: "from",
-      accountIds: accounts.map(a => a.id),
+      accounts,
       provider,
       currencyIds,
     });

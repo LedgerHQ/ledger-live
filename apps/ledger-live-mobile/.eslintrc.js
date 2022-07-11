@@ -56,6 +56,7 @@ module.exports = {
     "react/no-multi-comp": 0,
     "react/no-unused-state": 0,
     "react/no-array-index-key": 0,
+    "react/prop-types": 0,
     "no-await-in-loop": 0,
     "class-methods-use-this": 0,
     "react/no-unused-prop-types": 0,

@@ -364,6 +364,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               accounts={accounts}
               currencies={currencies}
               exchangeRate={exchangeRate}
+              pairs={pairs}
             />
 
             {swapTx.swap.rates.status === "loading" ? (

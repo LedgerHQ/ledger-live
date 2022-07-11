@@ -55,7 +55,7 @@ export type SwapNavParamList = {
   Swap: undefined;
   SelectAccount: {
     target: "from" | "to";
-    accountIds: string[];
+    accounts: AccountLike & { disabled: boolean };
     provider: string;
     currencyIds: string[];
   };

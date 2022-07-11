@@ -1,11 +1,9 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -16,29 +14,19 @@ import {
 } from "../../../helpers/formatAccountSearchResults";
 import { SelectAccountProps } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
-import { shallowAccountsSelector } from "../../../reducers/accounts";
 
 export function SelectAccount({
   navigation,
   route: {
-    params: { accountIds, provider, currencyIds },
+    params: { accounts, provider, currencyIds },
   },
-}: {
-  // TODO find proper prop for navigation
-  navigation: any;
-  route: SelectAccountProps["route"];
-}) {
+}: SelectAccountProps) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const allAccounts = useSelector(shallowAccountsSelector);
-  const accounts = useMemo(() => {
-    const accounts = allAccounts.filter(a => accountIds.includes(a.id));
-    return flattenAccounts(accounts, { enforceHideEmptySubAccounts: true });
-  }, [accountIds, allAccounts]);
-
   const onSelect = useCallback(
     (account: AccountLike) => {
+      // @ts-expect-error
       navigation.navigate("SwapForm", { accountId: account.id });
     },
     [navigation],
@@ -58,7 +46,8 @@ export function SelectAccount({
       return (
         <Flex {...styleProps}>
           <AccountCard
-            disabled={!item.match}
+            // @ts-expect-error
+            disabled={item.account.disabled}
             account={item.account}
             style={styles.card}
             onPress={() => onSelect(item.account)}
@@ -70,12 +59,14 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
+    // @ts-expect-error
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
       params: {
         returnToSwap: true,
         filterCurrencyIds: currencyIds,
         onSuccess: () => {
+          // @ts-expect-error
           navigation.navigate("SwapForm");
         },
         analyticsPropertyFlow: "swap",
@@ -85,6 +76,7 @@ export function SelectAccount({
 
   const renderList = useCallback(
     items => {
+      // @ts-expect-error
       const formatedList = formatSearchResults(items, accounts);
       return (
         <FlatList
@@ -132,6 +124,7 @@ export function SelectAccount({
         <FilteredSearchBar
           keys={["name", "unit.code", "token.name", "token.ticker"]}
           inputWrapperStyle={[styles.card, styles.searchBarContainer]}
+          // @ts-expect-error
           list={accounts}
           renderList={renderList}
           renderEmptySearch={() => (
