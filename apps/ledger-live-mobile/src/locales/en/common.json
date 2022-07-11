@@ -82,7 +82,8 @@
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
     "exchange": "Exchange",
-    "popular": "popular"
+    "popular": "popular",
+    "getSupport": "Get support"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -647,6 +648,9 @@
     "CardanoMinAmountError": {
       "title": "Minimum {{amount}} ADA required"
     }
+  },
+  "crash": {
+    "title": "Something went wrong"
   },
   "bluetooth": {
     "required": "Sorry, it looks like Bluetooth is disabled",

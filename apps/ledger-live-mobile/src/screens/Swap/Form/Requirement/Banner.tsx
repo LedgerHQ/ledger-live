@@ -1,43 +1,31 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { ActionRequired } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { useTranslation } from "react-i18next";
+import { Banner } from "../Banner";
 
 interface Props {
   required: ActionRequired;
-  provider: string;
+  provider?: string;
 }
 
-export function Banner({ provider, required }: Props) {
+export function RequirementBanner({ provider, required }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<any>();
 
   const onPress = useCallback(() => {
-    navigation.navigate(required, { provider });
+    if (provider) {
+      navigation.navigate(required, { provider });
+    }
   }, [navigation, provider, required]);
 
   const key = useMemo(() => required.toString().toLowerCase(), [required]);
 
   return (
-    <Flex
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      padding={4}
-      marginY={4}
-      borderRadius={4}
-      backgroundColor="primary.c10"
-    >
-      <Flex flex={1}>
-        <Text color="primary.c70">
-          {t(`transfer.swap2.form.providers.${key}.required`)}
-        </Text>
-      </Flex>
-
-      <Button type="main" size="small" onPress={onPress}>
-        {t(`transfer.swap2.form.providers.${key}.complete`)}
-      </Button>
-    </Flex>
+    <Banner
+      message={t(`transfer.swap2.form.providers.${key}.required`)}
+      cta={t(`transfer.swap2.form.providers.${key}.complete`)}
+      onPress={onPress}
+    />
   );
 }

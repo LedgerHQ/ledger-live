@@ -1,6 +1,6 @@
 import React from "react";
 import { ActionRequired } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { Banner } from "./Banner";
+import { RequirementBanner } from "./Banner";
 
 interface Props {
   required: ActionRequired;
@@ -12,5 +12,5 @@ export function Requirement({ required, provider }: Props) {
     return null;
   }
 
-  return <Banner required={required} provider={provider} />;
+  return <RequirementBanner required={required} provider={provider} />;
 }

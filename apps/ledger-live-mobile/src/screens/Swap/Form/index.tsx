@@ -40,6 +40,7 @@ import { Max } from "./Max";
 import { Modal } from "./Modal";
 import { Connect } from "./Connect";
 import { DeviceMeta } from "./Modal/Confirmation";
+import { ErrorBanner } from "./ErrorBanner";
 
 export const ratesExpirationThreshold = 60000;
 
@@ -47,7 +48,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const accounts = useSelector(shallowAccountsSelector);
-  const { providers, error, pairs } = useProviders(
+  const { providers, error: providersError, pairs } = useProviders(
     Config.SWAP_DISABLED_PROVIDERS,
   );
 
@@ -135,7 +136,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   useEffect(() => {
     // In case of error, don't show  login, kyc or mfa banner
-    if (error) {
+    if (errorCode) {
       // Don't show any flow banner on error to avoid double banner display
       setCurrentBanner(ActionRequired.None);
       return;
@@ -163,7 +164,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     ) {
       setCurrentBanner(ActionRequired.KYC);
     }
-  }, [error, provider, kyc, currentBanner]);
+  }, [errorCode, provider, kyc, currentBanner]);
 
   useEffect(() => {
     // Whenever an account is added, reselect the currency to pick a default target account.
@@ -308,7 +309,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     !swapTx.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTx.transaction &&
-    !error &&
+    !providersError &&
     !swapError &&
     currentBanner === ActionRequired.None &&
     exchangeRate &&
@@ -362,6 +363,10 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
                 />
 
                 <Requirement required={currentBanner} provider={provider} />
+
+                {errorCode && provider && (
+                  <ErrorBanner provider={provider} errorCode={errorCode} />
+                )}
               </>
             )}
           </Flex>
@@ -387,7 +392,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     );
   }
 
-  if (error) {
+  if (providersError) {
     return <NotAvailable />;
   }
 
