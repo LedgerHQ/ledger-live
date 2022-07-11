@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.4.0-next.7
+
+### Patch Changes
+
+- [#574](https://github.com/LedgerHQ/ledger-live/pull/574) [`6a5c9caf4`](https://github.com/LedgerHQ/ledger-live/commit/6a5c9caf4ff5b16830fff254be2b01e427073375) Thanks [@github-actions](https://github.com/apps/github-actions)! - Merge hotfix - Fix deeplinking logic to platform (cold app start deeplink, experimental & private apps always accessible)
+
 ## 3.4.0-next.6
 
 ### Patch Changes
