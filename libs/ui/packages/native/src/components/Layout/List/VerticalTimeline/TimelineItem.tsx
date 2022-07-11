@@ -99,9 +99,9 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
           {item.renderBody && (
             <Flex position="relative">
               <Flex onLayout={handleLayoutChange} pt={6} position="absolute" opacity={0}>
-                {item.renderBody(item.status)}
+                {item.renderBody(false)}
               </Flex>
-              <Flex pt={6}>{item.renderBody(item.status)}</Flex>
+              <Flex pt={6}>{item.renderBody(item.status === "active")}</Flex>
             </Flex>
           )}
         </Animated.View>

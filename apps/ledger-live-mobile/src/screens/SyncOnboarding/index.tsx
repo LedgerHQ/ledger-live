@@ -29,7 +29,7 @@ type Step = {
   key: CompanionStepKey;
   status: StepStatus;
   title: string;
-  renderBody?: (status?: StepStatus) => ReactNode;
+  renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
 type Props = StackScreenProps<
@@ -99,9 +99,9 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         key: CompanionStepKey.SoftwareCheck,
         title: "Software check",
         status: "inactive",
-        renderBody: (status?: StepStatus) => (
+        renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
-            active={status === "active"}
+            active={!!isDisplayed}
             onComplete={() =>
               setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
             }

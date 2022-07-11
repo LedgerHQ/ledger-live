@@ -9,7 +9,7 @@ export type ItemStatus = "inactive" | "active" | "completed";
 export type Item = {
   status: ItemStatus;
   title: string;
-  renderBody?: (status?: ItemStatus) => ReactNode;
+  renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
 export type Props = BaseStyledProps & {
