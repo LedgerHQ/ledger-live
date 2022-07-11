@@ -10,8 +10,8 @@ import { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampC
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/types/index";
-import type { Account, SubAccount } from "@ledgerhq/live-common/types/account";
+} from "@ledgerhq/types-cryptoassets";
+import type { Account, SubAccount } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";

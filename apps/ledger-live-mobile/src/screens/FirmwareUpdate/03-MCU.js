@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-import type { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import type { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";

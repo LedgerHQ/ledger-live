@@ -27,7 +27,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 
-import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { renderLoading } from "../../components/DeviceAction/rendering";

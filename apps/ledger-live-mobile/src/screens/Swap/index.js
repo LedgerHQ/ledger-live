@@ -23,11 +23,7 @@ import type {
   TokenCurrency,
   TransactionStatus,
 } from "@ledgerhq/live-common/types/index";
-import type {
-  Account,
-  AccountLike,
-  TokenAccount,
-} from "@ledgerhq/live-common/types/account";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
