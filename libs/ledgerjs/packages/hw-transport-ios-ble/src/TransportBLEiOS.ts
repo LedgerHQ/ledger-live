@@ -37,6 +37,10 @@ export default class TransportBLEiOS extends Transport {
       });
     });
   }
+
+  arrayToBuffer(int8Array: Uint8Array): Buffer {
+    return Buffer.from(int8Array);
+  }
 }
 
 type Callback = (f: (response: unknown, error: unknown) => void) => void;
