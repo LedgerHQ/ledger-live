@@ -3,7 +3,6 @@ import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { KYCStatus } from "@ledgerhq/live-common/src/exchange/swap/types";
 
-// TODO background color with opacity
 const statusThemeMap = {
   pending: {
     color: "warning.c100",
@@ -52,7 +51,7 @@ export function StatusTag({ kyc }: { kyc?: KYCStatus }) {
       backgroundColor={backgroundColor}
     >
       <Flex marginRight={2} borderRadius={4}>
-        <Text variant="small" color={color}>
+        <Text variant="tiny" color={color}>
           {t(`transfer.swap2.form.providers.kyc.status.${kyc.status}`)}
         </Text>
       </Flex>
