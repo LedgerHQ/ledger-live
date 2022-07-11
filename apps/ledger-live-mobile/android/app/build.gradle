@@ -3,8 +3,8 @@ apply plugin: 'com.google.gms.google-services'
 
 project.ext.envConfigFiles = [
     debug: ".env",
-    release: ".env.production",
-    stagingrelease: ".env.staging",
+    release: ".env.android.production",
+    stagingrelease: ".env.android.staging",
 ]
 
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
