@@ -38,7 +38,10 @@ import {
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
-import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
+import {
+  accountToPlatformAccount,
+  getPlatformTransactionSignFlowInfos,
+} from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
   deserializePlatformTransaction,
@@ -317,10 +320,15 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
         const bridge = getAccountBridge(account, parentAccount);
 
+        const { liveTx } = getPlatformTransactionSignFlowInfos(
+          platformTransaction,
+        );
+
         const t = bridge.createTransaction(account);
-        const { recipient, ...txData } = platformTransaction;
+        const { recipient, ...txData } = liveTx;
         const t2 = bridge.updateTransaction(t, {
           recipient,
+          subAccountId: isTokenAccount(account) ? account.id : undefined,
           feesStrategy: "custom",
         });
 
