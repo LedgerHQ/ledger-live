@@ -1,7 +1,6 @@
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex } from "../index";
 import styled from "styled-components/native";
 
-// TODO: move this component to the design system
 const Divider = styled(Flex).attrs(() => ({
   my: 4,
   height: 1,
