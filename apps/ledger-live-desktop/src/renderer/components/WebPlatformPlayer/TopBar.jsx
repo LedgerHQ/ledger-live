@@ -115,10 +115,8 @@ export type Props = {
   onReload: Function,
   onClose?: Function,
   onHelp?: Function,
-  onOpenDevTools: Function,
-  onGoBack: Function,
-  onGoForward: Function,
   config?: TopBarConfig,
+  webview: WebviewTag,
 };
 
 const WebPlatformTopBar = ({
@@ -126,10 +124,8 @@ const WebPlatformTopBar = ({
   onReload,
   onHelp,
   onClose,
-  onOpenDevTools,
-  onGoBack,
-  onGoForward,
   config = {},
+  webview,
 }: Props) => {
   const { name, icon } = manifest;
 
@@ -145,6 +141,24 @@ const WebPlatformTopBar = ({
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
+
+  const onOpenDevTools = useCallback(() => {
+    if (webview) {
+      webview.openDevTools();
+    }
+  }, [webview]);
+
+  const onGoBack = useCallback(() => {
+    if (webview) {
+      webview.goBack();
+    }
+  }, [webview]);
+
+  const onGoForward = useCallback(() => {
+    if (webview) {
+      webview.goForward();
+    }
+  }, [webview]);
 
   return (
     <Container>
