@@ -126,9 +126,9 @@ export default function SelectAccount({ navigation, route }: Props) {
     () =>
       allAccounts.filter(
         account =>
-          (account.type === "TokenAccount"
-            ? account.token.id
-            : account.currency.id) === currency.id,
+          (account?.type === "TokenAccount"
+            ? account?.token.id
+            : account?.currency.id) === currency.id,
       ),
     [allAccounts, currency.id],
   );
