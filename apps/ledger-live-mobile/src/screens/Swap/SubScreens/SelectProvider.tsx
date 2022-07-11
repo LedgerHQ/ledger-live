@@ -12,11 +12,13 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../icons/swap";
 import { SelectProviderProps } from "../types";
 import CounterValue from "../../../components/CounterValue";
+import { TrackScreen } from "../../../analytics";
 
 export function SelectProvider({
   navigation,
   route: {
     params: {
+      provider,
       swap: { from, to, rates },
       selectedId,
     },
@@ -41,6 +43,11 @@ export function SelectProvider({
 
   return (
     <Flex paddingX={4}>
+      <TrackScreen
+        category="Swap Form"
+        name="Edit Provider"
+        provider={provider}
+      />
       <Flex flexDirection="row" justifyContent="space-between" paddingY={2}>
         <Text margin={4} color="neutral.c70">
           {t("transfer.swap2.form.ratesDrawer.quote")}

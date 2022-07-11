@@ -19,6 +19,7 @@ export function SelectCurrency({
 
   const onSelect = useCallback(
     (currency: CryptoCurrency | TokenCurrency) => {
+      // @ts-expect-error
       navigation.navigate("SwapForm", { currency });
     },
     [navigation],
