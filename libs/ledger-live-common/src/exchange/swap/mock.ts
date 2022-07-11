@@ -23,7 +23,7 @@ import type {
 } from "./types";
 
 export const getMockExchangeRate = ({
-  provider = "ftx",
+  provider = "changelly",
   tradeMethod = "fixed",
 }: {
   provider?: string;
@@ -94,7 +94,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "ftx",
+      provider: "changelly",
       expirationDate: new Date(),
       tradeMethod: "fixed",
     },
@@ -103,7 +103,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "ftx",
+      provider: "changelly",
       expirationDate: new Date(),
       tradeMethod: "float",
     },
@@ -130,7 +130,7 @@ export const mockGetProviders: GetProviders = async () => {
   return usesV3
     ? [
         {
-          provider: "ftx",
+          provider: "changelly",
           pairs: [
             { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
             { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
