@@ -2150,10 +2150,6 @@
     "fees": {
       "title": "Edit fees"
     },
-    "manageCard": {
-      "title": "Manage CL Card",
-      "description": "Order and Manage CL Card"
-    },
     "receive": {
       "title": "Receive",
       "description": "Receive crypto from another wallet.",
@@ -4462,7 +4458,10 @@
       "tokenContractCopied": "Token Address copied !",
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal": {
       "viewOn": "View on",

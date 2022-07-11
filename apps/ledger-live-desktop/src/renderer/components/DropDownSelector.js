@@ -121,7 +121,7 @@ const DropDownSelector = ({
   return (
     <Tippy
       visible={isOpen}
-      onClickOutside={!process.env.PLAYWRIGHT_RUN ? () => setOpen(false) : null}
+      onClickOutside={() => setOpen(false)}
       onShow={() => setOpen(true)}
       onHide={() => setOpen(false)}
       animation="shift-away"

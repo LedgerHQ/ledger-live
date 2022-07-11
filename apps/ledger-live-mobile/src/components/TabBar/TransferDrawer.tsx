@@ -87,12 +87,6 @@ export default function TransferDrawer({ onClose }: ModalProps) {
       }),
     [onNavigate],
   );
-  const onManageCard = useCallback(() => {
-    onNavigate(ScreenName.PlatformApp, {
-      platform: "cl-card",
-      name: "CL Card Powered by Ledger",
-    });
-  }, [onNavigate]);
 
   const buttons = (
     <>
@@ -190,15 +184,6 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           />
         </Box>
       ) : null}
-      <Box>
-        <TransferButton
-          title={t("transfer.manageCard.title")}
-          description={t("transfer.manageCard.description")}
-          Icon={Icons.CardMedium}
-          onPress={onManageCard}
-          disabled={readOnlyModeEnabled}
-        />
-      </Box>
     </>
   );
 

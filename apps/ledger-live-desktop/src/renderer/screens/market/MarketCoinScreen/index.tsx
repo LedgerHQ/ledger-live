@@ -279,7 +279,7 @@ export default function MarketCoinScreen() {
         atlDate={atlDate}
         locale={locale}
         counterCurrency={counterCurrency}
-        loading={process.env.PLAYWRIGHT_RUN ? false : loading}
+        loading={loading}
       />
     </Container>
   ) : null;

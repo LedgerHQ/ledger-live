@@ -31,9 +31,9 @@ import {
   renderLoading,
   renderRequestQuitApp,
   renderRequiresAppInstallation,
-  renderSecureTransferDeviceConfirmation,
-  renderSwapDeviceConfirmationV2,
   renderWarningOutdated,
+  renderSwapDeviceConfirmation,
+  renderSecureTransferDeviceConfirmation,
 } from "./rendering";
 
 type OwnProps<R, H, P> = {
@@ -204,8 +204,7 @@ const DeviceAction = <R, H, P>({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     const { transaction, exchange, exchangeRate, status } = request;
     const { amountExpectedTo, estimatedFees } = hookState;
-    const renderFn = renderSwapDeviceConfirmationV2;
-    return renderFn({
+    return renderSwapDeviceConfirmation({
       modelId,
       type,
       transaction,

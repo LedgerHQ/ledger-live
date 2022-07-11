@@ -361,6 +361,7 @@
     "title": "Swap",
     "titleCrypto": "Swap {{currency}}",
     "whatIsSwap": "What is Swap",
+    "decentralizedSwapAvailable": "For some transactions you may consider using decentralised SWAP. Discover <0>ParaSwap</0> and <1>1inch</1>.",
     "paraswap": {
       "cta": " Check it out",
       "description": "Looking for Paraswap? It has been moved to the Discover tab."
@@ -1298,7 +1299,8 @@
         "description": "Description",
         "tokenAddress": "Token Address",
         "tokenId": "Token ID",
-        "quantity": "Quantity"
+        "quantity": "Quantity",
+        "floorPrice": "Floor Price"
       }
     },
     "collections": {
@@ -1533,7 +1535,8 @@
       "fees": "Fees",
       "provider": "Provider",
       "payoutNetworkFees": "Payout fees",
-      "payoutNetworkFeesTooltip": "This amount will not be shown on your device"
+      "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+      "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -2083,10 +2086,10 @@
     "replaceable": "replaceable",
     "cannotSelect": {
       "unconfirmed": "You cannot select coins from unconfirmed, replaceable transactions.",
+      "pending": "You cannot select coins from pending transactions. (except your change output)",
       "last": "You need at least one selected"
     },
     "pending": "pending",
-    "pickUnconfirmedRBF": "Include coins from unconfirmed, replaceable transactions.",
     "pickingStrategy": "UTXO picking strategy",
     "pickingStrategyLabels": {
       "DEEP_OUTPUTS_FIRST": "Oldest coins first (FIFO)",
