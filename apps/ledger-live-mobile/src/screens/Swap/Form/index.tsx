@@ -25,10 +25,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
-import {
-  swapAcceptedProvidersSelector,
-  swapKYCSelector,
-} from "../../../reducers/settings";
+import { swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
 // eslint-disable-next-line import/named
 import { TrackScreen, track } from "../../../analytics";
@@ -330,12 +327,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const onCloseModal = useCallback(() => {
     setConfirmed(false);
   }, []);
-
-  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
-  const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
 
-  if (confirmed && termsAccepted && !deviceMeta) {
+  if (confirmed && !deviceMeta) {
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
@@ -385,7 +379,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
           swapTx={swapTx}
           provider={provider}
           confirmed={confirmed}
-          termsAccepted={termsAccepted}
           onClose={onCloseModal}
           deviceMeta={deviceMeta}
           exchangeRate={exchangeRate}
