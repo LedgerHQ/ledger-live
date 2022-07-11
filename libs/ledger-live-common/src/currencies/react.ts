@@ -1,19 +1,16 @@
 import { useMemo } from "react";
-import { listTokens, listSupportedCurrencies } from "../currencies";
+import { listAndFilterCurrencies } from "./helpers";
 import { Currency } from "../types";
+import { CurrencyFilters } from "../platform/filters";
 
-export function useCurrencies(includeTokens = false): Currency[] {
+export function useFilteredCurrencies({
+  includeTokens,
+  currencies,
+}: CurrencyFilters): Currency[] {
   return useMemo(() => {
-    const currencies = listSupportedCurrencies();
-
-    if (!includeTokens) {
-      return currencies;
-    }
-
-    const allTokens = listTokens().filter(
-      ({ tokenType }) => tokenType === "erc20" || tokenType === "bep20"
-    );
-
-    return [...currencies, ...allTokens];
-  }, [includeTokens]);
+    return listAndFilterCurrencies({
+      includeTokens,
+      currencies,
+    });
+  }, [currencies, includeTokens]);
 }

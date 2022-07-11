@@ -5,15 +5,18 @@ import {
   Currency as PlatformCurrency,
 } from "@ledgerhq/live-app-sdk";
 
-export {
+export type {
   Account as PlatformAccount,
   Currency as PlatformCurrency,
   Unit as PlatformUnit,
   Transaction as PlatformTransaction,
-  CurrencyType as PlatformCurrencyType,
-  TokenStandard as PlatformTokenStandard,
   CryptoCurrency as PlatformCryptoCurrency,
   ERC20TokenCurrency as PlatformERC20TokenCurrency,
+} from "@ledgerhq/live-app-sdk";
+
+export {
+  CurrencyType as PlatformCurrencyType,
+  TokenStandard as PlatformTokenStandard,
 } from "@ledgerhq/live-app-sdk";
 
 export type TranslatableString = {

@@ -1,5 +1,9 @@
-import { Currency, CryptoCurrency, TokenCurrency } from "../types";
+import { makeRe } from "minimatch";
+import { CryptoCurrency, Currency, TokenCurrency } from "../types";
 import { listTokens, listSupportedCurrencies } from "../currencies";
+import { PlatformSupportedCurrency } from "../platform/types";
+import { CurrencyFilters } from "../platform/filters";
+import { isPlatformSupportedCurrency } from "../platform/helpers";
 
 export function isCryptoCurrency(
   currency: Currency
@@ -23,4 +27,43 @@ export function listCurrencies(includeTokens: boolean): Currency[] {
   );
 
   return [...currencies, ...allTokens];
+}
+
+export function filterCurrencies(
+  currencies: PlatformSupportedCurrency[],
+  filters: CurrencyFilters
+): Currency[] {
+  const filterCurrencyRegexes = filters.currencies
+    ? filters.currencies.map((filter) => makeRe(filter))
+    : null;
+
+  return currencies.filter((currency) => {
+    if (!filters.includeTokens && isTokenCurrency(currency)) {
+      return false;
+    }
+
+    if (
+      filterCurrencyRegexes &&
+      filterCurrencyRegexes.length &&
+      !filterCurrencyRegexes.some((regex) => currency.id.match(regex))
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+export function listAndFilterCurrencies({
+  includeTokens = false,
+  currencies,
+}: CurrencyFilters): Currency[] {
+  const allCurrencies = listCurrencies(includeTokens).filter(
+    isPlatformSupportedCurrency
+  );
+
+  return filterCurrencies(allCurrencies, {
+    includeTokens,
+    currencies,
+  });
 }

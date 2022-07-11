@@ -20,6 +20,12 @@ export function isPlatformCryptoCurrency(
   return currency.type === PlatformCurrencyType.CryptoCurrency;
 }
 
+export function isPlatformTokenCurrency(
+  currency: PlatformCurrency
+): currency is PlatformERC20TokenCurrency {
+  return currency.type === PlatformCurrencyType.TokenCurrency;
+}
+
 export function isPlatformERC20TokenCurrency(
   currency: PlatformCurrency
 ): currency is PlatformERC20TokenCurrency {

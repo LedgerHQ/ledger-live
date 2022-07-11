@@ -4,6 +4,7 @@ import {
   addPendingOperation,
   flattenAccounts,
   getMainAccount,
+  isTokenAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -223,41 +224,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
     [manifest],
   );
 
-  /*
-  const requestAccount = useCallback(
-    ({
-      currencies,
-      allowAddAccount,
-      includeTokens,
-    }: {
-      currencies?: string[],
-      allowAddAccount?: boolean,
-      includeTokens?: boolean,
-    }) => {
-      tracking.platformRequestAccountRequested(manifest);
-      return new Promise((resolve, reject) =>
-        dispatch(
-          openModal("MODAL_REQUEST_ACCOUNT", {
-            currencies,
-            allowAddAccount,
-            includeTokens,
-            onResult: account => {
-              tracking.platformRequestAccountSuccess(manifest);
-              //
-              resolve(serializePlatformAccount(accountToPlatformAccount(account, accounts)));
-            },
-            onCancel: error => {
-              tracking.platformRequestAccountFail(manifest);
-              reject(error);
-            },
-          }),
-        ),
-      );
-    },
-    [manifest, dispatch, accounts],
-  );
-
-  */
   const signTransaction = useCallback(
     ({
       accountId,
@@ -274,13 +240,13 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
       if (!account) return null;
 
-      const parentAccount =
-        account.type === "TokenAccount" ? accounts.find(a => a.id === account.parentId) : undefined;
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : undefined;
 
       if (
-        (account.type === "TokenAccount"
-          ? parentAccount?.currency.family
-          : account.currency.family) !== platformTransaction.family
+        (isTokenAccount(account) ? parentAccount?.currency.family : account.currency.family) !==
+        platformTransaction.family
       ) {
         throw new Error("Transaction family not matching account currency family");
       }
@@ -373,10 +339,10 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
         return null;
       }
 
-      if (fromAccount.type === "TokenAccount") {
+      if (isTokenAccount(fromAccount)) {
         fromParentAccount = accounts.find(a => a.id === fromAccount.parentId);
       }
-      if (toAccount && toAccount.type === "TokenAccount") {
+      if (toAccount && isTokenAccount(toAccount)) {
         toParentAccount = accounts.find(a => a.id === toAccount.parentId);
       }
 

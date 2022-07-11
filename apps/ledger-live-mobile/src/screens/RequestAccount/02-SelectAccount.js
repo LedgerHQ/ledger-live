@@ -5,7 +5,9 @@ import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import type {
   Account,
+  AccountLike,
   CryptoCurrency,
+  TokenCurrency,
 } from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
@@ -15,7 +17,7 @@ import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
-import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
+import { formatSearchResultsTuples } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import { NavigatorName, ScreenName } from "../../const";
 import Button from "../../components/Button";
@@ -29,7 +31,7 @@ type Props = {
 
 type RouteParams = {
   currencies: string[],
-  currency: CryptoCurrency,
+  currency: CryptoCurrency | TokenCurrency,
   allowAddAccount?: boolean,
 
   onSuccess: (account: Account) => void,
@@ -40,15 +42,15 @@ function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess, onError } = route.params;
 
-  const accounts: Account[] = useSelector(
+  const accounts: AccountLike[] = useSelector(
     accountsByCryptoCurrencyScreenSelector(currency),
   );
 
   const keyExtractor = item => item.account.id;
 
   const onSelect = useCallback(
-    (account: Account) => {
-      onSuccess(account);
+    (account: AccountLike, parentAccount: Account) => {
+      onSuccess(account, parentAccount);
       const n = navigation.getParent() || navigation;
       n.pop();
     },
@@ -57,16 +59,16 @@ function SelectAccount({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
-      const { account } = result;
+      const { account, parentAccount, match } = result;
 
       return (
         <View>
           <AccountCard
-            disabled={!result.match}
+            disabled={!match}
             account={account}
             style={styles.card}
             // $FlowFixMe
-            onPress={() => onSelect(account)}
+            onPress={() => onSelect(account, parentAccount)}
           />
         </View>
       );
@@ -113,7 +115,7 @@ function SelectAccount({ navigation, route }: Props) {
   const renderList = useCallback(
     items => {
       // $FlowFixMe
-      const formatedList = formatSearchResults(items, accounts);
+      const formatedList = formatSearchResultsTuples(items);
       return (
         <>
           <FlatList
@@ -127,7 +129,7 @@ function SelectAccount({ navigation, route }: Props) {
         </>
       );
     },
-    [accounts, renderFooter, renderItem],
+    [renderFooter, renderItem],
   );
 
   return (

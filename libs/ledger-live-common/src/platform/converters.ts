@@ -1,5 +1,5 @@
 import byFamily from "../generated/platformAdapter";
-import { getParentAccount, isTokenAccount, isSubAccount } from "../account";
+import { isTokenAccount, isSubAccount } from "../account";
 import { Account, AccountLike, Transaction } from "../types";
 import {
   PlatformAccount,
@@ -19,16 +19,12 @@ export function accountToPlatformAccount(
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
-    const shared = {
+    return {
       id: account.id,
-      address: parentAccount.freshAddress,
       balance: account.balance,
+      address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-    };
-
-    return {
-      ...shared,
       ...(isTokenAccount(account)
         ? {
             name: `${parentAccount.name} (${account.token.ticker})`,

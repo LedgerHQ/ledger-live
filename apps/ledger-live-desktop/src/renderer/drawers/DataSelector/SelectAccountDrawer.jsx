@@ -3,7 +3,12 @@
 import React, { useCallback, memo } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 
 import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";

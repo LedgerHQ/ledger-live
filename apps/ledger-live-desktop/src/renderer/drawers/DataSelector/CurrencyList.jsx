@@ -8,6 +8,7 @@ import styled from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import type { Currency } from "@ledgerhq/live-common/types/index";
 import Box from "~/renderer/components/Box";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
   onCurrencySelect: (currency: Currency) => void,
 };
 
-const CurrencyListContainer = styled.div`
+const CurrencyListContainer: ThemedComponent<{}> = styled.div`
   flex: 1 1 auto;
   width: 100%;
 `;

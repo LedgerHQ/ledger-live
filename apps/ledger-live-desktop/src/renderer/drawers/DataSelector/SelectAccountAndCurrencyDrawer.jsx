@@ -9,12 +9,8 @@ import { setDrawer } from "../Provider";
 
 import Fuse from "fuse.js";
 
-import {
-  listSupportedCurrencies,
-  listTokens,
-  useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/currencies/index";
-import { makeRe } from "@ledgerhq/live-common/platform/filters";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useFilteredCurrencies } from "@ledgerhq/live-common/currencies/react";
 import Text from "~/renderer/components/Text";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { CurrencyList } from "./CurrencyList";
@@ -36,7 +32,7 @@ function fuzzySearch(currencies: Currency[], searchValue: string) {
   return result;
 }
 
-const SelectCurrencyDrawerContainer = styled.div`
+const SelectAccountAndCurrencyDrawerContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
@@ -62,7 +58,7 @@ const HeaderContainer: ThemedComponent<any> = styled.div`
   justify-content: center;
 `;
 
-type SelectCurrencyDrawerProps = {
+type SelectAccountAndCurrencyDrawerProps = {
   onClose: () => void,
   currencies?: string[],
   includeTokens?: boolean,
@@ -74,97 +70,74 @@ const SearchInputContainer = styled.div`
   flex: 0 1 auto;
 `;
 
-const SelectCurrencyDrawer = (props: SelectCurrencyDrawerProps) => {
-  const { currencies, includeTokens, onAccountSelected, onClose } = props;
+const MemoizedSelectAccountAndCurrencyDrawer = memo<SelectAccountAndCurrencyDrawerProps>(
+  function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerProps) {
+    const { currencies, includeTokens, onAccountSelected, onClose } = props;
 
-  const { t } = useTranslation();
+    const { t } = useTranslation();
 
-  const cryptoCurrencies = useMemo(() => {
-    const allCurrencies = includeTokens
-      ? [...listSupportedCurrencies(), ...listTokens()]
-      : listSupportedCurrencies();
+    const cryptoCurrencies = useFilteredCurrencies({ currencies, includeTokens });
 
-    const filterCurrencyRegexes = currencies ? currencies.map(filter => makeRe(filter)) : null;
+    const [searchValue, setSearchValue] = useState<string>("");
 
-    return currencies
-      ? allCurrencies.filter(currency => {
-          if (
-            filterCurrencyRegexes &&
-            !filterCurrencyRegexes.some(regex => currency.id.match(regex))
-          ) {
-            return false;
-          }
+    // sorting them by marketcap
+    const sortedCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
-          return true;
-        })
-      : allCurrencies;
-  }, [currencies, includeTokens]);
+    // performing fuzzy search if there is a valid searchValue
+    const filteredCurrencies = useMemo(() => {
+      if (searchValue.length < 2) {
+        return sortedCurrencies;
+      }
+      return fuzzySearch(sortedCurrencies, searchValue);
+    }, [searchValue, sortedCurrencies]);
 
-  const [searchValue, setSearchValue] = useState<string>("");
-
-  // sorting them by marketcap
-  const sortedCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-
-  // performing fuzzy search if there is a valid searchValue
-  const filteredCurrencies = useMemo(() => {
-    if (searchValue.length < 2) {
-      return sortedCurrencies;
-    }
-    return fuzzySearch(sortedCurrencies, searchValue);
-  }, [searchValue, sortedCurrencies]);
-
-  const handleCurrencySelected = useCallback(
-    currency => {
-      setDrawer(
-        SelectAccountDrawer,
-        {
-          currency,
-          onAccountSelected,
-          onRequestBack: () =>
-            setDrawer(SelectCurrencyDrawer, props, {
-              onRequestClose: () => {
-                console.log("REQUEST CLOSE");
-                onClose();
-              },
-            }),
-        },
-        {
-          onRequestClose: () => {
-            console.log("REQUEST CLOSE");
-            onClose();
+    const handleCurrencySelected = useCallback(
+      currency => {
+        setDrawer(
+          SelectAccountDrawer,
+          {
+            currency,
+            onAccountSelected,
+            onRequestBack: () =>
+              setDrawer(MemoizedSelectAccountAndCurrencyDrawer, props, {
+                onRequestClose: onClose,
+              }),
           },
-        },
-      );
-    },
-    [onAccountSelected, props, onClose],
-  );
-
-  if (cryptoCurrencies.length === 1) {
-    return (
-      <SelectAccountDrawer currency={cryptoCurrencies[0]} onAccountSelected={onAccountSelected} />
+          {
+            onRequestClose: onClose,
+          },
+        );
+      },
+      [onAccountSelected, props, onClose],
     );
-  }
 
-  return (
-    <SelectCurrencyDrawerContainer>
-      <HeaderContainer>
-        <Text
-          ff="Inter|Medium"
-          color="palette.text.shade100"
-          fontSize="24px"
-          style={{ textTransform: "uppercase" }}
-        >
-          {t("drawers.selectCurrency.title")}
-        </Text>
-      </HeaderContainer>
-      <SelectorContent>
-        <SearchInputContainer>
-          <SearchInput value={searchValue} onChange={setSearchValue} />
-        </SearchInputContainer>
-        <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
-      </SelectorContent>
-    </SelectCurrencyDrawerContainer>
-  );
-};
+    if (cryptoCurrencies.length === 1) {
+      return (
+        <SelectAccountDrawer currency={cryptoCurrencies[0]} onAccountSelected={onAccountSelected} />
+      );
+    }
 
-export default memo<SelectCurrencyDrawerProps>(SelectCurrencyDrawer);
+    return (
+      <SelectAccountAndCurrencyDrawerContainer>
+        <HeaderContainer>
+          <Text
+            ff="Inter|Medium"
+            color="palette.text.shade100"
+            fontSize="24px"
+            style={{ textTransform: "uppercase" }}
+          >
+            {t("drawers.selectCurrency.title")}
+          </Text>
+        </HeaderContainer>
+        <SelectorContent>
+          <SearchInputContainer>
+            <SearchInput value={searchValue} onChange={setSearchValue} />
+          </SearchInputContainer>
+          <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
+        </SelectorContent>
+      </SelectAccountAndCurrencyDrawerContainer>
+    );
+  },
+);
+
+export default MemoizedSelectAccountAndCurrencyDrawer;

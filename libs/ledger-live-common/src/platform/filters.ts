@@ -1,7 +1,6 @@
-import { PlatformAccount, PlatformCurrency } from "./types";
 import { makeRe } from "minimatch";
-
-export { makeRe } from "minimatch";
+import { PlatformAccount, PlatformCurrency } from "./types";
+import { isPlatformTokenCurrency } from "./helpers";
 
 export type AccountFilters = {
   currencies?: string[];
@@ -40,7 +39,7 @@ export function filterPlatformCurrencies(
     : null;
 
   return currencies.filter((currency) => {
-    if (!filters.includeTokens && currency.type === "TokenCurrency") {
+    if (!filters.includeTokens && isPlatformTokenCurrency(currency)) {
       return false;
     }
 

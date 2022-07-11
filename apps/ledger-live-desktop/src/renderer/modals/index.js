@@ -12,7 +12,6 @@ import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
-import MODAL_REQUEST_ACCOUNT from "./RequestAccount";
 import MODAL_UPDATE_FIRMWARE from "./UpdateFirmwareModal";
 import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
@@ -94,7 +93,6 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
-  MODAL_REQUEST_ACCOUNT,
   MODAL_UPDATE_FIRMWARE,
   MODAL_DELEGATE,
   MODAL_MIGRATE_ACCOUNTS,

@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
 import { AccountLike } from "../types";
-import { useCurrencies } from "../currencies/react";
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,
@@ -19,6 +18,7 @@ import {
   AppManifest,
 } from "./types";
 import { getParentAccount } from "../account";
+import { listCurrencies } from "../currencies";
 
 export function usePlatformUrl(
   manifest: AppManifest,
@@ -53,30 +53,32 @@ export function usePlatformUrl(
 export function useListPlatformAccounts(
   accounts: AccountLike[]
 ): ListPlatformAccount {
+  const platformAccounts = useMemo(() => {
+    return accounts.map((account) => {
+      const parentAccount = getParentAccount(account, accounts);
+
+      return accountToPlatformAccount(account, parentAccount);
+    });
+  }, [accounts]);
+
   return useCallback(
     (filters: AccountFilters = {}) => {
-      const platformAccounts = accounts.map((account) => {
-        const parentAccount = getParentAccount(account, accounts);
-
-        return accountToPlatformAccount(account, parentAccount);
-      });
-
       return filterPlatformAccounts(platformAccounts, filters);
     },
-    [accounts]
+    [platformAccounts]
   );
 }
 
 export function usePlatformCurrencies(
   includeTokens = false
 ): PlatformCurrency[] {
-  const currencies = useCurrencies(includeTokens);
-
-  return useMemo(() => {
-    return currencies
-      .filter(isPlatformSupportedCurrency)
-      .map(currencyToPlatformCurrency);
-  }, [currencies]);
+  return useMemo(
+    () =>
+      listCurrencies(includeTokens)
+        .filter(isPlatformSupportedCurrency)
+        .map(currencyToPlatformCurrency),
+    [includeTokens]
+  );
 }
 
 export function useListPlatformCurrencies(): ListPlatformCurrency {

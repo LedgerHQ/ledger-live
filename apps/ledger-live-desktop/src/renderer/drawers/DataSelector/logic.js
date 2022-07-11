@@ -20,14 +20,13 @@ export function selectAccountAndCurrency(
         currencies,
         includeTokens,
         onAccountSelected: (account, parentAccount) => {
-          setDrawer(undefined);
+          setDrawer();
           resolve({ account, parentAccount });
         },
       },
       {
         onRequestClose: () => {
-          console.log("ULTRA REQUEST CLOSE");
-          setDrawer(undefined);
+          setDrawer();
           reject(new Error("Canceled by user"));
         },
       },

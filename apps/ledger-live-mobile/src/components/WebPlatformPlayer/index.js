@@ -29,7 +29,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   findCryptoCurrencyById,
-  listCurrencies,
+  listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
@@ -130,7 +130,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const requestAccount = useCallback(
     ({
-      currencies: currencyIds = [],
+      currencies: currencyIds,
       allowAddAccount = true,
       includeTokens,
     }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
@@ -143,10 +143,13 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
 
-        const allCurrencies = listCurrencies(includeTokens);
+        const allCurrencies = listAndFilterCurrencies({
+          currencies: currencyIds,
+          includeTokens,
+        });
         // handle no curencies selected case
         const cryptoCurrencyIds =
-          currencyIds.length > 0
+          currencyIds && currencyIds.length > 0
             ? currencyIds
             : allCurrencies.map(({ id }) => id);
 
@@ -160,20 +163,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           reject(new Error("No accounts found matching request"));
           return;
         }
-
-        // // if single account found return it
-        // if (foundAccounts.length === 1 && !allowAddAccount) {
-        //   resolve(
-        //     serializePlatformAccount(
-        //       accountToPlatformAccount(foundAccounts[0]),
-        //     ),
-        //   );
-        //   return;
-        // }
-
-        const currencies = allCurrencies.filter(c =>
-          cryptoCurrencyIds.includes(c.id),
-        );
 
         // list of queried cryptoCurrencies with one or more accounts -> used in case of not allowAddAccount and multiple accounts selectable
         const currenciesDiff = allowAddAccount
@@ -197,14 +186,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
             params: {
-              currencies,
+              currencies: allCurrencies,
               currency,
               allowAddAccount,
               includeTokens,
-              onSuccess: account => {
+              onSuccess: (account, parentAccount) => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
-                  serializePlatformAccount(accountToPlatformAccount(account)),
+                  serializePlatformAccount(
+                    accountToPlatformAccount(account, parentAccount),
+                  ),
                 );
               },
               onError: error => {
@@ -217,13 +208,15 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectCrypto,
             params: {
-              currencies,
+              currencies: allCurrencies,
               allowAddAccount,
               includeTokens,
-              onSuccess: account => {
+              onSuccess: (account, parentAccount) => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
-                  serializePlatformAccount(accountToPlatformAccount(account)),
+                  serializePlatformAccount(
+                    accountToPlatformAccount(account, parentAccount),
+                  ),
                 );
               },
               onError: error => {

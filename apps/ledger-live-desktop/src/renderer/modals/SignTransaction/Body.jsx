@@ -1,9 +1,8 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { useDispatch } from "react-redux";
-import { useSelector } from "reselect";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/types/index";
@@ -11,6 +10,7 @@ import type { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
@@ -43,44 +43,47 @@ type Props = {|
 
 function useSteps(canEditFees = false): St[] {
   const { t } = useTranslation();
-  const steps = [
-    {
-      id: "summary",
-      label: t("send.steps.summary.title"),
-      component: StepSummary,
-      footer: StepSummaryFooter,
-      onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
-    },
-    {
-      id: "device",
-      label: t("send.steps.device.title"),
-      component: StepConnectDevice,
-      onBack: ({ transitionTo }) => transitionTo("summary"),
-    },
-    {
-      id: "confirmation",
-      label: t("send.steps.confirmation.title"),
-      excludeFromBreadcrumb: true,
-      component: StepConfirmation,
-      footer: StepConfirmationFooter,
-      onBack: ({ transitionTo, onRetry }) => {
-        onRetry();
-        transitionTo("summary");
-      },
-    },
-  ];
 
-  return canEditFees
-    ? [
-        {
-          id: "amount",
-          label: t("send.steps.amount.title"),
-          component: StepAmount,
-          footer: StepAmountFooter,
+  return useMemo(() => {
+    const steps = [
+      {
+        id: "summary",
+        label: t("send.steps.summary.title"),
+        component: StepSummary,
+        footer: StepSummaryFooter,
+        onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
+      },
+      {
+        id: "device",
+        label: t("send.steps.device.title"),
+        component: StepConnectDevice,
+        onBack: ({ transitionTo }) => transitionTo("summary"),
+      },
+      {
+        id: "confirmation",
+        label: t("send.steps.confirmation.title"),
+        excludeFromBreadcrumb: true,
+        component: StepConfirmation,
+        footer: StepConfirmationFooter,
+        onBack: ({ transitionTo, onRetry }) => {
+          onRetry();
+          transitionTo("summary");
         },
-        ...steps,
-      ]
-    : steps;
+      },
+    ];
+
+    return canEditFees
+      ? [
+          {
+            id: "amount",
+            label: t("send.steps.amount.title"),
+            component: StepAmount,
+            footer: StepAmountFooter,
+          },
+          ...steps,
+        ]
+      : steps;
+  }, [canEditFees, t]);
 }
 
 const STATUS_KEYS_IGNORE = ["recipient", "gasLimit"];
@@ -124,7 +127,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     const { recipient, ...txData } = transactionData;
     const tx2 = bridge.updateTransaction(tx, {
       recipient,
-      subAccountId: account.type === "TokenAccount" ? account.id : undefined,
+      subAccountId: isTokenAccount(account) ? account.id : undefined,
     });
     const transaction = bridge.updateTransaction(tx2, {
       ...txData,
@@ -134,6 +137,8 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   });
 
   const [transactionError, setTransactionError] = useState(null);
+
+  const handleOpenModal = useCallback((name, data) => dispatch(openModal(name, data)), [dispatch]);
 
   const handleCloseModal = useCallback(() => {
     dispatch(closeModal("MODAL_SIGN_TRANSACTION"));
@@ -201,7 +206,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     warning,
     status,
     bridgePending,
-    openModal: () => dispatch(openModal()),
+    openModal: handleOpenModal,
     onClose,
     closeModal: handleCloseModal,
     onChangeAccount: handleChangeAccount,
