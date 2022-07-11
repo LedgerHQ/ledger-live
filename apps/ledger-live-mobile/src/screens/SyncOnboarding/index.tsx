@@ -39,7 +39,13 @@ type Step = {
   status: StepStatus;
   deviceStates: OnboardingStep[];
   title: string;
-  renderBody?: (status?: StepStatus) => ReactNode;
+  renderBody?: ({
+    status,
+    isDisplayed,
+  }: {
+    status?: StepStatus;
+    isDisplayed?: boolean;
+  }) => ReactNode;
 };
 
 type Props = StackScreenProps<
@@ -98,9 +104,16 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
         deviceStates: [OnboardingStep.Ready],
         title: "Software check",
-        renderBody: (status?: StepStatus) => (
+        renderBody: ({
+          status,
+          isDisplayed = true,
+        }: {
+          status?: StepStatus;
+          isDisplayed?: boolean;
+        }) => (
           <SoftwareChecksStep
-            active={status === "active"}
+            device={device}
+            active={status === "active" && isDisplayed}
             onComplete={() => setOnboardingComplete(true)}
           />
         ),
