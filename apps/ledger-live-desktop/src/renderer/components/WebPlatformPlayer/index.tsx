@@ -289,6 +289,22 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
     }
   }, []);
 
+  const handleGoBack = useCallback(() => {
+    const webview = targetRef.current;
+
+    if (webview) {
+      webview.goBack();
+    }
+  }, []);
+
+  const handleGoForward = useCallback(() => {
+    const webview = targetRef.current;
+
+    if (webview) {
+      webview.goForward();
+    }
+  }, []);
+
   return (
     <Container>
       <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />
@@ -297,6 +313,8 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
         onReload={handleReload}
         onClose={onClose}
         onOpenDevTools={handleOpenDevTools}
+        onGoBack={handleGoBack}
+        onGoForward={handleGoForward}
         config={config?.topBarConfig}
       />
 

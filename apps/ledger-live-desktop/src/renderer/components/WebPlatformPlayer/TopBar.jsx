@@ -6,20 +6,20 @@ import styled from "styled-components";
 
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
-import type { TopBarConfig } from "./type";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { TopBarConfig } from "./type";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
-import IconInfoCircle from "~/renderer/icons/InfoCircle";
-import IconReload from "~/renderer/icons/UpdateCircle";
-import LightBulb from "~/renderer/icons/LightBulb";
 import IconClose from "~/renderer/icons/Cross";
+import IconInfoCircle from "~/renderer/icons/InfoCircle";
+import LightBulb from "~/renderer/icons/LightBulb";
+import IconReload from "~/renderer/icons/UpdateCircle";
 
-import LiveAppIcon from "./LiveAppIcon";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
+import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
 const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
@@ -114,6 +114,8 @@ export type Props = {
   onClose?: Function,
   onHelp?: Function,
   onOpenDevTools: Function,
+  onGoBack: Function,
+  onGoForward: Function,
   config?: TopBarConfig,
 };
 
@@ -123,6 +125,8 @@ const WebPlatformTopBar = ({
   onHelp,
   onClose,
   onOpenDevTools,
+  onGoBack,
+  onGoForward,
   config = {},
 }: Props) => {
   const { name, icon } = manifest;
@@ -156,6 +160,12 @@ const WebPlatformTopBar = ({
         <ItemContent>
           <Trans i18nKey="common.sync.refresh" />
         </ItemContent>
+      </ItemContainer>
+      <ItemContainer isInteractive onClick={onGoBack}>
+        {"<-"}
+      </ItemContainer>
+      <ItemContainer isInteractive onClick={onGoForward}>
+        {"->"}
       </ItemContainer>
       {enablePlatformDevTools && (
         <>
