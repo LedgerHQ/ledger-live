@@ -75,6 +75,9 @@ suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 
+; Fixes server init loop on pnpm run flow command
+sharedmemory.hash_table_pow=21
+
 [lints]
 sketchy-null-number=warn
 sketchy-null-mixed=warn
