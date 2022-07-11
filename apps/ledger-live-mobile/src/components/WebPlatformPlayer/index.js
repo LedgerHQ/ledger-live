@@ -329,12 +329,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         const t2 = bridge.updateTransaction(t, {
           recipient,
           subAccountId: isTokenAccount(account) ? account.id : undefined,
-          feesStrategy: "custom",
         });
 
         const tx = bridge.updateTransaction(t2, {
-          ...txData,
           userGasLimit: txData.gasLimit,
+          ...txData,
         });
 
         navigation.navigate(NavigatorName.SignTransaction, {

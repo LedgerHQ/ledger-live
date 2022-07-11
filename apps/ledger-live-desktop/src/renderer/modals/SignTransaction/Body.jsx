@@ -130,6 +130,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
       subAccountId: isTokenAccount(account) ? account.id : undefined,
     });
     const transaction = bridge.updateTransaction(tx2, {
+      userGasLimit: txData.gasLimit,
       ...txData,
     });
 
