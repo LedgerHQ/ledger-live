@@ -5,6 +5,7 @@ const path = require("path");
 const { EOL } = require("os");
 
 const rootDirectory = path.resolve(__dirname, "..", "..", "..");
+const llmDirectory = path.resolve(__dirname, "..");
 
 function compile() {
   const config = ts.parseJsonConfigFileContent(
@@ -25,7 +26,11 @@ function compile() {
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program)
     // Ignore js files
-    .filter(diag => /\.tsx?/.test(diag.file.fileName));
+    .filter(
+      diag =>
+        diag.file.fileName.startsWith(llmDirectory) &&
+        /\.tsx?/.test(diag.file.fileName),
+    );
 
   const formatDiagnosticHost = {
     getNewLine: () => EOL,
