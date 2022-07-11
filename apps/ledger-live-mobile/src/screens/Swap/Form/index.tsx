@@ -112,11 +112,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
   const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
-    if (params?.currency) {
+    if (params.currency) {
       swapTx.setToCurrency(params.currency);
     }
 
-    if (params?.accountId) {
+    if (params.accountId) {
       const account = flattenAccounts(accounts).find(
         a => a.id === params.accountId,
       );
@@ -127,11 +127,11 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       swapTx.setFromAccount(account);
     }
 
-    if (params?.rate) {
+    if (params.rate) {
       setExchangeRate(params.rate);
     }
 
-    if (params?.transaction) {
+    if (params.transaction) {
       swapTx.setTransaction(params.transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
