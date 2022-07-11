@@ -22,7 +22,6 @@ import { HideRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tut
 import { HowToGetStarted } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/HowToGetStarted";
 import { NewRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/NewRecoveryPhrase";
 import { GenuineCheck } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/GenuineCheck";
-import { PreferLedgerRecoverySeed } from "~/renderer/components/Onboarding/Alerts/PreferLedgerRecoverySeed";
 import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
 import { QuizFailure } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizFailure";
 import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/QuizSuccess";
@@ -212,7 +211,6 @@ export default function Tutorial({ useCase }: Props) {
 
   const [connectedDevice, setConnectedDevice] = useState(null);
 
-  const [alertPreferLedgerSeed, setAlertPreferLedgerSeed] = useState(false);
   const [helpPinCode, setHelpPinCode] = useState(false);
   const [helpRecoveryPhrase, setHelpRecoveryPhrase] = useState(false);
   const [helpHideRecoveryPhrase, setHelpHideRecoveryPhrase] = useState(false);
@@ -569,9 +567,6 @@ export default function Tutorial({ useCase }: Props) {
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
-      <Popin isOpen={alertPreferLedgerSeed}>
-        <PreferLedgerRecoverySeed onClose={() => setAlertPreferLedgerSeed} />
-      </Popin>
       <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction="left">
         <Flex px={40} height="100%">
           `
