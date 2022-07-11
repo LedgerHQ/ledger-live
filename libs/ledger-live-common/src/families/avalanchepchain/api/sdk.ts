@@ -13,6 +13,9 @@ import { HDHelper } from "../hdhelper";
 const getIndexerUrl = (route: string): string =>
     `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
 
+const getExplorerUrl = (route: string): string =>
+  `${getEnv("API_AVALANCHE_EXPLORER_API")}${route || ""}`;
+
 const binTools = BinTools.getInstance();
 
 const INDEX_RANGE = 20;
@@ -24,27 +27,26 @@ export const AVAX_HRP = "fuji"; //"fuji" for testnet
 /**
  * Fetch operation list from indexer
  */
-const fetchOperations = async (
-    addresses: string[],
-    startHeight: number
-) => {
-    const ADDRESS_SIZE = 1024;
-    const selection = addresses.slice(0, ADDRESS_SIZE);
-    const remaining = addresses.slice(ADDRESS_SIZE);
+const fetchOperations = async (addresses: string[], startHeight: number) => {
+  const ADDRESS_SIZE = 1024;
+  const selection = addresses.slice(0, ADDRESS_SIZE);
+  const remaining = addresses.slice(ADDRESS_SIZE);
 
-    const rawAddresses = selection.map(removeChainPrefix).join(",");
+  const rawAddresses = selection.map(removeChainPrefix).join(",");
 
-    let { data } = await network({
-        method: "GET",
-        url: getIndexerUrl(`/transactions?address=${rawAddresses}&start_height=${startHeight}&limit=100`),
-    });
+  let { data } = await network({
+    method: "GET",
+    url: getIndexerUrl(
+      `/transactions?address=${rawAddresses}&start_height=${startHeight}&limit=100`
+    ),
+  });
 
-    if (remaining.length > 0) {
-        const nextOperations = await fetchOperations(remaining, startHeight);
-        data.push(...nextOperations);
-    }
+  if (remaining.length > 0) {
+    const nextOperations = await fetchOperations(remaining, startHeight);
+    data.push(...nextOperations);
+  }
 
-    return data;
+  return data;
 };
 
 /**
@@ -52,83 +54,144 @@ const fetchOperations = async (
  * @param address - "P-avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn"
  * @returns avax1yvkhyf0y9674p2ps41vmp9a8w427384jcu8zmn
  */
-const removeChainPrefix = (address: string) => address.split('-')[1];
+const removeChainPrefix = (address: string) => address.split("-")[1];
 
 const convertTransactionToOperation = (transaction, accountId): Operation => {
-    const type = getOperationType(transaction.type);
-    const fee = new BigNumber(transaction.fee);
-    const outputIndex = transaction.type === P_IMPORT ? 0 : 1;
-    let value = new BigNumber(transaction.outputs?.[outputIndex].amount);
+  const type = getOperationType(transaction.type);
+  const fee = new BigNumber(transaction.fee);
+  const outputIndex = transaction.type === P_IMPORT ? 0 : 1;
+  let value = new BigNumber(transaction.outputs?.[outputIndex].amount);
 
-    if (transaction.type === P_EXPORT) {
-        value = value.plus(fee);
-    }
+  if (transaction.type === P_EXPORT) {
+    value = value.plus(fee);
+  }
 
-    return {
-        id: encodeOperationId(accountId, transaction.id, type),
-        hash: transaction.id,
-        type,
-        value,
-        fee,
-        senders: transaction.inputs?.[0].addresses ?? [],
-        recipients: transaction.outputs?.[0].addresses ?? [],
-        blockHeight: transaction.block_height,
-        blockHash: transaction.block,
-        accountId,
-        date: new Date(transaction.timestamp),
-        extra: {}
-    }
-}
+  return {
+    id: encodeOperationId(accountId, transaction.id, type),
+    hash: transaction.id,
+    type,
+    value,
+    fee,
+    senders: transaction.inputs?.[0].addresses ?? [],
+    recipients: transaction.outputs?.[0].addresses ?? [],
+    blockHeight: transaction.block_height,
+    blockHash: transaction.block,
+    accountId,
+    date: new Date(transaction.timestamp),
+    extra: {},
+  };
+};
 
 const getOperationType = (type: string): OperationType => {
-    switch (type) {
-        case P_EXPORT:
-            return "OUT";
-        case P_IMPORT:
-            return "IN";
-        default:
-            return "NONE";
-    }
+  switch (type) {
+    case P_EXPORT:
+      return "OUT";
+    case P_IMPORT:
+      return "IN";
+    default:
+      return "NONE";
+  }
 };
 
-export const getOperations = async (publicKey: string, chainCode: string, blockStartHeight: number, accountId: string): Promise<Operation[]> => {
-    const hdHelper = await HDHelper.getInstance(publicKey, chainCode);
-    const addresses = hdHelper.getAllDerivedAddresses();
+export const getOperations = async (
+  blockStartHeight: number,
+  accountId: string
+): Promise<Operation[]> => {
+  const hdHelper = HDHelper.getInstance();
+  const addresses = hdHelper.getAllDerivedAddresses();
 
-    let operations: Operation[] = await fetchOperations(addresses, blockStartHeight);
+  let operations: Operation[] = await fetchOperations(
+    addresses,
+    blockStartHeight
+  );
 
-    const pChainOperations = operations.filter(getPChainOperations);
-    return pChainOperations.map(o => convertTransactionToOperation(o, accountId));
-}
+  const pChainOperations = operations.filter(getPChainOperations);
+  return pChainOperations.map((o) =>
+    convertTransactionToOperation(o, accountId)
+  );
+};
 
-const getPChainOperations = ({ type }) => type === P_IMPORT || type === P_EXPORT;
+const getPChainOperations = ({ type }) =>
+  type === P_IMPORT || type === P_EXPORT;
 
-export const getAccount = async (publicKey, chainCode) => {
-    const hdHelper = await HDHelper.getInstance(publicKey, chainCode);
-    const { available, locked, lockedStakeable, multisig } = await hdHelper.fetchBalances();
-    const stakedBalance = await hdHelper.fetchStake();
-    const balance = available.plus(locked).plus(lockedStakeable).plus(multisig);
+export const getAccount = async () => {
+  const hdHelper = HDHelper.getInstance();
+  const { available, locked, lockedStakeable, multisig } =
+    await hdHelper.fetchBalances();
+  const stakedBalance = await hdHelper.fetchStake();
+  const balance = available.plus(locked).plus(lockedStakeable).plus(multisig);
 
-    return {
-        balance,
-        stakedBalance
-    }
-}
+  return {
+    balance,
+    stakedBalance,
+  };
+};
+
+export const getDelegations = async () => {
+  let allDelegators: any = [];
+  const validators = await getValidators();
+
+  for (let i = 0; i < validators.length; i++) {
+    let validator = validators[i];
+    if (validator.delegators == null) continue;
+    allDelegators.push(...validator.delegators);
+  }
+
+  return getUserDelegations(allDelegators);
+};
+
+const getUserDelegations = (delegators) => {
+  const hdHelper = HDHelper.getInstance();
+
+  const userAddresses = hdHelper.getAllDerivedAddresses();
+
+  let userDelegations = delegators.filter((d) => {
+    let rewardAddresses = d.rewardOwner.addresses;
+    let filteredByUser = rewardAddresses.filter((address) => {
+      return userAddresses.includes(address);
+    });
+
+    return filteredByUser.length > 0;
+  });
+
+  userDelegations.sort((a, b) => {
+    let startA = parseInt(a.startTime);
+    let startB = parseInt(b.startTime);
+    return startA - startB;
+  });
+
+  return userDelegations;
+};
+
+// export const getValidators = makeLRUCache(async () => {
+//   const { validators } = (await avalancheClient()
+//     .PChain()
+//     .getCurrentValidators()) as any;
+//   return validators;
+// });
 
 export const getValidators = async () => {
-    return await cacheValidators();
+  const { validators } = (await avalancheClient()
+    .PChain()
+    .getCurrentValidators()) as any;
+  return validators;
 };
 
-const cacheValidators = makeLRUCache(
-    async () => {
-        const { data } = await network({
-            method: "GET",
-            url: getIndexerUrl('/validators'),
-        });
+export const getAddressChains = async (addresses: string[]) => {
+  const rawAddresses = addresses.map(removeChainPrefix);
 
-        return data;
-    }
-);
+  let { data } = await network({
+    method: "POST",
+    data: {
+      address: rawAddresses,
+      disableCount: ["1"],
+    },
+    url: getExplorerUrl(`/v2/addressChains`),
+  });
+
+  return data.addressChains;
+};
+  
 
 //TODO: replace this with HdHelper
 //OR, see walletPlatformBalance in assets.ts in avalanche-wallet

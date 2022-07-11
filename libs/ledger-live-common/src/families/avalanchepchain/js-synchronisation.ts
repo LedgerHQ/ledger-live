@@ -5,57 +5,61 @@ import {
     GetAccountShape,
     mergeOps,
 } from "../../bridge/jsHelpers";
-import { getAccount, getOperations } from "./api";
-import HDKey from 'hdkey';
+import { getAccount, getOperations, getDelegations } from "./api";
+import { HDHelper } from "./hdhelper";
 
 const getAccountShape: GetAccountShape = async (info) => {
-    const { address, initialAccount, currency, derivationMode } = info;
+  const { address, initialAccount, currency, derivationMode } = info;
 
-    const publicKey = info.rest?.publicKey || info.initialAccount?.avalanchePChainResources?.publicKey;
-    const chainCode = info.rest?.chainCode || info.initialAccount?.avalanchePChainResources?.chainCode;
+  const publicKey =
+    info.rest?.publicKey ||
+    info.initialAccount?.avalanchePChainResources?.publicKey;
+  const chainCode =
+    info.rest?.chainCode ||
+    info.initialAccount?.avalanchePChainResources?.chainCode;
 
-    const oldOperations = initialAccount?.operations || [];
+  const oldOperations = initialAccount?.operations || [];
 
-    const startAt = oldOperations.length
-        ? (oldOperations[0].blockHeight || 0) + 1
-        : 0;
+  const startAt = oldOperations.length
+    ? (oldOperations[0].blockHeight || 0) + 1
+    : 0;
 
-    const accountId = encodeAccountId({
-        type: "js",
-        version: "2",
-        currencyId: currency.id,
-        xpubOrAddress: address,
-        derivationMode,
-    });
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
 
-    const { balance, stakedBalance } = await getAccount(publicKey, chainCode);
-    let operations = oldOperations;
+  await HDHelper.instantiate(publicKey, chainCode);
 
-    const newOperations = await getOperations(
-        publicKey,
-        chainCode,
-        startAt,
-        accountId,
-    );
+  const { balance, stakedBalance } = await getAccount();
+  const delegations = await getDelegations();
 
-    operations = mergeOps(operations, newOperations);
+  let operations = oldOperations;
 
-    const shape = {
-        id: accountId,
-        balance: balance.plus(stakedBalance),
-        spendableBalance: balance,
-        operationsCount: operations.length,
-        avalanchePChainResources: {
-            publicKey,
-            chainCode,
-            stakedBalance
-        }
-    };
+  const newOperations = await getOperations(startAt, accountId);
 
-    return {
-        ...shape,
-        operations
-    }
+  operations = mergeOps(operations, newOperations);
+
+  const shape = {
+    id: accountId,
+    balance: balance.plus(stakedBalance),
+    spendableBalance: balance,
+    operationsCount: operations.length,
+    avalanchePChainResources: {
+      publicKey,
+      chainCode,
+      stakedBalance,
+      delegations,
+    },
+  };
+
+  return {
+    ...shape,
+    operations,
+  };
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
