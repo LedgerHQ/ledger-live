@@ -4,23 +4,23 @@ import React, { useCallback, useMemo, useState } from "react";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import type {
   AccountLike,
   Account,
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/index";
-import { createAction as initSellCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSell";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import getTransactionId from "@ledgerhq/live-common/lib/exchange/sell/getTransactionId";
+} from "@ledgerhq/live-common/types/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { createAction as initSellCreateAction } from "@ledgerhq/live-common/hw/actions/initSell";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import getTransactionId from "@ledgerhq/live-common/exchange/sell/getTransactionId";
 import { from, Observable } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import type { SellRequestEvent } from "@ledgerhq/live-common/lib/exchange/sell/types";
-import checkSignatureAndPrepare from "@ledgerhq/live-common/lib/exchange/sell/checkSignatureAndPrepare";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import type { Device } from "@ledgerhq/hw-transport/lib/Transport";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import type { SellRequestEvent } from "@ledgerhq/live-common/exchange/sell/types";
+import checkSignatureAndPrepare from "@ledgerhq/live-common/exchange/sell/checkSignatureAndPrepare";
+import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import type { Device } from "@ledgerhq/hw-transport";
 import { useTranslation } from "react-i18next";
 import DeviceAction from "../../components/DeviceAction";
 import { useBroadcast } from "../../components/useBroadcast";

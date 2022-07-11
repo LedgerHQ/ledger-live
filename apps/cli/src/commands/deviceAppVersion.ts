@@ -1,6 +1,6 @@
 import { from } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { deviceOpt } from "../scan";
 export default {
   args: [deviceOpt],

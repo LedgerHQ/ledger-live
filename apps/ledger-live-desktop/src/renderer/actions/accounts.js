@@ -1,7 +1,7 @@
 // @flow
 
-import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
-import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts";
+import type { Account, SubAccount } from "@ledgerhq/live-common/types/index";
+import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 
 export const replaceAccounts = (payload: Account[]) => ({

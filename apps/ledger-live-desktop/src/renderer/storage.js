@@ -9,8 +9,8 @@ import {
   editSatStackConfig,
   stringifySatStackConfig,
   parseSatStackConfig,
-} from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
-import type { SatStackConfig } from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
+} from "@ledgerhq/live-common/families/bitcoin/satstack";
+import type { SatStackConfig } from "@ledgerhq/live-common/families/bitcoin/satstack";
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.
   Because only serialized json can be sent between processes, the transform system now live here.
@@ -80,6 +80,8 @@ export const resetAll = () => ipcRenderer.invoke("resetAll");
 export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
+
+export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
 
 export const saveLSS = async (lssConfig: SatStackConfig) => {
   const configStub = {

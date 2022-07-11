@@ -3,9 +3,9 @@ import { useDispatch } from "react-redux";
 import { TouchableOpacity, Linking } from "react-native";
 import { Trans } from "react-i18next";
 
-import type { State } from "@ledgerhq/live-common/lib/apps";
+import type { State } from "@ledgerhq/live-common/apps/index";
 
-import manager from "@ledgerhq/live-common/lib/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 
 import styled from "styled-components/native";
 import { Box, Text, Flex, Icons } from "@ledgerhq/native-ui";
@@ -79,7 +79,7 @@ const FirmwareManager = ({
   }, [deviceInfo, dispatch]);
 
   const isDeprecated = manager.firmwareUnsupported(deviceModel.id, deviceInfo);
-  
+
   return (
     <>
         {firmware ? (

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import {
   DeviceInfo,
   FirmwareUpdateContext,
-} from "@ledgerhq/live-common/lib/types/manager";
-import manager from "@ledgerhq/live-common/lib/manager";
+} from "@ledgerhq/live-common/types/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 
 const useLatestFirmware: (
   deviceInfo?: DeviceInfo,

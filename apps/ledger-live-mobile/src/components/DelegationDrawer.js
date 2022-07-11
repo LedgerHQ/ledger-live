@@ -7,9 +7,9 @@ import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
 // TODO move to component
 import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";

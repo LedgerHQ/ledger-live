@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/nft/index";
+import { ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Skeleton from "../Skeleton";
-import NftImage from "./NftImage";
+import NftMedia from "./NftMedia";
 import Touchable from "../Touchable";
 
 type Props = {
@@ -41,10 +41,11 @@ function NftCollectionRow({
       onLongPress={onLongPress}
     >
       <Flex accessible flexDirection={"row"} alignItems={"center"} py={6}>
-        <NftImage
+        <NftMedia
           style={styles.collectionImage}
           status={nftStatus}
-          src={nftMetadata?.media}
+          metadata={nftMetadata}
+          mediaFormat={"preview"}
         />
         <Flex flexGrow={1} flexShrink={1} ml={6} flexDirection={"column"}>
           <Skeleton style={styles.collectionNameSkeleton} loading={loading}>

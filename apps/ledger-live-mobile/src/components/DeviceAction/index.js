@@ -1,15 +1,11 @@
 // @flow
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import type {
-  Action,
-  Device,
-} from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { track } from "../../analytics";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -24,6 +20,7 @@ import {
   renderInWrongAppForAccount,
   renderError,
   renderBootloaderStep,
+  renderExchange,
   renderConfirmSwap,
   renderConfirmSell,
   LoadingAppInstall,
@@ -86,6 +83,9 @@ export default function DeviceAction<R, H, P>({
     initSwapResult,
     signMessageRequested,
     allowOpeningGranted,
+    completeExchangeStarted,
+    completeExchangeResult,
+    completeExchangeError,
     initSellRequested,
     initSellResult,
     initSellError,
@@ -188,8 +188,30 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (
+    completeExchangeStarted &&
+    !completeExchangeResult &&
+    !completeExchangeError
+  ) {
+    return renderExchange({
+      // $FlowFixMe
+      exchangeType: request?.exchangeType,
+      t,
+      device,
+      theme,
+    });
+  }
+
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
+    return renderConfirmSwap({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      provider:
+        (request && request.exchangeRate && request.exchangeRate.provider) ||
+        undefined,
+    });
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {

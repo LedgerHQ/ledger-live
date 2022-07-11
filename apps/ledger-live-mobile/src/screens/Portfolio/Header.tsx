@@ -2,14 +2,15 @@
 import React, { useCallback } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
+import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import {
   NotificationsMedium,
   NotificationsOnMedium,
   SettingsMedium,
   WarningMedium,
+  CardMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import Animated, {
@@ -19,8 +20,8 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
-import { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
@@ -47,6 +48,13 @@ function PortfolioHeader({
 
   const { allIds, seenIds } = useAnnouncements();
   const { incidents } = useFilteredServiceStatus();
+
+  const onCardButtonPress = useCallback(() => {
+    navigation.navigate(ScreenName.PlatformApp, {
+      platform: "cl-card",
+      name: "CL Card Powered by Ledger",
+    });
+  }, [navigation]);
 
   const onNotificationButtonPress = useCallback(() => {
     // @ts-expect-error navigation ts issue
@@ -174,6 +182,18 @@ function PortfolioHeader({
           </Animated.View>
         </Flex>
       </TouchableWithoutFeedback>
+      <Box mr={7}>
+        <Touchable
+          onPress={onCardButtonPress}
+          event="button_clicked"
+          eventProperties={{
+            button: "card",
+            screen: ScreenName.Portfolio,
+          }}
+        >
+          <CardMedium size={24} color={"neutral.c100"} />
+        </Touchable>
+      </Box>
       <Box mr={7}>
         <Touchable onPress={onNotificationButtonPress}>
           {notificationsCount > 0 ? (

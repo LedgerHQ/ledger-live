@@ -39,7 +39,6 @@ Depending on the purpose every git branch should be prefixed.
 - `feat/` when adding a new feature to the application or library
 - `bugfix/` when fixing an existing bug
 - `support/` for any other changes (refactor, tests, improvements, CI…)
-- `hotfix/` is reserved when making a critical fix outside of the traditional release flow
 
 #### Changelogs
 

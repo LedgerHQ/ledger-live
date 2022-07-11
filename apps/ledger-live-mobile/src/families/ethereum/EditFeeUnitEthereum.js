@@ -5,13 +5,13 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
 import { useTheme } from "@react-navigation/native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import {
   reverseRangeIndex,
   projectRangeIndex,
-} from "@ledgerhq/live-common/lib/range";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/range";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 

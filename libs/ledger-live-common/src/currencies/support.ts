@@ -2,7 +2,7 @@ import type {
   FiatCurrency,
   CryptoCurrency,
   CryptoCurrencyIds,
-} from "@ledgerhq/cryptoassets/lib/types";
+} from "@ledgerhq/cryptoassets";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
