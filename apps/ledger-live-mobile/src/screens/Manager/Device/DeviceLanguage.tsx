@@ -81,7 +81,7 @@ const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device, deviceInfo }
   const openDeviceActionModal = useCallback(() => {
     setDeviceForAction(device);
     closeChangeLanguageModal();
-  }, [setDeviceForAction, device]);
+  }, [setDeviceForAction, device, closeChangeLanguageModal]);
   const closeDeviceActionModal = useCallback(() => setDeviceForAction(null), [
     setDeviceForAction,
   ]);
