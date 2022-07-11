@@ -156,10 +156,22 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       signedTransaction: RawPlatformSignedTransaction,
     }) => {
       const account = accounts.find(account => account.id === accountId);
-      if (!account) return null;
+      if (!account) {
+        tracking.platformBroadcastFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      if (!signedTransaction) {
+        tracking.platformBroadcastFail(manifest);
+        return Promise.reject(new Error("Transaction required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
 
       const signedOperation = deserializePlatformSignedTransaction(signedTransaction, accountId);
-      const bridge = getAccountBridge(account);
+      const bridge = getAccountBridge(account, parentAccount);
 
       let optimisticOperation = signedOperation.operation;
 
@@ -238,7 +250,12 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
       const account = accounts.find(account => account.id === accountId);
 
-      if (!account) return null;
+      tracking.platformSignTransactionRequested(manifest);
+
+      if (!account) {
+        tracking.platformSignTransactionFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
 
       const parentAccount = isTokenAccount(account)
         ? accounts.find(a => a.id === account.parentId)
@@ -250,8 +267,6 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       ) {
         throw new Error("Transaction family not matching account currency family");
       }
-
-      tracking.platformSignTransactionRequested(manifest);
 
       const { canEditFees, liveTx, hasFeesProvided } = getPlatformTransactionSignFlowInfos(
         platformTransaction,
@@ -267,7 +282,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
             account,
             parentAccount,
             onResult: signedOperation => {
-              tracking.platformSignTransactionRequested(manifest);
+              tracking.platformSignTransactionSuccess(manifest);
               resolve(serializePlatformSignedTransaction(signedOperation));
             },
             onCancel: error => {

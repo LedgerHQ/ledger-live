@@ -25,7 +25,11 @@ import {
 
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getMainAccount,
+  isTokenAccount,
+  flattenAccounts,
+} from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   findCryptoCurrencyById,
@@ -105,7 +109,7 @@ const InfoPanelButton = ({
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
-  const accounts = useSelector(accountsSelector);
+  const accounts = flattenAccounts(useSelector(accountsSelector));
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -154,7 +158,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             : allCurrencies.map(({ id }) => id);
 
         const foundAccounts = cryptoCurrencyIds?.length
-          ? accounts.filter(a => cryptoCurrencyIds.includes(a.currency.id))
+          ? accounts.filter(a =>
+              cryptoCurrencyIds.includes(
+                isTokenAccount(a) ? a.token.id : a.currency.id,
+              ),
+            )
           : accounts;
 
         // @TODO replace with correct error
@@ -168,7 +176,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         const currenciesDiff = allowAddAccount
           ? cryptoCurrencyIds
           : foundAccounts
-              .map(a => a.currency.id)
+              .map(a => (isTokenAccount(a) ? a.token.id : a.currency.id))
               .filter(
                 (c, i, arr) =>
                   cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
@@ -238,7 +246,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       return new Promise((resolve, reject) => {
         if (!account) {
           tracking.platformReceiveFail(manifest);
-          reject();
+          reject(new Error("Account required"));
           return;
         }
 
@@ -278,6 +286,27 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       const platformTransaction = deserializePlatformTransaction(transaction);
       const account = accounts.find(account => account.id === accountId);
 
+      tracking.platformSignTransactionRequested(manifest);
+
+      if (!account) {
+        tracking.platformSignTransactionFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : undefined;
+
+      if (
+        (isTokenAccount(account)
+          ? parentAccount?.currency.family
+          : account.currency.family) !== platformTransaction.family
+      ) {
+        return Promise.reject(
+          new Error("Transaction family not matching account currency family"),
+        );
+      }
+
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!transaction) {
@@ -285,13 +314,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           reject(new Error("Transaction required"));
           return;
         }
-        if (!account) {
-          tracking.platformSignTransactionFail(manifest);
-          reject(new Error("Account required"));
-          return;
-        }
 
-        const bridge = getAccountBridge(account);
+        const bridge = getAccountBridge(account, parentAccount);
 
         const t = bridge.createTransaction(account);
         const { recipient, ...txData } = platformTransaction;
@@ -312,6 +336,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             nextNavigation: ScreenName.SignTransactionSelectDevice,
             transaction: tx,
             accountId,
+            parentId: parentAccount ? parentAccount.id : undefined,
             appName: params.useApp,
             onSuccess: ({ signedOperation, transactionSignError }) => {
               if (transactionSignError) {
@@ -336,7 +361,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   );
 
   const broadcastTransaction = useCallback(
-    async ({
+    ({
       accountId,
       signedTransaction,
     }: {
@@ -345,16 +370,20 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }) => {
       const account = accounts.find(account => account.id === accountId);
 
+      if (!account) {
+        tracking.platformBroadcastFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!signedTransaction) {
           tracking.platformBroadcastFail(manifest);
           reject(new Error("Transaction required"));
-          return;
-        }
-        if (!account) {
-          tracking.platformBroadcastFail(manifest);
-          reject(new Error("Account required"));
           return;
         }
 
@@ -364,7 +393,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         );
 
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          broadcastSignedTx(account, null, signedOperation).then(
+          broadcastSignedTx(account, parentAccount, signedOperation).then(
             op => {
               tracking.platformBroadcastSuccess(manifest);
               resolve(op.hash);
