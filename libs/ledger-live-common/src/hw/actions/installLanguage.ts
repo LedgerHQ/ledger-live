@@ -133,7 +133,7 @@ const implementations = {
     ),
   // in this paradigm, we can't observe directly the device, so we have to poll it
   polling: ({ deviceSubject, installLanguage, language }) =>
-    Observable.create((o) => {
+    new Observable((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
       const DISCONNECT_DEBOUNCE = 5000;
@@ -309,7 +309,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           // debounce a bit the connect/disconnect event that we don't need
-          tap((e: Event) => log("actions-install-language-event", e.type, e)), // tap((e) => console.log("installLanguage event", e)),
+          tap((e: Event) => log("actions-install-language-event", e.type, e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
           // we debounce the UI state to not blink on the UI
