@@ -128,7 +128,7 @@ export function SelectAccount({
           list={accounts}
           renderList={renderList}
           renderEmptySearch={() => (
-            <Flex>
+            <Flex padding={4} alignItems="center">
               <Text>{t("transfer.receive.noAccount")}</Text>
             </Flex>
           )}
