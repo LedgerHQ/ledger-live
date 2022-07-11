@@ -17,6 +17,10 @@ export class Drawer {
     await this.continueButton.click();
   }
 
+  async waitForDrawerToDisappear() {
+    await this.continueButton.waitFor({state: "detached"});
+  }
+
   async close() {
     await this.closeButton.click();
   }
