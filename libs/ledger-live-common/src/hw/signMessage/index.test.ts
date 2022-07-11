@@ -1,5 +1,6 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { Account, CryptoCurrency } from "../../types";
 import { prepareMessageToSign } from "./index";
 import { MessageData } from "./types";
 

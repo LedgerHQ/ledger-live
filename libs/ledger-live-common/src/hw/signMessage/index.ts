@@ -7,13 +7,14 @@ import invariant from "invariant";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { from, Observable } from "rxjs";
 import perFamily from "../../generated/hw-signMessage";
-import { Account } from "../../types";
+import { Account } from "@ledgerhq/types-live";
 import type { AppRequest, AppState } from "../actions/app";
 import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { MessageData, Resolver, Result } from "./types";
+import { DerivationMode } from "../../derivation";
 
 export const prepareMessageToSign = (
   { currency, freshAddressPath, derivationMode }: Account,
@@ -26,7 +27,7 @@ export const prepareMessageToSign = (
   return {
     currency: currency,
     path: freshAddressPath,
-    derivationMode: derivationMode,
+    derivationMode: derivationMode as DerivationMode,
     message: message,
     rawMessage: "0x" + Buffer.from(message).toString("hex"),
   };
