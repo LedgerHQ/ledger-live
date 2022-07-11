@@ -70,6 +70,7 @@ const extraProperties = store => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
+    // $FlowFixMe
     ...deviceInfo,
     ...(satisfaction && { satisfaction }),
   };

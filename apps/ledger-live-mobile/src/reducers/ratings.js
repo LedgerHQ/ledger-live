@@ -8,7 +8,7 @@ export type RatingsState = {
   /** Boolean indicating whether the ratings flow modal is opened or closed */
   isRatingsModalOpen: boolean,
   /** The route name of the current screen displayed in the app, it is updated every time the displayed screen change */
-  currentRouteName?: string,
+  currentRouteName?: string | null,
   /** The happy moment that triggered the oppening of the ratings modal */
   happyMoment?: RatingsHappyMoment,
   /** Data related to the user's app usage. We use this data to prompt the rating flow on certain conditions only */
