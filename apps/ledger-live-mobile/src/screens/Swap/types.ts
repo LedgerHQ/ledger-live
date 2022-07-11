@@ -64,7 +64,7 @@ export type SwapNavParamList = {
     provider: string;
   };
   SelectProvider: {
-    privder: string;
+    provider: string;
     swap: SwapDataType;
     selectedId: string;
   };
