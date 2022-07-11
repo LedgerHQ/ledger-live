@@ -12,9 +12,11 @@ import {
   hasLendEnabledAccountsSelector,
   accountsSelector,
 } from "../../reducers/accounts";
-import { hasOrderedNanoSelector } from "../../reducers/settings";
+import {
+  hasOrderedNanoSelector,
+  readOnlyModeEnabledSelector,
+} from "../../reducers/settings";
 import { Props as ModalProps } from "../BottomModal";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import TransferButton from "./TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../components/SetupDeviceBanner";
@@ -64,7 +66,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: "SwapForm",
       }),
     [onNavigate],
   );
