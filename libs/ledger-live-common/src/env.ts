@@ -43,12 +43,17 @@ const envDefinitions = {
   API_AVALANCHE_INDEXER: {
     def: "http://localhost:4444",
     parser: stringParser,
-    desc: "Explorer API for avalanche"
+    desc: "Explorer API for avalanche",
   },
   API_AVALANCHE_NODE: {
     def: "http://localhost:5555",
     parser: stringParser,
-    desc: "Node endpoint for avalanche"
+    desc: "Node endpoint for avalanche",
+  },
+  API_AVALANCHE_EXPLORER_API: {
+    def: "https://explorerapi.avax-test.network",
+    parser: stringParser,
+    desc: "Explorer API for avalanche",
   },
   API_CELO_INDEXER: {
     def: "https://celo.coin.ledger.com/indexer/",

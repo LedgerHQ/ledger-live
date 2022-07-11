@@ -1,1 +1,6 @@
-export { getAccount, getOperations } from "./sdk";
+export {
+  getAccount,
+  getOperations,
+  getDelegations,
+  getAddressChains,
+} from "./sdk";

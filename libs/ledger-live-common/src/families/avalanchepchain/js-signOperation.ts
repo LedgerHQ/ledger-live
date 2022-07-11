@@ -41,8 +41,10 @@ const signOperation = ({
                     const publicKey = account.avalanchePChainResources?.publicKey ?? "";
                     const chainCode = account.avalanchePChainResources?.chainCode ?? "";
 
-                    const hdHelper = await HDHelper.getInstance(publicKey, chainCode);
-                    await hdHelper.findHdIndex();
+                    const hdHelper = await HDHelper.instantiate(
+                      publicKey,
+                      chainCode
+                    );
 
                     const unsignedTx = await buildTransaction(transaction, hdHelper);
                     const chainId = 'P';
