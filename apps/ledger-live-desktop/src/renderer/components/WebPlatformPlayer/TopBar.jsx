@@ -12,6 +12,7 @@ import type { TopBarConfig } from "./type";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
+import ArrowRight from "~/renderer/icons/ArrowRight";
 import IconClose from "~/renderer/icons/Cross";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import LightBulb from "~/renderer/icons/LightBulb";
@@ -22,6 +23,7 @@ import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+
 const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
@@ -162,10 +164,10 @@ const WebPlatformTopBar = ({
         </ItemContent>
       </ItemContainer>
       <ItemContainer isInteractive onClick={onGoBack}>
-        {"<-"}
+        <ArrowRight flipped size={16} />
       </ItemContainer>
       <ItemContainer isInteractive onClick={onGoForward}>
-        {"->"}
+        <ArrowRight size={16} />
       </ItemContainer>
       {enablePlatformDevTools && (
         <>
