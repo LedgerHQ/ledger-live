@@ -1,7 +1,7 @@
 // @flow
 import React, { useEffect, Component } from "react";
 import { createStructuredSelector } from "reselect";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import type { Device, Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
@@ -34,6 +34,8 @@ import {
   renderWarningOutdated,
   renderSwapDeviceConfirmation,
   renderSecureTransferDeviceConfirmation,
+  renderAllowLanguageInstallation,
+  renderInstallingLanguage,
 } from "./rendering";
 
 type OwnProps<R, H, P> = {
@@ -101,6 +103,8 @@ const DeviceAction = <R, H, P>({
     progress,
     listingApps,
     requiresAppInstallation,
+    languageInstallationRequested,
+    installingLanguage,
     inWrongDeviceForAccount,
     onRetry,
     onAutoRepair,
@@ -132,6 +136,8 @@ const DeviceAction = <R, H, P>({
     }
   }, [dispatch, modelId, preferredDeviceModel]);
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (deviceInfo) {
       const lastSeenDevice = {
@@ -161,6 +167,10 @@ const DeviceAction = <R, H, P>({
     return <InstallingApp {...props} />;
   }
 
+  if (installingLanguage) {
+    return renderInstallingLanguage({ type, modelId, progress, t });
+  }
+
   if (requiresAppInstallation) {
     const { appName, appNames: maybeAppNames } = requiresAppInstallation;
     const appNames = maybeAppNames?.length ? maybeAppNames : [appName];
@@ -171,6 +181,10 @@ const DeviceAction = <R, H, P>({
   if (allowManagerRequestedWording) {
     const wording = allowManagerRequestedWording;
     return renderAllowManager({ modelId, type, wording });
+  }
+
+  if (languageInstallationRequested) {
+    return renderAllowLanguageInstallation({ modelId, type, t });
   }
 
   if (listingApps) {

@@ -146,10 +146,13 @@ importers:
       '@storybook/react': ^6.3.12
       '@tippyjs/react': ^4.2.6
       '@trust/keyto': ^1.0.1
+      '@types/lodash': ^4.14.182
+      '@types/react-redux': ^7.1.24
       '@types/react-router-dom': ^5.3.2
       '@types/react-select': ^4
       '@types/redux-actions': ^2.6.2
       '@types/serve-handler': ^6.1.1
+      '@types/styled-components': ^5.1.25
       '@typescript-eslint/eslint-plugin': ^5.28.0
       '@typescript-eslint/parser': 5.28.0
       '@vitejs/plugin-react': ^1.3.2
@@ -402,10 +405,13 @@ importers:
       '@storybook/addon-essentials': 6.4.22_xhrc4i4yvz6ygksqsyy5bus5sy
       '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
       '@storybook/react': 6.4.22_xukv4uznet4ikv7tocanvygrou
+      '@types/lodash': 4.14.182
+      '@types/react-redux': 7.1.24
       '@types/react-router-dom': 5.3.3
       '@types/react-select': 4.0.18
       '@types/redux-actions': 2.6.2
       '@types/serve-handler': 6.1.1
+      '@types/styled-components': 5.1.25
       '@typescript-eslint/eslint-plugin': 5.30.5_spbve6n7dex5r2tzlzjv7mwvh4
       '@typescript-eslint/parser': 5.28.0_e4zyhrvfnqudwdx5bevnvkluy4
       '@vitejs/plugin-react': 1.3.2
@@ -16828,7 +16834,6 @@ packages:
         optional: true
     dependencies:
       hoist-non-react-statics: 3.3.2
-    dev: false
 
   /@types/hoist-non-react-statics/3.3.1_@types+react@17.0.45:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
@@ -17229,7 +17234,6 @@ packages:
       '@types/hoist-non-react-statics': 3.3.1
       hoist-non-react-statics: 3.3.2
       redux: 4.2.0
-    dev: false
 
   /@types/react-redux/7.1.24_@types+react@17.0.45:
     resolution: {integrity: sha512-7FkurKcS1k0FHZEtdbbgN8Oc6b+stGSfZYjQGicofJ0j4U0qIn/jaSvnP2pLwZKiai3/17xqqxkkrxTgN8UNbQ==}
@@ -17421,6 +17425,18 @@ packages:
       '@types/react': 17.0.45
       '@types/react-native': 0.65.22_@types+react@17.0.45
       '@types/styled-components': 5.1.25_@types+react@17.0.45
+
+  /@types/styled-components/5.1.25:
+    resolution: {integrity: sha512-fgwl+0Pa8pdkwXRoVPP9JbqF0Ivo9llnmsm+7TCI330kbPIFd9qv1Lrhr37shf4tnxCOSu+/IgqM7uJXLWZZNQ==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/hoist-non-react-statics': 3.3.1
+      csstype: 3.0.11
+    dev: true
 
   /@types/styled-components/5.1.25_@types+react@17.0.45:
     resolution: {integrity: sha512-fgwl+0Pa8pdkwXRoVPP9JbqF0Ivo9llnmsm+7TCI330kbPIFd9qv1Lrhr37shf4tnxCOSu+/IgqM7uJXLWZZNQ==}
@@ -19737,6 +19753,7 @@ packages:
   /assert-plus/1.0.0:
     resolution: {integrity: sha512-NfJ4UzBCcQGLDlQq7nHxH+tv3kyZ0hHQqF5BO6J7tNJeP5do1llPr8dZ8zHonfhAu0PHAdMkSo+8o0wxg9lZWw==}
     engines: {node: '>=0.8'}
+    requiresBuild: true
 
   /assert/1.4.1:
     resolution: {integrity: sha1-mZEtWRg2tab1s0XA8H7vwI/GXZE=}
@@ -21038,6 +21055,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
 
@@ -23250,7 +23268,8 @@ packages:
     dev: false
 
   /core-util-is/1.0.2:
-    resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
+    resolution: {integrity: sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=}
+    requiresBuild: true
 
   /core-util-is/1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -23342,6 +23361,7 @@ packages:
 
   /crc/3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
+    requiresBuild: true
     dependencies:
       buffer: 5.7.1
 
@@ -28400,6 +28420,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
 
   /filelist/1.0.3:
     resolution: {integrity: sha512-LwjCsruLWQULGYKy7TX0OPtrL9kLpojOFKc5VCTxdFTV7w5zbsgqVKfnkKG7Qgjtq50gKfO56hJv88OfcGb70Q==}
@@ -37278,6 +37299,7 @@ packages:
 
   /nan/2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
+    requiresBuild: true
 
   /nano-json-stream-parser/0.1.2:
     resolution: {integrity: sha1-DMj20OK2IrR5xA1JnEbWS3Vcb18=}
@@ -40654,6 +40676,7 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: true
 
   /react-docgen-typescript/2.2.2_typescript@4.6.4:
     resolution: {integrity: sha512-tvg2ZtOpOi6QDwsb3GZhOjDkkX0h8Z2gipvTg6OVMUyoYoURhEiRNePT8NZItTVCDh39JJHnLdfCOkzoLbFnTg==}
@@ -43871,6 +43894,7 @@ packages:
   /smart-buffer/4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
+    requiresBuild: true
     dev: true
 
   /smartwrap/2.0.2:

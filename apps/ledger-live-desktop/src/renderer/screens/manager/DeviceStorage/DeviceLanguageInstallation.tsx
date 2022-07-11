@@ -1,15 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { Button, Flex, Icons, Drawer, Radio } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import useAvailableLanguagesForDevice from "@ledgerhq/live-common/lib/hooks/useAvailableLanguagesForDevice";
-import { Language } from "@ledgerhq/live-common/lib/types/languages";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
+import { Language } from "@ledgerhq/live-common/types/languages";
 import { command } from "~/renderer/commands";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 const installLanguageExec = command("installLanguage");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : installLanguageExec);

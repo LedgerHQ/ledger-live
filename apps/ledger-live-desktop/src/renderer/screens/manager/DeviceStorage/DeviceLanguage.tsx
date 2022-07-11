@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import DeviceLanguageInstallation from "./DeviceLanguageInstallation";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 type Props = {
   deviceInfo: DeviceInfo,
