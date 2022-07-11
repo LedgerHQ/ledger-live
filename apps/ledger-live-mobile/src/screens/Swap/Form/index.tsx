@@ -120,6 +120,10 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
       const account = flattenAccounts(accounts).find(
         a => a.id === params.accountId,
       );
+      track("Page Swap Form - New Source Account", {
+        provider,
+        swapVersion: SWAP_VERSION,
+      });
       swapTx.setFromAccount(account);
     }
 
