@@ -10,7 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/lib/onboarding/hooks/useOnboardingStatePolling";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
-import { OnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
+import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/src/hw/extractOnboardingState";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
@@ -26,8 +26,8 @@ import SoftwareChecksStep from "./SoftwareChecksStep";
 type StepStatus = "completed" | "active" | "inactive";
 
 type Step = {
+  key: CompanionStepKey;
   status: StepStatus;
-  deviceStates: OnboardingStep[];
   title: string;
   renderBody?: (status?: StepStatus) => ReactNode;
 };
@@ -39,24 +39,40 @@ type Props = StackScreenProps<
 
 const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
+const readyRedirectDelay = 1000;
 const resyncDelay = 2000;
 
+/* eslint-disable no-unused-vars */
+// Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
+enum CompanionStepKey {
+  Paired = 0,
+  Pin,
+  Seed,
+  SoftwareCheck,
+  Ready,
+  Exit,
+}
+/* eslint-enable no-unused-vars */
+
+function nextStepKey(step: CompanionStepKey): CompanionStepKey {
+  if (step === CompanionStepKey.Ready) {
+    return CompanionStepKey.Ready;
+  }
+  return step + 1;
+}
+
 export const SyncOnboarding = ({ navigation, route }: Props) => {
-  const defaultOnboardingSteps: Step[] = useMemo(
+  const defaultCompanionSteps: Step[] = useMemo(
     () => [
       {
-        status: "inactive",
-        deviceStates: [],
+        key: CompanionStepKey.Paired,
         title: "Nano paired",
+        status: "inactive",
       },
       {
-        status: "inactive",
-        deviceStates: [
-          OnboardingStep.WelcomeScreen,
-          OnboardingStep.SetupChoice,
-          OnboardingStep.Pin,
-        ],
+        key: CompanionStepKey.Pin,
         title: "Set your PIN",
+        status: "inactive",
         renderBody: () => (
           <Flex>
             <Text
@@ -70,14 +86,9 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         ),
       },
       {
-        status: "inactive",
-        deviceStates: [
-          OnboardingStep.NewDevice,
-          OnboardingStep.NewDeviceConfirming,
-          OnboardingStep.RestoreSeed,
-          OnboardingStep.SafetyWarning,
-        ],
+        key: CompanionStepKey.Seed,
         title: "Recovery phrase",
+        status: "inactive",
         renderBody: () => (
           <Text variant="bodyLineHeight">
             {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
@@ -85,79 +96,50 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         ),
       },
       {
-        status: "inactive",
-        deviceStates: [OnboardingStep.Ready],
+        key: CompanionStepKey.SoftwareCheck,
         title: "Software check",
+        status: "inactive",
         renderBody: (status?: StepStatus) => (
           <SoftwareChecksStep
             active={status === "active"}
-            onComplete={() => setOnboardingComplete(true)}
+            onComplete={() =>
+              setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
+            }
           />
         ),
       },
       {
-        status: "inactive",
-        deviceStates: [],
+        key: CompanionStepKey.Ready,
         title: "Nano is ready",
+        status: "inactive",
       },
     ],
     [],
   );
 
   const dispatch = useDispatch();
-  const [onboardingComplete, setOnboardingComplete] = useState<boolean>(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
-  const [onboardingSteps, setOnboardingSteps] = useState(
-    defaultOnboardingSteps,
+  const [companionSteps, setCompanionSteps] = useState<Step[]>(
+    defaultCompanionSteps,
   );
-
-  const {
-    i18n: { language: locale },
-  } = useTranslation();
+  const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
+    CompanionStepKey.Paired,
+  );
 
   const { device } = route.params;
 
-  const { onboardingState, allowedError, fatalErrorItem } =
-    useOnboardingStatePolling({
-      device,
-      pollingPeriodMs,
-      stopPolling,
-    });
-
-  useEffect(() => {
-    const newStepState: Step[] = [];
-
-    const needToUpdateSteps = defaultOnboardingSteps.some(
-      (step, index, steps) => {
-        if (
-          !onboardingComplete &&
-          onboardingState &&
-          onboardingState.currentOnboardingStep &&
-          step.deviceStates.includes(onboardingState.currentOnboardingStep)
-        ) {
-          newStepState.push({
-            ...step,
-            status: "active",
-          });
-          newStepState.push(...steps.slice(index + 1));
-          return true;
-        }
-
-        newStepState.push({
-          ...step,
-          status: "completed",
-        });
-        return false;
-      },
-    );
-
-    if (needToUpdateSteps || onboardingComplete) {
-      setOnboardingSteps(newStepState);
-    }
-  }, [onboardingState, onboardingComplete, defaultOnboardingSteps]);
+  const {
+    onboardingState: deviceOnboardingState,
+    allowedError,
+    // fatalErrorItem,
+  } = useOnboardingStatePolling({
+    device,
+    pollingPeriodMs,
+    stopPolling,
+  });
 
   const handleClose = useCallback(() => {
     navigation.goBack();
@@ -208,10 +190,60 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   }, [isDesyncDrawerOpen]);
 
   useEffect(() => {
-    if (onboardingComplete) {
-      setTimeout(handleDeviceReady, 3000);
+    if (deviceOnboardingState?.isOnboarded) {
+      setCompanionStepKey(CompanionStepKey.SoftwareCheck);
+      return;
     }
-  }, [onboardingComplete, handleDeviceReady]);
+
+    switch (deviceOnboardingState?.currentOnboardingStep) {
+      case DeviceOnboardingStep.RestoreSeed:
+      case DeviceOnboardingStep.SafetyWarning:
+      case DeviceOnboardingStep.NewDevice:
+      case DeviceOnboardingStep.NewDeviceConfirming:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        break;
+      case DeviceOnboardingStep.WelcomeScreen:
+      case DeviceOnboardingStep.SetupChoice:
+      case DeviceOnboardingStep.Pin:
+        setCompanionStepKey(CompanionStepKey.Pin);
+        break;
+      default:
+        break;
+    }
+  }, [deviceOnboardingState]);
+
+  useEffect(() => {
+    if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
+      setStopPolling(true);
+    }
+
+    if (companionStepKey === CompanionStepKey.Ready) {
+      setTimeout(
+        () => setCompanionStepKey(CompanionStepKey.Exit),
+        readyRedirectDelay / 2,
+      );
+    }
+
+    if (companionStepKey === CompanionStepKey.Exit) {
+      setTimeout(handleDeviceReady, readyRedirectDelay / 2);
+    }
+
+    setCompanionSteps(
+      defaultCompanionSteps.map(step => {
+        const stepStatus =
+          step.key > companionStepKey
+            ? "inactive"
+            : step.key < companionStepKey
+            ? "completed"
+            : "active";
+
+        return {
+          ...step,
+          status: stepStatus,
+        };
+      }),
+    );
+  }, [companionStepKey, defaultCompanionSteps, handleDeviceReady]);
 
   return (
     <SafeAreaView>
@@ -249,7 +281,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
                   onPress={() => setHelpDrawerOpen(true)}
                 />
               </Flex>
-              <VerticalTimeline steps={onboardingSteps} />
+              <VerticalTimeline steps={companionSteps} />
             </Flex>
           </ScrollContainer>
         </Flex>
