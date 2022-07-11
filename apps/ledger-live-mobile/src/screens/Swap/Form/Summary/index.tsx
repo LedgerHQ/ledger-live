@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
@@ -48,8 +48,6 @@ export function Summary({
     from.account,
   ]);
 
-  const rate = useMemo(() => "", []);
-
   const targetAccountName = useMemo(
     () => to.account && getAccountName(to.account),
     [to.account],
@@ -94,7 +92,11 @@ export function Summary({
       </Item>
 
       <Item title={t("transfer.swap2.form.details.label.rate")}>
-        <Text>
+        <Icon
+          name={exchangeRate.tradeMethod === "fixed" ? "Lock" : "Unlock"}
+          color="neutral.c70"
+        />
+        <Text marginLeft={2}>
           <CurrencyUnitValue
             value={new BigNumber(10).pow(fromUnit.magnitude)}
             unit={fromUnit}
@@ -108,7 +110,6 @@ export function Summary({
               .times(exchangeRate.magnitudeAwareRate)}
             showCode
           />
-          {rate}
         </Text>
       </Item>
 
