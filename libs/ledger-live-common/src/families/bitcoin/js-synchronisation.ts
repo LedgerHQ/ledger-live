@@ -19,6 +19,7 @@ import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { getAddressWithBtcInstance } from "./hw-getAddress";
 import { mapTxToOperations } from "./logic";
+import { decodeAccountId } from "../../account/accountId";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (
@@ -93,7 +94,9 @@ const getAccountShape: GetAccountShape = async (info) => {
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
 
-  const paramXpub = initialAccount?.xpub;
+  const paramXpub = initialAccount
+    ? decodeAccountId(initialAccount.id).xpubOrAddress
+    : undefined;
 
   let generatedXpub;
   if (!paramXpub) {
