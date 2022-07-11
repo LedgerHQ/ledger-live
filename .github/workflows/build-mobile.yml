@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-mobile/**
   pull_request:
@@ -27,7 +29,7 @@ jobs:
 
   start-runner:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -48,7 +50,7 @@ jobs:
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
@@ -74,7 +76,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -128,7 +130,7 @@ jobs:
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
+    if: ${{ !fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member]
     runs-on: ubuntu-latest
     env:
@@ -150,7 +152,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -222,7 +224,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7

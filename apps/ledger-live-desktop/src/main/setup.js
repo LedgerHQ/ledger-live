@@ -3,12 +3,11 @@
 import "../live-common-setup-base";
 import { ipcMain } from "electron";
 import contextMenu from "electron-context-menu";
-import logger, { enableDebugLogger } from "../logger";
 import { log } from "@ledgerhq/logs";
+import logger, { enableDebugLogger } from "../logger";
 import LoggerTransport from "~/logger/logger-transport-main";
 import LoggerTransportFirmware from "~/logger/logger-transport-firmware";
 import { fsWriteFile, fsReadFile, fsUnlink } from "~/helpers/fs";
-import osName from "~/helpers/osName";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
@@ -119,13 +118,4 @@ contextMenu({
   },
 });
 
-const systemInfo = async () => {
-  const name = await osName();
-  const locale = await require("os-locale")();
-
-  logger.info(`Ledger Live version: ${__APP_VERSION__}`, { type: "system-info" });
-  logger.info(`OS: ${name}`, { type: "system-info" });
-  logger.info(`System locale: ${locale}`, { type: "system-info" });
-};
-
-systemInfo();
+logger.info(`Ledger Live version: ${__APP_VERSION__}`, { type: "system-info" });

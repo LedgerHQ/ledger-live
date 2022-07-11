@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
-import { TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
-import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
+import { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
+import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import {
   InfiniteLoader,
   Text,
@@ -28,6 +28,7 @@ import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
+import TermsFooter, { TermsProviders } from "../TermsFooter";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -209,8 +210,10 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
+  provider,
 }: RawProps & {
   device: Device;
+  provider?: TermsProviders;
 }) {
   return (
     <Wrapper width="100%">
@@ -226,6 +229,7 @@ export function renderConfirmSwap({
         />
       </AnimationContainer>
       <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+      <TermsFooter provider={provider} />
     </Wrapper>
   );
 }
@@ -471,6 +475,55 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
+    </Wrapper>
+  );
+}
+
+export function renderExchange({
+  exchangeType,
+  t,
+  device,
+  theme,
+}: RawProps & {
+  exchangeType: number;
+  device: Device;
+}) {
+  switch (exchangeType) {
+    case 0x00: // swap
+      return <div>{"Confirm swap on your device"}</div>;
+    case 0x01: // sell
+    case 0x02: // fund
+      return renderSecureTransferDeviceConfirmation({
+        exchangeTypeName: exchangeType === 0x01 ? "confirmSell" : "confirmFund",
+        t,
+        device,
+        theme,
+      });
+    default:
+      return <CenteredText>{"Confirm exchange on your device"}</CenteredText>;
+  }
+}
+
+export function renderSecureTransferDeviceConfirmation({
+  t,
+  exchangeTypeName,
+  device,
+  theme,
+}: RawProps & {
+  exchangeTypeName: string;
+  device: Device;
+}) {
+  return (
+    <Wrapper>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
+      <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+        {t(`DeviceAction.${exchangeTypeName}.alert`)}
+      </Alert>
     </Wrapper>
   );
 }

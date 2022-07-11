@@ -1,9 +1,9 @@
 import React, { memo, useMemo, useCallback } from "react";
 
-import { App } from "@ledgerhq/live-common/lib/types/manager";
+import { App } from "@ledgerhq/live-common/types/manager";
 
-import { State, Action } from "@ledgerhq/live-common/lib/apps";
-import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/lib/apps/react";
+import { State, Action } from "@ledgerhq/live-common/apps/index";
+import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";

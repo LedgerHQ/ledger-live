@@ -1,17 +1,19 @@
 import React, { memo, useMemo } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
 // @ts-ignore issue with exports
 import { TrackScreen, track } from "../../analytics";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../components/TabBar/TabBarSafeAreaView";
 
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
@@ -19,10 +21,7 @@ const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
 
-const StyledSafeAreaView = styled(SafeAreaView).attrs({
-  edges: ["top", "left", "right"], // see https://github.com/th3rdwave/react-native-safe-area-context#edges
-})`
-  flex: 1;
+const StyledSafeAreaView = styled(TabBarSafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
 `;
 
@@ -112,7 +111,9 @@ function Discover() {
   return (
     <StyledSafeAreaView>
       <TrackScreen category="Discover" />
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+      >
         <Flex p={8} mt={8} flexDirection="row">
           <Flex flex={1} justyfyContent="flex-start" alignItems="flex-start">
             <Text variant="h1">{t("discover.title")}</Text>

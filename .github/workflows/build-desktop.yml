@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:
@@ -30,7 +32,7 @@ jobs:
 
   start-runner:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -40,7 +42,7 @@ jobs:
 
   stop-runner:
     name: "stop ec2 instance"
-    if: ${{ always() && needs.start-runner.result == 'success' && needs.is-org-member.outputs.is-org-member }}
+    if: ${{ always() && needs.start-runner.result == 'success' && fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member, start-runner, build-desktop-app-linux]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
     with:
@@ -51,7 +53,7 @@ jobs:
 
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
@@ -70,10 +72,6 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -104,7 +102,7 @@ jobs:
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
+    if: ${{ !fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member]
     runs-on: ubuntu-latest
     env:
@@ -126,11 +124,6 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
-
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
@@ -207,7 +200,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -242,8 +235,6 @@ jobs:
           os: mac
 
       - name: build the app
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
           eval "$(rbenv init - bash)"
           pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"

@@ -126,7 +126,6 @@ export type BitcoinPickingStrategy =
   typeof bitcoinPickingStrategy[keyof typeof bitcoinPickingStrategy];
 export type UtxoStrategy = {
   strategy: BitcoinPickingStrategy;
-  pickUnconfirmedRBF: boolean;
   excludeUTXOs: Array<{
     hash: string;
     outputIndex: number;

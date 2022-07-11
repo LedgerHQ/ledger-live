@@ -22,13 +22,13 @@ type TestFixtures = {
 const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
-  theme: "light",
+  theme: "dark",
   userdata: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
   userdataOriginalFile: async ({ userdata }, use) => {
-    use(path.resolve("tests/userdata/", `${userdata}.json`));
+    use(path.join(__dirname, "../userdata/", `${userdata}.json`));
   },
   userdataFile: async ({ userdataDestinationPath }, use) => {
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
@@ -53,6 +53,7 @@ const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
+        LEDGER_MIN_HEIGHT: 768,
       },
       env,
     );
@@ -62,7 +63,7 @@ const test = base.extend<TestFixtures>({
 
     const electronApp: ElectronApplication = await electron.launch({
       args: [
-        "./.webpack/main.bundle.js",
+        `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
         `--user-data-dir=${userdataDestinationPath}`,
         // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
         "--force-device-scale-factor=1",
@@ -72,20 +73,21 @@ const test = base.extend<TestFixtures>({
         "--enable-logging",
       ],
       recordVideo: {
-        dir: "tests/artifacts/videos/",
+        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
         size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
       },
       env,
       colorScheme: theme,
       locale: lang,
       executablePath: require("electron/index.js"),
+      timeout: 120000,
     });
 
     // app is ready
     const page = await electronApp.firstWindow();
 
     // start coverage
-    const istanbulCLIOutput = path.join("tests/artifacts/.nyc_output");
+    const istanbulCLIOutput = path.join(__dirname, "../artifacts/.nyc_output");
 
     await page.addInitScript(() =>
       window.addEventListener("beforeunload", () =>
@@ -103,7 +105,6 @@ const test = base.extend<TestFixtures>({
 
     // app is loaded
     expect(await page.title()).toBe("Ledger Live");
-    await page.waitForSelector("#__app__ready__", { state: "attached" });
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 

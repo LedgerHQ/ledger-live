@@ -25,6 +25,48 @@
   "main": "lib/Btc.js",
   "module": "lib-es/Btc.js",
   "types": "lib/Btc.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*/": [
+        "lib/*/index.d.ts"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*/": [
+        "lib-es/*/index.d.ts"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*/": [
+        "lib/*/index.d.ts"
+      ],
+      "*": [
+        "lib/*",
+        "lib/Btc.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*/": "./lib/*/index.js",
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*/": {
+      "require": "./lib/*/index.js",
+      "default": "./lib-es/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/Btc.js",
+      "default": "./lib-es/Btc.js"
+    },
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",

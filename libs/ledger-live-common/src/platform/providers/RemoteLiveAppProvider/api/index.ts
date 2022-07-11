@@ -34,6 +34,12 @@ const api = {
     provider: string
   ): Promise<LiveAppManifest[]> => {
     if (getEnv("MOCK")) {
+      if (getEnv("MOCK_REMOTE_LIVE_MANIFEST")) {
+        return [
+          ...mockData,
+          ...JSON.parse(getEnv("MOCK_REMOTE_LIVE_MANIFEST")),
+        ] as LiveAppManifest[];
+      }
       return mockData as LiveAppManifest[];
     }
 
