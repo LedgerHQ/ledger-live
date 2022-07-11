@@ -158,9 +158,6 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - name: cleanup repository folder
-        run: |
-          rm -Force -Recurse 'C:\actions-runner\_work\ledger-live\ledger-live\*'
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha || github.event.push.head.sha }}
