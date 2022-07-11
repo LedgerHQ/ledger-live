@@ -29,9 +29,11 @@ export function Banner({ provider, required }: Props) {
       borderRadius={4}
       backgroundColor="primary.c10"
     >
-      <Text color="primary.c70">
-        {t(`transfer.swap2.form.providers.${key}.required`)}
-      </Text>
+      <Flex flex={1}>
+        <Text color="primary.c70">
+          {t(`transfer.swap2.form.providers.${key}.required`)}
+        </Text>
+      </Flex>
 
       <Button type="main" size="small" onPress={onPress}>
         {t(`transfer.swap2.form.providers.${key}.complete`)}
