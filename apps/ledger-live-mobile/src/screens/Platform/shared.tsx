@@ -1,13 +1,16 @@
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/PlatformAppProvider/helpers";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
-import { AppManifest } from "@ledgerhq/live-common/platform/types";
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import {
+  FilterParams,
+  filterPlatformApps,
+} from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
+import { LiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/types";
+import { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];
 
-export const useFilteredManifests = () => {
+export const useFilteredManifests = (filterParamsOverride?: FilterParams) => {
   const { state } = useRemoteLiveAppContext();
   const manifests = state?.value?.liveAppByIndex || defaultArray;
   const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
@@ -24,6 +27,7 @@ export const useFilteredManifests = () => {
       version: "0.0.1",
       platform: "mobile",
       branches,
+      ...(filterParamsOverride ?? {}),
     });
-  }, [manifests, experimental]);
+  }, [manifests, experimental, filterParamsOverride]);
 };
