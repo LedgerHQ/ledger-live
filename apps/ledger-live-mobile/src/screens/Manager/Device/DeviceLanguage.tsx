@@ -7,7 +7,7 @@ import DeviceLanguageSelection from "./DeviceLanguageSelection";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
 import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
-import useAvailableLanguagesForDevice from "@ledgerhq/live-common/lib/hooks/useAvailableLanguagesForDevice";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 
@@ -45,7 +45,11 @@ const DeviceLanguageInstalled: React.FC<{
   );
 };
 
-const DeviceLanguage: React.FC<Props> = ({ currentLanguage, device, deviceInfo }) => {
+const DeviceLanguage: React.FC<Props> = ({
+  currentLanguage,
+  device,
+  deviceInfo,
+}) => {
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
