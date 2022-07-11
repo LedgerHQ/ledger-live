@@ -12,15 +12,12 @@ import {
   Login,
   KYC,
   MFA,
+  PendingOperation,
+  OperationDetails,
 } from "../../screens/Swap";
 import { SwapFormNavigator } from "./SwapFormNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
-// import SwapError from "../../screens/Swap/Error";
-// import SwapKYC from "../../screens/Swap/KYC";
-// import SwapKYCStates from "../../screens/Swap/KYC/StateSelect";
-// import SwapPendingOperation from "../../screens/Swap/PendingOperation";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 export default function SwapNavigator() {
@@ -131,32 +128,22 @@ export default function SwapNavigator() {
         })}
       />
 
-      {/* <Stack.Screen
-        name={ScreenName.SwapKYCStates}
-        component={SwapKYCStates}
+      <Stack.Screen
+        name={"PendingOperation"}
+        component={PendingOperation}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("transfer.swap.kyc.states")} />
-          ),
-          headerRight: null,
+          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
+          headerLeft: undefined,
         }}
       />
       <Stack.Screen
-        name={ScreenName.SwapError}
-        component={SwapError}
+        name={"OperationDetails"}
+        component={OperationDetails}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
+          headerLeft: undefined,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.SwapPendingOperation}
-        component={SwapPendingOperation}
-        options={{
-          headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: null,
-        }}
-      /> */}
     </Stack.Navigator>
   );
 }

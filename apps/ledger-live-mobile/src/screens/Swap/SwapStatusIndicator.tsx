@@ -1,5 +1,3 @@
-// @flow
-
 import {
   isSwapOperationPending,
   operationStatusList,
@@ -7,14 +5,16 @@ import {
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
+// @ts-expect-error
 import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { rgba } from "../../colors";
-import IconSwap from "../../icons/Swap";
+// eslint-disable-next-line import/named
+import { SwapIcon } from "../../icons/Swap";
 
 export const getStatusColor = (
   status: string,
-  colors: *,
-  colorKey?: boolean = false,
+  colors: any,
+  colorKey: boolean = false,
 ) => {
   let key = "grey";
 
@@ -33,13 +33,13 @@ export const getStatusColor = (
   return colorKey ? key : colors[key];
 };
 
-const SwapStatusIndicator = ({
+export function SwapStatusIndicator({
   status,
   small,
 }: {
-  status: string,
-  small?: boolean,
-}) => {
+  status: string;
+  small?: boolean;
+}) {
   const { colors } = useTheme();
   const statusColor = getStatusColor(status, colors);
   const sizeDependantStyles = {
@@ -50,13 +50,15 @@ const SwapStatusIndicator = ({
 
   return (
     <View style={[styles.status, sizeDependantStyles]}>
-      <IconSwap color={statusColor} size={small ? 16 : 26} />
+      <SwapIcon color={statusColor} size={small ? 16 : 26} />
       {isSwapOperationPending(status) ? (
         <View
           style={[
             styles.pending,
             {
+              // @ts-expect-error
               backgroundColor: colors.white,
+              // @ts-expect-error
               borderColor: colors.white,
             },
           ]}
@@ -64,13 +66,14 @@ const SwapStatusIndicator = ({
           <IconAD
             size={small ? 10 : 14}
             name="clockcircleo"
+            // @ts-expect-error
             color={rgba(colors.darkBlue, 0.6)}
           />
         </View>
       ) : null}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   status: {
@@ -87,5 +90,3 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
-
-export default SwapStatusIndicator;

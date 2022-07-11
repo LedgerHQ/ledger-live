@@ -1,25 +1,23 @@
 // @flow
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { ScreenName } from "../../const";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import IconCheck from "../../icons/Check";
-import IconClock from "../../icons/Clock";
-import { rgba } from "../../colors";
-import { TrackScreen } from "../../analytics";
+import LText from "../../../components/LText";
+import Button from "../../../components/Button";
+import IconCheck from "../../../icons/Check";
+import IconClock from "../../../icons/Clock";
+import { rgba } from "../../../colors";
+import { TrackScreen } from "../../../analytics";
+import { PendingOperationProps } from "../types";
 
 const forceInset = { bottom: "always" };
 
-const PendingOperation = () => {
+export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const { colors } = useTheme();
-  const navigation = useNavigation();
-  const route = useRoute();
   const {
     swapId,
     provider,
@@ -32,7 +30,7 @@ const PendingOperation = () => {
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
 
   const onComplete = useCallback(() => {
-    navigation.navigate(ScreenName.OperationDetails, {
+    navigation.navigate("OperationDetails", {
       accountId: fromAccount.id,
       parentId: fromParentAccount && fromParentAccount.id,
       operation,
@@ -73,13 +71,7 @@ const PendingOperation = () => {
           <LText secondary style={styles.title}>
             <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
           </LText>
-          <View
-            style={{
-              flexDirection: "row",
-              alignContent: "center",
-              justifyContent: "center",
-            }}
-          >
+          <View style={styles.label}>
             <LText style={styles.swapID} color="grey">
               <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
             </LText>
@@ -114,7 +106,7 @@ const PendingOperation = () => {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -169,6 +161,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginVertical: 16,
   },
+  label: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
+  },
 });
-
-export default PendingOperation;

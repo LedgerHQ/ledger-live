@@ -313,7 +313,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     swapTx.transaction &&
     !error &&
     !swapError &&
-    // TODO: currentBanner === ActionRequired.None &&
+    currentBanner === ActionRequired.None &&
     exchangeRate &&
     swapTx.swap.to.account;
 

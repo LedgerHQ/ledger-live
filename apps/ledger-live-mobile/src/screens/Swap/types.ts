@@ -1,9 +1,12 @@
 import {
   ExchangeRate,
+  MappedSwapOperation,
   SwapDataType,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
+  AccountLike,
   CryptoCurrency,
+  Operation,
   TokenCurrency,
   Transaction,
 } from "@ledgerhq/live-common/lib/types";
@@ -38,6 +41,16 @@ export type KYCProps = StackScreenProps<SwapNavParamList, "KYC">;
 
 export type MFAProps = StackScreenProps<SwapNavParamList, "MFA">;
 
+export type PendingOperationProps = StackScreenProps<
+  SwapNavParamList,
+  "PendingOperation"
+>;
+
+export type OperationDetailsProps = StackScreenProps<
+  SwapNavParamList,
+  "OperationDetails"
+>;
+
 export type SwapNavParamList = {
   Swap: undefined;
   SelectAccount: {
@@ -68,6 +81,17 @@ export type SwapNavParamList = {
   };
   MFA: {
     provider: string;
+  };
+  PendingOperation: {
+    swapId: string;
+    provider: string;
+    targetCurrency: string;
+    operation: Operation;
+    fromAccount?: AccountLike;
+    fromParentAccount?: AccountLike;
+  };
+  OperationDetails: {
+    swapOperation: MappedSwapOperation;
   };
 };
 

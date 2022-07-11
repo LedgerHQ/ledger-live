@@ -7,6 +7,7 @@ import SelectDevice from "../../../components/SelectDevice";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { TrackScreen } from "../../../analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
+import { DeviceMeta } from "./Modal/Confirmation";
 
 const action = createAction(connectManager);
 

@@ -11,8 +11,6 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
-
-import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
@@ -22,30 +20,20 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import LText from "../../../components/LText";
+import SectionSeparator from "../../../components/SectionSeparator";
+import TooltipLabel from "../../../components/TooltipLabel";
+import CurrencyIcon from "../../../components/CurrencyIcon";
+import { urls } from "../../../config/urls";
+import ExternalLink from "../../../icons/ExternalLink";
+import FormatDate from "../../../components/FormatDate";
+import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
+import Footer from "../../OperationDetails/Footer";
+import { OperationDetailsProps } from "../types";
 
-import { flattenAccountsSelector } from "../../reducers/accounts";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import LText from "../../components/LText";
-import SectionSeparator from "../../components/SectionSeparator";
-import TooltipLabel from "../../components/TooltipLabel";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import { urls } from "../../config/urls";
-import ExternalLink from "../../icons/ExternalLink";
-import FormatDate from "../../components/FormatDate";
-
-import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
-
-import Footer from "../OperationDetails/Footer";
-
-type Props = {
-  route: {
-    params: {
-      swapOperation: MappedSwapOperation,
-    },
-  },
-};
-
-const OperationDetails = ({ route }: Props) => {
+export function OperationDetails({ route }: OperationDetailsProps) {
   const { swapOperation } = route.params;
   const {
     swapId,
@@ -203,7 +191,7 @@ const OperationDetails = ({ route }: Props) => {
       {url ? <Footer url={url} account={fromAccount} /> : null}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -295,5 +283,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default OperationDetails;

@@ -1,6 +1,7 @@
 import React from "react";
-import { KYCProps } from "../../types";
-import { Widget } from "./Widget";
+import { KYCProps } from "../../../types";
+import { Widget } from "../Widget";
+import { WyreKYC } from "./Wyre";
 
 export function KYC({
   route: {
@@ -16,8 +17,4 @@ export function KYC({
     default:
       return null;
   }
-}
-
-function WyreKYC() {
-  return null;
 }

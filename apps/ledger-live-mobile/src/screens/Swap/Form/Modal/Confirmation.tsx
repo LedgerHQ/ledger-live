@@ -23,8 +23,12 @@ import {
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { AccountLike, Transaction } from "@ledgerhq/live-common/src/types";
+import {
+  postSwapAccepted,
+  postSwapCancelled,
+} from "@ledgerhq/live-common/lib/exchange/swap";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
-import { ScreenName } from "../../../../const";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";
 import BottomModal from "../../../../components/BottomModal";
@@ -97,10 +101,24 @@ export function Confirmation({
 
   const onComplete = useCallback(
     result => {
-      if (!fromAccount || !targetCurrency) {
+      if (!fromAccount || !targetCurrency || !exchangeRate) {
         return;
       }
       const { operation, swapId } = result;
+      /**
+       * If transaction broadcast are disabled, consider the swap as cancelled
+       * since the partner will never receive the funds
+       */
+      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        postSwapCancelled({ provider: exchangeRate.provider, swapId });
+      } else {
+        postSwapAccepted({
+          provider: exchangeRate.provider,
+          swapId,
+          transactionId: operation.hash,
+        });
+      }
+
       const mainAccount = getMainAccount(fromAccount, fromParentAccount);
 
       if (!mainAccount || !exchangeRate) return;
@@ -123,7 +141,7 @@ export function Confirmation({
         ),
       );
       // @ts-expect-error
-      navigation.replace(ScreenName.SwapPendingOperation, {
+      navigation.replace("PendingOperation", {
         swapId,
         provider: exchangeRate.provider,
         targetCurrency: targetCurrency.name,
