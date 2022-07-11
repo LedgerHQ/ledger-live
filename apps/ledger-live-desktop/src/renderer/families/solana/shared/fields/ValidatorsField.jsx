@@ -4,12 +4,14 @@ import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import type { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
 import invariant from "invariant";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { TFunction } from "react-i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { NoResultPlaceholder } from "~/renderer/components/Delegation/ValidatorSearchInput";
+import ValidatorSearchInput, {
+  NoResultPlaceholder,
+} from "~/renderer/components/Delegation/ValidatorSearchInput";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
@@ -27,7 +29,7 @@ type Props = {
 const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, status }: Props) => {
   invariant(account && account.solanaResources, "solana account and resources required");
 
-  const [search] = useState("");
+  const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
 
   const unit = getAccountUnit(account);
@@ -41,12 +43,16 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
   }, [validators, chosenVoteAccAddr]);
 
   const validatorsFiltered = useMemo(() => {
-    return validators.filter(validator => {
-      return (
-        validator.name?.toLowerCase().includes(search) ||
-        validator.voteAccount.toLowerCase().includes(search)
+    return validators
+      .filter(validator => {
+        return (
+          validator.name?.toLowerCase().includes(search.toLowerCase()) ||
+          validator.voteAccount.toLowerCase().includes(search.toLowerCase())
+        );
+      })
+      .filter(
+        (value, index, self) => index === self.findIndex(t => t.voteAccount === value.voteAccount),
       );
-    });
   }, [validators, search]);
 
   const containerRef = useRef();
@@ -58,6 +64,8 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
       if (firstInput && firstInput.focus) firstInput.focus();
     }
   }, []);
+
+  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
   const renderItem = (validator: ValidatorAppValidator, validatorIdx: number) => {
     return (
@@ -73,25 +81,28 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
   };
 
   return (
-    <ValidatorsFieldContainer>
-      <Box p={1}>
-        <ScrollLoadingList
-          data={showAll ? validators : [chosenValidator ?? validators[0]]}
-          style={{ flex: showAll ? "1 0 240px" : "1 0 63px", marginBottom: 0, paddingLeft: 0 }}
-          renderItem={renderItem}
-          noResultPlaceholder={
-            validatorsFiltered.length <= 0 &&
-            search.length > 0 && <NoResultPlaceholder search={search} />
-          }
-        />
-      </Box>
-      <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
-        <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
-          <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
-        </Text>
-        <IconAngleDown size={16} />
-      </SeeAllButton>
-    </ValidatorsFieldContainer>
+    <>
+      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      <ValidatorsFieldContainer>
+        <Box p={1}>
+          <ScrollLoadingList
+            data={showAll ? validatorsFiltered : [chosenValidator ?? validators[0]]}
+            style={{ flex: showAll ? "1 0 240px" : "1 0 63px", marginBottom: 0, paddingLeft: 0 }}
+            renderItem={renderItem}
+            noResultPlaceholder={
+              validatorsFiltered.length <= 0 &&
+              search.length > 0 && <NoResultPlaceholder search={search} />
+            }
+          />
+        </Box>
+        <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+          <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
+          </Text>
+          <IconAngleDown size={16} />
+        </SeeAllButton>
+      </ValidatorsFieldContainer>
+    </>
   );
 };
 

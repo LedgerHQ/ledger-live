@@ -165,19 +165,27 @@ export function useMappedExtraOperationDetails({
   };
 }
 
-export function useLedgerFirstShuffledValidatorsCosmos() {
+export function useLedgerFirstShuffledValidatorsCosmos(
+  searchInput?: string
+): CosmosValidatorItem[] {
   const data = useCosmosPreloadData();
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? []);
-  }, [data]);
+    return reorderValidators(data?.validators ?? [], searchInput);
+  }, [data, searchInput]);
 }
 
 function reorderValidators(
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
+  searchInput?: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
     .filter((validator) => validator.commission !== 1.0)
+    .filter((validator) =>
+      searchInput
+        ? validator.name.toLowerCase().includes(searchInput.toLowerCase())
+        : true
+    )
     .sort((a, b) => b.votingPower - a.votingPower);
 
   // move Ledger validator to the first position

@@ -16,7 +16,7 @@ export default function SelectValidatorSearchBox({
       <SearchInput
         returnKeyType="search"
         maxLength={50}
-        onChangeText={setSearchQuery}
+        onChange={setSearchQuery}
         placeholder={t("common.search")}
         value={searchQuery}
         numberOfLines={1}
