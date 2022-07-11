@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import semver from "semver";
-import type { DeviceModelInfo } from "../types/manager";
+import type { DeviceInfo, DeviceModelInfo } from "../types/manager";
 import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "../api/Manager";
+import { Language } from "../types/languages";
 
 async function hasOudatedApps({
   deviceInfo,
@@ -71,3 +72,15 @@ export function useManagerBlueDot(
   }, [dmi, forceProvider]);
   return display;
 }
+
+export const useAvailableLanguagesForDevice = (deviceInfo: DeviceInfo): Language[] => {
+  const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
+
+  useEffect(() => {
+    if (deviceInfo) {
+      manager.getAvailableLanguagesDevice(deviceInfo).then(setAvailableLanguages);
+    }
+  }, [deviceInfo, setAvailableLanguages]);
+
+  return availableLanguages;
+};
