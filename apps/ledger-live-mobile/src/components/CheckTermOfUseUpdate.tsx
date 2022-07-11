@@ -7,7 +7,7 @@ import styled from "styled-components/native";
 import { useLocalizedTermsUrl, useTermsAccept } from "../logic/terms";
 import Button from "./Button";
 import Alert from "./Alert";
-import Divider from "./Divider";
+import { Divider } from "@ledgerhq/native-ui";
 
 const Description = styled(Text).attrs(() => ({
   color: "neutral.c70",
