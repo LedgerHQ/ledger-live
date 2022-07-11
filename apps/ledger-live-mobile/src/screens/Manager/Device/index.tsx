@@ -18,7 +18,7 @@ import NanoX from "../../../images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
-import Divider from "../../../components/Divider";
+import { Divider } from "@ledgerhq/native-ui";
 import DeviceLanguage from "./DeviceLanguage";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
