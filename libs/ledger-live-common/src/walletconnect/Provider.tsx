@@ -133,16 +133,14 @@ const ProviderCommon = ({
         status: STATUS.CONNECTED,
       });
     });
-    connector.on("disconnect", () => {
-      disconnect();
-    });
-    connector.on("error", (error) => {
+    connector.on("disconnect", () => disconnect());
+    connector.on("error", (error: Error) => {
       dispatch({
         status: STATUS.ERROR,
         error,
       });
     });
-    connector.on("call_request", (error, payload) => {
+    connector.on("call_request", (error: Error, payload: unknown | null) => {
       if (error) {
         dispatch({
           status: STATUS.ERROR,
@@ -153,6 +151,7 @@ const ProviderCommon = ({
 
       handleCallRequest(payload);
     });
+
     dispatch({
       error: null,
       connector,

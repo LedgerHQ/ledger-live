@@ -214,6 +214,19 @@ test("all USDT are countervalue enabled", () => {
   expect(tokens.every((t) => t.disableCountervalue === false)).toBe(true);
 });
 
+test("Ethereum family convention: all ethereum testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {
+  expect(
+    listCryptoCurrencies()
+      .filter(
+        (e) =>
+          e.family === "ethereum" && // ethereum family
+          e.isTestnetFor && // is a testnet coin
+          e.coinType !== getCryptoCurrencyById(e.isTestnetFor).coinType // it must use same coinType as the mainnet coin
+      )
+      .map((e) => e.id) // to get a nice error if it fails
+  ).toEqual([]);
+});
+
 test("can register a new coin externally", () => {
   const coinId = "mycoin";
   expect(() => getCryptoCurrencyById("mycoin")).toThrow(
