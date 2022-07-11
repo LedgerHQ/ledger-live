@@ -71,7 +71,7 @@ export default function installLanguage({
               timeoutSub.unsubscribe();
 
               if (language === "english") {
-                await uninstallAllLanugages(transport);
+                await uninstallAllLanguages(transport);
                 subscriber.next({
                   type: "languageInstalled",
                 });
@@ -97,7 +97,7 @@ export default function installLanguage({
 
               const apdus = rawApdus.split(/\r?\n/).filter(Boolean);
 
-              await uninstallAllLanugages(transport);
+              await uninstallAllLanguages(transport);
 
               for (let i = 0; i < apdus.length; i++) {
                 if (apdus[i].startsWith("e030")) {
@@ -171,7 +171,7 @@ export default function installLanguage({
   return sub;
 }
 
-const uninstallAllLanugages = async (transport: Transport) => {
+const uninstallAllLanguages = async (transport: Transport) => {
   // TODO: in a future FW version, this will be a single apdu
   for (const id of Object.values(languageIds)) {
     // do we want to reflect this on the UI? do we need to emit events here
