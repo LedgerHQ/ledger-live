@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
@@ -116,7 +117,9 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     if (params?.accountId) {
-      const account = accounts.find(a => a.id === params?.accountId);
+      const account = flattenAccounts(accounts).find(
+        a => a.id === params.accountId,
+      );
       swapTx.setFromAccount(account);
     }
 
