@@ -152,7 +152,7 @@ const implementations = {
           device: null,
         });
         device = null;
-        log("app/polling", "device init timeout");
+        log("actions-install-language-event/polling", "device init timeout");
       }, INIT_DEBOUNCE);
       let connectSub;
       let loopT;
@@ -169,7 +169,7 @@ const implementations = {
           return;
         }
 
-        log("manager/polling", "polling loop");
+        log("actions-install-language-event/polling", "polling loop");
         connectSub = installLanguage(pollingOnDevice, language)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
@@ -212,7 +212,7 @@ const implementations = {
                     // a disconnect will locally be remembered via locally setting device to null...
                     device = null;
                     o.next(event);
-                    log("app/polling", "device disconnect timeout");
+                    log("actions-install-language-event/polling", "device disconnect timeout");
                   }, DISCONNECT_DEBOUNCE);
                 } else {
                   // These error events should stop polling

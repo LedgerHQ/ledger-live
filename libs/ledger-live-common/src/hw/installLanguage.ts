@@ -1,6 +1,6 @@
 import { Observable, from, of, throwError, EMPTY } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
-import { DeviceOnDashboardExpected, TransportError, TransportStatusError } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, TransportError, TransportStatusError, LanguageNotFound } from "@ledgerhq/errors";
 
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
@@ -72,10 +72,12 @@ export default function installLanguage({
 
               if (language === "english") {
                 await uninstallAllLanguages(transport);
+                
                 subscriber.next({
                   type: "languageInstalled",
                 });
                 subscriber.complete();
+
                 return;
               }
 
@@ -83,10 +85,9 @@ export default function installLanguage({
 
               const packs: LanguagePackage[] = languages.filter((l: any) => l.language === language);
 
-              if (!packs.length) return subscriber.error(new Error(`No language ${language} found`));
+              if (!packs.length) return subscriber.error(new LanguageNotFound(language));
 
               const pack = packs[0];
-
               const { apdu_install_url } = pack;
               const url = apdu_install_url;
 
