@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { Flex } from "@ledgerhq/react-ui";
 
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 
-const DeviceSelectContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  align-items: stretch;
-`;
+const DeviceSelectContainer = styled(Flex).attrs({
+  flexDirection: "row",
+  alignItems: "stretch",
+  width: "100%",
+  height: "100%",
+})``;
 
 const devices = [
   {
