@@ -11,7 +11,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -132,7 +132,8 @@ export default function StepValidators({
     selectedValidator,
   ]);
 
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
 
   const selectedValidatorData = useMemo(
     () =>

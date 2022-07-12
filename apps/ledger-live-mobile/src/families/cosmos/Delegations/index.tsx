@@ -13,9 +13,9 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import {
-  useCosmosMappedDelegations,
-  useCosmosPreloadData,
-} from "@ledgerhq/live-common/families/cosmos/react";
+  useCosmosFamilyMappedDelegations,
+  useCosmosFamilyPreloadData,
+} from "@ledgerhq/live-common/lib/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
@@ -63,7 +63,7 @@ function Delegations({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
-  const delegations: CosmosMappedDelegation[] = useCosmosMappedDelegations(
+  const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(
     mainAccount,
   );
 
@@ -71,7 +71,7 @@ function Delegations({ account }: Props) {
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
 
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData('cosmos');
 
   const { cosmosResources } = mainAccount;
 

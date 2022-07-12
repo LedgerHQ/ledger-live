@@ -12,7 +12,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
@@ -67,7 +67,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
     "transaction src validator required",
   );
 
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily("cosmos");
 
   const validatorSrc = useMemo(
     () =>

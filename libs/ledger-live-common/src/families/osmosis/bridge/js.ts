@@ -14,9 +14,9 @@ import osmosisValidatorsManager from "../validators";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import { CosmosValidatorItem } from "../../cosmos/types";
 import {
-  asSafeCosmosPreloadData,
-  setCosmosPreloadData,
-} from "../../cosmos/preloadedData";
+  asSafeOsmosisPreloadData,
+  setOsmosisPreloadData,
+} from "../../osmosis/preloadedData";
 
 const receive = makeAccountBridgeReceive();
 const getPreloadStrategy = (_currency) => ({
@@ -27,7 +27,7 @@ const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async () => {
     const validators = await osmosisValidatorsManager.getValidators();
-    setCosmosPreloadData({
+    setOsmosisPreloadData({
       validators,
     });
     return Promise.resolve({
@@ -44,7 +44,7 @@ const currencyBridge: CurrencyBridge = {
     )
       return;
     osmosisValidatorsManager.hydrateValidators(validators);
-    setCosmosPreloadData(asSafeCosmosPreloadData(data));
+    setOsmosisPreloadData(asSafeOsmosisPreloadData(data));
   },
   scanAccounts,
 };

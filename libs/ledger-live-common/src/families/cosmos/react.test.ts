@@ -30,10 +30,12 @@ const cache = makeBridgeCacheSystem({
   },
 });
 describe("cosmos/react", () => {
-  describe("useCosmosPreloadData", () => {
+  describe("useCosmosFamilyPreloadData", () => {
     it("should return Cosmos preload data and updates", async () => {
       const { prepare } = setup();
-      const { result } = renderHook(() => hooks.useCosmosPreloadData());
+      const { result } = renderHook(() =>
+        hooks.useCosmosFamilyPreloadData("cosmos")
+      );
       const data = getCurrentCosmosPreloadData();
       expect(result.current).toStrictEqual(data);
       await act(() => prepare());
@@ -45,7 +47,7 @@ describe("cosmos/react", () => {
       const { account, prepare } = setup();
       await prepare();
       const { result } = renderHook(() =>
-        hooks.useCosmosMappedDelegations(account)
+        hooks.useCosmosFamilyMappedDelegations(account)
       );
       const delegations = account.cosmosResources?.delegations;
       invariant(delegations, "cosmos: delegations is required");
@@ -71,13 +73,13 @@ describe("cosmos/react", () => {
         const { account, prepare } = setup();
         await prepare();
         const { result } = renderHook(() =>
-          hooks.useCosmosMappedDelegations(account, "claimReward")
+          hooks.useCosmosFamilyMappedDelegations(account, "claimReward")
         );
         expect(result.current.length).toBe(3);
       });
     });
   });
-  describe("useCosmosDelegationsQuerySelector", () => {
+  describe("useCosmosFamilyDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, prepare } = setup();
       await prepare();
@@ -98,7 +100,10 @@ describe("cosmos/react", () => {
         })),
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(result.current.options.length).toBe(delegations.length);
       act(() => {
@@ -124,7 +129,10 @@ describe("cosmos/react", () => {
         })),
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(
         (
@@ -154,7 +162,10 @@ describe("cosmos/react", () => {
         sourceValidator,
       };
       const { result } = renderHook(() =>
-        hooks.useCosmosDelegationsQuerySelector(account, newTx as Transaction)
+        hooks.useCosmosFamilyDelegationsQuerySelector(
+          account,
+          newTx as Transaction
+        )
       );
       expect(
         (
@@ -169,7 +180,7 @@ describe("cosmos/react", () => {
       const { account, prepare } = setup();
       await prepare();
       const { result: preloadDataResult } = renderHook(() =>
-        hooks.useCosmosPreloadData()
+        hooks.useCosmosFamilyPreloadData("cosmos")
       );
       const { validators } = preloadDataResult.current;
       const delegations = (account.cosmosResources?.delegations || []).map(
@@ -191,7 +202,7 @@ describe("cosmos/react", () => {
   describe("reorderValidators", () => {
     it("should return a list of Validators with Ledger first", () => {
       const { result } = renderHook(() =>
-        hooks.useLedgerFirstShuffledValidatorsCosmos()
+        hooks.useLedgerFirstShuffledValidatorsCosmosFamily("cosmos")
       );
       expect(result.current[0].validatorAddress).toBe(LEDGER_VALIDATOR_ADDRESS);
     });
