@@ -20,8 +20,8 @@ import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
 import { Divider } from "@ledgerhq/native-ui";
 import DeviceLanguage from "./DeviceLanguage";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags";
 
 const illustrations = {
   nanoS: NanoS,
@@ -84,7 +84,7 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
-  const deviceLocalizationFeatureFlag = true; // useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
 
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
