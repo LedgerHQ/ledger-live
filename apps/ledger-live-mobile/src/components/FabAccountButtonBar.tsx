@@ -8,13 +8,15 @@ import React, {
 } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Linking } from "react-native";
-
 import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
+import { useSelector } from "react-redux";
 
 import { ScrollContainer } from "@ledgerhq/native-ui";
 import ChoiceButton from "./ChoiceButton";
 import InfoModal from "./InfoModal";
 import Button from "./wrappedUi/Button";
+import { readOnlyModeEnabledSelector } from "../reducers/settings";
+import { track } from "../analytics";
 
 type ActionButtonEventProps = {
   navigationParams?: any[];
@@ -81,9 +83,16 @@ function FabAccountButtonBar({
     [account, parentAccount, navigation],
   );
 
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
   const onPress = useCallback(
     (data: ActionButtonEventProps) => {
       const { navigationParams, confirmModalProps, linkUrl } = data;
+
+      if (readOnlyModeEnabled) {
+        track("button_clicked", { button: "Buy/Sell", screen: "Market Coin" });
+      }
+
       if (!confirmModalProps) {
         setInfoModalProps();
         if (linkUrl) {
@@ -96,7 +105,7 @@ function FabAccountButtonBar({
         setIsModalInfoOpened(true);
       }
     },
-    [onNavigate, setIsModalInfoOpened],
+    [onNavigate, setIsModalInfoOpened, readOnlyModeEnabled],
   );
 
   const onContinue = useCallback(() => {
