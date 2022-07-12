@@ -6,10 +6,10 @@ import type {
   Account,
   OperationType,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
+} from "@ledgerhq/live-common/types/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
 import { useSelector } from "react-redux";
 import { Icons } from "@ledgerhq/native-ui";

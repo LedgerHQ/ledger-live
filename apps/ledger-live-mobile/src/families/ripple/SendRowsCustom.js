@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 
 import SendRowTag from "./SendRowTag";
 

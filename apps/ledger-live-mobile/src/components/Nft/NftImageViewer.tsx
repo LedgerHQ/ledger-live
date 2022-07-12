@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/lib/types";
-import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
+import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import NftMedia from "./NftMedia";
 
 // import PanAndZoomView from "../PanAndZoomView";
@@ -36,6 +36,7 @@ class NftImageViewer extends React.PureComponent<Props> {
           mediaFormat={params.mediaFormat}
           status={params?.status}
           resizeMode="contain"
+          transaprency={true}
         />
       </View>
     );

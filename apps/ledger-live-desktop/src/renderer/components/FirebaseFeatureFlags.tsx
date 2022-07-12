@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { FeatureFlagsProvider } from "@ledgerhq/live-common/lib/featureFlags";
-import { Feature, FeatureId } from "@ledgerhq/live-common/lib/types";
+import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
+import { Feature, FeatureId } from "@ledgerhq/live-common/types/index";
 import { getValue } from "firebase/remote-config";
 
 import { formatFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";

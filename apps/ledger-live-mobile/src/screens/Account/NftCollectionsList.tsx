@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
+import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
 import {
   ArrowBottomMedium,
   DroprightMedium,

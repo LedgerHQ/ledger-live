@@ -5,23 +5,23 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
   shortAddressPreview,
-} from "@ledgerhq/live-common/lib/account";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   useDelegation,
   useBaker,
   useBakers,
   useRandomBaker,
-} from "@ledgerhq/live-common/lib/families/tezos/bakers";
-import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/tezos/bakers";
+import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { Alert } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../../reducers/accounts";

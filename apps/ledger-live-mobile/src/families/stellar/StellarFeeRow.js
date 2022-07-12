@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";

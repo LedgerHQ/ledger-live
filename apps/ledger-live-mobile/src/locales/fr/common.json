@@ -939,7 +939,7 @@
       "title" : "Bienvenue sur Ledger",
       "subtitle" : "La propriété numérique, sécurisée et simplifiée.",
       "start" : "Commencer",
-      "noDevice" : "Pas encore de wallet Ledger ?",
+      "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un {{fullDeviceName}}.",
       "terms" : "En appuyant sur Commencer, vous acceptez nos",
       "termsLink" : "Conditions d’utilisation",
@@ -1041,7 +1041,7 @@
       "1" : {
         "label" : "Les bases",
         "title" : "Détenez votre clé privée",
-        "desc" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+        "desc" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
       },
       "2" : {
         "label" : "Les bases",
@@ -1505,7 +1505,7 @@
     "warning" : {
       "recoveryPhrase" : {
         "title" : "N’utilisez jamais une phrase de récupération que vous n’avez pas générée vous-même.",
-        "desc" : "Vous devez être la seule personne à configurer le code PIN et la phrase de récupération de votre wallet Ledger. Si vous avez reçu un appareil avec une phrase de récupération déjà existante ou un code PIN déjà configuré, n’utilisez pas l’appareil et contactez l’Assistance Ledger.",
+        "desc" : "Vous devez être la seule personne à configurer le code PIN et la phrase de récupération de votre wallet Ledger. Si vous avez reçu un appareil avec une phrase de récupération fournie ou un code PIN déjà configuré, n’utilisez pas l’appareil et contactez l’Assistance Ledger.",
         "supportLink" : "Contacter l’Assistance"
       },
       "seed" : {
@@ -1639,8 +1639,8 @@
       "UNFREEZE" : "Dégelé",
       "REWARD" : "Récompense demandée",
       "FEES" : "Frais",
-      "OPT_IN" : "Activée",
-      "OPT_OUT" : "Désactivée",
+      "OPT_IN" : "Activé",
+      "OPT_OUT" : "Désactivé",
       "CLOSE_ACCOUNT" : "Compte fermé",
       "SUPPLY" : "Déposé",
       "REDEEM" : "Retiré",
@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Détails de l’opération",
+    "title" : "Détails de la transaction",
     "account" : "Compte",
     "date" : "Date",
     "confirmed" : "Confirmée",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
-    "noMoreOperations" : "Aucune autre opération"
+    "noMoreTransactions" : "Aucune autre transaction"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tout désélectionner",
@@ -1763,7 +1763,7 @@
     "sell" : "Vendre",
     "swap" : "Échanger",
     "manage" : "Gérer",
-    "lastOperations" : "Dernières opérations",
+    "lastTransactions" : "Dernières transactions",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
       "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
@@ -2132,22 +2132,18 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Entrez l’adresse."
+      "input" : "Entrer l’adresse"
     },
     "send" : {
       "title" : "Envoyer",
-      "description" : "Envoyez des cryptos vers un autre wallet."
+      "description" : "Envoyez des cryptos vers un autre wallet"
     },
     "fees" : {
       "title" : "Modifier les frais"
     },
-    "manageCard" : {
-      "title" : "Gérer ma carte CL",
-      "description" : "Commandez et gérez votre carte CL"
-    },
     "receive" : {
       "title" : "Recevoir",
-      "description" : "Recevez des cryptos provenant d’un autre wallet.",
+      "description" : "Recevez des cryptos d’un autre wallet",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
       "titleDevice" : "Connecter l’appareil",
@@ -2176,18 +2172,18 @@
     },
     "buy" : {
       "title" : "Acheter",
-      "description" : "Achetez des cryptos en toute sécurité."
+      "description" : "Achetez des cryptos en toute sécurité"
     },
     "sell" : {
       "title" : "Vendre",
-      "description" : "Vendez des cryptos en toute sécurité."
+      "description" : "Vendez des cryptos en toute sécurité"
     },
     "exchange" : {
       "title" : "Acheter / Vendre"
     },
     "swap" : {
       "title" : "Swap",
-      "description" : "Échangez une crypto contre une autre.",
+      "description" : "Échangez une crypto contre une autre",
       "selectDevice" : "Sélectionnez votre appareil.",
       "broadcasting" : "Swap en cours",
       "loadingFees" : "Chargement des frais de réseau…",
@@ -2225,7 +2221,7 @@
           },
           "closed" : {
             "cta" : "Réinitialiser",
-            "title" : "Demande de vérification refusée",
+            "title" : "Demande de vérification rejetée",
             "subtitle" : "Wyre a refusé les données que vous avez fournies.",
             "link" : "En savoir plus sur la vérification d’identité"
           },
@@ -2404,8 +2400,8 @@
     },
     "lending" : {
       "title" : "Prêter",
-      "titleTransferTab" : "Gagnez",
-      "descriptionTransferTab" : "Générez des revenus passifs.",
+      "titleTransferTab" : "Gagner",
+      "descriptionTransferTab" : "Générez des revenus passifs",
       "actionTitle" : "Prêter",
       "accountActions" : {
         "approve" : "Approuver",
@@ -2633,7 +2629,7 @@
     "recipient" : {
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
-      "input" : "Entrez l’adresse.",
+      "input" : "Entrer l’adresse",
       "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
     },
     "amount" : {
@@ -3070,7 +3066,7 @@
       "description" : "Configurez Ledger Live avec votre Nano X pour installer des apps, créer des comptes et effectuer des transactions sécurisées.",
       "question" : "Avez-vous votre Nano X ?",
       "button" : "Commencer à configurer mon Nano X",
-      "noDevice" : "Pas encore de wallet Ledger ?",
+      "noDevice" : "Pas encore d’appareil ?",
       "buy" : "Achetez un Ledger Nano X"
     },
     "appList" : {
@@ -4388,7 +4384,10 @@
       "tokenContractCopied" : "Adresse du token copiée",
       "tokenId" : "Identifiant du token",
       "tokenIdCopied" : "Identifiant du token copié",
-      "quantity" : "Nombre"
+      "quantity" : "Nombre",
+      "attributes" : {
+        "floorPrice" : "Prix plancher"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Voir sur",

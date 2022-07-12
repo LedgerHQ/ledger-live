@@ -6,7 +6,7 @@ import commandLineArgs from "command-line-args";
 import { closeAllDevices } from "./live-common-setup";
 import commandsMain from "./commands-index";
 // TODO cli-transaction.js => cli.js
-import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
+import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
 
 const commands = {
   ...Object.values(perFamily)

@@ -1,6 +1,6 @@
 // @flow
 import { NavigationProp } from "@react-navigation/native";
-import { isEnvDefault } from "@ledgerhq/live-common/lib/env";
+import { isEnvDefault } from "@ledgerhq/live-common/env";
 import React from "react";
 import { ScrollView } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";

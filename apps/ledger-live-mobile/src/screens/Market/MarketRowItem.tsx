@@ -2,7 +2,7 @@
 import React, { memo } from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CurrencyData } from "@ledgerhq/live-common/lib/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { Image } from "react-native";
 import { TFunction } from "i18next";
 import CircleCurrencyIcon from "../../components/CircleCurrencyIcon";

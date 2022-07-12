@@ -15,10 +15,6 @@ on:
         required: false
         default: ""
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}-${{ github.env.inputs.filter || "" }}
-  cancel-in-progress: true
-
 jobs:
   integration-tests:
     name: "Integration Tests"
@@ -47,7 +43,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: pnpm
+          # cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Bump npm to latest
         run: |

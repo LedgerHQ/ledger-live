@@ -2,13 +2,13 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import Config from "react-native-config";
-import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
+import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import type {
   Account,
   AccountLike,
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/types/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import Scanner from "../../components/Scanner";

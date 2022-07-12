@@ -61,4 +61,7 @@ export const defaultFeatures: DefaultFeatures = {
       support_email: "support@ledger.com",
     },
   },
+  counterValue: {
+    enabled: false,
+  },
 };

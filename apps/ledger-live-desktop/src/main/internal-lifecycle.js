@@ -1,8 +1,9 @@
 // @flow
 import { app, ipcMain } from "electron";
 import path from "path";
-import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
+import { setTags } from "~/sentry/main";
 import logger from "~/logger";
 import { getMainWindow } from "./window-lifecycle";
 import InternalProcess from "./InternalProcess";
@@ -14,11 +15,13 @@ const hydratedPerCurrency = {};
 // ~~~
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
+const HOME_DIRECTORY = app.getPath("home");
 
 const internal = new InternalProcess({ timeout: 3000 });
 
 let sentryEnabled = null;
 let userId = null;
+let sentryTags = null;
 
 export function getSentryEnabled(): boolean | null {
   return sentryEnabled;
@@ -28,6 +31,16 @@ export function setUserId(id: string) {
   userId = id;
 }
 
+ipcMain.handle("set-sentry-tags", (event, tags) => {
+  setTags(tags);
+  const tagsJSON = JSON.stringify(tags);
+  sentryTags = tagsJSON;
+  internal.send({
+    type: "set-sentry-tags",
+    tagsJSON,
+  });
+});
+
 const spawnCoreProcess = () => {
   const env = {
     ...getAllEnvs(),
@@ -35,6 +48,8 @@ const spawnCoreProcess = () => {
     ...process.env,
     IS_INTERNAL_PROCESS: 1,
     LEDGER_CONFIG_DIRECTORY,
+    HOME_DIRECTORY,
+    INITIAL_SENTRY_TAGS: sentryTags,
     INITIAL_SENTRY_ENABLED: String(!!sentryEnabled),
     SENTRY_USER_ID: userId,
   };
