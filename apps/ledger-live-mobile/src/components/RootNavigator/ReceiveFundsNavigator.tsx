@@ -109,6 +109,7 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
+          headerLeft: null,
         }}
       />
       {/* Receive Address Device Verification */}

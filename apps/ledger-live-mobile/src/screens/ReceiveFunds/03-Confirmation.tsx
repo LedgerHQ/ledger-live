@@ -28,6 +28,7 @@ import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
+import PreventNativeBack from "../../components/PreventNativeBack";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -126,6 +127,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   return (
     <Flex flex={1} mb={9}>
+      <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
