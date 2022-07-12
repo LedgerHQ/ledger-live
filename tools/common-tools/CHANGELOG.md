@@ -1,5 +1,18 @@
 # live-common-tools
 
+## 0.2.2-yolo.0
+
+### Patch Changes
+
+- Updated dependencies [[`e142b9484`](https://github.com/LedgerHQ/ledger-live/commit/e142b9484e6371539fb392c002e1ebaf7802542b), [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a), [`e4b7dc326`](https://github.com/LedgerHQ/ledger-live/commit/e4b7dc32664d32b43dfae2821c29715ae94a6ab4), [`203b927b4`](https://github.com/LedgerHQ/ledger-live/commit/203b927b4e5bca3402c85a88c536d519adb18c5f), [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/cryptoassets@6.30.0-yolo.0
+  - @ledgerhq/live-common@25.0.0-yolo.0
+  - @ledgerhq/hw-transport-web-ble@6.27.2-yolo.0
+  - @ledgerhq/hw-transport-webhid@6.27.2-yolo.0
+  - @ledgerhq/hw-transport-webusb@6.27.2-yolo.0
+  - @ledgerhq/hw-transport@6.27.2-yolo.0
+  - @ledgerhq/hw-transport-http@6.27.2-yolo.0
+
 ## 0.2.1
 
 ### Patch Changes

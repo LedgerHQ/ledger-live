@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.8.2-yolo.0
+
+### Patch Changes
+
+- Updated dependencies [[`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/icons-ui@0.2.7-yolo.0
+
 ## 0.8.1
 
 ### Patch Changes
