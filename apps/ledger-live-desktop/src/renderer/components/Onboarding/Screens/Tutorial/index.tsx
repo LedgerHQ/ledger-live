@@ -296,13 +296,13 @@ export default function Tutorial({ useCase }: Props) {
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
-            //setHelpPinCode(true);
+            // setHelpPinCode(true);
           }
           setHelpPinCode(true);
           // useCase === UseCase.recoveryPhrase
-          /*else {
+          /* else {
             history.push(`${path}/${ScreenId.existingRecoveryPhrase}`);
-          }*/
+          } */
         },
         previous: () => history.push(`${path}/${ScreenId.pinCode}`),
       },

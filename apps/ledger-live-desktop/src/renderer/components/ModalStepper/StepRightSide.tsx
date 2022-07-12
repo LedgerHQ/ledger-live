@@ -18,7 +18,9 @@ export type StepRightSideProps = {
 const StepRightSide = (props: StepRightSideProps) => {
   const { AsideRight, rightSideBgColor } = props;
   return (
-    <Container backgroundColor={rightSideBgColor || "palette.primary.c60"}>{AsideRight || null}</Container>
+    <Container backgroundColor={rightSideBgColor || "palette.primary.c60"}>
+      {AsideRight || null}
+    </Container>
   );
 };
 
