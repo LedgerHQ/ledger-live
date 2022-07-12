@@ -68,11 +68,10 @@ function Rule({ type, children }: RuleProps) {
   );
 }
 
-const PinHelpContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
+const PinHelpContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  height: "100%",
+})``;
 
 export function PinHelp(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
