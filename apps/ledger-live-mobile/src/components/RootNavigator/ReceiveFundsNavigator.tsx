@@ -1,9 +1,10 @@
 // @flow
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
+import { HeaderBackButton } from "@react-navigation/elements";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
 import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
@@ -16,6 +17,8 @@ import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
 
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import HeaderRightClose from "../HeaderRightClose";
+import { track } from "../../analytics";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -24,6 +27,14 @@ export default function ReceiveFundsNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
+  const onSelectCryptoClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: ScreenName.ReceiveSelectCrypto,
+    });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -38,6 +49,7 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerLeft: null,
           headerTitle: "",
+          headerRight: <HeaderRightClose onClose={onSelectCryptoClose} />,
         }}
       />
 
