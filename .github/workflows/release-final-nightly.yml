@@ -61,7 +61,7 @@ jobs:
       - name: publish nightly
         run: pnpm changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:

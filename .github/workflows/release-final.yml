@@ -43,7 +43,7 @@ jobs:
       - name: publish release
         run: pnpm changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
         id: desktop-changed
         run: |
