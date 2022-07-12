@@ -4,7 +4,7 @@ import { flatten } from "lodash";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { Transaction } from "@ledgerhq/hw-app-btc/lib/types";
+import { Transaction } from "@ledgerhq/hw-app-btc/types";
 import { Currency } from "./crypto/types";
 import { TransactionInfo, DerivationModes } from "./types";
 import { Account, SerializedAccount } from "./account";
@@ -117,10 +117,12 @@ class BitcoinLikeWallet {
     account: Account,
     feePerByte: number,
     excludeUTXOs: Array<{ hash: string; outputIndex: number }>,
-    pickUnconfirmedRBF: boolean,
     outputAddresses: string[] = []
   ) {
     const addresses = await account.xpub.getXpubAddresses();
+    const changeAddresses = (await account.xpub.getAccountAddresses(1)).map(
+      (item) => item.address
+    );
     const utxos = flatten(
       await Promise.all(
         addresses.map((address) =>
@@ -139,7 +141,11 @@ class BitcoinLikeWallet {
             excludeUtxo.outputIndex === utxo.output_index
         )
       ) {
-        if ((pickUnconfirmedRBF && utxo.rbf) || utxo.block_height !== null) {
+        // we can use either non pending utxo or change utxo
+        if (
+          changeAddresses.includes(utxo.address) ||
+          utxo.block_height !== null
+        ) {
           usableUtxoCount++;
           balance = balance.plus(utxo.value);
         }

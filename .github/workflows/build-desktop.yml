@@ -32,7 +32,7 @@ jobs:
 
   start-runner:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -42,7 +42,7 @@ jobs:
 
   stop-runner:
     name: "stop ec2 instance"
-    if: ${{ always() && needs.start-runner.result == 'success' && needs.is-org-member.outputs.is-org-member }}
+    if: ${{ always() && needs.start-runner.result == 'success' && fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member, start-runner, build-desktop-app-linux]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
     with:
@@ -53,7 +53,7 @@ jobs:
 
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
+          # cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
@@ -102,7 +102,7 @@ jobs:
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
+    if: ${{ !fromJSON(needs.is-org-member.outputs.is-org-member) }}
     needs: [is-org-member]
     runs-on: ubuntu-latest
     env:
@@ -130,7 +130,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
+          # cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server
@@ -220,7 +220,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: pnpm
+          # cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
       - name: TurboRepo local server

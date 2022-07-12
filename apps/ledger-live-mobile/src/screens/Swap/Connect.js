@@ -2,8 +2,8 @@
 
 import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useTheme } from "@react-navigation/native";
 import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";

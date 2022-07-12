@@ -2,8 +2,8 @@
 import React, { useCallback } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
+import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import {
   NotificationsMedium,
@@ -20,8 +20,8 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
-import { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import Touchable from "../../components/Touchable";
 import { NavigatorName, ScreenName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";

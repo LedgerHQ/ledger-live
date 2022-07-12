@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Action, State } from "@ledgerhq/live-common/lib/apps";
+import { Action, State } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
 
 import { Flex, Text } from "@ledgerhq/native-ui";

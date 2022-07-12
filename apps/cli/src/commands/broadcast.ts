@@ -1,7 +1,7 @@
 import { from } from "rxjs";
 import { map, concatMap } from "rxjs/operators";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { toOperationRaw } from "@ledgerhq/live-common/lib/account";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { toOperationRaw } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferSignedOperationsOpts } from "../signedOperation";

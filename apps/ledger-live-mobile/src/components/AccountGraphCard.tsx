@@ -7,13 +7,13 @@ import React, {
   useEffect,
 } from "react";
 import { useTheme } from "styled-components/native";
-import { Unit, Currency, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { Unit, Currency, AccountLike } from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/lib/portfolio/v2/types";
+} from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   Box,
   Flex,
