@@ -233,8 +233,8 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
           hideBackButton
           continueLabel={
             stepIndex + 1 >= stepCount
-              ? t("v3.onboarding.quizz.buttons.finish")
-              : t("v3.onboarding.quizz.buttons.next")
+              ? t("onboarding.quizz.buttons.finish")
+              : t("onboarding.quizz.buttons.next")
           }
           hideContinueButton={!userMadeAChoice}
           onClickContinue={onClickContinue}

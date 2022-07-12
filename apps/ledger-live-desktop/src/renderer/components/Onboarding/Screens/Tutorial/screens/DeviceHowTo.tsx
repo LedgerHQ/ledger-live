@@ -4,7 +4,7 @@ import { Bullet, Title, Column, AnimationContainer, AsideFooter } from "../share
 
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index.v3";
+import { OnboardingContext } from "../../../index";
 
 const steps = [
   {
