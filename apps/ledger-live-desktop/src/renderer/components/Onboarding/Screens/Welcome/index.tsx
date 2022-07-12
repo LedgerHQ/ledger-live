@@ -7,7 +7,7 @@ import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel";
 import { urls } from "~/config/urls";
-import { Text, Button, Logos, Icons, InvertThemeV3 } from "@ledgerhq/react-ui";
+import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 
 import accessCrypto from "./assets/accessCrypto.png";
 import ownPrivateKey from "./assets/ownPrivateKey.png";
@@ -29,58 +29,57 @@ const StyledLink = styled(Text)`
   cursor: pointer;
 `;
 
-const WelcomeContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-`;
+const WelcomeContainer = styled(Flex).attrs({
+  flexDirection: "row",
+  height: "100%",
+  width: "100%",
+})``;
 
-const LeftContainer = styled.div`
-  width: 386px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 40px;
-  z-index: 999;
-`;
+const LeftContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  justifyContent: "space-between",
+  width: "386px",
+  height: "100%",
+  padding: "40px",
+  zIndex: 999,
+})``;
 
-const Presentation = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const Presentation = styled(Flex).attrs({flexDirection: "column"})``;
 
-const ProductHighlight = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 4px;
-`;
+const ProductHighlight = styled(Flex).attrs({
+  flexDirection: "column",
+  mb: 2,
+})``;
 
-const TermsAndConditionsText = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 24px;
-`;
+const TermsAndConditionsContainer = styled(Flex).attrs({
+  justifyContent: "center",
+  flexWrap: "wrap",
+  marginTop: "24px",
+})``;
 
-const RightContainer = styled.div`
-  height: 100%;
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
-  background-color: ${p => p.theme.colors.palette.constant.purple};
-`;
+const TermsAndConditionsText = styled(Text).attrs({
+  flex: 1,
+  color: "neutral.c80",
+  textAlign: "center",
+  overflowWrap: "normal",
+  whiteSpace: "normal",
+})``;
 
-const CarouselTopBar = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 40px;
-  width: 100%;
-`;
+const RightContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  justifyContent: "space-between",
+  height: "100%",
+  overflow: "hidden",
+  flexGrow: 1,
+  backgroundColor: "constant.purple",
+})``;
+
+const CarouselTopBar = styled(Flex).attrs({
+  justifyContent: "flex-end",
+  alignItems: "center",
+  padding: "40px",
+  width: "100%",
+})``;
 
 const Description = styled(Text)`
   white-space: pre-line;
@@ -125,10 +124,10 @@ export function Welcome() {
       <LeftContainer>
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text variant="h1" ff="Alpha|Medium" pt={"32px"} pb={"20px"}>
+          <Text variant="h1" pt={10} pb={7}>
             {t("onboarding.screens.welcome.title")}
           </Text>
-          <Description variant="body" ff="Inter|Medium" fontSize={14}>
+          <Description variant="body">
             {t("onboarding.screens.welcome.description")}
           </Description>
         </Presentation>
@@ -146,26 +145,24 @@ export function Welcome() {
           <Button iconPosition="right" variant="main" onClick={buyNanoX} outline={true}>
             {t("onboarding.screens.welcome.buyLink")}
           </Button>
-          <TermsAndConditionsText>
-            <Text marginRight={2} color={colors.neutral.c80}>
-              {t("onboarding.screens.welcome.byTapping")}
-            </Text>
-            <StyledLink onClick={openTermsAndConditions} marginRight={2} color={colors.primary.c80}>
-              {t("onboarding.screens.welcome.termsAndConditions")}
-            </StyledLink>
-            <Text marginRight={2} color={colors.neutral.c80}>
-              {t("onboarding.screens.welcome.and")}
-            </Text>
-            <StyledLink onClick={openPrivacyPolicy} marginRight={2} color={colors.primary.c80}>
-              {t("onboarding.screens.welcome.privacyPolicy")}
-            </StyledLink>
-          </TermsAndConditionsText>
+          <TermsAndConditionsContainer>
+            <TermsAndConditionsText>
+              {t("onboarding.screens.welcome.byTapping")}{" "}
+              <StyledLink onClick={openTermsAndConditions} marginRight={2} color={colors.primary.c80}>
+                {t("onboarding.screens.welcome.termsAndConditions")}
+              </StyledLink>
+              {t("onboarding.screens.welcome.and")}{" "}
+              <StyledLink onClick={openPrivacyPolicy} marginRight={2} color={colors.primary.c80}>
+                {t("onboarding.screens.welcome.privacyPolicy")}
+              </StyledLink>
+            </TermsAndConditionsText>
+          </TermsAndConditionsContainer>
         </ProductHighlight>
       </LeftContainer>
       <RightContainer>
         <CarouselTopBar>
           {!!onboardingOrigin && (
-            <Button small onClick={handlePrevious}>
+            <Button size="small" onClick={handlePrevious}>
               {t("common.previous")}
             </Button>
           )}
