@@ -1,6 +1,5 @@
 import React from "react";
-import { Flex, Icons, Text, Button } from "@ledgerhq/react-ui";
-import { BoxedIcon } from "@ledgerhq/react-ui/components/asorted/Icon";
+import { BoxedIcon, Flex, Icons, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
 type Props = {
