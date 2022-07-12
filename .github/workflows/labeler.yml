@@ -16,7 +16,7 @@ jobs:
         if: github.event.pull_request.head.repo.fork
         with:
           script: |
-            const labels = await octokit.rest.issues.listLabelsOnIssue({
+            const labels = await github.rest.issues.listLabelsOnIssue({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
