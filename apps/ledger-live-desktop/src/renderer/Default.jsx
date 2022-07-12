@@ -186,14 +186,13 @@ export default function Default() {
             {process.env.DISABLE_TRANSACTION_BROADCAST ? (
               <DisableTransactionBroadcastWarning />
             ) : null}
-            {/* <Onboarding /> */}
             <Switch>
-              <Route exact path="/walletconnect">
-                <WalletConnect />
-              </Route>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
               {hasCompletedOnboarding && (
                 <Route>
+                  <Route exact path="/walletconnect">
+                    <WalletConnect />
+                  </Route>
                   <IsNewVersion />
                   <IsSystemLanguageAvailable />
                   <IsTermOfUseUpdated />
