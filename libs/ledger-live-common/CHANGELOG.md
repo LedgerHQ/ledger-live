@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.0.0-nightly.3
+
+### Minor Changes
+
+- [#460](https://github.com/LedgerHQ/ledger-live/pull/460) [`e4b7dc326`](https://github.com/LedgerHQ/ledger-live/commit/e4b7dc32664d32b43dfae2821c29715ae94a6ab4) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Create index in real time instead of loading from app.json for btc wallet. Fix bug: https://ledgerhq.atlassian.net/browse/LIVE-2495
+
 ## 25.0.0-nightly.2
 
 ### Patch Changes

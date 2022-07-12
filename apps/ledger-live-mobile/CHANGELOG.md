@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.4.0-nightly.1
+
+### Minor Changes
+
+- [#389](https://github.com/LedgerHQ/ledger-live/pull/389) [`d4a71a6d8`](https://github.com/LedgerHQ/ledger-live/commit/d4a71a6d890d85f1ff36641949e3a8396d0a8eb9) Thanks [@laure-lebon](https://github.com/laure-lebon)! - Fix wrong gas Price Polygon
+
+### Patch Changes
+
+- Updated dependencies [[`e4b7dc326`](https://github.com/LedgerHQ/ledger-live/commit/e4b7dc32664d32b43dfae2821c29715ae94a6ab4)]:
+  - @ledgerhq/live-common@25.0.0-nightly.3
+
 ## 3.3.3-nightly.0
 
 ### Patch Changes
