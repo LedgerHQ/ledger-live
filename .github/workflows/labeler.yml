@@ -16,18 +16,23 @@ jobs:
         if: github.event.pull_request.head.repo.fork
         with:
           script: |
-            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            }) || [];
-            console.log(labels)
-            if(labels.find(label => label.name === 'fork')) {
-              return
+            try {
+              const { data: rawLabels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              }) || [];
+              const labels = rawLabels.map(label => label.name)
+              console.log(labels)
+              if(labels.includes('fork')) {
+                return
+              }
+              await github.rest.issues.setLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [...labels, 'fork']
+              })
+            } catch(error) {
+              console.error(error)
             }
-            await github.rest.issues.setLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: [...labels, 'fork']
-            })
