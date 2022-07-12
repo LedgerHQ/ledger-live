@@ -3,6 +3,8 @@ import React, { useEffect, useState, createContext } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 
+import { Flex } from "@ledgerhq/react-ui";
+
 // screens
 import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
 import { SelectDevice } from "~/renderer/components/Onboarding/Screens/SelectDevice";
@@ -18,20 +20,19 @@ import Box from "../Box";
 
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
-const OnboardingContainer = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  position: relative;
-`;
+const OnboardingContainer = styled(Flex).attrs({
+  width: "100%",
+  height: "100%",
+  position: "relative"
+})``;
 
 const DURATION = 200;
 
-const ScreenContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-
+const ScreenContainer = styled(Flex).attrs({
+  width: "100%",
+  height: "100%",
+  position: "relative"
+})`
   &.page-switch-appear {
     opacity: 0;
   }
