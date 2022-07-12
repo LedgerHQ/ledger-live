@@ -1,18 +1,16 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
-import ChevronRight from "~/renderer/icons/ChevronRight";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 
-const PinHelpContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 80px;
-`;
+const PinHelpContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  mb: "80px",
+})``;
 
 export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();

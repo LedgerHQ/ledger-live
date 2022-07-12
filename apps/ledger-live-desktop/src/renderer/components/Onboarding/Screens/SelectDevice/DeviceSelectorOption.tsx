@@ -1,12 +1,11 @@
 import React from "react";
 import styled, { css, DefaultTheme, ThemeProps } from "styled-components";
-import { Text, Button } from "@ledgerhq/react-ui";
+import { Flex, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
-const DeviceIllustrationContainer = styled.div`
+const DeviceIllustrationContainer = styled(Flex)`
   transition: transform ease-out 150ms;
   will-change: transform;
-  display: flex;
 `;
 
 type BorderProps = ThemeProps<DefaultTheme> & { isFirst: boolean; isLast: boolean };
@@ -29,14 +28,14 @@ const SelectButton = styled(Button)`
   margin-top: 32px;
 `;
 
-const Container = styled.div`
-  display: flex;
-  flex: 1;
-  height: 100%;
-  padding-top: 38.43px;
-  justify-content: center;
+const Container = styled(Flex).attrs((p: BorderProps) => ({
+  flex: 1,
+  height: "100%",
+  paddingTop: "38.43px",
+  justifyContent: "center",
+  backgroundColor: bkgColor(p),
+}))`
   transition: background border 200ms;
-  background-color: ${bkgColor};
   &:hover {
     background-color: ${bkgColorHover};
   }
@@ -49,17 +48,15 @@ const Container = styled.div`
   ${borderCSS}
 `;
 
-const ContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: center;
-  align-self: center;
+const ContentContainer = styled(Flex).attrs({
+  flex: 1,
+  flexDirection: "column",
+  alignItems: "center",
+  alignSelf: "center",
+})`
 `;
 
-const DeviceName = styled(Text)`
-  color: ${p => p.theme.colors.palette.neutral.c100};
-`;
+const DeviceName = styled(Text).attrs({color: "neutral.c100"})``;
 
 interface DeviceSelectOptionProps {
   label: string;
