@@ -1,5 +1,5 @@
 /* eslint-disable import/named */
-import React, { useCallback, useMemo, useState, memo } from "react";
+import React, { useCallback, useMemo, useState, memo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, {
@@ -31,6 +31,7 @@ import globalSyncRefreshControl from "../../../components/globalSyncRefreshContr
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
 import Header from "../Header";
 import TrackScreen from "../../../analytics/TrackScreen";
+import { screen, track } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
 import { useProviders } from "../../Swap/SwapEntry";
@@ -46,6 +47,10 @@ import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Currency } from "@ledgerhq/live-common/types/index";
 import { ExploreWeb3Slide } from "../../../components/Carousel/shared";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../../helpers/routeHooks";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
   Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
@@ -96,6 +101,7 @@ const SectionTitle = ({
   const onLinkPress = useCallback(() => {
     if (onSeeAllPress) {
       onSeeAllPress();
+      track("button_clicked", { button: "See All", screen: "Wallet" });
     }
     if (navigation && navigatorName) {
       navigation.navigate(navigatorName, { screen: screenName, params });
@@ -174,11 +180,13 @@ function PortfolioScreen({ navigation }: Props) {
     [topCryptoCurrencies],
   );
 
+  const currentRoute = useCurrentRouteName();
+
   const data = useMemo(
     () => [
       hasOrderedNano && (
         <Box mx={6} mb={5} mt={6}>
-          <SetupDeviceBanner />
+          <SetupDeviceBanner screen="Wallet" />
         </Box>
       ),
       <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
@@ -199,7 +207,7 @@ function PortfolioScreen({ navigation }: Props) {
           navigatorName={NavigatorName.PortfolioAccounts}
           containerProps={{ mb: "9px" }}
         />
-        <ReadOnlyAssets assets={assetsToDisplay} />
+        <ReadOnlyAssets assets={assetsToDisplay} screen="Wallet" />
       </SectionContainer>,
       !hasOrderedNano && (
         <BuyDeviceBanner
@@ -212,6 +220,11 @@ function PortfolioScreen({ navigation }: Props) {
           buttonLabel={t("buyDevice.bannerButtonTitle")}
           buttonSize="small"
           event="button_clicked"
+          eventProperties={{
+            button: "Discover the Nano",
+            screen: currentRoute,
+          }}
+          screen="Wallet"
           {...IMAGE_PROPS_BIG_NANO}
         />
       ),
@@ -224,19 +237,21 @@ function PortfolioScreen({ navigation }: Props) {
       showCarousel,
       navigation,
       assetsToDisplay,
+      currentRoute,
     ],
   );
+
+  const previousRoute = usePreviousRouteName();
+
+  useEffect(() => {
+    screen("ReadOnly", "Wallet", { source: previousRoute });
+  }, [previousRoute]);
 
   return (
     <>
       <TabBarSafeAreaView>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
-        <TrackScreen
-          category="Portfolio"
-          accountsLength={topCryptoCurrencies.length}
-          discreet={discreetMode}
-        />
         <Box bg={"background.main"}>
           <Header
             counterValueCurrency={counterValueCurrency}

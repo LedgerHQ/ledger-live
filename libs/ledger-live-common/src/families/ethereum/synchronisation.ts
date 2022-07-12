@@ -20,7 +20,7 @@ import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId, encodeSubOperationId } from "../../operation";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
@@ -46,7 +46,13 @@ export const getAccountShape: GetAccountShape = async (
     : [];
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
+  const currentBlockP = fetchCurrentBlock(currency);
+  const balanceP = api.getAccountBalance(address);
   // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
+  // Check if the block hash exists on chain to prevent reorg issue
+  const blockHashExistsOnChain = await api
+    .getBlockByHash(mostRecentStableOperation?.blockHash)
+    .then(Boolean);
   const syncHash =
     JSON.stringify(blacklistedTokenIds || []) +
     "_" +
@@ -58,12 +64,11 @@ export const getAccountShape: GetAccountShape = async (
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
     mostRecentStableOperation &&
+    blockHashExistsOnChain &&
     !outdatedSyncHash
       ? mostRecentStableOperation.blockHash
       : undefined;
   const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
-  const currentBlockP = fetchCurrentBlock(currency);
-  const balanceP = api.getAccountBalance(address);
   const [txs, currentBlock, balance] = await Promise.all([
     txsP,
     currentBlockP,
@@ -167,7 +172,10 @@ export const getAccountShape: GetAccountShape = async (
     ...o,
     subOperations: inferSubOperations(o.hash, subAccounts),
   }));
-  const operations = mergeOps(initialStableOperations, newOps);
+  const operations = mergeOps(
+    blockHashExistsOnChain ? initialStableOperations : [],
+    newOps
+  );
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
@@ -274,7 +282,7 @@ const txToOps =
     // We are putting the sub operations in place for now, but they will later be exploded out of the operations back to their token accounts
     const subOperations = !transfer_events
       ? []
-      : flatMap(transfer_events.list, (event) => {
+      : flatMap(transfer_events.list, (event, i) => {
           const from = safeEncodeEIP55(event.from);
           const to = safeEncodeEIP55(event.to);
           const sending = addr === from;
@@ -296,7 +304,7 @@ const txToOps =
           if (sending) {
             const type = "OUT";
             all.push({
-              id: encodeOperationId(accountId, hash, type),
+              id: encodeSubOperationId(accountId, hash, type, i),
               hash,
               type,
               value,
@@ -315,7 +323,7 @@ const txToOps =
           if (receiving) {
             const type = "IN";
             all.push({
-              id: encodeOperationId(accountId, hash, type),
+              id: encodeSubOperationId(accountId, hash, type, i),
               hash,
               type,
               value,
