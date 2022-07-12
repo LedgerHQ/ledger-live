@@ -1,4 +1,4 @@
-import { Observable, from, of, throwError, EMPTY } from "rxjs";
+import { Observable, from, of, EMPTY, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import { DeviceOnDashboardExpected, TransportError, TransportStatusError, LanguageNotFound } from "@ledgerhq/errors";
 
@@ -8,20 +8,13 @@ import getDeviceInfo from "./getDeviceInfo";
 import { Language, languageIds, LanguagePackage } from "../types/languages";
 import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
-import { AppAndVersion } from "./connectApp";
-import appSupportsQuitApp from "../appSupportsQuitApp";
-import quitApp from "./quitApp";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import Transport from "@ledgerhq/hw-transport";
+import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 
 export type InstallLanguageEvent =
-  | {
-      type: "appDetected";
-    }
-  | {
-      type: "unresponsiveDevice";
-    }
+  | AttemptToQuitAppEvent
   | {
       type: "progress";
       progress: number;
@@ -32,20 +25,6 @@ export type InstallLanguageEvent =
   | {
       type: "languageInstalled";
     };
-
-const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<InstallLanguageEvent> =>
-  appAndVersion && appSupportsQuitApp(appAndVersion)
-    ? from(quitApp(transport)).pipe(
-        concatMap(() =>
-          of(<InstallLanguageEvent>{
-            type: "unresponsiveDevice",
-          })
-        ),
-        catchError((e) => throwError(e))
-      )
-    : of({
-        type: "appDetected",
-      });
 
 export type InstallLanguageRequest = {
   deviceId: string;
@@ -72,7 +51,7 @@ export default function installLanguage({
 
               if (language === "english") {
                 await uninstallAllLanguages(transport);
-                
+
                 subscriber.next({
                   type: "languageInstalled",
                 });
@@ -140,7 +119,7 @@ export default function installLanguage({
                     e.statusCode
                   ))
               ) {
-                const quitAppObservable = from(getAppAndVersion(transport)).pipe(
+                return from(getAppAndVersion(transport)).pipe(
                   concatMap((appAndVersion) => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
@@ -149,15 +128,9 @@ export default function installLanguage({
                         });
                   })
                 );
-
-                quitAppObservable.subscribe(
-                  (event) => subscriber.next(event),
-                  (error) => subscriber.error(error)
-                );
               }
-
-              subscriber.error(e);
-              return EMPTY;
+              
+              return throwError(e);
             })
           )
           .subscribe();
