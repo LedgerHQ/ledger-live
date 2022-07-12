@@ -1,1 +1,3 @@
-export type { CryptoCurrencyIds } from "./currencies";
+import { cryptocurrenciesById } from "./currencies";
+
+export type CryptoCurrencyIds = keyof typeof cryptocurrenciesById;

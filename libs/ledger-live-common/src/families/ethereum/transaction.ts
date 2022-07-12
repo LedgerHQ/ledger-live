@@ -16,11 +16,11 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import {
-  formatTransactionStatusCommon,
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -330,10 +330,6 @@ export const estimateGasLimit: (
     "+" +
     String(r.amplifier)
 );
-
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
-const formatTransactionStatus = formatTransactionStatusCommon;
 
 export default {
   formatTransaction,

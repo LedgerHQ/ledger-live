@@ -1,10 +1,10 @@
 import type { Transaction, TransactionRaw } from "./types";
 import {
-  formatTransactionStatusCommon,
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
@@ -43,10 +43,6 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
     family: t.family,
   };
 }
-
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
-const formatTransactionStatus = formatTransactionStatusCommon;
 
 export default {
   formatTransaction,

@@ -13,11 +13,11 @@ import type {
   TransferCommand,
 } from "./types";
 import {
-  formatTransactionStatusCommon,
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getAccountUnit } from "../../account";
@@ -218,9 +218,6 @@ function formatStakeSplit(
     .join("\n");
   return "\n" + str;
 }
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
-const formatTransactionStatus = formatTransactionStatusCommon;
 
 export default {
   formatTransaction,

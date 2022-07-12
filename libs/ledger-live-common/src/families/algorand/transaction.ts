@@ -5,11 +5,11 @@ import type {
   AlgorandTransactionRaw,
 } from "./types";
 import {
-  formatTransactionStatusCommon,
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -79,10 +79,6 @@ const toTransactionRaw = (t: AlgorandTransaction): AlgorandTransactionRaw => {
     assetId: t.assetId,
   };
 };
-
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
-const formatTransactionStatus = formatTransactionStatusCommon;
 
 export default {
   formatTransaction,

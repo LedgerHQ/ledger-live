@@ -76,7 +76,7 @@ const ethereumUnits = (name, code) => [
   },
 ];
 
-const cryptocurrenciesById: Record<string, CryptoCurrency> = {
+export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   near: {
     type: "CryptoCurrency",
     id: "near",
@@ -3287,11 +3287,6 @@ for (const id in cryptocurrenciesById) {
   const definition = cryptocurrenciesById[id];
   registerCryptoCurrency(id, definition);
 }
-
-/**
- *
- */
-export type CryptoCurrencyIds = keyof typeof cryptocurrenciesById;
 
 /**
  *

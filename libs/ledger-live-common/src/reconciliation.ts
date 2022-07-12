@@ -33,20 +33,19 @@ import {
   toTronResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
-import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
-import { TronAccount, TronAccountRaw } from "./families/tron/types";
-import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import { AlgorandAccount, AlgorandAccountRaw } from "./families/algorand/types";
-import _ from "lodash";
-import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
-import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
-import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
+import { BitcoinAccount, BitcoinAccountRaw } from "./families/bitcoin/types";
 import { CardanoAccount, CardanoAccountRaw } from "./families/cardano/types";
+import { CosmosAccount, CosmosAccountRaw } from "./families/cosmos/types";
 import {
   CryptoOrgAccount,
   CryptoOrgAccountRaw,
 } from "./families/crypto_org/types";
+import { ElrondAccount, ElrondAccountRaw } from "./families/elrond/types";
+import { PolkadotAccount, PolkadotAccountRaw } from "./families/polkadot/types";
 import { SolanaAccount, SolanaAccountRaw } from "./families/solana/types";
+import { TezosAccount, TezosAccountRaw } from "./families/tezos/types";
+import { TronAccount, TronAccountRaw } from "./families/tron/types";
 
 // aim to build operations with the minimal diff & call to coin implementation possible
 export async function minimalOperationsBuilder<CO>(
@@ -644,5 +643,5 @@ function stepBuilder(state, newOp, i) {
 }
 
 function isSameResources(a: any, b: any) {
-  return _.isEqual(a, b);
+  return isEqual(a, b);
 }

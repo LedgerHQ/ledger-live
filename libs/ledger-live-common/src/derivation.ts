@@ -34,6 +34,7 @@ export type ModeSpec = {
   tag?: string;
   addressFormat?: string;
 };
+
 export type DerivationMode = keyof typeof modes;
 
 const modes = Object.freeze({

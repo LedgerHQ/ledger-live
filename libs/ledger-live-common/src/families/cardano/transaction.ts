@@ -1,11 +1,11 @@
 import type { Transaction, TransactionRaw } from "./types";
 import { BigNumber } from "bignumber.js";
 import {
-  formatTransactionStatusCommon,
+  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
-  fromTransactionStatusRawCommon,
+  fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
-  toTransactionStatusRawCommon,
+  toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -54,10 +54,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     memo: t.memo,
   };
 };
-
-const fromTransactionStatusRaw = fromTransactionStatusRawCommon;
-const toTransactionStatusRaw = toTransactionStatusRawCommon;
-const formatTransactionStatus = formatTransactionStatusCommon;
 
 export default {
   formatTransaction,
