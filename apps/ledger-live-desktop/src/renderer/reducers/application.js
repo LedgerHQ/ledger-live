@@ -16,6 +16,7 @@ export type ApplicationState = {
   debug: {
     alwaysShowSkeletons: boolean,
   },
+  onboardingRelaunched: boolean,
 };
 
 const { language, region } = getParsedSystemLocale();
@@ -35,6 +36,7 @@ const state: ApplicationState = {
   debug: {
     alwaysShowSkeletons: false,
   },
+  onboardingRelaunched: false,
 };
 
 const handlers = {
@@ -57,27 +59,32 @@ const handlers = {
 
 // Selectors
 
-export const isLocked = (state: Object) => state.application.isLocked === true;
+export const isLocked = (state: { application: ApplicationState }) =>
+  state.application.isLocked === true;
 
-export const hasPasswordSelector = (state: Object) => state.application.hasPassword === true;
+export const hasPasswordSelector = (state: { application: ApplicationState }) =>
+  state.application.hasPassword === true;
 
-export const hasDismissedCarouselSelector = (state: Object) =>
+export const hasDismissedCarouselSelector = (state: { application: ApplicationState }) =>
   state.application.dismissedCarousel === true;
 
-export const osDarkModeSelector = (state: Object) => state.application.osDarkMode;
+export const osDarkModeSelector = (state: { application: ApplicationState }) =>
+  state.application.osDarkMode;
 
-export const alwaysShowSkeletonsSelector = (state: Object) =>
+export const alwaysShowSkeletonsSelector = (state: { application: ApplicationState }) =>
   state.application.debug.alwaysShowSkeletons;
 
-export const osLangAndRegionSelector = (state: Object) => state.application.osLanguage;
+export const osLangAndRegionSelector = (state: { application: ApplicationState }) =>
+  state.application.osLanguage;
 
-export const notSeededDeviceRelaunchSelector = (state: Object) =>
+export const notSeededDeviceRelaunchSelector = (state: { application: ApplicationState }) =>
   state.application.notSeededDeviceRelaunch;
 
-export const onboardingRelaunchedSelector = (state: ApplicationState) =>
-  state.application.onboardingRelaunched as boolean;
+export const onboardingRelaunchedSelector = (state: { application: ApplicationState }) =>
+  state.application.onboardingRelaunched;
 
-export const isNavigationLocked = (state: Object) => state.application.navigationLocked;
+export const isNavigationLocked = (state: { application: ApplicationState }) =>
+  state.application.navigationLocked;
 
 // Exporting reducer
 
