@@ -938,7 +938,7 @@
     "stepWelcome" : {
       "title" : "Ledger'a Hoş Geldiniz",
       "subtitle" : "Dijital mülkiyeti güvenli ve basit hale getiriyoruz.",
-      "start" : "Başlangıç",
+      "start" : "Hemen başla",
       "noDevice" : "Cihazınız yok mu?",
       "buy" : "{{fullDeviceName}} satın al",
       "terms" : "“Hemen Başla” butonuna dokunarak bunlara izin vermiş ve kabul etmiş olursunuz:",
@@ -1558,7 +1558,7 @@
       },
       "addAccounts" : {
         "addAccounts" : "Varlık ekle",
-        "title" : "Başlangıç",
+        "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
       }
     },
@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "İşlem detayları",
+    "title" : "İşlem bilgileri",
     "account" : "Hesap",
     "date" : "Tarih",
     "confirmed" : "Onaylandı",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
-    "noMoreOperations" : "Başka İşlem Yok"
+    "noMoreTransactions" : "Başka işlem yok"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tüm seçimi kaldır",
@@ -1763,7 +1763,7 @@
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
-    "lastOperations" : "Son işlemler",
+    "lastTransactions" : "Son işlemler",
     "emptyState" : {
       "title" : "Henüz kripto varlığınız yok mu?",
       "desc" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz",
@@ -1912,7 +1912,7 @@
     "header" : "Varlık dağılımı",
     "list" : "Varlık dağılımı ({{count}})",
     "assets" : "varlık",
-    "assets_plural" : "güvenle saklayın",
+    "assets_plural" : "varlık",
     "total" : "Toplam bakiye:",
     "listAccount" : "Varlık dağılımı ({{count}})",
     "title" : "Varlıklar",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "Ücretleri düzenle"
-    },
-    "manageCard" : {
-      "title" : "CL Kartı Ayarlayın",
-      "description" : "CL Kartı Sipariş Edin ve Ayarlayın"
     },
     "receive" : {
       "title" : "Al",
@@ -4388,7 +4384,10 @@
       "tokenContractCopied" : "Token Adresi kopyalandı!",
       "tokenId" : "Token Kimliği (Token ID)",
       "tokenIdCopied" : "Token Kimliği kopyalandı!",
-      "quantity" : "Miktar"
+      "quantity" : "Miktar",
+      "attributes" : {
+        "floorPrice" : "Taban Fiyat"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Burada görüntüle:",

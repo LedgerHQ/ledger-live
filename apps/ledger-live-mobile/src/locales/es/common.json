@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Detalles de la operación",
+    "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
     "date" : "Fecha",
     "confirmed" : "Confirmada",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
-    "noMoreOperations" : "No hay otras operaciones"
+    "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deseleccionar todo",
@@ -1763,7 +1763,7 @@
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
-    "lastOperations" : "Últimas operaciones",
+    "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
       "title" : "¿Aún no tienes activos cripto?",
       "desc" : "Verifica que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada para comenzar a recibir",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "Editar tarifas"
-    },
-    "manageCard" : {
-      "title" : "Gestionar Tarjeta CL",
-      "description" : "Pedir y gestionar la Tarjeta CL"
     },
     "receive" : {
       "title" : "Recibir",
@@ -4388,7 +4384,10 @@
       "tokenContractCopied" : "¡Dirección de token copiada!",
       "tokenId" : "ID de token",
       "tokenIdCopied" : "¡ID de token copiado!",
-      "quantity" : "Cantidad"
+      "quantity" : "Cantidad",
+      "attributes" : {
+        "floorPrice" : "Precio base"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ver en",
