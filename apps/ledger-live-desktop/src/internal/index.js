@@ -1,5 +1,5 @@
 // @flow
-import * as Sentry from "@sentry/node";
+import { getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
@@ -16,7 +16,7 @@ process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   unsubscribeAllCommands();
-  Sentry.close(2000);
+  getSentryIfAvailable()?.close(2000);
 });
 
 logger.add(new LoggerTransport());
@@ -101,7 +101,6 @@ process.on("message", m => {
 
     case "init": {
       const { hydratedPerCurrency } = m;
-
       // hydrate all
       log("init", `hydrate currencies ${Object.keys(hydratedPerCurrency).join(", ")}`);
       Object.keys(hydratedPerCurrency).forEach(currencyId => {
@@ -110,7 +109,6 @@ process.on("message", m => {
         const data = serialized && JSON.parse(serialized);
         getCurrencyBridge(currency).hydrate(data, currency);
       });
-
       break;
     }
 
