@@ -84,7 +84,7 @@ const DeviceCard = ({
     illustrations[deviceModel.id]({ color: colors.neutral.c100 }),
   );
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
+  const deviceLocalizationFeatureFlag = true; // useFeature("deviceLocalization");
 
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
