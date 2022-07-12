@@ -2,8 +2,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { noop } from "lodash";
-import { InvertThemeV3 } from "@ledgerhq/react-ui";
-import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
+import { Flex, InvertThemeV3 } from "@ledgerhq/react-ui";
 import ProgressBar from "./ProgressBar";
 import StepLeftSide, { StepLeftSideProps } from "./StepLeftSide";
 import StepRightSide, { StepRightSideProps } from "./StepRightSide";
@@ -11,7 +10,7 @@ import ProgressHeader, { ProgressHeaderProps } from "./ProgressHeader";
 
 export type Props = Omit<StepLeftSideProps, "Header"> & StepRightSideProps & ProgressHeaderProps;
 
-const StepContainer = styled(FlexBox).attrs(() => ({
+const StepContainer = styled(Flex).attrs(() => ({
   flexDirection: "row",
   justifyContent: "space-between",
   position: "relative",
