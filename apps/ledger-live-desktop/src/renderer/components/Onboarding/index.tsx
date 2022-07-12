@@ -23,7 +23,7 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 const OnboardingContainer = styled(Flex).attrs({
   width: "100%",
   height: "100%",
-  position: "relative"
+  position: "relative",
 })``;
 
 const DURATION = 200;
@@ -31,7 +31,7 @@ const DURATION = 200;
 const ScreenContainer = styled(Flex).attrs({
   width: "100%",
   height: "100%",
-  position: "relative"
+  position: "relative",
 })`
   &.page-switch-appear {
     opacity: 0;
