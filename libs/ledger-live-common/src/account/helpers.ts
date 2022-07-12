@@ -142,6 +142,7 @@ export function clearAccount<T extends AccountLike>(account: T): T {
       (account as Account).subAccounts &&
       (account as Account).subAccounts?.map(clearAccount),
   };
+
   if (copy.currency.id === "tron") {
     const tronAcc = copy as TronAccount;
     tronAcc.tronResources = {
