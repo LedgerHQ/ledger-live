@@ -130,7 +130,7 @@ export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
         onClick={props.handleNextInDrawer}
         Icon={() => <Icons.ArrowRightMedium size={18} />}
       >
-        {t("v3.onboarding.screens.welcome.nextButton")}
+        {t("onboarding.screens.welcome.nextButton")}
       </Button>
     </>
   );

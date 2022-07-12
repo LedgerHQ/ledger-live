@@ -3,7 +3,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index.v3";
+import { OnboardingContext } from "../../../index";
 
 const steps = [
   {

@@ -22,42 +22,42 @@ export function Pedagogy({ isOpen, onDone, onClose }: PedagogyProps) {
     <ModalStepper
       dataTestId="v3-onboarding-pedagogy-modal"
       isOpen={isOpen}
-      title={t("v3.onboarding.pedagogy.heading")}
+      title={t("onboarding.pedagogy.heading")}
       steps={[
         {
           bgColor: "palette.constant.purple",
-          title: t("v3.onboarding.pedagogy.screens.accessYourCoins.title"),
-          description: t("v3.onboarding.pedagogy.screens.accessYourCoins.description"),
+          title: t("onboarding.pedagogy.screens.accessYourCoins.title"),
+          description: t("onboarding.pedagogy.screens.accessYourCoins.description"),
           AsideRight: <Illustration size={280} lightSource={bitcoinBox} darkSource={bitcoinBox} />,
         },
         {
           bgColor: "palette.constant.purple",
-          title: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.title"),
-          description: t("v3.onboarding.pedagogy.screens.ownYourPrivateKey.description"),
+          title: t("onboarding.pedagogy.screens.ownYourPrivateKey.title"),
+          description: t("onboarding.pedagogy.screens.ownYourPrivateKey.description"),
           AsideRight: <Illustration size={280} lightSource={keyInABall} darkSource={keyInABall} />,
         },
         {
           bgColor: "palette.constant.purple",
-          title: t("v3.onboarding.pedagogy.screens.stayOffline.title"),
-          description: t("v3.onboarding.pedagogy.screens.stayOffline.description"),
+          title: t("onboarding.pedagogy.screens.stayOffline.title"),
+          description: t("onboarding.pedagogy.screens.stayOffline.description"),
           AsideRight: (
             <Illustration size={280} lightSource={lnNoWireless} darkSource={lnNoWireless} />
           ),
         },
         {
           bgColor: "palette.constant.purple",
-          title: t("v3.onboarding.pedagogy.screens.validateTransactions.title"),
-          description: t("v3.onboarding.pedagogy.screens.validateTransactions.description"),
+          title: t("onboarding.pedagogy.screens.validateTransactions.title"),
+          description: t("onboarding.pedagogy.screens.validateTransactions.description"),
           AsideRight: (
             <Illustration size={280} lightSource={phoneAndCoins} darkSource={phoneAndCoins} />
           ),
         },
         {
           bgColor: "palette.constant.purple",
-          title: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.title"),
-          description: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.description"),
+          title: t("onboarding.pedagogy.screens.setUpNanoWallet.title"),
+          description: t("onboarding.pedagogy.screens.setUpNanoWallet.description"),
           AsideRight: <Illustration size={280} lightSource={lnAndGlass} darkSource={lnAndGlass} />,
-          continueLabel: t("v3.onboarding.pedagogy.screens.setUpNanoWallet.CTA"),
+          continueLabel: t("onboarding.pedagogy.screens.setUpNanoWallet.CTA"),
         },
       ]}
       onClose={onClose}
