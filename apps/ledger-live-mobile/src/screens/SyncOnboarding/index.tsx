@@ -104,7 +104,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
             device={device}
-            isDisplayed={!!isDisplayed}
+            isDisplayed={isDisplayed}
             onComplete={() =>
               setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
             }

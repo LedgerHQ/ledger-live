@@ -10,7 +10,18 @@ import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/lib/hw/hooks/useGenuineCheck";
 import { useGetLatestFirmware } from "@ledgerhq/live-common/lib/hw/hooks/useGetLatestFirmware";
 
-type CheckStatus = "inactive" | "active" | "completed" | "failed";
+import GenuineCheckDrawer from "./GenuineCheckDrawer";
+import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
+import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
+import GenuineCheckActiveDrawer from "./GenuineCheckActiveDrawer";
+
+type CheckStatus =
+  | "inactive"
+  | "requested"
+  | "active"
+  | "cancelled"
+  | "completed"
+  | "failed";
 
 type CheckCardProps = FlexBoxProps & {
   title: string;
@@ -27,7 +38,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
       return <CheckAloneMedium color="success.c100" size={16} />;
     }
     if (status === "failed") {
-      return <CircledAlertMedium color="warning.c100" size={32} />;
+      return <CircledAlertMedium color="warning.c100" size={24} />;
     }
     return <Text variant="body">{index}</Text>;
   }, []);
@@ -49,7 +60,7 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
 
 export type Props = {
   device: Device;
-  isDisplayed: boolean;
+  isDisplayed?: boolean;
   onComplete?: () => void;
 };
 
@@ -86,39 +97,25 @@ export const SoftwareChecksStep = ({
 
   // Handles genuine check UI and logic states
   useEffect(() => {
-    if (isDisplayed && genuineCheckStepStatus === "inactive") {
-      setGenuineCheckStepStatus("active");
-      setGenuineCheckStepTitle(
-        t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.active.title", {
-          productName: device.modelId,
-        }),
-      );
+    if (
+      !isDisplayed ||
+      genuineCheckStepStatus === "completed" ||
+      genuineCheckStepStatus === "failed"
+    ) {
+      return;
+    }
+
+    if (genuineCheckStepStatus === "inactive") {
+      setGenuineCheckStepStatus("requested");
     } else if (genuineState === "genuine") {
       setGenuineCheckStepStatus("completed");
-      setGenuineCheckStepTitle(
-        t(
-          "syncOnboarding.sofwareChecksSteps.genuineCheckStep.completed.title",
-          {
-            productName: device.modelId,
-          },
-        ),
-      );
+    } else if (devicePermissionState === "refused") {
+      setGenuineCheckStepStatus("cancelled");
     } else if (genuineCheckError) {
       setGenuineCheckStepStatus("failed");
-      setGenuineCheckStepTitle(
-        t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.failed.title"),
-      );
-    } else if (devicePermissionState === "refused") {
-      setGenuineCheckStepStatus("failed");
-      setGenuineCheckStepTitle(
-        t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.failed.title"),
-      );
     } else if (genuineState === "non-genuine") {
       // FIXME: if the device is non-genuine, we should display something else
       setGenuineCheckStepStatus("failed");
-      setGenuineCheckStepTitle(
-        t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.failed.title"),
-      );
     }
   }, [
     t,
@@ -127,13 +124,7 @@ export const SoftwareChecksStep = ({
     genuineCheckError,
     isDisplayed,
     genuineCheckStepStatus,
-    device.modelId,
   ]);
-
-  // Handles device permission coming from the genuine check
-  useEffect(() => {
-    console.log(`👋 Device permission state = ${devicePermissionState}`);
-  }, [devicePermissionState]);
 
   const {
     latestFirmware,
@@ -144,55 +135,119 @@ export const SoftwareChecksStep = ({
     deviceId: device.deviceId,
   });
 
-  // Handles software update UI and logic states
   useEffect(() => {
-    // Transitions from genuine check step to firmware update step
-    if (
-      isDisplayed &&
-      (genuineCheckStepStatus === "completed" ||
-        genuineCheckStepStatus === "failed") &&
-      firmwareUpdateStepStatus === "inactive"
-    ) {
-      setFirmwareUpdateStepStatus("active");
-      setFirmwareUpdateStepTitle(
-        t("syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.active.title"),
-      );
+    switch (genuineCheckStepStatus) {
+      case "active":
+        setGenuineCheckStepTitle(
+          t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.active.title", {
+            productName: "Nano", // TODO: put something like device.modelId,
+          }),
+        );
+        break;
+      case "completed":
+        setGenuineCheckStepTitle(
+          t(
+            "syncOnboarding.sofwareChecksSteps.genuineCheckStep.completed.title",
+            {
+              productName: "Nano", // TODO: put something like device.modelId,
+            },
+          ),
+        );
+        break;
+      case "cancelled":
+      case "failed":
+        setGenuineCheckStepTitle(
+          t("syncOnboarding.sofwareChecksSteps.genuineCheckStep.failed.title"),
+        );
+        break;
+      default:
+        setGenuineCheckStepTitle(
+          t(
+            "syncOnboarding.sofwareChecksSteps.genuineCheckStep.inactive.title",
+          ),
+        );
+        break;
     }
+  }, [t, genuineCheckStepStatus]);
 
-    if (firmwareUpdateStepStatus === "active") {
-      if (latestFirmwareGettingError) {
-        setFirmwareUpdateStepStatus("failed");
+  useEffect(() => {
+    switch (firmwareUpdateStepStatus) {
+      case "active":
+        setFirmwareUpdateStepTitle(
+          t(
+            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.active.title",
+          ),
+        );
+        break;
+      case "completed":
+        if (
+          latestFirmwareGettingStatus === "available-firmware" &&
+          latestFirmware
+        ) {
+          setFirmwareUpdateStepTitle(
+            t(
+              "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.updateAvailable.title",
+              {
+                firmwareVersion: JSON.stringify(latestFirmware.final.name),
+              },
+            ),
+          );
+        } else {
+          setFirmwareUpdateStepTitle(
+            t(
+              "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
+            ),
+          );
+        }
+        break;
+      case "cancelled":
+      case "failed":
         setFirmwareUpdateStepTitle(
           t(
             "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.failed.title",
           ),
         );
-
-        console.log(
-          `❌ got an error while getting latest firmware: ${JSON.stringify(
-            latestFirmwareGettingError,
-          )}`,
+        break;
+      default:
+        setFirmwareUpdateStepTitle(
+          t(
+            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.inactive.title",
+          ),
         );
+        break;
+    }
+  }, [
+    t,
+    firmwareUpdateStepStatus,
+    latestFirmware,
+    latestFirmwareGettingStatus,
+  ]);
+
+  // Handles software update UI and logic states
+  useEffect(() => {
+    if (!isDisplayed) {
+      return;
+    }
+
+    // Transitions from genuine check step to firmware update step
+    if (
+      (genuineCheckStepStatus === "completed" ||
+        genuineCheckStepStatus === "failed") &&
+      firmwareUpdateStepStatus === "inactive"
+    ) {
+      setFirmwareUpdateStepStatus("active");
+    }
+
+    if (firmwareUpdateStepStatus === "active") {
+      if (latestFirmwareGettingError) {
+        setFirmwareUpdateStepStatus("failed");
       } else if (
         latestFirmwareGettingStatus === "available-firmware" &&
         latestFirmware
       ) {
         setFirmwareUpdateStepStatus("completed");
-        setFirmwareUpdateStepTitle(
-          t(
-            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.updateAvailable.title",
-            {
-              firmwareVersion: JSON.stringify(latestFirmware.final.name),
-            },
-          ),
-        );
       } else if (latestFirmwareGettingStatus === "no-available-firmware") {
         setFirmwareUpdateStepStatus("completed");
-        setFirmwareUpdateStepTitle(
-          t(
-            "syncOnboarding.sofwareChecksSteps.firmwareUpdateStep.completed.noUpdateAvailable.title",
-          ),
-        );
       }
     }
   }, [
@@ -208,12 +263,33 @@ export const SoftwareChecksStep = ({
   useEffect(() => {
     if (isDisplayed && onComplete && firmwareUpdateStepStatus === "completed") {
       // FIXME: timeout for now to display the status of the available fw update
-      setTimeout(() => onComplete(), 3000);
+      setTimeout(() => onComplete(), 2000);
     }
   }, [isDisplayed, firmwareUpdateStepStatus, onComplete]);
 
   return (
     <Flex>
+      {isDisplayed && (
+        <Flex>
+          <GenuineCheckDrawer
+            isOpen={genuineCheckStepStatus === "requested"}
+            onPress={() => setGenuineCheckStepStatus("active")}
+          />
+          <GenuineCheckActiveDrawer
+            isOpen={genuineCheckStepStatus === "active"}
+          />
+          <GenuineCheckCancelledDrawer
+            isOpen={genuineCheckStepStatus === "cancelled"}
+            onRetry={() => setGenuineCheckStepStatus("active")}
+            onSkip={() => setGenuineCheckStepStatus("failed")}
+          />
+          <FirmwareUpdateDrawer
+            isOpen={firmwareUpdateStepStatus === "requested"}
+            onSkip={() => setFirmwareUpdateStepStatus("completed")}
+            onUpdate={() => setFirmwareUpdateStepStatus("active")}
+          />
+        </Flex>
+      )}
       <CheckCard
         title={genuineCheckStepTitle}
         status={genuineCheckStepStatus}
