@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import {
   View,
@@ -30,7 +31,7 @@ type Props = {
   account: AccountLike,
   transaction: Transaction,
   parentAccount: Account,
-  navigation: *,
+  navigation: any,
   route: { params: * },
   setTransaction: Function,
 };
@@ -83,7 +84,7 @@ export default function StellarFeeRow({
   }: {
     label: React.ReactNode,
     isSelected: boolean,
-    fee: BigNumber,
+    fee: BigNumber | null,
     onSelect: (isCustom: boolean) => void,
   }) => (
     <TouchableOpacity
@@ -132,7 +133,9 @@ export default function StellarFeeRow({
             <ExternalLink size={12} color={colors.grey} />
           </View>
         }
-      />
+      >
+        {null}
+      </SummaryRow>
 
       <SafeAreaView style={styles.feesPickerContainer}>
         <FeeItem
