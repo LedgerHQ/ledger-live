@@ -57,6 +57,8 @@ allprojects {
             dependencySubstitution {
                 substitute module("com.redmadrobot:input-mask-android:6.0.0") using module('com.github.RedMadRobot:input-mask-android:6.0.0')
             }
+            force "androidx.core:core:$rootProject.ext.androidXCore"
+            force "androidx.core:core-ktx:$rootProject.ext.androidXCore"
         }
     }
 }
