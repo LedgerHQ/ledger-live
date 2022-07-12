@@ -95,14 +95,7 @@ const StoryBar: React.FC<Props> = props => {
   const handleStoryGroupPressed = useCallback(
     (storyGroupId?: string, storyId?: string) => {
       if (!storyGroupId || !storyId) return;
-      storylyRef?.current?.openStoryWithId(
-        // @ts-ignore the typing of storyly is broken, the iOS native module
-        // actually expects numbers or it will crash.
-        Platform.OS === "ios"
-          ? Number.parseInt(storyGroupId, 10)
-          : storyGroupId,
-        Platform.OS === "ios" ? Number.parseInt(storyId, 10) : storyId,
-      );
+      storylyRef?.current?.openStoryWithId(storyGroupId, storyId);
     },
     [storylyRef],
   );
