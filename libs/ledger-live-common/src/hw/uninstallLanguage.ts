@@ -47,7 +47,7 @@ export type UninstallLanguageRequest = {
   language: Language;
 };
 
-export default function unstallLanguage({
+export default function unistallLanguage({
   deviceId,
   language,
 }: UninstallLanguageRequest): Observable<UninstallLanguageEvent> {
