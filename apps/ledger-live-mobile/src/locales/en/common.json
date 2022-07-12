@@ -1591,6 +1591,44 @@
       }
     }
   },
+  "syncOnboarding": {
+    "sofwareChecksSteps": {
+      "genuineCheckStep": {
+        "inactive": {
+          "title": "Authenticity check"
+        },
+        "active": {
+          "title": "Checking {{productName}}"
+        },
+        "completed": {
+          "title": "Your {{productName}} is authentic"
+        },
+        "failed": {
+          "title": "Device security not checked"
+        }
+      },
+      "firmwareUpdateStep": {
+        "inactive": {
+          "title": "Software check"
+        },
+        "active": {
+          "title": "Checking software version"
+        },
+        "completed": { 
+          "updateAvailable": {
+            "title": "Software version {{firmwareVersion}} available"
+          },
+          "noUpdateAvailable": {
+            "title": "Software version up-to-date"
+          }
+
+        },
+        "failed": {
+          "title": "Software update failed"
+        }
+      }
+    }
+  },
   "tabs": {
     "portfolio": "Wallet",
     "accounts": "Accounts",

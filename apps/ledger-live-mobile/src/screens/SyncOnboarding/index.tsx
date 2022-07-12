@@ -21,7 +21,7 @@ import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
-import SoftwareChecksStep from "./SoftwareChecksStep";
+import { SoftwareChecksStep } from "./SoftwareChecksStep";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -62,6 +62,8 @@ function nextStepKey(step: CompanionStepKey): CompanionStepKey {
 }
 
 export const SyncOnboarding = ({ navigation, route }: Props) => {
+  const { device } = route.params;
+
   const defaultCompanionSteps: Step[] = useMemo(
     () => [
       {
@@ -101,7 +103,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
-            active={!!isDisplayed}
+            device={device}
+            isDisplayed={!!isDisplayed}
             onComplete={() =>
               setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
             }
@@ -114,7 +117,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         status: "inactive",
       },
     ],
-    [],
+    [device],
   );
 
   const dispatch = useDispatch();
@@ -128,8 +131,6 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
-
-  const { device } = route.params;
 
   const {
     onboardingState: deviceOnboardingState,
