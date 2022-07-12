@@ -1,10 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
-import { Button, Text } from "@ledgerhq/react-ui";
-import { Icons } from "@ledgerhq/react-ui";
+import { Button, Icons, Flex, Text } from "@ledgerhq/react-ui";
 
-const Container = styled(FlexBox).attrs(() => ({
+const Container = styled(Flex).attrs(() => ({
   flexDirection: "column",
   p: 12,
 }))`
@@ -44,7 +42,7 @@ const StepLeftSide = ({
 }: StepLeftSideProps) => {
   return (
     <Container justifyContent="space-between">
-      <FlexBox flexDirection="column">
+      <Flex flexDirection="column">
         {Header}
         {stepTitle && (
           <Text variant="h3" mb={5}>
@@ -57,8 +55,8 @@ const StepLeftSide = ({
           </Text>
         )}
         {AsideLeft}
-      </FlexBox>
-      <FlexBox flexDirection="column">
+      </Flex>
+      <Flex flexDirection="column">
         {!hideContinueButton && (
           <Button
             data-test-id={dataTestId}
@@ -75,7 +73,7 @@ const StepLeftSide = ({
             {backLabel}
           </Button>
         )}
-      </FlexBox>
+      </Flex>
     </Container>
   );
 };

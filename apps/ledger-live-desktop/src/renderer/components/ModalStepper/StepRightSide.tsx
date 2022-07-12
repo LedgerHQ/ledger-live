@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
+import { Flex } from "@ledgerhq/react-ui";
 
-const Container = styled(FlexBox)`
+const Container = styled(Flex)`
   height: 100%;
   flex: 0 0 52%;
   width: 52%;
