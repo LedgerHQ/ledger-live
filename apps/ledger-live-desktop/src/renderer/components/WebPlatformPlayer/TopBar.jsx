@@ -133,6 +133,7 @@ const WebPlatformTopBar = ({
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
+    shouldDisplayNavigation = false,
   } = config;
 
   const [canGoBack, setCanGoBack] = React.useState(false);
@@ -146,7 +147,7 @@ const WebPlatformTopBar = ({
   }, [webview]);
 
   useEffect(() => {
-    if (webview) {
+    if (webview && shouldDisplayNavigation) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
     }
@@ -157,7 +158,7 @@ const WebPlatformTopBar = ({
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
       }
     };
-  }, [handleDidNavigate, webview]);
+  }, [handleDidNavigate, webview, shouldDisplayNavigation]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
@@ -198,12 +199,16 @@ const WebPlatformTopBar = ({
           <Trans i18nKey="common.sync.refresh" />
         </ItemContent>
       </ItemContainer>
-      <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
-        <ArrowRight flipped size={16} />
-      </ItemContainer>
-      <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
-        <ArrowRight size={16} />
-      </ItemContainer>
+      {shouldDisplayNavigation && (
+        <>
+          <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
+            <ArrowRight flipped size={16} />
+          </ItemContainer>
+          <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
+            <ArrowRight size={16} />
+          </ItemContainer>
+        </>
+      )}
       {enablePlatformDevTools && (
         <>
           <Separator />
