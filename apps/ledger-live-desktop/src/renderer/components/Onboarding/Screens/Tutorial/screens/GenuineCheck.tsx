@@ -3,8 +3,8 @@ import { useTranslation, Trans } from "react-i18next";
 import { AsideFooter, Bullet, Column, IllustrationContainer } from "../shared";
 import connectNano from "../assets/connectNano.png";
 
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { getEnv } from "@ledgerhq/live-common/env";
 import DeviceAction from "~/renderer/components/DeviceAction";
 
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import { saveSettings } from "~/renderer/actions/settings";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { track } from "~/renderer/analytics/segment";
-import { OnboardingContext } from "../../../index.v3";
+import { OnboardingContext } from "../../../index";
 
 const connectManagerExec = command("connectManager");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManagerExec);

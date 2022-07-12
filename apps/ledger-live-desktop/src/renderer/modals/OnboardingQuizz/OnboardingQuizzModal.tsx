@@ -19,7 +19,7 @@ export const QuizzPopin = ({ onWin, isOpen, onLose, onClose = noop }: PopinProps
   if (!isOpen) return null;
   return (
     <ModalQuizz
-      title={t("v3.onboarding.quizz.heading")}
+      title={t("onboarding.quizz.heading")}
       isOpen
       onClose={onClose}
       onWin={onWin}

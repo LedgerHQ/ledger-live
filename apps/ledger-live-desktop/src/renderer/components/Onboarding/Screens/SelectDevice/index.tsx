@@ -4,12 +4,11 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Text } from "@ledgerhq/react-ui";
-import Button from "~/renderer/components/Button";
 import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
-import OnboardingNavHeader from "../../OnboardingNavHeader.v3";
+import OnboardingNavHeader from "../../OnboardingNavHeader";
 
-import { OnboardingContext } from "../../index.v3";
+import { OnboardingContext } from "../../index";
 
 const SelectDeviceContainer = styled.div`
   height: 100%;
@@ -18,12 +17,6 @@ const SelectDeviceContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`;
-
-const TopRightContainer = styled.div`
-  position: absolute;
-  right: 40px;
-  top: 40px;
 `;
 
 const TitleText = styled(Text)`
@@ -53,7 +46,7 @@ export function SelectDevice() {
       <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/welcome")} />
       <DeviceSelector onClick={handleDeviceSelect} />
       <TitleText variant="h3" fontSize="28px">
-        {t("v3.onboarding.screens.selectDevice.title")}
+        {t("onboarding.screens.selectDevice.title")}
       </TitleText>
     </SelectDeviceContainer>
   );

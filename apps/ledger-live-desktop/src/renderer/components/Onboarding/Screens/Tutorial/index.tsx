@@ -28,7 +28,7 @@ import { QuizSuccess } from "~/renderer/components/Onboarding/Screens/Tutorial/s
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
 
-import { UseCase } from "../../index.v3";
+import { UseCase } from "../../index";
 
 import { track } from "~/renderer/analytics/segment";
 

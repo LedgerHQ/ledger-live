@@ -61,7 +61,7 @@ const UseCaseOptionContainer = styled.button`
 interface UseCaseOptionProps {
   title: React.ReactNode;
   description: React.ReactNode;
-  Illu: React.ReactNode;
+  illustration: React.ReactNode;
   onClick: () => void;
   id?: string;
   dataTestId: string;
@@ -70,7 +70,7 @@ interface UseCaseOptionProps {
 export function UseCaseOption({
   title,
   description,
-  Illu,
+  illustration,
   onClick,
   id,
   dataTestId,
@@ -78,7 +78,7 @@ export function UseCaseOption({
   return (
     <UseCaseOptionContainer data-test-id={dataTestId} id={id} onClick={onClick}>
       <Container>
-        <IllustrationContainer>{Illu}</IllustrationContainer>
+        <IllustrationContainer>{illustration}</IllustrationContainer>
         <TitleText variant="h3">{title}</TitleText>
         <DescriptionText variant="paragraph" fontWeight="medium">
           {description}

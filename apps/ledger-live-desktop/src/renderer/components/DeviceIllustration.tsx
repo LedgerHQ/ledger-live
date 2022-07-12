@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
 import nanoX from "~/renderer/images/nanoX.v3.svg";

@@ -12,12 +12,12 @@ import { Separator } from "./Separator";
 import { deviceById } from "~/renderer/components/Onboarding/Screens/SelectDevice/devices";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
-import OnboardingNavHeader from "../../OnboardingNavHeader.v3";
+import OnboardingNavHeader from "../../OnboardingNavHeader";
 
 import { track } from "~/renderer/analytics/segment";
 
 import { ScreenId } from "../Tutorial";
-import { OnboardingContext, UseCase } from "../../index.v3";
+import { OnboardingContext, UseCase } from "../../index";
 
 import connectNanoLight from "./assets/connectNanoLight.png";
 import restorePhraseLight from "./assets/restorePhraseLight.png";
@@ -108,7 +108,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
           <LeftColumn>
             <LeftText variant="h3">
               <Trans
-                i18nKey="v3.onboarding.screens.selectUseCase.hasNoRecovery"
+                i18nKey="onboarding.screens.selectUseCase.hasNoRecovery"
                 values={{
                   deviceName: device.productName,
                 }}
@@ -121,14 +121,14 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               id="first-use"
               title={
                 <Trans
-                  i18nKey="v3.onboarding.screens.selectUseCase.options.1.title"
+                  i18nKey="onboarding.screens.selectUseCase.options.1.title"
                   values={{
                     deviceName: device.productName,
                   }}
                 />
               }
-              description={t("v3.onboarding.screens.selectUseCase.options.1.description")}
-              Illu={
+              description={t("onboarding.screens.selectUseCase.options.1.description")}
+              illustration={
                 <Illustration lightSource={setupNanoLight} darkSource={setupNanoDark} size={220} />
               }
               onClick={() => {
@@ -140,10 +140,10 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
             />
           </RightColumn>
         </Row>
-        <Separator label={t("v3.onboarding.screens.selectUseCase.separator")} />
+        <Separator label={t("onboarding.screens.selectUseCase.separator")} />
         <Row>
           <LeftColumn>
-            <LeftText variant="h3">{t("v3.onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
+            <LeftText variant="h3">{t("onboarding.screens.selectUseCase.hasRecovery")}</LeftText>
           </LeftColumn>
           <RightColumn>
             <UseCaseOption
@@ -151,14 +151,14 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
               id="initialized-device"
               title={
                 <Trans
-                  i18nKey="v3.onboarding.screens.selectUseCase.options.2.title"
+                  i18nKey="onboarding.screens.selectUseCase.options.2.title"
                   values={{
                     deviceName: device.productName,
                   }}
                 />
               }
-              description={t("v3.onboarding.screens.selectUseCase.options.2.description")}
-              Illu={
+              description={t("onboarding.screens.selectUseCase.options.2.description")}
+              illustration={
                 <Illustration
                   lightSource={connectNanoLight}
                   darkSource={connectNanoDark}
@@ -175,16 +175,16 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
             <UseCaseOption
               dataTestId="v3-onboarding-restore-device"
               id="restore-device"
-              title={t("v3.onboarding.screens.selectUseCase.options.3.title")}
+              title={t("onboarding.screens.selectUseCase.options.3.title")}
               description={
                 <Trans
-                  i18nKey="v3.onboarding.screens.selectUseCase.options.3.description"
+                  i18nKey="onboarding.screens.selectUseCase.options.3.description"
                   values={{
                     deviceName: device.productName,
                   }}
                 />
               }
-              Illu={
+              illustration={
                 <Illustration
                   lightSource={restorePhraseLight}
                   darkSource={restorePhraseDark}

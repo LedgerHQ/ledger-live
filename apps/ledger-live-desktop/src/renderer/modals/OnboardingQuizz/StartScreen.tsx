@@ -25,9 +25,9 @@ const StartScreen = ({ onStart }: Props) => {
           borderColor="neutral.c100"
           iconColor="neutral.c100"
         />
-        <Text variant="h1">{t("v3.onboarding.quizz.title")}</Text>
+        <Text variant="h1">{t("onboarding.quizz.title")}</Text>
         <Text variant="body" fontWeight="medium">
-          {t("v3.onboarding.quizz.descr")}
+          {t("onboarding.quizz.descr")}
         </Text>
         <Button
           data-test-id="v3-quiz-start-button"
@@ -36,7 +36,7 @@ const StartScreen = ({ onStart }: Props) => {
           iconPosition="left"
           onClick={onStart}
         >
-          {t("v3.onboarding.quizz.buttons.start")}
+          {t("onboarding.quizz.buttons.start")}
         </Button>
       </Flex>
     </Flex>
