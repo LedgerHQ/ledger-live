@@ -1,7 +1,7 @@
 // @flow
 import React, { useState } from "react";
 import { withTranslation } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import SendFeeMode from "./SendFeeMode";
 import FeeField from "./FeeField";
 import Box from "~/renderer/components/Box";

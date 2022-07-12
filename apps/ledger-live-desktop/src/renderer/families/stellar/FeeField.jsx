@@ -3,14 +3,14 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Text from "~/renderer/components/Text";
 import Label from "~/renderer/components/Label";
 import Alert from "~/renderer/components/Alert";
 import invariant from "invariant";
-import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/types";
+import type { Account, Transaction, TransactionStatus } from "@ledgerhq/live-common/types/index";
 
 const FeeField = ({
   onChange,

@@ -11,15 +11,15 @@ import {
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/impl";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction/index";
+import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 
 import type {
   TokenCurrency,
   SubAccount,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";

@@ -4,8 +4,8 @@ import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
+import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";

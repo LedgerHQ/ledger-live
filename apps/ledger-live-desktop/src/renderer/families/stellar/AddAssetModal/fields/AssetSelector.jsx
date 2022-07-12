@@ -3,9 +3,9 @@ import React, { useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
-import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
 
-import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
