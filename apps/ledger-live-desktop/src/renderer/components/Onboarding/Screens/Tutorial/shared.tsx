@@ -1,14 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
+import { Box, Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
+import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/Switch";
 
-export const WaveContainer = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 500px;
+export const WaveContainer = styled(Box).attrs({
+  position: "absolute",
+  left: "0",
+  right: "0",
+  top: "0",
+  height: "500px",
+})`
   pointer-events: none;
 `;
 
@@ -93,6 +95,7 @@ export const CheckStep = ({
 }: {
   checked: boolean;
   label: React.ReactNode;
+  onClick: SwitchProps["onChange"];
 }) => (
   <BorderFlex mt={12} p={4} {...props} width="fit-content" alignItems="center">
     <Switch onChange={props.onClick} name="checkbox" checked={checked} size="normal" />
