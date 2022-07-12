@@ -1,6 +1,6 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
 
-# Ledger Live (desktop) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/ledger-wallet/localized.svg)](https://crowdin.com/project/ledger-wallet)
+# Ledger Live (desktop)
 
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
@@ -74,8 +74,8 @@ pnpm dev:lld
 
 # build all the required dependencies
 pnpm build:lld:deps
-# then use alias to trigger the `dist` script in ledger-live-desktop project 
-pnpm desktop build 
+# then use alias to trigger the `dist` script in ledger-live-desktop project
+pnpm desktop build
 
 # or you can use the top level script (pnpm build:lld:deps not required in this case)
 pnpm build:lld
