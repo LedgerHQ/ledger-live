@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { useSelector } from "react-redux";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
@@ -43,7 +43,8 @@ function StepConfirmation({
   signed,
   transaction,
 }: StepProps & { theme: * }) {
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
 
   if (optimisticOperation) {

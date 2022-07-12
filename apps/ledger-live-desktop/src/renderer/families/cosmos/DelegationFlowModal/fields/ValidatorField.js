@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/lib/families/cosmos/react";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -38,8 +38,8 @@ const ValidatorField = ({
 }: Props) => {
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
-  console.log("validators is: ", validators);
+  const currencyName = account.currency.name.toLowerCase();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
   const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
     return (
       <ValidatorRow

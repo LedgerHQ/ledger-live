@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 
 import Box from "~/renderer/components/Box";
@@ -22,7 +22,8 @@ const ValidatorsSection: ThemedComponent<{}> = styled(Box)`
 `;
 
 export default function ValidatorField({ account, transaction, t, onChange }: *) {
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const currencyName = account.currency.name.toLowerCase();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
   const { cosmosResources } = account;
 
   invariant(cosmosResources, "cosmosResources required");

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
@@ -31,7 +31,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
 
   const unit = getAccountUnit(account);
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   const mappedDelegations = mapDelegationInfo(
     transaction.validators,
     validators,
@@ -56,7 +56,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
 }
 
 function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   const validator = validators.find(
     v => v.validatorAddress === tx.validators[0].address,
   );
@@ -73,7 +73,7 @@ function sourceValidatorNameField({
   field,
   transaction: { sourceValidator },
 }: FieldProps) {
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   if (!sourceValidator) {
     return null;
   }

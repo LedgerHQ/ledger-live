@@ -16,7 +16,7 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 
 import {
-  useCosmosPreloadData,
+  useCosmosFamilyPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/lib/families/cosmos/react";
 
@@ -77,7 +77,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
 
   const validatorSrc = useMemo(
     () =>

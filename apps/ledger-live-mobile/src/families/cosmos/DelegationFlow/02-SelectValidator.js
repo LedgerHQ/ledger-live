@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 
 import {
-  useCosmosPreloadData,
+  useCosmosFamilyPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
@@ -101,7 +101,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   const SR = useSortedValidators(searchQuery, validators, []);
 
   const delegationsSelected = transaction.validators?.length;

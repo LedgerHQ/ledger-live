@@ -14,7 +14,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -30,7 +30,8 @@ export default function StepConfirmation({
   transaction,
 }: StepProps) {
   const { t } = useTranslation();
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
 
   if (optimisticOperation) {

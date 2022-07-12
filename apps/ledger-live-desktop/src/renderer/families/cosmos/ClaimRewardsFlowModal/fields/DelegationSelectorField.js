@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { useCosmosDelegationsQuerySelector } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import type { CosmosMappedDelegation } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -28,7 +28,7 @@ const renderItem = ({
 };
 
 export default function DelegationSelectorField({ account, transaction, t, onChange }: *) {
-  const { query, setQuery, options, value } = useCosmosDelegationsQuerySelector(
+  const { query, setQuery, options, value } = useCosmosFamilyDelegationsQuerySelector(
     account,
     transaction,
   );

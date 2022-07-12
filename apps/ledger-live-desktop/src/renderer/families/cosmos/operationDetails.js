@@ -8,7 +8,7 @@ import { Trans } from "react-i18next";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import type {
   CosmosDelegationInfo,
   CosmosValidatorItem,
@@ -124,8 +124,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { validators: cosmosValidators } = useCosmosPreloadData();
-
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
   const { claimedRewards } = extra;
   console.log("claimedRewards: ", claimedRewards);
 

@@ -25,20 +25,53 @@ import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
 import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
 
-export function useCosmosPreloadData(): CosmosPreloadData {
-  const [state, setState] = useState(getCurrentCosmosPreloadData);
+// Add Cosmos-families imports below:
+import {
+  getCurrentOsmosisPreloadData,
+  getOsmosisPreloadDataUpdates,
+} from "../osmosis/preloadedData";
+import { FIGMENT_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
+
+export function useCosmosFamilyPreloadData(
+  currencyName: string
+): CosmosPreloadData {
+  let getCurrent;
+  let getUpdates;
+
+  if (currencyName == "cosmos") {
+    getCurrent = getCurrentCosmosPreloadData;
+    getUpdates = getCosmosPreloadDataUpdates;
+  }
+  if (currencyName == "osmosis") {
+    getCurrent = getCurrentOsmosisPreloadData;
+    getUpdates = getOsmosisPreloadDataUpdates;
+  }
+
+  console.log("-> -> -> useCosmosFamilyPreloadData was called");
+  const [state, setState] = useState(getCurrent);
   useEffect(() => {
-    const sub = getCosmosPreloadDataUpdates().subscribe(setState);
+    const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
-  }, []);
+  }, [getCurrent, getUpdates]);
   return state;
 }
 
-export function useCosmosMappedDelegations(
+// export function useCosmosPreloadData(): CosmosPreloadData {
+//   const [state, setState] = useState(getCurrentCosmosPreloadData);
+//   useEffect(() => {
+//     const sub = getCosmosPreloadDataUpdates().subscribe(setState);
+//     return () => sub.unsubscribe();
+//   }, []);
+//   return state;
+// }
+
+export function useCosmosFamilyMappedDelegations(
   account: Account,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
+
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
   const unit = getAccountUnit(account);
@@ -54,7 +87,7 @@ export function useCosmosMappedDelegations(
   }, [delegations, validators, mode, unit]);
 }
 
-export function useCosmosDelegationsQuerySelector(
+export function useCosmosFamilyDelegationsQuerySelector(
   account: Account,
   transaction: Transaction,
   delegationSearchFilter: CosmosSearchFilter = defaultSearchFilter
@@ -65,7 +98,10 @@ export function useCosmosDelegationsQuerySelector(
   value: CosmosMappedDelegation | null | undefined;
 } {
   const [query, setQuery] = useState<string>("");
-  const delegations = useCosmosMappedDelegations(account, transaction.mode);
+  const delegations = useCosmosFamilyMappedDelegations(
+    account,
+    transaction.mode
+  );
   const options = useMemo<CosmosMappedDelegation[]>(
     () => delegations.filter(delegationSearchFilter(query)),
     [query, delegations, delegationSearchFilter]
@@ -151,7 +187,7 @@ export function useMappedExtraOperationDetails({
   account: Account;
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
-  const { validators } = useCosmosPreloadData();
+  const { validators } = useCosmosFamilyPreloadData("cosmos");
   const unit = getAccountUnit(account);
   return {
     validators: extra.validators
@@ -166,18 +202,27 @@ export function useMappedExtraOperationDetails({
   };
 }
 
-export function useLedgerFirstShuffledValidatorsCosmos() {
-  const data = useCosmosPreloadData();
-
-  console.log("data is: ", data);
+export function useLedgerFirstShuffledValidatorsCosmosFamily(
+  currencyName: string
+) {
+  let data;
+  let ledgerValidatorAddress;
+  if (currencyName == "osmosis") {
+    data = getCurrentOsmosisPreloadData();
+    ledgerValidatorAddress = FIGMENT_OSMOSIS_VALIDATOR_ADDRESS;
+  } else {
+    data = getCurrentCosmosPreloadData();
+    ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
+  }
 
   return useMemo(() => {
-    return reorderValidators(data?.validators ?? []);
-  }, [data]);
+    return reorderValidators(data?.validators ?? [], ledgerValidatorAddress);
+  }, [data, ledgerValidatorAddress]);
 }
 
 function reorderValidators(
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
+  ledgerValidatorAddress: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
     .filter((validator) => validator.commission !== 1.0)
@@ -185,12 +230,12 @@ function reorderValidators(
 
   // move Ledger validator to the first position
   const ledgerValidator = sortedValidators.find(
-    (v) => v.validatorAddress === LEDGER_VALIDATOR_ADDRESS
+    (v) => v.validatorAddress === ledgerValidatorAddress
   );
 
   if (ledgerValidator) {
     const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      (v) => v.validatorAddress !== LEDGER_VALIDATOR_ADDRESS
+      (v) => v.validatorAddress !== ledgerValidatorAddress
     );
     sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 

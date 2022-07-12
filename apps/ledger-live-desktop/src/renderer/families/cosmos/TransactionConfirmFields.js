@@ -15,7 +15,7 @@ import TransactionConfirmField from "~/renderer/components/TransactionConfirm/Tr
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
@@ -86,7 +86,8 @@ const CosmosDelegateValidatorsField = ({
   const unit = getAccountUnit(mainAccount);
 
   const { validators } = transaction;
-  const { validators: cosmosValidators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
 
   const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
 
@@ -131,7 +132,8 @@ const CosmosValidatorNameField = ({
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { validators } = transaction;
-  const { validators: cosmosValidators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
 
   const address = validators && validators.length > 0 ? validators[0].address : null;
 
@@ -198,7 +200,9 @@ const sourceValidatorField = ({
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { sourceValidator } = transaction;
-  const { validators: cosmosValidators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
+
   const formattedValidator = useMemo(
     () => cosmosValidators.find(v => v.validatorAddress === sourceValidator),
     [cosmosValidators, sourceValidator],

@@ -4,8 +4,9 @@ import type { Account, Unit } from "../../types";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo } from "./types";
+import { CosmosOperation, CosmosExtraTxInfo, CosmosPreloadData } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
+import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 
 function formatOperationSpecifics(
   op: CosmosOperation,
@@ -45,10 +46,22 @@ function formatOperationSpecifics(
   return `${validatorsString} \n ${rewards}`;
 }
 
+function getCurrentCosmosFamilyPreloadData(
+  currencyName: string
+): CosmosPreloadData {
+  if (currencyName === "osmosis") {
+    return getCurrentOsmosisPreloadData();
+  } else {
+    return getCurrentCosmosPreloadData();
+  }
+}
+
 export function formatAccountSpecifics(account: Account): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const { validators } = getCurrentCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = getCurrentCosmosFamilyPreloadData(currencyName);
+
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
