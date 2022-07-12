@@ -3,12 +3,12 @@ import styled from "styled-components";
 import { Box } from "@ledgerhq/react-ui";
 
 const Bar = styled(Box).attrs((p: {percentage: number}) => ({
-  "position": "absolute",
-  "top": 0,
-  "left": 0,
-  "right": 0,
-  "height": "4px",
-  "width": `${p.percentage}%`,
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  height: "4px",
+  width: `${p.percentage}%`,
   backgroundColor: "neutral.c100",
 }))`
   transition: width ease-out 200ms;

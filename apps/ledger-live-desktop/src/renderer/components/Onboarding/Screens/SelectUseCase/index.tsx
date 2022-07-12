@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { openModal } from "~/renderer/actions/modals";
 import { useTranslation, Trans } from "react-i18next";
-import { Text } from "@ledgerhq/react-ui";
+import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
@@ -38,28 +38,25 @@ registerAssets([
   setupNanoDark,
 ]);
 
-const SelectUseCaseContainer = styled.div`
-  width: 100%;
-  padding: 134px 0px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  box-sizing: border-box;
-`;
+const SelectUseCaseContainer = styled(Flex).attrs({
+  width: "100%",
+  padding: "134px 0px",
+  alignItems: "center",
+  flexDirection: "column",
+  boxSizing: "border-box",
+})``;
 
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0px 160.5px;
-  width: 100%;
-`;
+const Row = styled(Flex).attrs({
+  flexDirection: "row",
+  justifyContent: "space-between",
+  padding: "0px 160.5px",
+  width: "100%",
+})``;
 
-const LeftColumn = styled.div`
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-`;
+const LeftColumn = styled(Flex).attrs({
+  maxWidth: "300px",
+  flexDirection: "column",
+})``;
 
 const LeftText = styled(Text).attrs(() => ({
   uppercase: true,
@@ -68,9 +65,9 @@ const LeftText = styled(Text).attrs(() => ({
   max-width: 382px;
 `;
 
-const RightColumn = styled.div`
-  display: flex;
-  flex-direction: column;
+const RightColumn = styled(Flex).attrs({
+  flexDirection: "column",
+})`
   & > * {
     margin: 10px 0px;
   }

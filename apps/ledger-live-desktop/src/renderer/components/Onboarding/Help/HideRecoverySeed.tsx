@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
@@ -8,21 +8,19 @@ import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import Color from "color";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 
-const RuleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 16px;
-  align-items: center;
-`;
+const RuleContainer = styled(Flex).attrs({
+  flexDirection: "row",
+  alignItems: "center",
+  mb: 6,
+})``;
 
-const RuleIconContainer = styled.div`
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-`;
+const RuleIconContainer = styled(Flex).attrs({
+  width: "28px",
+  height: "28px",
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: "50%",
+})``;
 
 const ruleTypes = {
   success: {
@@ -78,12 +76,12 @@ function Rule({ type, children }: RuleProps) {
   );
 }
 
-const HideRecoverySeedContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
+const HideRecoverySeedContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  height: "100%",
+})``;
 
+// TODO: fix text styling props using design system (variant & fontWeight, no ff)
 export function HideRecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
 

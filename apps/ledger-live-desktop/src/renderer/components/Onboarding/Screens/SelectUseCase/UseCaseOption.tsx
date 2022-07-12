@@ -1,28 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Text, Icons } from "@ledgerhq/react-ui";
+import { Flex, Button, Text, Icons } from "@ledgerhq/react-ui";
 
-const IllustrationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-self: center;
-`;
+const IllustrationContainer = styled(Flex).attrs({
+  flexDirection: "column",
+  alignSelf: "center",
+})``;
 
 const TitleText = styled(Text).attrs(() => ({
   fontSize: "20px",
   mb: "12px",
   uppercase: true,
-}))`
-  color: ${p => p.theme.colors.palette.neutral.c100};
-`;
+}))``;
 
-const DescriptionText = styled(Text).attrs(() => ({}))`
-  color: ${p => p.theme.colors.palette.neutral.c100};
-`;
+const DescriptionText = styled(Text).attrs(() => ({}))``;
 
 // TODO: use proper button styling once all styles are covered in the design sys
 const ArrowButton = styled(Button).attrs(() => ({
-  type: "primary",
+  variant: "main",
   size: "large",
   Icon: Icons.ArrowRightRegular,
   iconButton: true,
@@ -32,14 +27,15 @@ const ArrowButton = styled(Button).attrs(() => ({
   align-self: flex-end;
 `;
 
-const Container = styled.div`
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  border: 1px solid ${p => p.theme.colors.palette.neutral.c40};
-  position: relative;
-  display: flex;
-  flex-direction: column;
+const Container = styled(Flex).attrs({
+  width: "100%",
+  padding: "20px",
+  border: "1px solid",
+  borderColor: "neutral.c40",
+  position: "relative",
+  boxSizing: "border-box",
+  flexDirection: "column",
+})`
   text-align: left;
 `;
 

@@ -1,27 +1,25 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { Text, Button, Icons } from "@ledgerhq/react-ui";
+import { Flex, Text, Button, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import Color from "color";
 
-const RuleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 16px;
-  align-items: center;
-`;
+const RuleContainer = styled(Flex).attrs({
+  flexDirection: "row",
+  marginBottom: "16px",
+  alignItems: "center",
+})``;
 
-const RuleIconContainer = styled.div`
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-`;
+const RuleIconContainer = styled(Flex).attrs({
+  width: "28px",
+  height: "28px",
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: "50%",
+})``;
 
 const ruleTypes = {
   success: {
