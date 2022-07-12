@@ -929,6 +929,10 @@
       "earn" : {
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+      },
+      "mint": {
+        "title": "Acuñar",
+        "desc": "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
