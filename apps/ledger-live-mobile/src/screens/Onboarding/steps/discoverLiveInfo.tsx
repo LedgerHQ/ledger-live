@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Flex,
@@ -16,7 +16,12 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
 import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
-import { NavigatorName } from "../../../const";
+import { NavigatorName, ScreenName } from "../../../const";
+import { screen, track } from "../../../analytics";
+import {
+  useCurrentRouteName,
+  usePreviousRouteName,
+} from "../../../helpers/routeHooks";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -34,6 +39,7 @@ const Item = ({
   title,
   imageProps,
   displayNavigationButtons = false,
+  currentIndex,
 }: {
   title: string;
   imageProps: ImageProps;
@@ -44,15 +50,27 @@ const Item = ({
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  const onClick = useCallback(
+    (value: string) => {
+      track("button_clicked", {
+        button: value,
+        screen: `Reborn Story Step ${currentIndex}`,
+      });
+    },
+    [currentIndex],
+  );
+
   const buyLedger = useCallback(() => {
+    onClick("Buy a Ledger");
     // TODO: FIX @react-navigation/native using Typescript
     // @ts-ignore next-line
     navigation.navigate(NavigatorName.BuyDevice);
-  }, [navigation]);
+  }, [navigation, onClick]);
 
   const exploreLedger = useCallback(() => {
     dispatch(completeOnboarding());
     dispatch(setReadOnlyMode(true));
+    onClick("Explore without a device");
 
     // Fixme: Navigate to read only page ?
     // TODO: FIX @react-navigation/native using Typescript
@@ -60,7 +78,17 @@ const Item = ({
     navigation.navigate(NavigatorName.Base, {
       screen: NavigatorName.Main,
     });
-  }, [dispatch, navigation]);
+  }, [dispatch, navigation, onClick]);
+
+  const pressExplore = useCallback(() => {
+    exploreLedger();
+    onClick("Explore without a device");
+  }, [exploreLedger, onClick]);
+
+  const pressBuy = useCallback(() => {
+    buyLedger();
+    onClick("Buy a Ledger");
+  }, [buyLedger, onClick]);
 
   return (
     <Flex flex={1} backgroundColor={`background.main`}>
@@ -107,15 +135,10 @@ const Item = ({
       </Box>
       {displayNavigationButtons && (
         <Box position={"absolute"} bottom={0} width={"100%"} px={6} pb={10}>
-          <Button onPress={exploreLedger} type={"main"} mb={6} size="large">
+          <Button onPress={pressExplore} type={"main"} mb={6}>
             {t("onboarding.discoverLive.exploreWithoutADevice")}
           </Button>
-          <Button
-            onPress={buyLedger}
-            type={"shade"}
-            outline={true}
-            size="large"
-          >
+          <Button onPress={pressBuy} type={"shade"} outline={true}>
             {t("onboarding.discoverLive.buyALedgerNow")}
           </Button>
         </Box>
@@ -126,6 +149,28 @@ const Item = ({
 
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+  const previousRoute = usePreviousRouteName();
+
+  const onChange = useCallback(
+    (index: number, skipped: boolean) => {
+      setCurrentIndex(index + 1);
+      screen("Onboarding", `Reborn Story Step ${index + 1}`, {
+        skipped,
+        flow: "Onboarding No Device",
+        source: previousRoute,
+      });
+    },
+    [previousRoute],
+  );
+
+  const autoChange = useCallback((index: number) => onChange(index, false), [
+    onChange,
+  ]);
+  const manualChange = useCallback((index: number) => onChange(index, true), [
+    onChange,
+  ]);
 
   return (
     <StyledSafeAreaView>
@@ -143,6 +188,8 @@ function DiscoverLiveInfo() {
         }}
         scrollViewProps={{ scrollEnabled: false }}
         maxDurationOfTap={700}
+        onAutoChange={autoChange}
+        onManualChange={manualChange}
       >
         {slidesImages.map((image, index) => (
           <Item
@@ -152,6 +199,7 @@ function DiscoverLiveInfo() {
               source: image,
             }}
             displayNavigationButtons={slidesImages.length - 1 === index}
+            currentIndex={currentIndex}
           />
         ))}
       </Carousel>
