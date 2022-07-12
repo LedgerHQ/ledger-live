@@ -8,7 +8,7 @@ import { useTheme } from "styled-components";
 
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index.v3";
+import { OnboardingContext } from "../../../index";
 
 export function PinCodeHowTo() {
   const { colors } = useTheme();
