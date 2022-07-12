@@ -929,6 +929,10 @@
       "earn" : {
         "title" : "Verdienen",
         "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
+      },
+      "mint": {
+        "title": "Minting",
+        "desc": "Minte NFTs von exklusiven Kollaborationen auf [ L ] Market"
       }
     },
     "comingSoon" : "In Kürze verfügbar",
