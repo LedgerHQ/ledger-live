@@ -16,12 +16,13 @@ jobs:
         if: github.event.pull_request.head.repo.fork
         with:
           script: |
-            const labels = await github.rest.issues.listLabelsOnIssue({
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             }) || [];
-            if(labels.includes('fork')) {
+            console.log(labels)
+            if(labels.find(label => label.name === 'fork')) {
               return
             }
             await github.rest.issues.setLabels({
