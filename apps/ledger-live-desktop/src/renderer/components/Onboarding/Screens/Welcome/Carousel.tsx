@@ -141,8 +141,8 @@ const Carousel = ({ timeout = DEFAULT_TIMEOUT, queue }: Props): React.ReactEleme
   const onPrevious = useCallback(() => onSlide("right"), [onSlide]);
   const onNext = useCallback(() => onSlide("left"), [onSlide]);
 
-  const onMouseEnter = () => setPaused(true);
-  const onMouseLeave = () => setPaused(false);
+  const onMouseEnter = useCallback(() => setPaused(true));
+  const onMouseLeave = useCallback(() => setPaused(false));
 
   useEffect(() => {
     // Nb we pause automatic transitions when the mouse is within the carousel.

@@ -18,7 +18,7 @@ const OnboardingContainer = styled(Header)`
 `;
 
 const Logo = styled.div`
-  background-color: ${p => (p.theme.colors.palette.type === "light" ? "black" : "white")};
+  background-color: ${p => p.theme.colors.palette.neutral.c100};
   -webkit-mask-image: url(${ledgerLogo});
   mask-image: url(${ledgerLogo});
   height: 25px;
