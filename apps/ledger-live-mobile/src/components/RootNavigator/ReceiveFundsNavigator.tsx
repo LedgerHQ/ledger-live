@@ -35,6 +35,20 @@ export default function ReceiveFundsNavigator() {
     });
   }, []);
 
+  const onConnectDeviceClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: ScreenName.ReceiveConnectDevice,
+    });
+  }, []);
+
+  const onConnectDeviceBack = useCallback(() => {
+    track("button_clicked", {
+      button: "Back arrow",
+      screen: ScreenName.ReceiveConnectDevice,
+    });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -102,6 +116,8 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
+          headerRight: <HeaderRightClose onClose={onConnectDeviceClose} />,
+          headerLeft: <HeaderBackButton onPress={onConnectDeviceBack} />,
         }}
       />
       {/* Select / Connect Device */}
