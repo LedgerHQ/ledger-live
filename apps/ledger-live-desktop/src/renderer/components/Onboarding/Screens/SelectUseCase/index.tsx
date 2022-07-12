@@ -194,7 +194,7 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 history.push(
                   `/onboarding/${UseCase.recoveryPhrase}/${ScreenId.importYourRecoveryPhrase}`,
                 );
-                //onWrappedUseCase();
+                // onWrappedUseCase();
               }}
             />
           </RightColumn>

@@ -44,7 +44,7 @@ const LeftContainer = styled(Flex).attrs({
   zIndex: 999,
 })``;
 
-const Presentation = styled(Flex).attrs({flexDirection: "column"})``;
+const Presentation = styled(Flex).attrs({ flexDirection: "column" })``;
 
 const ProductHighlight = styled(Flex).attrs({
   flexDirection: "column",
@@ -127,9 +127,7 @@ export function Welcome() {
           <Text variant="h1" pt={10} pb={7}>
             {t("onboarding.screens.welcome.title")}
           </Text>
-          <Description variant="body">
-            {t("onboarding.screens.welcome.description")}
-          </Description>
+          <Description variant="body">{t("onboarding.screens.welcome.description")}</Description>
         </Presentation>
         <ProductHighlight>
           <Button
@@ -148,7 +146,11 @@ export function Welcome() {
           <TermsAndConditionsContainer>
             <TermsAndConditionsText>
               {t("onboarding.screens.welcome.byTapping")}{" "}
-              <StyledLink onClick={openTermsAndConditions} marginRight={2} color={colors.primary.c80}>
+              <StyledLink
+                onClick={openTermsAndConditions}
+                marginRight={2}
+                color={colors.primary.c80}
+              >
                 {t("onboarding.screens.welcome.termsAndConditions")}
               </StyledLink>
               {t("onboarding.screens.welcome.and")}{" "}
