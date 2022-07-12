@@ -86,7 +86,7 @@ const Description = styled(Text)`
   white-space: pre-line;
 `;
 
-export function Welcome({}) {
+export function Welcome() {
   const onboardingOrigin = useSelector(onboardingRelaunchedSelector) ? "/settings/help" : undefined;
   const { t } = useTranslation();
   const history = useHistory();
@@ -108,8 +108,8 @@ export function Welcome({}) {
 
   const steps = stepLogos.map((logo, index) => ({
     image: logo,
-    title: t(`v3.onboarding.screens.welcome.steps.${index}.title`),
-    description: t(`v3.onboarding.screens.welcome.steps.${index}.desc`),
+    title: t(`onboarding.screens.welcome.steps.${index}.title`),
+    description: t(`onboarding.screens.welcome.steps.${index}.desc`),
     isLast: index === stepLogos.length - 1,
   }));
 
@@ -126,10 +126,10 @@ export function Welcome({}) {
         <Presentation>
           <Logos.LedgerLiveRegular color={colors.neutral.c100} />
           <Text variant="h1" ff="Alpha|Medium" pt={"32px"} pb={"20px"}>
-            {t("v3.onboarding.screens.welcome.title")}
+            {t("onboarding.screens.welcome.title")}
           </Text>
           <Description variant="body" ff="Inter|Medium" fontSize={14}>
-            {t("v3.onboarding.screens.welcome.description")}
+            {t("onboarding.screens.welcome.description")}
           </Description>
         </Presentation>
         <ProductHighlight>
@@ -141,23 +141,23 @@ export function Welcome({}) {
             onClick={() => history.push("/onboarding/select-device")}
             mb="24px"
           >
-            {t("v3.onboarding.screens.welcome.nextButton")}
+            {t("onboarding.screens.welcome.nextButton")}
           </Button>
           <Button iconPosition="right" variant="main" onClick={buyNanoX} outline={true}>
-            {t("v3.onboarding.screens.welcome.buyLink")}
+            {t("onboarding.screens.welcome.buyLink")}
           </Button>
           <TermsAndConditionsText>
             <Text marginRight={2} color={colors.neutral.c80}>
-              {t("v3.onboarding.screens.welcome.byTapping")}
+              {t("onboarding.screens.welcome.byTapping")}
             </Text>
             <StyledLink onClick={openTermsAndConditions} marginRight={2} color={colors.primary.c80}>
-              {t("v3.onboarding.screens.welcome.termsAndConditions")}
+              {t("onboarding.screens.welcome.termsAndConditions")}
             </StyledLink>
             <Text marginRight={2} color={colors.neutral.c80}>
-              {t("v3.onboarding.screens.welcome.and")}
+              {t("onboarding.screens.welcome.and")}
             </Text>
             <StyledLink onClick={openPrivacyPolicy} marginRight={2} color={colors.primary.c80}>
-              {t("v3.onboarding.screens.welcome.privacyPolicy")}
+              {t("onboarding.screens.welcome.privacyPolicy")}
             </StyledLink>
           </TermsAndConditionsText>
         </ProductHighlight>
