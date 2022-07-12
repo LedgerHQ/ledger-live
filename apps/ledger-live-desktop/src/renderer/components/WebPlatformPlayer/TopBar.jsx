@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -135,8 +135,29 @@ const WebPlatformTopBar = ({
     shouldDisplayClose = !!onClose,
   } = config;
 
+  const [canGoBack, setCanGoBack] = React.useState(false);
+  const [canGoForward, setCanGoForward] = React.useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
+
+  const handleDidNavigate = useCallback(() => {
+    setCanGoBack(webview.canGoBack());
+    setCanGoForward(webview.canGoForward());
+  }, [webview]);
+
+  useEffect(() => {
+    if (webview) {
+      webview.addEventListener("did-navigate", handleDidNavigate);
+      webview.addEventListener("did-navigate-in-page", handleDidNavigate);
+    }
+
+    return () => {
+      if (webview) {
+        webview.removeEventListener("did-navigate", handleDidNavigate);
+        webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
+      }
+    };
+  }, [handleDidNavigate, webview]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
@@ -177,10 +198,10 @@ const WebPlatformTopBar = ({
           <Trans i18nKey="common.sync.refresh" />
         </ItemContent>
       </ItemContainer>
-      <ItemContainer isInteractive onClick={onGoBack}>
+      <ItemContainer disabled={!canGoBack} isInteractive onClick={onGoBack}>
         <ArrowRight flipped size={16} />
       </ItemContainer>
-      <ItemContainer isInteractive onClick={onGoForward}>
+      <ItemContainer disabled={!canGoForward} isInteractive onClick={onGoForward}>
         <ArrowRight size={16} />
       </ItemContainer>
       {enablePlatformDevTools && (
