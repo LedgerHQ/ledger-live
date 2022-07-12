@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
-import { Text } from "@ledgerhq/react-ui";
+
+import { Flex, Text } from "@ledgerhq/react-ui";
 
 const HeaderText = styled(Text).attrs(() => ({ ff: "Inter|Medium", fontSize: "12px" }))`
   color: ${p => p.theme.colors.palette.neutral.c80};
