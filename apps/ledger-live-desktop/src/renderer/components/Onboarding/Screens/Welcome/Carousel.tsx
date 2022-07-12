@@ -5,16 +5,17 @@ import styled from "styled-components";
 import { TransitionGroup } from "react-transition-group";
 import TransitionSlide from "@ledgerhq/react-ui/components/transitions/TransitionSlide";
 
-const Wrapper = styled(Flex)`
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  flex: 1;
-  justify-content: center;
+const Wrapper = styled(Flex).attrs({
+  flexDirection: "column",
+  alignItems: "center",
+  position: "relative",
+  flex: 1,
+  justifyContent: "center",
+  width: "350px",
+  margin: "auto",
+  height: "100%",
+})`
   text-align: center;
-  width: 350px;
-  margin: auto;
-  height: 100%;
 `;
 
 const SlideLogo = styled(Flex)<{ image?: string }>`
@@ -47,25 +48,24 @@ const Slide = ({ title, description, image }: SlideProps): React.ReactElement =>
   );
 };
 
-const CarouselWrapper = styled.div`
-  flex: 1;
-  height: 700px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  margin: 44px;
-  position: relative;
-`;
+const CarouselWrapper = styled(Flex).attrs({
+  flex: 1,
+  height: "700px",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+  margin: "44px",
+  position: "relative",
+})``;
 
-const Controllers = styled(Flex)`
-  position: absolute;
-  flex-direction: row;
-  right: ${p => p.theme.space[5]}px;
-  bottom: ${p => p.theme.space[4]}px;
-  column-gap: ${p => p.theme.space[4]}px;
-  color: ${p => p.theme.colors.palette.constant.black};
-
+const Controllers = styled(Flex).attrs({
+  position: "absolute",
+  flexDirection: "row",
+  right: 5,
+  bottom: 4,
+  columnGap: 4,
+  color: "constant.black",
+})`
   > div {
     &:hover {
       opacity: 0.5;
@@ -73,14 +73,13 @@ const Controllers = styled(Flex)`
   }
 `;
 
-const Bullets = styled.div<{ active?: number }>`
-  position: absolute;
-  display: flex;
-  left: ${p => p.theme.space[8]}px;
-  bottom: ${p => p.theme.space[8]}px;
-  column-gap: ${p => p.theme.space[2]}px;
-  flex-direction: row;
-
+const Bullets = styled(Flex)<{ active?: number }>.attrs({
+  left: 8,
+  bottom: 8,
+  columnGap: 2,
+  position: "absolute",
+  flexDirection: "row",
+})`
   > div {
     position: relative;
     height: ${p => p.theme.space[1]}px;
