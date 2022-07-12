@@ -16,8 +16,7 @@ const SelectDeviceContainer = styled(Flex).attrs({
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "column",
-})`
-`;
+})``;
 
 const TitleText = styled(Text).attrs({
   color: "neutral.c100",

@@ -53,10 +53,9 @@ const ContentContainer = styled(Flex).attrs({
   flexDirection: "column",
   alignItems: "center",
   alignSelf: "center",
-})`
-`;
+})``;
 
-const DeviceName = styled(Text).attrs({color: "neutral.c100"})``;
+const DeviceName = styled(Text).attrs({ color: "neutral.c100" })``;
 
 interface DeviceSelectOptionProps {
   label: string;
