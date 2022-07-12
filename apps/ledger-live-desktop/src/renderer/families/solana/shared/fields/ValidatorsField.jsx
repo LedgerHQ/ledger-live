@@ -43,16 +43,21 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
   }, [validators, chosenVoteAccAddr]);
 
   const validatorsFiltered = useMemo(() => {
-    return validators
-      .filter(validator => {
-        return (
-          validator.name?.toLowerCase().includes(search.toLowerCase()) ||
-          validator.voteAccount.toLowerCase().includes(search.toLowerCase())
-        );
-      })
-      .filter(
-        (value, index, self) => index === self.findIndex(t => t.voteAccount === value.voteAccount),
+    const filtered = validators.filter(validator => {
+      return (
+        validator.name?.toLowerCase().includes(search.toLowerCase()) ||
+        validator.voteAccount.toLowerCase().includes(search.toLowerCase())
       );
+    });
+
+    const flags = [];
+    const output = [];
+    for (let i = 0; i < filtered.length; i++) {
+      if (flags[filtered[i].voteAccount]) continue;
+      flags[filtered[i].voteAccount] = true;
+      output.push(filtered[i]);
+    }
+    return output;
   }, [validators, search]);
 
   const containerRef = useRef();

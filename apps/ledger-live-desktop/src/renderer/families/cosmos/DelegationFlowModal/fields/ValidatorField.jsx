@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -45,6 +45,10 @@ const ValidatorField = ({
 
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
+  const chosenValidator = useMemo(() => {
+    return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
+  }, [validators, chosenVoteAccAddr]);
+
   const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
     return (
       <ValidatorRow
@@ -64,11 +68,7 @@ const ValidatorField = ({
       <ValidatorsFieldContainer>
         <Box p={1}>
           <ScrollLoadingList
-            data={
-              showAll
-                ? validators
-                : [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]]
-            }
+            data={showAll ? validators : chosenValidator}
             style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
             renderItem={renderItem}
             noResultPlaceholder={null}

@@ -41,18 +41,22 @@ export default function SelectValidator({ navigation, route }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const validatorsFiltered = useMemo(() => {
-    return validators
-      .filter(validator => {
-        return (
-          validator.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          validator.voteAccount.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      })
-      .filter(
-        (value, index, self) => index === self.findIndex(t => t.voteAccount === value.voteAccount),
+    const filtered = validators.filter(validator => {
+      return (
+        validator.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        validator.voteAccount.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  }, [validators, searchQuery]);
+    });
 
+    const flags = [];
+    const output = [];
+    for (let i = 0; i < filtered.length; i++) {
+      if (flags[filtered[i].voteAccount]) continue;
+      flags[filtered[i].voteAccount] = true;
+      output.push(filtered[i]);
+    }
+    return output;
+  }, [validators, searchQuery]);
 
   const onItemPress = useCallback(
     (validator: ValidatorsAppValidator) => {
