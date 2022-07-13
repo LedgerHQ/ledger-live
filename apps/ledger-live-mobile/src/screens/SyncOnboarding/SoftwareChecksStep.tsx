@@ -90,6 +90,7 @@ export const SoftwareChecksStep = ({
     genuineState,
     devicePermissionState,
     error: genuineCheckError,
+    resetGenuineCheckState,
   } = useGenuineCheck({
     isHookEnabled: genuineCheckStepStatus === "active",
     deviceId: device.deviceId,
@@ -280,7 +281,10 @@ export const SoftwareChecksStep = ({
           />
           <GenuineCheckCancelledDrawer
             isOpen={genuineCheckStepStatus === "cancelled"}
-            onRetry={() => setGenuineCheckStepStatus("active")}
+            onRetry={() => {
+              resetGenuineCheckState();
+              setGenuineCheckStepStatus("active");
+            }}
             onSkip={() => setGenuineCheckStepStatus("failed")}
           />
           <FirmwareUpdateDrawer
