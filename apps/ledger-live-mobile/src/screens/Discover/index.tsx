@@ -1,9 +1,9 @@
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
@@ -14,6 +14,7 @@ import { TrackScreen, track } from "../../analytics";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import { AnalyticsContext } from "../../components/RootNavigator";
 
 const learnImg = require("../../images/illustration/Shared/_Learn.png");
 
@@ -116,6 +117,10 @@ function Discover() {
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [learn?.enabled, navigation, readOnlyTrack, t],
   );
+
+  const { setSource } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => setSource("Discover"));
 
   return (
     <StyledSafeAreaView>
