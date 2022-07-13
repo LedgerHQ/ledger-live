@@ -555,12 +555,23 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         return Promise.reject(error);
       }
 
-      navigation.navigate(NavigatorName.SignMessage, {
-        screen: ScreenName.SignSummary,
-        params: {
-          message: formattedMessage,
-          accountId,
-        },
+      return new Promise((resolve, reject) => {
+        navigation.navigate(NavigatorName.SignMessage, {
+          screen: ScreenName.SignSummary,
+          params: {
+            message: formattedMessage,
+            accountId,
+            onConfirmationHandler: message => {
+              resolve(message);
+            },
+            onFailHandler: error => {
+              reject(error);
+            },
+          },
+          onClose: () => {
+            reject(new Error("Signature aborted by user"));
+          },
+        });
       });
     },
     [navigation, accounts],

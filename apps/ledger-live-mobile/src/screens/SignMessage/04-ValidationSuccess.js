@@ -41,7 +41,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     if (onConfirmationHandler) {
       onConfirmationHandler(signature);
     }
-  }, []);
+  }, [wcContext.currentCallRequestId, onConfirmationHandler, signature]);
 
   const onClose = useCallback(() => {
     navigation.getParent().pop();

@@ -34,22 +34,30 @@ export default function HeaderRightClose({
   const [onModalHide, setOnModalHide] = useState();
 
   function close(): void {
-    if (onClose) {
-      onClose();
-    }
-
     if (skipNavigation) {
+      // onClose should always be call at the end of the close method,
+      // so the callback will not interfere with the expected behavior of this component
+      if (onClose) {
+        onClose();
+      }
       return;
     }
 
     if (navigation.getParent().pop && preferDismiss) {
       navigation.getParent().pop();
+      if (onClose) {
+        onClose();
+      }
       return;
     }
 
     if (navigation.closeDrawer) navigation.closeDrawer();
 
     navigation.goBack();
+
+    if (onClose) {
+      onClose();
+    }
   }
 
   function onPress(): void {

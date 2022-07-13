@@ -40,11 +40,11 @@ export default function ValidationError({ navigation, route }: Props) {
     if (wcContext.currentCallRequestId) {
       setDisableRetry(true);
       setCurrentCallRequestError(error);
-      if (onFailHandler) {
-        onFailHandler(error);
-      }
     }
-  }, []);
+    if (onFailHandler) {
+      onFailHandler(error);
+    }
+  }, [wcContext.currentCallRequestId, onFailHandler, error]);
 
   const onClose = useCallback(() => {
     navigation.getParent().pop();
