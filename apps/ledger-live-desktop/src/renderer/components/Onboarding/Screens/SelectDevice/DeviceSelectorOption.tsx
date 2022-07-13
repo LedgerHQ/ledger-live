@@ -10,7 +10,7 @@ const DeviceIllustrationContainer = styled(Flex)`
 
 type BorderProps = ThemeProps<DefaultTheme> & { isFirst: boolean; isLast: boolean };
 
-const bkgColor = (p: BorderProps) => p.theme.colors.palette.neutral.c00;
+const bkgColor = (p: BorderProps) => p.theme.colors.palette.background.main;
 const bkgColorHover = (p: BorderProps) => p.theme.colors.palette.neutral.c20;
 const borderColorHover = (p: BorderProps) => p.theme.colors.palette.neutral.c40;
 
