@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from "@playwright/test";
-import { DeviceAction } from "../DeviceAction";
+import { DeviceAction } from "./DeviceAction";
 
 export class OnboardingPage {
   readonly page: Page;
