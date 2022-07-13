@@ -19,6 +19,7 @@ type Props = {
    */
   replacement?: string | React.ReactNode;
   colors: any;
+  onCopy?: () => void;
 };
 
 type State = {
@@ -33,12 +34,12 @@ class CopyLink extends PureComponent<Props, State> {
   timeout = null;
 
   onPress = () => {
-    const { string } = this.props;
+    const { string, onCopy } = this.props;
 
     Clipboard.setString(string);
 
     this.setState({ copied: true });
-
+    onCopy && onCopy();
     this.timeout = setTimeout(() => {
       this.setState({ copied: false });
     }, 3000);
