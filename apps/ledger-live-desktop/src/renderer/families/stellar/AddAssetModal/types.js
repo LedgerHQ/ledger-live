@@ -5,7 +5,7 @@ import type { Step } from "~/renderer/components/Stepper";
 
 import type { Account, TransactionStatus, Operation } from "@ledgerhq/live-common/types/index";
 
-import type { Transaction } from "@ledgerhq/live-common/families/stellar/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 
 export type StepId = "assets" | "connectDevice" | "confirmation";
 
