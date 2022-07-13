@@ -246,18 +246,22 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       tracking.platformReceiveRequested(manifest);
       const account = accounts.find(account => account.id === accountId);
 
-      return new Promise((resolve, reject) => {
-        if (!account) {
-          tracking.platformReceiveFail(manifest);
-          reject(new Error("Account required"));
-          return;
-        }
+      if (!account) {
+        tracking.platformReceiveFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
 
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+
+      return new Promise((resolve, reject) => {
         navigation.navigate(ScreenName.VerifyAccount, {
           account,
+          parentId: parentAccount ? parentAccount.id : undefined,
           onSuccess: account => {
             tracking.platformReceiveSuccess(manifest);
-            resolve(account.freshAddress);
+            resolve(accountToPlatformAccount(account, parentAccount).address);
           },
           onClose: () => {
             tracking.platformReceiveFail(manifest);

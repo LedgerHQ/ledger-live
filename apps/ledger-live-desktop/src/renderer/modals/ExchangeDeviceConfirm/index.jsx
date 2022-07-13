@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components";
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
@@ -136,27 +136,25 @@ const VerifyOnDevice = ({
   ) : null;
 };
 
+type DataProp = {
+  account: AccountLike,
+  parentAccount: ?Account,
+  onResult: (AccountLike, ?Account, any) => null,
+  verifyAddress?: boolean,
+  onCancel?: () => void,
+};
+
 type Props = {
   onClose: () => void,
   skipDevice: boolean,
-  data: {
-    account: AccountLike,
-    parentAccount: ?Account,
-    onResult: (AccountLike, ?Account, any) => null,
-    verifyAddress?: boolean,
-  },
+  data: DataProp,
   flow?: string,
 };
 
 type PropsFooter = {
   onClose: () => null,
   onSkipDevice: Function,
-  data: {
-    account: AccountLike,
-    parentAccount: ?Account,
-    onResult: (AccountLike, ?Account, any) => null,
-    verifyAddress?: boolean,
-  },
+  data: DataProp,
 };
 
 const Root = ({ data, onClose, skipDevice, flow }: Props) => {
@@ -179,6 +177,21 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
     [verifyAddress, onResult, account, parentAccount, onClose],
   );
 
+  const onAddressVerified = useCallback(
+    status => {
+      if (status) {
+        onResult(account, parentAccount, status);
+      }
+      onClose();
+    },
+    [account, onClose, onResult, parentAccount],
+  );
+
+  const request = useMemo(() => ({ account: mainAccount, tokenCurrency }), [
+    mainAccount,
+    tokenCurrency,
+  ]);
+
   return (
     <Box flow={2}>
       {waitingForDevice || skipDevice ? (
@@ -186,17 +199,12 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
           mainAccount={mainAccount}
           device={device}
           skipDevice={skipDevice}
-          onAddressVerified={status => {
-            if (status) {
-              onResult(account);
-            }
-            onClose();
-          }}
+          onAddressVerified={onAddressVerified}
         />
       ) : (
         <DeviceAction
           action={action}
-          request={{ account: mainAccount, tokenCurrency }}
+          request={request}
           onResult={handleResult}
           analyticsPropertyFlow={flow}
         />
@@ -209,14 +217,28 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
   const { t } = useTranslation();
   const [skipClicked, setSkipClicked] = useState(false);
 
-  const { account, parentAccount, onResult } = data;
+  const { account, parentAccount, onResult, verifyAddress } = data;
   const mainAccount = getMainAccount(account, parentAccount);
   const name = getAccountName(mainAccount);
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     onResult(account, parentAccount, true);
     onClose();
-  };
+  }, [account, onClose, onResult, parentAccount]);
+
+  const onSkipClick = useCallback(() => {
+    if (verifyAddress) {
+      setSkipClicked(true);
+      onSkipDevice(true);
+    } else {
+      nextStep();
+    }
+  }, [nextStep, onSkipDevice, verifyAddress]);
+
+  const onVerify = useCallback(() => {
+    setSkipClicked(false);
+    onSkipDevice(false);
+  }, [onSkipDevice]);
 
   return !skipClicked ? (
     <Box horizontal flow={2}>
@@ -226,68 +248,69 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
         inverted
         event="Buy Flow Without Device Clicked"
         id={"buy-connect-device-skip-device-button"}
-        onClick={() => {
-          if (data.verifyAddress) {
-            setSkipClicked(true);
-            onSkipDevice(true);
-          } else {
-            nextStep();
-          }
-        }}
+        onClick={onSkipClick}
       >
         {t("buy.withoutDevice")}
       </Button>
     </Box>
   ) : (
     <Box alignItems="center" shrink flow={2}>
-      <Receive2NoDevice
-        name={name}
-        onVerify={() => {
-          setSkipClicked(false);
-          onSkipDevice(false);
-        }}
-        onContinue={nextStep}
-      />
+      <Receive2NoDevice name={name} onVerify={onVerify} onContinue={nextStep} />
     </Box>
   );
 };
 
-const BuyCrypto = ({ flow }: { flow?: string }) => {
+const BuyCryptoModal = ({
+  data,
+  onClose,
+  flow,
+}: {
+  data: DataProp,
+  onClose: () => void,
+  flow?: string,
+}) => {
   const [skipDevice, setSkipDevice] = useState(false);
   const device = useSelector(getCurrentDevice);
   const { t } = useTranslation();
 
+  const handleClose = useCallback(() => {
+    if (data.onCancel) {
+      data.onCancel();
+    }
+    onClose();
+  }, [data, onClose]);
+
+  const renderFooter = useCallback(
+    () =>
+      data && !device ? (
+        <StepConnectDeviceFooter data={data} onClose={onClose} onSkipDevice={setSkipDevice} />
+      ) : null,
+    [data, device, onClose],
+  );
+
+  const render = useCallback(
+    () =>
+      data ? <Root data={data} skipDevice={skipDevice} onClose={onClose} flow={flow} /> : null,
+    [data, flow, onClose, skipDevice],
+  );
+
   return (
-    <Modal
-      name="MODAL_EXCHANGE_CRYPTO_DEVICE"
-      centered
-      render={({ data, onClose }) => (
-        <ModalBody
-          onClose={() => {
-            if (data.onCancel) {
-              data.onCancel();
-            }
-            onClose();
-          }}
-          title={t("common.connectDevice")}
-          renderFooter={() =>
-            data && !device ? (
-              <StepConnectDeviceFooter
-                data={data}
-                onClose={onClose}
-                onSkipDevice={v => {
-                  setSkipDevice(v);
-                }}
-              />
-            ) : null
-          }
-          render={() =>
-            data ? <Root data={data} skipDevice={skipDevice} onClose={onClose} flow={flow} /> : null
-          }
-        />
-      )}
+    <ModalBody
+      onClose={handleClose}
+      title={t("common.connectDevice")}
+      renderFooter={renderFooter}
+      render={render}
     />
   );
+};
+
+const BuyCrypto = ({ flow }: { flow?: string }) => {
+  const render = useCallback(
+    ({ data, onClose }) => <BuyCryptoModal data={data} onClose={onClose} flow={flow} />,
+    [flow],
+  );
+
+  return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} />;
 };
 
 export default BuyCrypto;

@@ -122,18 +122,27 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
-      const account = accounts.find(account => account.id === accountId);
       tracking.platformReceiveRequested(manifest);
+      const account = accounts.find(account => account.id === accountId);
+
+      if (!account) {
+        tracking.platformReceiveFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
 
       // FIXME: handle address rejection (if user reject address, we don't end up in onResult nor in onCancel 🤔)
       return new Promise((resolve, reject) =>
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
             account,
-            parentAccount: null,
-            onResult: account => {
+            parentAccount,
+            onResult: (account, parentAccount) => {
               tracking.platformReceiveSuccess(manifest);
-              resolve(account.freshAddress);
+              resolve(accountToPlatformAccount(account, parentAccount).address);
             },
             onCancel: error => {
               tracking.platformReceiveFail(manifest);
