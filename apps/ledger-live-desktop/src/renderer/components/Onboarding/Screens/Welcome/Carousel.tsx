@@ -73,13 +73,13 @@ const Controllers = styled(Flex).attrs({
   }
 `;
 
-const Bullets = styled(Flex)<{ active?: number }>.attrs({
+const Bullets = styled(Flex).attrs({
   left: 8,
   bottom: 8,
   columnGap: 2,
   position: "absolute",
   flexDirection: "row",
-})`
+})<{ active?: number }>`
   > div {
     position: relative;
     height: ${p => p.theme.space[1]}px;
