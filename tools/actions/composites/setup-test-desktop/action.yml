@@ -17,7 +17,7 @@ runs:
     - uses: actions/setup-node@v3
       with:
         node-version: 16
-        # cache: pnpm
+        cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - uses: actions/setup-python@v4
       if: ${{ !inputs.skip_python }}
