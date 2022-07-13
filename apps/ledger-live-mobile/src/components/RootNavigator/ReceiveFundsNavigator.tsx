@@ -56,6 +56,13 @@ export default function ReceiveFundsNavigator() {
     });
   }, []);
 
+  const onVerifyAddressClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: ScreenName.ReceiveVerifyAddress,
+    });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -135,7 +142,7 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerTitle: "",
           headerLeft: null,
-          headerRight: null,
+          headerRight: <HeaderRightClose onClose={onVerifyAddressClose} />,
         }}
       />
       {/* Add account(s) automatically */}
