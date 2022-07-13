@@ -67,7 +67,6 @@ export function Summary({
     !provider ||
     !fromUnit ||
     !to.currency ||
-    !targetAccountName ||
     !fees ||
     !ProviderIcon ||
     !exchangeRate

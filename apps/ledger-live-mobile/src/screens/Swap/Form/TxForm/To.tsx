@@ -1,73 +1,99 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BigNumber } from "bignumber.js";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { getAccountName } from "@ledgerhq/live-common/lib/account";
-import { SwapSelectorStateType } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { Flex, Text } from "@ledgerhq/native-ui";
+import {
+  getAccountCurrency,
+  getAccountName,
+} from "@ledgerhq/live-common/lib/account";
+import {
+  ExchangeRate,
+  Pair,
+  SwapTransactionType,
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
+import {
+  usePickDefaultCurrency,
+  useSelectableCurrencies,
+} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
-import { usePickDefaultCurrency } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 
 interface Props {
-  to: SwapSelectorStateType;
-  setCurrency: (currency: CryptoCurrency | TokenCurrency) => void;
+  swapTx: SwapTransactionType;
   provider?: string;
-  currencies: (CryptoCurrency | TokenCurrency)[];
-  amount?: BigNumber;
+  exchangeRate?: ExchangeRate;
+  pairs: Pair[];
 }
 
-export function To({
-  to: { account, currency },
-  setCurrency,
-  provider,
-  currencies,
-  amount,
-}: Props) {
+export function To({ swapTx, provider, pairs }: Props) {
   const { t } = useTranslation();
-  // TODO
   const navigation = useNavigation<any>();
 
-  usePickDefaultCurrency(currencies, currency, setCurrency);
-
-  const name = useMemo(
+  const fromCurrency = useMemo(
     () =>
-      (account && getAccountName(account)) ?? t("transfer.swap2.form.loading"),
-    [account, t],
+      swapTx.swap.from.account && getAccountCurrency(swapTx.swap.from.account),
+    [swapTx.swap.from],
   );
 
-  const balance = useMemo(() => currency?.units[0].code ?? "", [currency]);
+  const currencies = useCurrencies(pairs, fromCurrency?.id);
+
+  const { name, balance, amount } = useMemo(() => {
+    const { currency, account, amount } = swapTx.swap.to;
+
+    return {
+      name: (account && getAccountName(account)) || currency?.name,
+      balance: currency?.units[0].code ?? "",
+      amount,
+    };
+  }, [swapTx.swap.to]);
+
+  usePickDefaultCurrency(
+    currencies,
+    swapTx.swap.to.currency,
+    swapTx.setToCurrency,
+  );
 
   const onPress = useCallback(() => {
     navigation.navigate("SelectCurrency", { currencies, provider });
   }, [navigation, currencies, provider]);
 
-  const CIcon = currency ? (
-    <CurrencyIcon size={32} currency={currency} />
-  ) : (
-    <Flex width={32} height={32} justifyContent="center">
-      <InfiniteLoader size={24} />
-    </Flex>
-  );
-
   return (
     <Flex>
       <Text>{t("transfer.swap2.form.to")}</Text>
-      <Flex flexDirection="row" justifyContent={"space-between"}>
+      <Flex flexDirection="row" justifyContent="space-between">
         <Selector
-          Icon={CIcon}
+          currency={swapTx.swap.to.currency}
           title={name}
           subTitle={balance || "-"}
           onPress={onPress}
-          disabled={!currency}
+          disabled={!swapTx.swap.to.currency}
         />
 
         <Flex flex={1} justifyContent="center">
-          <CurrencyValue currency={currency} amount={amount} />
+          <CurrencyValue currency={swapTx.swap.to.currency} amount={amount} />
         </Flex>
       </Flex>
     </Flex>
   );
+}
+
+// based toSelector on apps/ledger-live-desktop/src/renderer/actions/swap.js
+function useCurrencies(
+  pairs: Pair[],
+  fromCurrencyId?: string,
+): (CryptoCurrency | TokenCurrency)[] {
+  const filtered = useMemo(() => {
+    if (!pairs) return [];
+
+    if (fromCurrencyId)
+      return pairs.reduce<string[]>(
+        (acc, pair) => (pair.from === fromCurrencyId ? [...acc, pair.to] : acc),
+        [],
+      );
+
+    return pairs.map(p => p.to);
+  }, [pairs, fromCurrencyId]);
+
+  return useSelectableCurrencies({ allCurrencies: [...new Set(filtered)] });
 }

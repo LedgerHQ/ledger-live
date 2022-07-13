@@ -1,89 +1,69 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 import { useNavigation } from "@react-navigation/native";
-import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import {
-  Account,
-  AccountLike,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import {
+  flattenAccounts,
+  getAccountCurrency,
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { usePickDefaultAccount } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import {
-  SwapSelectorStateType,
+  SwapTransactionType,
   Pair,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
+import { useSelector } from "react-redux";
+import { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
+import { shallowAccountsSelector } from "../../../../reducers/accounts";
+import { SwapFormProps } from "../../types";
 
 interface Props {
-  from: SwapSelectorStateType;
-  setAccount: (account: AccountLike) => void;
-  setAmount: (amount: BigNumber) => void;
-  isMaxEnabled: boolean;
-  accounts: Account[];
   provider?: string;
-  currencies: (CryptoCurrency | TokenCurrency)[];
+  swapTx: SwapTransactionType;
   pairs: Pair[];
 }
 
-export function From({
-  from: { account, currency, amount },
-  setAccount,
-  setAmount,
-  isMaxEnabled,
-  accounts: accountsProp,
-  provider,
-  currencies,
-  pairs,
-}: Props) {
+export function From({ swapTx, provider, pairs }: Props) {
   const { t } = useTranslation();
-  // TODO: navigation type
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<SwapFormProps>();
 
-  const accounts = usePickDefaultAccount(
-    accountsProp,
-    account,
-    setAccount,
-    pairs,
-  );
-  const currencyIds = useMemo(() => currencies.map(c => c.id), [currencies]);
+  const accounts = useAccounts(pairs);
+  const { currency, name, balance, unit } = useMemo(() => {
+    const { currency, account } = swapTx.swap.from;
 
-  const name = useMemo(() => (account && getAccountName(account)) ?? "", [
-    account,
-  ]);
-  const balance = useMemo(
-    () =>
-      (account &&
-        currency &&
-        formatCurrencyUnit(currency.units[0], account.balance, {
-          showCode: true,
-        })) ??
-      "",
-    [account, currency],
+    return {
+      account,
+      currency,
+      name: account && getAccountName(account),
+      balance:
+        (account &&
+          currency &&
+          formatCurrencyUnit(currency.units[0], account.balance, {
+            showCode: true,
+          })) ??
+        "",
+      unit: account && getAccountUnit(account),
+    };
+  }, [swapTx.swap.from]);
+
+  usePickDefaultAccount(
+    accounts,
+    swapTx.swap.from.account,
+    swapTx.setFromAccount,
   );
 
   const onPress = useCallback(() => {
+    // @ts-expect-error
     navigation.navigate("SelectAccount", {
       target: "from",
       accounts,
       provider,
-      currencyIds,
     });
-  }, [navigation, accounts, provider, currencyIds]);
-
-  const unit = useMemo(() => account && getAccountUnit(account), [account]);
-
-  if (!currency) {
-    return null;
-  }
+  }, [navigation, accounts, provider]);
 
   return (
     <Flex
@@ -95,14 +75,7 @@ export function From({
       <Text>{t("transfer.swap2.form.from")}</Text>
       <Flex flexDirection="row" justifyContent="space-between">
         <Selector
-          Icon={
-            <BoxedIcon
-              size={32}
-              Icon={<CurrencyIcon size={32} currency={currency} />}
-              variant="circle"
-              borderColor="transparent"
-            />
-          }
+          currency={currency}
           title={name}
           subTitle={balance}
           onPress={onPress}
@@ -110,13 +83,77 @@ export function From({
 
         <Flex flex={1} justifyContent="center">
           <AmountInput
-            value={amount}
-            editable={!isMaxEnabled}
+            value={swapTx.swap.from.amount}
+            editable={!swapTx.swap.isMaxEnabled}
             unit={unit}
-            onChange={setAmount}
+            onChange={swapTx.setFromAmount}
+            error={swapTx.fromAmountError}
           />
         </Flex>
       </Flex>
     </Flex>
   );
+}
+
+type AccountLikeWithFilter = AccountLike & { disabled: boolean };
+
+// based fromSelector on apps/ledger-live-desktop/src/renderer/actions/swap.js
+function useAccounts(pairs: Pair[]): AccountLikeWithFilter[] {
+  const accounts = useSelector(shallowAccountsSelector);
+
+  const filtered = useMemo<AccountLikeWithFilter[]>(() => {
+    if (pairs === null || pairs === undefined) return [];
+
+    return flattenAccounts(accounts).map(account => {
+      const id = getAccountCurrency(account).id;
+      const isAccountAvailable = !!pairs.find(pair => pair.from === id);
+      return { ...account, disabled: !isAccountAvailable };
+    });
+  }, [accounts, pairs]);
+
+  const sorted = useMemo(() => {
+    let activeAccounts: AccountLikeWithFilter[] = [];
+    let disabledAccounts: AccountLikeWithFilter[] = [];
+    let subAccounts = [];
+    let disabledSubAccounts = [];
+
+    // Traverse the accounts in reverse to check disabled accounts with active subAccounts
+    for (let i = filtered.length - 1; i >= 0; i--) {
+      const account = filtered[i];
+
+      // Handle Account type first
+      if (account.type === "Account") {
+        if (account.disabled && !subAccounts.length) {
+          // When a disabled account has no active subAccount, add it to the disabledAccounts
+          disabledAccounts = [
+            account,
+            ...disabledSubAccounts,
+            ...disabledAccounts,
+          ];
+        } else {
+          // When an account has at least an active subAccount, add it to the activeAccounts
+          activeAccounts = [
+            account,
+            ...subAccounts,
+            ...disabledSubAccounts,
+            ...activeAccounts,
+          ];
+        }
+
+        // Clear subAccounts
+        subAccounts = [];
+        disabledSubAccounts = [];
+      } else if (account.disabled) {
+        // Add TokenAccount and ChildAccount to the subAccounts arrays
+        disabledSubAccounts.unshift(account);
+      } else {
+        // Add TokenAccount and ChildAccount to the subAccounts arrays
+        subAccounts.unshift(account);
+      }
+    }
+
+    return [...activeAccounts, ...disabledAccounts];
+  }, [filtered]);
+
+  return sorted;
 }

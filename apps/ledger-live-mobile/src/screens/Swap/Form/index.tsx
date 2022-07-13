@@ -14,7 +14,6 @@ import {
   usePollKYCStatus,
   useSwapTransaction,
   useProviders,
-  useSelectableCurrencies,
 } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
 import {
   getKYCStatusFromCheckQuoteStatus,
@@ -65,22 +64,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
 
   const exchangeRatesState = swapTx.swap?.rates;
   const swapKYC = useSelector(swapKYCSelector);
-
-  const currencyNames = useMemo(() => {
-    if (!swapTx.swap.from.currency) {
-      return pairs.map(p => p.to);
-    }
-
-    return pairs.reduce<string[]>(
-      (acc, p) =>
-        p.from === swapTx.swap.from.currency?.id ? [...acc, p.to] : acc,
-      [],
-    );
-  }, [pairs, swapTx.swap.from.currency]);
-
-  const currencies = useSelectableCurrencies({
-    allCurrencies: [...new Set(currencyNames)],
-  });
 
   const { provider, kyc } = useMemo<{
     provider?: string;
@@ -361,8 +344,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
             <TxForm
               swapTx={swapTx}
               provider={provider}
-              accounts={accounts}
-              currencies={currencies}
               exchangeRate={exchangeRate}
               pairs={pairs}
             />

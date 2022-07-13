@@ -1,11 +1,6 @@
 import React from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import {
-  Account,
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import {
   SwapTransactionType,
   ExchangeRate,
   Pair,
@@ -16,38 +11,19 @@ import { To } from "./To";
 interface Props {
   swapTx: SwapTransactionType;
   provider?: string;
-  accounts: Account[];
-  currencies: (CryptoCurrency | TokenCurrency)[];
   exchangeRate?: ExchangeRate;
   pairs: Pair[];
 }
 
-export function TxForm({
-  swapTx,
-  currencies,
-  provider,
-  accounts,
-  exchangeRate,
-  pairs,
-}: Props) {
+export function TxForm({ swapTx, provider, exchangeRate, pairs }: Props) {
   return (
     <Flex>
-      <From
-        from={swapTx.swap.from}
-        isMaxEnabled={swapTx.swap.isMaxEnabled}
-        setAccount={swapTx.setFromAccount}
-        setAmount={swapTx.setFromAmount}
-        provider={provider}
-        accounts={accounts}
-        currencies={currencies}
-        pairs={pairs}
-      />
+      <From swapTx={swapTx} provider={provider} pairs={pairs} />
       <To
-        to={swapTx.swap.to}
-        amount={exchangeRate?.toAmount}
-        setCurrency={swapTx.setToCurrency}
+        swapTx={swapTx}
+        exchangeRate={exchangeRate}
         provider={provider}
-        currencies={currencies}
+        pairs={pairs}
       />
     </Flex>
   );

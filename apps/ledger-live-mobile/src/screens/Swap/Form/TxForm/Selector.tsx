@@ -1,22 +1,35 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import { useTranslation } from "react-i18next";
+import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 interface Props {
-  Icon: React.ReactNode;
-  title: string;
+  currency?: CryptoCurrency | TokenCurrency;
+  title?: string;
   subTitle: string;
   onPress: () => void;
   disabled?: boolean;
 }
 
 export function Selector({
-  Icon,
+  currency,
   title,
   subTitle,
   onPress,
   disabled = false,
 }: Props) {
+  const { t } = useTranslation();
+
+  const Icon = currency ? (
+    <CurrencyIcon size={32} currency={currency} />
+  ) : (
+    <Flex width={32} height={32} justifyContent="center">
+      <InfiniteLoader size={24} />
+    </Flex>
+  );
+
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
       <Flex
@@ -32,7 +45,7 @@ export function Selector({
 
           <Flex marginLeft={4} marginRight={4}>
             <Text variant="h3" marginBottom={2}>
-              {title}
+              {title ?? t("transfer.swap2.form.loading")}
             </Text>
             <Text variant="subtitle">{subTitle}</Text>
           </Flex>

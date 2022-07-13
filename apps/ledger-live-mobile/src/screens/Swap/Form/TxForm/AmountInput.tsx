@@ -7,39 +7,33 @@ import CurrencyInput from "../../../../components/CurrencyInput";
 import TranslatedError from "../../../../components/TranslatedError";
 
 interface Props {
-  value?: BigNumber;
+  value: BigNumber | undefined;
   editable: boolean;
-  unit?: Unit;
+  unit: Unit | undefined;
   onChange: (val: BigNumber) => void;
-  fromAmountError?: string;
+  error: Error | undefined;
 }
 
-export function AmountInput({
-  value,
-  onChange,
-  editable,
-  unit,
-  fromAmountError,
-}: Props) {
-  if (!unit) {
-    return <Text>0</Text>;
-  }
-
+export function AmountInput({ value, onChange, editable, unit, error }: Props) {
   return (
-    <Flex alignItems="flex-end">
-      <CurrencyInput
-        editable={editable}
-        onChange={onChange}
-        unit={unit}
-        value={value}
-        inputStyle={styles.inputText}
-        hasError={!!fromAmountError}
-        dynamicFontRatio={0.3}
-      />
+    <Flex justifyContent="flex-end" alignItems="flex-end">
+      {unit ? (
+        <CurrencyInput
+          editable={editable}
+          onChange={onChange}
+          unit={unit}
+          value={value}
+          inputStyle={styles.inputText}
+          hasError={!!error}
+          dynamicFontRatio={0.3}
+        />
+      ) : (
+        <Text variant="h1">-</Text>
+      )}
 
       <Text color="error.c100">
         {/* @ts-expect-error */}
-        <TranslatedError error={fromAmountError} />
+        <TranslatedError error={error} />
       </Text>
     </Flex>
   );
