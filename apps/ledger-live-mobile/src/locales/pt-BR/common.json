@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Operation details",
+    "title" : "Transaction details",
     "account" : "Account",
     "date" : "Date",
     "confirmed" : "Confirmed",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "No Operations",
-    "noMoreOperations" : "No other Operations"
+    "noMoreTransactions" : "No other transactions"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deselect all",
@@ -1763,7 +1763,7 @@
     "sell" : "Sell",
     "swap" : "Swap",
     "manage" : "Manage",
-    "lastOperations" : "Last operations",
+    "lastTransactions" : "Last transactions",
     "emptyState" : {
       "title" : "No crypto assets yet?",
       "desc" : "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "Edit fees"
-    },
-    "manageCard" : {
-      "title" : "Manage CL Card",
-      "description" : "Order and Manage CL Card"
     },
     "receive" : {
       "title" : "Receive",
@@ -4388,7 +4384,10 @@
       "tokenContractCopied" : "Token Address copied !",
       "tokenId" : "Token ID",
       "tokenIdCopied" : "Token ID copied !",
-      "quantity" : "Quantity"
+      "quantity" : "Quantity",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal" : {
       "viewOn" : "View on",

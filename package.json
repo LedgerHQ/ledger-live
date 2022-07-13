@@ -4,7 +4,13 @@
   "license": "MIT",
   "private": true,
   "packageManager": "pnpm@7.3.0",
-  "repository": "https://github.com/LedgerHQ/ledger-live",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",

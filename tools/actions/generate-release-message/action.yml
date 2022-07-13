@@ -1,0 +1,22 @@
+name: generate-release-message
+description: creates a changelog to be used during the creation of a Github Release
+inputs:
+  package-path:
+    description: path to the package.json with the version
+    required: true
+  changelog-path:
+    description: path to the CHANGELOG.MD
+    required: true
+  output-path:
+    description: path to the folder where the new file will be created
+    required: true
+  name:
+    description: name of the new file (without the .md extension)
+    required: true
+outputs:
+  path:
+    description: path to the newly generated changelog file
+
+runs:
+  using: node16
+  main: "build/index.js"

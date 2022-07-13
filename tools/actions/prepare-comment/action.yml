@@ -21,7 +21,7 @@ inputs:
     description: jestoutput
     required: true
 runs:
-  using: node12
+  using: node16
   main: build/index.js
 
 branding:
