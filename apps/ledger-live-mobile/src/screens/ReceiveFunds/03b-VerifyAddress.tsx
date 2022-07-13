@@ -18,8 +18,12 @@ import {
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useTheme } from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import { Flex, Link as TextLink } from "@ledgerhq/native-ui";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
+import { track, TrackScreen } from "../../analytics";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -33,15 +37,12 @@ import { rejectionOp } from "../../logic/debugReject";
 import GenericErrorView from "../../components/GenericErrorView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Animation from "../../components/Animation";
 import getDeviceAnimation from "../../components/DeviceAction/getDeviceAnimation";
-import styled from "styled-components/native";
 import Illustration from "../../images/illustration/Illustration";
 import { urls } from "../../config/urls";
 
@@ -85,6 +86,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
+  const lastRoute = usePreviousRouteName();
 
   const onModalClose = useCallback(() => {
     setError(null)
@@ -172,6 +174,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>{t("common.retry")}</Button>
           </Flex>
         </> : <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
+          <TrackScreen category="ReceiveFunds" name="Verify Address" source={lastRoute}/>
           <LText variant="h4" textAlign="center" mb={6}>{t("transfer.receive.verifyAddress.title")}</LText>
         <LText variant="body" color="neutral.c70" textAlign="center">{t("transfer.receive.verifyAddress.subtitle")}</LText>
         <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
