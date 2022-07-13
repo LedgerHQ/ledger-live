@@ -1,6 +1,6 @@
-import test from "../../../fixtures/common";
+import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { OnboardingPage } from "../../../models/OnboardingPage";
+import { OnboardingPage } from "../../models/OnboardingPage";
 
 enum Nano {
   nanoX = "nanoX",
