@@ -2,21 +2,21 @@ import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   formatCurrencyUnit,
   getCurrencyColor,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getMaxDelegationAvailable } from "@ledgerhq/live-common/lib/families/cosmos/logic";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
+} from "@ledgerhq/live-common/currencies/index";
+import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
+import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
 import {
   CosmosValidatorItem,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

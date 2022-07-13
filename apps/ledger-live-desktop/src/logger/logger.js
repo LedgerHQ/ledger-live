@@ -2,6 +2,7 @@
 import winston from "winston";
 import Transport from "winston-transport";
 import pname from "./pname";
+import { summarize } from "./summarize";
 
 const { format } = winston;
 const { combine, json, timestamp } = format;
@@ -74,7 +75,7 @@ const captureBreadcrumb = (breadcrumb: any) => {
   if (!process.env.STORYBOOK_ENV) {
     try {
       if (typeof window !== "undefined") {
-        require("~/sentry/renderer").captureBreadcrumb(breadcrumb);
+        import("~/sentry/renderer").then(sentry => sentry.captureBreadcrumb(breadcrumb));
       } else if (process.title === "Ledger Live Internal") {
         require("~/sentry/internal").captureBreadcrumb(breadcrumb);
       } else {
@@ -89,7 +90,7 @@ const captureBreadcrumb = (breadcrumb: any) => {
 const captureException = (error: Error) => {
   try {
     if (typeof window !== "undefined") {
-      require("~/sentry/renderer").captureException(error);
+      import("~/sentry/renderer").then(sentry => sentry.captureException(error));
     } else if (process.title === "Ledger Live Internal") {
       require("~/sentry/internal").captureException(error);
     } else {
@@ -111,71 +112,6 @@ const logApdu = !process.env.NO_DEBUG_DEVICE;
 const logCountervalues = !process.env.NO_DEBUG_COUNTERVALUES;
 
 const ANALYTICS_TYPE = "analytics";
-
-function summarizeAccount({
-  type,
-  balance,
-  id,
-  index,
-  freshAddress,
-  freshAddressPath,
-  name,
-  operations,
-  pendingOperations,
-  subAccounts,
-}: Object) {
-  const o: Object = {
-    type,
-    balance,
-    id,
-    name,
-    index,
-    freshAddress,
-    freshAddressPath,
-  };
-  if (operations && typeof operations === "object" && Array.isArray(operations)) {
-    o.opsL = operations.length;
-  }
-  if (
-    pendingOperations &&
-    typeof pendingOperations === "object" &&
-    Array.isArray(pendingOperations)
-  ) {
-    o.pendingOpsL = pendingOperations.length;
-  }
-  if (subAccounts && typeof subAccounts === "object" && Array.isArray(subAccounts)) {
-    o.subA = subAccounts.map(o => summarizeAccount(o));
-  }
-  return o;
-}
-
-// minize objects that gets logged to keep the essential
-export const summarize = (obj: mixed, key?: string): mixed => {
-  switch (typeof obj) {
-    case "object": {
-      if (!obj) return obj;
-      if (key === "appByName") return "(removed)";
-      if (key === "firmware") return "(removed)";
-      if (Array.isArray(obj)) {
-        return obj.map(o => summarize(o));
-      }
-      if (
-        obj.type === "Account" ||
-        // AccountRaw
-        ("seedIdentifier" in obj && "freshAddressPath" in obj && "operations" in obj)
-      ) {
-        return summarizeAccount(obj);
-      }
-      const copy = {};
-      for (const k in obj) {
-        copy[k] = summarize(obj[k], k);
-      }
-      return copy;
-    }
-    default:
-      return obj;
-  }
-};
 
 export default {
   onCmd: (type: string, id: string, spentTime: number, data?: any) => {

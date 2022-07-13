@@ -10,18 +10,18 @@ import { BigNumber } from "bignumber.js";
 import type {
   CosmosValidatorItem,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountUnit,
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";

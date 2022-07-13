@@ -14,12 +14,12 @@ import {
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import {
   getAccountName,
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import { flattenAccountsSelector } from "../../../reducers/accounts";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import LText from "../../../components/LText";

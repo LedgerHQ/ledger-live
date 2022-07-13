@@ -1,5 +1,5 @@
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";

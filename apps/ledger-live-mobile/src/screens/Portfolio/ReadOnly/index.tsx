@@ -18,9 +18,9 @@ import {
   listSupportedCurrencies,
   listTokens,
   useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import {
   discreetModeSelector,
   counterValueCurrencySelector,

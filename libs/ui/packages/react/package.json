@@ -3,7 +3,14 @@
   "version": "0.8.0",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
-  "repository": "https://github.com/LedgerHQ/ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react",
   "license": "MIT",
   "types": "index.d.ts",
   "typesVersions": {
@@ -15,13 +22,29 @@
     }
   },
   "exports": {
-    ".": {
-      "require": "./lib/cjs/index.js",
-      "default": "./lib/index.js"
-    },
     "./": {
       "require": "./lib/cjs/",
       "default": "./lib/"
+    },
+    "./*/": {
+      "require": "./lib/cjs/*/index.js",
+      "default": "./lib/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/cjs/*.js",
+      "default": "./lib/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/cjs/*.js",
+      "default": "./lib/*.js"
+    },
+    "./*.woff2": {
+      "require": "./lib/cjs/*.woff2",
+      "default": "./lib/*.woff2"
+    },
+    ".": {
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json"
   },

@@ -4,22 +4,22 @@ import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import {
   formatVotes,
   useTronSuperRepresentatives,
-} from "@ledgerhq/live-common/lib/families/tron/react";
-import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
+} from "@ledgerhq/live-common/families/tron/react";
+import type { Vote } from "@ledgerhq/live-common/families/tron/types";
 import type {
   Account,
   Operation,
   Currency,
   Unit,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

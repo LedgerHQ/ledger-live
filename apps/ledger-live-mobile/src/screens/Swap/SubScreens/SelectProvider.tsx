@@ -2,11 +2,11 @@ import React, { useMemo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
-import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
-import { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { Unit } from "@ledgerhq/live-common/lib/types";
+import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { Unit } from "@ledgerhq/live-common/types/index";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 // eslint-disable-next-line import/no-unresolved, import/named
 import { providerIcons } from "../../../icons/swap";

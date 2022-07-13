@@ -50,8 +50,8 @@ function readPackage(pkg, context) {
       addDevDependencies(
         /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|types-.*)$/,
         {
-          jest: "^27.4.7",
-          "ts-jest": "^27.1.2",
+          jest: "^28.1.1",
+          "ts-jest": "^28.0.5",
           "ts-node": "^10.4.0",
           "@types/node": "*",
           "@types/jest": "*",
@@ -158,6 +158,9 @@ function readPackage(pkg, context) {
       }),
       addPeerDependencies("jest-worker", {
         metro: "*",
+      }),
+      addPeerDependencies("react-lottie", {
+        "prop-types": "*",
       }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.

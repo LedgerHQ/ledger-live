@@ -1,11 +1,11 @@
 // @flow
 
 import React from "react";
-import { RampLiveAppCatalogEntry } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/types";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import { RampLiveAppCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { mapQueryParamsForProvider } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+import { mapQueryParamsForProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { languageSelector } from "../../reducers/settings";
 import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import { TrackScreen } from "../../analytics";

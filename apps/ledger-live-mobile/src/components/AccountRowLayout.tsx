@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { TouchableOpacity } from "react-native";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
   Currency,
   Unit,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { Flex, ProgressLoader, Text, Tag } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
@@ -13,7 +13,7 @@ import CounterValue from "../../components/CounterValue";
 import { ensureContrast } from "../../colors";
 import Delta from "../../components/Delta";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import { ValueChange } from "../../../../libs/ledger-live-common/src/portfolio/v2/types";
+import { ValueChange } from "../../../../libs/ledger-live-common/portfolio/v2/types";
 
 type Props = {
   balance: BigNumber;

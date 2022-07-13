@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import winston from "winston";
-import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
-import simple from "@ledgerhq/live-common/lib/logs/simple";
+import { EnvName, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
-import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
+import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 setPlatformVersion("0.0.1");
 

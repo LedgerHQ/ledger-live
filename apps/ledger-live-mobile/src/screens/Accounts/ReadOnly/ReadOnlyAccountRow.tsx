@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import AccountRowLayout from "../../../components/AccountRowLayout";
 import { BigNumber } from "bignumber.js";

@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";

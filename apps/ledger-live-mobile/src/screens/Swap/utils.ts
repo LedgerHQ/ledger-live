@@ -1,4 +1,4 @@
-import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/lib/errors";
+import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "../../analytics/segment";
 

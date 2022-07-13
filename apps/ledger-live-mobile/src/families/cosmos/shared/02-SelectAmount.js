@@ -16,11 +16,11 @@ import { BigNumber } from "bignumber.js";
 import type {
   CosmosValidatorItem,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";

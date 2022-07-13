@@ -19,13 +19,13 @@ import type {
   Account,
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { RecipientRequired } from "@ledgerhq/errors";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { Baker } from "@ledgerhq/live-common/lib/families/tezos/bakers";
-import { useBakers } from "@ledgerhq/live-common/lib/families/tezos/bakers";
-import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
+import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";

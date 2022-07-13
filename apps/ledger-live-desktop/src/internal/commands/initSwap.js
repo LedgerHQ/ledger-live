@@ -6,14 +6,14 @@ import type {
   ExchangeRateRaw,
   ExchangeRaw,
   SwapRequestEvent,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import type { TransactionRaw } from "@ledgerhq/live-common/lib/types";
-import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import type { TransactionRaw } from "@ledgerhq/live-common/types/index";
+import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   fromExchangeRaw,
   fromExchangeRateRaw,
-} from "@ledgerhq/live-common/lib/exchange/swap/serialization";
-import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
+} from "@ledgerhq/live-common/exchange/swap/serialization";
+import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 
 type Input = {
   exchange: ExchangeRaw,

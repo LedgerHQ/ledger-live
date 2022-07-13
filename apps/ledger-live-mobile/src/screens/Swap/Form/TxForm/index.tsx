@@ -4,7 +4,7 @@ import {
   SwapTransactionType,
   ExchangeRate,
   Pair,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { From } from "./From";
 import { To } from "./To";
 

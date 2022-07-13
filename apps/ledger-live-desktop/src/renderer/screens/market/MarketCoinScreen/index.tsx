@@ -5,7 +5,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
-import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled, { useTheme } from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
@@ -15,12 +15,12 @@ import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
 import { useProviders } from "../../exchange/Swap2/Form";
 import Track from "~/renderer/analytics/Track";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/lib/exchange/swap/utils";
+import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;

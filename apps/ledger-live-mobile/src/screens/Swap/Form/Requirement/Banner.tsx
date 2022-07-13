@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { ActionRequired } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { ActionRequired } from "@ledgerhq/live-common/exchange/swap/types";
 import { useTranslation } from "react-i18next";
 import { Banner } from "../Banner";
 

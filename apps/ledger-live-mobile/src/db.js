@@ -1,8 +1,8 @@
 // @flow
 import { log } from "@ledgerhq/logs";
-import { atomicQueue } from "@ledgerhq/live-common/lib/promise";
-import type { AccountRaw } from "@ledgerhq/live-common/lib/types";
-import type { CounterValuesStateRaw } from "@ledgerhq/live-common/lib/countervalues/types";
+import { atomicQueue } from "@ledgerhq/live-common/promise";
+import type { AccountRaw } from "@ledgerhq/live-common/types/index";
+import type { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
 import store from "./logic/storeWrapper";
 
 const ACCOUNTS_KEY = "accounts";

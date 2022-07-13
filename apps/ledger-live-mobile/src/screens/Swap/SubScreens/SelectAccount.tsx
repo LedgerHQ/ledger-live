@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";

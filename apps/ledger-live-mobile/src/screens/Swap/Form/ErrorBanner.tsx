@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import { ValidCheckQuoteErrorCodes } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { ValidCheckQuoteErrorCodes } from "@ledgerhq/live-common/exchange/swap/types";
 import { urls } from "../../../config/urls";
 import { Banner } from "./Banner";
 

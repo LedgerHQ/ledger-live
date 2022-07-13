@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice from "../../../components/SelectDevice";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { TrackScreen } from "../../../analytics";

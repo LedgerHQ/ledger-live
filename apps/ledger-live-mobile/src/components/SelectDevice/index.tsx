@@ -7,8 +7,11 @@ import {
   useNavigation,
   useTheme as useNavTheme,
 } from "@react-navigation/native";
-import { discoverDevices, TransportModule } from "@ledgerhq/live-common/lib/hw";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import {
+  discoverDevices,
+  TransportModule,
+} from "@ledgerhq/live-common/hw/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";

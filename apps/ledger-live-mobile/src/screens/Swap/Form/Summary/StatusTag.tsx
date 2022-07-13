@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { KYCStatus } from "@ledgerhq/live-common/src/exchange/swap/types";
+import { KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 
 const statusThemeMap = {
   pending: {

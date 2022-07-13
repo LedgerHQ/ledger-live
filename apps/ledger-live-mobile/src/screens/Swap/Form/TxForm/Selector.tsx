@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
 import { useTranslation } from "react-i18next";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 

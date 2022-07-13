@@ -6,9 +6,9 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import {
   WidgetTypes,
   getFTXURL,
-} from "@ledgerhq/live-common/lib/exchange/swap/utils";
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Icon, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { Message } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { Message } from "@ledgerhq/live-common/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
 import { Loading } from "../../Loading";

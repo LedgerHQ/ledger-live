@@ -8,26 +8,26 @@ import {
   ExchangeRate,
   SwapTransaction,
   SwapTransactionType,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapHistory";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
+import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import {
   addPendingOperation,
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { AccountLike, Transaction } from "@ledgerhq/live-common/src/types";
+} from "@ledgerhq/live-common/account/index";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { AccountLike, Transaction } from "@ledgerhq/live-common/types/index";
 import {
   postSwapAccepted,
   postSwapCancelled,
-} from "@ledgerhq/live-common/lib/exchange/swap";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/exchange/swap/index";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";

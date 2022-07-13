@@ -4,18 +4,18 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import {
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   ExchangeRate,
   Pair,
   SwapTransactionType,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
 import {
   usePickDefaultCurrency,
   useSelectableCurrencies,
-} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 

@@ -31,20 +31,19 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
-import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
-import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
-
-import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
-import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { GlobalCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/GlobalCatalogProvider";
-import { RampCatalogProvider } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
+import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
+import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
+import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
+import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
+import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import {
   RemoteLiveAppProvider,
   useRemoteLiveAppContext,
-} from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
@@ -70,10 +69,12 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+/* eslint-disable import/named */
 import WalletConnectProvider, {
   // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
+/* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";

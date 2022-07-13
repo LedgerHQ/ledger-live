@@ -1,5 +1,5 @@
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -49,9 +49,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <View style={styles.header}>
         <ValidatorHead />

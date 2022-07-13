@@ -1,7 +1,5 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
-// import { Flex, Text } from "@ledgerhq/native-ui";
-// import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SelectFeesProps } from "../types";
 import SendRowsFee from "../../../components/SendRowsFee";

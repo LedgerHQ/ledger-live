@@ -2,11 +2,11 @@
 
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
-import type { ExchangeRaw } from "@ledgerhq/live-common/lib/exchange/platform/types";
-import completeExchange from "@ledgerhq/live-common/lib/exchange/platform/completeExchange";
-import { fromExchangeRaw } from "@ledgerhq/live-common/lib/exchange/platform/serialization";
-import type { TransactionRaw } from "@ledgerhq/live-common/lib/types";
-import { fromTransactionRaw } from "@ledgerhq/live-common/lib/transaction";
+import type { ExchangeRaw } from "@ledgerhq/live-common/exchange/platform/types";
+import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
+import { fromExchangeRaw } from "@ledgerhq/live-common/exchange/platform/serialization";
+import type { TransactionRaw } from "@ledgerhq/live-common/types/index";
+import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 type Input = {
   deviceId: string,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
+import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { accountsSelector } from "../reducers/accounts";
 
 export const SyncNewAccounts = ({ priority }: { priority: number }) => {

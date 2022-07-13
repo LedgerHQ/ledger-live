@@ -1,16 +1,12 @@
 import React from "react";
-import {
-  setEnvUnsafe,
-  isEnvDefault,
-  getEnv,
-} from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-common/env";
 
 import { Feature, isReadOnly } from "../../../experimental";
 import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
-import { useFeature } from "@ledgerhq/live-common/lib/featureFlags";
-import { FeatureId } from "@ledgerhq/live-common/lib/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureId } from "@ledgerhq/live-common/types/index";
 
 type Props = {
   feature: Feature;

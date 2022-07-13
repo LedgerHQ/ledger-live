@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.4.0-next.6",
+  "version": "3.4.1",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
@@ -27,6 +27,7 @@
     "preios:ci:nightly": "bundle install",
     "ios:ci:nightly": "bundle exec fastlane ios ci_nightly --env nightly",
     "ios:device:add": "bundle exec fastlane ios add_ios_device",
+    "ios:sync:profiles": "bundle exec fastlane ios sync_ios_profiles",
     "preandroid:apk": "bundle install",
     "android:apk": "bundle exec fastlane android apk --env staging",
     "preandroid:ci:playstore": "bundle install",
@@ -246,8 +247,8 @@
     "flipper-plugin-rn-performance-android": "^0.1.0",
     "flow-bin": "0.122.0",
     "flow-typed": "^2.6.2",
-    "jest": "^27.5.1",
-    "jest-circus": "^27.5.1",
+    "jest": "^28.1.1",
+    "jest-circus": "^28.1.1",
     "jetifier": "^1.6.6",
     "local-web-server": "^4.2.1",
     "metro": "^0.67.0",

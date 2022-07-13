@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types/currencies";
+} from "@ledgerhq/live-common/types/currencies";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";

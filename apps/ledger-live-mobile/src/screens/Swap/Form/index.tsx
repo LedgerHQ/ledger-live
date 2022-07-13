@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import Config from "react-native-config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { checkQuote } from "@ledgerhq/live-common/lib/exchange/swap";
+import { checkQuote } from "@ledgerhq/live-common/exchange/swap/index";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import {
   ExchangeRate,
@@ -9,21 +9,21 @@ import {
   ValidCheckQuoteErrorCodes,
   OnNoRatesCallback,
   ActionRequired,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
   usePollKYCStatus,
   useSwapTransaction,
   useProviders,
-} from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   getKYCStatusFromCheckQuoteStatus,
   KYC_STATUS,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
-} from "@ledgerhq/live-common/lib/exchange/swap/utils";
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,

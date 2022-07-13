@@ -3,7 +3,7 @@
 // This is a test example for dev testing purpose.
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 type Input = {
   deviceId: string,

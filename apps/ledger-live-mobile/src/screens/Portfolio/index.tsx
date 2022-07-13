@@ -1,7 +1,7 @@
 /* eslint-disable import/named */
 import React, { useCallback, useMemo, useState, memo } from "react";
 import { useSelector } from "react-redux";
-import { FlatList, LayoutChangeEvent } from "react-native";
+import { FlatList } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -9,15 +9,13 @@ import Animated, {
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -33,7 +31,6 @@ import Carousel from "../../components/Carousel";
 import Header from "./Header";
 import TrackScreen from "../../analytics/TrackScreen";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
-import RequireTerms from "../../components/RequireTerms";
 import { NavigatorName } from "../../const";
 import FabActions from "../../components/FabActions";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
@@ -278,8 +275,10 @@ function PortfolioScreen({ navigation }: Props) {
 
   return (
     <>
-      <FirmwareUpdateBanner />
       <TabBarSafeAreaView>
+        <Flex px={6} py={4}>
+          <FirmwareUpdateBanner />
+        </Flex>
         <CheckLanguageAvailability />
         <CheckTermOfUseUpdate />
         <TrackScreen
@@ -296,9 +295,6 @@ function PortfolioScreen({ navigation }: Props) {
             hidePortfolio={areAccountsEmpty}
           />
         </Box>
-        <Flex px={6} py={4}>
-          <FirmwareUpdateBanner />
-        </Flex>
         <AnimatedFlatListWithRefreshControl
           data={data}
           style={{ flex: 1, position: "relative" }}

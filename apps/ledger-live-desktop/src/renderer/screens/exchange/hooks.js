@@ -1,14 +1,14 @@
 // @flow
 import { useCallback, useMemo } from "react";
-import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/lib/currencies";
+import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types/currencies";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types/account";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
+import type { AccountLike } from "@ledgerhq/live-common/types/account";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { RampCatalogEntry } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/types";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 import coinifyIcon from "~/renderer/images/coinifyLogo.png";
 

@@ -2,14 +2,14 @@ import {
   ExchangeRate,
   MappedSwapOperation,
   SwapDataType,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
   AccountLike,
   CryptoCurrency,
   Operation,
   TokenCurrency,
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
 

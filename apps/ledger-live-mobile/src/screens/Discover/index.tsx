@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
@@ -20,6 +20,8 @@ const learnImg = require("../../images/illustration/Shared/_Learn.png");
 const appsImg = require("../../images/illustration/Shared/_Apps.png");
 
 const earnImg = require("../../images/illustration/Shared/_Earn.png");
+
+const mintImg = require("../../images/illustration/Shared/_Mint.png");
 
 const StyledSafeAreaView = styled(TabBarSafeAreaView)`
   background-color: ${({ theme }) => theme.colors.background.main};
@@ -110,6 +112,24 @@ function Discover() {
               size={130}
               darkSource={earnImg}
               lightSource={earnImg}
+            />
+          ),
+        },
+        {
+          title: t("discover.sections.mint.title"),
+          subTitle: t("discover.sections.mint.desc"),
+          onPress: () => {
+            readOnlyTrack("Mint");
+              track("Discover - Mint - OpenUrl", { url: urls.discover.mint});
+              Linking.openURL(urls.discover.mint);
+
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={130}
+              darkSource={mintImg}
+              lightSource={mintImg}
             />
           ),
         },

@@ -1,7 +1,7 @@
-import { isSwapOperationPending } from "@ledgerhq/live-common/lib/exchange/swap";
-import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/exchange/swap/csvExport";
-import getCompleteSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/getCompleteSwapHistory";
-import updateAccountSwapStatus from "@ledgerhq/live-common/lib/exchange/swap/updateAccountSwapStatus";
+import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
+import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
+import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
+import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
 import { useTheme } from "@react-navigation/native";
 import React, {
   useCallback,

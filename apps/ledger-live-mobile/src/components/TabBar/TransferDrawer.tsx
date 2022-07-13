@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 
 import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
 import { ScrollView, Linking } from "react-native";

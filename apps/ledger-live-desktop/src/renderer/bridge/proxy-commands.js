@@ -16,7 +16,7 @@ import type {
   SignOperationEventRaw,
   SignedOperationRaw,
   OperationRaw,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   fromTransactionRaw,
   toTransactionRaw,
@@ -24,7 +24,7 @@ import {
   fromSignedOperationRaw,
   toSignOperationEventRaw,
   formatTransaction,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import {
   fromAccountRaw,
   fromAccountLikeRaw,
@@ -32,10 +32,10 @@ import {
   toOperationRaw,
   formatOperation,
   formatAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { toScanAccountEventRaw } from "@ledgerhq/live-common/lib/bridge";
-import * as bridgeImpl from "@ledgerhq/live-common/lib/bridge/impl";
+} from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { toScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
+import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
 
 const cmdCurrencyPreload = ({ currencyId }: { currencyId: string }): Observable<mixed> => {
   const currency = getCryptoCurrencyById(currencyId);

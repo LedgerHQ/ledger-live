@@ -1,12 +1,12 @@
-import completeExchange from "@ledgerhq/live-common/lib/exchange/platform/completeExchange";
-import { Exchange } from "@ledgerhq/live-common/lib/exchange/platform/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/completeExchange";
-import { createAction as txCreateAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
+import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
+import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import type {
   Operation, Transaction
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

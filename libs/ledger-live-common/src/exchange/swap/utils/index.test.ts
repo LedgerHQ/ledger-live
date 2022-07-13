@@ -1,4 +1,4 @@
-import { getTokenById } from "@ledgerhq/cryptoassets/lib/tokens";
+import { getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "../../../currencies";
 import { genAccount } from "../../../mock/account";

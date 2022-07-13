@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   SwapNavParamList,
   SelectAccount,

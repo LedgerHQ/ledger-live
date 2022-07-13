@@ -7,15 +7,15 @@ import {
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { usePickDefaultAccount } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
   SwapTransactionType,
   Pair,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { shallowAccountsSelector } from "../../../../reducers/accounts";

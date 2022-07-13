@@ -1,13 +1,13 @@
 /* @flow */
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { Trans } from "react-i18next";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/families/bitcoin/types";
+import type { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useFeesStrategy } from "@ledgerhq/live-common/lib/families/bitcoin/react";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { ScreenName } from "../../const";
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 

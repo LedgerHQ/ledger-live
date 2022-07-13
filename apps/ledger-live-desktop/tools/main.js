@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 const yargs = require("yargs");
-const { esbuild, NodeExternalsPlugin } = require("esbuild-utils");
 const Electron = require("./utils/Electron");
-const WebpackWorker = require("./utils/WebpackWorker");
 const processReleaseNotes = require("./utils/processReleaseNotes");
 const {
   processNativeModules,
@@ -11,17 +9,16 @@ const {
   esBuildExternalsPlugin,
 } = require("native-modules-tools");
 const path = require("path");
+const { esbuild, NodeExternalsPlugin } = require("esbuild-utils");
+const { createServer } = require("vite");
 
-const { buildMainEnv, buildRendererEnv, buildRendererConfig } = require("./utils");
-
-const lldRoot = path.resolve(__dirname, "..");
+const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./utils");
 
 const startDev = async argv => {
   const electron = new Electron("./.webpack/main.bundle.js");
 
   const devConfig = {
     minify: false,
-    incremental: true,
     watch: {
       onRebuild(error, result) {
         if (error) {
@@ -54,10 +51,6 @@ const startDev = async argv => {
     define: buildMainEnv("development", argv),
     ...devConfig,
   };
-  const rendererConfig = buildRendererConfig(
-    "development",
-    require("./config/renderer.webpack.config"),
-  );
 
   try {
     await processReleaseNotes();
@@ -65,14 +58,17 @@ const startDev = async argv => {
     console.log(error);
   }
 
+  const rendererServer = await createServer(buildViteConfig(argv));
+
   await Promise.all([
     esbuild.build(mainConfig),
     esbuild.build(preloaderConfig),
     esbuild.build(webviewPreloaderConfig),
     esbuild.build(swapConnectWebviewPreloaderConfig),
-    new WebpackWorker("renderer", rendererConfig).serve(argv.port),
+    rendererServer.listen(),
   ]);
 
+  rendererServer.printUrls();
   electron.start();
 };
 

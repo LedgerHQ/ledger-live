@@ -1,8 +1,8 @@
 import React from "react";
 import { VideoProperties } from "react-native-video";
 import { FastImageProps } from "react-native-fast-image";
-import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/lib/types";
-import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
+import { NFTMediaSizes, NFTMetadata } from "@ledgerhq/live-common/types/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Theme } from "@react-navigation/native";
 import { getMetadataMediaType } from "../../logic/nft";
 import { withTheme } from "../../colors";

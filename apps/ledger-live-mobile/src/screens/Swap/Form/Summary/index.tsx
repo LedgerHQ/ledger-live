@@ -2,16 +2,16 @@ import React, { useCallback, useMemo } from "react";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getProviderName } from "@ledgerhq/live-common/lib/exchange/swap/utils";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   SwapTransactionType,
   ExchangeRate,
   KYCStatus,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 // eslint-disable-next-line import/no-unresolved, import/named

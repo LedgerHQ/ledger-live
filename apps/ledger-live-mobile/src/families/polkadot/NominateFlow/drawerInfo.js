@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { useTheme } from "@react-navigation/native";
 import Touchable from "../../../components/Touchable";

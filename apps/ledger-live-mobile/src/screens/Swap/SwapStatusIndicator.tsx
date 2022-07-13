@@ -1,7 +1,7 @@
 import {
   isSwapOperationPending,
   operationStatusList,
-} from "@ledgerhq/live-common/lib/exchange/swap";
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";

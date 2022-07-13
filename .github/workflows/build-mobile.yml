@@ -18,18 +18,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  is-org-member:
-    name: "Check Org Member"
-    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ./.github/workflows/pr-is-fork.yml
     with:
-      username: ${{ github.actor }}
-      organisation: ledgerhq
+      non-pr-result: true
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
-    needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -50,8 +49,8 @@ jobs:
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member, start-runner]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -130,8 +129,8 @@ jobs:
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member]
+    if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork]
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"

@@ -2,15 +2,15 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, NavigationProp } from "@react-navigation/native";
-import { useLocalLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/LocalLiveAppProvider";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
 
-const DebuggerButton: React.FC<{
-  noPress: Function,
+const DebuggerButton: React$ComponentType<{
+  onPress: Function,
 }> = ({ onPress }) => {
   const { colors } = useTheme();
 

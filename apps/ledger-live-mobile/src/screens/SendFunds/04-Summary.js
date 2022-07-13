@@ -1,16 +1,16 @@
 /* @flow */
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/account/index";
+import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";

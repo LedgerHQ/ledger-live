@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import IconCheck from "../../../icons/Check";
