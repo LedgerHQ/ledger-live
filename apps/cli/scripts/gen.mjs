@@ -1,37 +1,30 @@
 #!/usr/bin/env zx
-import "zx/globals"
+import "zx/globals";
 
-cd("src")
-const { stdout } = await $`pwd`
-const pwd = stdout.replace("\n", "")
-
-const subfolder = "commands"
-const p = path.join(pwd, subfolder)
+const src = path.join(__dirname, "..", "src");
+const subfolder = "commands";
+const p = path.join(src, subfolder);
 async function gen() {
-  let imports = ``
-  let exprts = `export default {`
+  let imports = ``;
+  let exprts = `export default {`;
   for (const file of await fs.promises.readdir(p)) {
-    const clean = file.replace(".ts", "")
+    const clean = file.replace(".ts", "");
     imports += `import ${clean} from "./${subfolder}/${clean}";
 `;
     exprts += `
-  ${clean},`
-
+  ${clean},`;
   }
 
-  exprts = exprts.substring(0, exprts.length - 1)
+  exprts = exprts.substring(0, exprts.length - 1);
   exprts += `
 };
-`
+`;
 
   const str = `${imports}
-${exprts}`
+${exprts}`;
 
-  return str
+  return str;
 }
 
-const str = await gen()
-console.log(str)
-await fs.promises.writeFile("commands-index.ts", str, "utf8")
-
-
+const str = await gen();
+await fs.promises.writeFile(path.join(src, "commands-index.ts"), str, "utf8");
