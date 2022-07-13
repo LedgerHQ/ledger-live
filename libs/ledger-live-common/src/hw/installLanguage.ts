@@ -37,7 +37,7 @@ export default function installLanguage({
 }: InstallLanguageRequest): Observable<InstallLanguageEvent> {
   const sub = withDevice(deviceId)(
     (transport) =>
-      new Observable<InstallLanguageEvent>((subscriber) => {
+      new Observable((subscriber) => {
         const timeoutSub = of<InstallLanguageEvent>({
           type: "unresponsiveDevice",
         })
@@ -133,7 +133,7 @@ export default function installLanguage({
               return throwError(e);
             })
           )
-          .subscribe();
+          .subscribe(subscriber);
 
         return () => {
           timeoutSub.unsubscribe();
@@ -142,7 +142,7 @@ export default function installLanguage({
       })
   );
 
-  return sub;
+  return sub as Observable<InstallLanguageEvent>;
 }
 
 const uninstallAllLanguages = async (transport: Transport) => {
