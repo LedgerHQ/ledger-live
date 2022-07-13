@@ -929,6 +929,10 @@
       "earn" : {
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
+      },
+      "mint": {
+        "title": "Minter",
+        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
       }
     },
     "comingSoon" : "Prochainement",
