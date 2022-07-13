@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import React, { useCallback, useMemo, memo } from "react";
+=======
+import React, { useCallback, useMemo, memo, useContext } from "react";
+>>>>>>> LIVE-2927 - Fix analytics for upsell modal
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -23,6 +28,7 @@ import TabBarSafeAreaView, {
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
 import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -133,9 +139,13 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     [t],
   );
 
+  const { source, setSource } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => setSource("Assets"));
+
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="ReadOnly" name="Assets" source="Wallet" />
+      <TrackScreen category="ReadOnly" name="Assets" source={source} />
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FilteredSearchBar

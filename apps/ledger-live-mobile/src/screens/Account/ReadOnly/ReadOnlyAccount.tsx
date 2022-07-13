@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useContext } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -7,8 +7,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getCryptoCurrencyById,
   getTokenById,
+<<<<<<< HEAD
 } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/live-common/types/index";
+=======
+} from "@ledgerhq/live-common/lib/currencies";
+import { Currency } from "@ledgerhq/live-common/lib/types";
+import { useFocusEffect } from "@react-navigation/native";
+>>>>>>> LIVE-2927 - Fix analytics for upsell modal
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
@@ -26,7 +32,7 @@ import {
   counterValueCurrencySelector,
   hasOrderedNanoSelector,
 } from "../reducers/settings";
-import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 type RouteParams = {
   currencyId: string;
@@ -132,7 +138,9 @@ function ReadOnlyAccount({ route }: Props) {
   const renderItem = useCallback(({ item }: any) => item, []);
   const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
-  const previousRoute = usePreviousRouteName();
+  const { source, setSource } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => setSource("Account"));
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
@@ -140,7 +148,7 @@ function ReadOnlyAccount({ route }: Props) {
         category="Account"
         currency={currency}
         operationsSize={0}
-        source={previousRoute}
+        source={source}
       />
       <FlatList
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
