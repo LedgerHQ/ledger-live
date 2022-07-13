@@ -7,10 +7,11 @@ import {
   WidgetTypes,
   getFTXURL,
 } from "@ledgerhq/live-common/lib/exchange/swap/utils";
-import { Icon, Flex } from "@ledgerhq/native-ui";
+import { Icon, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Message } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../../actions/settings";
+import { Loading } from "../../Loading";
 
 interface Props {
   provider: string;
@@ -108,6 +109,20 @@ export function Widget({ provider, type }: Props) {
       incognito={true}
       injectedJavaScriptBeforeContentLoaded={preload}
       onMessage={handleMessage}
+      startInLoadingState
+      renderLoading={() => (
+        <Flex
+          flex={1}
+          position="absolute"
+          top="0"
+          right="0"
+          bottom="0"
+          left="0"
+          backgroundColor="background.main"
+        >
+          <Loading />
+        </Flex>
+      )}
     />
   );
 }

@@ -32,7 +32,7 @@ import {
 import { setSwapKYCStatus } from "../../../actions/settings";
 // eslint-disable-next-line import/named
 import { TrackScreen, track } from "../../../analytics";
-import { Loading } from "./Loading";
+import { Loading } from "../Loading";
 import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
