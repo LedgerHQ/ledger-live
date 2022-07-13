@@ -22,7 +22,7 @@ export function Banner({ message, cta, onPress }: Props) {
         <Text color="primary.c70">{message}</Text>
       </Flex>
 
-      <Button type="main" size="small" onPress={onPress}>
+      <Button type="main" size="small" onPress={onPress} marginLeft={2}>
         {cta}
       </Button>
     </Flex>
