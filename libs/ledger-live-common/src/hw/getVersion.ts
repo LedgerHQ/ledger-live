@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { FirmwareInfo } from "../types/manager";
 import { satisfies as versionSatisfies } from "semver";
@@ -13,8 +13,9 @@ const deviceVersionRangesForBootloaderVersion: {
 };
 export const isBootloaderVersionSupported = (
   seVersion: string,
-  modelId: DeviceModelId
+  modelId?: DeviceModelId
 ) =>
+  modelId &&
   deviceVersionRangesForBootloaderVersion[modelId] &&
   versionSatisfies(
     seVersion,
@@ -28,24 +29,15 @@ const deviceVersionRangesForHardwareVersion: {
 };
 export const isHardwareVersionSupported = (
   seVersion: string,
-  modelId: DeviceModelId
+  modelId?: DeviceModelId
 ) =>
+  modelId &&
   deviceVersionRangesForHardwareVersion[modelId] &&
   versionSatisfies(
     seVersion,
     deviceVersionRangesForHardwareVersion[modelId] as string
   );
 
-/**
- * Retrieve targetId and firmware version from device
- */
-
-const deviceTargetIds = {
-  "33000004": DeviceModelId.nanoX,
-  "31100004": DeviceModelId.nanoS,
-  "33100004": DeviceModelId.nanoSP,
-  "33200004": DeviceModelId.nanoFTS,
-};
 
 export default async function getVersion(
   transport: Transport
@@ -126,9 +118,9 @@ export default async function getVersion(
     const isOSU = rawVersion.includes("-osu");
 
     if (!isOSU) {
-      const deviceModel: DeviceModelId = deviceTargetIds[targetId.toString(16)];
+      const deviceModel = identifyTargetId(targetId);
 
-      if (isBootloaderVersionSupported(seVersion, deviceModel)) {
+      if (isBootloaderVersionSupported(seVersion, deviceModel?.id)) {
         const bootloaderVersionLength = data[i++];
         let bootloaderVersionBuf: Buffer = Buffer.from(
           data.slice(i, i + bootloaderVersionLength)
@@ -144,7 +136,7 @@ export default async function getVersion(
         bootloaderVersion = bootloaderVersionBuf.toString();
       }
 
-      if (isHardwareVersionSupported(seVersion, deviceModel)) {
+      if (isHardwareVersionSupported(seVersion, deviceModel?.id)) {
         const hardwareVersionLength = data[i++];
         hardwareVersion = data
           .slice(i, i + hardwareVersionLength)
@@ -152,7 +144,7 @@ export default async function getVersion(
         i += hardwareVersionLength;
       }
 
-      if (isDeviceLocalizationSupported(seVersion, deviceModel)) {
+      if (isDeviceLocalizationSupported(seVersion, deviceModel?.id)) {
         const languageIdLength = data[i++];
         languageId = data.slice(i, i + languageIdLength).readUIntBE(0, 1);
       }
