@@ -29,6 +29,8 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { useProviders } from "../exchange/Swap2/Form";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 type Props = {
   isAvailable: boolean,
   cryptoChange: ValueChange,
@@ -54,6 +56,9 @@ export default function AssetBalanceSummaryHeader({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
 
   const cvUnit = counterValue.units[0];
   const data = useMemo(
@@ -98,16 +103,36 @@ export default function AssetBalanceSummaryHeader({
       return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
     });
 
-  const onBuy = useCallback(() => {
-    setTrackingSource("asset header actions");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        mode: "onRamp",
-        currencyId: currency.id,
-      },
-    });
-  }, [currency, history]);
+  const onBuySell = useCallback(
+    (mode = "buy") => {
+      setTrackingSource("asset header actions");
+      // PTX smart routing redirect to live app or to native implementation
+      if (ptxSmartRouting?.enabled) {
+        const params = {
+          currency: currency.id,
+          mode, // buy or sell
+        };
+
+        const queryParams = new URLSearchParams(params);
+
+        history.push({
+          // replace 'multibuy' in case live app id changes
+          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+            "multibuy"}?${queryParams.toString()}`,
+          state: {},
+        });
+      } else {
+        history.push({
+          pathname: "/exchange",
+          state: {
+            mode: "onRamp",
+            currencyId: currency.id,
+          },
+        });
+      }
+    },
+    [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
+  );
 
   const onSwap = useCallback(() => {
     setTrackingSource("asset header actions");
@@ -168,7 +193,12 @@ export default function AssetBalanceSummaryHeader({
           </Wrapper>
         </BalanceTotal>
         {availableOnBuy && (
-          <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+          <Button
+            data-test-id="portfolio-buy-button"
+            variant="color"
+            mr={1}
+            onClick={() => onBuySell("buy")}
+          >
             {t("accounts.contextMenu.buy")}
           </Button>
         )}

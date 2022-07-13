@@ -37,9 +37,11 @@ import {
   ActionDefault,
   BuyActionDefault,
   ReceiveActionDefault,
+  SellActionDefault,
   SendActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const ButtonSettings: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
   alignItems: "center",
@@ -131,6 +133,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme("colors.palette.text.shade60");
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
+
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
   const manage = perFamilyManageActions[mainAccount.currency.family];
   let manageList = [];
@@ -177,17 +182,45 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   const history = useHistory();
 
-  const onBuy = useCallback(() => {
-    setTrackingSource("account header actions");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        mode: "onRamp",
-        currencyId: currency.id,
-        accountId: mainAccount.id,
-      },
-    });
-  }, [currency, history, mainAccount]);
+  const onBuySell = useCallback(
+    (mode = "buy") => {
+      setTrackingSource("account header actions");
+      // PTX smart routing redirect to live app or to native implementation
+      if (ptxSmartRouting?.enabled) {
+        const params = {
+          currency: currency.id,
+          account: mainAccount.freshAddress,
+          mode, // buy or sell
+        };
+
+        const queryParams = new URLSearchParams(params);
+
+        history.push({
+          // replace 'multibuy' in case live app id changes
+          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+            "multibuy"}?${queryParams.toString()}`,
+          state: {},
+        });
+      } else {
+        history.push({
+          pathname: "/exchange",
+          state: {
+            mode: "onRamp",
+            currencyId: currency.id,
+            accountId: mainAccount.id,
+          },
+        });
+      }
+    },
+    [
+      currency.id,
+      history,
+      mainAccount.freshAddress,
+      mainAccount.id,
+      ptxSmartRouting?.enabled,
+      ptxSmartRouting?.params?.liveAppId,
+    ],
+  );
 
   const onLend = useCallback(() => {
     openModal("MODAL_LEND_MANAGE", {
@@ -277,7 +310,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       : []),
   ];
 
-  const BuyHeader = <BuyActionDefault onClick={onBuy} />;
+  const BuyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
+
+  const SellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
 
   const SwapHeader = <SwapActionDefault onClick={onSwap} />;
 
@@ -288,6 +323,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {manageActions.length > 0 && ManageActionsHeader}
       {availableOnSwap && SwapHeader}
       {availableOnBuy && BuyHeader}
+      {/** don't show sell button if ptx smart routing is not enabled or sell not available */}
+      {availableOnSell && ptxSmartRouting?.enabled && SellHeader}
       {canSend(account, parentAccount) && (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       )}

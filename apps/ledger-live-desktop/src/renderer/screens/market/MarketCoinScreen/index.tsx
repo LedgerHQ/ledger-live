@@ -22,6 +22,8 @@ import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/plat
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
   width: 56px;
@@ -71,6 +73,9 @@ export default function MarketCoinScreen() {
           .flat(2)
       : [];
   }, [providers, storedProviders]);
+
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
 
   const {
     selectedCoinData: currency,
@@ -126,19 +131,36 @@ export default function MarketCoinScreen() {
     : colors.primary.c80;
 
   const onBuy = useCallback(
-    e => {
+    (e: any) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market Coin");
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-        },
-      });
+      // PTX smart routing redirect to live app or to native implementation
+      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
+        const params = {
+          currency: currency.internalCurrency.id,
+          mode: "buy", // buy or sell
+        };
+
+        const queryParams = new URLSearchParams(params);
+
+        history.push({
+          // replace 'multibuy' in case live app id changes
+          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+            "multibuy"}?${queryParams.toString()}`,
+          state: {},
+        });
+      } else {
+        history.push({
+          pathname: "/exchange",
+          state: {
+            mode: "onRamp",
+            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+          },
+        });
+      }
     },
-    [history, currency],
+    [currency, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
   );
 
   const openAddAccounts = useCallback(() => {
@@ -152,7 +174,7 @@ export default function MarketCoinScreen() {
   }, [dispatch, currency]);
 
   const onSwap = useCallback(
-    e => {
+    (e: any) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();

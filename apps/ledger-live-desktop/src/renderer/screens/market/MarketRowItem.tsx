@@ -17,6 +17,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
   width: 32px;
@@ -65,6 +67,9 @@ function MarketRowItem({
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
+
   const openAddAccounts = useCallback(() => {
     if (currency)
       dispatch(
@@ -91,23 +96,40 @@ function MarketRowItem({
   }, [currency, history, range, selectCurrency]);
 
   const onBuy = useCallback(
-    e => {
+    (e: any) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market");
-      history.push({
-        pathname: "/exchange",
-        state: {
-          mode: "onRamp",
-          defaultTicker: currency.ticker.toUpperCase(),
-        },
-      });
+      // PTX smart routing redirect to live app or to native implementation
+      if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
+        const params = {
+          currency: currency.internalCurrency.id,
+          mode: "buy", // buy or sell
+        };
+
+        const queryParams = new URLSearchParams(params);
+
+        history.push({
+          // replace 'multibuy' in case live app id changes
+          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+            "multibuy"}?${queryParams.toString()}`,
+          state: {},
+        });
+      } else {
+        history.push({
+          pathname: "/exchange",
+          state: {
+            mode: "onRamp",
+            defaultTicker: currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
+          },
+        });
+      }
     },
-    [currency, history],
+    [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
   );
 
   const onSwap = useCallback(
-    e => {
+    (e: any) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
@@ -137,7 +159,7 @@ function MarketRowItem({
   );
 
   const onStarClick = useCallback(
-    e => {
+    (e: any) => {
       e.preventDefault();
       e.stopPropagation();
       toggleStar();
