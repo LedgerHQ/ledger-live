@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.5.0-hotfix.0",
+  "version": "3.4.1-hotfix.0",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
