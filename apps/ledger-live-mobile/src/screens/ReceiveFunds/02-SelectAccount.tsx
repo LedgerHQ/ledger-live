@@ -8,9 +8,11 @@ import type { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import AccountCard from "../../components/AccountCard";
 import LText from "../../components/LText";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
+import { useRoute } from "@react-navigation/native";
 
 type Props = {
   navigation: any;
@@ -18,7 +20,9 @@ type Props = {
 };
 
 function ReceiveSelectAccount({ navigation, route }: Props) {
+  const lastRoute = usePreviousRouteName()
   const currency = route.params?.currency;
+  const routerRoute = useRoute()
   const { t } = useTranslation();
 
   const accounts = useSelector(
@@ -53,6 +57,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
+      track("account_clicked", { currency: currency.name, screen: routerRoute.name}
       navigation.navigate(ScreenName.ReceiveConfirmation, {
         ...route.params,
         accountId: account?.parentId || account.id,
@@ -83,7 +88,7 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   return aggregatedAccounts.length > 1 ? (
     <>
-      <TrackScreen category="ReceiveFunds" name="SelectAccount" />
+      <TrackScreen category="ReceiveFunds" name="Receive Account Select" source={lastRoute} currency={currency.name} />
       <Flex p={6}>
         <LText fontSize="32px" fontFamily="InterMedium" semiBold>
           {t("transfer.receive.selectAccount.title")}
