@@ -11,9 +11,9 @@ import {
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getMainAccount } from "@ledgerhq/live-common/account/helpers/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl/index";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 
 import type {

@@ -8,7 +8,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/types/index";
-import type { DeviceModelId } from "@ledgerhq/devices/index";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { useSignWithDevice } from "../../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../../actions/accounts";

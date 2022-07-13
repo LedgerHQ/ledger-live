@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback } from "react";
 import {
   View,
   StyleSheet,
