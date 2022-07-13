@@ -6,6 +6,7 @@ import {
   Link as TextLink,
   Flex,
   BottomDrawer,
+  Text,
 } from "@ledgerhq/native-ui";
 
 import Illustration from "../images/illustration/Illustration";
@@ -50,11 +51,17 @@ function PromptNotification({ isOpen, onClose, type = "generic" }: Props) {
       id="PromptNotification"
       isOpen={isOpen}
       noCloseButton
-      title={t("notifications.prompt.title")}
-      description={t("notifications.prompt.desc")}
-      Icon={<NotifIllustration />}
     >
-      <Flex alignItems={"center"}>
+      <Flex>
+        <Flex alignItems={"center"}>
+          <NotifIllustration />
+          <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
+            {t("notifications.prompt.title")}
+          </Text>
+          <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c70" textAlign="center" mt={3}>
+            {t("notifications.prompt.desc")}
+          </Text>
+        </Flex>
         <Button type={"main"} mt={8} mb={7} onPress={onPressAllow}>
           {t("notifications.prompt.allow")}
         </Button>

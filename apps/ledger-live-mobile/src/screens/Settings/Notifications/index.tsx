@@ -1,10 +1,9 @@
-import React, { useCallback } from "react";
-import { Linking } from "react-native";
+import React, { useCallback, useMemo } from "react";
+import { Linking, Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
-import { Box, Switch, Text, Button } from "@ledgerhq/native-ui";
-import { SettingsMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Box, Switch, Text, Button, Icons } from "@ledgerhq/native-ui";
 
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
@@ -76,6 +75,18 @@ function NotificationsSettings() {
 
   const openSettings = useCallback(() => Linking.openSettings(), []);
 
+  const platformData = useMemo(() => {
+    return Platform.OS === "ios" ? {
+      osName: "iOS",
+      ctaTransKey: "iosCta",
+      ctaIcon: Icons.SettingsMedium,
+    } : {
+      osName: "Android",
+      ctaTransKey: "androidCta",
+      ctaIcon: Icons.NotificationsMedium,
+    };
+  }, []);
+
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Notifications" />
@@ -86,21 +97,19 @@ function NotificationsSettings() {
           fontWeight={"semiBold"}
           mb={2}
         >
-          Your notifications are disabled
+          {t(`settings.notifications.disabledNotifications.title`)}
         </Text>
         <Text color={"neutral.c70"} variant={"bodyLineHeight"}>
-          iOS is blocking notifications from Ledger Live. To get notifications
-          on your phone, visit your device’s settings to turn on Ledger Live
-          notifications.
+          {t(`settings.notifications.disabledNotifications.desc`, { platform: platformData.osName })}
         </Text>
         <Button
           type={"main"}
           mt={6}
           onPress={openSettings}
-          icon={SettingsMedium}
+          Icon={platformData.ctaIcon}
           iconPosition={"left"}
         >
-          Go to system settings
+          {t(`settings.notifications.disabledNotifications.${platformData.ctaTransKey}`)}
         </Button>
       </Box>
       <NotificationSettingsRow notificationKey={"allowed"} />
@@ -109,7 +118,7 @@ function NotificationsSettings() {
           notificationKey={"announcement"}
           disabled={disableSubSettings}
         />
-        <NotificationSettingsRow
+        {/* <NotificationSettingsRow
           notificationKey={"transactions"}
           label={t(`common.comingSoon`)}
           disabled={disableSubSettings}
@@ -123,7 +132,7 @@ function NotificationsSettings() {
           notificationKey={"price"}
           label={t(`common.comingSoon`)}
           disabled={disableSubSettings}
-        />
+        /> */}
       </Box>
     </SettingsNavigationScrollView>
   );
