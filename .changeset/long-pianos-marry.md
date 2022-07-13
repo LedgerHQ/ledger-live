@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-Adding [ L ] Market tothe Mobile Discover Landing
+Adding [ L ] Market to the Mobile Discover Landing
