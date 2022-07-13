@@ -14,7 +14,7 @@ import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/families/stellar/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText from "../../components/LText";

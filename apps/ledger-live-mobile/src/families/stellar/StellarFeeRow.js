@@ -82,7 +82,7 @@ export default function StellarFeeRow({
     fee,
     onSelect,
   }: {
-    label: React.ReactNode,
+    label: React.FC,
     isSelected: boolean,
     fee: BigNumber | null,
     onSelect: (isCustom: boolean) => void,
