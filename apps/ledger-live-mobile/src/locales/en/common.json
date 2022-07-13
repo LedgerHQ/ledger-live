@@ -2065,26 +2065,31 @@
     "notifications": {
       "title": "Notifications",
       "desc": "Manage your notifications",
+      "disabledNotifications": {
+        "title": "Your notifications are disabled",
+        "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
+        "androidCta": "Turn on notifications",
+        "iosCta": "Go to system settings"
+      },
       "allowed": {
         "title": "Allow notifications",
-        "desc": "Receive notifications about your crypto, market tendencies and more."
+        "desc": "Receive notifications about your crypto, market tendencies and more"
       },
       "transactions": {
         "title": "Transactions",
-        "desc": "Get notified when your crypto moves."
+        "desc": "Get notified when you receive or send crypto"
       },
       "market": {
         "title": "Market",
-        "desc": "Receive live push notifications about the crypto market."
+        "desc": "Receive significant market changes updates"
       },
       "announcement": {
-        "title": "Announcement",
-        "desc": "Receive live push notifications about the crypto market."
+        "title": "Announcements",
+        "desc": "Receive important Ledger Live updates"
       },
       "price": {
         "title": "Price Alerts",
-        "desc": "Receive alerts for your favorite coins",
-        "label": "Coming soon"
+        "desc": "Set price alerts for your favorite coins so that you don't miss a market move"
       }
     },
     "help": {
