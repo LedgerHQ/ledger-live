@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import React, { ReactNode, useCallback } from "react";
+import React, { useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -82,7 +82,7 @@ export default function StellarFeeRow({
     fee,
     onSelect,
   }: {
-    label: ReactNode,
+    label: React.ReactNode,
     isSelected: boolean,
     fee: BigNumber | null,
     onSelect: (isCustom: boolean) => void,
