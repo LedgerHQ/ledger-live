@@ -35,6 +35,13 @@ export default function ReceiveFundsNavigator() {
     });
   }, []);
 
+  const onSelectAccountClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: ScreenName.ReceiveSelectAccount,
+    });
+  }, []);
+
   const onConnectDeviceClose = useCallback(() => {
     track("button_clicked", {
       button: "Close 'x'",
@@ -73,6 +80,7 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveSelectAccount}
         options={{
           headerTitle: "",
+          headerRight: <HeaderRightClose onClose={onSelectAccountClose} />,
         }}
       />
 
