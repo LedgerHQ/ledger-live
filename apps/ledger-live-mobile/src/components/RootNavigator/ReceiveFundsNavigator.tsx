@@ -63,6 +63,13 @@ export default function ReceiveFundsNavigator() {
     });
   }, []);
 
+  const onConfirmationClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: ScreenName.ReceiveConfirmation,
+    });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -152,6 +159,7 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
+          headerRight: <HeaderRightClose onClose={onConfirmationClose} />,
         }}
       />
       {/* Receive Address Device Verification */}

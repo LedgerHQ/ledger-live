@@ -19,6 +19,7 @@ import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons, Button, Notification } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
+import { useRoute } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -28,6 +29,8 @@ import ReceiveSecurityModal from "./ReceiveSecurityModal";
 import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
+import { track, TrackScreen } from "../../analytics";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -62,7 +65,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const onModalHide = useRef(() => {});
   const [isAddionalInfoModalOpen, setIsAddionalInfoModalOpen] = useState(false);
   const dispatch = useDispatch();
-
+  const lastRoute = usePreviousRouteName()
+  const routerRoute = useRoute();
+  
   const hideToast = useCallback(() => {
     setIsToastDisplayed(false);
   }, []);
@@ -71,15 +76,23 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }, []);
 
   const openAdditionalInfoModal = useCallback(() => {
+    track("notification_clicked", {
+      button: "Imported and created account",
+      screen: routerRoute.name
+    })
     setIsAddionalInfoModalOpen(true);
     hideToast();
-  }, [setIsAddionalInfoModalOpen, hideToast]);
+  }, [setIsAddionalInfoModalOpen, hideToast, routerRoute.name]);
 
   const closeAdditionalInfoModal = useCallback(() => {
     setIsAddionalInfoModalOpen(false);
   }, [setIsAddionalInfoModalOpen]);
 
   const onRetry = useCallback(() => {
+    track("button_clicked", {
+      button: "Verify your address",
+      screen: routerRoute.name
+    })
     const params = {...route.params, notSkippable: true}
     if (isModalOpened) {
       setIsModalOpened(false);
@@ -87,7 +100,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     } else {
       navigation.navigate(ScreenName.ReceiveConnectDevice, params);
     }
-  }, [isModalOpened, navigation, route.params])
+  }, [isModalOpened, navigation, route.params, routerRoute])
 
   const { width } = getWindowDimensions();
   const QRSize = Math.round(width / 1.8 - 16);
@@ -117,16 +130,28 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }, [verified])
 
   const onShare = useCallback(() => {
+    track("button_clicked", {
+      button: "Share",
+      screen: routerRoute.name
+    })
     if (mainAccount?.freshAddress) {
       Share.share({ message: mainAccount?.freshAddress });
     }
-  }, [mainAccount?.freshAddress]);
+  }, [mainAccount?.freshAddress, routerRoute.name]);
+
+  const onCopy = useCallback(() => {
+    track("button_clicked", {
+      button: "Copy",
+      screen: routerRoute.name
+    })
+  }, [routerRoute.name])
 
   if (!account || !currency || !mainAccount) return null;
 
   return (
     <Flex flex={1} mb={9}>
       <NavigationScrollView style={{ flex: 1 }}>
+        <TrackScreen category="ReceiveFunds" name="Receive Qr Code" source={lastRoute} currency={currency.name} />
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
             {t("transfer.receive.receiveConfirmation.title", { currencyTicker: currency.ticker })}
@@ -192,6 +217,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             {mainAccount.freshAddress}
           </Text>
           <CopyLink
+            onCopy={onCopy}        
             string={mainAccount.freshAddress}
             replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
           >
