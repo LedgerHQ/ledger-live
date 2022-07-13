@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import {
   Flex,
   Icons,
@@ -26,7 +26,8 @@ import {
   discreetModeSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
-import { useCurrentRouteName } from "../helpers/routeHooks";
+import { StringNullableChain } from "lodash";
+import { AnalyticsContext } from "../components/RootNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -84,17 +85,16 @@ export default function GetDeviceScreen() {
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const discreetMode = useSelector(discreetModeSelector);
-  const currentRoute = useCurrentRouteName();
 
   const handleBack = useCallback(() => {
     navigation.goBack();
     if (discreetMode) {
       track("button_clicked", {
         button: "close",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [currentRoute, discreetMode, navigation]);
+  }, [discreetMode, navigation]);
 
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
@@ -108,16 +108,10 @@ export default function GetDeviceScreen() {
     if (discreetMode) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
-        screen: currentRoute,
+        screen: "Upsell Nano",
       });
     }
-  }, [
-    currentRoute,
-    discreetMode,
-    navigation,
-    setFirstTimeOnboarding,
-    setShowWelcome,
-  ]);
+  }, [discreetMode, navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
@@ -129,14 +123,12 @@ export default function GetDeviceScreen() {
 
   const videoMounted = !useIsAppInBackground();
 
+  const { source } = useContext(AnalyticsContext);
+
   return (
     <StyledSafeAreaView>
       {discreetMode ? (
-        <TrackScreen
-          category="ReadOnly"
-          name="Upsell Nano"
-          source={currentRoute}
-        />
+        <TrackScreen category="ReadOnly" name="Upsell Nano" source={source} />
       ) : null}
       <Flex
         flexDirection="row"

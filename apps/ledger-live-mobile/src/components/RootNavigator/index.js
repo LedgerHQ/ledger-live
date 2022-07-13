@@ -1,5 +1,5 @@
 // @flow
-import React, { useMemo } from "react";
+import React, { useMemo, createContext, useState } from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -8,6 +8,11 @@ import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 import BaseNavigator from "./BaseNavigator";
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
+
+export const AnalyticsContext = createContext<{
+  source: undefined | string,
+  setSource: (source: undefined | string) => void,
+}>({ source: undefined, setSource: () => {} });
 
 type Props = {
   importDataString?: string,
@@ -26,27 +31,38 @@ export default function RootNavigator({ importDataString }: Props) {
 
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
 
+  const [analyticsSource, setAnalyticsSource] = useState<undefined | string>(
+    undefined,
+  );
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {data ? (
-        <Stack.Screen
-          name={NavigatorName.ImportAccounts}
-          component={ImportAccountsNavigator}
-        />
-      ) : goToOnboarding ? (
-        <Stack.Screen
-          name={NavigatorName.BaseOnboarding}
-          component={BaseOnboardingNavigator}
-        />
-      ) : null}
-      <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
-      {hasCompletedOnboarding ? (
-        <Stack.Screen
-          name={NavigatorName.BaseOnboarding}
-          component={BaseOnboardingNavigator}
-        />
-      ) : null}
-    </Stack.Navigator>
+    <AnalyticsContext.Provider
+      value={{
+        source: analyticsSource,
+        setSource: setAnalyticsSource,
+      }}
+    >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {data ? (
+          <Stack.Screen
+            name={NavigatorName.ImportAccounts}
+            component={ImportAccountsNavigator}
+          />
+        ) : goToOnboarding ? (
+          <Stack.Screen
+            name={NavigatorName.BaseOnboarding}
+            component={BaseOnboardingNavigator}
+          />
+        ) : null}
+        <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
+        {hasCompletedOnboarding ? (
+          <Stack.Screen
+            name={NavigatorName.BaseOnboarding}
+            component={BaseOnboardingNavigator}
+          />
+        ) : null}
+      </Stack.Navigator>
+    </AnalyticsContext.Provider>
   );
 }
 

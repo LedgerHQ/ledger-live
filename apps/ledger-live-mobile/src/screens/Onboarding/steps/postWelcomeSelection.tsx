@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Text, Button, Flex } from "@ledgerhq/native-ui";
 import { track, TrackScreen } from "../../../analytics";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -9,6 +9,7 @@ import OnboardingView from "../OnboardingView";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Illustration from "../../../images/illustration/Illustration";
 import DiscoverCard from "../../Discover/DiscoverCard";
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const setupLedgerImg = require("../../../images/illustration/Shared/_SetupLedger.png");
 const buyNanoImg = require("../../../images/illustration/Shared/_BuyNanoX.png");
@@ -89,6 +90,10 @@ function PostWelcomeSelection({
     userHasDevice ? "With Device" : "No Device"
   }`;
 
+  const { source, setSource } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => setSource(screenName));
+
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<DataType | null>(null);
@@ -152,7 +157,7 @@ function PostWelcomeSelection({
       <TrackScreen
         category="Onboarding"
         name={userHasDevice ? "Choice With Device" : "Choice No Device"}
-        source={"Has Device"}
+        source={source}
       />
       <OnboardingView hasBackButton>
         <Text variant="h4" fontWeight="semiBold" mb={2}>

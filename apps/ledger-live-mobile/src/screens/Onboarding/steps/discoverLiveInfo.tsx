@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Flex,
@@ -8,7 +8,7 @@ import {
   StoriesIndicator,
   Box,
 } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
@@ -18,6 +18,8 @@ import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
 
 import { NavigatorName } from "../../../const";
 import { screen, track } from "../../../analytics";
+
+import { AnalyticsContext } from "../../../components/RootNavigator";
 
 const slidesImages = [
   require("../../../../assets/images/onboarding/stories/slide1.png"),
@@ -46,14 +48,18 @@ const Item = ({
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  const screenName = useMemo(() => `Reborn Story Step ${currentIndex}`, [
+    currentIndex,
+  ]);
+
   const onClick = useCallback(
     (value: string) => {
       track("button_clicked", {
         button: value,
-        screen: `Reborn Story Step ${currentIndex}`,
+        screen: screenName,
       });
     },
-    [currentIndex],
+    [screenName],
   );
 
   const buyLedger = useCallback(() => {
@@ -146,7 +152,9 @@ const Item = ({
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(1);
-  const { params } = useRoute<any>();
+  const { source, setSource } = useContext(AnalyticsContext);
+
+  useFocusEffect(() => setSource(`Reborn Story Step ${currentIndex}`));
 
   const onChange = useCallback(
     (index: number, skipped: boolean) => {
@@ -154,10 +162,10 @@ function DiscoverLiveInfo() {
       screen("Onboarding", `Reborn Story Step ${index + 1}`, {
         skipped,
         flow: "Onboarding No Device",
-        source: params.source,
+        source,
       });
     },
-    [params.source],
+    [source],
   );
 
   const autoChange = useCallback((index: number) => onChange(index, false), [
