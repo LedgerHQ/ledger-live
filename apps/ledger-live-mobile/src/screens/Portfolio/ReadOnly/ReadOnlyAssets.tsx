@@ -13,7 +13,11 @@ const ReadOnlyAssetsList = ({ assets }: ListProps) => {
   const navigation = useNavigation();
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
-      <ReadOnlyAccountRow navigation={navigation} currency={item} />
+      <ReadOnlyAccountRow
+        navigation={navigation}
+        currency={item}
+        screen="Assets"
+      />
     ),
     [navigation],
   );

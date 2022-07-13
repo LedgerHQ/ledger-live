@@ -325,6 +325,12 @@ platform :ios do
     refresh_ios_profiles
   end
 
+  desc "ci: sync apple profiles"
+  lane :sync_ios_profiles do
+    setup_ios_ci
+    refresh_ios_profiles
+  end
+
   # ============================ END CI BUILD =============================
 end
 

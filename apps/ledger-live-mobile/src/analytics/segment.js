@@ -27,6 +27,8 @@ import {
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
+  sensitiveAnalyticsSelector,
+  firstConnectionHasDeviceSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { satisfactionSelector } from "../reducers/ratings";
@@ -42,9 +44,12 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const extraProperties = store => {
   const state: State = store.getState();
-  const systemLanguage = RNLocalize.getLocales()[0]?.languageTag;
-  const language = languageSelector(state);
-  const region = localeSelector(state);
+  const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
+  const systemLanguage = sensitiveAnalytics
+    ? null
+    : RNLocalize.getLocales()[0]?.languageTag;
+  const language = sensitiveAnalytics ? null : languageSelector(state);
+  const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
 
@@ -57,19 +62,22 @@ const extraProperties = store => {
         modelId: lastDevice.modelId,
       }
     : {};
+  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
 
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
-    systemLanguage,
+    systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     region: region?.split("-")[1] || region,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
+    firstConnectionHasDevice,
+    // $FlowFixMe
     ...deviceInfo,
     ...(satisfaction && { satisfaction }),
   };
@@ -106,6 +114,25 @@ export const start = async (store: *) => {
     }
   }
   track("Start", extraProperties(store), true);
+};
+
+export const updateIdentify = async () => {
+  Sentry.addBreadcrumb({
+    category: "identify",
+    level: "debug",
+  });
+
+  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+    return;
+  }
+
+  if (ANALYTICS_LOGS)
+    console.log("analytics:identify", extraProperties(storeInstance), {
+      context,
+    });
+  if (!token) return;
+  const { user } = await getOrCreateUser();
+  analytics.identify(user.id, extraProperties(storeInstance), { context });
 };
 
 export const stop = () => {

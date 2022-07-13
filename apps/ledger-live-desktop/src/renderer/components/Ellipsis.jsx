@@ -8,6 +8,7 @@ const innerStyle = {
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
   maxWidth: "100%",
+  flexShrink: 1,
   display: "block" /** important for ellipsis to work */,
 };
 
