@@ -48,6 +48,8 @@ import {
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/serializers";
+import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
+
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -56,7 +58,6 @@ import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
 
 import * as tracking from "./tracking";
-import { prepareMessageToSign, signMessageExec } from "@ledgerhq/live-common/lib/hw/signMessage";
 
 type Props = {
   manifest: AppManifest,

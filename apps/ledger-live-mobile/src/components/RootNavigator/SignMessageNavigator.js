@@ -14,7 +14,11 @@ import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
 
-export default function SignMessageNavigator({route}: {route: {params: Record<String, any>}}) {
+export default function SignMessageNavigator({
+  route,
+}: {
+  route: { params: Record<String, any> },
+}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavConfig = useMemo(
