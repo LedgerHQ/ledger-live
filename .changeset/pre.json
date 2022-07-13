@@ -71,5 +71,7 @@
     "native-modules-tools": "1.0.1",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "long-pianos-marry"
+  ]
 }
