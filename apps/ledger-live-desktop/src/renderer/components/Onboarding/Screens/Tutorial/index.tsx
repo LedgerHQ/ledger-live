@@ -39,6 +39,7 @@ const FlowStepperContainer = styled(Flex)`
 
 const FlowStepperContentContainer = styled(Flex)`
   height: 100%;
+  width: 50%;
   padding: ${p => p.theme.space[10]}px;
 `;
 
