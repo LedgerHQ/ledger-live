@@ -27,7 +27,7 @@ type RouteParams = {
   accountId: string,
   message: TypedMessageData | MessageData,
   error: Error,
-  onFailHandler?: (Error) => void,
+  onFailHandler?: Error => void,
 };
 
 export default function ValidationError({ navigation, route }: Props) {
