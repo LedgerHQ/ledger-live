@@ -166,4 +166,40 @@ describe("useGenuineCheck", () => {
       });
     });
   });
+
+  describe("When the hook consumer requests to reset the genuine check state", () => {
+    it("should reset the device permission and genuine states", async () => {
+      // In the case of an unsuccessful genuine check
+      mockedGenuineCheck.mockReturnValue(
+        of(
+          { type: "device-permission-granted" },
+          { type: "result", payload: "1111" }
+        )
+      );
+
+      const { result } = renderHook(() =>
+        useGenuineCheck({
+          isHookEnabled: true,
+          deviceId: "A_DEVICE_ID",
+        })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(result.current.devicePermissionState).toEqual("granted");
+      expect(result.current.genuineState).toEqual("non-genuine");
+      expect(result.current.error).toBeNull();
+
+      // We ask to reset the genuine check state
+      await act(async () => {
+        result.current.resetGenuineCheckState();
+      });
+
+      expect(result.current.devicePermissionState).toEqual("unrequested");
+      expect(result.current.genuineState).toEqual("unchecked");
+      expect(result.current.error).toBeNull();
+    });
+  });
 });

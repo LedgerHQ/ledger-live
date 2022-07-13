@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
@@ -23,6 +23,7 @@ export type UseGenuineCheckResult = {
   genuineState: GenuineState;
   devicePermissionState: DevicePermissionState;
   error: Error | null;
+  resetGenuineCheckState: () => void;
 };
 
 /**
@@ -43,6 +44,11 @@ export const useGenuineCheck = ({
   const [devicePermissionState, setDevicePermisionState] =
     useState<DevicePermissionState>("unrequested");
   const [error, setError] = useState<Error | null>(null);
+
+  const resetGenuineCheckState = useCallback(() => {
+    setDevicePermisionState("unrequested");
+    setGenuineState("unchecked");
+  }, []);
 
   useEffect(() => {
     if (isHookEnabled) {
@@ -89,5 +95,6 @@ export const useGenuineCheck = ({
     genuineState,
     devicePermissionState,
     error,
+    resetGenuineCheckState,
   };
 };
