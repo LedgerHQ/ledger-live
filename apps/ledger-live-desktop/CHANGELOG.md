@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.45.0-nightly.8
+
+### Patch Changes
+
+- [#415](https://github.com/LedgerHQ/ledger-live/pull/415) [`6ef54d871`](https://github.com/LedgerHQ/ledger-live/commit/6ef54d871740f1b5378d2e259864c239aaea9c99) Thanks [@laure-lebon](https://github.com/laure-lebon)! - Ellipsis added to memo for Cosmos
+
 ## 2.44.1-next.1
 
 ### Patch Changes

@@ -69,24 +69,19 @@
     "pnpm-utils": "1.0.0",
     "@actions/submit-bot-report": "1.0.0",
     "live-github-bot": "1.0.0",
-    "esbuild-utils": "1.0.0"
+    "esbuild-utils": "1.0.0",
+    "@actions/generate-release-message": "1.0.0"
   },
   "changesets": [
-    "blue-bags-train",
     "brave-ears-teach",
-    "brown-mugs-beam",
     "dull-timers-care",
     "funny-goats-poke",
-    "hip-icons-jam",
     "hot-avocados-dream",
     "long-toes-sing",
-    "lucky-ants-reply",
     "lucky-bugs-shake",
-    "moody-moons-dance",
-    "neat-rabbits-applaud",
     "odd-pigs-admire",
-    "popular-weeks-shake",
     "shiny-swans-tickle",
+    "stale-kings-repeat",
     "wild-spies-cry"
   ]
 }
