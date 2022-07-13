@@ -15,12 +15,7 @@ export type Props = {
 };
 
 const GenuineCheckCancelledDrawer = ({ isOpen, onRetry, onSkip }: Props) => (
-  <BottomDrawer
-    onClose={onSkip}
-    isOpen={isOpen}
-    preventBackdropClick
-    noCloseButton
-  >
+  <BottomDrawer isOpen={isOpen} preventBackdropClick noCloseButton>
     <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
       <BoxedIcon
         Icon={<ShieldCheckMedium color="primary.c90" size={24} />}
