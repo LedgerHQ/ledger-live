@@ -1,5 +1,7 @@
 # ledger-live-desktop
 
+## 2.44.1
+
 ## 2.44.1-next.1
 
 ### Patch Changes

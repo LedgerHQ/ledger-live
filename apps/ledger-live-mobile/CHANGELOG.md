@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.4.1
+
+### Patch Changes
+
+- [#642](https://github.com/LedgerHQ/ledger-live/pull/642) [`fbb61657d`](https://github.com/LedgerHQ/ledger-live/commit/fbb61657d1204174c31dc37c716e5c837617b60f) Thanks [@porenes](https://github.com/porenes)! - Adding [ L ] Market to the Mobile Discover Landing
+
 ## 3.4.1-hotfix.0
 
 ### Patch Changes
