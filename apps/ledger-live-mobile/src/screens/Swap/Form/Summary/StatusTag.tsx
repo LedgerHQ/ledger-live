@@ -29,7 +29,7 @@ const statusThemeMap = {
 export function StatusTag({ kyc }: { kyc?: KYCStatus }) {
   const { t } = useTranslation();
 
-  if (!kyc) {
+  if (!kyc?.status) {
     return null;
   }
 
