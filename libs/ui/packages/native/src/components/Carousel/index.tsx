@@ -68,6 +68,16 @@ export type Props = React.PropsWithChildren<{
    * Number of milliseconds a tap should not exceed to scroll to the netxt or precedent item.
    */
   maxDurationOfTap?: number;
+
+  /**
+   * Called when the active carousel index is updated automaticly.
+   */
+  onAutoChange?: (index: number) => void;
+
+  /**
+   * Called when the active carousel index is updated manually.
+   */
+  onManualChange?: (index: number) => void;
 }>;
 
 function Carousel({
@@ -83,6 +93,8 @@ function Carousel({
   IndicatorComponent = SlideIndicator,
   maxDurationOfTap,
   children,
+  onAutoChange,
+  onManualChange,
 }: Props) {
   const [init, setInit] = useState(false);
   const [activeIndexState, setActiveIndexState] = useState(activeIndex);
@@ -136,16 +148,18 @@ function Carousel({
       if (tapPositionXPercent > 0.25) {
         if (slidesLength > activeIndexState + 1) {
           scrollToIndex(activeIndexState + 1, false);
+          onManualChange && onManualChange(activeIndexState + 1);
         } else {
           onOverflow && onOverflow("end", false);
         }
       } else if (activeIndexState > 0) {
         scrollToIndex(activeIndexState - 1, false);
+        onManualChange && onManualChange(activeIndexState - 1);
       } else {
         onOverflow && onOverflow("start", false);
       }
     },
-    [slidesLength, activeIndexState, scrollToIndex, onOverflow, itemWidth],
+    [slidesLength, activeIndexState, scrollToIndex, onOverflow, itemWidth, onManualChange],
   );
 
   const onScroll = ({
@@ -165,6 +179,8 @@ function Carousel({
       if (!disableTimer.current) {
         const newIndex =
           typeof activeIndexState !== "undefined" ? (activeIndexState + 1) % slidesLength : 0;
+
+        onAutoChange && onAutoChange(newIndex);
         if (restartAfterEnd || newIndex !== 0) {
           scrollToIndex(newIndex);
         } else {
@@ -185,6 +201,7 @@ function Carousel({
     activeIndexState,
     onOverflow,
     restartAfterEnd,
+    onAutoChange,
   ]);
 
   // Timestamp of start of click on the Carrousel
@@ -238,6 +255,7 @@ function Carousel({
             onChange={(index: number) => {
               scrollToIndex(index);
               setResetTimer({});
+              onManualChange && onManualChange(index);
             }}
             slidesLength={slidesLength}
             duration={autoDelay}

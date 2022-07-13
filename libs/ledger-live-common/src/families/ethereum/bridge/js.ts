@@ -47,7 +47,11 @@ const broadcast = async ({
 };
 
 const scanAccounts = makeScanAccounts({ getAccountShape });
-const sync = makeSync({ getAccountShape, postSync: postSyncPatch });
+const sync = makeSync({
+  getAccountShape,
+  postSync: postSyncPatch,
+  shouldMergeOps: false,
+});
 
 const createTransaction = (): Transaction => ({
   family: "ethereum",

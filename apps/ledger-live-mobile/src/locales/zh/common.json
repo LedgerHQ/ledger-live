@@ -1656,7 +1656,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "操作详情",
+    "title" : "交易详情",
     "account" : "账户",
     "date" : "日期",
     "confirmed" : "已确认",
@@ -1722,7 +1722,7 @@
   },
   "operationList" : {
     "noOperations" : "不作操作",
-    "noMoreOperations" : "无其他操作"
+    "noMoreTransactions" : "无其他交易"
   },
   "selectableAccountsList" : {
     "deselectAll" : "取消全选",
@@ -1763,7 +1763,7 @@
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
-    "lastOperations" : "最后操作",
+    "lastTransactions" : "最近交易",
     "emptyState" : {
       "title" : "还没有加密资产？",
       "desc" : "确保已安装了 <1><0>{{managerAppName}}</0></1> 应用程序并开始接收。",
@@ -2140,10 +2140,6 @@
     },
     "fees" : {
       "title" : "编辑费用"
-    },
-    "manageCard" : {
-      "title" : "管理 CL 卡",
-      "description" : "订购和管理 CL 卡"
     },
     "receive" : {
       "title" : "接收",
@@ -4388,7 +4384,10 @@
       "tokenContractCopied" : "代币地址已复制！",
       "tokenId" : "代币 ID",
       "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "底价"
+      }
     },
     "viewerModal" : {
       "viewOn" : "查看",

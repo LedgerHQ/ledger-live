@@ -173,9 +173,11 @@ export const makeSync =
   ({
     getAccountShape,
     postSync = (_, a) => a,
+    shouldMergeOps = true,
   }: {
     getAccountShape: GetAccountShape;
     postSync?: (initial: Account, synced: Account) => Account;
+    shouldMergeOps?: boolean;
   }): AccountBridge<any>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater> =>
     Observable.create((o) => {
@@ -206,10 +208,14 @@ export const makeSync =
             },
             syncConfig
           );
+
           o.next((acc) => {
             const a = needClear ? clearAccount(acc) : acc;
             // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
-            const operations = mergeOps(a.operations, shape.operations || []);
+            const operations = shouldMergeOps
+              ? mergeOps(a.operations, shape.operations || [])
+              : shape.operations || [];
+
             return recalculateAccountBalanceHistories(
               postSync(a, {
                 ...a,

@@ -1,0 +1,17 @@
+{
+  "name": "@actions/generate-release-message",
+  "version": "1.0.0",
+  "description": "creates a changelog to be used during the creation of a Github Release",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build main.ts -o build -m"
+  },
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "@vercel/ncc": "^0.33.1",
+    "semver": "^7.3.7"
+  }
+}
