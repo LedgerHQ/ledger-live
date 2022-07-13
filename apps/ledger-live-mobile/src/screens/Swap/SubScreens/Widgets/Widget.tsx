@@ -107,6 +107,8 @@ export function Widget({ provider, type }: Props) {
         uri,
       }}
       incognito={true}
+      // to allow signin with Google
+      userAgent="ledger-live-mobile"
       injectedJavaScriptBeforeContentLoaded={preload}
       onMessage={handleMessage}
       startInLoadingState
