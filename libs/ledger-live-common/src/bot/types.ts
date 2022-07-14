@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
-import type { Transaction, TransactionStatus } from "../types";
+import type { Transaction, TransactionStatus } from "../generated/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "../load/speculos";
 import {

@@ -5,11 +5,12 @@ import sha from "sha.js";
 import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
-import type { DerivationMode, Transaction } from "../types";
+import type { DerivationMode } from "../types";
 import type { TypedMessageData } from "../families/ethereum/types";
 import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
 import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "../generated/types";
 export type WCPayloadTransaction = {
   from: string;
   to?: string;

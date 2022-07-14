@@ -6,7 +6,7 @@ import type {
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 
 const options = [];
 

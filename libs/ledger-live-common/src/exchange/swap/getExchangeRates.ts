@@ -12,7 +12,7 @@ import {
   SwapExchangeRateAmountTooLow,
 } from "../../errors";
 import network from "../../network";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";
 import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";

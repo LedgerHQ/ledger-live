@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { getAccountCurrency } from "../../account";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { Transaction as SolanaTransaction } from "./types";
 import { assertUnreachable } from "./utils";
 

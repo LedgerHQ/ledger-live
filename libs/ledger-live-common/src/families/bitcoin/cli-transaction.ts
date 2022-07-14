@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { bitcoinPickingStrategy } from "./types";
 import type { AccountLike } from "@ledgerhq/types-live";
 const options = [

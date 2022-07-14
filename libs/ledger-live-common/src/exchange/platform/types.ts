@@ -5,7 +5,7 @@ import type {
   AccountRawLike,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { ExchangeTypes, RateTypes } from "../hw-app-exchange/Exchange";
 
 export type CompleteExchangeRequestEvent =

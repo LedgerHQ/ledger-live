@@ -1,5 +1,4 @@
 import groupBy from "lodash/groupBy";
-import type { Transaction } from "../types";
 import { formatOperation, formatAccount } from "../account";
 import {
   toSignedOperationRaw,
@@ -8,6 +7,7 @@ import {
 } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
+import type { Transaction } from "../generated/types";
 export const formatTime = (t: number) =>
   t > 3000
     ? `${Math.round(t / 100) / 10}s`

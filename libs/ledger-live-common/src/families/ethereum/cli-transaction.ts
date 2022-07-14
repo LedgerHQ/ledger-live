@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import { modes } from "./modules";
 import type {
   Account,

@@ -8,7 +8,7 @@ import { getCurrencyExchangeConfig } from "../";
 import perFamily from "../../generated/exchange";
 import type { SellRequestEvent } from "./types";
 import { ExchangeTypes } from "../hw-app-exchange/Exchange";
-import type { Transaction, TransactionStatus } from "../../types";
+import type { Transaction, TransactionStatus } from "../../generated/types";
 import { getProvider } from "./index";
 import { delay } from "../../promise";
 import type { Account, AccountLike } from "@ledgerhq/types-live";

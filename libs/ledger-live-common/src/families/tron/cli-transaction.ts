@@ -6,7 +6,7 @@ import zipWith from "lodash/zipWith";
 import { getAccountCurrency } from "../../account";
 import { getTronSuperRepresentativeData } from "../../api/Tron";
 import type { Transaction as TronTransaction, TronAccount } from "./types";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import type { SuperRepresentativeData, Vote } from "./types";
 import type {
   Account,

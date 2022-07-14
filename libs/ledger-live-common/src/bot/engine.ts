@@ -43,11 +43,15 @@ import type {
   TransactionArg,
   TransactionRes,
 } from "./types";
-import type { Transaction, TransactionStatus } from "../types";
 import { makeBridgeCacheSystem } from "../bridge/cache";
 import { accountDataToAccount, accountToAccountData } from "../cross";
-import { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import type {
+  Account,
+  Operation,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Transaction, TransactionStatus } from "../generated/types";
 
 let appCandidates;
 const localCache = {};

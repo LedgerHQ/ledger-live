@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import getExchangeRates from "./getExchangeRates";
 import { Exchange, ExchangeRate } from "./types";
 

@@ -1,7 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import type { ElrondAccount } from "./types";
 const options = [
   {

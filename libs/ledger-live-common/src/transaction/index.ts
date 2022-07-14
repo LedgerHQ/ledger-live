@@ -6,7 +6,7 @@ import type {
   TransactionRaw,
   TransactionStatus,
   TransactionStatusRaw,
-} from "../types";
+} from "../generated/types";
 import transactionModulePerFamily from "../generated/transaction";
 import type { Account } from "@ledgerhq/types-live";
 

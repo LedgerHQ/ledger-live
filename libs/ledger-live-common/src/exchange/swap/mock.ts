@@ -20,7 +20,7 @@ import type {
   SwapRequestEvent,
   ValidKYCStatus,
 } from "./types";
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 import type {
   CryptoCurrency,
   TokenCurrency,

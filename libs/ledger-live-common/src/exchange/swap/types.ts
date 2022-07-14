@@ -10,7 +10,7 @@ import {
   Operation,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../../types";
+import type { Transaction, TransactionRaw } from "../../generated/types";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";

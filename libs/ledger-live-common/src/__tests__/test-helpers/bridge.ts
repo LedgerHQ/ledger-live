@@ -34,7 +34,7 @@ import type {
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TransactionStatus } from "../../types";
+import { TransactionStatus } from "../../generated/types";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);

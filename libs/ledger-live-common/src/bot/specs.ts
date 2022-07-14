@@ -5,8 +5,8 @@ import expect from "expect";
 import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
 import type { DeviceAction, DeviceActionArg } from "./types";
-import type { Transaction } from "../types";
 import { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "../generated/types";
 
 const stepValueTransformDefault = (s) => s.trim();
 

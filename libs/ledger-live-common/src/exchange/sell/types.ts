@@ -1,4 +1,4 @@
-import type { Transaction } from "../../types";
+import type { Transaction } from "../../generated/types";
 export type InitSellResult = {
   transaction: Transaction;
 };

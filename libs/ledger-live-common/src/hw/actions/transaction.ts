@@ -3,7 +3,7 @@ import { scan, catchError, tap } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
-import type { Transaction, TransactionStatus } from "../../types";
+import type { Transaction, TransactionStatus } from "../../generated/types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
