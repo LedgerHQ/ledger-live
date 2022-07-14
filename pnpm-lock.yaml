@@ -915,9 +915,9 @@ importers:
       '@stricahq/bip32ed25519': ^1.0.3
       '@stricahq/typhonjs': ^1.2.4
       '@svgr/core': ^5.5.0
-      '@taquito/ledger-signer': stablelib
-      '@taquito/taquito': stablelib
-      '@taquito/utils': stablelib
+      '@taquito/ledger-signer': ^13.0.1
+      '@taquito/taquito': ^13.0.1
+      '@taquito/utils': ^13.0.1
       '@testing-library/react-hooks': ^4.0.1
       '@types/bchaddrjs': ^0.4.0
       '@types/bs58': ^4.0.1
@@ -1075,9 +1075,9 @@ importers:
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
       '@stricahq/typhonjs': 1.2.4
-      '@taquito/ledger-signer': 11.1.0-stablelib.0
-      '@taquito/taquito': 11.1.0-stablelib.0
-      '@taquito/utils': 11.1.0-stablelib.0
+      '@taquito/ledger-signer': 13.0.1
+      '@taquito/taquito': 13.0.1
+      '@taquito/utils': 13.0.1
       '@types/bchaddrjs': 0.4.0
       '@types/bs58check': 2.1.0
       '@types/qs': 6.9.7
@@ -10176,6 +10176,15 @@ packages:
       semver: 7.3.7
     dev: false
 
+  /@ledgerhq/devices/6.27.1:
+    resolution: {integrity: sha512-jX++oy89jtv7Dp2X6gwt3MMkoajel80JFWcdc0HCouwDsV1mVJ3SQdwl/bQU0zd8HI6KebvUP95QTwbQLLK/RQ==}
+    dependencies:
+      '@ledgerhq/errors': 6.10.0
+      '@ledgerhq/logs': 6.10.0
+      rxjs: 6.6.7
+      semver: 7.3.7
+    dev: false
+
   /@ledgerhq/electron-updater/4.2.2:
     resolution: {integrity: sha512-kPUJDBnic9VAj8bnL+beqWMP7fpng6SvvbkZQ9+ALHpeoZEcVfF0mmcdB78fqNpoAC4nGw8+G1jgpbbbO1yD2Q==}
     dependencies:
@@ -10193,6 +10202,10 @@ packages:
 
   /@ledgerhq/errors/5.50.0:
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
+    dev: false
+
+  /@ledgerhq/errors/6.10.0:
+    resolution: {integrity: sha512-fQFnl2VIXh9Yd41lGjReCeK+Q2hwxQJvLZfqHnKqWapTz68NHOv5QcI0OHuZVNEbv0xhgdLhi5b65kgYeQSUVg==}
     dev: false
 
   /@ledgerhq/hw-app-eth/5.11.0:
@@ -10228,6 +10241,14 @@ packages:
       events: 3.3.0
     dev: false
 
+  /@ledgerhq/hw-transport/6.27.1:
+    resolution: {integrity: sha512-hnE4/Fq1YzQI4PA1W0H8tCkI99R3UWDb3pJeZd6/Xs4Qw/q1uiQO+vNLC6KIPPhK0IajUfuI/P2jk0qWcMsuAQ==}
+    dependencies:
+      '@ledgerhq/devices': 6.27.1
+      '@ledgerhq/errors': 6.10.0
+      events: 3.3.0
+    dev: false
+
   /@ledgerhq/json-bignumber/1.1.0:
     resolution: {integrity: sha512-FxWFC3UrYF077OV8eXLZ+2ymnr0IEVICdBk5SgplcIM1T4aZWMAJ+KvCVIxUB+DirygBaCYeUwWBrs5twxHUXA==}
     dependencies:
@@ -10243,6 +10264,10 @@ packages:
 
   /@ledgerhq/logs/5.50.0:
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
+    dev: false
+
+  /@ledgerhq/logs/6.10.0:
+    resolution: {integrity: sha512-lLseUPEhSFUXYTKj6q7s2O3s2vW2ebgA11vMAlKodXGf5AFw4zUoEbTz9CoFOC9jS6xY4Qr8BmRnxP/odT4Uuw==}
     dev: false
 
   /@ledgerhq/react-native-passcode-auth/2.1.0:
@@ -16213,78 +16238,73 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@taquito/http-utils/11.2.0:
-    resolution: {integrity: sha512-9s9l4z70ah8/pjmc5ARxdwy6GCnsqwYxMITqCqKBT4DKVgI8m8kXkdxaVg+Ob5ZGvRQoVDSgTeSeNg8TUMtc+w==}
+  /@taquito/http-utils/13.0.1:
+    resolution: {integrity: sha512-eHzd0HSL3qX6bOOSaQClm+0XmpbSNcJP69uzaBJwfXo7ntQR1bUfGLn6+1Hgsk/lJ0JxakD2PDA4aaeajHvyPw==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      xhr2-cookies: 1.1.0
+      axios: 0.26.1
     dev: false
 
-  /@taquito/ledger-signer/11.1.0-stablelib.0:
-    resolution: {integrity: sha512-g01b7KkPeaWSDpMXQVDQ9trJnrF6y6S3itWtmUhZr7douZRwy2Lyw4yFV4JaE4jDGnxrJPjYN0Qf6MtNNqjk9g==}
+  /@taquito/ledger-signer/13.0.1:
+    resolution: {integrity: sha512-gyBO8FarBrItPGAfrnm4J7vrIWMsr9xqgfzgN4PAqY7eEmL8MDuZtdpk6B6DBuJ3hYbqxvOEa0QPhNzBxnGPeA==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      '@ledgerhq/hw-transport': 5.51.1
+      '@ledgerhq/hw-transport': 6.27.1
       '@stablelib/blake2b': 1.0.1
-      '@taquito/taquito': 11.1.0-stablelib.0
-      '@taquito/utils': 11.2.0
-      '@types/jest': 26.0.24
+      '@taquito/taquito': 13.0.1
+      '@taquito/utils': 13.0.1
       buffer: 6.0.3
     dev: false
 
-  /@taquito/michel-codec/11.2.0:
-    resolution: {integrity: sha512-ZWu1eyRl9RqOpyHP5h3JKfSPylUMN/91GTWjlJ26GhaMP9YA6mVjJ7pWDrZHFn1QXiS8JgQ7xwsmU+dBqZznSw==}
+  /@taquito/local-forging/13.0.1:
+    resolution: {integrity: sha512-2n1ryUzHBIOHiQYRO7ELQaurjoNhJ3KUUcX0dAnFs3xVxUBugHgDPot+T+1rNZDdLVhTS6mmK796xrWDGnO6xw==}
+    engines: {node: '>=6.0.0'}
+    dependencies:
+      '@taquito/utils': 13.0.1
+      bignumber.js: 9.0.2
+    dev: false
+
+  /@taquito/michel-codec/13.0.1:
+    resolution: {integrity: sha512-A9MxhDMdTTK31ty5Ke2wg4wkt7F/Y++tD8wq9YIFJzxt+MkpWX5b2i1f7yHXPsK/81YiGAi/LDamLtLCekY1LA==}
     engines: {node: '>=6.0.0'}
     dev: false
 
-  /@taquito/michelson-encoder/11.2.0:
-    resolution: {integrity: sha512-ifU3PSrJiQDovY7MT3RjrBTVToW82vGBwXeTIKIMnnoAjCnZdL/XjxFfzTrxT90jaz++ou3xcrgIabSvJrfJjg==}
+  /@taquito/michelson-encoder/13.0.1:
+    resolution: {integrity: sha512-U80vswMHlEDQUjvARZScIKrSZkIjxdYtDLvHu4oRZ9wTqTXSlj+t64G5QmZwTEJRQkbzfhsOOr6vL40ztL0tzw==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      '@taquito/rpc': 11.2.0
-      '@taquito/utils': 11.2.0
+      '@taquito/rpc': 13.0.1
+      '@taquito/utils': 13.0.1
       bignumber.js: 9.0.2
       fast-json-stable-stringify: 2.1.0
     dev: false
 
-  /@taquito/rpc/11.2.0:
-    resolution: {integrity: sha512-Hb5KIi1swUIGHg6h6cPJ+6G+6Nfi6Npat4RogOFvULpbn+WQIo+CTUecEW7aWEBuXahs7W0JBcL4a6GbqE3YGg==}
+  /@taquito/rpc/13.0.1:
+    resolution: {integrity: sha512-f2Z0qzHB1ERLU5kewmXh3rAD84qIYthSjmAo04sWFbuaMgGW1HxMJKJ/EtL4s4VgoDUwahSwfATmVzmKg57BSw==}
     engines: {node: '>=6.0.0'}
     dependencies:
-      '@taquito/http-utils': 11.2.0
-      '@taquito/utils': 11.2.0
+      '@taquito/http-utils': 13.0.1
+      '@taquito/utils': 13.0.1
       bignumber.js: 9.0.2
     dev: false
 
-  /@taquito/taquito/11.1.0-stablelib.0:
-    resolution: {integrity: sha512-5V914TzycljnRJnneQx26zyagzhEPm/Qh009wmA4FkSByc5tilk5shfr5dmPTnAbwrb4CL8rGki/ovofw1x90A==}
+  /@taquito/taquito/13.0.1:
+    resolution: {integrity: sha512-xNtcwKsOCHSkURO9G2VhKSeI9q0qh5/OkVuYe6KM0Fo40FthXNqq205I/FTJzu5E1Q73J7cFqA7FHqUrv276gw==}
     engines: {node: '>=6.0.0'}
     requiresBuild: true
     dependencies:
-      '@taquito/http-utils': 11.2.0
-      '@taquito/michel-codec': 11.2.0
-      '@taquito/michelson-encoder': 11.2.0
-      '@taquito/rpc': 11.2.0
-      '@taquito/utils': 11.2.0
+      '@taquito/http-utils': 13.0.1
+      '@taquito/local-forging': 13.0.1
+      '@taquito/michel-codec': 13.0.1
+      '@taquito/michelson-encoder': 13.0.1
+      '@taquito/rpc': 13.0.1
+      '@taquito/utils': 13.0.1
       bignumber.js: 9.0.2
       rxjs: 6.6.7
     dev: false
 
-  /@taquito/utils/11.1.0-stablelib.0:
-    resolution: {integrity: sha512-eo1y/MV8Ruxn0mGLskZ9JMkqKO4FoW19TH1OTwmjgJt3VBCWr75VSspbPUEGtC61IaZcqVCPk7qjdhyijgrnZA==}
-    engines: {node: '>=6.0.0'}
-    dependencies:
-      '@stablelib/blake2b': 1.0.1
-      '@stablelib/ed25519': 1.0.2
-      blakejs: 1.2.1
-      bs58check: 2.1.2
-      buffer: 6.0.3
-      elliptic: 6.5.4
-      typedarray-to-buffer: 4.0.0
-    dev: false
-
-  /@taquito/utils/11.2.0:
-    resolution: {integrity: sha512-I5LoD5fG9S2Yo4CNpW4u3vF9lUJG1PxkGLi6ntvvH49SBXwo9HJ/n/v04aoE9V7ncA0a7LUm6ucnROagIc2QQQ==}
+  /@taquito/utils/13.0.1:
+    resolution: {integrity: sha512-uRtsl4EATlVJ1UnNUiAEoibFFyexGLDLz02CBHoBrcWjqrZdj3AxA+TO63E2kWn/JmT2FM0Sqaqbm555lj4tow==}
     engines: {node: '>=6.0.0'}
     dependencies:
       '@stablelib/blake2b': 1.0.1
@@ -16657,13 +16677,6 @@ packages:
     resolution: {integrity: sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==}
     dependencies:
       '@types/istanbul-lib-report': 3.0.0
-
-  /@types/jest/26.0.24:
-    resolution: {integrity: sha512-E/X5Vib8BWqZNRlDxj9vYXhsDwPYbPINqKF9BsnSoon4RQ0D9moEuLD8txgyypFLH7J4+Lho9Nr/c8H0Fi+17w==}
-    dependencies:
-      jest-diff: 26.6.2
-      pretty-format: 26.6.2
-    dev: false
 
   /@types/jest/27.5.0:
     resolution: {integrity: sha512-9RBFx7r4k+msyj/arpfaa0WOOEcaAZNmN+j80KFbFCoSqCJGHTz7YMAMGQW9Xmqm5w6l5c25vbSjMwlikJi5+g==}
@@ -24192,6 +24205,7 @@ packages:
   /diff-sequences/26.6.2:
     resolution: {integrity: sha512-Mv/TDa3nZ9sbc5soK+OoA74BsS3mL37yixCvUAQkiuA4Wz6YtwP/K47n2rv2ovzHZvoiQeA5FTQOschKkEwB0Q==}
     engines: {node: '>= 10.14.2'}
+    dev: true
 
   /diff-sequences/27.5.1:
     resolution: {integrity: sha512-k1gCAXAsNgLwEL+Y8Wvl+M6oEFj5bgazfZULpS5CneoPPXRaCCW7dm+q21Ky2VEE5X+VeRDBVg1Pcvvsr4TtNQ==}
@@ -32212,6 +32226,7 @@ packages:
       diff-sequences: 26.6.2
       jest-get-type: 26.3.0
       pretty-format: 26.6.2
+    dev: true
 
   /jest-diff/27.5.1:
     resolution: {integrity: sha512-m0NvkX55LDt9T4mctTEgnZk3fmEg3NRYutvMPWM/0iPnkFj2wIeF45O1718cMSOFO1vINkqmxqD8vE37uTEbqw==}
