@@ -1,48 +1,87 @@
 import type { BigNumber } from "bignumber.js";
 import type {
-    TransactionCommon,
-    TransactionCommonRaw,
+  TransactionCommon,
+  TransactionCommonRaw,
 } from "../../types/transaction";
-import { Buffer } from "buffer/";
 
 export type NetworkInfo = {
-    family: "avalanchepchain";
+  family: "avalanchepchain";
 };
 export type NetworkInfoRaw = {
-    family: "avalanchepchain";
+  family: "avalanchepchain";
 };
 export type Transaction = TransactionCommon & {
-    family: "avalanchepchain";
-    fees: BigNumber | null;
-    mode: string;
+  family: "avalanchepchain";
+  fees: BigNumber | null;
+  mode: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
-    family: "avalanchepchain";
-    fees: string | null;
-    mode: string;
+  family: "avalanchepchain";
+  fees: string | null;
+  mode: string;
 };
 
-export interface AddressBatch {
-    nonChange: {
-        addresses: string[],
-        pkhs: Buffer[]
-    },
-    change: {
-        addresses: string[],
-        pkhs: Buffer[]
-    },
-    utxoset: any
-}
-
 export type AvalanchePChainResources = {
-    publicKey: string;
-    chainCode: string;
-    stakedBalance: BigNumber;
-}
+  publicKey: string;
+  chainCode: string;
+  stakedBalance: BigNumber;
+  delegations: AvalancheDelegation[];
+};
 
 export type AvalanchePChainResourcesRaw = {
-    publicKey: string;
-    chainCode: string;
-    stakedBalance: string;
-}
+  publicKey: string;
+  chainCode: string;
+  stakedBalance: string;
+  delegations: AvalancheDelegationRaw[];
+};
+
+export type AvalanchePChainPreloadData = {
+  validators: AvalanchePChainValidator[];
+};
+
+export type AvalanchePChainValidator = {
+  txID: string;
+  startTime: string;
+  endTime: string;
+  stakeAmount: BigNumber;
+  nodeID: string;
+  rewardOwner: {
+    lockTime: string;
+    threshold: string;
+    addresses: string[];
+  };
+  potentialReward: BigNumber;
+  delegationFee: BigNumber;
+  uptime: BigNumber;
+  connected: boolean;
+  delegators: AvalancheDelegation[];
+};
+
+export type AvalancheDelegation = {
+  txID: string;
+  startTime: string;
+  endTime: string;
+  stakeAmount: BigNumber;
+  nodeID: string;
+  rewardOwner: {
+    lockTime: string;
+    threshold: string;
+    addresses: string[];
+  };
+  potentialReward: BigNumber;
+};
+
+export type AvalancheDelegationRaw = {
+  txID: string;
+  startTime: string;
+  endTime: string;
+  stakeAmount: string;
+  nodeID: string;
+  rewardOwner: {
+    lockTime: string;
+    threshold: string;
+    addresses: string[];
+  };
+  potentialReward: string;
+};
