@@ -51,7 +51,7 @@ describe(getAccountCurrency.name, () => {
       mockAccount.type = "Account";
     });
     it("should return the currency", () => {
-      const sampleCurrency = { id: "bitcoin" } as CryptoCurrency;
+      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
       mockAccount.currency = sampleCurrency;
       expect(getAccountCurrency(mockAccount)).toEqual(sampleCurrency);
     });
@@ -59,7 +59,7 @@ describe(getAccountCurrency.name, () => {
 
   describe("given a ChildAccount", () => {
     it("should return the currency", () => {
-      const sampleCurrency = { id: "bitcoin" } as CryptoCurrency;
+      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
       childAccount.currency = sampleCurrency;
       expect(getAccountCurrency(childAccount)).toEqual(sampleCurrency);
     });
@@ -249,7 +249,7 @@ describe(isAccountEmpty.name, () => {
     beforeEach(() => {
       tronAccount = mockAccount as TronAccount;
       tronAccount.type = "Account";
-      tronAccount.currency = { id: "tron" } as CryptoCurrency;
+      tronAccount.currency = { family: "tron" } as CryptoCurrency;
     });
     describe("when account as no ressources", () => {
       beforeEach(() => {
@@ -282,7 +282,7 @@ describe(isAccountEmpty.name, () => {
   describe("given an account", () => {
     beforeEach(() => {
       mockAccount.type = "Account";
-      mockAccount.currency = { id: "ethereum" } as CryptoCurrency;
+      mockAccount.currency = { family: "ethereum" } as CryptoCurrency;
     });
     describe("when account has no subaccounts", () => {
       beforeEach(() => {
@@ -446,7 +446,7 @@ describe(clearAccount.name, () => {
 
   describe("given an Account", () => {
     const ethereumCurrency = {
-      id: "ethereum",
+      family: "ethereum",
     } as CryptoCurrency;
     const withSubAccounts = {
       ...mockAccount,
@@ -482,7 +482,7 @@ describe(clearAccount.name, () => {
     describe("when it is a tron account", () => {
       beforeEach(() => {
         const tronCurrency = {
-          id: "tron",
+          family: "tron",
         } as CryptoCurrency;
         withSubAccounts.currency = tronCurrency;
       });
@@ -499,7 +499,7 @@ describe(clearAccount.name, () => {
     describe("when it is a bitcoin account", () => {
       beforeEach(() => {
         const btcCurrency = {
-          id: "bitcoin",
+          family: "bitcoin",
         } as CryptoCurrency;
         withSubAccounts.currency = btcCurrency;
       });

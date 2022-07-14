@@ -3,19 +3,16 @@ import type {
   Account,
   TransactionCommon,
   TransactionCommonRaw,
+  TransactionStatusCommon,
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { mapValues } from "lodash";
 import { getAccountUnit } from "../account";
 import { formatCurrencyUnit } from "../currencies";
-import type {
-  Transaction,
-  TransactionRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-} from "../types";
+
 export const fromTransactionCommonRaw = (
-  raw: TransactionRaw
+  raw: TransactionCommonRaw
 ): TransactionCommon => {
   const common: TransactionCommon = {
     amount: new BigNumber(raw.amount),
@@ -33,7 +30,7 @@ export const fromTransactionCommonRaw = (
   return common;
 };
 export const toTransactionCommonRaw = (
-  raw: Transaction
+  raw: TransactionCommon
 ): TransactionCommonRaw => {
   const common: TransactionCommonRaw = {
     amount: raw.amount.toString(),
@@ -59,35 +56,39 @@ const toErrorRaw = (raw: Error): string =>
   JSON.stringify(serializeError(raw)) || "{}";
 
 export const fromTransactionStatusRawCommon = (
-  ts: TransactionStatusRaw
-): TransactionStatus => ({
+  ts: TransactionStatusCommonRaw
+): TransactionStatusCommon => ({
   errors: mapValues(ts.errors, fromErrorRaw),
   warnings: mapValues(ts.warnings, fromErrorRaw),
   estimatedFees: new BigNumber(ts.estimatedFees),
   amount: new BigNumber(ts.amount),
   totalSpent: new BigNumber(ts.totalSpent),
   recipientIsReadOnly: ts.recipientIsReadOnly,
-  family: ts.family,
 });
 
 export const toTransactionStatusRawCommon = (
-  ts: TransactionStatus
-): TransactionStatusRaw => ({
+  ts: TransactionStatusCommon
+): TransactionStatusCommonRaw => ({
   errors: mapValues(ts.errors, toErrorRaw),
   warnings: mapValues(ts.warnings, toErrorRaw),
   estimatedFees: ts.estimatedFees.toString(),
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
   recipientIsReadOnly: ts.recipientIsReadOnly,
-  family: ts.family,
 });
 
 const formatErrorSmall = (e: Error): string =>
   e.name === "Error" ? e.message : e.name;
 
 export const formatTransactionStatusCommon = (
-  t: Transaction,
-  { errors, warnings, estimatedFees, amount, totalSpent }: TransactionStatus,
+  t: TransactionCommon,
+  {
+    errors,
+    warnings,
+    estimatedFees,
+    amount,
+    totalSpent,
+  }: TransactionStatusCommon,
   mainAccount: Account
 ): string => {
   let str = "";

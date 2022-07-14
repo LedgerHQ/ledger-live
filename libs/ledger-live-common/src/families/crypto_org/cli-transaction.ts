@@ -31,6 +31,7 @@ function inferTransactions(
 
     if (account.type === "Account") {
       const cryptoOrgAccount = account as CryptoOrgAccount;
+      // We are doing the job twice... maybe use either invariant or if() throw
       invariant(cryptoOrgAccount.cryptoOrgResources, "unactivated account");
       if (!cryptoOrgAccount.cryptoOrgResources)
         throw new Error("unactivated account");

@@ -85,7 +85,7 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
   }
 };
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  if (a.type === "Account" && a.currency.id === "tron") {
+  if (a.type === "Account" && a.currency.family === "tron") {
     const tronAcc = a as TronAccount;
     // FIXME: here we compared a BigNumber to a number, would always return false
     return (
@@ -143,14 +143,14 @@ export function clearAccount<T extends AccountLike>(account: T): T {
       (account as Account).subAccounts?.map(clearAccount),
   };
 
-  if (copy.currency.id === "tron") {
+  if (copy.currency.family === "tron") {
     const tronAcc = copy as TronAccount;
     tronAcc.tronResources = {
       ...tronAcc.tronResources,
       cacheTransactionInfoById: {},
     };
   }
-  if (copy.currency.id === "bitcoin") {
+  if (copy.currency.family === "bitcoin") {
     (copy as BitcoinAccount).bitcoinResources = initialBitcoinResourcesValue;
   }
   delete copy.nfts;
@@ -226,7 +226,7 @@ export const getVotesCount = (
   const mainAccount = getMainAccount(account, parentAccount);
 
   // FIXME find a way to make it per family?
-  switch (mainAccount.currency.id) {
+  switch (mainAccount.currency.family) {
     case "tezos":
       return isAccountDelegating(account) ? 1 : 0;
     case "tron":

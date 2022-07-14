@@ -776,7 +776,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.subAccounts = subAccounts as SubAccount[];
   }
 
-  switch (res.currency.id) {
+  switch (res.currency.family) {
     case "tron":
       (res as TronAccount).tronResources = fromTronResourcesRaw(
         (rawAccount as TronAccountRaw).tronResources
@@ -907,7 +907,7 @@ export function toAccountRaw(account: Account): AccountRaw {
     res.subAccounts = subAccounts.map(toSubAccountRaw);
   }
 
-  switch (res.currencyId) {
+  switch (account.currency.family) {
     case "tron":
       (res as TronAccountRaw).tronResources = toTronResourcesRaw(
         (account as TronAccount).tronResources

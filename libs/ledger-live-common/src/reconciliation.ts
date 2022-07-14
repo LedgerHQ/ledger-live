@@ -288,7 +288,7 @@ export function patchAccount(
     }
   }
 
-  switch (account.currency.id) {
+  switch (account.currency.family) {
     case "tron":
       {
         const tronAcc = account as TronAccount;

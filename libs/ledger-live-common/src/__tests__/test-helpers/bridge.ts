@@ -4,7 +4,6 @@ import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
-import type { Transaction, TransactionStatus } from "../../types";
 import {
   fromAccountRaw,
   toAccountRaw,
@@ -32,8 +31,10 @@ import type {
   SyncConfig,
   DatasetTest,
   CurrenciesData,
+  TransactionCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TransactionStatus } from "../../types";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);
@@ -56,7 +57,7 @@ const defaultSyncConfig = {
   paginationConfig: {},
   blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
-export function syncAccount<T extends Transaction>(
+export function syncAccount<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig
@@ -67,7 +68,9 @@ export function syncAccount<T extends Transaction>(
     .toPromise();
 }
 
-export function testBridge<T extends Transaction>(data: DatasetTest<T>): void {
+export function testBridge<T extends TransactionCommon>(
+  data: DatasetTest<T>
+): void {
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
@@ -695,12 +698,12 @@ export function testBridge<T extends Transaction>(data: DatasetTest<T>): void {
 
                   const obj = subAccountId
                     ? {
-                        transaction: t as Transaction,
+                        transaction: t as TransactionCommon,
                         account: inferSubAccount() as AccountLike,
                         parentAccount: account,
                       }
                     : {
-                        transaction: t as Transaction,
+                        transaction: t as TransactionCommon,
                         account: account as AccountLike,
                       };
 
