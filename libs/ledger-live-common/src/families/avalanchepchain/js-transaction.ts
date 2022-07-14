@@ -5,22 +5,21 @@ import type { Transaction } from "./types";
 // import estimateMaxSpendable from "./js-estimateMaxSpendable";
 
 const createTransaction = (): Transaction => ({
-    family: "avalanchepchain",
-    amount: new BigNumber(0),
-    recipient: "",
-    useAllAmount: false,
-    fees: null,
-    mode: "delegate"
+  family: "avalanchepchain",
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  fees: null,
+  mode: "delegate",
 });
 
-const prepareTransaction = async (account: Account, transaction: Transaction) => {
-    return transaction;
+const prepareTransaction = async (
+  account: Account,
+  transaction: Transaction
+) => {
+  return transaction;
 };
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
-export {
-    createTransaction,
-    prepareTransaction,
-    updateTransaction
-};
+export { createTransaction, prepareTransaction, updateTransaction };
