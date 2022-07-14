@@ -22,7 +22,7 @@ export const DEFAULT_FEES = 0;
  * Fetch the transaction fees for a transaction
  */
 const getEstimatedFees = async (): Promise<BigNumber> => {
-  // for "send" transactions fees are zero
+  // Fees are currently zero in Osmosis
   return new BigNumber(DEFAULT_FEES);
 };
 
