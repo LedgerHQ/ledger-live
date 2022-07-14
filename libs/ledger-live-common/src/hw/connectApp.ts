@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { DerivationMode } from "../types";
+import type { DerivationMode } from "../derivation";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";

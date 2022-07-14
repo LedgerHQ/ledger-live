@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { getDerivationScheme, runDerivationScheme } from "../../types";
+import { getDerivationScheme, runDerivationScheme } from "../../derivation";
 import type {
   GetAccountShape,
   IterateResultBuilder,
