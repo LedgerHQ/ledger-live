@@ -3,15 +3,15 @@ import { getEnv } from "../../../env";
 import network from "../../../network";
 import { Operation, OperationType } from "../../../types";
 import { encodeOperationId } from "../../../operation";
-import { KeyPair as AVMKeyPair } from 'avalanche/dist/apis/avm';
-import BinTools from 'avalanche/dist/utils/bintools';
+import { KeyPair as AVMKeyPair } from "avalanche/dist/apis/avm";
+import BinTools from "avalanche/dist/utils/bintools";
 import { avalancheClient } from "./client";
-import type { AddressBatch } from "../types";
-import { makeLRUCache } from '../../../cache';
+import { makeLRUCache } from "../../../cache";
 import { HDHelper } from "../hdhelper";
+import { isDefaultValidatorNode } from "../utils";
 
 const getIndexerUrl = (route: string): string =>
-    `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
+  `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
 
 const getExplorerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_EXPLORER_API")}${route || ""}`;
@@ -163,18 +163,62 @@ const getUserDelegations = (delegators) => {
   return userDelegations;
 };
 
-// export const getValidators = makeLRUCache(async () => {
-//   const { validators } = (await avalancheClient()
-//     .PChain()
-//     .getCurrentValidators()) as any;
-//   return validators;
-// });
+const MINUTE_MS = 60000;
+const HOUR_MS = MINUTE_MS * 60;
+const DAY_MS = HOUR_MS * 24;
 
-export const getValidators = async () => {
-  const { validators } = (await avalancheClient()
+export const getValidators = makeLRUCache(async () => {
+  let { validators } = (await avalancheClient()
     .PChain()
     .getCurrentValidators()) as any;
-  return validators;
+
+  validators = validators.filter(removeExpiringValidators);
+
+  return customValidatorOrder(validators);
+});
+
+const removeExpiringValidators = (validator) => {
+  const now = Date.now();
+  const endTime = parseInt(validator.endTime) * 1000;
+  const diff = endTime - now;
+  const threshold = DAY_MS * 14 + 10 * MINUTE_MS;
+
+  // If end time is less than 2 weeks + 1 hour, remove from validator list
+  return diff > threshold;
+};
+
+const customValidatorOrder = (validators) => {
+  const defaultValidator = validators.find((v) =>
+    isDefaultValidatorNode(v.nodeID)
+  );
+
+  const validatorGroupsSortedByStakeAmount = validators.sort(
+    orderByStakeAmount()
+  );
+
+  if (defaultValidator) {
+    return [
+      defaultValidator,
+      ...validatorGroupsSortedByStakeAmount.filter(
+        (v) => !isDefaultValidatorNode(v.nodeID)
+      ),
+    ];
+  }
+
+  return validatorGroupsSortedByStakeAmount;
+};
+
+const orderByStakeAmount = () => (a, b) => {
+  let aStake = new BigNumber(a.stakeAmount);
+  let bStake = new BigNumber(b.stakeAmount);
+
+  if (aStake.gt(bStake)) {
+    return -1;
+  } else if (aStake.lt(bStake)) {
+    return 1;
+  } else {
+    return 0;
+  }
 };
 
 export const getAddressChains = async (addresses: string[]) => {
@@ -191,7 +235,6 @@ export const getAddressChains = async (addresses: string[]) => {
 
   return data.addressChains;
 };
-  
 
 //TODO: replace this with HdHelper
 //OR, see walletPlatformBalance in assets.ts in avalanche-wallet
@@ -200,7 +243,7 @@ export const getAddressChains = async (addresses: string[]) => {
 //Will need this info for "Staking info Dashboard" ticket
 
 /**
- * @param hdKey 
+ * @param hdKey
  * @returns Total balance of this wallet's P-chain addresses
  */
 // export const fetchBalances = async (hdKey) => {
@@ -287,45 +330,45 @@ export const getAddressChains = async (addresses: string[]) => {
  * Traverses the wallet, finding all used keys.
  * Batching 40 used keys at a time, hit the node to retrieve each key's UTXOs.
  * Then, call the batchFunction on that group of 40 used keys.
- * @param hdKey 
- * @param batchFunction 
+ * @param hdKey
+ * @param batchFunction
  */
-const getUsedKeys = async (hdKey, batchFunction) => {
-    let allAddressesAreUnused = false;
-    let index = 0;
+// const getUsedKeys = async (hdKey, batchFunction) => {
+//     let allAddressesAreUnused = false;
+//     let index = 0;
 
-    while (!allAddressesAreUnused || index < SCAN_RANGE) {
-        const batch: AddressBatch = {
-            nonChange: { addresses: [], pkhs: [] },
-            change: { addresses: [], pkhs: [] },
-            utxoset: {}
-        }
+//     while (!allAddressesAreUnused || index < SCAN_RANGE) {
+//         const batch: AddressBatch = {
+//             nonChange: { addresses: [], pkhs: [] },
+//             change: { addresses: [], pkhs: [] },
+//             utxoset: {}
+//         }
 
-        for (let i = 0; i < INDEX_RANGE; i++) {
-            const child = hdKey.deriveChild(0).deriveChild(index + i);
-            const changeChild = hdKey.deriveChild(1).deriveChild(index + i);
+//         for (let i = 0; i < INDEX_RANGE; i++) {
+//             const child = hdKey.deriveChild(0).deriveChild(index + i);
+//             const changeChild = hdKey.deriveChild(1).deriveChild(index + i);
 
-            const publicKeyHash = AVMKeyPair.addressFromPublicKey(child.publicKey);
-            const changePublicKeyHash = AVMKeyPair.addressFromPublicKey(changeChild.publicKey);
-            const address = binTools.addressToString(AVAX_HRP, "P", publicKeyHash);
-            const changeAddress = binTools.addressToString(AVAX_HRP, "P", changePublicKeyHash);
+//             const publicKeyHash = AVMKeyPair.addressFromPublicKey(child.publicKey);
+//             const changePublicKeyHash = AVMKeyPair.addressFromPublicKey(changeChild.publicKey);
+//             const address = binTools.addressToString(AVAX_HRP, "P", publicKeyHash);
+//             const changeAddress = binTools.addressToString(AVAX_HRP, "P", changePublicKeyHash);
 
-            batch.nonChange.pkhs.push(publicKeyHash);
-            batch.change.pkhs.push(changePublicKeyHash);
-            batch.nonChange.addresses.push(address);
-            batch.change.addresses.push(changeAddress);
-        }
+//             batch.nonChange.pkhs.push(publicKeyHash);
+//             batch.change.pkhs.push(changePublicKeyHash);
+//             batch.nonChange.addresses.push(address);
+//             batch.change.addresses.push(changeAddress);
+//         }
 
-        const batchedAddresses = batch.nonChange.addresses.concat(batch.change.addresses);
+//         const batchedAddresses = batch.nonChange.addresses.concat(batch.change.addresses);
 
-        const pchain = avalancheClient().PChain();
+//         const pchain = avalancheClient().PChain();
 
-        let { utxos } = await pchain.getUTXOs(batchedAddresses);
-        batch.utxoset = utxos;
+//         let { utxos } = await pchain.getUTXOs(batchedAddresses);
+//         batch.utxoset = utxos;
 
-        await batchFunction(batch);
+//         await batchFunction(batch);
 
-        index += INDEX_RANGE;
-        allAddressesAreUnused = batch.utxoset.getAllUTXOs().length === 0;
-    }
-};
+//         index += INDEX_RANGE;
+//         allAddressesAreUnused = batch.utxoset.getAllUTXOs().length === 0;
+//     }
+// };
