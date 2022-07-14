@@ -1,7 +1,6 @@
 import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import BigNumber from "bignumber.js";
-import { encodeAccountId } from "../../types";
 import {
   SolanaAccount,
   SolanaStake,
@@ -50,6 +49,7 @@ import type {
   CurrenciesData,
   DatasetTest,
 } from "@ledgerhq/types-live";
+import { encodeAccountId } from "../../account";
 
 // do not change real properties or the test will break
 const testOnChainData = {

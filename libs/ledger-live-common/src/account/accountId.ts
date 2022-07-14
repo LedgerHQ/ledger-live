@@ -3,18 +3,11 @@ import invariant from "invariant";
 import { asDerivationMode } from "../derivation";
 import { getCryptoCurrencyById, findTokenById } from "../currencies";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import type { DerivationMode } from "@ledgerhq/types-live";
+import type { AccountIdParams, DerivationMode } from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-export type AccountIdParams = {
-  type: string;
-  version: string;
-  currencyId: string;
-  xpubOrAddress: string;
-  derivationMode: DerivationMode;
-};
 
 function ensureNoColon(value: string, ctx: string): string {
   invariant(

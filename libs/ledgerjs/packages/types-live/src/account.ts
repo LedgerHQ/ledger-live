@@ -254,3 +254,11 @@ export type AccountRaw = {
 };
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
 export type AccountRawLike = AccountRaw | SubAccountRaw;
+
+export type AccountIdParams = {
+  type: string;
+  version: string;
+  currencyId: string;
+  xpubOrAddress: string;
+  derivationMode: DerivationMode;
+};

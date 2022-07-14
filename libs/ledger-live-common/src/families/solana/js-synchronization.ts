@@ -1,8 +1,7 @@
 import { GetAccountShapeArg0, mergeOps } from "../../bridge/jsHelpers";
-import { encodeAccountId } from "../../types";
 import BigNumber from "bignumber.js";
 
-import { emptyHistoryCache } from "../../account";
+import { emptyHistoryCache, encodeAccountId } from "../../account";
 import {
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,

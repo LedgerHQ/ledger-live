@@ -128,3 +128,14 @@ export type OperationRaw = {
   // Operations related to ERC721 | ERC1155 tokens
   nftOperations?: OperationRaw[];
 };
+
+export type DailyOperationsSection = {
+  day: Date;
+  data: Operation[];
+};
+export type DailyOperations = {
+  // operations grouped by day
+  sections: DailyOperationsSection[];
+  // Is the sections complete? means there is no more operations to pull
+  completed: boolean;
+};

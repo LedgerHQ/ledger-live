@@ -1,6 +1,7 @@
 export * from "./account";
 export * from "./bridge";
 export * from "./derivation";
+export * from "./feature";
 export * from "./manager";
 export * from "./nft";
 export * from "./operation";
