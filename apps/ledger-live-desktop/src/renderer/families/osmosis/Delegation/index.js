@@ -10,7 +10,8 @@ import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,
 } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import { canDelegate } from "@ledgerhq/live-common/lib/families/osmosis/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 import { urls } from "~/config/urls";

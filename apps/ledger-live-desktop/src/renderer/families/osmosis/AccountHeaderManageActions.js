@@ -1,6 +1,6 @@
 // @flow
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import { canDelegate } from "@ledgerhq/live-common/lib/families/osmosis/logic";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import invariant from "invariant";
 import { useCallback } from "react";
@@ -20,9 +20,9 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { cosmosResources } = mainAccount;
-  console.log("cosmos Resources: ", cosmosResources);
   invariant(cosmosResources, "Osmosis account with cosmosResources expected");
   const earnRewardEnabled = canDelegate(mainAccount);
+  // const earnRewardEnabled = true;
 
   const hasDelegations = cosmosResources.delegations.length > 0;
 
