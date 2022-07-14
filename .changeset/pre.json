@@ -70,7 +70,8 @@
     "@actions/submit-bot-report": "1.0.0",
     "live-github-bot": "1.0.0",
     "esbuild-utils": "1.0.0",
-    "@actions/generate-release-message": "1.0.0"
+    "@actions/generate-release-message": "1.0.0",
+    "@actions/pr-is-fork": "1.0.0"
   },
   "changesets": [
     "brave-ears-teach",
