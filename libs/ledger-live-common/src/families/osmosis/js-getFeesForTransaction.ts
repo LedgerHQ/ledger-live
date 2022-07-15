@@ -5,9 +5,9 @@ const gasForTransaction: {
   [Key in CosmosOperationMode]: number;
 } = {
   send: 100000,
-  delegate: 250000,
-  undelegate: 275000,
-  redelegate: 500000,
+  delegate: 300000,
+  undelegate: 350000,
+  redelegate: 550000,
   claimReward: 300000, // Per https://github.com/chainapsis/keplr-wallet/blob/8d45477df2b2393a90786a5c87f814302b878c3d/packages/extension/src/stores/root.tsx#L240
   claimRewardCompound: 400000, // TODO - verify this value
 };
