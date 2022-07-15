@@ -38,7 +38,7 @@ const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   zIndex: p.theme.zIndexes[8],
   p: p.p !== undefined ? p.p : p.theme.space[10],
   rowGap: 6,
-  backgroundColor: p.theme.colors.neutral.c00,
+  backgroundColor: "background.main",
 }))``;
 
 const Overlay = styled(Flex).attrs((p) => ({
