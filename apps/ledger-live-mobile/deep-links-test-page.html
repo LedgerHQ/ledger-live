@@ -94,7 +94,7 @@
           </p>
     </header>
     <div class="scrollContent">
-      <input type="text" value="" placeholder="Edit currency..." id="input">
+      <input type="text" value="" placeholder="Edit currency..." id="currencyInput">
       <button class="link" onclick="onClick('ledgerlive:\/\/')">
         <p>ledgerlive://</p> <p>🔗</p>
       </button>
@@ -158,8 +158,10 @@
         <p>🔗</p>
       </button>
 
-      <button class="link" onclick="onClick('ledgerlive:\/\/discover\/paraswap')">
-        <p>ledgerlive://discover/paraswap</p>
+      <input type="text" value="" placeholder="Edit platform app id..." id="platformAppInput">
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/discover\/PLATFORM_APP_PARAM')">
+        <p>ledgerlive://discover/<b class="platformApp">paraswap</b></p>
         <p>🔗</p>
       </button>
 
@@ -178,8 +180,14 @@
     </div>
     <script>
       let currency = "bitcoin";
+      let platformApp = "paraswap"
       function onClick(url) {
-        window.open(url.replace(/CURRENCY_PARAM/, currency), "_blank");
+        window.open(
+          url
+            .replace(/CURRENCY_PARAM/, currency)
+            .replace(/PLATFORM_APP_PARAM/, platformApp),
+          "_blank"
+        );
       }
 
       function onChangeCurrency(evt) {
@@ -187,8 +195,14 @@
         Array.from(document.querySelectorAll("b.currencyName")).forEach(el => el.innerHTML = currency)
       }
 
+      function onChangePlatformApp(evt) {
+        platformApp = event.target.value.toLowerCase()
+        Array.from(document.querySelectorAll("b.platformApp")).forEach(el => el.innerHTML = platformApp)
+      }
+
       window.onload = () => {
-        document.getElementById("input").onchange = onChangeCurrency;
+        document.getElementById("currencyInput").onchange = onChangeCurrency;
+        document.getElementById("platformAppInput").onchange = onChangePlatformApp;
       }
     </script>
   </body>

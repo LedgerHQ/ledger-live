@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "private": true,
   "scripts": {
     "postinstall": "bash ./scripts/post.sh",
@@ -27,6 +27,7 @@
     "preios:ci:nightly": "bundle install",
     "ios:ci:nightly": "bundle exec fastlane ios ci_nightly --env nightly",
     "ios:device:add": "bundle exec fastlane ios add_ios_device",
+    "ios:sync:profiles": "bundle exec fastlane ios sync_ios_profiles",
     "preandroid:apk": "bundle install",
     "android:apk": "bundle exec fastlane android apk --env staging",
     "preandroid:ci:playstore": "bundle install",

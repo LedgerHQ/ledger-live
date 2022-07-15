@@ -424,6 +424,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
   },
+  MOCK_REMOTE_LIVE_MANIFEST: {
+    def: "",
+    parser: stringParser,
+    desc: "mock remote live app manifest",
+  },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
     parser: stringParser,

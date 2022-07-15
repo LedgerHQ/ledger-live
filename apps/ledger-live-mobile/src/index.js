@@ -35,7 +35,6 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
-
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
@@ -238,7 +237,7 @@ const linkingOptions = {
       Linking.removeEventListener("url", onReceiveURL);
     };
   },
-  prefixes: ["ledgerlive://"],
+  prefixes: ["ledgerlive://", "https://ledger.com"],
   config: {
     screens: {
       [NavigatorName.Base]: {
@@ -385,12 +384,19 @@ const linkingOptionsOnboarding = {
   },
 };
 
+const platformManifestFilterParams = {
+  private: true,
+  branches: undefined, // will override & having it to undefined makes all branches valid
+};
+
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
-  const removeLiveAppState = useRemoteLiveAppContext();
-  const filteredManifests = useFilteredManifests();
+  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const liveAppProviderInitialized =
+    !!remoteLiveAppState.value || !!remoteLiveAppState.error;
+  const filteredManifests = useFilteredManifests(platformManifestFilterParams);
 
   const linking = useMemo(
     () => ({
@@ -406,6 +412,16 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
            *  - checking that a manifest exists
            *  - adding "name" search param
            * */
+          if (!liveAppProviderInitialized) {
+            /**
+             * The provider isn't initialized yet so the manifest will possibly
+             * not be found.
+             * We redirect because this scenario happens when deep linking
+             * triggers a cold app start. The platform app screen will show an
+             * error in case the app isn't found.
+             */
+            return getStateFromPath(path, config);
+          }
           const manifest = filteredManifests.find(
             m => m.id.toLowerCase() === platform.toLowerCase(),
           );
@@ -422,33 +438,16 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       wcContext.initDone,
       wcContext.session.session,
       filteredManifests,
+      liveAppProviderInitialized,
     ],
   );
 
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) {
-      return;
-    }
-    if (
-      removeLiveAppState.isLoading &&
-      !removeLiveAppState.lastUpdateTime &&
-      !removeLiveAppState.error
-    )
-      /**
-       * Ensure that the list of manifests has been loaded once so that the
-       * deep linking logic to platform apps works in the scenario where the app
-       * was not previously running.
-       *  */
-      return;
+    if (!wcContext.initDone) return;
     setIsReady(true);
-  }, [
-    wcContext.initDone,
-    removeLiveAppState.isLoading,
-    removeLiveAppState.lastUpdateTime,
-    removeLiveAppState.error,
-  ]);
+  }, [wcContext.initDone]);
 
   React.useEffect(
     () => () => {

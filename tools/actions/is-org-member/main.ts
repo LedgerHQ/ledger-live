@@ -10,12 +10,12 @@ import * as core from "@actions/core";
 // }
 
 const main = async function(): Promise<void> {
-  const username = core.getInput("username");
-  const org = core.getInput("organisation");
-  const token = core.getInput("token");
-  const octokit = github.getOctokit(token);
-
   try {
+    const username = core.getInput("username");
+    const org = core.getInput("organisation");
+    const token = core.getInput("token");
+    const octokit = github.getOctokit(token);
+
     await octokit.rest.orgs.checkMembershipForUser({
       org,
       username,
@@ -23,6 +23,7 @@ const main = async function(): Promise<void> {
 
     core.setOutput("is-org-member", true);
   } catch (error) {
+    console.error(error);
     core.setOutput("is-org-member", false);
   }
 };

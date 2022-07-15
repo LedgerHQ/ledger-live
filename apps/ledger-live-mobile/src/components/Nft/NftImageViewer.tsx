@@ -36,6 +36,7 @@ class NftImageViewer extends React.PureComponent<Props> {
           mediaFormat={params.mediaFormat}
           status={params?.status}
           resizeMode="contain"
+          transaprency={true}
         />
       </View>
     );

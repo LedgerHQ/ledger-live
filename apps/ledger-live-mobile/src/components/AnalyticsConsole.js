@@ -32,6 +32,10 @@ const AnalyticsConsole = () => {
   }, [addItem]);
   const render = useEnv("ANALYTICS_CONSOLE");
 
+  useEffect(() => {
+    setItems([]);
+  }, [render]);
+
   return render ? (
     <View style={styles.root} pointerEvents="none">
       {items.map((item, index) => {

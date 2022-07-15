@@ -10,6 +10,8 @@ import ForceTheme from "./theme/ForceTheme";
 
 import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
 import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
+import { useCurrentRouteName } from "../helpers/routeHooks";
+import { track } from "../analytics";
 
 type Props = {
   topLeft?: JSX.Element | null;
@@ -22,6 +24,7 @@ type Props = {
   imageContainerStyle?: StyleProp<ViewStyle>;
   imageStyle?: StyleProp<ImageStyle>;
   variant?: "buy" | "setup";
+  screen: string;
 };
 
 const Container = styled(Flex).attrs({
@@ -70,12 +73,15 @@ export default function BuyDeviceBanner({
   imageContainerStyle,
   imageStyle,
   variant,
+  screen,
 }: Props) {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
+
   const handleOnPress = useCallback(() => {
     navigate(NavigatorName.BuyDevice);
   }, [navigate]);
+
   const handleSetupCtaOnPress = useCallback(() => {
     navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -84,13 +90,27 @@ export default function BuyDeviceBanner({
       },
     });
   }, [navigate]);
+
   const onPress = useCallback(() => {
     if (variant === "setup") {
       handleSetupCtaOnPress();
     } else {
       handleOnPress();
+      track("button_clicked", {
+        button: "Discover the Nano",
+        screen: "Wallet",
+      });
     }
   }, [handleOnPress, handleSetupCtaOnPress, variant]);
+
+  const pressMessage = useCallback(() => {
+    track("message_clicked", {
+      message: "I already have a device, set it up",
+      screen,
+      currency: eventProperties?.currency,
+    });
+    handleSetupCtaOnPress();
+  }, [handleSetupCtaOnPress, eventProperties]);
 
   return (
     <>
@@ -120,8 +140,10 @@ export default function BuyDeviceBanner({
             <Button
               onPress={onPress}
               size={buttonSize}
-              event={event}
-              eventProperties={eventProperties}
+              event={variant === "setup" ? undefined : event}
+              eventProperties={
+                variant === "setup" ? undefined : eventProperties
+              }
               type="main"
               flexShrink={0}
             >
@@ -153,7 +175,7 @@ export default function BuyDeviceBanner({
             type="color"
             Icon={Icons.ArrowRightMedium}
             iconPosition="right"
-            onPress={handleSetupCtaOnPress}
+            onPress={pressMessage}
           >
             {t("buyDevice.setupCta")}
           </Link>

@@ -10,7 +10,7 @@ import logger from "~/logger";
 import LoggerTransport from "~/logger/logger-transport-internal";
 
 import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
-import sentry from "~/sentry/internal";
+import sentry, { setTags } from "~/sentry/internal";
 
 process.on("exit", () => {
   logger.debug("exiting process, unsubscribing all...");
@@ -42,6 +42,12 @@ let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
 const userId = process.env.SENTRY_USER_ID || "";
 sentry(() => Boolean(userId) && sentryEnabled, userId);
 
+const { INITIAL_SENTRY_TAGS } = process.env;
+if (INITIAL_SENTRY_TAGS) {
+  const parsed = JSON.parse(INITIAL_SENTRY_TAGS);
+  if (parsed) setTags(parsed);
+}
+
 process.on("message", m => {
   switch (m.type) {
     case "command":
@@ -71,6 +77,11 @@ process.on("message", m => {
     case "sentryLogsChanged": {
       const { payload } = m;
       sentryEnabled = payload;
+      break;
+    }
+
+    case "set-sentry-tags": {
+      setTags(JSON.parse(m.tagsJSON));
       break;
     }
 
