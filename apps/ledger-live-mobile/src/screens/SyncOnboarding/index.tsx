@@ -28,7 +28,7 @@ import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
-import { SoftwareChecksStep } from "./SoftwareChecksStep";
+import SoftwareChecksStep from "./SoftwareChecksStep";
 
 type StepStatus = "completed" | "active" | "inactive";
 
