@@ -11,6 +11,8 @@ const createTransaction = (): Transaction => ({
   useAllAmount: false,
   fees: null,
   mode: "delegate",
+  startTime: null,
+  endTime: null,
 });
 
 const prepareTransaction = async (
