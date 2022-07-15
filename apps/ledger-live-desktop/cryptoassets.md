@@ -109,7 +109,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10097)
+## Tokens (10098)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -3339,7 +3339,7 @@
 | Ethereum | HD | 0x6ce654aC973D326F89f0685E7459542641410eD9 | HUB.finance |  | ethereum/erc20/hub_finance |
 | Ethereum | HEART | 0x8FAc8031e079F409135766C7d5De29cf22EF897C | HUMANS |  | ethereum/erc20/humans |
 | Ethereum | HUNT | 0x9AAb071B4129B083B01cB5A0Cb513Ce7ecA26fa5 | HUNT Token |  | ethereum/erc20/hunt_token |
-| Ethereum | HUSD | 0xdF574c24545E5FfEcb9a659c229253D4111d87e1 | HUSD Stablecoin |  | ethereum/erc20/husd_stablecoin  |
+| Ethereum | HUSD | 0xdF574c24545E5FfEcb9a659c229253D4111d87e1 | HUSD Stablecoin |  | ethereum/erc20/husd_stablecoin  |
 | Ethereum | HUSL | 0x56BE94D29e1125D2D61D06629c1b251d72c1b3B3 | HUSTLE |  | ethereum/erc20/hustle |
 | Ethereum | HXRO | 0x4bD70556ae3F8a6eC6C4080A0C327B24325438f3 | HXRO |  | ethereum/erc20/hxro |
 | Ethereum | HYDRO | 0x946112efaB61C3636CBD52DE2E1392D7A75A6f01 | HYDRO TOKEN |  | ethereum/erc20/hydro_token |
@@ -4338,7 +4338,7 @@
 | Ethereum | NYM | 0x525A8F6F3Ba4752868cde25164382BfbaE3990e1 | NYM |  | ethereum/erc20/nym |
 | Ethereum | NABOX | 0x630bC7dD0aBfc2d196289cE09Db947DD2CAfae7C | Nabox Token |  | ethereum/erc20/nabox_token |
 | Ethereum | NII | 0x7c8155909cd385F120A56eF90728dD50F9CcbE52 | Nahmii |  | ethereum/erc20/nahmii |
-| Ethereum | NAKA | 0xDf282f170f3C32AC9c49f3f5Be1D68e5aE6Eb742 | Nakamoto Perpetual Debt Token | delisted, countervalues disabled | ethereum/erc20/nakamoto_perpetual_debt_token  |
+| Ethereum | NAKA | 0xDf282f170f3C32AC9c49f3f5Be1D68e5aE6Eb742 | Nakamoto Perpetual Debt Token | delisted, countervalues disabled | ethereum/erc20/nakamoto_perpetual_debt_token  |
 | Ethereum | NAM | 0x05984006707585F66465e8A6505341f46b64fA7A | Nam Coin |  | ethereum/erc20/nam_coin |
 | Ethereum | NCT | 0x8A9c4dfe8b9D8962B31e4e16F8321C44d48e246E | NameChangeToken | countervalues disabled | ethereum/erc20/namechangetoken |
 | Ethereum | NAMI | 0x2f7B618993cc3848d6C7ed9CdD5e835E4Fe22b98 | Nami Corporation Token |  | ethereum/erc20/nami_corporation_token |
@@ -4839,7 +4839,7 @@
 | Ethereum | PROS | 0x8642A849D0dcb7a15a974794668ADcfbe4794B56 | Prosper |  | ethereum/erc20/prosper |
 | Ethereum | PROGE | 0x282D0AD1FA03DFBDB88243B958e77349c73737D1 | Protector Roge |  | ethereum/erc20/protector_roge |
 | Ethereum | PFI | 0x7B69D465c0F9FB22AffAE56aa86149973e9B0966 | Protocol Finance |  | ethereum/erc20/protocol_finance |
-| Ethereum | XPR | 0xD7EFB00d12C2c13131FD319336Fdf952525dA2af | Proton | countervalues disabled | ethereum/erc20/proton  |
+| Ethereum | XPR | 0xD7EFB00d12C2c13131FD319336Fdf952525dA2af | Proton | countervalues disabled | ethereum/erc20/proton  |
 | Ethereum | PTT | 0x4689a4e169eB39cC9078C0940e21ff1Aa8A39B9C | Proton Token |  | ethereum/erc20/proton_token |
 | Ethereum | VOCO | 0xB5Ca46cF1da09248126682a7bd72401fd7A6b151 | Provoco Token |  | ethereum/erc20/provoco_token |
 | Ethereum | XES | 0xA017ac5faC5941f95010b12570B812C974469c2C | Proxeus |  | ethereum/erc20/proxeus |
@@ -6621,7 +6621,7 @@
 | Ethereum | YFOX | 0x706CB9E741CBFee00Ad5b3f5ACc8bd44D1644a74 | YFOX.FINANCE |  | ethereum/erc20/yfox_finance |
 | Ethereum | YFPRO | 0x0fdC5313333533cC0c00C22792BfF7383d3055F2 | YFPRO.FINANCE |  | ethereum/erc20/yfpro_finance |
 | Ethereum | YFSI | 0x1DF6f1Bb7454E5E4BA3BcA882d3148FBf9b5697A | YFSCIENCE |  | ethereum/erc20/yfscience |
-| Ethereum | YFV | 0x45f24BaEef268BB6d63AEe5129015d69702BCDfa | YFValue |  | ethereum/erc20/yfvalue  |
+| Ethereum | YFV | 0x45f24BaEef268BB6d63AEe5129015d69702BCDfa | YFValue |  | ethereum/erc20/yfvalue  |
 | Ethereum | YFX | 0xF55a93b613D172b86c2Ba3981a849DaE2aeCDE2f | YFX |  | ethereum/erc20/yfx |
 | Ethereum | YFARMER | 0x7B0F66fA5cf5cc28280c1e7051af881E06579362 | YFarmLand Token |  | ethereum/erc20/yfarmland_token |
 | Ethereum | YFARM | 0xF5D0FefAaB749d8B14C27F0De60cC6e9e7f848d1 | YFarmToken |  | ethereum/erc20/yfarmtoken |
@@ -7385,6 +7385,7 @@
 | Polygon | RENFIL | 0xc4Ace9278e7E01755B670C0838c3106367639962 | renFIL |  | polygon/erc20/renfil |
 | Polygon | UMX | 0x5dF1a47e05b4caBa0ED3Df13662642f05314764D | unimex.network |  | polygon/erc20/unimex.network |
 | Polygon | XTK | 0x22308317A4aA9e8196065E0b3647e582d44c4d7b | xToken |  | polygon/erc20/xtoken |
+| Stellar | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
 | Tron | GOLD | TKjLCYg1aQmtnC8HGLCgbrq89Ru7xifPP5 | !!!!GOLDCOIN | delisted, countervalues disabled | tron/trc10/1002341 |
 | Tron | GOLD | TP429SKrsp4BoTiEFXHj4TNSJwqDFsygnr | !!!!GoldSpot!!!! | delisted, countervalues disabled | tron/trc10/1002467 |
 | Tron | 666 | TMqNJwD3qVmuRxzzP3Q4A24fuByVBKQ39E | !!!666 | delisted, countervalues disabled | tron/trc10/1002438 |
@@ -10209,3 +10210,4 @@
 | Tron | OMGT | TQ7mRLfgZyKiGC1VKppeufPEGfrN69oRVE | zOilMarineGroup | delisted, countervalues disabled | tron/trc10/1000258 |
 | Tron | XZGZ | TNoFdHVLw5Rm2RezJ7xDhyQvPZKth3bWtS | zigzag | delisted, countervalues disabled | tron/trc10/1002501 |
 | Tron | ZLX | TPGFoGo5gVyX6axDtV3VnPSPKqVhrVD5Wh | zlotodex | delisted, countervalues disabled | tron/trc10/1002606 |
+
