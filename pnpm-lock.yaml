@@ -2794,6 +2794,16 @@ importers:
       '@actions/github': 5.0.3
       '@vercel/ncc': 0.33.4
 
+  tools/actions/pr-is-fork:
+    specifiers:
+      '@actions/core': ^1.9.0
+      '@actions/github': ^5.0.3
+      '@vercel/ncc': ^0.33.1
+    dependencies:
+      '@actions/core': 1.9.0
+      '@actions/github': 5.0.3
+      '@vercel/ncc': 0.33.4
+
   tools/actions/prepare-comment:
     specifiers:
       '@actions/core': ^1.9.0

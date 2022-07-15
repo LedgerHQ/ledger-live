@@ -958,6 +958,10 @@
       "earn": {
         "title": "Earn",
         "desc": "Earn passive income and grow your crypto assets"
+      },
+      "mint": {
+        "title": "Mint",
+        "desc": "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon": "Coming soon",
