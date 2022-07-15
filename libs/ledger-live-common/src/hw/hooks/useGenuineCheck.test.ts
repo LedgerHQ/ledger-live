@@ -1,5 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import { from, of, throwError } from "rxjs";
+import { delay } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../deviceAccess";
 import getDeviceInfo from "../getDeviceInfo";
@@ -9,6 +10,7 @@ import {
   UserRefusedAllowManager,
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
+import { DeviceInfo } from "../../types/manager";
 
 jest.mock("../deviceAccess");
 jest.mock("../getDeviceInfo");
@@ -198,6 +200,47 @@ describe("useGenuineCheck", () => {
       });
 
       expect(result.current.devicePermissionState).toEqual("unrequested");
+      expect(result.current.genuineState).toEqual("unchecked");
+      expect(result.current.error).toBeNull();
+    });
+  });
+
+  describe("When the device is locked before doing a genuine check, and it timed out", () => {
+    it("should notify the hook consumer of the need to unlock the device, and once done, continue the genuine check flow", async () => {
+      // Delays the device info response
+      mockedGetDeviceInfo.mockReturnValue(
+        of(aDeviceInfo as DeviceInfo)
+          .pipe(delay(1001))
+          .toPromise()
+      );
+
+      mockedGenuineCheck.mockReturnValue(
+        of({
+          type: "device-permission-requested",
+          wording: "",
+        })
+      );
+
+      const { result } = renderHook(() =>
+        useGenuineCheck({
+          lockedDeviceTimeoutMs: 1000,
+          deviceId: "A_DEVICE_ID",
+        })
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(1000);
+      });
+
+      expect(result.current.devicePermissionState).toEqual("unlock-needed");
+      expect(result.current.genuineState).toEqual("unchecked");
+      expect(result.current.error).toBeNull();
+
+      await act(async () => {
+        jest.advanceTimersByTime(1);
+      });
+
+      expect(result.current.devicePermissionState).toEqual("requested");
       expect(result.current.genuineState).toEqual("unchecked");
       expect(result.current.error).toBeNull();
     });
