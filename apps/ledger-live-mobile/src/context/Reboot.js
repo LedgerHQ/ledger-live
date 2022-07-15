@@ -1,7 +1,7 @@
 // @flow
 import React, { Fragment, useContext, useCallback, useState } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { clearDb } from "../db";
 
 type RebootFunc = (resetData?: boolean) => Promise<void>;

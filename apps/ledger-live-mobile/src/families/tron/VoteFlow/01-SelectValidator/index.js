@@ -5,15 +5,15 @@ import { StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import {
   useTronSuperRepresentatives,
   useSortedSr,
   SR_MAX_VOTES,
   SR_THRESHOLD,
-} from "@ledgerhq/live-common/lib/families/tron/react";
+} from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { ScreenName } from "../../../../const";

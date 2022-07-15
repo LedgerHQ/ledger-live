@@ -5,8 +5,8 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import { translateContent } from "@ledgerhq/live-common/lib/platform/logic";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import { translateContent } from "@ledgerhq/live-common/platform/logic";
 
 import { useLocale } from "../../context/Locale";
 

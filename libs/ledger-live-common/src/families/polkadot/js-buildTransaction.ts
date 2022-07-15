@@ -3,6 +3,7 @@ import type { Transaction } from "./types";
 import type { Account } from "../../types";
 import { getRegistry, getTransactionParams } from "./cache";
 import { isFirstBond, getNonce } from "./logic";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
 const DEFAULTS = {
@@ -140,6 +141,8 @@ export const buildTransaction = async (
   t: Transaction,
   forceLatestParams = false
 ) => {
+  await loadPolkadotCrypto();
+
   const { extrinsics, registry } = await getRegistry();
   const info = forceLatestParams
     ? await getTransactionParams.force()

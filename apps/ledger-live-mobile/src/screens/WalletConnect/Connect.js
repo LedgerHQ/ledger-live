@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
+/* eslint-disable import/named */
 import {
   // $FlowFixMe
   context,
@@ -22,6 +23,7 @@ import {
   // $FlowFixMe
   approveSession,
 } from "./Provider";
+/* eslint-enable import/named */
 import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import Disconnect from "../../icons/Disconnect";

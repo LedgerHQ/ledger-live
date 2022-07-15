@@ -1,27 +1,35 @@
-import { Transaction, CryptoCurrency, ProtoNFT } from "../types";
+import { Transaction, CryptoCurrency, ProtoNFT, NFTStandard } from "../types";
 import { getEnv } from "../env";
 
-export const isNftTransaction = (transaction: Transaction): boolean => {
-  if (transaction.family === "ethereum") {
-    return ["erc721.transfer", "erc1155.transfer"].includes(transaction.mode);
+export const isNftTransaction = (
+  transaction: Transaction | undefined | null
+): boolean => {
+  if (transaction?.family === "ethereum") {
+    return ["erc721.transfer", "erc1155.transfer"].includes(transaction?.mode);
   }
 
   return false;
 };
 
-export function isNFTActive(currency: CryptoCurrency): boolean {
-  return getEnv("NFT_CURRENCIES").split(",").includes(currency.id);
+export function isNFTActive(
+  currency: CryptoCurrency | undefined | null
+): boolean {
+  return getEnv("NFT_CURRENCIES").split(",").includes(currency?.id);
 }
 
-const nftCapabilities = {
+const nftCapabilities: Record<string, NFTStandard[]> = {
   hasQuantity: ["ERC1155"],
 };
 
-export const getNftCapabilities = (nft: ProtoNFT) =>
-  Object.entries(nftCapabilities).reduce(
+type NFTCapabilty = keyof typeof nftCapabilities;
+
+export const getNftCapabilities = (
+  nft: ProtoNFT | undefined | null
+): Record<NFTCapabilty, boolean> =>
+  (Object.entries(nftCapabilities) as [NFTCapabilty, NFTStandard[]][]).reduce(
     (acc, [capability, standards]) => ({
       ...acc,
-      [capability]: standards.includes(nft.standard),
+      [capability]: nft?.standard ? standards.includes(nft.standard) : false,
     }),
-    {}
+    {} as Record<NFTCapabilty, boolean>
   );

@@ -8,7 +8,7 @@ import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import ethLedgerServices from "@ledgerhq/hw-app-eth/lib/services/ledger";
+import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import type { Transaction } from "./types";
 import type { Operation, Account, SignOperationEvent } from "../../types";
 import { getGasLimit, buildEthereumTx } from "./transaction";
@@ -17,7 +17,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
-import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { Transaction as EthereumTx } from "@ethereumjs/tx";
 export const signOperation = ({
   account,

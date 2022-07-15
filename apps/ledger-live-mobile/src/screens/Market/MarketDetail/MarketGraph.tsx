@@ -8,7 +8,7 @@ import {
   InfiniteLoader,
   Transitions,
 } from "@ledgerhq/native-ui";
-import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
 import Graph from "../../../components/Graph";

@@ -1,3 +1,37 @@
+# 2.44.0
+
+Ledger and FTX joining forces, RBF for Bitcoin transactions, a few bug fixes, and more. Here are some powerful new Ledger Live features heading your way. 
+
+### 🚀 Features
+Swap crypto on FTX without leaving Ledger Live. Access to FTX swapping options to grow and diversify your portfolio while your assets remain fully secure in a Ledger hardware wallet. 
+Gone are the days of stuck Bitcoin transactions. With the enhanced Bitcoin RBF (Replace-by-Fee) feature, you can increase network fees and speed up unconfirmed transactions.
+Did you know that the floor price is one of the most important metrics for determining the value of an NFT collection? In this spirit, Ledger Live will now display an NFT’s floor price next to the collection name.
+
+### 🐛 Fixes
+There were a few little bugs that caused some trouble. For instance, several users reported issues when connecting to Rarible or OpenSea with WalletConnect. We’ve patched this up.
+
+# 2.43.0
+
+We’re constantly adding new integrations and working on performance improvements to make Ledger Live a world-class experience. Here is what’s new in this release.
+
+### 🚀 Features
+We’re excited to announce that Ledger Live is launching support for Cardano, one of the biggest cryptocurrencies based on its total market value. Now you can send and receive Cardano’s native token, ADA. 
+
+### 🐛 Fixes
+We’ve done some bug fixes and made a few small but important changes behind the curtain.
+
+# v2.42.0
+New coins, Solana staking improvements, NFT videos, and more. Here is what's new in Ledger Live Desktop and what we're gradually rolling out.
+
+### 🚀 Features
+- Say hello to HEDERA 👋. Starting today, Ledger Live supports HEDERA. Send and receive HBAR at your fingertips.
+- NFTs are getting traction in Ledger Live. In addition to basic images, you can now explore NFTs with animated media. 
+
+
+### 🐛 Fixes
+- This release includes noteworthy improvements to Solana staking. Along with Available balance, now you can see your Staked balance as well. We've also removed validators with 100% commission and made some cosmetic fixes to error messages and notifications.
+
+
 # v2.41.3
 ## 🚀 Features
 - Solana staking

@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useReducer, useState } from "react";
+import { getExchangeRates } from "..";
+import { Transaction } from "../../../generated/types";
+import type { CustomMinOrMaxError, Exchange, ExchangeRate } from "../types";
 import {
   OnNoRatesCallback,
   SetExchangeRateCallback,
   SwapSelectorStateType,
 } from "./useSwapTransaction";
-import { getExchangeRates } from "..";
-import { Exchange, ExchangeRate } from "../types";
-import { pickExchangeRate } from "../utils";
-import { Transaction } from "../../../generated/types";
 
 export type RatesReducerState = {
   status?: string | null;
@@ -34,14 +33,12 @@ const ratesReducer = (state: RatesReducerState, action): RatesReducerState => {
 export const useProviderRates = ({
   fromState,
   toState,
-  exchangeRate,
   transaction,
   onNoRates,
   setExchangeRate,
 }: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
-  exchangeRate?: ExchangeRate | null | undefined;
   transaction?: Transaction | null | undefined;
   onNoRates?: OnNoRatesCallback | null | undefined;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
@@ -82,23 +79,74 @@ export const useProviderRates = ({
             undefined,
             toCurrency
           );
+
           if (abort) return;
           if (rates.length === 0) {
             onNoRates && onNoRates({ fromState, toState });
           }
+
           // Discard bad provider rates
-          let rateError: Error | null | undefined = null;
+          let rateError: Error | CustomMinOrMaxError | null | undefined = null;
           rates = rates.reduce<ExchangeRate[]>((acc, rate) => {
             rateError = rateError ?? rate.error;
+
+            /**
+             * If we have an error linked to the ammount, this error takes
+             * precedence over the other (like a "CurrencyNotSupportedError" one
+             * for example)
+             */
+            if (
+              rateError?.name !== rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              rateError = rate.error;
+            }
+
+            if (
+              rateError?.name === rate.error?.name &&
+              (rate.error?.name === "SwapExchangeRateAmountTooLow" ||
+                rate.error?.name === "SwapExchangeRateAmountTooHigh")
+            ) {
+              /**
+               * Comparison pivot, depending on the order in which we want to sort errors
+               * If the order is ascending, the pivot is -1, otherwise it's 1
+               * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
+               */
+              const cmp =
+                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+
+              /**
+               * If the amount is too low, the user should put at least the
+               * minimum amount possible
+               * If the amount is too high, the user should put at most the
+               * maximum amount possible
+               */
+
+              rateError =
+                (rateError as CustomMinOrMaxError).amount.comparedTo(
+                  (rate.error as CustomMinOrMaxError)?.amount
+                ) === cmp
+                  ? rateError
+                  : rate.error;
+            }
+
             return rate.error ? acc : [...acc, rate];
           }, []);
+
           if (rates.length === 0 && rateError) {
             // If all the rates are in error
             dispatchRates({ type: "error", payload: rateError });
           } else {
             dispatchRates({ type: "set", payload: rates });
-            setExchangeRate &&
-              pickExchangeRate(rates, exchangeRate, setExchangeRate);
+
+            /**
+             * Select the first rate returned by the API. Should be the prefered
+             * rate for the user. Rate ordering logic is handeled on backend side
+             */
+            const rate = rates?.length > 0 ? rates[0] : null;
+
+            setExchangeRate && setExchangeRate(rate);
           }
         } catch (error) {
           !abort && dispatchRates({ type: "error", payload: error });

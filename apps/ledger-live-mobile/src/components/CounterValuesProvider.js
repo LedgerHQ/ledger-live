@@ -5,7 +5,7 @@ import { useNetInfo } from "@react-native-community/netinfo";
 import {
   Countervalues,
   useCountervaluesPolling,
-} from "@ledgerhq/live-common/lib/countervalues/react";
+} from "@ledgerhq/live-common/countervalues/react";
 import { useUserSettings } from "../actions/general";
 
 export default function CountervaluesProvider({

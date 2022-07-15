@@ -6,9 +6,8 @@ import {
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -17,8 +16,6 @@ import OperationDetails, {
 } from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
-import Distribution from "../../screens/Distribution";
-import Asset, { HeaderTitle } from "../../screens/Asset";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
 import WalletConnectScan from "../../screens/WalletConnect/Scan";
 import WalletConnectConnect from "../../screens/WalletConnect/Connect";
@@ -27,6 +24,7 @@ import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
+import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
 import SignMessageNavigator from "./SignMessageNavigator";
@@ -35,9 +33,8 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeBuyFlowNavigator from "./ExchangeBuyFlowNavigator";
-import ExchangeSellFlowNavigator from "./ExchangeSellFlowNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
+import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
@@ -74,10 +71,15 @@ import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScree
 import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
 import SwapOperationDetails from "../../screens/Swap/OperationDetails";
 
-import BuyDeviceScreen from "../../screens/BuyDeviceScreen";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import ProviderList from "../../screens/Exchange/ProviderList";
+import ProviderView from "../../screens/Exchange/ProviderView";
+import ScreenHeader from "../../screens/Exchange/ScreenHeader";
+import ExchangeStackNavigator from "./ExchangeStackNavigator";
+
+import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
 import Learn from "../../screens/Learn";
-import ManagerMain from "../../screens/Manager/Manager";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -86,8 +88,8 @@ export default function BaseNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const learn = useFeature("learn");
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
     <Stack.Navigator
@@ -102,9 +104,44 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.BuyDeviceScreen}
-        component={BuyDeviceScreen}
-        options={{ headerShown: false }}
+        name={NavigatorName.BuyDevice}
+        component={BuyDeviceNavigator}
+        options={{
+          headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NoDeviceWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
+        {...noNanoBuyNanoWallScreenOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
+        component={PostBuyDeviceSetupNanoWallScreen}
+        options={{
+          headerShown: false,
+          presentation: "transparentModal",
+          headerMode: "none",
+          mode: "modal",
+          transparentCard: true,
+          cardStyle: { opacity: 1 },
+          gestureEnabled: true,
+          headerTitle: null,
+          headerRight: null,
+          headerBackTitleVisible: false,
+          title: null,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.PostBuyDeviceScreen}
+        component={PostBuyDeviceScreen}
+        options={{
+          title: t("postBuyDevice.headerTitle"),
+          headerLeft: null,
+          headerRight: null,
+        }}
       />
       <Stack.Screen
         name={NavigatorName.Settings}
@@ -133,6 +170,7 @@ export default function BaseNavigator() {
           headerStyle: styles.headerNoShadow,
           title: route.params.name,
         })}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       {learn?.enabled ? (
         <Stack.Screen
@@ -313,33 +351,43 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-        {...(readOnlyModeEnabled
-          ? {
-              component: BuyDeviceScreen,
-              options: {
-                ...TransitionPresets.ModalTransition,
-                headerShown: false,
-              },
-            }
-          : {
-              component: ExchangeNavigator,
-              options: { headerStyle: styles.headerNoShadow, headerLeft: null },
-            })}
+        component={ExchangeNavigator}
+        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeBuyFlow}
-        component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeBuyFlowNavigator
-        }
+        name={NavigatorName.ProviderList}
+        component={ProviderList}
+        options={({ route }) => ({
+          headerStyle: styles.headerNoShadow,
+          title:
+            route.params.type === "onRamp"
+              ? t("exchange.buy.screenTitle")
+              : t("exchange.sell.screenTitle"),
+        })}
+      />
+      <Stack.Screen
+        name={NavigatorName.ProviderView}
+        component={ProviderView}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <ScreenHeader icon={route.params.icon} name={route.params.name} />
+          ),
+          headerStyle: styles.headerNoShadow,
+        })}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExchangeStack}
+        component={ExchangeStackNavigator}
         initialParams={{ mode: "buy" }}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
-        name={NavigatorName.ExchangeSellFlow}
-        component={
-          readOnlyModeEnabled ? BuyDeviceScreen : ExchangeSellFlowNavigator
-        }
+        name={NavigatorName.PlatformExchange}
+        component={PlatformExchangeNavigator}
         options={{ headerShown: false }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.OperationDetails}
@@ -429,15 +477,6 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={ScreenName.Distribution}
-        component={Distribution}
-        options={{
-          ...stackNavigationConfig,
-          title: t("distribution.header"),
-          headerLeft: null,
-        }}
-      />
-      <Stack.Screen
         name={NavigatorName.Analytics}
         component={AnalyticsNavigator}
         options={{
@@ -456,14 +495,6 @@ export default function BaseNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.Asset}
-        component={readOnlyModeEnabled ? BuyDeviceScreen : Asset}
-        options={{
-          headerTitle: () => <HeaderTitle />,
-          headerRight: null,
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.PortfolioOperationHistory}
         component={PortfolioHistory}
         options={{
@@ -473,7 +504,7 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.Account}
-        component={readOnlyModeEnabled ? BuyDeviceScreen : Account}
+        component={Account}
         options={({ route, navigation }) => ({
           headerLeft: () => (
             <BackButton navigation={navigation} route={route} />
@@ -551,11 +582,6 @@ export default function BaseNavigator() {
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "", headerRight: null }}
       />
       {Object.keys(families).map(name => {
         const { component, options } = families[name];

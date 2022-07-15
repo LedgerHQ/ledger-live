@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import { NFTStandards } from "./nft";
+import { NFTStandard } from "./nft";
 
 export type OperationType =
   | "IN"
@@ -65,7 +65,7 @@ export type Operation = {
   accountId: string;
   // --------------------------------------------- properties related to NFTs
   // the specification used for the transaction's event
-  standard?: NFTStandards | string;
+  standard?: NFTStandard | string;
   // address of an account/contract that is approved to make the transfer
   operator?: string;
   // address of the contract/collection containing an NFT (tokenId)
@@ -102,7 +102,7 @@ export type OperationRaw = {
   accountId: string;
   hasFailed?: boolean;
   // --------------------------------------------- properties related to NFTs
-  standard?: NFTStandards | string;
+  standard?: NFTStandard | string;
   operator?: string;
   contract?: string;
   tokenId?: string;

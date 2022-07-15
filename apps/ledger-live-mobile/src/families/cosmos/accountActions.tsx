@@ -1,6 +1,6 @@
 import React from "react";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
@@ -15,8 +15,7 @@ const getActions = ({ account }: { account: Account }) => {
       navigationParams: [
         NavigatorName.CosmosDelegationFlow,
         {
-          screen: ScreenName.CosmosDelegationStarted,
-
+          screen: (account.cosmosResources && account.cosmosResources?.delegations.length > 0) ? ScreenName.CosmosDelegationValidator : ScreenName.CosmosDelegationStarted,
         },
       ],
       label: <Trans i18nKey="account.stake" />,

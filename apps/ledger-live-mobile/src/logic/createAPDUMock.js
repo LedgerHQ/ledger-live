@@ -1,7 +1,7 @@
 // @flow
 
 import { Buffer } from "buffer";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+import { delay } from "@ledgerhq/live-common/promise";
 
 export type ApduMock = {
   exchange: Buffer => Promise<Buffer>,

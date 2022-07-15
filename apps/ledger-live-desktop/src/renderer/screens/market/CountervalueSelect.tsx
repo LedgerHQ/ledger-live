@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { supportedCountervalues } from "~/renderer/reducers/settings";
+import { supportedCountervalues, SupportedCoutervaluesData } from "~/renderer/reducers/settings";
 
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";
+import { Currency } from "@ledgerhq/live-common/types/index";
 
 type Props = {
   counterCurrency: string;
@@ -19,7 +20,7 @@ function CounterValueSelect({
   const { t } = useTranslation();
 
   const handleChangeCounterValue = useCallback(
-    item => {
+    (item: { currency: Currency }) => {
       setCounterCurrency(item.currency.ticker);
     },
     [setCounterCurrency],
@@ -27,14 +28,18 @@ function CounterValueSelect({
 
   const options = useMemo(
     () =>
-      supportedCountervalues.filter(({ value }) =>
-        supportedCounterCurrencies.includes(value.toLowerCase()),
+      supportedCountervalues.filter(({ value }: SupportedCoutervaluesData) =>
+        supportedCounterCurrencies.includes(value?.toLowerCase()),
       ),
     [supportedCounterCurrencies],
   );
 
   const cvOption = useMemo(
-    () => supportedCountervalues.find(f => f.value.toLowerCase() === counterCurrency.toLowerCase()),
+    () =>
+      supportedCountervalues.find(
+        (f: SupportedCoutervaluesData) =>
+          f?.value?.toLowerCase() === counterCurrency?.toLowerCase(),
+      ),
     [counterCurrency],
   );
 

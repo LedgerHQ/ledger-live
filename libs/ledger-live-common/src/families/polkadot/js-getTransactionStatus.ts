@@ -41,6 +41,7 @@ import {
 import { isValidAddress } from "./address";
 import { getCurrentPolkadotPreloadData } from "./preload";
 import { isControllerAddress, isNewAccount, isElectionClosed } from "./cache";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 // Should try to refacto
 const getSendTransactionStatus = async (
@@ -135,6 +136,8 @@ const getSendTransactionStatus = async (
 };
 
 const getTransactionStatus = async (a: Account, t: Transaction) => {
+  await loadPolkadotCrypto();
+
   const errors: {
     staking?: Error;
     amount?: Error;

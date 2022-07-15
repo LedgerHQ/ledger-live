@@ -119,8 +119,11 @@ export const signOperation: AccountBridge<any>["signOperation"] = ({
       cancelled = true;
     };
   });
-export const isInvalidRecipient = (recipient: string) =>
-  recipient.includes("invalid") || recipient.length <= 3;
+export const isInvalidRecipient = (recipient: string) => {
+  if (recipient.includes("criticalcrash"))
+    throw new Error("isInvalidRecipient_mock_criticalcrash");
+  return recipient.includes("invalid") || recipient.length <= 3;
+};
 
 const subtractOneYear = (date) =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));

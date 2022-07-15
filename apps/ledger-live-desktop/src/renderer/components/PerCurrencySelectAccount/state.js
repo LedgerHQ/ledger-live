@@ -1,9 +1,9 @@
 // @flow
 
-import { useState, useCallback, useMemo } from "react";
-import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types/account";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types/currencies";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import type { Account, SubAccount } from "@ledgerhq/live-common/types/account";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/currencies";
 
 export type AccountTuple = {
   account: ?Account,
@@ -131,6 +131,16 @@ export function useCurrencyAccountSelect({
         subAccount: null,
       }
     );
+  }, [availableAccounts, accountId]);
+
+  useEffect(() => {
+    if (!accountId && availableAccounts.length > 0) {
+      setState(currState => ({
+        ...currState,
+        accountId: availableAccounts[0].account?.id,
+        subAccountId: availableAccounts[0].subAccount ? availableAccounts[0].subAccount.id : null,
+      }));
+    }
   }, [availableAccounts, accountId]);
 
   return {

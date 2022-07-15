@@ -1,16 +1,16 @@
 /* @flow */
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/account/index";
+import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -159,25 +159,27 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     setContinuing(false);
   }, [setHighFeesOpen]);
 
+  const { amount, totalSpent, errors } = status;
+  const { transaction: transactionError } = errors;
+  const error = errors[Object.keys(errors)[0]];
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const currency = account && getAccountCurrency(account);
+  const hasNonEmptySubAccounts =
+    account &&
+    account.type === "Account" &&
+    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
+
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
       screen: ScreenName.ExchangeBuy,
       params: {
-        accountId: account && account.id,
-        parentId: parentAccount && parentAccount.id,
+        defaultAccountId: account?.id,
+        defaultCurrencyId: currency?.id,
       },
     });
-  }, [account, parentAccount, navigation]);
+  }, [navigation, account?.id, currency?.id]);
 
   if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
-  const { amount, totalSpent, errors } = status;
-  const { transaction: transactionError } = errors;
-  const error = status.errors[Object.keys(status.errors)[0]];
-  const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
-  const hasNonEmptySubAccounts =
-    account.type === "Account" &&
-    (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
   return (
     <SafeAreaView
@@ -187,7 +189,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       <TrackScreen
         category="SendFunds"
         name="Summary"
-        currencyName={currency.name}
+        currencyName={currency?.name}
       />
       <NavigationScrollView style={styles.body}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
@@ -196,7 +198,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
               <Trans
                 i18nKey="send.summary.subaccountsWarning"
                 values={{
-                  currency: currency.name,
+                  currency: currency?.name,
                 }}
               />
             </Alert>
@@ -233,6 +235,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         )}
         <SendRowsFee
           setTransaction={setTransaction}
+          status={status}
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
@@ -265,7 +268,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          isCurrencySupported(mainAccount.currency) && (
+          isCurrencySupported(currency) && (
             <Button
               event="SummaryBuyEth"
               type="primary"

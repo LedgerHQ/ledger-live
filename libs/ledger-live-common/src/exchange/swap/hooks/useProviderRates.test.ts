@@ -1,9 +1,12 @@
-import { renderHook, act } from "@testing-library/react-hooks";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
-import { mocked } from "ts-jest/utils";
 import { useProviderRates } from ".";
 import { getExchangeRates } from "..";
+import {
+  SwapExchangeRateAmountTooHigh,
+  SwapExchangeRateAmountTooLow,
+} from "../../../errors";
 import { genAccount } from "../../../mock/account";
 import { mockGetExchangeRates } from "../mock";
 
@@ -15,7 +18,7 @@ const fromAccount = genAccount("from-account", {
   currency: ETH,
 });
 
-const mockedGetExchangeRates = mocked(getExchangeRates, true);
+const mockedGetExchangeRates = jest.mocked(getExchangeRates, true);
 const mockedRatesPromise = mockGetExchangeRates(
   { fromAccount } as any,
   { amount: new BigNumber(1) } as any,
@@ -182,6 +185,104 @@ describe("useProviderRates", () => {
     await waitForNextUpdate({ timeout: 1000 });
     expect(result.current.rates.status).toBe("error");
     expect(result.current.rates.error).toBe(error);
+    expect(result.current.rates.value).toBeUndefined();
+  });
+
+  it("should sort SwapExchangeRateAmountTooLow based on amount", async () => {
+    const swapExchangeRateAmountTooLowError1 = new SwapExchangeRateAmountTooLow(
+      undefined,
+      {
+        amount: new BigNumber(1),
+      }
+    );
+
+    const swapExchangeRateAmountTooLowError2 = new SwapExchangeRateAmountTooLow(
+      undefined,
+      {
+        amount: new BigNumber(2),
+      }
+    );
+
+    mockedRates[0].error = swapExchangeRateAmountTooLowError2;
+    mockedRates[1].error = swapExchangeRateAmountTooLowError1;
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRates);
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: baseInitalProps,
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.status).toBe("error");
+    expect(result.current.rates.error).toBe(swapExchangeRateAmountTooLowError1);
+    expect(result.current.rates.value).toBeUndefined();
+  });
+
+  it("should sort SwapExchangeRateAmountTooHigh based on amount", async () => {
+    const swapExchangeRateAmountTooHighError1 =
+      new SwapExchangeRateAmountTooHigh(undefined, {
+        amount: new BigNumber(1),
+      });
+
+    const swapExchangeRateAmountTooHighError2 =
+      new SwapExchangeRateAmountTooHigh(undefined, {
+        amount: new BigNumber(2),
+      });
+
+    mockedRates[0].error = swapExchangeRateAmountTooHighError1;
+    mockedRates[1].error = swapExchangeRateAmountTooHighError2;
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRates);
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: baseInitalProps,
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.status).toBe("error");
+    expect(result.current.rates.error).toBe(
+      swapExchangeRateAmountTooHighError2
+    );
+    expect(result.current.rates.value).toBeUndefined();
+  });
+
+  it("SwapExchangeRateAmountTooLow should take precedence over standard errors", async () => {
+    const swapExchangeRateAmountTooLowError = new SwapExchangeRateAmountTooLow(
+      undefined,
+      {
+        amount: new BigNumber(1),
+      }
+    );
+
+    const standardError = new Error("Error");
+
+    mockedRates[0].error = standardError;
+    mockedRates[1].error = swapExchangeRateAmountTooLowError;
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRates);
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: baseInitalProps,
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.status).toBe("error");
+    expect(result.current.rates.error).toBe(swapExchangeRateAmountTooLowError);
+    expect(result.current.rates.value).toBeUndefined();
+  });
+
+  it("SwapExchangeRateAmountTooHigh should take precedence over standard errors", async () => {
+    const SwapExchangeRateAmountTooHighError =
+      new SwapExchangeRateAmountTooHigh(undefined, {
+        amount: new BigNumber(1),
+      });
+
+    const standardError = new Error("Error");
+
+    mockedRates[0].error = standardError;
+    mockedRates[1].error = SwapExchangeRateAmountTooHighError;
+
+    mockedGetExchangeRates.mockResolvedValue(mockedRates);
+    const { result, waitForNextUpdate } = renderHook(useProviderRates, {
+      initialProps: baseInitalProps,
+    });
+    await waitForNextUpdate({ timeout: 1000 });
+    expect(result.current.rates.status).toBe("error");
+    expect(result.current.rates.error).toBe(SwapExchangeRateAmountTooHighError);
     expect(result.current.rates.value).toBeUndefined();
   });
 

@@ -5,7 +5,7 @@ import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../const";
 import Sell from "../../screens/Exchange/Sell";
-import BuyNavigator from "./BuyNavigator";
+import Buy from "../../screens/Exchange/Buy";
 import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
 
 type TabLabelProps = {
@@ -24,7 +24,7 @@ export default function ExchangeNavigator() {
     <Tab.Navigator {...tabNavigationConfig}>
       <Tab.Screen
         name={ScreenName.ExchangeBuy}
-        component={BuyNavigator}
+        component={Buy}
         options={{
           title: t("exchange.buy.tabTitle"),
           tabBarLabel: (props: TabLabelProps) => (

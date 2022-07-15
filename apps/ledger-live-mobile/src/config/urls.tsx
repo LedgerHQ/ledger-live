@@ -25,6 +25,7 @@ export const urls = {
   buyNanoX:
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
+  applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
   applestore:
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
   feesMoreInfo:
@@ -140,6 +141,7 @@ export const urls = {
   },
   solana: {
     supportPage: "https://support.ledger.com",
+    stakingPage: "https://support.ledger.com",
   },
   resources: {
     gettingStarted:
@@ -162,5 +164,7 @@ export const urls = {
       "https://www.ledger.com/academy?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     tellMeMore:
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
+    mint:
+      "ledgerlive://discover/lmarket"
   },
 };

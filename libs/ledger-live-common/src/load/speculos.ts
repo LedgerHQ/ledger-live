@@ -316,8 +316,11 @@ export function appCandidatesMatches(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
-    (!search.appVersion ||
-      semver.satisfies(appCandidate.appVersion, search.appVersion))
+    ((!search.appVersion &&
+      !appCandidate.appVersion.includes("prerelease") &&
+      !appCandidate.appVersion.includes("rc")) ||
+      (search.appVersion &&
+        semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );
 }
 export const findAppCandidate = (

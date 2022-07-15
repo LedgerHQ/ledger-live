@@ -1,9 +1,9 @@
 // @flow
-import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
-} from "@ledgerhq/live-common/lib/compound/logic";
+} from "@ledgerhq/live-common/compound/logic";
 
 export default function useCompoundAccountEnabled(account?: AccountLike, parentAccount?: Account) {
   if (!account || account.type !== "TokenAccount") return false;

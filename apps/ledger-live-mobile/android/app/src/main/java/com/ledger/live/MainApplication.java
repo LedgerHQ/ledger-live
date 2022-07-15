@@ -1,10 +1,14 @@
 package com.ledger.live;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.res.Configuration;
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import co.airbitz.fastcrypto.RNFastCryptoPackage;
@@ -20,6 +24,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
+  public static String LO_NOTIFICATION_CHANNEL = "lo-llm";
+  public static String HI_NOTIFICATION_CHANNEL = "hi-llm";
+  public static int FW_UPDATE_NOTIFICATION_PROGRESS = 1;
+  public static int FW_UPDATE_NOTIFICATION_USER = 2;
+
+  private void createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      String description = "Notification channel for background running tasks";
+      NotificationChannel loChannel = new NotificationChannel(LO_NOTIFICATION_CHANNEL, LO_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_DEFAULT);
+      loChannel.setDescription(description);
+      NotificationChannel hiChannel = new NotificationChannel(HI_NOTIFICATION_CHANNEL, HI_NOTIFICATION_CHANNEL, NotificationManager.IMPORTANCE_HIGH);
+      hiChannel.setDescription(description);
+
+      NotificationManager notificationManager = getSystemService(NotificationManager.class);
+      notificationManager.createNotificationChannel(loChannel);
+      notificationManager.createNotificationChannel(hiChannel);
+    }
+  }
 
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
@@ -34,6 +56,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           packages.add(new BluetoothHelperPackage());
           packages.add(new ReactVideoPackage());
+          packages.add(new BackgroundRunnerPackager());
           return packages;
         }
 
@@ -54,6 +77,7 @@ public class MainApplication extends Application implements ReactApplication {
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     ApplicationLifecycleDispatcher.onApplicationCreate(this);
+    createNotificationChannel();
   }
 
   /**

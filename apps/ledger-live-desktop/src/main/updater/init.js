@@ -50,7 +50,7 @@ const init = () => {
   autoUpdater.autoInstallOnAppQuit = false;
   autoUpdater.autoDownload = false;
   autoUpdater.checkForUpdates();
-  if (__PRERELEASE__ && __CHANNEL__) {
+  if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;
   }
 };

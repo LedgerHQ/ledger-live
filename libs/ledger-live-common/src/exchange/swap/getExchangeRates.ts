@@ -1,17 +1,21 @@
-import type { Exchange, GetExchangeRates } from "./types";
-import type { Transaction } from "../../types";
-import { getAccountCurrency, getAccountUnit } from "../../account";
-import type { Unit, TokenCurrency, CryptoCurrency } from "../../types";
-import { formatCurrencyUnit } from "../../currencies";
-import { mockGetExchangeRates } from "./mock";
-import network from "../../network";
-import { getSwapAPIError, getSwapAPIBaseURL } from "./";
-import { getEnv } from "../../env";
 import { BigNumber } from "bignumber.js";
+import { getAccountCurrency, getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+import { getEnv } from "../../env";
 import {
-  SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooHigh,
+  SwapExchangeRateAmountTooLow,
 } from "../../errors";
+import network from "../../network";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+  Transaction,
+  Unit,
+} from "../../types";
+import { getAvailableProviders, getSwapAPIBaseURL, getSwapAPIError } from "./";
+import { mockGetExchangeRates } from "./mock";
+import type { CustomMinOrMaxError, Exchange, GetExchangeRates } from "./types";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -36,6 +40,7 @@ const getExchangeRates: GetExchangeRates = async (
     from,
     to,
     amountFrom: apiAmount.toString(),
+    providers: usesV3 ? getAvailableProviders() : undefined,
   };
   const res = await network({
     method: "POST",
@@ -66,30 +71,34 @@ const getExchangeRates: GetExchangeRates = async (
       };
     }
 
-    // NB Allows us to simply multiply satoshi values from/to
-    const magnitudeAwareRate = (
-      tradeMethod === "fixed"
-        ? new BigNumber(maybeRate)
-        : new BigNumber(amountTo).div(amountFrom)
-    ).div(new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude));
+    const payoutNetworkFees = new BigNumber(maybePayoutNetworkFees || 0);
 
-    const payoutNetworkFees = new BigNumber(maybePayoutNetworkFees || 0).times(
+    const magnitudeAwarePayoutNetworkFees = payoutNetworkFees.times(
       new BigNumber(10).pow(unitTo.magnitude)
     );
 
-    const toAmount = new BigNumber(amountTo)
-      .times(new BigNumber(10).pow(unitTo.magnitude))
-      .minus(payoutNetworkFees); // Nb no longer need to break it down on UI
+    const rate = maybeRate
+      ? new BigNumber(maybeRate)
+      : new BigNumber(amountTo).minus(payoutNetworkFees).div(amountFrom);
 
-    const rate =
-      maybeRate || new BigNumber(amountTo).div(new BigNumber(amountFrom));
+    // NB Allows us to simply multiply satoshi values from/to
+    const magnitudeAwareRate = rate.div(
+      new BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude)
+    );
+
+    const toAmount = new BigNumber(amountTo).minus(payoutNetworkFees);
+
+    const magnitudeAwareToAmount = toAmount.times(
+      new BigNumber(10).pow(unitTo.magnitude)
+    );
+    // Nb no longer need to break it down on UI
 
     const out = {
       magnitudeAwareRate,
       provider,
       rate,
       rateId,
-      toAmount,
+      toAmount: magnitudeAwareToAmount,
       tradeMethod,
     };
 
@@ -98,7 +107,7 @@ const getExchangeRates: GetExchangeRates = async (
     } else {
       return {
         ...out,
-        payoutNetworkFees,
+        payoutNetworkFees: magnitudeAwarePayoutNetworkFees,
       };
     }
   });
@@ -114,7 +123,7 @@ const inferError = (
     errorCode?: number;
     errorMessage?: string;
   }
-): Error | undefined => {
+): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const { amountTo, minAmountFrom, maxAmountFrom, errorCode, errorMessage } =
     responseData;
@@ -149,6 +158,7 @@ const inferError = (
             showCode: true,
           }
         ),
+        amount: new BigNumber(amount),
       });
     }
   }

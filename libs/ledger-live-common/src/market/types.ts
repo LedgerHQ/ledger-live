@@ -22,6 +22,7 @@ export type MarketListRequestParams = {
   lastRequestTime?: Date;
   sparkline?: boolean;
   liveCompatible?: boolean;
+  top100?: boolean;
 };
 
 export type MarketCurrencyChartDataRequestParams = {

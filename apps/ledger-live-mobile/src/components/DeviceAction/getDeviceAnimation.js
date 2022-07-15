@@ -1,5 +1,5 @@
 // @flow
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import Config from "react-native-config";
 
 const animations = {

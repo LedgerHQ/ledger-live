@@ -7,6 +7,13 @@ export const defaultFeatures: DefaultFeatures = {
   pushNotifications: {
     enabled: false,
   },
+  buyDeviceFromLive: {
+    enabled: false,
+    params: {
+      url: null,
+      debug: false,
+    },
+  },
   ratings: {
     enabled: false,
     params: {
@@ -53,5 +60,8 @@ export const defaultFeatures: DefaultFeatures = {
         "https://form.typeform.com/to/Jo7gqcB4?typeform-medium=embed-sdk&typeform-medium-version=next&typeform-embed=popup-blank",
       support_email: "support@ledger.com",
     },
+  },
+  counterValue: {
+    enabled: false,
   },
 };

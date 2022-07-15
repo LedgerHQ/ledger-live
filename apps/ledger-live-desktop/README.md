@@ -1,6 +1,6 @@
 **[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
 
-# Ledger Live (desktop) [![Crowdin](https://d322cqt584bo4o.cloudfront.net/ledger-wallet/localized.svg)](https://crowdin.com/project/ledger-wallet)
+# Ledger Live (desktop)
 
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
@@ -43,7 +43,7 @@ Ledger Live releases are signed. The automatic update mechanism makes use of the
 
 ### Requirements
 
-- [NodeJS](https://nodejs.org) `lts/fermium` (v14.x)
+- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x)
 - [PnPm](https://pnpm.io) (v7.x)
 - [Python](https://www.python.org/) (v3.5+)
 - A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))
@@ -71,7 +71,14 @@ pnpm dev:lld
 # Build & package the whole app
 # Creates a .dmg for Mac, .exe installer for Windows, or .AppImage for Linux
 # Output files will be created in dist/ folder
-pnpm desktop dist
+
+# build all the required dependencies
+pnpm build:lld:deps
+# then use alias to trigger the `dist` script in ledger-live-desktop project
+pnpm desktop build
+
+# or you can use the top level script (pnpm build:lld:deps not required in this case)
+pnpm build:lld
 ```
 
 ## Debug
@@ -149,7 +156,7 @@ pnpm desktop test
 ### Run code quality checks
 
 ```bash
-pnpm desktop codecheck
+pnpm desktop test:codecheck
 ```
 
 ## File structure
@@ -192,3 +199,16 @@ src
 ## Localization / Translations
 
 Translations from English to other languages are handled internally so it is not possible to directly contribute to them, however if you spot a bug (e.g. a wrong variable name) or any issue in translation files, feel free to report a bug to Ledger's support team and it will be taken care of.
+
+---
+
+## Are you adding the support of a blockchain to Ledger Live?
+
+This part of the repository is where you will add the support of your blockchain for the desktop app.
+
+For a smooth and quick integration:
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
+- Go on Discord to chat with developer support and the developer community. See you there! If you are new to Ledger OP3N Discord server [click here](https://discord.gg/Ledger), otherwise directly join [the Blockchain channel](https://discord.com/channels/885256081289379850/907623688759803935).
+
+---

@@ -18,6 +18,10 @@ export type Props = React.PropsWithChildren<{
    */
   onChange?: (index: number) => void;
   /**
+   * Called when Carousel try to scroll before the first or after the last item (if restartAfterEnd is false).
+   */
+  onOverflow?: (side: "start" | "end", fromAutoDelay: boolean) => void;
+  /**
    * This number in milliseconds will enable automatic scrolling when defined.
    *
    * The Carousel will scroll to the next item after this delay is elapsed,
@@ -27,6 +31,14 @@ export type Props = React.PropsWithChildren<{
    * manually change the carousel item displayed.
    */
   autoDelay?: number;
+  /**
+   * When the delay is elasped, if the Carousel is at the last item, it will scroll back to the beginning.
+   */
+  restartAfterEnd?: boolean;
+  /**
+   * When the user tap on one side of an item, it will scroll to the next or precedent item. Same behavior as Instagram or Snapchat. Default: false.
+   */
+  scrollOnSidePress?: boolean;
   /**
    * Additional props to pass to the outer container.
    * This container is a Flex element.
@@ -42,16 +54,47 @@ export type Props = React.PropsWithChildren<{
    * This container is a Flex element.
    */
   slideIndicatorContainerProps?: FlexboxProps & ViewProps;
+
+  IndicatorComponent?:
+    | React.ComponentType<{
+        activeIndex: number;
+        slidesLength: number;
+        onChange?: (index: number) => void;
+        duration?: number;
+      }>
+    | React.ReactElement;
+
+  /**
+   * Number of milliseconds a tap should not exceed to scroll to the netxt or precedent item.
+   */
+  maxDurationOfTap?: number;
+
+  /**
+   * Called when the active carousel index is updated automaticly.
+   */
+  onAutoChange?: (index: number) => void;
+
+  /**
+   * Called when the active carousel index is updated manually.
+   */
+  onManualChange?: (index: number) => void;
 }>;
 
 function Carousel({
-  activeIndex,
+  activeIndex = 0,
   autoDelay,
+  restartAfterEnd = true,
+  scrollOnSidePress = false,
   containerProps,
   slideIndicatorContainerProps,
   scrollViewProps,
   onChange,
+  onOverflow,
+  IndicatorComponent = SlideIndicator,
+  maxDurationOfTap,
   children,
+  onAutoChange,
+  onManualChange,
 }: Props) {
   const [init, setInit] = useState(false);
   const [activeIndexState, setActiveIndexState] = useState(activeIndex);
@@ -81,7 +124,9 @@ function Carousel({
 
   useEffect(() => {
     // On init scroll to the active index prop location - if specified.
-    if (init && activeIndex) scrollToIndex(activeIndex, false);
+    if (init && activeIndex) {
+      scrollToIndex(activeIndex, false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [init]);
 
@@ -97,6 +142,26 @@ function Carousel({
     setInit(true);
   };
 
+  const onTap = useCallback(
+    (event) => {
+      const tapPositionXPercent = event.nativeEvent.locationX / itemWidth;
+      if (tapPositionXPercent > 0.25) {
+        if (slidesLength > activeIndexState + 1) {
+          scrollToIndex(activeIndexState + 1, false);
+          onManualChange && onManualChange(activeIndexState + 1);
+        } else {
+          onOverflow && onOverflow("end", false);
+        }
+      } else if (activeIndexState > 0) {
+        scrollToIndex(activeIndexState - 1, false);
+        onManualChange && onManualChange(activeIndexState - 1);
+      } else {
+        onOverflow && onOverflow("start", false);
+      }
+    },
+    [slidesLength, activeIndexState, scrollToIndex, onOverflow, itemWidth, onManualChange],
+  );
+
   const onScroll = ({
     nativeEvent: { contentOffset, contentSize },
   }: {
@@ -110,19 +175,49 @@ function Carousel({
   useEffect(() => {
     if (!autoDelay) return;
 
-    const interval = setInterval(() => {
+    const interval = setTimeout(() => {
       if (!disableTimer.current) {
-        setActiveIndexState((index) => {
-          const newIndex = typeof index !== "undefined" ? (index + 1) % slidesLength : 0;
+        const newIndex =
+          typeof activeIndexState !== "undefined" ? (activeIndexState + 1) % slidesLength : 0;
+
+        onAutoChange && onAutoChange(newIndex);
+        if (restartAfterEnd || newIndex !== 0) {
           scrollToIndex(newIndex);
-          onChange && onChange(newIndex);
-          return newIndex;
-        });
+        } else {
+          onOverflow && onOverflow("end", true);
+        }
       }
     }, autoDelay);
 
-    return () => clearInterval(interval);
-  }, [resetTimer, slidesLength, scrollToIndex, onChange, autoDelay]);
+    return () => {
+      return clearTimeout(interval);
+    };
+  }, [
+    resetTimer,
+    slidesLength,
+    scrollToIndex,
+    onChange,
+    autoDelay,
+    activeIndexState,
+    onOverflow,
+    restartAfterEnd,
+    onAutoChange,
+  ]);
+
+  // Timestamp of start of click on the Carrousel
+  const [tapTime, setTapTime] = useState<number>(0);
+  const onStartTap = useCallback(() => {
+    setTapTime(new Date().getTime());
+  }, []);
+  const onEndTap = useCallback(
+    (event) => {
+      const currentTime: number = new Date().getTime();
+      if (!maxDurationOfTap || currentTime - tapTime <= maxDurationOfTap) {
+        onTap(event);
+      }
+    },
+    [maxDurationOfTap, onTap, tapTime],
+  );
 
   return (
     <Flex flex={1} width="100%" alignItems="center" justifyContent="center" {...containerProps}>
@@ -141,6 +236,8 @@ function Carousel({
         scrollEventThrottle={200}
         contentContainerStyle={{ width: `${fullWidth}%` }}
         decelerationRate="fast"
+        onTouchStart={scrollOnSidePress ? onStartTap : undefined}
+        onTouchEnd={scrollOnSidePress ? onEndTap : undefined}
         {...scrollViewProps}
       >
         {React.Children.map(children, (child, index) => (
@@ -150,14 +247,20 @@ function Carousel({
         ))}
       </HorizontalScrollView>
       <Flex my={8} {...slideIndicatorContainerProps}>
-        <SlideIndicator
-          activeIndex={activeIndexState || 0}
-          onChange={(index) => {
-            scrollToIndex(index);
-            setResetTimer({});
-          }}
-          slidesLength={slidesLength}
-        />
+        {React.isValidElement(IndicatorComponent) ? (
+          IndicatorComponent
+        ) : (
+          <IndicatorComponent
+            activeIndex={activeIndexState || 0}
+            onChange={(index: number) => {
+              scrollToIndex(index);
+              setResetTimer({});
+              onManualChange && onManualChange(index);
+            }}
+            slidesLength={slidesLength}
+            duration={autoDelay}
+          />
+        )}
       </Flex>
     </Flex>
   );

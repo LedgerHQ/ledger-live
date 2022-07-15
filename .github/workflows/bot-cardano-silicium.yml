@@ -1,0 +1,83 @@
+name: "[Bot] 'Cardano on Silicium'"
+on:
+  push:
+    branches:
+      - feat/cardano
+
+concurrency:
+  group: bot-seed3-cardano
+
+jobs:
+  start-runner:
+    name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  stop-runner:
+    name: "stop ec2 instance (Linux)"
+    needs: [start-runner, run-bot]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
+    if: ${{ always() }}
+    with:
+      label: ${{ needs.start-runner.outputs.label }}
+      ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}
+    secrets:
+      CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
+
+  run-bot:
+    runs-on: ${{ needs.start-runner.outputs.label }}
+    needs: [start-runner]
+    steps:
+      - name: prepare runner
+        run: |
+          sudo growpart /dev/nvme0n1 1
+          sudo resize2fs /dev/nvme0n1p1
+      - uses: actions/checkout@v3
+      - name: Retrieving coin apps
+        uses: actions/checkout@v3
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.GH_PAT }}
+          path: coin-apps
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: install and build
+        run: |
+          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm build:cli
+      - name: bot logic
+        env:
+          SEED: ${{ secrets.SEED3 }}
+          BOT_REPORT_FOLDER: botreport
+          VERBOSE_FILE: botreport/logs.txt
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          BOT_FILTER_FAMILY: cardano
+        run: |
+          mkdir libs/ledger-live-common/botreport
+          COINAPPS=$PWD/coin-apps pnpm common ci-test-bot
+        timeout-minutes: 120
+      - name: submit bot report
+        uses: ledgerhq/ledger-live/tools/actions/submit-bot-report@develop
+        with:
+          path: libs/ledger-live-common/botreport/
+          githubSha: ${{github.sha}}
+          githubToken: ${{github.token}}
+          slackApiToken: ${{secrets.SLACK_API_TOKEN}}
+          slackChannel: ci-ada-ll
+      - name: upload logs to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: botreport
+          path: libs/ledger-live-common/botreport/

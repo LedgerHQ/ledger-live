@@ -1,10 +1,12 @@
-name: Test Mobile App
+name: "[Test] Mobile App"
 
 on:
   push:
     branches:
       - main
       - develop
+      - release
+      - hotfix
   pull_request:
   workflow_dispatch:
 
@@ -13,12 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-desktop-app:
-    name: "Ledger Live Mobile Tests"
+  codecheck:
+    name: "Ledger Live Mobile CodeCheck"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       FORCE_COLOR: 3
 
     runs-on: ubuntu-latest
@@ -27,19 +27,21 @@ jobs:
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
       - name: Bump npm to latest
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: pnpm lint --filter="live-mobile"
-      - name: Run code checkers
-        run: pnpm typecheck --filter="live-mobile"
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+      - name: Run flow
+        run: pnpm mobile flow
+      # - name: Run code checkers
+      #   run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"

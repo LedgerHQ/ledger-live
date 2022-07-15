@@ -1,8 +1,8 @@
 // @flow
 
 import type { Observable } from "rxjs";
-import main from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
-import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
+import main from "@ledgerhq/live-common/hw/firmwareUpdate-main";
+import type { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
 
 type Input = FirmwareUpdateContext;
 

@@ -1,14 +1,12 @@
 import React from "react";
-import {
-  setEnvUnsafe,
-  isEnvDefault,
-  getEnv,
-} from "@ledgerhq/live-common/lib/env";
+import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-common/env";
 
 import { Feature, isReadOnly } from "../../../experimental";
 import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureId } from "@ledgerhq/live-common/types/index";
 
 type Props = {
   feature: Feature;
@@ -19,9 +17,23 @@ const experimentalTypesMap = {
   integer: FeatureInteger,
 };
 
+const FeatureRowWithFeatureFlag = ({
+  feature,
+  featureFlagId,
+}: {
+  feature: Feature;
+  featureFlagId: FeatureId;
+}) => {
+  const featureFlag = useFeature(featureFlagId);
+
+  return !featureFlag?.enabled ? <FeatureRow feature={feature} /> : null;
+};
+
 const FeatureRow = ({ feature }: Props) => {
   const { type, ...rest } = feature;
   const Children = experimentalTypesMap[type];
+
+  // we only display a feature as experimental if it is not enabled already via feature flag
   return (
     <SettingsRow
       event={`${feature.name}Row`}
@@ -42,4 +54,15 @@ const FeatureRow = ({ feature }: Props) => {
   );
 };
 
-export default FeatureRow;
+const FeatureRowCommon = ({ feature }: Props) => {
+  return feature.rolloutFeatureFlag ? (
+    <FeatureRowWithFeatureFlag
+      feature={feature}
+      featureFlagId={feature.rolloutFeatureFlag}
+    />
+  ) : (
+    <FeatureRow feature={feature} />
+  );
+};
+
+export default FeatureRowCommon;

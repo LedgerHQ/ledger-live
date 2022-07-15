@@ -3,11 +3,11 @@ import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import type {
   Transaction,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import LText from "../../components/LText";
 import SummaryRow from "./SummaryRow";
 

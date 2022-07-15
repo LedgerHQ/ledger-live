@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 
 import {
   canNominate,
@@ -11,8 +11,8 @@ import {
   hasExternalStash,
   hasPendingOperationType,
   isStash,
-} from "@ledgerhq/live-common/lib/families/polkadot/logic";
-import { getCurrentPolkadotPreloadData } from "@ledgerhq/live-common/lib/families/polkadot/preload";
+} from "@ledgerhq/live-common/families/polkadot/logic";
+import { getCurrentPolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/preload";
 
 import { Icons } from "@ledgerhq/native-ui";
 import BondIcon from "../../icons/LinkIcon";

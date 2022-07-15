@@ -1,7 +1,7 @@
 import type BigNumber from "bignumber.js";
 import { CryptoCurrencyIds } from ".";
 
-export type NFTStandards = "ERC721" | "ERC1155";
+export type NFTStandard = "ERC721" | "ERC1155";
 
 export type NFTMediaSizes = "preview" | "big" | "original";
 
@@ -33,7 +33,7 @@ export type ProtoNFT = {
   tokenId: string;
   amount: BigNumber;
   contract: string;
-  standard: NFTStandards;
+  standard: NFTStandard;
   currencyId: CryptoCurrencyIds;
   metadata?: NFTMetadata;
 };
@@ -68,4 +68,9 @@ export type NFTCollectionMetadataResponse = {
     contract: string;
     tokenName: string | null;
   } | null;
+};
+
+export type FloorPrice = {
+  ticker: string;
+  value: number;
 };

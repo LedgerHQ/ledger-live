@@ -10,6 +10,7 @@ import ReceiveConnectDevice from "../../screens/ReceiveFunds/02-ConnectDevice";
 import ReceiveSelectAccount from "../../screens/SelectAccount";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
+import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 
 const totalSteps = "3";
 
@@ -20,6 +21,8 @@ export default function ReceiveFundsNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+  const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -45,6 +48,7 @@ export default function ReceiveFundsNavigator() {
           next: ScreenName.ReceiveConnectDevice,
           category: "ReceiveFunds",
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}

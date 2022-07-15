@@ -3,7 +3,10 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  CryptoCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";

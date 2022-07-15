@@ -1,7 +1,7 @@
 // @flow
 
 import type { Observable } from "rxjs";
-import repair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
+import repair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 
 type Input = {
   version: ?string,

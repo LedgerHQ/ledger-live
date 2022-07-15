@@ -1,5 +1,5 @@
 import semver from "semver";
-import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/lib/shouldUseTrustedInputForSegwit";
+import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "../env";
@@ -21,7 +21,9 @@ export function shouldUpgrade(
     appName === "Bitcoin"
   ) {
     // https://donjon.ledger.com/lsb/010/
-    return !semver.satisfies(semver.coerce(appVersion) || "", ">= 1.4.0");
+    return !semver.satisfies(appVersion || "", ">= 1.4.0", {
+      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
+    });
   }
 
   return false;
@@ -43,7 +45,9 @@ export function mustUpgrade(
   const range = appVersionsRequired[appName];
 
   if (range) {
-    return !semver.satisfies(appVersion, range);
+    return !semver.satisfies(appVersion || "", range, {
+      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
+    });
   }
 
   return false;

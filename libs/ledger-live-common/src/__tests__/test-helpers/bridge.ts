@@ -1,6 +1,5 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
@@ -32,7 +31,6 @@ import {
   toTransactionRaw,
   toTransactionStatusRaw,
 } from "../../transaction";
-import { getBalanceHistoryJS, getRanges } from "../../portfolio";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
@@ -69,10 +67,7 @@ export function syncAccount<T extends Transaction>(
     .toPromise();
 }
 
-export function testBridge<T extends Transaction>(
-  family: string,
-  data: DatasetTest<T>
-) {
+export function testBridge<T extends Transaction>(data: DatasetTest<T>): void {
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
@@ -120,7 +115,7 @@ export function testBridge<T extends Transaction>(
     );
   });
   const accountsFoundInScanAccountsMap = {};
-  const preloadObservables: Array<Observable<any>> = [];
+
   currenciesRelated.map(({ currencyData, currency }) => {
     const bridge = getCurrencyBridge(currency);
 
@@ -212,16 +207,6 @@ export function testBridge<T extends Transaction>(
         describe("scanAccounts", () => {
           scanAccounts.forEach((sa) => {
             // we start running the scan accounts in parallel!
-            preloadObservables.push(
-              defer(() =>
-                from(
-                  scanAccountsCached(sa.apdus).then(
-                    () => null,
-                    () => {}
-                  )
-                )
-              )
-            );
             test(sa.name, async () => {
               const accounts = await scanAccountsCached(sa.apdus);
               accounts.forEach((a) => {
@@ -514,21 +499,6 @@ export function testBridge<T extends Transaction>(
             });
           });
         });
-        makeTest(
-          "account balanceHistory (when exists) matches getBalanceHistoryJS",
-          async () => {
-            const account = await getSynced();
-            getRanges().forEach((range) => {
-              const balanceHistory =
-                account.balanceHistory && account.balanceHistory[range];
-              if (!balanceHistory) return;
-              const history = getBalanceHistoryJS(account, range);
-              expect(balanceHistory.map((b) => b.value)).toEqual(
-                history.map((b) => b.value)
-              );
-            });
-          }
-        );
         describe("createTransaction", () => {
           makeTest(
             "empty transaction is an object with empty recipient and zero amount",
@@ -785,7 +755,4 @@ export function testBridge<T extends Transaction>(
         });
       });
     });
-  return {
-    preloadObservables,
-  };
 }

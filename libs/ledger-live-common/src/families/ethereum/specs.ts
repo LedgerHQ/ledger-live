@@ -26,10 +26,10 @@ const ethereumBasicMutations = ({ maxAccount }) => [
   {
     name: "move 50%",
     maxRun: 2,
-    transaction: ({ account, siblings, bridge }) => {
+    transaction: ({ account, siblings, bridge, maxSpendable }) => {
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
-      const amount = account.balance.div(2).integerValue();
+      const amount = maxSpendable.div(2).integerValue();
       return {
         transaction: bridge.createTransaction(account),
         updates: [
