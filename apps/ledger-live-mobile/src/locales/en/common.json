@@ -322,6 +322,14 @@
     "InvalidRecipient": {
       "title": "Invalid recipient"
     },
+    "LanguageInstallRefusedOnDevice": {
+      "title": "Language installation refused on device",
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound": {
+      "title": "Language not found",
+      "description": "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
       "description": "Please contact Ledger Support if you cannot use your device."
