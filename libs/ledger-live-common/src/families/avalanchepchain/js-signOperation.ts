@@ -24,283 +24,354 @@ import { AVAX_HRP } from "./api/sdk";
 const STAKEABLELOCKINID: number = 21;
 
 const signOperation = ({
-    account,
-    deviceId,
-    transaction,
+  account,
+  deviceId,
+  transaction,
 }: {
-    account: Account;
-    deviceId: any;
-    transaction: Transaction;
+  account: Account;
+  deviceId: any;
+  transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-        (transport) =>
-            new Observable<SignOperationEvent>((o) => {
-                let cancelled;
+  withDevice(deviceId)(
+    (transport) =>
+      new Observable<SignOperationEvent>((o) => {
+        let cancelled;
 
-                async function main() {
-                    const publicKey = account.avalanchePChainResources?.publicKey ?? "";
-                    const chainCode = account.avalanchePChainResources?.chainCode ?? "";
+        async function main() {
+          const publicKey = account.avalanchePChainResources?.publicKey ?? "";
+          const chainCode = account.avalanchePChainResources?.chainCode ?? "";
 
-                    const hdHelper = await HDHelper.instantiate(
-                      publicKey,
-                      chainCode
-                    );
+          const hdHelper = await HDHelper.instantiate(publicKey, chainCode);
 
-                    const unsignedTx = await buildTransaction(transaction, hdHelper);
-                    const chainId = 'P';
-                    const extendedPAddresses = hdHelper.getExtendedAddresses();
-                    const paths = getTransactionPaths(unsignedTx, chainId, extendedPAddresses);
+          const unsignedTx = await buildTransaction(
+            account,
+            transaction,
+            hdHelper
+          );
+          const chainId = "P";
+          const extendedPAddresses = hdHelper.getExtendedAddresses();
+          const { paths, addresses } = getTransactionPathsAndAddresses(
+            unsignedTx,
+            chainId,
+            extendedPAddresses
+          );
 
-                    const avalanche: Avalanche = new Avalanche(transport);
-                    const config = await avalanche.getLedgerAppConfiguration();
-                    let canLedgerParse = getCanLedgerParse(config, unsignedTx);
+          const avalanche: Avalanche = new Avalanche(transport);
+          const config = await avalanche.getLedgerAppConfiguration();
+          let canLedgerParse = getCanLedgerParse(config, unsignedTx);
 
-                    o.next({ type: "device-signature-requested" });
+          o.next({ type: "device-signature-requested" });
 
-                    let signedTx: PlatformTx;
+          let signedTx: PlatformTx;
 
-                    if (canLedgerParse) {
-                        signedTx = await signTransactionParsable<PlatformUnsignedTx, PlatformTx>(unsignedTx, paths, chainId, avalanche);
-                    } else {
-                        signedTx = await signTransactionHash<PlatformUnsignedTx, PlatformTx>(unsignedTx, paths, chainId, avalanche);
-                    }
+          if (canLedgerParse) {
+            signedTx = await signTransactionParsable<
+              PlatformUnsignedTx,
+              PlatformTx
+            >(unsignedTx, paths, chainId, avalanche);
+          } else {
+            signedTx = await signTransactionHash<
+              PlatformUnsignedTx,
+              PlatformTx
+            >(unsignedTx, paths, chainId, avalanche);
+          }
 
-                    if (cancelled) return;
+          if (cancelled) return;
 
-                    o.next({ type: "device-signature-granted" });
+          o.next({ type: "device-signature-granted" });
 
-                    const signature = '0x' + binTools.addChecksum(signedTx.toBuffer()).toString('hex');
+          const signature =
+            "0x" + binTools.addChecksum(signedTx.toBuffer()).toString("hex");
 
-                    const operation = buildOptimisticOperation(account, transaction);
+          const operation = buildOptimisticOperation(
+            account,
+            transaction,
+            addresses
+          );
 
-                    o.next({
-                        type: "signed",
-                        signedOperation: {
-                            operation,
-                            signature,
-                            expirationDate: null,
-                        },
-                    });
-                }
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
+              expirationDate: null,
+            },
+          });
+        }
 
-                main().then(
-                    () => o.complete(),
-                    (e) => o.error(e)
-                );
-                return () => {
-                    cancelled = true;
-                };
-            })
-    );
+        main().then(
+          () => o.complete(),
+          (e) => o.error(e)
+        );
+        return () => {
+          cancelled = true;
+        };
+      })
+  );
 
-const signTransactionParsable = async<UnsignedTx extends PlatformUnsignedTx, SignedTx extends PlatformTx>(unsignedTx: UnsignedTx, paths: string[], chainId: string, avalanche): Promise<SignedTx> => {
-    const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
-    const bip32Paths = pathsToUniqueBipPaths(paths);
-    const txbuff = unsignedTx.toBuffer();
-    const changePath = BIPPath.fromString(`${AVAX_BIP32_PREFIX}/0/0`);
+const signTransactionParsable = async <
+  UnsignedTx extends PlatformUnsignedTx,
+  SignedTx extends PlatformTx
+>(
+  unsignedTx: UnsignedTx,
+  paths: string[],
+  chainId: string,
+  avalanche
+): Promise<SignedTx> => {
+  const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
+  const bip32Paths = pathsToUniqueBipPaths(paths);
+  const txbuff = unsignedTx.toBuffer();
+  const changePath = BIPPath.fromString(`${AVAX_BIP32_PREFIX}/0/0`);
 
-    const ledgerSignedTx = await avalanche.signTransaction(accountPath, bip32Paths, txbuff, changePath);
+  const ledgerSignedTx = await avalanche.signTransaction(
+    accountPath,
+    bip32Paths,
+    txbuff,
+    changePath
+  );
 
-    const sigMap = ledgerSignedTx.signatures;
-    const credentials = getCredentials<UnsignedTx>(unsignedTx, paths, sigMap, chainId);
-    const signedTx = new PlatformTx(unsignedTx as PlatformUnsignedTx, credentials);
+  const sigMap = ledgerSignedTx.signatures;
+  const credentials = getCredentials<UnsignedTx>(
+    unsignedTx,
+    paths,
+    sigMap,
+    chainId
+  );
+  const signedTx = new PlatformTx(
+    unsignedTx as PlatformUnsignedTx,
+    credentials
+  );
 
-    return signedTx as SignedTx;
+  return signedTx as SignedTx;
 };
 
-const signTransactionHash = async<UnsignedTx extends PlatformUnsignedTx, SignedTx extends PlatformTx>(unsignedTx: UnsignedTx, paths: string[], chainId: string, avalanche): Promise<SignedTx> => {
-    const txbuff = unsignedTx.toBuffer();
-    const msg = Buffer.from(createHash('sha256').update(txbuff).digest());
-    const bip32Paths = pathsToUniqueBipPaths(paths);
-    const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
-    const sigMap = await avalanche.signHash(accountPath, bip32Paths, msg);
-    const creds: Credential[] = getCredentials<UnsignedTx>(unsignedTx, paths, sigMap, chainId);
-    const signedTx = new PlatformTx(unsignedTx as PlatformUnsignedTx, creds);
+const signTransactionHash = async <
+  UnsignedTx extends PlatformUnsignedTx,
+  SignedTx extends PlatformTx
+>(
+  unsignedTx: UnsignedTx,
+  paths: string[],
+  chainId: string,
+  avalanche
+): Promise<SignedTx> => {
+  const txbuff = unsignedTx.toBuffer();
+  const msg = Buffer.from(createHash("sha256").update(txbuff).digest());
+  const bip32Paths = pathsToUniqueBipPaths(paths);
+  const accountPath = BIPPath.fromString(AVAX_BIP32_PREFIX);
+  const sigMap = await avalanche.signHash(accountPath, bip32Paths, msg);
+  const creds: Credential[] = getCredentials<UnsignedTx>(
+    unsignedTx,
+    paths,
+    sigMap,
+    chainId
+  );
+  const signedTx = new PlatformTx(unsignedTx as PlatformUnsignedTx, creds);
 
-    return signedTx as SignedTx;
+  return signedTx as SignedTx;
 };
 
 const getCanLedgerParse = (config, unsignedTx) => {
-    let canLedgerParse = config.version >= '0.3.1';
+  let canLedgerParse = config.version >= "0.3.1";
 
-    const txIns = unsignedTx.getTransaction().getIns();
+  const txIns = unsignedTx.getTransaction().getIns();
 
-    for (let i = 0; i < txIns.length; i++) {
-        let typeID = txIns[i].getInput().getTypeID();
-        if (typeID === STAKEABLELOCKINID) {
-            canLedgerParse = false;
-            break;
-        }
+  for (let i = 0; i < txIns.length; i++) {
+    let typeID = txIns[i].getInput().getTypeID();
+    if (typeID === STAKEABLELOCKINID) {
+      canLedgerParse = false;
+      break;
     }
+  }
 
-    return canLedgerParse;
+  return canLedgerParse;
 };
 
 const pathsToUniqueBipPaths = (paths: string[]) => {
-    const uniquePaths = paths.filter((val: any, i: number) => {
-        return paths.indexOf(val) === i;
-    });
+  const uniquePaths = paths.filter((val: any, i: number) => {
+    return paths.indexOf(val) === i;
+  });
 
-    const bip32Paths = uniquePaths.map((path) => {
-        return BIPPath.fromString(path, false);
-    });
+  const bip32Paths = uniquePaths.map((path) => {
+    return BIPPath.fromString(path, false);
+  });
 
-    return bip32Paths;
+  return bip32Paths;
 };
 
-const getTransactionPaths = (unsignedTx, chainId, pAddresses) => {
-    unsignedTx.toBuffer();
-    const tx = unsignedTx.getTransaction();
+const getTransactionPathsAndAddresses = (unsignedTx, chainId, pAddresses) => {
+  unsignedTx.toBuffer();
+  const tx = unsignedTx.getTransaction();
 
-    const items = tx.getIns();
-    let operations: TransferableOperation[] = [];
+  const items = tx.getIns();
+  let operations: TransferableOperation[] = [];
 
-    // Try to get operations, it will fail if there are none, ignore and continue
-    try {
-        operations = (tx as OperationTx).getOperations();
-    } catch (e) {
-        console.log(e);
+  // Try to get operations, it will fail if there are none, ignore and continue
+  try {
+    operations = (tx as OperationTx).getOperations();
+  } catch (e) {
+    console.log(e);
+  }
+
+  const hrp = AVAX_HRP;
+  const paths: string[] = [];
+  const addresses: string[] = [];
+
+  // Collect derivation paths for source addresses
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const sigidxs: SigIdx[] = item.getInput().getSigIdxs();
+    const sources = sigidxs.map((sigidx) => sigidx.getSource());
+    const addrs: string[] = sources.map((source) => {
+      return binTools.addressToString(hrp, chainId, source);
+    });
+
+    for (let j = 0; j < addrs.length; j++) {
+      const srcAddr = addrs[j];
+      const pathStr = getPathFromAddress(srcAddr, pAddresses);
+
+      paths.push(pathStr);
+      addresses.push(srcAddr);
     }
+  }
 
-    const hrp = AVAX_HRP;
-    const paths: string[] = [];
+  // Do the Same for operational inputs, if there are any...
+  for (let i = 0; i < operations.length; i++) {
+    const op = operations[i];
+    const sigidxs: SigIdx[] = op.getOperation().getSigIdxs();
+    const sources = sigidxs.map((sigidx) => sigidx.getSource());
+    const addrs: string[] = sources.map((source) => {
+      return binTools.addressToString(hrp, chainId, source);
+    });
 
-    // Collect derivation paths for source addresses
-    for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const sigidxs: SigIdx[] = item.getInput().getSigIdxs();
-        const sources = sigidxs.map((sigidx) => sigidx.getSource());
-        const addrs: string[] = sources.map((source) => {
-            return binTools.addressToString(hrp, chainId, source);
-        });
+    for (let j = 0; j < addrs.length; j++) {
+      const srcAddr = addrs[j];
+      const pathStr = getPathFromAddress(srcAddr, pAddresses);
 
-        for (let j = 0; j < addrs.length; j++) {
-            const srcAddr = addrs[j];
-            const pathStr = getPathFromAddress(srcAddr, pAddresses);
-
-            paths.push(pathStr);
-        }
+      paths.push(pathStr);
+      addresses.push(srcAddr);
     }
+  }
 
-    // Do the Same for operational inputs, if there are any...
-    for (let i = 0; i < operations.length; i++) {
-        const op = operations[i];
-        const sigidxs: SigIdx[] = op.getOperation().getSigIdxs();
-        const sources = sigidxs.map((sigidx) => sigidx.getSource());
-        const addrs: string[] = sources.map((source) => {
-            return binTools.addressToString(hrp, chainId, source);
-        });
-
-        for (let j = 0; j < addrs.length; j++) {
-            const srcAddr = addrs[j];
-            const pathStr = getPathFromAddress(srcAddr, pAddresses);
-
-            paths.push(pathStr);
-        }
-    }
-
-    return paths;
+  return { paths, addresses };
 };
 
-const getCredentials = <UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx>(unsignedTx: UnsignedTx, paths: string[], sigMap: any, chainId: string): Credential[] => {
-    const creds: Credential[] = [];
-    const tx = unsignedTx.getTransaction();
-    const ins = tx.getIns ? tx.getIns() : [];
-    let operations: TransferableOperation[] = [];
+const getCredentials = <UnsignedTx extends AVMUnsignedTx | PlatformUnsignedTx>(
+  unsignedTx: UnsignedTx,
+  paths: string[],
+  sigMap: any,
+  chainId: string
+): Credential[] => {
+  const creds: Credential[] = [];
+  const tx = unsignedTx.getTransaction();
+  const ins = tx.getIns ? tx.getIns() : [];
+  let operations: TransferableOperation[] = [];
 
-    const items = ins;
+  const items = ins;
 
-    // Try to get operations, it will fail if there are none, ignore and continue
-    try {
-        operations = (tx as OperationTx).getOperations();
-    } catch (e) {
-        console.error(e);
+  // Try to get operations, it will fail if there are none, ignore and continue
+  try {
+    operations = (tx as OperationTx).getOperations();
+  } catch (e) {
+    console.log(e);
+  }
+
+  const CredentialClass = PlatformSelectCredentialClass;
+
+  for (let i = 0; i < items.length; i++) {
+    const sigidxs: SigIdx[] = items[i].getInput().getSigIdxs();
+    const cred: Credential = CredentialClass(
+      items[i].getInput().getCredentialID()
+    );
+
+    for (let j = 0; j < sigidxs.length; j++) {
+      const pathIndex = i + j;
+      const pathStr = paths[pathIndex];
+
+      const sigRaw = sigMap.get(pathStr);
+      const sigBuff = AvalancheBuffer.from(sigRaw);
+      const sig: Signature = new Signature();
+      sig.fromBuffer(sigBuff);
+      cred.addSignature(sig);
     }
+    creds.push(cred);
+  }
 
-    const CredentialClass = PlatformSelectCredentialClass;
+  for (let i = 0; i < operations.length; i++) {
+    const op = operations[i].getOperation();
+    const sigidxs: SigIdx[] = op.getSigIdxs();
+    const cred: Credential = CredentialClass(op.getCredentialID());
 
-    for (let i = 0; i < items.length; i++) {
-        const sigidxs: SigIdx[] = items[i].getInput().getSigIdxs();
-        const cred: Credential = CredentialClass(items[i].getInput().getCredentialID());
+    for (let j = 0; j < sigidxs.length; j++) {
+      const pathIndex = items.length + i + j;
+      const pathStr = paths[pathIndex];
 
-        for (let j = 0; j < sigidxs.length; j++) {
-            const pathIndex = i + j;
-            const pathStr = paths[pathIndex];
-
-            const sigRaw = sigMap.get(pathStr);
-            const sigBuff = AvalancheBuffer.from(sigRaw);
-            const sig: Signature = new Signature();
-            sig.fromBuffer(sigBuff);
-            cred.addSignature(sig);
-        }
-        creds.push(cred);
+      const sigRaw = sigMap.get(pathStr);
+      const sigBuff = AvalancheBuffer.from(sigRaw);
+      const sig: Signature = new Signature();
+      sig.fromBuffer(sigBuff);
+      cred.addSignature(sig);
     }
+    creds.push(cred);
+  }
 
-    for (let i = 0; i < operations.length; i++) {
-        const op = operations[i].getOperation();
-        const sigidxs: SigIdx[] = op.getSigIdxs();
-        const cred: Credential = CredentialClass(op.getCredentialID());
-
-        for (let j = 0; j < sigidxs.length; j++) {
-            const pathIndex = items.length + i + j;
-            const pathStr = paths[pathIndex];
-
-            const sigRaw = sigMap.get(pathStr);
-            const sigBuff = AvalancheBuffer.from(sigRaw);
-            const sig: Signature = new Signature();
-            sig.fromBuffer(sigBuff);
-            cred.addSignature(sig);
-        }
-        creds.push(cred);
-    }
-
-    return creds;
+  return creds;
 };
 
 const getPathFromAddress = (address: string, pAddresses: string[]) => {
-    const platformIndex = pAddresses.indexOf(address);
+  const platformIndex = pAddresses.indexOf(address);
 
-    if (platformIndex >= 0) {
-        return `0/${platformIndex}`;
-    }
+  if (platformIndex >= 0) {
+    return `0/${platformIndex}`;
+  }
 
-    throw 'Unable to find source address.';
+  throw "Unable to find source address.";
 };
 
-
 const buildOptimisticOperation = (
-    account: Account,
-    transaction: Transaction,
+  account: Account,
+  transaction: Transaction,
+  senders: string[]
 ): Operation => {
-    let type: OperationType;
+  let type: OperationType;
 
-    switch (transaction.mode) {
-        case "delegate":
-            type = "DELEGATE";
-            break;
-        default:
-            type = "OUT";
-    }
+  switch (transaction.mode) {
+    case "delegate":
+      type = "DELEGATE";
+      break;
+    default:
+      type = "OUT";
+  }
 
-    const fee = transaction.fees ?? new BigNumber(0);
-    const value = new BigNumber(transaction.amount).plus(fee);
+  const fee = transaction.fees ?? new BigNumber(0);
+  const value = new BigNumber(transaction.amount).plus(fee);
 
-    const operation: Operation = {
-        id: encodeOperationId(account.id, "", type),
-        hash: "",
-        type,
-        value,
-        fee,
-        blockHash: null,
-        blockHeight: null,
-        senders: [account.freshAddress],
-        recipients: [transaction.recipient],
-        accountId: account.id,
-        date: new Date(),
-        extra: {}
-    };
+  const operation: Operation = {
+    id: encodeOperationId(account.id, "", type),
+    hash: "",
+    type,
+    value,
+    fee,
+    blockHash: null,
+    blockHeight: null,
+    senders,
+    recipients: [transaction.recipient],
+    accountId: account.id,
+    date: new Date(),
+    extra: {},
+  };
 
-    return operation;
+  return operation;
 };
 
 export default signOperation;
+
+// "TypeError: bn.toArray is not a function
+//     at BinTools.fromBNToBuffer (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/utils/bintools.js:172:31)
+//     at new ValidatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:40:33)
+//     at new WeightedValidatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:114:9)
+//     at new AddDelegatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:177:9)
+//     at UTXOSet.buildAddDelegatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/utxos.js:641:25)
+//     at PlatformVMAPI.<anonymous> (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/api.js:1172:45)
+//     at Generator.next (<anonymous>)
+//     at fulfilled (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/api.js:5:58)
+//     at processTicksAndRejections (internal/process/task_queues.js:93:5)"
