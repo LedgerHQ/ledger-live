@@ -35,10 +35,8 @@ const getTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  if (amount.lte(AVAX_MINIMUM_STAKE_AMOUNT)) {
-    console.log("SPENDABLE BALANCE: ", account.spendableBalance);
-    console.log("AMOUNT: ", amount);
-    errors.amount = new NotEnoughBalanceToDelegate(); //switched this from NotEnoughBalanceToDelegate
+  if (amount.lt(AVAX_MINIMUM_STAKE_AMOUNT)) {
+    errors.amount = new NotEnoughBalanceToDelegate();
   }
 
   const totalSpent = amount.plus(estimatedFees);
