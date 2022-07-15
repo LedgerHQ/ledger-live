@@ -78,7 +78,7 @@ export function PinHelp(props: { handleNextInDrawer: () => void }) {
 
   return (
     <>
-      <ScrollArea>
+      <ScrollArea isInsideDrawer>
         <PinHelpContainer>
           <Text color="palette.text.shade100" variant="h3">
             {t("onboarding.drawers.pinHelp.title")}
