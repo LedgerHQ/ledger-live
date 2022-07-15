@@ -19,14 +19,16 @@ function inferTransactions(
     opts: Record<string, string>
 ): Transaction[] {
     return flatMap(transactions, ({ transaction }) => {
-        console.log("FAMILY: ", transaction.family);
-        invariant(transaction.family === "avalanchepchain", "avalanchepchain family");
+      invariant(
+        transaction.family === "avalanchepchain",
+        "avalanchepchain family"
+      );
 
-        return {
-            ...transaction,
-            family: "avalanchepchain",
-            mode: opts.mode || "stake"
-        } as Transaction;
+      return {
+        ...transaction,
+        family: "avalanchepchain",
+        mode: opts.mode || "stake",
+      } as Transaction;
     });
 }
 
