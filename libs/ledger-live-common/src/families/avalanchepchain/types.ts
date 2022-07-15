@@ -14,12 +14,16 @@ export type Transaction = TransactionCommon & {
   family: "avalanchepchain";
   fees: BigNumber | null;
   mode: string;
+  startTime: BigNumber | null;
+  endTime: BigNumber | null;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "avalanchepchain";
   fees: string | null;
   mode: string;
+  startTime: string | null;
+  endTime: string | null;
 };
 
 export type AvalanchePChainResources = {

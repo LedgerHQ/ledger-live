@@ -27,20 +27,24 @@ export const formatTransaction = (
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     const common = fromTransactionCommonRaw(tr);
     return {
-        ...common,
-        family: tr.family,
-        fees: tr.fees ? new BigNumber(tr.fees) : null,
-        mode: tr.mode
+      ...common,
+      family: tr.family,
+      fees: tr.fees ? new BigNumber(tr.fees) : null,
+      mode: tr.mode,
+      startTime: tr.startTime ? new BigNumber(tr.startTime) : null,
+      endTime: tr.endTime ? new BigNumber(tr.endTime) : null,
     };
 };
 
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     const common = toTransactionCommonRaw(t);
     return {
-        ...common,
-        family: t.family,
-        fees: t.fees?.toString() || null,
-        mode: t.mode
+      ...common,
+      family: t.family,
+      fees: t.fees?.toString() ?? null,
+      mode: t.mode,
+      startTime: t.startTime?.toString() ?? null,
+      endTime: t.endTime?.toString() ?? null,
     };
 };
 
