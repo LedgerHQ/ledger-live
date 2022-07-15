@@ -33,7 +33,7 @@ const DeviceLanguageInstalled: React.FC<{
         size={48}
         iconSize={24}
       />
-      <Text variant="h4" textAlign="center" my={7}>
+      <Text variant="h4" textAlign="center" my={7} fontWeight="semiBold">
         {t("deviceLocalization.languageInstalled", {
           language: t(`deviceLocalization.languages.${installedLanguage}`),
         })}
