@@ -14,10 +14,12 @@ import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
 import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
 import GenuineCheckActiveDrawer from "./GenuineCheckActiveDrawer";
+import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 
 type CheckStatus =
   | "inactive"
   | "requested"
+  | "unlock-needed"
   | "active"
   | "cancelled"
   | "completed"
@@ -64,11 +66,7 @@ export type Props = {
   onComplete?: () => void;
 };
 
-export const SoftwareChecksStep = ({
-  device,
-  isDisplayed,
-  onComplete,
-}: Props) => {
+const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
   const { t } = useTranslation();
   const [genuineCheckStepStatus, setGenuineCheckStepStatus] = useState<
     CheckStatus
@@ -92,7 +90,7 @@ export const SoftwareChecksStep = ({
     error: genuineCheckError,
     resetGenuineCheckState,
   } = useGenuineCheck({
-    isHookEnabled: genuineCheckStepStatus === "active",
+    isHookEnabled: ["active", "unlock-needed"].includes(genuineCheckStepStatus),
     deviceId: device.deviceId,
   });
 
@@ -110,6 +108,10 @@ export const SoftwareChecksStep = ({
       setGenuineCheckStepStatus("requested");
     } else if (genuineState === "genuine") {
       setGenuineCheckStepStatus("completed");
+    } else if (devicePermissionState === "unlock-needed") {
+      setGenuineCheckStepStatus("unlock-needed");
+    } else if (devicePermissionState === "unlocked") {
+      setGenuineCheckStepStatus("active");
     } else if (devicePermissionState === "refused") {
       setGenuineCheckStepStatus("cancelled");
     } else if (genuineCheckError) {
@@ -276,6 +278,10 @@ export const SoftwareChecksStep = ({
             isOpen={genuineCheckStepStatus === "requested"}
             onPress={() => setGenuineCheckStepStatus("active")}
           />
+          <UnlockDeviceDrawer
+            isOpen={genuineCheckStepStatus === "unlock-needed"}
+            device={device}
+          />
           <GenuineCheckActiveDrawer
             isOpen={genuineCheckStepStatus === "active"}
           />
@@ -308,3 +314,5 @@ export const SoftwareChecksStep = ({
     </Flex>
   );
 };
+
+export default SoftwareChecksStep;
