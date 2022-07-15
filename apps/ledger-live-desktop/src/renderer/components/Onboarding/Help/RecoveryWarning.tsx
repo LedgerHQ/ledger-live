@@ -20,7 +20,7 @@ export default function RecoveryWarning() {
   const onClickLink = useCallback(() => openURL(urls.faq), []);
 
   return (
-    <ScrollArea>
+    <ScrollArea isInsideDrawer>
       <PinHelpContainer>
         <Text mt={4} textAlign="center" color="warning">
           <TriangleWarning size={56} />
