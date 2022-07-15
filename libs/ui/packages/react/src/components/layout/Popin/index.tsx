@@ -50,7 +50,7 @@ const Overlay = styled(Flex).attrs((p) => ({
   position: "fixed",
   top: 0,
   left: 0,
-  backgroundColor: p.theme.colors.neutral.c100a07,
+  backgroundColor: "constant.overlay",
 }))``;
 
 const Header = baseStyled.section`
