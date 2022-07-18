@@ -25,7 +25,7 @@ export function splitTransaction(
     version.equals(Buffer.from([0x03, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x04, 0x00, 0x00, 0x80])) ||
     version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
-  const zcashv5 = version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
+  const isZcashV5 = version.equals(Buffer.from([0x05, 0x00, 0x00, 0x80]));
   offset += 4;
   if (
     !hasTimestamp &&
@@ -46,7 +46,7 @@ export function splitTransaction(
     nVersionGroupId = transaction.slice(offset, 4 + offset);
     offset += 4;
   }
-  if (zcashv5) {
+  if (isZcashV5) {
     locktime = transaction.slice(offset + 4, offset + 8);
     nExpiryHeight = transaction.slice(offset + 8, offset + 12);
     offset += 12;
@@ -107,13 +107,13 @@ export function splitTransaction(
   if (witness) {
     witnessScript = transaction.slice(offset, -4);
     locktime = transaction.slice(transaction.length - 4);
-  } else if (!zcashv5) {
+  } else if (!isZcashV5) {
     locktime = transaction.slice(offset, offset + 4);
   }
 
   offset += 4;
 
-  if ((overwinter || isDecred) && !zcashv5) {
+  if ((overwinter && !isZcashV5) || isDecred) {
     nExpiryHeight = transaction.slice(offset, offset + 4);
     offset += 4;
   }
