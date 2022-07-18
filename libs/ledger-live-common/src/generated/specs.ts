@@ -1,5 +1,7 @@
 import algorand from "../families/algorand/specs";
 
+import avalanchecchain from "../families/avalanchecchain/specs";
+
 import bitcoin from "../families/bitcoin/specs";
 
 import cardano from "../families/cardano/specs";
@@ -33,6 +35,7 @@ import tron from "../families/tron/specs";
 
 export default {
   algorand,
+  avalanchecchain,
   bitcoin,
   cardano,
   celo,
