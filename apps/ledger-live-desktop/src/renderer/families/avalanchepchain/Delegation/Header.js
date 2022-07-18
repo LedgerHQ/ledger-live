@@ -27,27 +27,21 @@ export const TableLine: ThemedComponent<{}> = styled(Box).attrs(() => ({
 `;
 
 export const Header = () => (
-    <HeaderWrapper>
-      <TableLine>
-        <Trans i18nKey="avalanchepchain.delegation.validator" />
-      </TableLine>
-      <TableLine>
-        <Trans i18nKey="avalanchepchain.delegation.startTime" />
-      </TableLine>
-      <TableLine>
-        <Trans i18nKey="avalanchepchain.delegation.endTime" />
-      </TableLine>
-      <TableLine>
-        <Trans i18nKey="avalanchepchain.delegation.stakeAmount" />
-      </TableLine>
-      <TableLine>
-        <Trans i18nKey="avalanchepchain.delegation.potentialReward" />
-      </TableLine>
-    </HeaderWrapper>
-  );
-
-  //node id
-  //stake amount
-  //start time
-  //end time
-  //potential reward
+         <HeaderWrapper>
+           <TableLine>
+             <Trans i18nKey="avalanchepchain.delegation.validator" />
+           </TableLine>
+           <TableLine>
+             <Trans i18nKey="avalanchepchain.delegation.startTime" />
+           </TableLine>
+           <TableLine>
+             <Trans i18nKey="avalanchepchain.delegation.endTime" />
+           </TableLine>
+           <TableLine>
+             <Trans i18nKey="avalanchepchain.delegation.stakeAmount" />
+           </TableLine>
+           <TableLine>
+             <Trans i18nKey="avalanchepchain.delegation.potentialReward" />
+           </TableLine>
+         </HeaderWrapper>
+       );
