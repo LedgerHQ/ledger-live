@@ -67,8 +67,7 @@ const getTransactionStatus = async (
 
   const { balance } = a;
   const { address } = getAddress(a);
-  const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit, family } =
-    t;
+  const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit } = t;
   let { amount } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
