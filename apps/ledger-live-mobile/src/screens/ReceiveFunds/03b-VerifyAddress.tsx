@@ -36,7 +36,6 @@ import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
 import GenericErrorView from "../../components/GenericErrorView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import AdditionalInfoModal from "./AdditionalInfoModal";
 import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";

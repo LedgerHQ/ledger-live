@@ -128,7 +128,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   useEffect(() => {
     setIsVerifiedToastDisplayed(verified)
-  }, [verified])
+    if(verified){
+      track("Verification Success", { currency: currency.name })
+    }
+  }, [verified, currency.name])
 
   const onShare = useCallback(() => {
     track("button_clicked", {
