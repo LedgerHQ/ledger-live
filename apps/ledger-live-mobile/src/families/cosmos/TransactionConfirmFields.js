@@ -69,7 +69,7 @@ function CosmosValidatorNameField({ field, transaction: tx }: FieldProps) {
   );
 }
 
-function sourceValidatorNameField({
+function CosmosSourceValidatorNameField({
   field,
   transaction: { sourceValidator },
 }: FieldProps) {
@@ -120,7 +120,7 @@ function Warning({ transaction }: FieldProps) {
 const fieldComponents = {
   "cosmos.delegateValidators": CosmosDelegateValidatorsField,
   "cosmos.validatorName": CosmosValidatorNameField,
-  "cosmos.sourceValidatorName": sourceValidatorNameField,
+  "cosmos.sourceValidatorName": CosmosSourceValidatorNameField,
 };
 
 export default {

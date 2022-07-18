@@ -73,15 +73,17 @@ const onExternalLink = (account, address) => {
   if (URL) openURL(URL);
 };
 
-const CosmosDelegateValidatorsField = ({
+export const CosmosDelegateValidatorsField = ({
   account,
   parentAccount,
   transaction,
   field,
 }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
 
   const unit = getAccountUnit(mainAccount);
 
@@ -122,15 +124,17 @@ const CosmosDelegateValidatorsField = ({
   ) : null;
 };
 
-const CosmosValidatorNameField = ({
+export const CosmosValidatorNameField = ({
   account,
   parentAccount,
   transaction,
   field,
 }: FieldComponentProps) => {
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
   const mainAccount = getMainAccount(account, parentAccount);
-
   const { validators } = transaction;
   const currencyName = account.currency.name.toLowerCase();
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
@@ -161,15 +165,17 @@ const CosmosValidatorNameField = ({
   ) : null;
 };
 
-const CosmosValidatorAmountField = ({
+export const CosmosValidatorAmountField = ({
   account,
   parentAccount,
   transaction,
   field,
 }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
 
   const unit = getAccountUnit(mainAccount);
 
@@ -190,15 +196,17 @@ const CosmosValidatorAmountField = ({
   ) : null;
 };
 
-const sourceValidatorField = ({
+export const CosmosSourceValidatorField = ({
   account,
   parentAccount,
   transaction,
   field,
 }: FieldComponentProps) => {
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
   const mainAccount = getMainAccount(account, parentAccount);
-
   const { sourceValidator } = transaction;
   const currencyName = account.currency.name.toLowerCase();
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
@@ -246,7 +254,10 @@ const Warning = ({
   transaction: Transaction,
   recipientWording: string,
 }) => {
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
 
   switch (transaction.mode) {
     case "delegate":
@@ -265,7 +276,10 @@ const Warning = ({
 };
 
 const Title = ({ transaction }: { transaction: Transaction }) => {
-  invariant(transaction.family === "cosmos", "cosmos transaction");
+  invariant(
+    transaction.family === "cosmos" || transaction.family === "osmosis",
+    "not a cosmos family transaction",
+  );
 
   return (
     <Info>
@@ -279,7 +293,7 @@ const fieldComponents = {
   "cosmos.delegateValidators": CosmosDelegateValidatorsField,
   "cosmos.validatorName": CosmosValidatorNameField,
   "cosmos.validatorAmount": CosmosValidatorAmountField,
-  "cosmos.sourceValidatorName": sourceValidatorField,
+  "cosmos.sourceValidatorName": CosmosSourceValidatorField,
 };
 
 export default {
