@@ -168,7 +168,7 @@ const DeviceAction = <R, H, P>({
   }
 
   if (installingLanguage) {
-    return renderInstallingLanguage({ type, modelId, progress, t });
+    return renderInstallingLanguage({ progress, t });
   }
 
   if (requiresAppInstallation) {

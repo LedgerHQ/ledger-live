@@ -6,6 +6,7 @@ import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { idsToLanguage, Language } from "@ledgerhq/live-common/types/languages";
 import { useTranslation } from "react-i18next";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -13,7 +14,7 @@ type Props = {
 };
 
 const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
-  if (!deviceInfo.languageId) return null;
+  if (deviceInfo.languageId === undefined) return null;
 
   const [isLanguageInstallationOpen, setIsLanguageInstallation] = useState(false);
   const [deviceLanguage, setDeviceLanguage] = useState<Language>(
@@ -28,7 +29,7 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <Flex>
+    <Flex alignItems="center">
       <Icons.LanguageMedium color="neutral.c80" size={24} />
       <Flex ml={1}>
         <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
@@ -45,10 +46,12 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
         device={device}
         onSelectLanguage={setSelectedLanguage}
         selectedLanguage={selectedLanguage}
+        currentLanguage={deviceLanguage}
         onSuccess={refreshDeviceLanguage}
       />
     </Flex>
   );
 };
 
-export default DeviceLanguage;
+
+export default withV3StyleProvider(DeviceLanguage);

@@ -33,7 +33,6 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import Alert from "~/renderer/components/Alert";
 import ConnectTroubleshooting from "~/renderer/components/ConnectTroubleshooting";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
@@ -53,6 +52,8 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
+import { Flex, Log } from "@ledgerhq/react-ui"
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -335,36 +336,23 @@ export const InstallingApp = ({
   );
 };
 
-export const renderInstallingLanguage = ({
-  modelId,
-  type,
+export const renderInstallingLanguage = withV3StyleProvider(({
   progress,
   t
-}: {
-  modelId: DeviceModelId,
-  type: "light" | "dark",
-  progress: number,
+}: {  progress: number,
   t: TFunction
 }) => {
-  const cleanProgress = progress ? Math.round(progress * 100) : undefined;
-
   return (
-    <Wrapper data-test-id="device-action-loader">
-      <Header />
-      <AnimationWrapper modelId={modelId}>
-        <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
-      </AnimationWrapper>
+    <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
       <ProgressWrapper>        
         <ProgressCircle size={58} progress={progress} />        
       </ProgressWrapper>
-      <Footer>
-        <Title>
+        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
           {t("deviceLocalization.installingLanguage")}
-        </Title>        
-      </Footer>
-    </Wrapper>
+        </Log> 
+    </Flex>
   );
-};
+});
 
 export const renderListingApps = () => (
   <Wrapper data-test-id="device-action-loader">
@@ -417,18 +405,15 @@ export const renderAllowLanguageInstallation = ({
   type: "light" | "dark",
   t: TFunction,
 }) => (
-  <Wrapper>
+  <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
     <DeviceBlocker />
-    <Header />
     <AnimationWrapper modelId={modelId}>
-    <Animation animation={getDeviceAnimation(modelId, type, "validate")} />
+      <Animation animation={getDeviceAnimation(modelId, type, "validate")} />
     </AnimationWrapper>
-    <Footer>
-      <Title>
-        {t(`deviceLocalization.allowLanguageInstallation`)}
-      </Title>
-    </Footer>
-  </Wrapper>
+    <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
+      {t(`deviceLocalization.allowLanguageInstallation`)}
+    </Log>
+  </Flex>
 );
 
 export const renderAllowOpeningApp = ({

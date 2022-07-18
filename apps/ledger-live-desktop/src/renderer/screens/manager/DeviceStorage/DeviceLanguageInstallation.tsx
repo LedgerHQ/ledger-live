@@ -1,5 +1,14 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Button, Flex, Icons, Drawer, Radio, BoxedIcon, Text } from "@ledgerhq/react-ui";
+import {
+  Button,
+  Flex,
+  Icons,
+  Drawer,
+  Radio,
+  BoxedIcon,
+  Divider,
+  Log,
+} from "@ledgerhq/react-ui";
 import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Language } from "@ledgerhq/live-common/types/languages";
@@ -20,6 +29,7 @@ type Props = {
   deviceInfo: DeviceInfo;
   onSuccess: () => void;
   selectedLanguage: Language;
+  currentLanguage: Language;
   onSelectLanguage: (language: Language) => void;
   device: Device;
 };
@@ -38,16 +48,21 @@ const DeviceLanguageInstalled = ({
   const { t } = useTranslation();
 
   return (
-    <Flex flexDirection="column" alignItems="center" height="100%" justifyContent="center">
-      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={48} iconSize={24} />
-      <Text variant="h4" textAlign="center" my={7}>
-        {t("deviceLocalization.languageInstalled", {
-          language: t(`deviceLocalization.languages.${installedLanguage}`),
-        })}
-      </Text>
-      <Button variant="main" alignSelf="stretch" onClick={onContinue}>
-        {t("common.continue")}
-      </Button>
+    <Flex height="100%" flexDirection="column">
+      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
+        <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
+        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
+          {t("deviceLocalization.languageInstalled")}
+        </Log>
+      </Flex>
+      <Flex flexDirection="column" rowGap={10}>
+        <Divider variant="light" />
+        <Flex alignSelf="end">
+          <Button variant="main" onClick={onContinue}>
+            {t("common.close")}
+          </Button>
+        </Flex>
+      </Flex>
     </Flex>
   );
 };
@@ -58,6 +73,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   deviceInfo,
   selectedLanguage,
   onSelectLanguage,
+  currentLanguage,
   onSuccess,
 }: Props) => {
   const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
@@ -86,9 +102,11 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     [onSelectLanguage],
   );
 
+  const onInstall = useCallback(() => setInstalling(true), [setInstalling]);
+
   return (
     <Drawer isOpen={isOpen} onClose={onCloseDrawer} title="Device Language" big>
-      <Flex flex={1} p={10} flexDirection="column" justifyContent="space-between">
+      <Flex flex={1} flexDirection="column" justifyContent="space-between">
         {installing ? (
           <DeviceAction action={action} request={selectedLanguage} Result={Result} />
         ) : (
@@ -101,16 +119,37 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             >
               {availableLanguages.map(language => (
                 <Radio.ListElement
-                  containerProps={{ flex: 1, padding: 0 }}
-                  label={t(`deviceLocalization.languages.${language}`)}
+                  containerProps={{
+                    flex: 1,
+                    padding: 0,
+                  }}
+                  label={({ checked }: { checked: boolean }) => (
+                    <Flex flex={1} justifyContent="space-between">
+                      <Radio.ListElement.Label checked={checked}>
+                        {t(`deviceLocalization.languages.${language}`)}
+                      </Radio.ListElement.Label>
+                      {currentLanguage === language && (
+                        <Icons.CircledCheckSolidMedium color="primary.c80" size={24} />
+                      )}
+                    </Flex>
+                  )}
                   value={language}
                   key={language}
                 />
               ))}
             </Radio>
-            <Button variant="main" onClick={() => setInstalling(true)}>
-              Change Language
-            </Button>
+            <Flex flexDirection="column" rowGap={10}>
+              <Divider variant="light" />
+              <Flex alignSelf="end">
+                <Button
+                  variant="main"
+                  onClick={onInstall}
+                  disabled={currentLanguage === selectedLanguage}
+                >
+                  {t(`deviceLocalization.changeLanguage`)}
+                </Button>
+              </Flex>
+            </Flex>
           </>
         )}
       </Flex>
