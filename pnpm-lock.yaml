@@ -468,6 +468,7 @@ importers:
       '@types/node': ^16.7.13
       '@types/react': ^17.0.20
       '@types/react-dom': ^17.0.9
+      cross-env: ^7.0.3
       react: ^17.0.2
       react-dom: ^17.0.2
       react-scripts: 5.0.0
@@ -482,6 +483,8 @@ importers:
       react-dom: 17.0.2_react@17.0.2
       react-scripts: 5.0.0_3k6agborcge6z57osi42vahqli
       typescript: 4.6.4
+    devDependencies:
+      cross-env: 7.0.3
 
   apps/ledger-live-mobile:
     specifiers:
@@ -27308,7 +27311,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: ^27.0.0
+      jest: '*'
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
