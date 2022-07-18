@@ -219,4 +219,9 @@ export const urls = {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
+  avalanche: {
+    //TODO: update this link with correct article upon launch
+    learnMore: "https://support.ledger.com/hc/en-us/articles/360020765779",
+    learnMoreStakingParameters: "https://docs.avax.network/nodes/validate/staking#staking-parameters-on-avalanche"
+  }
 };
