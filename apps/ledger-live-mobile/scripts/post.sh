@@ -1,8 +1,7 @@
 #!/bin/bash
 
 cd $(dirname $0)/..
-
-./scripts/sync-families-dispatch.sh
+zx ./scripts/sync-families-dispatch.mjs
 
 # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
 # patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
