@@ -71,7 +71,7 @@ function getDeviceTransactionConfig({
           validators[0].amount,
           {
             showCode: true,
-            disableRounding: true,
+            disableRounding: false,
           }
         ),
       });
@@ -96,7 +96,7 @@ function getDeviceTransactionConfig({
           validators[0].amount,
           {
             showCode: true,
-            disableRounding: true,
+            disableRounding: false,
           }
         ),
       });
@@ -172,7 +172,7 @@ function getDeviceTransactionConfig({
       label,
       value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
         showCode: true,
-        disableRounding: true,
+        disableRounding: false,
       }),
     });
   } else {
@@ -181,7 +181,7 @@ function getDeviceTransactionConfig({
       label: "Total",
       value: formatCurrencyUnit(currency.units[0], totalSpent, {
         showCode: true,
-        disableRounding: true,
+        disableRounding: false,
       }),
     });
   }
