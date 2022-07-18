@@ -19,7 +19,7 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
-import BigNumber from "bignumber.js";
+import { canDelegate } from "@ledgerhq/live-common/lib/families/avalanchepchain/utils";
 
 type Props = {
   account: Account,
@@ -50,9 +50,7 @@ const Delegation = ({ account }: Props) => {
   }, [account, dispatch]);
 
   const explorerView = getDefaultExplorerView(account.currency);
-  const twentyFiveAvax = 25000000000;
-  const oneAvax = 1000000000;
-  const hasEnoughToDelegate = account.spendableBalance.gt(oneAvax); //TODO: set this to 25 for mainnet
+  const isDelegationEnabled = canDelegate(account);
 
   //TODO: make sure this works on mainnet. Make sure links to same place as official avax wallet
   const onExternalLink = useCallback(
@@ -70,31 +68,29 @@ const Delegation = ({ account }: Props) => {
 
   return (
     <>
-      {!hasEnoughToDelegate && (
-        <Alert
-          type="warning"
-          learnMoreUrl={urls.avalanche.learnMoreStakingParameters}
-          mb={3}
-        >
+      {!isDelegationEnabled && (
+        <Alert type="warning" learnMoreUrl={urls.avalanche.learnMoreStakingParameters} mb={3}>
           <Trans i18nKey={`avalanchepchain.delegation.notEnoughToDelegate`} />
         </Alert>
       )}
       <TableContainer mb={6}>
         <TableHeader title={<Trans i18nKey="avalanchepchain.delegation.header" />}>
-          {hasEnoughToDelegate && <Button
-            id={"account-delegate-button"}
-            mr={2}
-            color="palette.primary.main"
-            small
-            onClick={onDelegate}
-          >
-            <Box horizontal flow={1} alignItems="center">
-              <DelegateIcon size={12} />
-              <Box>
-                <Trans i18nKey="avalanchepchain.delegation.add" />
+          {isDelegationEnabled && (
+            <Button
+              id={"account-delegate-button"}
+              mr={2}
+              color="palette.primary.main"
+              small
+              onClick={onDelegate}
+            >
+              <Box horizontal flow={1} alignItems="center">
+                <DelegateIcon size={12} />
+                <Box>
+                  <Trans i18nKey="avalanchepchain.delegation.add" />
+                </Box>
               </Box>
-            </Box>
-          </Button>}
+            </Button>
+          )}
         </TableHeader>
         {hasDelegations ? (
           <>
