@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/ValidatorRow";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account, TransactionStatus } from "@ledgerhq/live-common/lib/types";
 import type {

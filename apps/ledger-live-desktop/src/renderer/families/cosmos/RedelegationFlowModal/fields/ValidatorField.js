@@ -13,7 +13,7 @@ import { NoResultPlaceholder } from "~/renderer/components/Delegation/ValidatorS
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/ValidatorRow";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 
 const ValidatorsSection: ThemedComponent<{}> = styled(Box)`
   width: 100%;
