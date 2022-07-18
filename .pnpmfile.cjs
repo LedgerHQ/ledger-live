@@ -103,9 +103,6 @@ function readPackage(pkg, context) {
       addDependencies(/^@walletconnect\/.*/, {
         tslib: "*",
       }),
-      addDependencies("avalanche", {
-        randombytes: "*",
-      }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
       addDependencies("react-native-codegen", {
