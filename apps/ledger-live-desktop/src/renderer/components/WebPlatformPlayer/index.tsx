@@ -30,16 +30,16 @@ import TopBar from "./TopBar";
 import * as tracking from "./tracking";
 import { TopBarConfig } from "./type";
 import {
-  receiveOnAccountCallback,
-  requestAccountCallback,
-  signTransactionCallback,
-  broadcastTransactionCallback,
-  startExchangeCallback,
+  receiveOnAccountLogic,
+  requestAccountLogic,
+  signTransactionLogic,
+  broadcastTransactionLogic,
+  startExchangeLogic,
   CompleteExchangeRequest,
-  completeExchangeCallback,
+  completeExchangeLogic,
   RequestAccountParams,
-  signMessageCallback,
-} from "./LiveAppSDKCallback";
+  signMessageLogic,
+} from "./LiveAppSDKLogic";
 
 const Container = styled.div`
   display: flex;
@@ -109,14 +109,14 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
   const requestAccount = useCallback(
     (request: RequestAccountParams) => {
-      return requestAccountCallback({ manifest }, request);
+      return requestAccountLogic({ manifest }, request);
     },
     [manifest],
   );
 
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
-      return receiveOnAccountCallback({ manifest, dispatch, accounts }, accountId);
+      return receiveOnAccountLogic({ manifest, dispatch, accounts }, accountId);
     },
     [manifest, accounts, dispatch],
   );
@@ -131,12 +131,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       transaction: RawPlatformTransaction;
       params: any;
     }) => {
-      return signTransactionCallback(
-        { manifest, dispatch, accounts },
-        accountId,
-        transaction,
-        params,
-      );
+      return signTransactionLogic({ manifest, dispatch, accounts }, accountId, transaction, params);
     },
     [manifest, dispatch, accounts],
   );
@@ -149,7 +144,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
       accountId: string;
       signedTransaction: RawPlatformSignedTransaction;
     }) => {
-      return broadcastTransactionCallback(
+      return broadcastTransactionLogic(
         { manifest, dispatch, accounts },
         accountId,
         signedTransaction,
@@ -162,21 +157,21 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
   const startExchange = useCallback(
     ({ exchangeType }: { exchangeType: number }) => {
-      return startExchangeCallback({ manifest, dispatch }, exchangeType);
+      return startExchangeLogic({ manifest, dispatch }, exchangeType);
     },
     [manifest, dispatch],
   );
 
   const completeExchange = useCallback(
     (completeRequest: CompleteExchangeRequest) => {
-      return completeExchangeCallback({ manifest, dispatch, accounts }, completeRequest);
+      return completeExchangeLogic({ manifest, dispatch, accounts }, completeRequest);
     },
     [accounts, dispatch, manifest],
   );
 
   const signMessage = useCallback(
     ({ accountId, message }: { accountId: string; message: string }) => {
-      return signMessageCallback({ manifest, dispatch, accounts }, accountId, message);
+      return signMessageLogic({ manifest, dispatch, accounts }, accountId, message);
     },
     [accounts, dispatch],
   );

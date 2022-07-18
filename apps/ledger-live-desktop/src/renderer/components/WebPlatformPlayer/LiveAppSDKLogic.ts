@@ -45,7 +45,7 @@ type WebPlatformContext = {
   accounts: Array<Account>;
 };
 
-export const receiveOnAccountCallback = (
+export const receiveOnAccountLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
 ) => {
@@ -87,7 +87,7 @@ export type RequestAccountParams = {
   allowAddAccount?: boolean;
   includeTokens?: boolean;
 };
-export const requestAccountCallback = async (
+export const requestAccountLogic = async (
   { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch">,
   { currencies, allowAddAccount, includeTokens }: RequestAccountParams, // TODO-STP: Check allowAddAccount
 ) => {
@@ -97,7 +97,7 @@ export const requestAccountCallback = async (
   return serializePlatformAccount(accountToPlatformAccount(account, parentAccount));
 };
 
-export const signTransactionCallback = (
+export const signTransactionLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   transaction: RawPlatformTransaction,
@@ -151,7 +151,7 @@ export const signTransactionCallback = (
   );
 };
 
-export const broadcastTransactionCallback = async (
+export const broadcastTransactionLogic = async (
   { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
@@ -219,7 +219,7 @@ export const broadcastTransactionCallback = async (
   return optimisticOperation.hash;
 };
 
-export const startExchangeCallback = (
+export const startExchangeLogic = (
   { manifest, dispatch }: Omit<WebPlatformContext, "accounts">,
   exchangeType: number,
 ) => {
@@ -246,13 +246,13 @@ export type CompleteExchangeRequest = {
   provider: string;
   fromAccountId: string;
   toAccountId: string;
-  transaction: Transaction;
+  transaction: RawPlatformTransaction;
   binaryPayload: string;
   signature: string;
   feesStrategy: string;
   exchangeType: number;
 };
-export const completeExchangeCallback = (
+export const completeExchangeLogic = (
   { manifest, dispatch, accounts }: WebPlatformContext,
   {
     provider,
@@ -330,14 +330,14 @@ export const completeExchangeCallback = (
   );
 };
 
-export const signMessageCallback = (
+export const signMessageLogic = (
   { dispatch, accounts }: WebPlatformContext,
   accountId: string,
   message: string,
 ) => {
   const account = accounts.find(account => account.id === accountId);
   if (account === undefined) {
-    return Promise.reject(new Error("Unknown accountId: " + accountId))
+    return Promise.reject(new Error("Unknown accountId: " + accountId));
   }
 
   let formattedMessage: MessageData | null;

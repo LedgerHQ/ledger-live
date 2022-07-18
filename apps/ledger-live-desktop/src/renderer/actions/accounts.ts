@@ -58,7 +58,10 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-type ToggleAction = {type: string, payload: {updater: Function, accountId: string | undefined}}
+type ToggleAction = {
+  type: string;
+  payload: { updater: (account: Account) => any; accountId: string | undefined };
+};
 export const toggleStarAction = (id: string, parentId?: string): ToggleAction => {
   return {
     type: "DB:UPDATE_ACCOUNT",
