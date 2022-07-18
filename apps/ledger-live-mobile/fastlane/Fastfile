@@ -119,7 +119,7 @@ platform :ios do
     export_options_method = options[:local] ? "development" : (options[:adhoc] ? "ad-hoc" : "app-store")
     code_sign_identity = "iPhone Distribution"
     MY_APP_BUNDLE_ID = ENV["MY_APP_BUNDLE_ID"]
-    MY_APP_ID = (options[:adhoc] ? "#{ENV["SHORT_BUNDLE_ID"]}.local" : "#{ENV["APP_IDENTIFIER"]}")
+    MY_APP_ID = ENV["APP_IDENTIFIER"]
 
     MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
     MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
