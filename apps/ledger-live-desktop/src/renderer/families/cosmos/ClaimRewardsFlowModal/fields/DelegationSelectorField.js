@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 
 const renderItem = ({
   data: { validatorAddress, validator, formattedPendingRewards, status },
@@ -17,7 +17,7 @@ const renderItem = ({
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <CosmosLedgerValidatorIcon validator={validator} />
+        <CosmosFamilyLedgerValidatorIcon validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>

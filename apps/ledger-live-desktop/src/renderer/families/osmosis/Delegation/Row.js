@@ -26,7 +26,7 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 
 export { UnbondingRow } from "../../cosmos/Delegation/Row";
 
@@ -121,7 +121,7 @@ export const Row = ({
     <Wrapper>
       <Column strong clickable onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <CosmosLedgerValidatorIcon
+          <CosmosFamilyLedgerValidatorIcon
             validator={validator ?? { validatorAddress, name: validatorAddress }}
           />
         </Box>

@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import Box from "~/renderer/components/Box";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
@@ -22,7 +22,7 @@ const renderItem = ({
   return (
     <Box key={validatorAddress} horizontal alignItems="center" justifyContent="space-between">
       <Box horizontal alignItems="center">
-        <CosmosLedgerValidatorIcon validator={validator} />
+        <CosmosFamilyLedgerValidatorIcon validator={validator} />
         <Text ml={2} ff="Inter|Medium">
           {name}
         </Text>

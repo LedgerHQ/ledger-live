@@ -16,7 +16,7 @@ import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 type Props = {
@@ -47,7 +47,7 @@ function CosmosValidatorRow({ validator, active, onClick, unit, currency }: Prop
       onClick={onClick}
       key={validator.validatorAddress}
       validator={{ address: validator.validatorAddress }}
-      icon={<CosmosLedgerValidatorIcon validator={validator} />}
+      icon={<CosmosFamilyLedgerValidatorIcon validator={validator} />}
       title={validator.name || validator.voteAccount}
       onExternalLink={onExternalLink}
       unit={unit}

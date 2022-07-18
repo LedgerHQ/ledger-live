@@ -24,7 +24,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 
 import Label from "~/renderer/components/Label";
 import ChevronRight from "~/renderer/icons/ChevronRightSmall";
-import CosmosLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosLedgerValidatorIcon";
+import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 
@@ -167,7 +167,7 @@ export default function StepValidators({
           <Box flex="1" horizontal alignItems="center" justifyContent="space-between">
             {selectedValidatorData ? (
               <Box horizontal alignItems="center">
-                <CosmosLedgerValidatorIcon validator={selectedValidatorData} />
+                <CosmosFamilyLedgerValidatorIcon validator={selectedValidatorData} />
                 <Text ff="Inter|Medium" ml={2}>
                   {selectedValidatorData.name || selectedValidatorData.validatorAddress}
                 </Text>

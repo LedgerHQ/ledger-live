@@ -2,16 +2,17 @@
 import type { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
 
 import React from "react";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 
-const CosmosLedgerValidatorIcon = ({ validator }: { validator: CosmosValidatorItem }) => {
+const CosmosFamilyLedgerValidatorIcon = ({ validator }: { validator: CosmosValidatorItem }) => {
   return (
     <IconContainer isSR>
-      {validator && validator.validatorAddress === LEDGER_VALIDATOR_ADDRESS ? (
+      {validator &&
+      COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(validator.validatorAddress) ? (
         <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
       ) : (
         <FirstLetterIcon label={validator.name || validator.validatorAddress} />
@@ -20,4 +21,4 @@ const CosmosLedgerValidatorIcon = ({ validator }: { validator: CosmosValidatorIt
   );
 };
 
-export default CosmosLedgerValidatorIcon;
+export default CosmosFamilyLedgerValidatorIcon;
