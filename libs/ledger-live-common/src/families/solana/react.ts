@@ -5,11 +5,8 @@ import {
   getCurrentSolanaPreloadData,
   getSolanaPreloadData,
 } from "./js-preload-data";
-import {
-  SolanaPreloadDataV1,
-  SolanaStake,
-  ValidatorsAppValidator,
-} from "./types";
+import { SolanaPreloadDataV1, SolanaStake, SolanaStakeWithMeta } from "./types";
+import { ValidatorsAppValidator } from "./validator-app";
 
 export function useSolanaPreloadData(
   currency: CryptoCurrency
