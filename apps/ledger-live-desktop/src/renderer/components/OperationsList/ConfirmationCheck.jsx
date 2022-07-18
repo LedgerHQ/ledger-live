@@ -122,6 +122,12 @@ const iconsComponent = {
   CHILL: VoteNay,
   REWARD_PAYOUT: ClaimRewards,
   SET_CONTROLLER: IconSend,
+  LOCK: IconLink,
+  UNLOCK: IconUndelegate,
+  WITHDRAW: ClaimRewards,
+  REVOKE: VoteNay,
+  ACTIVATE: Vote,
+  REGISTER: IconPlus,
 };
 
 class ConfirmationCheck extends PureComponent<{
