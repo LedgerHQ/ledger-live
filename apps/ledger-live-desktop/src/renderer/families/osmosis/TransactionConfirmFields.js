@@ -8,6 +8,12 @@ import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/lib/ac
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
+import {
+  CosmosDelegateValidatorsField,
+  CosmosValidatorNameField,
+  CosmosValidatorAmountField,
+  CosmosSourceValidatorField,
+} from "~/renderer/families/cosmos/TransactionConfirmFields";
 
 const OsmosisExtendedAmountField = ({
   account,
@@ -51,6 +57,10 @@ const OsmosisExtendedAmountField = ({
 
 const fieldComponents = {
   "osmosis.extendedAmount": OsmosisExtendedAmountField,
+  "cosmos.delegateValidators": CosmosDelegateValidatorsField,
+  "cosmos.validatorName": CosmosValidatorNameField,
+  "cosmos.validatorAmount": CosmosValidatorAmountField,
+  "cosmos.sourceValidatorName": CosmosSourceValidatorField,
 };
 
 export default { fieldComponents };
