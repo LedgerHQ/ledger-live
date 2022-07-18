@@ -13,6 +13,8 @@ import {
   CosmosValidatorNameField,
   CosmosValidatorAmountField,
   CosmosSourceValidatorField,
+  Warning,
+  Title,
 } from "~/renderer/families/cosmos/TransactionConfirmFields";
 
 const OsmosisExtendedAmountField = ({
@@ -63,4 +65,4 @@ const fieldComponents = {
   "cosmos.sourceValidatorName": CosmosSourceValidatorField,
 };
 
-export default { fieldComponents };
+export default { fieldComponents, warning: Warning, tite: Title };

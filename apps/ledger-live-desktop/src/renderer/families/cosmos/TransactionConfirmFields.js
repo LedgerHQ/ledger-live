@@ -247,7 +247,7 @@ const CosmosMemoField = ({ account, parentAccount, transaction, field }: FieldCo
   ) : null;
 };
 
-const Warning = ({
+export const Warning = ({
   transaction,
   recipientWording,
 }: {
@@ -275,7 +275,7 @@ const Warning = ({
   }
 };
 
-const Title = ({ transaction }: { transaction: Transaction }) => {
+export const Title = ({ transaction }: { transaction: Transaction }) => {
   invariant(
     transaction.family === "cosmos" || transaction.family === "osmosis",
     "not a cosmos family transaction",

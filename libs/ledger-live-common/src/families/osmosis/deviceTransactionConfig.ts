@@ -172,16 +172,18 @@ function getDeviceTransactionConfig({
       label,
       value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
         showCode: true,
-        disableRounding: false,
+        disableRounding: true,
       }),
     });
+  } else if (mode === "undelegate" || mode === "redelegate") {
+    return fields;
   } else {
     fields.push({
       type: "text",
       label: "Total",
       value: formatCurrencyUnit(currency.units[0], totalSpent, {
         showCode: true,
-        disableRounding: false,
+        disableRounding: true,
       }),
     });
   }

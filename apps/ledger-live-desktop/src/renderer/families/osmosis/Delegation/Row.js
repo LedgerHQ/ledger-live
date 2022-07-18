@@ -91,10 +91,10 @@ export const Row = ({
       },
       {
         key: "MODAL_COSMOS_UNDELEGATE",
-        label: <Trans i18nKey="cosmos.delegation.undelegate" />,
+        label: <Trans i18nKey="osmosis.delegation.undelegate" />,
         disabled: !_canUndelegate,
         tooltip: !_canUndelegate ? (
-          <Trans i18nKey="cosmos.delegation.undelegateDisabledTooltip">
+          <Trans i18nKey="osmosis.delegation.undelegateDisabledTooltip">
             <b></b>
           </Trans>
         ) : null,
@@ -103,7 +103,7 @@ export const Row = ({
         ? [
             {
               key: "MODAL_COSMOS_CLAIM_REWARDS",
-              label: <Trans i18nKey="cosmos.delegation.reward" />,
+              label: <Trans i18nKey="osmosis.delegation.reward" />,
             },
           ]
         : []),
