@@ -1996,6 +1996,13 @@
       }
     }
   },
+  "cardano": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Total balance doesn't include staking rewards"
+      }
+    }
+  },
   "tron": {
     "voting": {
       "emptyState": {
