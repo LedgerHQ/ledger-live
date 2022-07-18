@@ -79,7 +79,7 @@ export const prepareTransaction = async (account: Account, t: Transaction) => {
     t = { ...t, amount, fees, gas };
   }
 
-  if (mode === "delegate" && amount.eq(0)) {
+  if ((mode === "delegate" || mode === "claimRewardCompound") && amount.eq(0)) {
     const validatorAmount = t.validators.reduce(
       (old, current) => old.plus(current.amount),
       new BigNumber(0)
