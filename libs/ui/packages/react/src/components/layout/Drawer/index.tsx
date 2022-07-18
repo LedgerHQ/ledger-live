@@ -141,7 +141,7 @@ const DrawerContent = React.forwardRef(
             <Wrapper
               big={big}
               onClick={stopClickPropagation}
-              backgroundColor={backgroundColor ?? "neutral.c00"}
+              backgroundColor={backgroundColor ?? "background.main"}
             >
               <Container>
                 <FlexBox
