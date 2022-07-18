@@ -8,7 +8,7 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/helpers";
 import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -19,7 +19,7 @@ import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 export type Props = CardProps & {
-  account: Account;
+  account: AccountLike;
   style?: any;
   disabled?: boolean;
   useFullBalance?: boolean;

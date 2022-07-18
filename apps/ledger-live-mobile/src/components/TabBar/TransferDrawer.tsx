@@ -64,7 +64,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: "SwapForm",
       }),
     [onNavigate],
   );
@@ -149,20 +149,22 @@ export default function TransferDrawer({ onClose }: ModalProps) {
           disabled={readOnlyModeEnabled}
         />
       </Box>
-      <Box mb={8}>
-        <TransferButton
-          eventProperties={{
-            button: "transfer_swap",
-            page,
-            drawer: "trade",
-          }}
-          title={t("transfer.swap.title")}
-          description={t("transfer.swap.description")}
-          Icon={Icons.BuyCryptoMedium}
-          onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
-          disabled={readOnlyModeEnabled}
-        />
-      </Box>
+      {!areAccountsEmpty && (
+        <Box mb={8}>
+          <TransferButton
+            eventProperties={{
+              button: "transfer_swap",
+              page,
+              drawer: "trade",
+            }}
+            title={t("transfer.swap.title")}
+            description={t("transfer.swap.description")}
+            Icon={Icons.BuyCryptoMedium}
+            onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
+            disabled={readOnlyModeEnabled}
+          />
+        </Box>
+      )}
       {lendingEnabled ? (
         <Box mb={8}>
           <TransferButton

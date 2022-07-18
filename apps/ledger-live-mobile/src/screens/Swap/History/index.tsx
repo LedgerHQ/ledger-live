@@ -42,34 +42,35 @@ const History = () => {
   const [sections, setSections] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const ref = useRef();
+
   useEffect(() => {
     setSections(getCompleteSwapHistory(accounts));
   }, [accounts, setSections]);
+
   useEffect(() => {
     if (isRefreshing) {
       updateSwapStatus();
     }
   }, [isRefreshing, updateSwapStatus]);
+
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;
-
     async function fetchUpdatedSwapStatus() {
       const updatedAccounts = await Promise.all(
         accounts.map(updateAccountSwapStatus),
       );
-
       if (!cancelled) {
         updatedAccounts.filter(Boolean).forEach(account => {
           dispatch(updateAccountWithUpdater(account.id, _ => account));
         });
       }
-
       setIsRefreshing(false);
     }
 
     fetchUpdatedSwapStatus();
     return () => (cancelled = true);
   }, [accounts, dispatch]);
+
   const hasPendingSwapOperations = useMemo(() => {
     if (sections) {
       for (const section of sections) {
@@ -80,9 +81,9 @@ const History = () => {
         }
       }
     }
-
     return false;
   }, [sections]);
+
   useInterval(() => {
     if (hasPendingSwapOperations) {
       updateSwapStatus();
@@ -117,14 +118,7 @@ const History = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>
@@ -197,4 +191,5 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
 export default History;

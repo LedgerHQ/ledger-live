@@ -1,12 +1,12 @@
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/lib/platform/providers/RemoteLiveAppProvider";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import {
   FilterParams,
   filterPlatformApps,
-} from "@ledgerhq/live-common/lib/platform/filters";
+} from "@ledgerhq/live-common/platform/filters";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import type { LiveAppManifest } from "@ledgerhq/live-common/lib/platform/providers/types";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/providers/types";
+import { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { useMemo } from "react";
 
 const defaultArray: LiveAppManifest[] = [];

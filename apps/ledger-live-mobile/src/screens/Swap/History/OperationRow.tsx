@@ -1,46 +1,42 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/dist/Ionicons";
-import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { Icon } from "@ledgerhq/native-ui";
+import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/account/helpers";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { ScreenName } from "../../../const";
-import SwapStatusIndicator from "../SwapStatusIndicator";
+import { SwapStatusIndicator } from "../SwapStatusIndicator";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { colors } = useTheme();
-  const { swapId, fromAccount, toAccount, fromAmount, toAmount, status } = item;
+  const { fromAccount, toAccount, ...routeParams } = item;
+  const { swapId, fromAmount, toAmount, status } = routeParams;
   const navigation = useNavigation();
+
   const onOpenOperationDetails = useCallback(() => {
-    navigation.navigate(ScreenName.SwapOperationDetails, {
-      swapOperation: item,
+    navigation.navigate("OperationDetails", {
+      swapOperation: {
+        fromAccountId: fromAccount.id,
+        toAccountId: toAccount.id,
+        ...routeParams,
+      },
     });
-  }, [item, navigation]);
+  }, [navigation, routeParams, fromAccount, toAccount]);
+
   return (
     <TouchableOpacity key={swapId} onPress={onOpenOperationDetails}>
       <View
         style={[
           styles.root,
-          {
-            backgroundColor: colors.card,
-            borderBottomColor: colors.lightFog,
-          },
+          { backgroundColor: colors.card, borderBottomColor: colors.lightFog },
         ]}
       >
         <SwapStatusIndicator small status={status} />
-        <View
-          style={[
-            styles.accountWrapper,
-            {
-              marginLeft: 18,
-            },
-          ]}
-        >
+        <View style={[styles.accountWrapper, { marginLeft: 18 }]}>
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(fromAccount)}
           </LText>
@@ -53,16 +49,9 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           </LText>
         </View>
         <View style={styles.arrow}>
-          <Icon name={"ios-arrow-forward"} size={30} color={colors.fog} />
+          <Icon name="ArrowRightLight" size={30} color="neutral.c70" />
         </View>
-        <View
-          style={[
-            styles.accountWrapper,
-            {
-              alignItems: "flex-end",
-            },
-          ]}
-        >
+        <View style={[styles.accountWrapper, { alignItems: "flex-end" }]}>
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(toAccount)}
           </LText>
@@ -104,4 +93,5 @@ const styles = StyleSheet.create({
     width: "35%",
   },
 });
+
 export default OperationRow;

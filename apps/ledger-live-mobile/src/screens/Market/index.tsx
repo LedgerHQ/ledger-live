@@ -36,7 +36,6 @@ import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/SwapEntry";
 import Illustration from "../../images/illustration/Illustration";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
@@ -274,8 +273,6 @@ export default function Market({ navigation }: { navigation: any }) {
   const { params }: { params: any } = useRoute();
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
-
-  useProviders();
 
   const {
     requestParams,

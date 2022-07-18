@@ -16,6 +16,7 @@ import type {
   AccountLike,
   PortfolioRange,
 } from "@ledgerhq/types-live";
+import { KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
@@ -83,10 +84,11 @@ export type SettingsState = {
   locale: string | null | undefined;
   swap: {
     hasAcceptedIPSharing: false;
-    acceptedProviders: [];
-    selectableCurrencies: [];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    KYC: {};
+    acceptedProviders: string[],
+    selectableCurrencies: string[],
+    KYC: {
+      [key: string]: KYCStatus,
+    },
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
   starredMarketCoins: string[];
@@ -327,6 +329,7 @@ const handlers: Record<string, any> = {
     ...state,
     locale: payload,
   }),
+  // TODO swap: remove
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
     swap: { ...state.swap, selectableCurrencies: payload },
@@ -335,11 +338,9 @@ const handlers: Record<string, any> = {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
-    if (id && status) {
-      KYC[provider] = {
-        id,
-        status,
-      };
+    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
+    if (id && typeof status !== "undefined") {
+      KYC[provider] = { id, status };
     } else {
       delete KYC[provider];
     }
@@ -397,7 +398,17 @@ const handlers: Record<string, any> = {
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS: (
     state: SettingsState,
     { payload },
-  ) => ({ ...state, marketFilterByStarredAccounts: payload }),
+  ) => ({
+    ...state,
+    marketFilterByStarredAccounts: payload,
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
+  }),
   SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
     ...state,
     sensitiveAnalytics: action.enabled,
@@ -578,8 +589,8 @@ export const swapSelectableCurrenciesSelector = (state: Record<string, any>) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: Record<string, any>) =>
-  state.settings.swap.KYC;
+export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
+
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
 export const starredMarketCoinsSelector = (state: State) =>

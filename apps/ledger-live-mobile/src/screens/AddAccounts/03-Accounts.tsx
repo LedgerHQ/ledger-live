@@ -262,6 +262,7 @@ function AddAccountsAccounts({
       if (onSuccess)
         onSuccess({
           scannedAccounts,
+          selected: scannedAccounts.filter(a => selectedIds.includes(a.id)),
         });
       else
         navigation.replace(ScreenName.AddAccountsSuccess, {
@@ -553,7 +554,6 @@ class Footer extends PureComponent<{
       onRetry,
       onDone,
       colors,
-      returnToSwap,
     } = this.props;
     return (
       <View
@@ -590,13 +590,7 @@ class Footer extends PureComponent<{
           <Button
             event="AddAccountsSelected"
             type="primary"
-            title={
-              returnToSwap ? (
-                <Trans i18nKey="addAccounts.finalCtaForSwap" />
-              ) : (
-                <Trans i18nKey="addAccounts.finalCta" />
-              )
-            }
+            title={<Trans i18nKey="addAccounts.finalCta" />}
             onPress={isDisabled ? undefined : onContinue}
           />
         )}

@@ -204,9 +204,11 @@ export default function DeviceAction<R, H, P>({
       device: selectedDevice,
       colors,
       theme,
-      provider:
-        (request && request.exchangeRate && request.exchangeRate.provider) ||
-        undefined,
+      transaction: request?.transaction,
+      exchangeRate: request?.exchangeRate,
+      exchange: request?.exchange,
+      amountExpectedTo: status.amountExpectedTo,
+      estimatedFees: status.estimatedFees,
     });
   }
 

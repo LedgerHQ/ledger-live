@@ -1,7 +1,5 @@
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AccountLike,
@@ -9,16 +7,16 @@ import {
   AccountRawLike,
   Operation,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import type { Transaction, TransactionRaw } from "../../generated/types";
+import { Transaction, TransactionRaw } from "../../generated/types";
+import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
 /// v3 changes here, move me to another folder soon
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
-export type KYCStatus = { id: string; status: ValidKYCStatus };
+export type KYCStatus = { id: string; status: ValidKYCStatus | "rejected" };
 export type GetKYCStatus = (arg0: string, arg1: string) => Promise<KYCStatus>;
 export type SubmitKYC = (
   str: string,
-  KYCData
+  data: KYCData
 ) => Promise<KYCStatus | { error: Error }>;
 
 export type KYCData = {
@@ -62,7 +60,9 @@ export type ExchangeRate = {
   error?: Error;
   providerURL?: string | null | undefined;
 };
+
 export type TradeMethod = "fixed" | "float";
+
 export type ExchangeRateRaw = {
   rate: string;
   magnitudeAwareRate: string;
@@ -74,20 +74,28 @@ export type ExchangeRateRaw = {
   error?: string;
   providerURL?: string | null | undefined;
 };
+
 export type AvailableProviderV2 = {
   provider: string;
   supportedCurrencies: string[];
 };
+
 export type AvailableProviderV3 = {
   provider: string;
-  pairs: Array<{ from: string; to: string; tradeMethod: string }>;
+  pairs: Pair[];
 };
+
+export interface Pair {
+  from: string;
+  to: string;
+  tradeMethod: string;
+}
 
 type CheckQuoteOkStatus = {
   codeName: "RATE_VALID";
 };
 
-type ValidCheckQuoteErrorCodes =
+export type ValidCheckQuoteErrorCodes =
   | "UNKNOW_USER"
   | "KYC_UNDEFINED"
   | "KYC_PENDING"
@@ -97,6 +105,7 @@ type ValidCheckQuoteErrorCodes =
   | "UNKNOWN_ERROR"
   | "WITHDRAWALS_BLOCKED"
   | "MFA_REQUIRED"
+  | "UNAUTHENTICATED_USER"
   | "RATE_NOT_FOUND";
 
 type CheckQuoteErrorStatus = {
@@ -257,6 +266,7 @@ export type InitSwapInput = {
   deviceId: string;
   userId?: string; // Nb for kyc purposes
 };
+
 export type InitSwapInputRaw = {
   exchange: ExchangeRaw;
   exchangeRate: ExchangeRateRaw;
@@ -268,3 +278,61 @@ export type InitSwapInputRaw = {
 export interface CustomMinOrMaxError extends Error {
   amount: BigNumber;
 }
+
+export type SwapSelectorStateType = {
+  currency: TokenCurrency | CryptoCurrency | undefined;
+  account: AccountLike | undefined;
+  parentAccount: Account | undefined;
+  amount: BigNumber | undefined;
+};
+
+export type OnNoRatesCallback = (arg: {
+  fromState: SwapSelectorStateType;
+  toState: SwapSelectorStateType;
+}) => void;
+
+export type RatesReducerState = {
+  status?: string | null;
+  value?: ExchangeRate[];
+  error?: Error;
+};
+
+export type SwapDataType = {
+  from: SwapSelectorStateType;
+  to: SwapSelectorStateType;
+  isMaxEnabled: boolean;
+  isSwapReversable: boolean;
+  rates: RatesReducerState;
+  refetchRates: () => void;
+  targetAccounts?: Account[];
+};
+
+export type SwapTransactionType = UseBridgeTransactionResult & {
+  swap: SwapDataType;
+  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
+  setToAccount: (
+    currency: SwapSelectorStateType["currency"],
+    account: SwapSelectorStateType["account"],
+    parentAccount: SwapSelectorStateType["parentAccount"]
+  ) => void;
+  setFromAmount: (amount: BigNumber) => void;
+  setToAmount: (amount: BigNumber) => void;
+  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
+  toggleMax: () => void;
+  reverseSwap: () => void;
+  fromAmountError?: Error;
+};
+
+export type SetIsSendMaxLoading = (loading: boolean) => void;
+
+export enum ActionRequired {
+  Login = "Login",
+  KYC = "KYC",
+  MFA = "MFA",
+  None = "None",
+}
+
+export type Message =
+  | { type: "navigation" }
+  | { type: "setToken"; token: string }
+  | { type: "closeWidget" };
