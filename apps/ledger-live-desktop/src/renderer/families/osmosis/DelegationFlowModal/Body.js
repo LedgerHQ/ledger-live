@@ -24,7 +24,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "../../cosmos/DelegationFlowModal/steps/StepAmount";
-import { FIGMENT_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/osmosis/utils";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/osmosis/utils";
 import { BigNumber } from "bignumber.js";
 
 import Stepper from "~/renderer/components/Stepper";
@@ -132,7 +132,7 @@ const Body = ({
 
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
-      validators: [{ address: FIGMENT_OSMOSIS_VALIDATOR_ADDRESS, amount: BigNumber(0) }],
+      validators: [{ address: LEDGER_OSMOSIS_VALIDATOR_ADDRESS, amount: BigNumber(0) }],
       recipient: account.freshAddress,
     });
 

@@ -30,7 +30,7 @@ import {
   getCurrentOsmosisPreloadData,
   getOsmosisPreloadDataUpdates,
 } from "../osmosis/preloadedData";
-import { FIGMENT_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "../osmosis/utils";
 
 export function useCosmosFamilyPreloadData(
   currencyName: string
@@ -209,7 +209,7 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   let ledgerValidatorAddress;
   if (currencyName == "osmosis") {
     data = getCurrentOsmosisPreloadData();
-    ledgerValidatorAddress = FIGMENT_OSMOSIS_VALIDATOR_ADDRESS;
+    ledgerValidatorAddress = LEDGER_OSMOSIS_VALIDATOR_ADDRESS;
   } else {
     data = getCurrentCosmosPreloadData();
     ledgerValidatorAddress = LEDGER_VALIDATOR_ADDRESS;
