@@ -1,13 +1,10 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { useCallback, useState } from "react";
-import {
-  selectorStateDefaultValues,
-  SwapSelectorStateType,
-  SwapTransactionType,
-} from ".";
+import { selectorStateDefaultValues } from ".";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { Account, AccountLike } from "../../../types";
 import { Result as UseBridgeTransactionReturnType } from "../../../bridge/useBridgeTransaction";
+import { SwapSelectorStateType, SwapTransactionType } from "../types";
 
 export const useFromState = ({
   accounts,
@@ -40,7 +37,7 @@ export const useFromState = ({
       const parentAccount =
         account?.type !== "Account"
           ? accounts?.find((a) => a.id === account?.parentId)
-          : null;
+          : undefined;
       const currency = getAccountCurrency(account as AccountLike);
 
       bridgeTransaction.setAccount(account as AccountLike, parentAccount);

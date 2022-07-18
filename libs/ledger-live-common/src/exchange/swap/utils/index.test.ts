@@ -12,10 +12,10 @@ import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,
   getProviderName,
-  KYCStatus,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "./index";
+import { ValidKYCStatus } from "../types";
 
 /* TODO: Refacto these two function and move them to mock/account.ts if needed */
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
@@ -285,7 +285,7 @@ describe("swap/utils/shouldShowKYCBanner", () => {
         test(`should display KYC banner if kycStatus is ${status}`, () => {
           const result = shouldShowKYCBanner({
             provider,
-            kycStatus: status as KYCStatus,
+            kycStatus: status as ValidKYCStatus,
           });
 
           expect(result).toBe(true);

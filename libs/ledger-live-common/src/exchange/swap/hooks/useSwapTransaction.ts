@@ -1,71 +1,28 @@
 import { AmountRequired } from "@ledgerhq/errors";
-import { BigNumber } from "bignumber.js";
 import { useMemo } from "react";
 import {
-  RatesReducerState,
-  useFromState,
-  useProviderRates,
-  useToState,
-} from ".";
-import useBridgeTransaction, {
-  Result as UseBridgeTransactionReturnType,
-} from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  CryptoCurrency,
-  TokenAccount,
-  TokenCurrency,
-} from "../../../types";
-import { ExchangeRate } from "../types";
+  ExchangeRate,
+  SwapSelectorStateType,
+  OnNoRatesCallback,
+  SwapTransactionType,
+  SetIsSendMaxLoading,
+} from "../types";
+import useBridgeTransaction from "../../../bridge/useBridgeTransaction";
+import { Account } from "../../../types";
+import { useFromState } from "./useFromState";
+import { useProviderRates } from "./useProviderRates";
+import { useToState } from "./useToState";
 import { useReverseAccounts } from "./useReverseAccounts";
 import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
-export type SwapSelectorStateType = {
-  currency: null | undefined | TokenCurrency | CryptoCurrency;
-  account: null | undefined | Account | TokenAccount;
-  parentAccount: null | undefined | Account;
-  amount: null | undefined | BigNumber;
-};
-export type SwapDataType = {
-  from: SwapSelectorStateType;
-  to: SwapSelectorStateType;
-  isMaxEnabled: boolean;
-  isSwapReversable: boolean;
-  rates: RatesReducerState;
-  refetchRates: () => void;
-  targetAccounts?: Account[];
-};
 export const selectorStateDefaultValues = {
-  currency: null,
-  account: null,
-  parentAccount: null,
-  amount: null,
+  currency: undefined,
+  account: undefined,
+  parentAccount: undefined,
+  amount: undefined,
 };
 
-export type SwapTransactionType = UseBridgeTransactionReturnType & {
-  swap: SwapDataType;
-  setFromAccount: (account: SwapSelectorStateType["account"]) => void;
-  setToAccount: (
-    currency: SwapSelectorStateType["currency"],
-    account: SwapSelectorStateType["account"],
-    parentAccount: SwapSelectorStateType["parentAccount"]
-  ) => void;
-  setFromAmount: (amount: BigNumber) => void;
-  setToAmount: (amount: BigNumber) => void;
-  setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
-  toggleMax: () => void;
-  reverseSwap: () => void;
-  fromAmountError?: Error;
-};
-
-export type OnNoRatesCallback = (arg: {
-  fromState: SwapSelectorStateType;
-  toState: SwapSelectorStateType;
-}) => void;
-export type SetExchangeRateCallback = (
-  exchangeRate?: ExchangeRate | null
-) => void;
-export type SetIsSendMaxLoading = (boolean) => void;
+export type SetExchangeRateCallback = (exchangeRate?: ExchangeRate) => void;
 
 export const useFromAmountError = (
   errors: Record<string, Error | undefined>

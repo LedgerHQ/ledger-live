@@ -3,8 +3,8 @@ import jwtDecode from "jwt-decode";
 import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
 import { getEnv } from "../../../env";
-import { Account, SubAccount, TokenAccount } from "../../../types";
-import type { CheckQuoteStatus } from "../types";
+import { Account, SubAccount, AccountLike } from "../../../types";
+import { CheckQuoteStatus, ValidKYCStatus } from "../types";
 
 // Note: looks like we can't use an enum because this is used in LLD js code
 export const KYC_STATUS = {
@@ -53,8 +53,8 @@ export function getAccountTuplesForCurrency(
 
 export const getAvailableAccountsById = (
   id: string,
-  accounts: ((Account | TokenAccount) & { disabled?: boolean })[]
-): ((Account | TokenAccount) & {
+  accounts: (AccountLike & { disabled?: boolean })[]
+): (AccountLike & {
   disabled?: boolean | undefined;
 })[] =>
   accounts
@@ -77,20 +77,20 @@ export const isJwtExpired = (jwtToken: string): boolean => {
 // Note: used in UI (LLD / LLM)
 export const getKYCStatusFromCheckQuoteStatus = (
   checkQuoteStatus: CheckQuoteStatus
-): KYCStatus | null => {
+): string | null => {
   switch (checkQuoteStatus.codeName) {
     case "KYC_PENDING":
-      return KYC_STATUS.pending as KYCStatus;
+      return KYC_STATUS.pending;
 
     case "KYC_FAILED":
-      return KYC_STATUS.rejected as KYCStatus;
+      return KYC_STATUS.rejected;
 
     case "KYC_UNDEFINED":
     case "KYC_UPGRADE_REQUIRED":
-      return KYC_STATUS.upgradeRequired as KYCStatus;
+      return KYC_STATUS.upgradeRequired;
 
     case "RATE_VALID":
-      return KYC_STATUS.approved as KYCStatus;
+      return KYC_STATUS.approved;
 
     // FIXME: should handle all other non KYC related error cases somewhere
     default:
@@ -157,7 +157,7 @@ export const shouldShowKYCBanner = ({
   kycStatus,
 }: {
   provider?: string;
-  kycStatus: KYCStatus;
+  kycStatus: ValidKYCStatus | "closed" | "rejected";
 }): boolean => {
   if (!provider) {
     return false;

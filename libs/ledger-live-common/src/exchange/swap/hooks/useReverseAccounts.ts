@@ -1,5 +1,9 @@
 import { useCallback, useMemo } from "react";
-import { SwapDataType, SwapSelectorStateType, SwapTransactionType } from ".";
+import {
+  SwapDataType,
+  SwapSelectorStateType,
+  SwapTransactionType,
+} from "../types";
 import { flattenAccounts } from "../../../account";
 import { Account } from "../../../types";
 

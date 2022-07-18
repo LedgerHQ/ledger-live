@@ -1,21 +1,21 @@
 import { useEffect } from "react";
-import { Account, TokenAccount } from "../../../types";
+import { AccountLike } from "../../../types";
 import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
 import { getAvailableAccountsById } from "../utils";
 
 // Pick a default source account if none are selected.
 export const usePickDefaultAccount = (
-  accounts: ((Account | TokenAccount) & { disabled?: boolean })[],
-  fromAccount: Account | TokenAccount | null | undefined,
-  setFromAccount: (account: Account | TokenAccount) => void
+  accounts: (AccountLike & { disabled?: boolean })[],
+  fromAccount: AccountLike | null | undefined,
+  setFromAccount: (account: AccountLike) => void
 ): void => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const allCurrencies = useCurrenciesByMarketcap(list);
 
   useEffect(() => {
     if (!fromAccount && allCurrencies.length > 0) {
-      const defaultAccount: Account | TokenAccount | undefined = allCurrencies
+      const defaultAccount: AccountLike | undefined = allCurrencies
         .map(({ id }) =>
           getAvailableAccountsById(id, accounts).filter((account) =>
             account.balance.gt(0)
