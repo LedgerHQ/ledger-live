@@ -2693,6 +2693,49 @@
       }
     }
   },
+  "avalanchepchain": {
+    "stakedBalance": "Staking",
+    "stakedBalanceTooltip": "Amount staked to validators",
+    "delegation": {
+      "header": "Delegations",
+      "add": "Add",
+      "validator": "NodeID",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "stakeAmount": "Stake",
+      "potentialReward": "Potential Reward",
+      "emptyState": {
+        "description": "You can earn AVAX rewards by delegating your assets.",
+        "info": "How Delegation works",
+        "delegation": "Earn rewards"
+      },
+      "notEnoughToDelegate": "You must have at least 25 available AVAX on the P chain to become a delegator.",
+      "validatorStake": "Validator Stake",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
