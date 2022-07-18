@@ -10,9 +10,7 @@ import * as server from "../../utils/serve-dummy-app";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH"
-// , env: { DEV_TOOLS: true }
-});
+test.use({ userdata: "1AccountBTC1AccountETH" });
 
 let continueTest = false;
 
@@ -108,6 +106,7 @@ test("Discover", async ({ page }) => {
 
   await test.step("Sign Transaction - confirmation modal", async () => {
     await discoverPage.continueToSignTransaction();
+    await layout.waitForLoadingSpinnerToHaveDisappeared();
     await discoverPage.waitForConfirmationScreenToBeDisplayed();
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
   });
