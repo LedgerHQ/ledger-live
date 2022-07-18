@@ -53,7 +53,6 @@ const DeviceLanguage: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [isChangeLanguageOpen, setIsChangeLanguageOpen] = useState(false);
-  const [deviceForAction, setDeviceForAction] = useState<Device | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(
     currentLanguage,
   );
@@ -61,6 +60,14 @@ const DeviceLanguage: React.FC<Props> = ({
     currentLanguage,
   );
   const availableLanguages = useAvailableLanguagesForDevice(deviceInfo);
+
+  const [shouldInstallLanguage, setShouldInstallLanguage] = useState<boolean>(
+    false,
+  );
+  const [
+    deviceForActionModal,
+    setDeviceForActionModal,
+  ] = useState<Device | null>(null);
 
   const action = useMemo(
     () =>
@@ -82,13 +89,23 @@ const DeviceLanguage: React.FC<Props> = ({
     [setIsChangeLanguageOpen],
   );
 
-  const openDeviceActionModal = useCallback(() => {
-    setDeviceForAction(device);
+  const confirmInstall = useCallback(() => {
+    setShouldInstallLanguage(true);
     closeChangeLanguageModal();
-  }, [setDeviceForAction, device, closeChangeLanguageModal]);
-  const closeDeviceActionModal = useCallback(() => setDeviceForAction(null), [
-    setDeviceForAction,
-  ]);
+  }, [setShouldInstallLanguage, closeChangeLanguageModal]);
+  // this has to be done in two steps because we can only open the second modal after the first
+  // one has been hidden. So we need to put this function attached to the onModalHide prop of the first
+  // see https://github.com/react-native-modal/react-native-modal/issues/30
+  const openDeviceActionModal = useCallback(() => {
+    if (shouldInstallLanguage) {
+      setDeviceForActionModal(device);
+    }
+  }, [shouldInstallLanguage, device, setDeviceForActionModal]);
+
+  const closeDeviceActionModal = useCallback(() => {
+    setShouldInstallLanguage(false);
+    setDeviceForActionModal(null);
+  }, [setShouldInstallLanguage, setDeviceForActionModal]);
 
   const refreshDeviceLanguage = useCallback(
     () => setDeviceLanguage(selectedLanguage),
@@ -119,19 +136,20 @@ const DeviceLanguage: React.FC<Props> = ({
       <BottomModal
         isOpened={isChangeLanguageOpen}
         onClose={closeChangeLanguageModal}
+        onModalHide={openDeviceActionModal}
       >
         <DeviceLanguageSelection
           deviceLanguage={deviceLanguage}
           onSelectLanguage={setSelectedLanguage}
           selectedLanguage={selectedLanguage}
-          onConfirmInstall={openDeviceActionModal}
+          onConfirmInstall={confirmInstall}
           availableLanguages={availableLanguages}
         />
       </BottomModal>
       <DeviceActionModal
         action={action}
         onClose={closeDeviceActionModal}
-        device={deviceForAction}
+        device={deviceForActionModal}
         renderOnResult={() => (
           <DeviceLanguageInstalled
             onContinue={closeDeviceActionModal}
