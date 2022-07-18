@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
-import { TouchableOpacity, TouchableWithoutFeedback, Share, Linking } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import QRCode from "react-native-qrcode-svg";
+import { TouchableOpacity, Linking } from "react-native";
+import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type {
   Account,
@@ -13,30 +12,19 @@ import type {
 import {
   getMainAccount,
   getAccountCurrency,
-  getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
-import { Flex, Link as TextLink } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
-import { track, TrackScreen } from "../../analytics";
+import { Flex } from "@ledgerhq/native-ui";
+import { TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
-import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import BottomModal from "../../components/BottomModal";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import CopyLink from "../../components/CopyLink";
-import NavigationScrollView from "../../components/NavigationScrollView";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
-import GenericErrorView from "../../components/GenericErrorView";
-import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
