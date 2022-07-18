@@ -7,8 +7,10 @@ import type {
 export type Transaction = TransactionCommon & {
     family: "avalanchecchain";
     fees: BigNumber | null;
+    mode: string;
 };
 export type TransactionRaw = TransactionCommonRaw & {
     family: "avalanchecchain";
     fees: string | null;
+    mode: string;
 };

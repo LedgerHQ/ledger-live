@@ -5,11 +5,12 @@ import getFeesForTransaction from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 
 const createTransaction = (): Transaction => ({
-    family: "avalanchecchain",
-    amount: new BigNumber(0),
-    recipient: "",
-    useAllAmount: false,
-    fees: null,
+  family: "avalanchecchain",
+  amount: new BigNumber(0),
+  recipient: "",
+  useAllAmount: false,
+  fees: null,
+  mode: "delegate",
 });
 
 const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
