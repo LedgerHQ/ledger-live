@@ -27,6 +27,7 @@ import {
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromCeloResourcesRaw,
   fromNFTRaw,
   fromCardanoResourceRaw,
 } from "./account";
@@ -395,6 +396,14 @@ export function patchAccount(
 
   if (updatedRaw.solanaResources) {
     next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.celoResources &&
+    !isEqual(account.celoResources, updatedRaw.celoResources)
+  ) {
+    next.celoResources = fromCeloResourcesRaw(updatedRaw.celoResources);
     changed = true;
   }
 
