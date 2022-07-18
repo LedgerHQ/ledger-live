@@ -91,6 +91,10 @@ const buildOptimisticOperation = (
     }
   }
 
+  const extra = {};
+  if (memo) {
+    extra["memo"] = memo;
+  }
   const op: Operation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
@@ -103,9 +107,7 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map((o) => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: {
-      memo,
-    },
+    extra: extra,
   };
 
   const tokenAccount = t.subAccountId

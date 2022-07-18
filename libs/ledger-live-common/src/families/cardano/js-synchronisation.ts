@@ -47,6 +47,10 @@ function mapTxToAccountOperation(
 
   const subOperations = inferSubOperations(tx.hash, subAccounts);
   const memo = getMemoFromTx(tx);
+  const extra = {};
+  if (memo) {
+    extra["memo"] = memo;
+  }
 
   return {
     accountId,
@@ -68,9 +72,7 @@ function mapTxToAccountOperation(
     subOperations,
     blockHeight: tx.blockHeight,
     date: new Date(tx.timestamp),
-    extra: {
-      memo,
-    },
+    extra: extra,
     blockHash: undefined,
   };
 }
