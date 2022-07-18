@@ -103,36 +103,33 @@ export default function AssetBalanceSummaryHeader({
       return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
     });
 
-  const onBuySell = useCallback(
-    (mode = "buy") => {
-      setTrackingSource("asset header actions");
-      // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled) {
-        const params = {
-          currency: currency.id,
-          mode, // buy or sell
-        };
+  const onBuy = useCallback(() => {
+    setTrackingSource("asset header actions");
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency.id,
+        mode: "buy", // buy or sell
+      };
 
-        const queryParams = new URLSearchParams(params);
+      const queryParams = new URLSearchParams(params);
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
-            "multibuy"}?${queryParams.toString()}`,
-          state: {},
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            currencyId: currency.id,
-          },
-        });
-      }
-    },
-    [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
-  );
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+          "multibuy"}?${queryParams.toString()}`,
+        state: {},
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+        },
+      });
+    }
+  }, [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("asset header actions");
@@ -193,12 +190,7 @@ export default function AssetBalanceSummaryHeader({
           </Wrapper>
         </BalanceTotal>
         {availableOnBuy && (
-          <Button
-            data-test-id="portfolio-buy-button"
-            variant="color"
-            mr={1}
-            onClick={() => onBuySell("buy")}
-          >
+          <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
             {t("accounts.contextMenu.buy")}
           </Button>
         )}

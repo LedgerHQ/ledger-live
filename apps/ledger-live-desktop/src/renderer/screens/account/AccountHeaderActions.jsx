@@ -310,24 +310,24 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       : []),
   ];
 
-  const BuyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
+  const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
 
-  const SellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
+  const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
 
-  const SwapHeader = <SwapActionDefault onClick={onSwap} />;
+  const swapHeader = <SwapActionDefault onClick={onSwap} />;
 
-  const ManageActionsHeader = manageActions.map(item => renderAction(item));
+  const manageActionsHeader = manageActions.map(item => renderAction(item));
 
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
-      {manageActions.length > 0 && ManageActionsHeader}
-      {availableOnSwap && SwapHeader}
-      {availableOnBuy && BuyHeader}
+      {manageActions.length > 0 ? manageActionsHeader : null}
+      {availableOnSwap ? swapHeader : null}
+      {availableOnBuy ? buyHeader : null}
       {/** don't show sell button if ptx smart routing is not enabled or sell not available */}
-      {availableOnSell && ptxSmartRouting?.enabled && SellHeader}
-      {canSend(account, parentAccount) && (
+      {availableOnSell && ptxSmartRouting?.enabled ? sellHeader : null}
+      {canSend(account, parentAccount) ? (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
-      )}
+      ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
     </FadeInButtonsContainer>
   );

@@ -75,45 +75,42 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
     mainAccount.subAccounts.length &&
     mainAccount.subAccounts[0].type === "TokenAccount";
 
-  const onBuySell = useCallback(
-    (mode = "buy") => {
-      setTrackingSource("empty state account");
-      // PTX smart routing redirect to live app or to native implementation
-      if (ptxSmartRouting?.enabled) {
-        const params = {
-          currency: currency.id,
-          account: mainAccount.freshAddress,
-          mode, // buy or sell
-        };
+  const onBuy = useCallback(() => {
+    setTrackingSource("empty state account");
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency.id,
+        account: mainAccount.freshAddress,
+        mode: "buy", // buy or sell
+      };
 
-        const queryParams = new URLSearchParams(params);
+      const queryParams = new URLSearchParams(params);
 
-        history.push({
-          // replace 'multibuy' in case live app id changes
-          pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
-            "multibuy"}?${queryParams.toString()}`,
-          state: {},
-        });
-      } else {
-        history.push({
-          pathname: "/exchange",
-          state: {
-            mode: "onRamp",
-            currencyId: currency.id,
-            accountId: mainAccount.id,
-          },
-        });
-      }
-    },
-    [
-      currency.id,
-      history,
-      mainAccount.freshAddress,
-      mainAccount.id,
-      ptxSmartRouting?.enabled,
-      ptxSmartRouting?.params?.liveAppId,
-    ],
-  );
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
+          "multibuy"}?${queryParams.toString()}`,
+        state: {},
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+          accountId: mainAccount.id,
+        },
+      });
+    }
+  }, [
+    currency.id,
+    history,
+    mainAccount.freshAddress,
+    mainAccount.id,
+    ptxSmartRouting?.enabled,
+    ptxSmartRouting?.params?.liveAppId,
+  ]);
 
   if (!mainAccount) return null;
 
@@ -162,7 +159,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
         </Description>
         <Box horizontal>
           {availableOnBuy ? (
-            <Button mt={5} mr={2} primary onClick={() => onBuySell("buy")}>
+            <Button mt={5} mr={2} primary onClick={onBuy}>
               <Box horizontal flow={1} alignItems="center">
                 <IconExchange size={12} />
                 <Box>{t("account.emptyState.buttons.buy")}</Box>
