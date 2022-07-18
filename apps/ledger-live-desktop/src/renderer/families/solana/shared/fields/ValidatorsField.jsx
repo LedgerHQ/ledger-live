@@ -34,31 +34,13 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
 
   const unit = getAccountUnit(account);
 
-  const validators = useValidators(account.currency);
+  const validators = useValidators(account.currency, search);
 
   const chosenValidator = useMemo(() => {
     if (chosenVoteAccAddr !== null) {
       return validators.find(v => v.voteAccount === chosenVoteAccAddr);
     }
   }, [validators, chosenVoteAccAddr]);
-
-  const validatorsFiltered = useMemo(() => {
-    const filtered = validators.filter(validator => {
-      return (
-        validator.name?.toLowerCase().includes(search.toLowerCase()) ||
-        validator.voteAccount.toLowerCase().includes(search.toLowerCase())
-      );
-    });
-
-    const flags = [];
-    const output = [];
-    for (let i = 0; i < filtered.length; i++) {
-      if (flags[filtered[i].voteAccount]) continue;
-      flags[filtered[i].voteAccount] = true;
-      output.push(filtered[i]);
-    }
-    return output;
-  }, [validators, search]);
 
   const containerRef = useRef();
 
@@ -91,12 +73,11 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
       <ValidatorsFieldContainer>
         <Box p={1}>
           <ScrollLoadingList
-            data={showAll ? validatorsFiltered : [chosenValidator ?? validators[0]]}
+            data={showAll ? validators : [chosenValidator ?? validators[0]]}
             style={{ flex: showAll ? "1 0 240px" : "1 0 63px", marginBottom: 0, paddingLeft: 0 }}
             renderItem={renderItem}
             noResultPlaceholder={
-              validatorsFiltered.length <= 0 &&
-              search.length > 0 && <NoResultPlaceholder search={search} />
+              validators.length <= 0 && search.length > 0 && <NoResultPlaceholder search={search} />
             }
           />
         </Box>

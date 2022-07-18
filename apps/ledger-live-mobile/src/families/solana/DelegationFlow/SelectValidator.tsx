@@ -37,26 +37,8 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const validators = useValidators(account.currency);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const validatorsFiltered = useMemo(() => {
-    const filtered = validators.filter(validator => {
-      return (
-        validator.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        validator.voteAccount.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    });
-
-    const flags = [];
-    const output = [];
-    for (let i = 0; i < filtered.length; i++) {
-      if (flags[filtered[i].voteAccount]) continue;
-      flags[filtered[i].voteAccount] = true;
-      output.push(filtered[i]);
-    }
-    return output;
-  }, [validators, searchQuery]);
+  const validators = useValidators(account.currency, searchQuery);
 
   const onItemPress = useCallback(
     (validator: ValidatorsAppValidator) => {
@@ -72,7 +54,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     ({ item }: { item: ValidatorsAppValidator }) => (
       <ValidatorRow account={account} validator={item} onPress={onItemPress} />
     ),
-    [onItemPress],
+    [onItemPress, account],
   );
 
   return (
@@ -90,7 +72,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       </View>
       <FlatList
         contentContainerStyle={styles.list}
-        data={validatorsFiltered}
+        data={validators}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />
@@ -182,30 +164,28 @@ const styles = StyleSheet.create({
 
 const keyExtractor = (v: ValidatorsAppValidator) => v.voteAccount;
 
-const ValidatorHead = () => {
-  return (
-    <View style={styles.validatorHead}>
+const ValidatorHead = () => (
+  <View style={styles.validatorHead}>
+    <Text
+      style={styles.validatorHeadText}
+      color="smoke"
+      numberOfLines={1}
+      fontWeight="semiBold"
+    >
+      <Trans i18nKey="delegation.validator" />
+    </Text>
+    <View style={styles.validatorHeadContainer}>
       <Text
         style={styles.validatorHeadText}
         color="smoke"
         numberOfLines={1}
         fontWeight="semiBold"
       >
-        <Trans i18nKey="delegation.validator" />
+        <Trans i18nKey="solana.delegation.totalStake" />
       </Text>
-      <View style={styles.validatorHeadContainer}>
-        <Text
-          style={styles.validatorHeadText}
-          color="smoke"
-          numberOfLines={1}
-          fontWeight="semiBold"
-        >
-          <Trans i18nKey="solana.delegation.totalStake" />
-        </Text>
-      </View>
     </View>
-  );
-};
+  </View>
+);
 const ValidatorRow = ({
   onPress,
   validator,
