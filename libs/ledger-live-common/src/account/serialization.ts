@@ -33,6 +33,10 @@ import {
   fromAlgorandResourcesRaw,
 } from "../families/algorand/serialization";
 import {
+  toAvalanchePChainResourcesRaw,
+  fromAvalanchePChainResourcesRaw
+} from "../families/avalanchepchain/serialization";
+import {
   toPolkadotResourcesRaw,
   fromPolkadotResourcesRaw,
 } from "../families/polkadot/serialization";
@@ -74,6 +78,7 @@ import {
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
+export { toAvalanchePChainResourcesRaw, fromAvalanchePChainResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
 export { toTezosResourcesRaw, fromTezosResourcesRaw };
@@ -716,6 +721,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     bitcoinResources,
     swapHistory,
     algorandResources,
+    avalanchePChainResources,
     syncHash,
     polkadotResources,
     elrondResources,
@@ -827,6 +833,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.algorandResources = fromAlgorandResourcesRaw(algorandResources);
   }
 
+  if (avalanchePChainResources) {
+    res.avalanchePChainResources = fromAvalanchePChainResourcesRaw(avalanchePChainResources);
+  }
+
   if (polkadotResources) {
     res.polkadotResources = fromPolkadotResourcesRaw(polkadotResources);
   }
@@ -885,6 +895,7 @@ export function toAccountRaw({
   tezosResources,
   swapHistory,
   algorandResources,
+  avalanchePChainResources,
   syncHash,
   polkadotResources,
   elrondResources,
@@ -960,6 +971,10 @@ export function toAccountRaw({
 
   if (algorandResources) {
     res.algorandResources = toAlgorandResourcesRaw(algorandResources);
+  }
+
+  if (avalanchePChainResources) {
+    res.avalanchePChainResources = toAvalanchePChainResourcesRaw(avalanchePChainResources);
   }
 
   if (polkadotResources) {

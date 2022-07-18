@@ -172,6 +172,10 @@ const modes = Object.freeze({
   solanaSub: {
     overridesDerivation: "44'/501'/<account>'",
   },
+  avalanchepchain: {
+    overridesDerivation: "44'/9000'/0'/0/<account>",
+    isNonIterable: true
+  },
   hederaBip44: {
     overridesDerivation: "44/3030",
   },
@@ -193,6 +197,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
+  avalanchepchain: ["avalanchepchain"],
   hedera: ["hederaBip44"],
   filecoin: ["gliflegacy", "glif"],
   cardano: ["cardano"],
@@ -356,6 +361,7 @@ const disableBIP44 = {
   stellar: true,
   polkadot: true,
   solana: true,
+  avalanchepchain: true,
   hedera: true,
   cardano: true,
   cardano_testnet: true,
@@ -364,6 +370,7 @@ const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
+  avalanchepchain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,

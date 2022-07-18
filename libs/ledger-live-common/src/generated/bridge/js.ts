@@ -1,5 +1,9 @@
 import algorand from "../../families/algorand/bridge/js";
 
+import avalanchecchain from "../../families/avalanchecchain/bridge/js";
+
+import avalanchepchain from "../../families/avalanchepchain/bridge/js";
+
 import bitcoin from "../../families/bitcoin/bridge/js";
 
 import cardano from "../../families/cardano/bridge/js";
@@ -35,6 +39,8 @@ import tron from "../../families/tron/bridge/js";
 
 export default {
   algorand,
+  avalanchecchain,
+  avalanchepchain,
   bitcoin,
   cardano,
   celo,
