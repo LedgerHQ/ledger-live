@@ -30,6 +30,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
         ...common,
         family: tr.family,
         fees: tr.fees ? new BigNumber(tr.fees) : null,
+        mode: tr.mode
     };
 };
 
@@ -39,6 +40,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
         ...common,
         family: t.family,
         fees: t.fees?.toString() || null,
+        mode: t.mode
     };
 };
 
