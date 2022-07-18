@@ -3,33 +3,48 @@ import { BN } from "avalanche";
 import { avalancheClient } from "./api/client";
 import { UnixNow } from "avalanche/dist/utils";
 import { HDHelper } from "./hdhelper";
+import type { Account } from "../../types";
 
-const buildTransaction = async (transaction: Transaction, hdHelper: HDHelper) => {
-    const pChain = avalancheClient().PChain();
-    const info = avalancheClient().Info();
+const buildTransaction = async (
+  account: Account,
+  transaction: Transaction,
+  hdHelper: HDHelper
+) => {
+  const { amount } = transaction;
 
-    const utxos = await hdHelper.fetchUTXOs();
-    const returnAddress = hdHelper.getCurrentAddress();
-    const pAddresses = hdHelper.getAllDerivedAddresses();
-    const changeAddress = hdHelper.getFirstAvailableAddress();
-    const nodeId = await info.getNodeID();
-    const startTime: BN = UnixNow().add(new BN(60 * 1)); //TODO: probably should be 2 - 5 minutes out
-    const endTime: BN = startTime.add(new BN(1814400)); //TODO: get this from UI
-    const amount: BN = new BN(transaction.amount.toString());
+  const utxos = await hdHelper.fetchUTXOs();
+  const returnAddress = hdHelper.getCurrentAddress();
+  const pAddresses = hdHelper.getAllDerivedAddresses();
+  const changeAddress = hdHelper.getFirstAvailableAddress();
+  const nodeId = transaction.recipient;
+  const startTime: BN = UnixNow().add(new BN(60 * 5)); //5 minutes from now
+  const endTime: BN = new BN(transaction.endTime?.toString());
+  const stakeAmount: BN = transaction.useAllAmount
+    ? new BN(account.spendableBalance.minus(transaction.fees || 0).toString())
+    : new BN(amount.toString());
 
-    const unsignedTx = await pChain.buildAddDelegatorTx(
-        utxos,
-        [returnAddress],
-        pAddresses,
-        [changeAddress],
-        nodeId,
-        startTime,
-        endTime,
-        amount,
-        [returnAddress]
-    );
+  //for testing
+  //   const info = avalancheClient().Info();
+  //   const nodeId = await info.getNodeID();
+  //   const endTime: BN = startTime.add(new BN(1814400)); //TODO: get this from UI
+  //   console.log("UTXOs:", utxos);
+  //   console.log("ADDRESSES: ", utxos.getAllUTXOStrings());
 
-    return unsignedTx;
+  const pChain = avalancheClient().PChain();
+
+  const unsignedTx = await pChain.buildAddDelegatorTx(
+    utxos,
+    [returnAddress],
+    pAddresses,
+    [changeAddress],
+    nodeId,
+    startTime,
+    endTime,
+    stakeAmount,
+    [returnAddress]
+  );
+
+  return unsignedTx;
 };
 
 export default buildTransaction;
