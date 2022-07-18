@@ -74,13 +74,18 @@ export const prepareTransaction = async (account: Account, t: Transaction) => {
     memo = "Ledger Live";
   }
 
+  if (t.useAllAmount) {
+    amount = await estimateMaxSpendable({ account, parentAccount: null });
+    t = { ...t, amount, fees, gas };
+  }
+
   if (mode === "delegate" && amount.eq(0)) {
     const validatorAmount = t.validators.reduce(
       (old, current) => old.plus(current.amount),
       new BigNumber(0)
     );
     amount = validatorAmount;
-    t = { ...t, amount, gas };
+    t = { ...t, amount, fees, gas };
   }
 
   if (t.memo !== memo || !sameFees(t.fees, fees)) {
