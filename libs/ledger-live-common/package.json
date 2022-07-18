@@ -163,7 +163,7 @@
     "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.0",
     "async": "^3.2.3",
-    "avalanche": "^3.15.1",
+    "avalanche": "^3.15.3",
     "axios": "0.26.1",
     "axios-retry": "^3.2.4",
     "base32-decode": "^1.0.0",
