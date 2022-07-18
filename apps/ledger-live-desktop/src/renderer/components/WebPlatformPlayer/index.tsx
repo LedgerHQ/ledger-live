@@ -116,7 +116,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
 
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
-      return receiveOnAccountCallback(accountId, { manifest, dispatch, accounts });
+      return receiveOnAccountCallback({ manifest, dispatch, accounts }, accountId);
     },
     [manifest, accounts, dispatch],
   );

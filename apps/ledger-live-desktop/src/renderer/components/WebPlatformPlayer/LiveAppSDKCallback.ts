@@ -46,8 +46,8 @@ type WebPlatformContext = {
 };
 
 export const receiveOnAccountCallback = (
-  accountId: string,
   { manifest, dispatch, accounts }: WebPlatformContext,
+  accountId: string,
 ) => {
   tracking.platformReceiveRequested(manifest);
 
@@ -336,6 +336,9 @@ export const signMessageCallback = (
   message: string,
 ) => {
   const account = accounts.find(account => account.id === accountId);
+  if (account === undefined) {
+    return Promise.reject(new Error("Unknown accountId: " + accountId))
+  }
 
   let formattedMessage: MessageData | null;
   try {
