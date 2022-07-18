@@ -1,5 +1,7 @@
 import algorand from "../families/algorand/speculos-deviceActions";
 
+import avalanchecchain from "../families/avalanchecchain/speculos-deviceActions";
+
 import bitcoin from "../families/bitcoin/speculos-deviceActions";
 
 import celo from "../families/celo/speculos-deviceActions";
@@ -31,6 +33,7 @@ import tron from "../families/tron/speculos-deviceActions";
 
 export default {
   algorand,
+  avalanchecchain,
   bitcoin,
   celo,
   cosmos,
