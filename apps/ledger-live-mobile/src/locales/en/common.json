@@ -644,7 +644,10 @@
       "title": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
     },
     "CardanoMinAmountError": {
-      "title": "Minimum {{amount}} ADA required"
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
     }
   },
   "bluetooth": {
@@ -4395,8 +4398,8 @@
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
       "quantity": "Quantity",
-      "attributes" : {
-        "floorPrice" : "Floor Price"
+      "attributes": {
+        "floorPrice": "Floor Price"
       }
     },
     "viewerModal": {

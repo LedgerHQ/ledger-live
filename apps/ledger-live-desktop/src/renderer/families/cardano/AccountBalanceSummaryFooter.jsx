@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
