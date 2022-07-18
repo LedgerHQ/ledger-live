@@ -239,6 +239,16 @@ dependencies {
 
     androidTestImplementation('com.wix:detox:+')
 
+    implementation (project(path:':storyly-react-native')) {
+        /**
+         * for now, no support for videos in storyly as it conflicts with react-native-video's
+         * dependency on exoplayer.
+         * Once this PR https://github.com/LedgerHQ/ledger-live/pull/435 is merged
+         * we can then upgrade to react-native-video v6 and the following line will be removed.
+         */
+        exclude(group: "com.google.android.exoplayer")
+    }
+
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
 

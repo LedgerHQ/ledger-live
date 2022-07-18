@@ -653,6 +653,7 @@ importers:
       rxjs: ^6.6.6
       rxjs-compat: ^6.6.6
       semver: ^7.3.7
+      storyly-react-native: ^1.24.0
       stream-browserify: ^3.0.0
       string_decoder: ~1.3.0
       styled-components: ^5.3.3
@@ -805,6 +806,7 @@ importers:
       rxjs: 6.6.7
       rxjs-compat: 6.6.7
       semver: 7.3.7
+      storyly-react-native: 1.24.0_jtrxi44z2zn3egoyupbz6wol6a
       stream-browserify: 3.0.0
       string_decoder: 1.3.0
       styled-components: 5.3.5_ovpqj5wn7dv5iunpkty63trwiy
@@ -43806,6 +43808,16 @@ packages:
   /store2/2.13.2:
     resolution: {integrity: sha512-CMtO2Uneg3SAz/d6fZ/6qbqqQHi2ynq6/KzMD/26gTkiEShCcpqFfTHgOxsE0egAq6SX3FmN4CeSqn8BzXQkJg==}
     dev: true
+
+  /storyly-react-native/1.24.0_jtrxi44z2zn3egoyupbz6wol6a:
+    resolution: {integrity: sha512-Cum4UcCZwc583t7T40jEIZJ+vGuWktZ5fVyJemIXHCLIgkcqEulZs20H1oddEHMx6nd7Bn2yu1ibVJBvL1+igw==}
+    peerDependencies:
+      react: ^17.0.2
+      react-native: '>=0.64.2 <1.0.x'
+    dependencies:
+      react: 17.0.2
+      react-native: 0.67.3_shn3lkepuadv4od4dudas6ijbq
+    dev: false
 
   /stream-array/1.1.2:
     resolution: {integrity: sha1-nl9zRfITfDDuO0mLkRToC1K7frU=}
