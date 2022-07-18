@@ -115,7 +115,7 @@ export const getAccountBridge = (
       transaction: toTransactionRaw(t),
     })
       .toPromise()
-      .then(fromTransactionStatusRaw);
+      .then(transactionStatus => fromTransactionStatusRaw(transactionStatus, a.currency.family));
 
   const signOperation = ({ account, transaction, deviceId }) =>
     command("AccountSignOperation")({

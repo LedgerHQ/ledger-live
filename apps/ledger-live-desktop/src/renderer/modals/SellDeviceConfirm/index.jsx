@@ -128,7 +128,7 @@ const Root = ({ data, onClose }: Props) => {
             payloadSignature,
             account: toAccountLikeRaw(account),
             parentAccount: parentAccount ? toAccountRaw(parentAccount) : undefined,
-            status: toTransactionStatusRaw(status),
+            status: toTransactionStatusRaw(status, account.currency.family),
           }),
         handleTransactionId,
       ),

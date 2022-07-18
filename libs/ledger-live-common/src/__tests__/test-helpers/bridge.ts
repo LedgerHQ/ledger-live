@@ -661,10 +661,13 @@ export function testBridge<T extends TransactionCommon>(
                   errors && expect(s.errors).toMatchObject(errors);
                   warnings && expect(s.warnings).toMatchObject(warnings);
                   // now we match rest of fields but using the raw version for better readability
-                  const restRaw: Record<string, any> = toTransactionStatusRaw({
-                    ...s,
-                    ...es,
-                  });
+                  const restRaw: Record<string, any> = toTransactionStatusRaw(
+                    {
+                      ...s,
+                      ...es,
+                    },
+                    account.currency.family
+                  );
                   delete restRaw.errors;
                   delete restRaw.warnings;
 
@@ -675,7 +678,10 @@ export function testBridge<T extends TransactionCommon>(
                   }
 
                   expect(
-                    toTransactionStatusRaw(s as TransactionStatus)
+                    toTransactionStatusRaw(
+                      s as TransactionStatus,
+                      account.currency.family
+                    )
                   ).toMatchObject(restRaw);
                 }
 

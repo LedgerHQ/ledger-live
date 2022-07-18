@@ -22,15 +22,17 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
 };
 
 export const fromTransactionStatusRaw = (
-  tr: TransactionStatusRaw
+  tr: TransactionStatusRaw,
+  family: string
 ): TransactionStatus => {
-  const TM = transactionModulePerFamily[tr.family];
+  const TM = transactionModulePerFamily[family];
   return TM.fromTransactionStatusRaw(tr as any);
 };
 export const toTransactionStatusRaw = (
-  t: TransactionStatus
+  t: TransactionStatus,
+  family: string
 ): TransactionStatusRaw => {
-  const TM = transactionModulePerFamily[t.family];
+  const TM = transactionModulePerFamily[family];
   return TM.toTransactionStatusRaw(t as any);
 };
 

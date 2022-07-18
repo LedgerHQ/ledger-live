@@ -31,9 +31,5 @@ export type TransactionRaw = TransactionCommonRaw & {
   tag: number | null | undefined;
   feeCustomUnit: Unit | null | undefined;
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "ripple";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "ripple";
-};
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

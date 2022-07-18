@@ -36,7 +36,6 @@ const initial: State = {
     estimatedFees: new BigNumber(0),
     amount: new BigNumber(0),
     totalSpent: new BigNumber(0),
-    family: "" as any,
   },
   statusOnTransaction: null,
   errorAccount: null,

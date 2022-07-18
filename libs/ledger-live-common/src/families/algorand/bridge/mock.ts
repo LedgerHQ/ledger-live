@@ -5,8 +5,12 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { AlgorandTransaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AlgorandTransaction, Transaction } from "../types";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 import {
   scanAccounts,
   signOperation,
@@ -43,7 +47,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   );
 };
 
-const getTransactionStatus = (account, t) => {
+const getTransactionStatus = (account: Account, t: Transaction) => {
   const errors: any = {};
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;

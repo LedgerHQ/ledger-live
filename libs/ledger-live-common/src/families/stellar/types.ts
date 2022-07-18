@@ -42,9 +42,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   memoValue: string | null | undefined;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "stellar";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "stellar";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

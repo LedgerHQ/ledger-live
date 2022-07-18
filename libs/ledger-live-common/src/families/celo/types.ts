@@ -15,9 +15,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "celo";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "celo";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

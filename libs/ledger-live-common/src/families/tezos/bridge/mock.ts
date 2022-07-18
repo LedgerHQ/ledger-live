@@ -12,8 +12,12 @@ import {
   RecommendSubAccountsToEmpty,
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
-import type { Transaction } from "../types";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { TezosAccount, Transaction } from "../types";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
 import {
   scanAccounts,
@@ -69,7 +73,7 @@ const createTransaction = (): Transaction => ({
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
-const getTransactionStatus = (a, t) => {
+const getTransactionStatus = (a: Account, t: Transaction) => {
   const errors: {
     recipient?: Error;
     amount?: Error;
@@ -84,7 +88,7 @@ const getTransactionStatus = (a, t) => {
   const account = subAcc || a;
 
   if (t.mode !== "undelegate") {
-    if (account.freshAddress === t.recipient) {
+    if ((account as TezosAccount).freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
       if (!t.recipient) {

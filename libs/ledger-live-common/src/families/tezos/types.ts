@@ -54,9 +54,6 @@ export type TezosAccountRaw = AccountRaw & {
   tezosResources: TezosResourcesRaw;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "tezos";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "tezos";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

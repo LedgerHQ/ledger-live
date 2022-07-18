@@ -82,9 +82,6 @@ export type ElrondAccountRaw = AccountRaw & {
   elrondResources: ElrondResourcesRaw;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "elrond";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "elrond";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

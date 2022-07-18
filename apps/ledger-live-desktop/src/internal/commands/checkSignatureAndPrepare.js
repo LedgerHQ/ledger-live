@@ -35,13 +35,14 @@ const cmd = ({
   parentAccount,
   status,
 }: Input): Observable<SellRequestEvent> => {
+  const acc = fromAccountLikeRaw(account);
   return withDevice(deviceId)(transport =>
     from(
       checkSignatureAndPrepare(transport, {
         binaryPayload,
-        account: fromAccountLikeRaw(account),
+        account: acc,
         parentAccount: parentAccount ? fromAccountRaw(parentAccount) : undefined,
-        status: fromTransactionStatusRaw(status),
+        status: fromTransactionStatusRaw(status, acc.currency.family),
         payloadSignature,
         transaction: fromTransactionRaw(transaction),
       }),

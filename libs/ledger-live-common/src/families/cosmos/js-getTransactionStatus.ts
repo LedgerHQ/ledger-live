@@ -127,7 +127,6 @@ export const getTransactionStatus = async (
     estimatedFees,
     amount: new BigNumber(0),
     totalSpent,
-    family: t.family,
   });
 };
 
@@ -184,7 +183,6 @@ const getDelegateTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
-    family: t.family,
   });
 };
 
@@ -243,7 +241,6 @@ const getSendTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
-    family: t.family,
   });
 };
 

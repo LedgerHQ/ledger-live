@@ -194,9 +194,6 @@ export type CosmosAccount = Account & { cosmosResources: CosmosResources };
 export type CosmosAccountRaw = AccountRaw & {
   cosmosResources: CosmosResourcesRaw;
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "cosmos";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "cosmos";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

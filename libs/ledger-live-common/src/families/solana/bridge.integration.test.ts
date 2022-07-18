@@ -1093,7 +1093,6 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
     totalSpent: new BigNumber(testOnChainData.fees.lamportsPerSignature),
     errors: stakeTestSpec.expectedErrors,
     warnings: {},
-    family: preparedTx.family,
   };
 
   expect(status).toEqual(expectedStatus);

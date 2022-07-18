@@ -49,6 +49,5 @@ export default async function getTransactionStatus(
     estimatedFees,
     totalSpent,
     warnings: {},
-    family: transaction.family,
   };
 }

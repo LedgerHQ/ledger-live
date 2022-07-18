@@ -115,7 +115,7 @@ const cmdAccountGetTransactionStatus = (o: {
   return from(
     bridge
       .getTransactionStatus(account, transaction)
-      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw)),
+      .then((raw: TransactionStatus) => toTransactionStatusRaw(raw, account.currency.family)),
   );
 };
 

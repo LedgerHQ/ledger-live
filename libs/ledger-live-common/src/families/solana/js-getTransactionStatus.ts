@@ -21,7 +21,6 @@ const getTransactionStatus = async (
       totalSpent: tx.amount,
       errors: {},
       warnings: {},
-      family: tx.family,
     };
   }
 
@@ -37,7 +36,6 @@ const getTransactionStatus = async (
     totalSpent,
     warnings,
     errors,
-    family: tx.family,
   };
 };
 

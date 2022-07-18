@@ -83,7 +83,6 @@ const fromTransactionStatusRaw = (
   const common = fromTransactionStatusRawCommon(tr);
   return {
     ...common,
-    family: tr.family,
     txInputs: tr.txInputs ? tr.txInputs.map(fromBitcoinInputRaw) : undefined,
     txOutputs: tr.txOutputs
       ? tr.txOutputs.map(fromBitcoinOutputRaw)
@@ -95,7 +94,6 @@ const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(t);
   return {
     ...common,
-    family: t.family,
     txInputs: t.txInputs ? t.txInputs.map(toBitcoinInputRaw) : undefined,
     txOutputs: t.txOutputs ? t.txOutputs.map(toBitcoinOutputRaw) : undefined,
   };

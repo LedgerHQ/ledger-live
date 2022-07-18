@@ -252,10 +252,6 @@ export type SolanaAccountRaw = AccountRaw & {
   solanaResources: SolanaResourcesRaw;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "solana";
-};
+export type TransactionStatus = TransactionStatusCommon;
 
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "solana";
-};
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

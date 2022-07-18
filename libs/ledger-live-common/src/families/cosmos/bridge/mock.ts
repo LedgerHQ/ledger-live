@@ -25,7 +25,11 @@ import {
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) =>
@@ -57,7 +61,7 @@ const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   );
 };
 
-const getTransactionStatus = (account, t) => {
+const getTransactionStatus = (account: Account, t: Transaction) => {
   const errors: StatusErrorMap = {};
   const warnings: StatusErrorMap = {};
   const useAllAmount = !!t.useAllAmount;

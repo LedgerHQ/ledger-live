@@ -94,9 +94,6 @@ export type TypedMessageData = {
   };
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "ethereum";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "ethereum";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

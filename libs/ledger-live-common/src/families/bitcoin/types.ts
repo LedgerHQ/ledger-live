@@ -149,12 +149,10 @@ export type TransactionRaw = TransactionCommonRaw & {
   networkInfo: NetworkInfoRaw | null | undefined;
 };
 export type TransactionStatus = TransactionStatusCommon & {
-  family: "bitcoin";
   txInputs?: BitcoinInput[];
   txOutputs?: BitcoinOutput[];
 };
 export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "bitcoin";
   txInputs?: BitcoinInputRaw[];
   txOutputs?: BitcoinOutputRaw[];
 };

@@ -117,7 +117,6 @@ const getTransactionStatus = async (
     totalSpent,
     txInputs,
     txOutputs,
-    family: t.family,
   });
 };
 

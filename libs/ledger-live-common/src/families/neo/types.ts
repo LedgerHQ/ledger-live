@@ -17,9 +17,5 @@ export type Transaction = TransactionCommon & {
 export type TransactionRaw = TransactionCommonRaw & {
   family: "neo";
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "neo";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "neo";
-};
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

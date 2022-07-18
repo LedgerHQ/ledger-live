@@ -114,9 +114,5 @@ export type PolkadotAccount = Account & {
 export type PolkadotAccountRaw = AccountRaw & {
   polkadotResources: PolkadotResourcesRaw;
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "polkadot";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "polkadot";
-};
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

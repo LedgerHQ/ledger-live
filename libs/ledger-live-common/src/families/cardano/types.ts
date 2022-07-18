@@ -187,9 +187,6 @@ export type CardanoAccountRaw = AccountRaw & {
   cardanoResources: CardanoResourcesRaw;
 };
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "cardano";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "cardano";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

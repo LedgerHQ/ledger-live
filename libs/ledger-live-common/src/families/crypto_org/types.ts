@@ -45,9 +45,6 @@ export type CryptoOrgAccount = Account & {
 export type CryptoOrgAccountRaw = AccountRaw & {
   cryptoOrgResources: CryptoOrgResourcesRaw;
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "crypto_org";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "crypto_org";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

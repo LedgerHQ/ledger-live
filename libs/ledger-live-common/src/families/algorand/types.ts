@@ -43,12 +43,8 @@ export type AlgorandTransactionRaw = TransactionCommonRaw & {
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "algorand";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "algorand";
-};
+export type TransactionStatus = TransactionStatusCommon;
+export type TransactionStatusRaw = TransactionStatusCommonRaw;
 export type Transaction = AlgorandTransaction;
 export type TransactionRaw = AlgorandTransactionRaw;
 export type AlgorandOperation = Operation & {

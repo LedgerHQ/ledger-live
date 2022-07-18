@@ -29,9 +29,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 export const reflect = (_declare: any) => {};
 
-export type TransactionStatus = TransactionStatusCommon & {
-  family: "hedera";
-};
-export type TransactionStatusRaw = TransactionStatusCommonRaw & {
-  family: "hedera";
-};
+export type TransactionStatus = TransactionStatusCommon;
+
+export type TransactionStatusRaw = TransactionStatusCommonRaw;

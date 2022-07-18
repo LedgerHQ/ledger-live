@@ -122,7 +122,6 @@ const getTransactionStatus = async (
     estimatedFees,
     amount,
     totalSpent,
-    family: t.family,
   });
 };
 

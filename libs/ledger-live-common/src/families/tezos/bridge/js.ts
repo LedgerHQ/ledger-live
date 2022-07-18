@@ -76,7 +76,7 @@ const createTransaction: () => Transaction = () => ({
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const getTransactionStatus = async (
-  account: Account,
+  account: TezosAccount,
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: {
