@@ -205,8 +205,10 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     .filter(
       (s) =>
         // ignore coin that are backed by testnet that have funds
-        !specsWithoutFunds.some(
-          (o) => o.spec.currency.isTestnetFor === s.spec.currency.id
+        !results.some(
+          (o) =>
+            o.spec.currency.isTestnetFor === s.spec.currency.id &&
+            !specsWithoutFunds.includes(o)
         )
     )
     .map((s) => s.spec.name);
@@ -336,7 +338,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       withoutFunds.length
     } specs don't have enough funds! (${withoutFunds.join(
       ", "
-    )})\n (and aren't covered by testnet)`;
+    )}) _(aren't covered by testnet neither)_`;
     body += missingFundsWarn;
     slackBody += missingFundsWarn;
   }
