@@ -9,6 +9,7 @@ export type ItemStatus = "inactive" | "active" | "completed";
 export type Item = {
   status: ItemStatus;
   title: string;
+  estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { from } from "rxjs";
-import { mergeMap } from "rxjs/operators";
+import { useCallback, useEffect, useState } from "react";
+import { from, of } from "rxjs";
+import { delay, mergeMap } from "rxjs/operators";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import getDeviceInfo from "../getDeviceInfo";
 import { withDevice } from "../deviceAccess";
@@ -11,6 +11,8 @@ import genuineCheck from "../genuineCheck";
 export type GenuineState = "unchecked" | "genuine" | "non-genuine";
 export type DevicePermissionState =
   | "unrequested"
+  | "unlock-needed"
+  | "unlocked"
   | "requested"
   | "granted"
   | "refused";
@@ -18,12 +20,14 @@ export type DevicePermissionState =
 export type UseGenuineCheckArgs = {
   isHookEnabled?: boolean;
   deviceId: DeviceId;
+  lockedDeviceTimeoutMs?: number;
 };
 
 export type UseGenuineCheckResult = {
   genuineState: GenuineState;
   devicePermissionState: DevicePermissionState;
   error: Error | null;
+  resetGenuineCheckState: () => void;
 };
 
 /**
@@ -31,6 +35,7 @@ export type UseGenuineCheckResult = {
  * It replaces a DeviceAction if we're only interested in getting the genuine check
  * @param isHookEnabled A boolean to enable (true, default value) or disable (false) the hook
  * @param deviceId A device id, or an empty string if device is usb plugged
+ * @param lockedDeviceTimeoutMs Time of no response from device after which the device is considered locked, in ms. Default 1000ms.
  * @returns An object containing:
  * - genuineState: the current GenuineState
  * - devicePermissionState: the current DevicePermissionState
@@ -39,18 +44,36 @@ export type UseGenuineCheckResult = {
 export const useGenuineCheck = ({
   isHookEnabled = true,
   deviceId,
+  lockedDeviceTimeoutMs = 1000,
 }: UseGenuineCheckArgs): UseGenuineCheckResult => {
   const [genuineState, setGenuineState] = useState<GenuineState>("unchecked");
   const [devicePermissionState, setDevicePermisionState] =
     useState<DevicePermissionState>("unrequested");
   const [error, setError] = useState<Error | null>(null);
 
+  const resetGenuineCheckState = useCallback(() => {
+    setDevicePermisionState("unrequested");
+    setGenuineState("unchecked");
+  }, []);
+
   useEffect(() => {
     if (isHookEnabled) {
+      // Notifies the hook consumer once the device is considered unresponsive.
+      // As we're not timing out inside the genuineCheckObservable flow (with rxjs timeout for ex)
+      // once the device is unlock, getDeviceInfo should return the device info and
+      // the flow will continue. No need to handle a retry strategy
+      const lockedDeviceTimeout = setTimeout(() => {
+        setDevicePermisionState("unlock-needed");
+      }, lockedDeviceTimeoutMs);
+
       // withDevice handles the unsubscribing cleaning when leaving the useEffect
       const genuineCheckObservable = withDevice(deviceId)((t) =>
         from(getDeviceInfo(t)).pipe(
-          mergeMap((deviceInfo) => genuineCheck(t, deviceInfo))
+          mergeMap((deviceInfo) => {
+            clearTimeout(lockedDeviceTimeout);
+            setDevicePermisionState("unlocked");
+            return genuineCheck(t, deviceInfo);
+          })
         )
       );
 
@@ -84,11 +107,12 @@ export const useGenuineCheck = ({
         },
       });
     }
-  }, [isHookEnabled, deviceId]);
+  }, [isHookEnabled, deviceId, lockedDeviceTimeoutMs]);
 
   return {
     genuineState,
     devicePermissionState,
     error,
+    resetGenuineCheckState,
   };
 };

@@ -28,7 +28,7 @@ import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import { completeOnboarding } from "../../actions/settings";
-import { SoftwareChecksStep } from "./SoftwareChecksStep";
+import SoftwareChecksStep from "./SoftwareChecksStep";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -36,6 +36,7 @@ type Step = {
   key: CompanionStepKey;
   status: StepStatus;
   title: string;
+  estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
@@ -46,8 +47,8 @@ type Props = StackScreenProps<
 
 const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
-const readyRedirectDelay = 1000;
-const resyncDelay = 2000;
+const readyRedirectDelay = 2500;
+const resyncDelay = 10000;
 
 /* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
@@ -75,13 +76,19 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     () => [
       {
         key: CompanionStepKey.Paired,
-        title: "Nano paired",
+        title: "Nano is paired",
         status: "inactive",
+        renderBody: () => (
+          <Text variant="bodyLineHeight">
+            {`Continue setting up on your Nano and look back here for step by step assistance.`}
+          </Text>
+        ),
       },
       {
         key: CompanionStepKey.Pin,
-        title: "Set your PIN",
+        title: "Choose your PIN",
         status: "inactive",
+        estimatedTime: 120,
         renderBody: () => (
           <Flex>
             <Text
@@ -96,8 +103,9 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.Seed,
-        title: "Recovery phrase",
+        title: "Set your recovery phrase",
         status: "inactive",
+        estimatedTime: 300,
         renderBody: () => (
           <Text variant="bodyLineHeight">
             {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
@@ -106,12 +114,12 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.SoftwareCheck,
-        title: "Software check",
+        title: "Operating system check",
         status: "inactive",
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
             device={device}
-            isDisplayed={!!isDisplayed}
+            isDisplayed={isDisplayed}
             onComplete={() =>
               setCompanionStepKey(nextStepKey(CompanionStepKey.SoftwareCheck))
             }
@@ -212,6 +220,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         break;
       case DeviceOnboardingStep.WelcomeScreen:
       case DeviceOnboardingStep.SetupChoice:
+        setCompanionStepKey(CompanionStepKey.Paired);
+        break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
         break;
