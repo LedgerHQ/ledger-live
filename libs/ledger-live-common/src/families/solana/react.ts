@@ -39,7 +39,7 @@ export function useValidators(
     );
 
     const flags = [];
-    const output = [];
+    const output: ValidatorsAppValidator[] = [];
     for (let i = 0; i < filtered.length; i++) {
       if (flags[filtered[i].voteAccount]) continue;
       flags[filtered[i].voteAccount] = true;
