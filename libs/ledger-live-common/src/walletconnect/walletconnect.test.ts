@@ -8,9 +8,6 @@ import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import type { Account } from "../types/account";
 import { emptyHistoryCache } from "../account";
 import { setEnv } from "../env";
-import { setPlatformVersion } from "../platform/version";
-
-setPlatformVersion("0.1.0");
 
 describe("walletconnect", () => {
   const account: Account = {

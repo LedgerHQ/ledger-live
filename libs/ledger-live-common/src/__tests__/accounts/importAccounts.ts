@@ -7,7 +7,7 @@ import { setSupportedCurrencies } from "../../currencies";
 import { AccountRaw } from "../../types";
 import { setPlatformVersion } from "../../platform/version";
 
-setPlatformVersion("0.1.0");
+setPlatformVersion("1.0.0");
 
 setSupportedCurrencies(["ethereum"]);
 describe("importAccountsMakeItems", () => {
