@@ -4481,5 +4481,13 @@
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
     }
+  },
+  "drawers": {
+    "selectCurrency": {
+      "title": "choose asset"
+    },
+    "selectAccount": {
+      "title": "choose account"
+    }
   }
 }
