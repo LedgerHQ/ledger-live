@@ -134,7 +134,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const contrastText = useTheme("colors.palette.text.shade60");
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptx_smart_routing");
 
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
   const manage = perFamilyManageActions[mainAccount.currency.family];

@@ -75,7 +75,7 @@ export default function MarketCoinScreen() {
   }, [providers, storedProviders]);
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("feature_ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptx_smart_routing");
 
   const {
     selectedCoinData: currency,
