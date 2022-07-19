@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
@@ -142,6 +142,9 @@ export default function Default() {
   useDeeplink();
   useUSBTroubleshooting();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptx_smart_routing");
+
   useProviders(); // prefetch data from swap providers here
 
   // every time location changes, scroll back up
@@ -211,11 +214,23 @@ export default function Default() {
                           exact
                         />
                         <Route
-                          path="/platform/:appId"
+                          path="/platform/:appId?"
                           render={(props: any) => <PlatformApp {...props} />}
                         />
                         <Route path="/lend" render={props => <Lend {...props} />} />
-                        <Route path="/exchange" render={props => <Exchange {...props} />} />
+                        <Route
+                          path="/exchange"
+                          render={(props: any) =>
+                            ptxSmartRouting?.enabled ? (
+                              <PlatformApp
+                                appId={ptxSmartRouting?.params?.liveAppId ?? "multibuy"}
+                                {...props}
+                              />
+                            ) : (
+                              <Exchange {...props} />
+                            )
+                          }
+                        />
                         <Route
                           exact
                           path="/account/:id/nft-collection"

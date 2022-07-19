@@ -19,12 +19,15 @@ type Props = {
     path: string,
     url: string,
   },
+  appId?: string,
 };
 
-export default function PlatformApp({ match }: Props) {
+export default function PlatformApp({ match, appId: propsAppId }: Props) {
   const history = useHistory();
   const { state: urlParams, search } = useLocation();
-  const { appId } = match.params;
+  const appId = propsAppId || match.params?.appId;
+
+  console.log(match);
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
 

@@ -85,13 +85,10 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
         mode: "buy", // buy or sell
       };
 
-      const queryParams = new URLSearchParams(params);
-
       history.push({
         // replace 'multibuy' in case live app id changes
-        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ??
-          "multibuy"}?${queryParams.toString()}`,
-        state: {},
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
       });
     } else {
       history.push({

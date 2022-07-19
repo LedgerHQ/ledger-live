@@ -11,22 +11,48 @@ import type { Account, CryptoCurrency } from "@ledgerhq/live-common/types/index"
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const BuyButton = ({ currency, account }: { currency: CryptoCurrency, account: Account }) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptx_smart_routing");
+
   const onClick = useCallback(() => {
     dispatch(closeAllModal());
     setTrackingSource("send flow");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        tab: 0,
-        defaultCurrency: currency,
-        defaultAccount: account,
-      },
-    });
-  }, [account, currency, dispatch, history]);
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency.id,
+        account: account.freshAddress,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          tab: 0,
+          defaultCurrency: currency,
+          defaultAccount: account,
+        },
+      });
+    }
+  }, [
+    account,
+    currency,
+    dispatch,
+    history,
+    ptxSmartRouting?.enabled,
+    ptxSmartRouting?.params?.liveAppId,
+  ]);
 
   if (!isCurrencySupported("BUY", currency)) {
     return null;
