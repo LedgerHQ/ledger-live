@@ -107,11 +107,11 @@ export class OnboardingPage {
     await this.stepperEndButton.click();
   }
 
-  async startTutorial(group: string) {
+  async startTutorial(group: string, nano: string) {
     expect(await this.page.screenshot()).toMatchSnapshot([group, "get-started-1.png"]);
     await this.continueTutorial();
 
-    expect(await this.page.screenshot()).toMatchSnapshot([group, "get-started-2.png"]);
+    expect(await this.page.screenshot()).toMatchSnapshot([group, `get-started-2-${nano}.png`]);
     await this.continueTutorial();
   }
 

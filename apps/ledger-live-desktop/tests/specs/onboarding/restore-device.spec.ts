@@ -27,7 +27,7 @@ test.describe.parallel("Onboarding", () => {
         expect(await page.screenshot()).toMatchSnapshot("v3-restore-device.png");
         await onboardingPage.restoreDevice();
 
-        await onboardingPage.startTutorial("v3-restore-tutorial");
+        await onboardingPage.startTutorial("v3-restore-tutorial", nano);
 
         await onboardingPage.setPinCode("v3-restore-tutorial");
 

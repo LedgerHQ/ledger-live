@@ -63,7 +63,7 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step("Set up new device", async () => {
-        await onboardingPage.startTutorial("v3-setup-new-device");
+        await onboardingPage.startTutorial("v3-setup-new-device", nano);
 
         await onboardingPage.setPinCode("v3-setup-new-device");
 
