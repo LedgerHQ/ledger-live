@@ -1,6 +1,6 @@
 // @flow
 
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { Currency } from "@ledgerhq/live-common/types/index";
 import type { ConfirmationDefaults } from "../types/common";
 
 export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {

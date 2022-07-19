@@ -88,12 +88,48 @@ platform :ios do
     set_api_key
   end
 
+  desc "private: refresh profiles"
+  private_lane :refresh_ios_profiles do
+    match(
+      type: "development",
+      app_identifier: ["com.ledger.live", "com.ledger.live.dev", "com.ledger.live.ledgerconnect"],
+      force_for_new_devices: true,
+      git_url: ENV["GIT_REPO_URL"],
+      username: ENV["APPLE_ID"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
+    match(
+      type: "adhoc",
+      app_identifier: ["com.ledger.live", "com.ledger.live.dev", "com.ledger.live.ledgerconnect"],
+      force_for_new_devices: true,
+      git_url: ENV["GIT_REPO_URL"],
+      username: ENV["APPLE_ID"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
+    match(
+      type: "appstore",
+      app_identifier: "com.ledger.live",
+      git_url: ENV["GIT_REPO_URL"],
+      username: ENV["APPLE_ID"],
+      team_id: ENV["DEVELOPER_TEAM_ID"],
+      keychain_name: ENV["CI_KEYCHAIN_NAME"],
+      keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+      git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+    )
+  end
+
   desc "buid for deployment (app-store or ad-hoc)"
   private_lane :build do |options|
     export_options_method = options[:local] ? "development" : (options[:adhoc] ? "ad-hoc" : "app-store")
     code_sign_identity = "iPhone Distribution"
     MY_APP_BUNDLE_ID = ENV["MY_APP_BUNDLE_ID"]
-    MY_APP_ID = (options[:adhoc] ? "#{ENV["SHORT_BUNDLE_ID"]}.local" : "#{ENV["APP_IDENTIFIER"]}")
+    MY_APP_ID = ENV["APP_IDENTIFIER"]
 
     MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
     MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
@@ -215,6 +251,7 @@ platform :ios do
           skip_submission: false,
           app_identifier: "com.ledger.live",
           skip_waiting_for_build_processing: false,
+          wait_processing_timeout_duration: 1800, # 30mn
           ipa: IPA_DIRECTORY,
           changelog: "Nightly Build v#{package['version']} (#{build_number})",
           beta_app_review_info: {
@@ -285,6 +322,23 @@ platform :ios do
       adhoc: true,
       ci: true
     )
+  end
+
+  desc "ci: add a device to apple profiles"
+  lane :add_ios_device do
+    setup_ios_ci
+    register_devices(
+      devices: {
+        ENV["DEVICE_NAME"] => ENV["UDID"]
+      }
+    )
+    refresh_ios_profiles
+  end
+
+  desc "ci: sync apple profiles"
+  lane :sync_ios_profiles do
+    setup_ios_ci
+    refresh_ios_profiles
   end
 
   # ============================ END CI BUILD =============================

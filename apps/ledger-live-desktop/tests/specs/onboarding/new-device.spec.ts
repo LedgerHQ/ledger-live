@@ -22,48 +22,48 @@ test.describe.parallel("Onboarding", () => {
       const deviceAction = new DeviceAction(page);
 
       await test.step("Get started", async () => {
-        expect(await onboardingPage.getStartedButton).toBeVisible();
-        expect(await page.screenshot()).toMatchSnapshot("getstarted.png");
+        await expect(onboardingPage.getStartedButton).toBeVisible();
+        await expect(page).toHaveScreenshot("getstarted.png");
         await onboardingPage.getStarted();
       });
 
       await test.step("Terms of service", async () => {
-        expect(await page.screenshot()).toMatchSnapshot("terms.png");
+        await expect(page).toHaveScreenshot("terms.png");
         await onboardingPage.acceptTerms();
       });
 
       await test.step(`[${nano}]" Select Device"`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot("device-selection.png");
+        await expect(page).toHaveScreenshot("device-selection.png");
         await onboardingPage.selectDevice(nano);
       });
 
       await test.step(`[${nano}]" Set Up new"`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`${nano}-onboarding-flows.png`);
+        await expect(page).toHaveScreenshot(`${nano}-onboarding-flows.png`);
         await onboardingPage.newDevice();
       });
 
       await test.step("Go through Basics Carrousel", async () => {
-        expect(await onboardingPage.pedagogyModal.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "carousel",
           "access-your-crypto.png",
         ]);
         await onboardingPage.basicsCarrouselRight();
-        expect(await onboardingPage.pedagogyModal.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "carousel",
           "own-your-private-key.png",
         ]);
         await onboardingPage.basicsCarrouselRight();
-        expect(await onboardingPage.pedagogyModal.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "carousel",
           "stay-offline.png",
         ]);
         await onboardingPage.basicsCarrouselRight();
-        expect(await onboardingPage.pedagogyModal.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "carousel",
           "validate-transactions.png",
         ]);
         await onboardingPage.basicsCarrouselRight();
-        expect(await onboardingPage.pedagogyModal.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.pedagogyModal).toHaveScreenshot([
           "carousel",
           "lets-set-up-your-nano.png",
         ]);
@@ -71,65 +71,65 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Set Up new device", async () => {
         await onboardingPage.setupWallet();
-        expect(await page.screenshot()).toMatchSnapshot(`start-setup.png`);
+        await expect(page).toHaveScreenshot(`start-setup.png`);
         await onboardingPage.startSetup();
-        expect(await page.screenshot()).toMatchSnapshot(`set-pincode.png`);
+        await expect(page).toHaveScreenshot(`set-pincode.png`);
         await onboardingPage.setPincode();
-        expect(await page.screenshot()).toMatchSnapshot(`set-passphrase.png`);
+        await expect(page).toHaveScreenshot(`set-passphrase.png`);
         await onboardingPage.setPassphrase();
       });
 
       await test.step("Pass Quiz", async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`quiz-start.png`);
+        await expect(page).toHaveScreenshot(`quiz-start.png`);
         await onboardingPage.startQuiz();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "question-1.png",
         ]);
         await onboardingPage.answerQuizBottom();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "answer-1.png",
         ]);
         await onboardingPage.quizNextQuestion();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "question-2.png",
         ]);
         await onboardingPage.answerQuizBottom();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "answer-2.png",
         ]);
         await onboardingPage.quizNextQuestion();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "question-3.png",
         ]);
         await onboardingPage.answerQuizTop();
-        expect(await onboardingPage.quizContainer.screenshot()).toMatchSnapshot([
+        await expect(onboardingPage.quizContainer).toHaveScreenshot([
           "quiz",
           "answer-3.png",
         ]);
         await onboardingPage.quizNextQuestion();
-        expect(await page.screenshot()).toMatchSnapshot("quiz-success.png");
+        await expect(page).toHaveScreenshot("quiz-success.png");
         await onboardingPage.quizEnd();
       });
 
       await test.step(`[${nano}]"Device genuine check"`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`connect-${nano}.png`);
+        await expect(page).toHaveScreenshot(`connect-${nano}.png`);
         await onboardingPage.checkDevice();
-        expect(await page.screenshot()).toMatchSnapshot("before-genuine-check.png");
+        await expect(page).toHaveScreenshot("before-genuine-check.png");
       });
 
       await test.step("Pass genuine check", async () => {
         await deviceAction.genuineCheck();
-        expect(await page.screenshot()).toMatchSnapshot("genuine-check-done.png");
+        await expect(page).toHaveScreenshot("genuine-check-done.png");
       });
 
       await test.step("Reach app", async () => {
         await onboardingPage.continue();
-        expect(await page.screenshot()).toMatchSnapshot("onboarding-complete.png");
+        await expect(page).toHaveScreenshot("onboarding-complete.png");
       });
     });
   }

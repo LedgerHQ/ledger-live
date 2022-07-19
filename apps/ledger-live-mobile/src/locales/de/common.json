@@ -80,7 +80,8 @@
     },
     "seeMore" : "Mehr anzeigen",
     "moreInfo" : "Mehr Infos",
-    "buyEth" : "Ethereum kaufen"
+    "buyEth" : "Ethereum kaufen",
+    "popular" : "beliebt"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Mindestens {{amount}} ADA erforderlich"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "Standort ist für Bluetooth LE erforderlich",
     "locationRequiredMessage" : "Unter Android ist eine Standortfreigabe erforderlich, um Bluetooth LE-Geräte aufzulisten.",
     "checkEnabled" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons."
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "Keine Verbindung",
+      "description" : "Ihre Verbindung mit dem Internet ist offenbar unterbrochen. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es noch einmal."
+    }
   },
   "location" : {
     "required" : "Standortdienste erforderlich",
@@ -795,6 +805,16 @@
         "title" : "Krypto-Märkte",
         "description" : "Überprüfen Sie Krypto-Preise und Markttrends direkt in der App",
         "cta" : "Durchsuchen"
+      },
+      "manageCard" : {
+        "title" : "Wir präsentieren die CL Card",
+        "description" : "Bestellen und verwalten Sie Ihre CL Card Powered by Ledger",
+        "cta" : "Weitere Informationen"
+      },
+      "discoverWeb3" : {
+        "title" : "Web 3.0 entdecken",
+        "description" : "Machen Sie sich bis zum Eintreffen Ihres Geräts mit allem vertraut, was das Web 3.0 zu bieten hat.",
+        "cta" : "Entdecken"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "Zertifizierte Sicherheit",
       "desc" : "Unsere Produkte sind die einzigen Hardware-Wallets, die für ihre Sicherheit von nationalen Cyber-Sicherheitsbehörden zertifiziert sind."
     },
-    "title" : "Ihren Ledger erhalten",
-    "desc" : "Schützen Sie Ihre Krypto & NFTs mit branchenführender Sicherheit",
+    "title" : "Sie benötigen einen Ledger.",
+    "desc" : "Aus Sicherheitsgründen funktioniert Ledger Live nur mit einem Gerät. Sie benötigen ein Gerät, um fortzufahren.",
     "cta" : "Ledger jetzt kaufen",
-    "footer" : "Ich habe bereits ein Gerät, jetzt einrichten"
+    "footer" : "Ich habe bereits ein Gerät, jetzt einrichten",
+    "bannerTitle" : "Bewahren Sie Ihre Kryptowährungen und NFTs sicher auf",
+    "bannerTitle2" : "Sie benötigen eine Nano für den Handel",
+    "bannerSubtitle" : "mit einem Ledger-Gerät",
+    "bannerButtonTitle" : "Entdecken Sie die Nano",
+    "bannerButtonTitle2" : "Ein Gerät kaufen",
+    "setupCta" : "Ich habe bereits ein Gerät. Bitte Einrichtung starten."
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "Haben Sie Ihr Gerät erhalten?",
+    "desc" : "Sobald Sie Ihr Gerät erhalten haben, können Sie es über Ledger Live einrichten!",
+    "cta" : "Mein Gerät einrichten",
+    "bannerTitle" : "Haben Sie Ihr Gerät erhalten?",
+    "bannerCta" : "Starten Sie die Einrichtung",
+    "continue" : "Weiter"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "Gerät kaufen",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "iFrame-URL aktualisieren",
+        "subtitle" : "Debugging-Einstellungen",
+        "cta" : "Speichern"
+      },
+      "message" : {
+        "successTitle" : "Transaktion abgeschlossen",
+        "errorTitle" : "Transaktionsfehler",
+        "subtitle" : "Nachricht empfangen",
+        "type" : "Typ: {{type}}",
+        "deviceId" : "Geräte-ID: {{deviceId}}",
+        "price" : "Preis: {{price}}",
+        "currency" : "Währung: {{currency}}",
+        "value" : "Wert: {{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "Kauf erfolgreich",
+    "title" : "Glückwunsch!",
+    "desc" : "Ihre Bestellung wird bearbeitet.\nSie erhalten Ihr Ledger-Gerät in Kürze. Bitte überprüfen Sie Ihre E-Mails auf Ihre Auftragsbestätigung."
   },
   "discover" : {
     "title" : "Entdecken",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "Verdienen",
         "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
+      },
+      "mint": {
+        "title": "Minting",
+        "desc": "Minte NFTs von exklusiven Kollaborationen auf [ L ] Market"
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -877,8 +940,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
-      "subtitle" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
+      "title" : "Willkommen bei Ledger",
+      "subtitle" : "Wir machen digitales Eigentum sicher und einfach.",
       "start" : "Erste Schritte",
       "noDevice" : "Kein Gerät?",
       "buy" : "Kaufen Sie ein {{fullDeviceName}}",
@@ -887,9 +950,16 @@
       "privacyLink" : "Datenschutzrichtlinie",
       "and" : "Hinzu kommt:"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "Besitzen Sie ein Ledger-Gerät?",
+      "subtitle" : "Zuallererst das Wichtigste",
+      "yes" : "Ja, das tue ich",
+      "no" : "Noch nicht"
+    },
     "postWelcomeStep" : {
-      "title" : "Los geht's!",
-      "subtitle" : "Richten Sie Ihren Ledger ein oder kaufen Sie jetzt einen.",
+      "title" : "Entscheiden Sie sich",
+      "subtitle_yes" : "Sie können Ihr Ledger-Gerät einrichten oder sich zuerst in der App umschauen.",
+      "subtitle_no" : "Sie können auswählen, ob Sie sich zunächst die App ansehen oder gleich eine Nano X kaufen möchten.",
       "noLedgerLink" : "Ich habe keinen Ledger und möchte einen kaufen",
       "setupLedger" : {
         "title" : "Meinen Ledger einrichten",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "Kaufen Sie ein Ledger Nano X",
-        "subtitle" : "Ihr Schlüssel zu Web3 - Schaffen Sie sich die Freiheit, Ihre Vermögenswerte zu kontrollieren"
+        "subtitle" : "Eine Hardware-Wallet ist die einzige Möglichkeit, um sicherzustellen, dass Ihre Vermögenswerte sicher sind "
       },
       "discoverLedger" : {
-        "title" : "Entdecken Sie Ledger Live",
-        "subtitle" : "Die App erkunden"
+        "title" : "Erkunden Sie Ledger Live",
+        "subtitle" : "Erkunden Sie die App und erfahren Sie mehr über ihre Vorteile "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "Erkunden Sie ohne ein Gerät",
+      "buyALedgerNow" : "Jetzt Ledger kaufen",
       "0" : {
-        "title" : "Ein Ort für all Ihre Kryptoanforderungen",
-        "desc" : "Überwachen, kaufen, verkaufen, tauschen, vermehren und verwalten Sie Ihre Vermögenswerte sicher und erhalten Sie die besten Krypto-Einblicke"
+        "title" : "Sichern Sie alle Ihre Krypto-Werte"
       },
       "1" : {
-        "title" : "Nicht Ihre Schlüssel, nicht Ihre Kryptos",
-        "desc" : "Die Sicherung Ihrer Vermögenswerte mit einer Hardware-Wallet ist die beste und einzige Möglichkeit, Ihre Krypto-Vermögenswerte zu besitzen und zu sichern"
+        "title" : "Behalten Sie die Märkte im Auge."
       },
       "2" : {
-        "title" : "Gewinnen Sie die Kontrolle über Ihr Geld zurück",
-        "desc" : "Die Ledger Nano X hält Ihre Coins offline und geschützt. Kombinieren Sie sie mit der Ledger Live App für maximale Sicherheit und Kontrolle über Ihre Kryptos",
-        "cta" : "Beginnen Sie Ihre Reise"
+        "title" : "Entdecken Sie Apps und erfahren Sie mehr über web3."
+      },
+      "3" : {
+        "title" : "Sichern Sie Ihre Krypto & NFTs."
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "Lernen",
-    "noConnection" : "Keine Verbindung",
-    "noConnectionDesc" : "Ihre Verbindung mit dem Internet ist offenbar unterbrochen. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es noch einmal.",
     "sectionShows" : "Shows",
     "sectionVideo" : "Video",
     "sectionPodcast" : "Podcast",
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Details",
+    "title" : "Transaktionsdetails",
     "account" : "Konto",
     "date" : "Datum",
     "confirmed" : "Bestätigt",
@@ -1600,7 +1669,7 @@
     "fees" : "Netzgebühren",
     "noFees" : "Keine Gebühr",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "identifier" : "Transaktions-ID",
     "viewOperation" : "Im Explorer ansehen",
     "whatIsThis" : "Was ist diese Aktion?",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "Keine Aktionen",
-    "noMoreOperations" : "Keine anderen Vorgänge"
+    "noMoreTransactions" : "Keine anderen Transaktionen"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Auswahl aufheben",
@@ -1698,7 +1767,7 @@
     "sell" : "Verkaufen",
     "swap" : "Umtauschen",
     "manage" : "Verwalten",
-    "lastOperations" : "Letzte Aktionen",
+    "lastTransactions" : "Letzte Transaktionen",
     "emptyState" : {
       "title" : "Noch keine Krypto-Werte?",
       "desc" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "NFT erhalten",
       "howTo" : "Um NFTs hinzuzufügen, müssen Sie sie <0>empfangen</0> mit Ihrer <1>{{currency}} Adresse</1>."
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "Sie haben keine Transaktionen",
+        "subtitle" : "Sie benötigen ein Gerät um {{assetName}} zu kaufen oder zu empfangen"
+      }
     }
   },
   "accounts" : {
@@ -1829,7 +1904,13 @@
       }
     },
     "noResultsFound" : "Kein Wert gefunden",
-    "noResultsDesc" : "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut"
+    "noResultsDesc" : "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "und mehr als 6000 weitere",
+        "subtitle" : "Ledger unterstützt mehr als 6000 Coins und Token"
+      }
+    }
   },
   "distribution" : {
     "header" : "Vermögensaufteilung",
@@ -1992,7 +2073,7 @@
       "clearCacheDesc" : "Die Transaktionen im Netzwerk werden gescannt und Ihre Konten werden neu berechnet.",
       "clearCacheModal" : "Sind Sie sicher?",
       "clearCacheModalDesc" : "Es wird ein neuer und vollständiger Scan der Transaktionen im Netzwerk durchgeführt. Die Kontoverläufe werden neu aufgebaut und die Salden werden neu berechnet.",
-      "clearCacheButton" : "Leeren",
+      "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
       "hardReset" : "Ledger Live zurücksetzen",
@@ -2058,13 +2139,15 @@
       "input" : "Adresse eingeben"
     },
     "send" : {
-      "title" : "Senden"
+      "title" : "Senden",
+      "description" : "Senden Sie Kryptos an eine andere Wallet."
     },
     "fees" : {
       "title" : "Gebühren bearbeiten"
     },
     "receive" : {
       "title" : "Empfangen",
+      "description" : "Empfangen Sie Kryptos von einer anderen Wallet.",
       "titleReadOnly" : "Ungeprüfte Adresse",
       "headerTitle" : "Krypto-Vermögenswert",
       "titleDevice" : "Verbundenes Gerät",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "Kein Krypto-Wert gefunden",
       "noResultsDesc" : "Bitte überprüfen Sie die Schreibweise und versuchen Sie es erneut"
     },
+    "buy" : {
+      "title" : "Kaufen",
+      "description" : "Kaufen Sie Kryptos sicher mit Bargeld."
+    },
+    "sell" : {
+      "title" : "Verkaufen",
+      "description" : "Verkaufen Sie Kryptos sicher gegen Bargeld."
+    },
     "exchange" : {
       "title" : "Kaufen / Verkaufen"
     },
     "swap" : {
       "title" : "Umtauschen",
+      "description" : "Tauschen Sie eine Kryptowährung gegen eine andere.",
       "selectDevice" : "Gerät auswählen",
       "broadcasting" : "Übertrage Swap",
       "loadingFees" : "Netzwerkgebühren werden geladen...",
@@ -2196,7 +2288,7 @@
         "tab" : "Umtauschen",
         "button" : "Weiter",
         "from" : "Von",
-        "to" : "Bis",
+        "to" : "An",
         "source" : "Quelle",
         "target" : "Zielkonto",
         "noAccount" : "Sie haben kein {{currency}}-Konto",
@@ -2234,7 +2326,7 @@
         },
         "summary" : {
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "send" : "Senden",
           "payoutNetworkFees" : "Auszahlungsgebühren",
           "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
@@ -2258,7 +2350,7 @@
         "date" : "Datum",
         "from" : "Von",
         "fromAmount" : "Gesendeter Betrag",
-        "to" : "Bis",
+        "to" : "An",
         "toAmount" : "Zu erhaltender Betrag",
         "statusTooltips" : {
           "expired" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID für weitere Informationen.",
@@ -2298,7 +2390,7 @@
       "form" : {
         "summary" : {
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "send" : "Senden",
           "payoutNetworkFees" : "Auszahlungsgebühren",
           "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "Kryptowährungen verleihen",
-      "titleTransferTab" : "Leihen",
+      "titleTransferTab" : "Verdienen",
+      "descriptionTransferTab" : "Verdienen Sie ein passives Einkommen.",
       "actionTitle" : "Leihen",
       "accountActions" : {
         "approve" : "Bestätigen",
@@ -2557,7 +2650,7 @@
       "total" : "Insgesamt",
       "amount" : "Betrag",
       "from" : "Von",
-      "to" : "Bis",
+      "to" : "An",
       "infoTotalTitle" : "Gesamtbelastung",
       "infoTotalDesc" : "Enthält den Transaktionsbetrag und die gewählten Netzwerkgebühren",
       "gasLimit" : "Gaslimit",
@@ -2836,10 +2929,15 @@
     },
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
-      "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden."
+      "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden.",
+      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>"
     },
     "confirmSell" : {
       "title" : "Verkaufsvorgang auf Gerät bestätigen",
+      "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden."
+    },
+    "confirmFund" : {
+      "title" : "Fondstransaktion bestätigen",
       "alert" : "Vor dem Senden der Fondsdetails müssen Sie diese auf Ihrem Gerät verifizieren. Die Adressen müssen Sie nicht verifizieren, da diese sicher ausgetauscht werden."
     },
     "button" : {
@@ -3923,7 +4021,7 @@
     "undelegateMy" : "Delegierung aufheben meines",
     "warnUndelegation" : "Die Delegierung Ihres Kontos wird aufgehoben.",
     "warnDelegation" : "Das Delegieren Ihrer Stimmrechte garantiert keine Prämien durch Ihren Validator.",
-    "to" : "Bis",
+    "to" : "an",
     "from" : "Von",
     "forAnEstYield" : "für einen geschätzten Ertrag von",
     "yieldPerYear" : "{{yield}} / Jahr",
@@ -4016,7 +4114,7 @@
     "amount" : "Betrag",
     "account" : "Konto",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "redelegationAmount" : "Zurückdelegierter Betrag",
     "gas" : "Gas",
     "validatorAddress" : "Validator-Adresse",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "Krypto kaufen",
       "tabTitle" : "Kaufen",
       "selectCurrency" : "Wählen Sie eine Währung",
       "selectAccount" : "Wählen Sie ein Konto",
+      "wantToBuy" : "Ich möchte kaufen",
       "connectDevice" : "Verbinden Sie Ihr Gerät",
       "title" : "Krypto kaufen über unseren Partner",
       "coinifyTitle" : "Krypto kaufen über unseren Partner",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "Krypto verkaufen",
       "tabTitle" : "Verkaufen",
       "selectCurrency" : "Wählen Sie eine Währung",
       "selectAccount" : "Wählen Sie ein Konto",
+      "wantToSell" : "Ich möchte verkaufen",
       "connectDevice" : "Verbinden Sie Ihr Gerät",
       "title" : "Krypto verkaufen über unseren Partner",
       "description" : "Verkaufen Sie Krypto-Vermögenswerte direkt von Ihrem Ledger-Konto über Coinify und erhalten Sie Fiat-Geld auf ihr Bankkonto.",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "Historisches"
+    },
+    "providerList" : {
+      "title" : "Anbieter auswählen"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "Token-Adresse kopiert!",
       "tokenId" : "Token ID",
       "tokenIdCopied" : "Token-ID kopiert!",
-      "quantity" : "Menge"
+      "quantity" : "Menge",
+      "attributes" : {
+        "floorPrice" : "Tiefstpreis"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ansehen auf",

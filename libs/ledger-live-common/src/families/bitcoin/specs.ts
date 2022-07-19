@@ -248,7 +248,6 @@ const bitcoinLikeMutations = ({
           {
             utxoStrategy: {
               ...transaction.utxoStrategy,
-              pickUnconfirmedRBF: true,
             },
           },
           {

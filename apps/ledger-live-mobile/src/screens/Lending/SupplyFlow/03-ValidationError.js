@@ -5,7 +5,7 @@ import type {
   Account,
   AccountLike,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";

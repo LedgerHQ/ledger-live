@@ -2,11 +2,11 @@
 /* eslint-disable array-callback-return */
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
-import type { AccountLikeArray, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/lib/compound/logic";
-import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
-import { isCompoundTokenSupported } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
+import type { AccountLikeArray, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
+import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
+import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
+import { isCompoundTokenSupported } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const makeSummaries = (accounts: AccountLikeArray): CompoundAccountSummary[] =>

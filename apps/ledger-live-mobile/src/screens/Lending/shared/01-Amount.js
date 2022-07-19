@@ -15,10 +15,10 @@ import invariant from "invariant";
 import type {
   Transaction,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/lib/compound/react";
+} from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/compound/react";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";

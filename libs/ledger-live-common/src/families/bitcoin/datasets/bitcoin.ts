@@ -47,7 +47,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -73,7 +72,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -99,7 +97,6 @@ const dataset: CurrenciesData<Transaction> = {
             rbf: false,
             utxoStrategy: {
               strategy: 0,
-              pickUnconfirmedRBF: false,
               excludeUTXOs: [],
             },
           }),
@@ -137,7 +134,6 @@ const dataset: CurrenciesData<Transaction> = {
         balance: "2757",
         blockHeight: 0,
         lastSyncDate: "",
-        xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
       },
     },
     {
@@ -163,7 +159,6 @@ const dataset: CurrenciesData<Transaction> = {
         unitMagnitude: 8,
         lastSyncDate: "",
         balance: "2717",
-        xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",
       },
     },
   ],

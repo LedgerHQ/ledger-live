@@ -1,5 +1,301 @@
 # live-mobile
 
+## 3.4.1
+
+### Patch Changes
+
+- [#642](https://github.com/LedgerHQ/ledger-live/pull/642) [`fbb61657d`](https://github.com/LedgerHQ/ledger-live/commit/fbb61657d1204174c31dc37c716e5c837617b60f) Thanks [@porenes](https://github.com/porenes)! - Adding [ L ] Market to the Mobile Discover Landing
+
+## 3.4.1-hotfix.0
+
+### Patch Changes
+
+- [#642](https://github.com/LedgerHQ/ledger-live/pull/642) [`fbb61657d`](https://github.com/LedgerHQ/ledger-live/commit/fbb61657d1204174c31dc37c716e5c837617b60f) Thanks [@porenes](https://github.com/porenes)! - Adding [ L ] Market to the Mobile Discover Landing
+
+## 3.4.0
+
+### Minor Changes
+
+- [#582](https://github.com/LedgerHQ/ledger-live/pull/582) [`8aefbac63`](https://github.com/LedgerHQ/ledger-live/commit/8aefbac63188f72e8c3f6655b2f91fc45bf16004) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Refresh segment identify to take in account satisfaction user property change
+
+### Patch Changes
+
+- [#574](https://github.com/LedgerHQ/ledger-live/pull/574) [`6a5c9caf4`](https://github.com/LedgerHQ/ledger-live/commit/6a5c9caf4ff5b16830fff254be2b01e427073375) Thanks [@github-actions](https://github.com/apps/github-actions)! - Merge hotfix - Fix deeplinking logic to platform (cold app start deeplink, experimental & private apps always accessible)
+
+* [#562](https://github.com/LedgerHQ/ledger-live/pull/562) [`41aa44fde`](https://github.com/LedgerHQ/ledger-live/commit/41aa44fde2ca4e0d127f82e622c4cdb3e96cfa90) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Empty analytics overlay when activating it
+
+- [#592](https://github.com/LedgerHQ/ledger-live/pull/592) [`593cd6bc1`](https://github.com/LedgerHQ/ledger-live/commit/593cd6bc1dd146e99c7966aa03a9a20cac5af46a) Thanks [@Justkant](https://github.com/Justkant)! - fix: Inline app install not working [LIVE-2851]
+
+* [#391](https://github.com/LedgerHQ/ledger-live/pull/391) [`d9689451e`](https://github.com/LedgerHQ/ledger-live/commit/d9689451efe39fd7333aafb9aff12df1702e88db) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix bug when navigating to the Manager screen without params
+
+- [#568](https://github.com/LedgerHQ/ledger-live/pull/568) [`2f0f22075`](https://github.com/LedgerHQ/ledger-live/commit/2f0f220756e1c014cb8a8ecf1d62f1a4ddccb1b0) Thanks [@Justkant](https://github.com/Justkant)! - fix: imports should use /lib and not /src
+
+* [#466](https://github.com/LedgerHQ/ledger-live/pull/466) [`026d923ee`](https://github.com/LedgerHQ/ledger-live/commit/026d923ee078169845026a9ab8abbf7cf235599d) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Update on Ledger Card CTA's (removed some, created one in the portfolio header)
+
+- [#315](https://github.com/LedgerHQ/ledger-live/pull/315) [`093792ebb`](https://github.com/LedgerHQ/ledger-live/commit/093792ebb70704cfcba7f12f1511930d0cd33a05) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Reborn analytics
+
+* [#373](https://github.com/LedgerHQ/ledger-live/pull/373) [`da3320c0a`](https://github.com/LedgerHQ/ledger-live/commit/da3320c0a65d6c5479eacf14e3a93ce85a42766c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing the architecture of NftMedia component
+
+* Updated dependencies [[`60fb9efdc`](https://github.com/LedgerHQ/ledger-live/commit/60fb9efdcc9dbf72f651fd7b388d175a12bf859b), [`3969bac02`](https://github.com/LedgerHQ/ledger-live/commit/3969bac02d6028ff543e61d4b67d95a6bfb14dfe), [`414fa596a`](https://github.com/LedgerHQ/ledger-live/commit/414fa596a88aafdce676ac3fb349f41f302ea860), [`4c02cf2e0`](https://github.com/LedgerHQ/ledger-live/commit/4c02cf2e0c393ad8d9cc5339e7b63eefb297e2cb)]:
+  - @ledgerhq/live-common@24.1.0
+
+## 3.4.0-next.7
+
+### Patch Changes
+
+- [#574](https://github.com/LedgerHQ/ledger-live/pull/574) [`6a5c9caf4`](https://github.com/LedgerHQ/ledger-live/commit/6a5c9caf4ff5b16830fff254be2b01e427073375) Thanks [@github-actions](https://github.com/apps/github-actions)! - Merge hotfix - Fix deeplinking logic to platform (cold app start deeplink, experimental & private apps always accessible)
+
+## 3.4.0-next.6
+
+### Patch Changes
+
+- [#315](https://github.com/LedgerHQ/ledger-live/pull/315) [`093792ebb`](https://github.com/LedgerHQ/ledger-live/commit/093792ebb70704cfcba7f12f1511930d0cd33a05) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Reborn analytics
+
+## 3.5.0-next.5
+
+### Patch Changes
+
+- [#592](https://github.com/LedgerHQ/ledger-live/pull/592) [`593cd6bc1`](https://github.com/LedgerHQ/ledger-live/commit/593cd6bc1dd146e99c7966aa03a9a20cac5af46a) Thanks [@Justkant](https://github.com/Justkant)! - fix: Inline app install not working [LIVE-2851]
+
+## 3.5.0-next.4
+
+### Patch Changes
+
+- [#562](https://github.com/LedgerHQ/ledger-live/pull/562) [`41aa44fde`](https://github.com/LedgerHQ/ledger-live/commit/41aa44fde2ca4e0d127f82e622c4cdb3e96cfa90) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Empty analytics overlay when activating it
+
+## 3.5.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`4c02cf2e0`](https://github.com/LedgerHQ/ledger-live/commit/4c02cf2e0c393ad8d9cc5339e7b63eefb297e2cb)]:
+  - @ledgerhq/live-common@24.1.0-next.1
+
+## 3.5.0-next.2
+
+### Patch Changes
+
+- [#373](https://github.com/LedgerHQ/ledger-live/pull/373) [`da3320c0a`](https://github.com/LedgerHQ/ledger-live/commit/da3320c0a65d6c5479eacf14e3a93ce85a42766c) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Changing the architecture of NftMedia component
+
+## 3.5.0-next.1
+
+### Minor Changes
+
+- [#582](https://github.com/LedgerHQ/ledger-live/pull/582) [`8aefbac63`](https://github.com/LedgerHQ/ledger-live/commit/8aefbac63188f72e8c3f6655b2f91fc45bf16004) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Refresh segment identify to take in account satisfaction user property change
+
+## 3.4.1-next.0
+
+### Patch Changes
+
+- [#391](https://github.com/LedgerHQ/ledger-live/pull/391) [`d9689451e`](https://github.com/LedgerHQ/ledger-live/commit/d9689451efe39fd7333aafb9aff12df1702e88db) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix bug when navigating to the Manager screen without params
+
+* [#568](https://github.com/LedgerHQ/ledger-live/pull/568) [`2f0f22075`](https://github.com/LedgerHQ/ledger-live/commit/2f0f220756e1c014cb8a8ecf1d62f1a4ddccb1b0) Thanks [@Justkant](https://github.com/Justkant)! - fix: imports should use /lib and not /src
+
+- [#466](https://github.com/LedgerHQ/ledger-live/pull/466) [`026d923ee`](https://github.com/LedgerHQ/ledger-live/commit/026d923ee078169845026a9ab8abbf7cf235599d) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Update on Ledger Card CTA's (removed some, created one in the portfolio header)
+
+- Updated dependencies [[`60fb9efdc`](https://github.com/LedgerHQ/ledger-live/commit/60fb9efdcc9dbf72f651fd7b388d175a12bf859b), [`3969bac02`](https://github.com/LedgerHQ/ledger-live/commit/3969bac02d6028ff543e61d4b67d95a6bfb14dfe), [`414fa596a`](https://github.com/LedgerHQ/ledger-live/commit/414fa596a88aafdce676ac3fb349f41f302ea860)]:
+  - @ledgerhq/live-common@24.1.0-next.0
+
+## 3.3.2
+
+### Patch Changes
+
+- [#609](https://github.com/LedgerHQ/ledger-live/pull/609) [`0139d05ab`](https://github.com/LedgerHQ/ledger-live/commit/0139d05ab2adf83f49690e3b6cd93e87707f82d7) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix deeplinking logic to platform (cold app start deeplink, experimental & private apps always accessible)
+
+## 3.3.2-hotfix.0
+
+### Patch Changes
+
+- [#609](https://github.com/LedgerHQ/ledger-live/pull/609) [`0139d05ab`](https://github.com/LedgerHQ/ledger-live/commit/0139d05ab2adf83f49690e3b6cd93e87707f82d7) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fix deeplinking logic to platform (cold app start deeplink, experimental & private apps always accessible)
+
+## 3.4.0
+
+### Minor Changes
+
+- [#385](https://github.com/LedgerHQ/ledger-live/pull/385) [`5145781e5`](https://github.com/LedgerHQ/ledger-live/commit/5145781e599fcb64be13695620988951bb805a3e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- [#73](https://github.com/LedgerHQ/ledger-live/pull/73) [`99cc5bbc1`](https://github.com/LedgerHQ/ledger-live/commit/99cc5bbc10d2676ad3e621577fdbcf432d1c91a2) Thanks [@chabroA](https://github.com/chabroA)! - Handle all non final (i.e: non OK nor KO) status as pending
+
+* [#412](https://github.com/LedgerHQ/ledger-live/pull/412) [`fbc32d3e2`](https://github.com/LedgerHQ/ledger-live/commit/fbc32d3e2e229e7a3dbe71bbd8c36ed203c61e34) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - AccountGraphCard : Add rounding when using counter value (to prevent too many decimals in crypto-value)
+
+- [#371](https://github.com/LedgerHQ/ledger-live/pull/371) [`4f43ac0e5`](https://github.com/LedgerHQ/ledger-live/commit/4f43ac0e53e090239dcdc11ae3840cf5abbf401b) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Add back navigation to NftViewer and fixed style issues on the view
+
+* [#336](https://github.com/LedgerHQ/ledger-live/pull/336) [`6bf75fa20`](https://github.com/LedgerHQ/ledger-live/commit/6bf75fa20e1991964948bf48c01a530a43ba03e1) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated naming for last operations to last transactions
+
+- [#337](https://github.com/LedgerHQ/ledger-live/pull/337) [`7bdf0091f`](https://github.com/LedgerHQ/ledger-live/commit/7bdf0091fef18d6b10e54a74a765f76798640100) Thanks [@gre](https://github.com/gre)! - (internal) Filtering more errors to NOT be reported to Sentry – typically to ignore users-specific cases
+
+- Updated dependencies [[`99cc5bbc1`](https://github.com/LedgerHQ/ledger-live/commit/99cc5bbc10d2676ad3e621577fdbcf432d1c91a2), [`22531f3c3`](https://github.com/LedgerHQ/ledger-live/commit/22531f3c377191d56bc5d5635f1174fb32b01957), [`c5714333b`](https://github.com/LedgerHQ/ledger-live/commit/c5714333bdb1c90a29c20c7e5793184d89967142), [`d22452817`](https://github.com/LedgerHQ/ledger-live/commit/d224528174313bc4975e62d015adf928d4315620), [`5145781e5`](https://github.com/LedgerHQ/ledger-live/commit/5145781e599fcb64be13695620988951bb805a3e), [`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062), [`2012b5477`](https://github.com/LedgerHQ/ledger-live/commit/2012b54773b6391f353903564a247ad02be1a296), [`10440ec3c`](https://github.com/LedgerHQ/ledger-live/commit/10440ec3c2bffa7ce8636a7838680bb3501ffe0d), [`e1f2f07a2`](https://github.com/LedgerHQ/ledger-live/commit/e1f2f07a2ba1de5eab6fa10c4c800b7097c8037d), [`99cc5bbc1`](https://github.com/LedgerHQ/ledger-live/commit/99cc5bbc10d2676ad3e621577fdbcf432d1c91a2), [`1e4a5647b`](https://github.com/LedgerHQ/ledger-live/commit/1e4a5647b39c0f806bc311383b49a246fbe453eb), [`508e4c23b`](https://github.com/LedgerHQ/ledger-live/commit/508e4c23babd04c48e7b626ef4004fb55f3c1ba9), [`b1e396dd8`](https://github.com/LedgerHQ/ledger-live/commit/b1e396dd89ca2787978dc7e53b7ca865133a1961), [`e9decc277`](https://github.com/LedgerHQ/ledger-live/commit/e9decc27785fb07972460494c8ef39e92b0127a1)]:
+  - @ledgerhq/live-common@24.0.0
+  - @ledgerhq/native-ui@0.8.1
+
+## 3.4.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`bdc76d75f`](https://github.com/LedgerHQ/ledger-live/commit/bdc76d75f9643129384c76ac9868e160c4b52062)]:
+  - @ledgerhq/live-common@24.0.0-next.4
+
+## 3.4.0-next.3
+
+### Minor Changes
+
+- 5145781e5: NFT counter value added on LLM and LLD with feature flagging
+
+### Patch Changes
+
+- Updated dependencies [5145781e5]
+  - @ledgerhq/live-common@24.0.0-next.3
+
+## 3.3.1
+
+### Patch Changes
+
+- c3079243d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
+- bda266fc4: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
+## 3.3.1-hotfix.1
+
+### Patch Changes
+
+- bb592ab1d: Exit readonly mode in multiple places where the user interacts with a device and therefore should have exited readonly mode. Fix a bug where user in "old" readonly mode would crash when pressing an account in MarketPage.
+
+## 3.3.1-hotfix.0
+
+### Patch Changes
+
+- b8dad7183: Fix an edge case where the readonly example portfolio would show up instead of the real one
+
+## 3.3.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [c5714333b]
+  - @ledgerhq/live-common@24.0.0-next.2
+
+## 3.3.1-next.1
+
+### Patch Changes
+
+- 99cc5bbc1: Handle all non final (i.e: non OK nor KO) status as pending
+- Updated dependencies [99cc5bbc1]
+- Updated dependencies [99cc5bbc1]
+  - @ledgerhq/live-common@24.0.0-next.1
+
+## 3.3.1-next.0
+
+### Patch Changes
+
+- fbc32d3e2: AccountGraphCard : Add rounding when using counter value (to prevent too many decimals in crypto-value)
+- 4f43ac0e5: Add back navigation to NftViewer and fixed style issues on the view
+- 6bf75fa20: Updated naming for last operations to last transactions
+- 7bdf0091f: (internal) Filtering more errors to NOT be reported to Sentry – typically to ignore users-specific cases
+- Updated dependencies [22531f3c3]
+- Updated dependencies [d22452817]
+- Updated dependencies [2012b5477]
+- Updated dependencies [10440ec3c]
+- Updated dependencies [e1f2f07a2]
+- Updated dependencies [1e4a5647b]
+- Updated dependencies [508e4c23b]
+- Updated dependencies [b1e396dd8]
+- Updated dependencies [e9decc277]
+  - @ledgerhq/live-common@24.0.0-next.0
+  - @ledgerhq/native-ui@0.8.1-next.0
+
+## 3.3.0
+
+### Minor Changes
+
+- 09f79c7b4: Add Cardano to mobile
+- 7ba2346a5: feat(LLM): multibuy 1.5 [LIVE-1710]
+- 4db0f58ca: Updated learn feature url to be remote configurable
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+- fe3c7a39c: Add Earn Rewards btn on Solana
+
+### Patch Changes
+
+- 3d71946fb: Fix deep linking logic for platform apps
+- 27c947ba4: fix(multibuy): remove fiat filter
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 95b4c2854: Fix hasOrderedNano state with Buy Nano screen
+- 3d1ab8511: Behavior fixed when clicking on the "My Ledger" button on the tab bar when on read only mode
+- 46994ebfd: Wording - small typos fixed
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+- 5bae58815: bugfix - webview reload crash issue related to ui rendering layout shift bugs
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [bf12e0f65]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [592ad2f7b]
+- Updated dependencies [ec5c4fa3d]
+- Updated dependencies [dd6a12c9b]
+- Updated dependencies [608010c9d]
+- Updated dependencies [78a64769d]
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/live-common@23.1.0
+  - @ledgerhq/native-ui@0.8.0
+
+## 3.3.0-next.14
+
+### Patch Changes
+
+- 95b4c2854: Fix hasOrderedNano state with Buy Nano screen
+
+## 3.3.0-next.13
+
+### Patch Changes
+
+- Updated dependencies [78a64769d]
+  - @ledgerhq/live-common@23.1.0-next.4
+
+## 3.3.0-next.12
+
+### Patch Changes
+
+- 5bae58815: bugfix - webview reload crash issue related to ui rendering layout shift bugs
+- Updated dependencies [0c2c6682b]
+  - @ledgerhq/native-ui@0.8.0-next.2
+
+## 3.3.0-next.11
+
+### Patch Changes
+
+- 46994ebfd: Wording - small typos fixed
+
+## 3.3.0-next.10
+
+### Patch Changes
+
+- 3d1ab8511: Behavior fixed when clicking on the "My Ledger" button on the tab bar when on read only mode
+
+## 3.3.0-next.9
+
+### Patch Changes
+
+- Updated dependencies [ec5c4fa3d]
+  - @ledgerhq/live-common@23.1.0-next.3
+
+## 3.3.0-next.8
+
+### Patch Changes
+
+- 27c947ba4: fix(multibuy): remove fiat filter
+
+## 3.3.0-next.7
+
+### Minor Changes
+
+- 7ba2346a5: feat(LLM): multibuy 1.5 [LIVE-1710]
+
+## 3.3.0-next.6
+
+### Minor Changes
+
+- bf12e0f65: feat: sell and fund flow [LIVE-784]
+- d2576ef46: feat(swap): Add Changelly's Terms of Use in the confirmation screen [LIVE-1196]
+
 ## 3.2.1
 
 ### Patch Changes
@@ -10,7 +306,58 @@
 
 ### Patch Changes
 
-- fea7a4aa1: Fix bug of a conditionally called hook in the firmware retrieval
+- Updated dependencies [bf12e0f65]
+  - @ledgerhq/live-common@23.1.0-next.2
+
+## 3.3.0-next.5
+
+### Patch Changes
+
+- 3d71946fb: Fix deep linking logic for platform apps
+
+## 3.3.0-next.4
+
+### Minor Changes
+
+- 4db0f58ca: Updated learn feature url to be remote configurable
+
+## 3.3.0-next.3
+
+### Minor Changes
+
+- fe3c7a39c: Add Earn Rewards btn on Solana
+
+## 3.3.0-next.2
+
+### Minor Changes
+
+- 09f79c7b4: Add Cardano to mobile
+
+## 3.3.0-next.1
+
+### Minor Changes
+
+- 592ad2f7b: Update design on upsell modal in mobile app. Also add new variants and shape to IconBoxList and BoxedIcon components in native UI.
+- 608010c9d: Add a purchase device page embedding a webview from the ecommerce team. Also abstract webview pages logic into its own component (include Learn page's webview). Add a delayed tracking provider to send events to Adjust or Segment with an anonymised timestamp for sensible data.
+
+### Patch Changes
+
+- Updated dependencies [592ad2f7b]
+- Updated dependencies [608010c9d]
+  - @ledgerhq/native-ui@0.8.0-next.1
+  - @ledgerhq/live-common@23.1.0-next.1
+
+## 3.2.1-next.0
+
+### Patch Changes
+
+- 35737e057: fix(LLM): can't open custom loaded manifest on iOS [LIVE-2481]
+- 8a973ad0e: fix(LLM): platform manifest can be undefined when no network [LIVE-2571]
+- Updated dependencies [8323d2eaa]
+- Updated dependencies [8861c4fe0]
+- Updated dependencies [dd6a12c9b]
+  - @ledgerhq/live-common@23.1.0-next.0
+  - @ledgerhq/native-ui@0.7.19-next.0
 
 ## 3.2.0
 

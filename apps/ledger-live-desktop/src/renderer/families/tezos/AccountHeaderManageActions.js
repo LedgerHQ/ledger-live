@@ -1,12 +1,12 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-import { useDelegation } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 
 type Props = {
   account: AccountLike,

@@ -4,9 +4,9 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import _ from "lodash";
-import type { AccountLikeArray } from "@ledgerhq/live-common/lib/types";
-import type { CurrentRate } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
-// import { formatShort } from "@ledgerhq/live-common/lib/currencies";
+import type { AccountLikeArray } from "@ledgerhq/live-common/types/index";
+import type { CurrentRate } from "@ledgerhq/live-common/families/ethereum/modules/compound";
+// import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -93,14 +93,14 @@ const Rates = ({
     token => {
       navigation.navigate(NavigatorName.LendingEnableFlow, {
         screen: ScreenName.LendingEnableSelectAccount,
-        params: { currency: token },
+        params: { token },
       });
     },
     [navigation],
   );
   const navigateToBuyFlow = useCallback(
     token => {
-      navigation.navigate(NavigatorName.ExchangeBuyFlow, {
+      navigation.navigate(NavigatorName.ExchangeStack, {
         screen: ScreenName.ExchangeSelectAccount,
         params: {
           currency: token,

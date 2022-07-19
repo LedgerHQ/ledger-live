@@ -1,7 +1,7 @@
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

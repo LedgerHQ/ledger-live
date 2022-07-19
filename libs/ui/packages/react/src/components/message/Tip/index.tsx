@@ -40,7 +40,7 @@ const StyledIconContainer = styled.div<{ type?: TipType }>`
   }}
 
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  margin-right ${(p) => `${p.theme.space[6]}px`};
+  margin-right: ${(p) => `${p.theme.space[6]}px`};
   padding: 6px;
   display: flex;
   align-items: center;

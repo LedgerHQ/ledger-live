@@ -3,7 +3,14 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.1.0",
+  "packageManager": "pnpm@7.3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
   "scripts": {
     "clean": "git clean -fdX",
     "changelog": "changeset add",
@@ -11,7 +18,7 @@
     "prerelease": "pnpm run build:libs",
     "release": "changeset publish",
     "build": "pnpm turbo run build --ignore=apps/* --ignore=apps\\* --ignore=tools/actions/* --ignore=tools\\actions\\* --no-deps",
-    "build:libs": "pnpm turbo run build --scope=@ledgerhq/* --include-dependencies --no-deps",
+    "build:libs": "pnpm turbo run build --filter=\"!./apps/**\" --scope=@ledgerhq/* --include-dependencies --no-deps",
     "build:libs:force": "pnpm -r --filter=\"!./apps/**\" --filter=\"!ledger-live\" build",
     "build:actions": "pnpm turbo run build --filter=@actions/* --no-deps",
     "build:cli": "pnpm turbo run build --filter=live-cli",
@@ -43,6 +50,7 @@
     "cli": "pnpm --filter live-cli",
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
+    "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryoptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter cryptoassets",
@@ -83,11 +91,12 @@
     "actions": "pnpm --filter @actions/*"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.21.1",
+    "@changesets/changelog-github": "^0.4.5",
+    "@changesets/cli": "^2.23.0",
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "turbo": "^1.2.9"
+    "turbo": "1.3.1"
   },
   "pnpm": {
     "overrides": {

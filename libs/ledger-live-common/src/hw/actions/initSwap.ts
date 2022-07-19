@@ -1,24 +1,26 @@
-import { Observable, of, concat } from "rxjs";
-import { scan, tap, catchError } from "rxjs/operators";
-import { useEffect, useState } from "react";
-import { getMainAccount } from "../../account";
-import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
-import type { InitSwapInput, SwapTransaction } from "../../exchange/swap/types";
-import type { Action, Device } from "./types";
-import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
-import { createAction as createAppAction } from "./app";
+import { useEffect, useState } from "react";
+import { concat, Observable, of } from "rxjs";
+import { catchError, scan, tap } from "rxjs/operators";
+import { getMainAccount } from "../../account";
 import type {
   Exchange,
   ExchangeRate,
+  InitSwapInput,
   InitSwapResult,
   SwapRequestEvent,
+  SwapTransaction,
 } from "../../exchange/swap/types";
+import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
+import type { AppState } from "./app";
+import { createAction as createAppAction } from "./app";
+import type { Action, Device } from "./types";
 
 type State = {
   initSwapResult: InitSwapResult | null | undefined;
   initSwapRequested: boolean;
   initSwapError: Error | null | undefined;
+  swapId?: string;
   error?: Error;
   isLoading: boolean;
   freezeReduxDevice: boolean;
@@ -40,6 +42,7 @@ type Result =
     }
   | {
       initSwapError: Error;
+      swapId?: string;
     };
 
 type InitSwapAction = Action<InitSwapRequest, InitSwapState, Result>;
@@ -47,6 +50,7 @@ type InitSwapAction = Action<InitSwapRequest, InitSwapState, Result>;
 const mapResult = ({
   initSwapResult,
   initSwapError,
+  swapId,
 }: InitSwapState): Result | null | undefined =>
   initSwapResult
     ? {
@@ -55,12 +59,14 @@ const mapResult = ({
     : initSwapError
     ? {
         initSwapError,
+        swapId,
       }
     : null;
 
 const initialState: State = {
   initSwapResult: null,
   initSwapError: null,
+  swapId: undefined,
   initSwapRequested: false,
   isLoading: true,
   freezeReduxDevice: false,
@@ -72,7 +78,12 @@ const reducer = (state: State, e: SwapRequestEvent) => {
       return { ...state, freezeReduxDevice: true };
 
     case "init-swap-error":
-      return { ...state, initSwapError: e.error, isLoading: false };
+      return {
+        ...state,
+        initSwapError: e.error,
+        swapId: e.swapId,
+        isLoading: false,
+      };
 
     case "init-swap-requested":
       return {

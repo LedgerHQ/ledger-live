@@ -48,10 +48,11 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
-
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
       - name: commit
         run: |
@@ -60,7 +61,7 @@ jobs:
       - name: publish nightly
         run: pnpm changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:

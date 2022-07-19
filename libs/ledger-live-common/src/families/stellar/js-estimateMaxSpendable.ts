@@ -2,10 +2,12 @@ import { getMainAccount } from "../../account";
 import createTransaction from "./js-createTransaction";
 import prepareTransaction from "./js-prepareTransaction";
 import getTransactionStatus from "./js-getTransactionStatus";
-import { notCreatedStellarMockAddress } from "./test-dataset";
 import type { Account, AccountLike } from "../../types";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
+
+const notCreatedStellarMockAddress =
+  "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
 
 const estimateMaxSpendable = async ({
   account,

@@ -1,9 +1,9 @@
 // @flow
 import type { TFunction } from "react-i18next";
 import type { Step } from "~/renderer/components/Stepper";
-import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 
 export type StepId = "summary" | "sign";
 

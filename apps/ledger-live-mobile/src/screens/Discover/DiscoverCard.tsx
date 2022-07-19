@@ -79,6 +79,8 @@ const DiscoverCard = ({
           bottom={"-3px"}
           right={0}
           height="100%"
+          alignItems={"flex-end"}
+          justifyContent={"flex-end"}
           style={{ transform: [{ scale: 1.1 }] }}
         >
           {Image}

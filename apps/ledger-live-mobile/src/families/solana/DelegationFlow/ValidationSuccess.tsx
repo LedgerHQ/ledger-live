@@ -1,4 +1,4 @@
-import { Operation, Transaction } from "@ledgerhq/live-common/lib/types";
+import { Operation, Transaction } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";

@@ -3,8 +3,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import CurrencyIcon from "../../components/CurrencyIcon";

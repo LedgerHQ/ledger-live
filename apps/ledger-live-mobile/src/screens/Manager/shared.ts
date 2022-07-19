@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import type { Exec, ListAppsResult } from "@ledgerhq/live-common/lib/apps";
-import { useAppsRunner } from "@ledgerhq/live-common/lib/apps/react";
-import { execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import type { Exec, ListAppsResult } from "@ledgerhq/live-common/apps/index";
+import { useAppsRunner } from "@ledgerhq/live-common/apps/react";
+import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 export function useApps(
   listAppsRes: ListAppsResult,

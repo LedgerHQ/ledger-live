@@ -7,8 +7,8 @@ import { useTheme } from "@react-navigation/native";
 import type {
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+} from "@ledgerhq/live-common/types/index";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
 import SearchIcon from "../../../icons/Search";

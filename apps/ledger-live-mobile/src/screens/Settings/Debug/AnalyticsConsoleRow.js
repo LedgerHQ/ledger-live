@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useCallback } from "react";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-common/lib/env";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { setEnv } from "@ledgerhq/live-common/env";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
 import Switch from "../../../components/Switch";

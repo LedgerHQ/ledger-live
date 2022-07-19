@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { satisfies as versionSatisfies } from "semver";
 
 const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
@@ -8,7 +8,10 @@ const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
   nanoSP: ">=1.0.0-0",
 };
 
-export const isFirmwareUpdateVersionSupported = (deviceInfo: DeviceInfo, modelId: DeviceModelId) =>
+export const isFirmwareUpdateVersionSupported = (
+  deviceInfo: DeviceInfo,
+  modelId: DeviceModelId,
+) =>
   deviceVersionRangesForUpdate[modelId] &&
   versionSatisfies(
     deviceInfo.version,

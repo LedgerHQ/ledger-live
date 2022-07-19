@@ -80,7 +80,8 @@
     },
     "seeMore" : "Daha fazla gör",
     "moreInfo" : "Daha fazla bilgi",
-    "buyEth" : "Ethereum Satın Al"
+    "buyEth" : "Ethereum Satın Al",
+    "popular" : "popüler"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+    },
+    "CardanoMinAmountError" : {
+      "title" : "En az {{amount}} ADA gerekli"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "Bluetooth LE için konum gerekli",
     "locationRequiredMessage" : "Bluetooth LE cihazlarını listelemek için Android'de konum izni gerekli.",
     "checkEnabled" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "Bağlantı yok",
+      "description" : "İnternete erişiminiz yok gibi görünüyor. Lütfen bağlantınızı kontrol edin ve tekrar deneyin."
+    }
   },
   "location" : {
     "required" : "Konum hizmetleri gerekli",
@@ -795,6 +805,16 @@
         "title" : "Kripto Piyasaları",
         "description" : "Kripto fiyatlarını ve piyasa hareketlerini doğrudan uygulamadan kontrol edin",
         "cta" : "Göz at"
+      },
+      "manageCard" : {
+        "title" : "CL Kart ile Tanışın",
+        "description" : "Ledger ile çalışan CL Kartınızı sipariş edin ve ayarlayın",
+        "cta" : "Daha fazla bilgi"
+      },
+      "discoverWeb3" : {
+        "title" : "Web 3.0'ı Keşfedin",
+        "description" : "Cihazınız elinize geçene kadar Web 3.0 ile ilgili her şeyi öğrenin!",
+        "cta" : "Keşfedin"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "Sertifikalı güvenlik",
       "desc" : "Ürünlerimiz, güvenlik açısından ulusal siber güvenlik kurumları tarafından onaylanmış tek donanım cüzdanlarıdır."
     },
-    "title" : "LEDGER SAHİBİ OLUN",
-    "desc" : "Kripto ve NFT'lerinizi sektör lideri güvenlikle koruyun",
+    "title" : "Bir Ledger'a ihtiyacınız var",
+    "desc" : "Güvenliğiniz için Ledger Live yalnızca bir cihazla çalışır. Devam etmek için bir cihaza ihtiyacınız var.",
     "cta" : "Ledger'ınızı şimdi satın alın",
-    "footer" : "Zaten bir cihazım var, şimdi kurmak istiyorum"
+    "footer" : "Zaten bir cihazım var, şimdi kurmak istiyorum",
+    "bannerTitle" : "Kriptolarınızı ve NFT'lerinizi güvende tutun",
+    "bannerTitle2" : "Bir Ledger Cihazıyla işlem yapmak için",
+    "bannerSubtitle" : "bir Nano'ya ihtiyacınız olacak",
+    "bannerButtonTitle" : "Nano'yu Keşfedin",
+    "bannerButtonTitle2" : "Cihaz satın al",
+    "setupCta" : "Zaten bir cihazım var, onu kuralım"
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "Cihazınız elinize geçti mi?",
+    "desc" : "Cihazınız elinize geçtiğinde kurulumunu Ledger Live üzerinde başlatabilirsiniz!",
+    "cta" : "Cihazımı kur",
+    "bannerTitle" : "Cihazınız elinize geçti mi?",
+    "bannerCta" : "Kurulumu başlatın",
+    "continue" : "Devam"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "Cihaz Satın Alın",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "iframe URL'sini güncelleyin",
+        "subtitle" : "Hata Ayıklama Ayarları",
+        "cta" : "Ledger Nano S'te"
+      },
+      "message" : {
+        "successTitle" : "İşlem tamamlandı",
+        "errorTitle" : "İşlem hatası",
+        "subtitle" : "Mesaj alındı",
+        "type" : "Tür: {{type}}",
+        "deviceId" : "Cihaz Kimliği: {{deviceId}}",
+        "price" : "Fiyat: {{price}}",
+        "currency" : "Birim: {{currency}}",
+        "value" : "Değer: {{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "Alım başarıyla gerçekleşti",
+    "title" : "Tebrikler!",
+    "desc" : "Siparişiniz işleniyor.\nLedger cihazınız yakında size ulaşacak. Sipariş onayınız için lütfen e-postanızı kontrol edin."
   },
   "discover" : {
     "title" : "Keşfedin",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
+      },
+      "mint": {
+        "title": "Mintleyin",
+        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -877,9 +940,9 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "En güvenli kripto para ve NFT cüzdanı",
-      "subtitle" : "Kriptolarınızı ve NFT'lerinizi Ledger Live'da güvenle yönetin, satın alın ve artırın.",
-      "start" : "Başlangıç",
+      "title" : "Ledger'a Hoş Geldiniz",
+      "subtitle" : "Dijital mülkiyeti güvenli ve basit hale getiriyoruz.",
+      "start" : "Hemen başla",
       "noDevice" : "Cihazınız yok mu?",
       "buy" : "{{fullDeviceName}} satın al",
       "terms" : "“Hemen Başla” butonuna dokunarak bunlara izin vermiş ve kabul etmiş olursunuz:",
@@ -887,9 +950,16 @@
       "privacyLink" : "Gizlilik Politikası",
       "and" : "ve"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "Ledger cihazınız var mı?",
+      "subtitle" : "Sırayla gidelim",
+      "yes" : "Evet, var",
+      "no" : "Henüz yok"
+    },
     "postWelcomeStep" : {
-      "title" : "Hadi başlayalım",
-      "subtitle" : "Ledger'ınızı kurun veya şimdi bir tane satın alın.",
+      "title" : "Tercih sizin",
+      "subtitle_yes" : "Ledger cihazınızı kurmaya başlayabilir ya da önce uygulamaya göz atabilirsiniz",
+      "subtitle_no" : "Önce uygulamaya göz atabilir ya da bir Nano X cihazı satın alabilirsiniz",
       "noLedgerLink" : "Ledger'ım yok ve almak istiyorum",
       "setupLedger" : {
         "title" : "Ledger'ımı kur",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "Ledger Nano X satın alın",
-        "subtitle" : "Web3 anahtarınız — Varlıklarınızı kontrol etme özgürlüğüne erişin"
+        "subtitle" : "Donanım cüzdan, varlıklarınızın güvende olduğundan emin olmanın tek yoludur "
       },
       "discoverLedger" : {
-        "title" : "Ledger Live'ı Keşfedin",
-        "subtitle" : "Uygulamayı keşfedin"
+        "title" : "Ledger Live'ı keşfedin",
+        "subtitle" : "Uygulamayı keşfedip ne gibi faydaları olduğunu öğrenin "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "Cihaz olmadan keşfedin",
+      "buyALedgerNow" : "Şimdi Ledger satın alın",
       "0" : {
-        "title" : "Tüm kripto ihtiyaçlarınız tek bir yerde",
-        "desc" : "Varlıklarınızı güvenli bir şekilde takip edin, satın alın, satın, takas edin, artırın, yönetin ve en iyi kripto içgörülerini elde edin"
+        "title" : "Tüm kripto varlıklarınızı güvenceye alın."
       },
       "1" : {
-        "title" : "Anahtarlarınız sizde değilse kriptonuz sizin değildir",
-        "desc" : "Kripto varlıklarınızı bir donanım cüzdanla güvence altına almak, onları güvence altına almanın en iyi ve tek yoludur."
+        "title" : "Bir gözünüz piyasalarda olsun."
       },
       "2" : {
-        "title" : "Paranızın kontrolünü geri kazanın",
-        "desc" : "Ledger Nano X, coin'lerinizi çevrim dışı tutar ve korur. Kripto paranız üzerinde maksimum güvenlik ve tam kontrol sahibi olmak için onu Ledger Live uygulamasıyla birlikte kullanın.",
-        "cta" : "Yolculuğunuza Başlayın"
+        "title" : "Uygulamaları keşfedin ve Web3 ile ilgili bilgi alın."
+      },
+      "3" : {
+        "title" : "Kriptolarınızı ve NFT'lerinizi güvende tutun."
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "Öğren",
-    "noConnection" : "Bağlantı yok",
-    "noConnectionDesc" : "İnternete erişiminiz yok gibi görünüyor. Lütfen bağlantınızı kontrol edin ve tekrar deneyin.",
     "sectionShows" : "Yayınlar",
     "sectionVideo" : "Video",
     "sectionPodcast" : "Podcast",
@@ -1493,7 +1562,7 @@
       },
       "addAccounts" : {
         "addAccounts" : "Varlık ekle",
-        "title" : "Başlangıç",
+        "title" : "Hemen başla",
         "description" : "Ortaklarımızdan kripto satın alabilir veya cüzdanınızı kurabilirsiniz"
       }
     },
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "İşlem detayları",
+    "title" : "İşlem bilgileri",
     "account" : "Hesap",
     "date" : "Tarih",
     "confirmed" : "Onaylandı",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
-    "noMoreOperations" : "Başka İşlem Yok"
+    "noMoreTransactions" : "Başka işlem yok"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Tüm seçimi kaldır",
@@ -1698,7 +1767,7 @@
     "sell" : "Sat",
     "swap" : "Takas et",
     "manage" : "Yönet",
-    "lastOperations" : "Son işlemler",
+    "lastTransactions" : "Son işlemler",
     "emptyState" : {
       "title" : "Henüz kripto varlığınız yok mu?",
       "desc" : "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "NFT alın",
       "howTo" : "NFT'ler eklemek için onları <1>{{currency}} adresinizi</1> kullanarak <0>hesabınıza almanız</0> gerekir."
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "Hiçbir işleminiz yok",
+        "subtitle" : "{{assetName}} satın almak veya teslim almak için bir cihaza ihtiyacınız olacak"
+      }
     }
   },
   "accounts" : {
@@ -1829,13 +1904,19 @@
       }
     },
     "noResultsFound" : "Varlık bulunamadı",
-    "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
+    "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "+6.000 tane daha",
+        "subtitle" : "Ledger 6.000'den fazla coin ve token'ı destekler"
+      }
+    }
   },
   "distribution" : {
     "header" : "Varlık dağılımı",
     "list" : "Varlık dağılımı ({{count}})",
     "assets" : "varlık",
-    "assets_plural" : "güvenle saklayın",
+    "assets_plural" : "varlık",
     "total" : "Toplam bakiye:",
     "listAccount" : "Varlık dağılımı ({{count}})",
     "title" : "Varlıklar",
@@ -2058,13 +2139,15 @@
       "input" : "Adresi girin"
     },
     "send" : {
-      "title" : "Gönder"
+      "title" : "Gönder",
+      "description" : "Başka bir cüzdana kripto gönderin."
     },
     "fees" : {
       "title" : "Ücretleri düzenle"
     },
     "receive" : {
       "title" : "Al",
+      "description" : "Başka bir cüzdandan kripto alın.",
       "titleReadOnly" : "Doğrulanmamış adres",
       "headerTitle" : "Kripto varlık",
       "titleDevice" : "Cihazı bağlayın",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "Kripto varlık bulunamadı",
       "noResultsDesc" : "Lütfen doğru yazdığınızdan emin olun ve tekrar deneyin"
     },
+    "buy" : {
+      "title" : "Satın Alın",
+      "description" : "Güvenli bir şekilde nakit karşılığında kripto satın alın."
+    },
+    "sell" : {
+      "title" : "Sat",
+      "description" : "Güvenli bir şekilde nakit karşılığında kripto satın."
+    },
     "exchange" : {
       "title" : "Satın Al / Sat"
     },
     "swap" : {
       "title" : "Takas edin",
+      "description" : "Bir kriptoyu diğeriyle takas edin.",
       "selectDevice" : "Cihazınızı seçin",
       "broadcasting" : "Takas işlemi yayınlanıyor",
       "loadingFees" : "Ağ ücretleri yükleniyor...",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "Kripto borç verin",
-      "titleTransferTab" : "Borç verin",
+      "titleTransferTab" : "Kazanın",
+      "descriptionTransferTab" : "Pasif gelir kazanın.",
       "actionTitle" : "Borç verin",
       "accountActions" : {
         "approve" : "Onayla",
@@ -2836,11 +2929,16 @@
     },
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
-      "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
+      "alert" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum."
     },
     "confirmSell" : {
       "title" : "Satış işleminizi cihazdan onaylayın",
       "alert" : "Göndermeden önce cihazınızdaki Satış bilgilerini doğrulayın. Adresler güvenli bir şekilde değiştirilir, böylece onları doğrulamak zorunda kalmazsınız."
+    },
+    "confirmFund" : {
+      "title" : "Fon işlemini onaylayın",
+      "alert" : "Göndermeden önce cihazınızdaki Fon bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır ve böylece onları doğrulamak zorunda kalmazsınız."
     },
     "button" : {
       "openManager" : "Yöneticiyi Aç",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "KRİPTO SATIN AL",
       "tabTitle" : "Satın Al",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
+      "wantToBuy" : "Satın almak istiyorum",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın alın",
       "coinifyTitle" : "Ortağımız üzerinden kripto satın alın",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "KRİPTO SATIN",
       "tabTitle" : "Sat",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
+      "wantToSell" : "Satmak istiyorum",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın",
       "description" : "Ledger hesabınızdaki kripto varlıklarını Coinify üzerinden doğrudan satın ve itibari para birimlerini banka hesabınıza alın.",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "Geçmiş"
+    },
+    "providerList" : {
+      "title" : "Bir sağlayıcı seçin"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "Token Adresi kopyalandı!",
       "tokenId" : "Token Kimliği (Token ID)",
       "tokenIdCopied" : "Token Kimliği kopyalandı!",
-      "quantity" : "Miktar"
+      "quantity" : "Miktar",
+      "attributes" : {
+        "floorPrice" : "Taban Fiyat"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Burada görüntüle:",

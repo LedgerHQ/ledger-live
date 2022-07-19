@@ -1,7 +1,10 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Operation, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type {
+  Operation,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";

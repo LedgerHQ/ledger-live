@@ -73,6 +73,7 @@
       "dependsOn": ["^build"],
       "outputs": [
         "lib/**",
+        "lib-es/**",
         "src/data/icons/react/**",
         "src/data/icons/reactNative/**",
         "src/data/flags/react/**",

@@ -228,6 +228,7 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "Cambiar",
       "ratesDrawer" : {
         "title" : "Tasa",
         "quote" : "Cotización",
@@ -267,11 +268,25 @@
           "complete" : "Completa tu KYC",
           "update" : "Actualiza tu KYC",
           "rejected" : "KYC rechazado, vuelve a iniciar la verificación",
+          "rejectedContactProviderSupport" : "KYC rechazado, ponte en contacto con el soporte de {{providerName}}",
+          "updateRequired" : "Completa o actualiza tu KYC",
           "status" : {
             "pending" : "KYC pendiente",
             "approved" : "KYC aprobado",
-            "closed" : "KYC rechazado"
+            "closed" : "KYC rechazado",
+            "upgradeRequired" : "KYC insuficiente"
           }
+        },
+        "login" : {
+          "required" : "Necesitas iniciar sesión con este proveedor",
+          "complete" : "Inicia sesión"
+        },
+        "mfa" : {
+          "required" : "Necesitas configurar la MFA con este proveedor",
+          "complete" : "Configurar la MFA"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "{{providerName}} ha bloqueado tu retiro.\n\n Para obtener más información, ponte en contacto con su equipo de soporte."
         }
       }
     },
@@ -346,6 +361,7 @@
     "title" : "Permutar",
     "titleCrypto" : "Permutar {{currency}}",
     "whatIsSwap" : "Qué es la permuta",
+    "decentralizedSwapAvailable" : "Para determinadas transacciones, quizás deberías considerar la opción de usar la permuta descentralizada. Descubre <0>ParaSwap</0> y <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Échale un vistazo",
       "description" : "¿Buscas Paraswap? Está en a la pestaña Discover."
@@ -482,9 +498,9 @@
       "subtitle" : "Actualiza Ledger Live a la última versión y vuelve a verificar tu identidad para permutar con Wyre",
       "cta" : "Restablece la verificación"
     },
-    "resetKYCModal" : {
-      "title" : "Elimina tu KYC",
-      "subtitle" : "Elimina tu KYC para eliminar todos los tokens almacenados de forma local en tu PC. Deberás volver a enviar tu KYC para acceder a los servicios ofrecidos por nuestros socios.",
+    "resetThirdPartyDataModal" : {
+      "title" : "Eliminar los datos locales de terceros",
+      "subtitle" : "Elimina los datos locales de terceros. Es posible que tengas que volver a realizar el KYC o iniciar sesión de nuevo para acceder a los servicios proporcionados por nuestros socios.",
       "cta" : "Confirmar"
     },
     "modal" : {
@@ -1283,7 +1299,8 @@
         "description" : "Descripción",
         "tokenAddress" : "Dirección del token",
         "tokenId" : "ID de token",
-        "quantity" : "Cantidad"
+        "quantity" : "Cantidad",
+        "floorPrice" : "Precio base"
       }
     },
     "collections" : {
@@ -1518,7 +1535,8 @@
       "fees" : "Tarifas",
       "provider" : "Proveedor",
       "payoutNetworkFees" : "Tarifas de pago",
-      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo"
+      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -2068,10 +2086,10 @@
     "replaceable" : "reemplazable",
     "cannotSelect" : {
       "unconfirmed" : "No puedes seleccionar monedas de transacciones reemplazables y no confirmadas.",
+      "pending" : "No puedes seleccionar monedas de transacciones pendientes (excepto la salida de cambio).",
       "last" : "Debes seleccionar al menos una"
     },
     "pending" : "pendiente",
-    "pickUnconfirmedRBF" : "Incluye monedas de transacciones reemplazables y no confirmadas.",
     "pickingStrategy" : "Estrategia de selección UTXO",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Las monedas más antiguas primero (FIFO)",
@@ -2844,8 +2862,8 @@
       "softResetTitle" : "Borrar caché",
       "softResetDesc" : "Borra la caché de Ledger Live para forzar una nueva sincronización con la cadena de bloques.",
       "softReset" : "Borrar",
-      "resetKYC" : "Restablecer datos de KYC",
-      "resetKYCDesc" : "Borra todos tus datos de KYC almacenados localmente que se utilizan para acceder a un proveedor de transacciones de terceros.",
+      "resetThirdPartyData" : "Restablecer datos de terceros",
+      "resetThirdPartyDataDesc" : "Borra todos los datos locales de terceros que se usan para acceder al proveedor de transacciones de terceros.",
       "hardResetTitle" : "Restablecer Ledger Live",
       "hardResetDesc" : "Borrar todos los datos de Ledger Live almacenados en tu PC, incluidas tus cuentas, historial de transacciones y ajustes.",
       "hardReset" : "Restablecer",
@@ -4342,7 +4360,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "Asegúrate de que tu saldo restante es suficiente para cubrir las tarifas de transacciones futuras"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "Tu transacción anterior todavía no se ha procesado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
     },
     "SolanaTxConfirmationTimeout" : {

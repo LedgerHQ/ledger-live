@@ -1,11 +1,10 @@
 import { BigNumber } from "bignumber.js";
-
 import type {
-  Transaction,
   Account,
   AccountLike,
   AccountRaw,
   AccountRawLike,
+  Transaction,
 } from "../../types";
 import { ExchangeTypes, RateTypes } from "../hw-app-exchange/Exchange";
 
@@ -50,7 +49,7 @@ export type ExchangeSellRaw = {
 
 interface CompleteExchangeInputCommon {
   rateType: RateTypes;
-  deviceId: string;
+  deviceId?: string;
   provider: string;
   binaryPayload: string;
   signature: string;

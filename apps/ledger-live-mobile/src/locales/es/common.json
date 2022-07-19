@@ -80,7 +80,8 @@
     },
     "seeMore" : "Ver más",
     "moreInfo" : "Más información",
-    "buyEth" : "Comprar Ethereum"
+    "buyEth" : "Comprar Ethereum",
+    "popular" : "popular"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+    },
+    "CardanoMinAmountError" : {
+      "title" : "{{amount}} mínimos de ADA necesarios"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "La ubicación es necesaria para Bluetooth LE",
     "locationRequiredMessage" : "Es necesario otorgar permisos de ubicación de Android para mostrar los dispositivos de Bluetooth LE.",
     "checkEnabled" : "Habilita Bluetooth en los ajustes del teléfono."
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "No hay conexión",
+      "description" : "Parece que no tienes acceso a Internet. Comprueba tu conexión e inténtalo de nuevo."
+    }
   },
   "location" : {
     "required" : "Son necesarios los servicios de ubicación",
@@ -795,6 +805,16 @@
         "title" : "Mercados cripto",
         "description" : "Verifica los precios de las cripto y las tendencias del mercado directamente desde la aplicación",
         "cta" : "Examinar"
+      },
+      "manageCard" : {
+        "title" : "Presentamos la Tarjeta CL",
+        "description" : "Pide y gestiona tu Tarjeta CL con tecnología de Ledger",
+        "cta" : "Más información"
+      },
+      "discoverWeb3" : {
+        "title" : "Descubre la Web3",
+        "description" : "¡Descúbrelo todo sobre la Web3 mientras llega tu dispositivo!",
+        "cta" : "Discover"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "Seguridad certificada",
       "desc" : "Nuestros productos son las únicas billeteras de hardware con seguridad certificada por agencias nacionales de seguridad cibernética."
     },
-    "title" : "Compra tu Ledger",
-    "desc" : "Protege tus criptomonedas y NFTs con seguridad líder en la industria",
+    "title" : "Necesitas un Ledger",
+    "desc" : "Por motivos de seguridad, Ledger Live solo se puede usar en conjunto con un dispositivo físico. Necesitas un dispositivo para poder continuar.",
     "cta" : "Compra tu Ledger ahora",
-    "footer" : "Ya tengo un dispositivo, deseo configurarlo ahora"
+    "footer" : "Ya tengo un dispositivo, deseo configurarlo ahora",
+    "bannerTitle" : "Mantén a salvo tus criptomonedas y NFTs",
+    "bannerTitle2" : "Necesitarás un Nano para operar",
+    "bannerSubtitle" : "con un dispositivo Ledger",
+    "bannerButtonTitle" : "Descubre el Nano",
+    "bannerButtonTitle2" : "Compra un dispositivo",
+    "setupCta" : "Ya tengo un dispositivo y quiero configurarlo"
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "¿Has recibido tu dispositivo?",
+    "desc" : "En cuanto recibas tu dispositivo, podrás comenzar a configurarlo a través de Ledger Live.",
+    "cta" : "Configurar mi dispositivo",
+    "bannerTitle" : "¿Has recibido tu dispositivo?",
+    "bannerCta" : "Iniciar la configuración",
+    "continue" : "Continuar"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "Comprar dispositivo",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "Actualizar URL de iframe",
+        "subtitle" : "Ajustes de depuración",
+        "cta" : "Guardar"
+      },
+      "message" : {
+        "successTitle" : "Transacción finalizada",
+        "errorTitle" : "Error de transacción",
+        "subtitle" : "Mensaje recibido",
+        "type" : "Tipo: {{type}}",
+        "deviceId" : "ID del dispositivo: {{deviceId}}",
+        "price" : "Precio: {{price}}",
+        "currency" : "Divisa: {{currency}}",
+        "value" : "Valor: {{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "Compra exitosa",
+    "title" : "¡Enhorabuena!",
+    "desc" : "Tu pedido está en proceso.\nRecibirás tu Ledger pronto. Busca la confirmación de tu pedido en tu correo electrónico."
   },
   "discover" : {
     "title" : "Discover",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+      },
+      "mint": {
+        "title": "Acuñar",
+        "desc": "Acuña NFTs de colaboraciones exclusivas en [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
@@ -877,8 +940,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "La billetera más segura para criptodivisas y NFTs",
-      "subtitle" : "Gestiona, compra y haz crecer de forma segura tus criptomonedas y NFTs en Ledger Live.",
+      "title" : "Bienvenidos a Ledger",
+      "subtitle" : "Hacemos que poseer activos digitales sea seguro y simple.",
       "start" : "Comenzar",
       "noDevice" : "¿No tienes un dispositivo?",
       "buy" : "Compra un {{fullDeviceName}}",
@@ -887,9 +950,16 @@
       "privacyLink" : "Política de Privacidad",
       "and" : "Y"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "¿Tienes un Ledger?",
+      "subtitle" : "Lo primero es lo primero",
+      "yes" : "Sí",
+      "no" : "No todavía"
+    },
     "postWelcomeStep" : {
-      "title" : "Comencemos",
-      "subtitle" : "Configura tu Ledger o compra uno ahora.",
+      "title" : "Tú eliges",
+      "subtitle_yes" : "Puedes elegir configurar tu Ledger o darle un vistazo a la aplicación primero.",
+      "subtitle_no" : "Puedes elegir darle un vistazo a la aplicación primero o comprar un Nano X",
       "noLedgerLink" : "No tengo un Ledger y me gustaría comprar uno",
       "setupLedger" : {
         "title" : "Configurar mi Ledger",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "Compra un Ledger Nano X",
-        "subtitle" : "Tu acceso a la Web3 — Desbloquea la libertad de controlar tus activos"
+        "subtitle" : "Una billetera de hardware es la única forma de garantizar que tus activos estén protegidos "
       },
       "discoverLedger" : {
-        "title" : "Descubre Ledger Live",
-        "subtitle" : "Explora la aplicación"
+        "title" : "Explora Ledger Live",
+        "subtitle" : "Explora la aplicación y conoce sus ventajas "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "Explora sin necesidad de un dispositivo",
+      "buyALedgerNow" : "Compra ahora un Ledger",
       "0" : {
-        "title" : "Un mismo lugar para todas tus necesidades cripto",
-        "desc" : "Controla, compra, vende, permuta, haz crecer y gestiona tus activos de forma segura y recibe la mejor información"
+        "title" : "Protege todos tus activos cripto."
       },
       "1" : {
-        "title" : "Sin claves, no hay criptomonedas",
-        "desc" : "La mejor manera, y en realidad la única, de poseer y proteger tus activos cripto es mediante una billetera de hardware"
+        "title" : "Presta atención a los mercados."
       },
       "2" : {
-        "title" : "Recupera el control de tu dinero",
-        "desc" : "El Ledger Nano X protege tus monedas y las mantiene sin conexión. Combínalo con la aplicación Ledger Live para una máxima seguridad y control de tus cripto.",
-        "cta" : "Comienza tu viaje"
+        "title" : "Descubre aplicaciones y aprende más sobre la Web3."
+      },
+      "3" : {
+        "title" : "Mantén tus cripto y NFTs a buen recaudo."
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "Información",
-    "noConnection" : "No hay conexión",
-    "noConnectionDesc" : "Parece que no tienes acceso a Internet. Comprueba tu conexión e inténtalo de nuevo.",
     "sectionShows" : "Muestra",
     "sectionVideo" : "Vídeo",
     "sectionPodcast" : "Podcast",
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Detalles de la operación",
+    "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
     "date" : "Fecha",
     "confirmed" : "Confirmada",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
-    "noMoreOperations" : "No hay otras operaciones"
+    "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deseleccionar todo",
@@ -1698,7 +1767,7 @@
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
-    "lastOperations" : "Últimas operaciones",
+    "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
       "title" : "¿Aún no tienes activos cripto?",
       "desc" : "Verifica que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada para comenzar a recibir",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "Recibir NFT",
       "howTo" : "Para agregar NFTs, debes <0>recibirlos</0> utilizando tu <1>dirección de {{currency}}</1>."
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "No tienes ninguna transacción",
+        "subtitle" : "Necesitas un dispositivo para poder comprar o recibir {{assetName}}"
+      }
     }
   },
   "accounts" : {
@@ -1829,7 +1904,13 @@
       }
     },
     "noResultsFound" : "No se encontraron activos",
-    "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo"
+    "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "Y otras 6000 más",
+        "subtitle" : "Ledger es compatible con más de 6000 monedas y tokens"
+      }
+    }
   },
   "distribution" : {
     "header" : "Asignación de activos",
@@ -2058,13 +2139,15 @@
       "input" : "Ingresar dirección"
     },
     "send" : {
-      "title" : "Enviar"
+      "title" : "Enviar",
+      "description" : "Envía cripto a otra billetera."
     },
     "fees" : {
       "title" : "Editar tarifas"
     },
     "receive" : {
       "title" : "Recibir",
+      "description" : "Recibe criptomonedas de otra billetera.",
       "titleReadOnly" : "Dirección no verificada",
       "headerTitle" : "Activo cripto",
       "titleDevice" : "Conectar dispositivo",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "No se encontraron activos cripto",
       "noResultsDesc" : "Verifica la ortografía e inténtalo de nuevo"
     },
+    "buy" : {
+      "title" : "Comprar",
+      "description" : "Compra criptomonedas de forma segura con dinero en efectivo."
+    },
+    "sell" : {
+      "title" : "Vender",
+      "description" : "Vende criptomonedas de forma segura a cambio de dinero en efectivo."
+    },
     "exchange" : {
       "title" : "Comprar / Vender"
     },
     "swap" : {
       "title" : "Permutar",
+      "description" : "Cambia una criptomoneda por otra.",
       "selectDevice" : "Selecciona tu dispositivo",
       "broadcasting" : "Transmitiendo la permuta",
       "loadingFees" : "Cargando tarifas de red...",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "Prestar cripto",
-      "titleTransferTab" : "Prestar",
+      "titleTransferTab" : "Gana",
+      "descriptionTransferTab" : "Obtén ingresos pasivos.",
       "actionTitle" : "Prestar",
       "accountActions" : {
         "approve" : "Aprobar",
@@ -2836,11 +2929,16 @@
     },
     "confirmSwap" : {
       "title" : "Confirma la operación de permuta en tu dispositivo",
-      "alert" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
+      "alert" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>"
     },
     "confirmSell" : {
       "title" : "Confirma la operación de venta en el dispositivo",
       "alert" : "Verifica los detalles de venta en tu dispositivo antes de enviarlos. Las direcciones se intercambian de forma segura, por lo que no es necesario verificarlas."
+    },
+    "confirmFund" : {
+      "title" : "Confirmar transacción de ingreso de fondos",
+      "alert" : "Verifica la información del ingreso de fondos en tu dispositivo antes de enviarlo. Las direcciones se intercambian de forma segura, por lo cual no es necesario verificarlas."
     },
     "button" : {
       "openManager" : "Abrir Manager",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "COMPRAR CRIPTO",
       "tabTitle" : "Comprar",
       "selectCurrency" : "Selecciona una divisa",
       "selectAccount" : "Selecciona una cuenta",
+      "wantToBuy" : "Quiero comprar",
       "connectDevice" : "Conecta tu dispositivo",
       "title" : "Compra cripto a través de nuestro socio",
       "coinifyTitle" : "Compra cripto a través de nuestro socio",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "VENDER CRIPTO",
       "tabTitle" : "Vender",
       "selectCurrency" : "Selecciona una divisa",
       "selectAccount" : "Selecciona una cuenta",
+      "wantToSell" : "Quiero vender",
       "connectDevice" : "Conecta tu dispositivo",
       "title" : "Vende criptos a través de nuestro socio",
       "description" : "Vende activos cripto directamente desde la cuenta de Ledger mediante Coinify y recibe dinero fiduciario en tu cuenta bancaria.",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "Historial"
+    },
+    "providerList" : {
+      "title" : "Elegir un proveedor"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "¡Dirección de token copiada!",
       "tokenId" : "ID de token",
       "tokenIdCopied" : "¡ID de token copiado!",
-      "quantity" : "Cantidad"
+      "quantity" : "Cantidad",
+      "attributes" : {
+        "floorPrice" : "Precio base"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ver en",

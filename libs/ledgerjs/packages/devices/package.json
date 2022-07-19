@@ -7,18 +7,59 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/LedgerHQ/ledgerjs"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
   "bugs": {
-    "url": "https://github.com/LedgerHQ/ledgerjs/issues"
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledgerjs",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/devices",
   "publishConfig": {
     "access": "public"
   },
   "main": "lib/index.js",
   "module": "lib-es/index.js",
   "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "lib/*/": [
+        "lib/*/index.d.ts"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*/": [
+        "lib-es/*/index.d.ts"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "*/": [
+        "lib/*/index.d.ts"
+      ],
+      "*": [
+        "lib/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*/": "./lib/*/index.js",
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*/": "./lib-es/*/index.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./*/": {
+      "require": "./lib/*/index.js",
+      "default": "./lib-es/*/index.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",

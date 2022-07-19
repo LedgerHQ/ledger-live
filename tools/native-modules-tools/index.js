@@ -200,6 +200,9 @@ function esBuildExternalsPlugin(nativeModules) {
     setup(build) {
       Object.values(nativeModules).forEach((module) => {
         build.onResolve({ filter: new RegExp(`^${module.name}`) }, (args) => {
+          if (args.resolveDir === "") {
+            return; // Ignore unresolvable paths
+          }
           try {
             const resolvedPath = require.resolve(args.path, {
               paths: [args.resolveDir],

@@ -8,11 +8,11 @@ import type {
   CosmosMappedValidator,
   CosmosMappedDelegation,
   CosmosValidatorItem,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import type { Unit } from "@ledgerhq/live-common/types/index";
 
 import { useTheme } from "@react-navigation/native";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ArrowRight from "../../../icons/ArrowRight";

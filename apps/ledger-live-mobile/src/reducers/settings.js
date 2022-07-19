@@ -7,20 +7,19 @@ import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   listSupportedFiats,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/currencies/index";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { createSelector } from "reselect";
 import type {
   CryptoCurrency,
   Currency,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import Config from "react-native-config";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
+} from "@ledgerhq/live-common/types/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 import { SLIDES } from "../components/Carousel/shared";
@@ -76,6 +75,7 @@ export type SettingsState = {
   hasCompletedOnboarding: boolean,
   hasInstalledAnyApp: boolean,
   readOnlyModeEnabled: boolean,
+  hasOrderedNano: boolean,
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   graphCountervalueFirst: boolean,
@@ -103,6 +103,8 @@ export type SettingsState = {
   marketRequestParams: MarketListRequestParams,
   marketCounterCurrency: ?string,
   marketFilterByStarredAccounts: boolean,
+  sensitiveAnalytics: boolean,
+  firstConnectionHasDevice: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -117,7 +119,9 @@ export const INITIAL_STATE: SettingsState = {
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
   hasInstalledAnyApp: true,
-  readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
+  // readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
+  readOnlyModeEnabled: true,
+  hasOrderedNano: false,
   experimentalUSBEnabled: false,
   countervalueFirst: true,
   graphCountervalueFirst: true,
@@ -155,6 +159,8 @@ export const INITIAL_STATE: SettingsState = {
   },
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
+  sensitiveAnalytics: false,
+  firstConnectionHasDevice: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -411,6 +417,10 @@ const handlers: Object = {
     ...state,
     lastConnectedDevice,
   }),
+  SET_HAS_ORDERED_NANO: (state, action) => ({
+    ...state,
+    hasOrderedNano: action.enabled,
+  }),
   SET_MARKET_REQUEST_PARAMS: (state: SettingsState, { payload }) => ({
     ...state,
     marketRequestParams: {
@@ -428,6 +438,14 @@ const handlers: Object = {
   ) => ({
     ...state,
     marketFilterByStarredAccounts: payload,
+  }),
+  SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
+    ...state,
+    sensitiveAnalytics: action.enabled,
+  }),
+  SET_FIRST_CONNECTION_HAS_DEVICE: (state: SettingsState, payload) => ({
+    ...state,
+    firstConnectionHasDevice: payload,
   }),
 };
 
@@ -620,6 +638,9 @@ export const starredMarketCoinsSelector = (state: State) =>
 export const lastConnectedDeviceSelector = (state: State) =>
   state.settings.lastConnectedDevice;
 
+export const hasOrderedNanoSelector = (state: State) =>
+  state.settings.hasOrderedNano;
+
 export const marketRequestParamsSelector = (state: State) =>
   state.settings.marketRequestParams;
 
@@ -628,3 +649,9 @@ export const marketCounterCurrencySelector = (state: State) =>
 
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
+
+export const sensitiveAnalyticsSelector = (state: State) =>
+  state.settings.sensitiveAnalytics;
+
+export const firstConnectionHasDeviceSelector = (state: State) =>
+  state.settings.firstConnectionHasDevice;
