@@ -25,7 +25,7 @@ setGlobalOnBridgeError(e => logger.critical(e));
 
 setDeviceMode("polling");
 
-setPlatformVersion("0.0.1");
+setPlatformVersion("0.1.0");
 
 setSupportedCurrencies([
   "bitcoin",

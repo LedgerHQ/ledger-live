@@ -10,7 +10,7 @@ import { emptyHistoryCache } from "../account";
 import { setEnv } from "../env";
 import { setPlatformVersion } from "../platform/version";
 
-setPlatformVersion("0.0.1");
+setPlatformVersion("0.1.0");
 
 describe("walletconnect", () => {
   const account: Account = {
