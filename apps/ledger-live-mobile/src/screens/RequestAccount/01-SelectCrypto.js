@@ -3,6 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
+  Currency,
   CryptoCurrency,
   AccountLike,
 } from "@ledgerhq/live-common/types/index";
@@ -72,7 +73,7 @@ export default function RequestAccountsSelectCrypto({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="RequestAccounts" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView>
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}

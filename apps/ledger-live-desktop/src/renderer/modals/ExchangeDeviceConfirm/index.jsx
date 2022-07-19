@@ -152,7 +152,7 @@ type Props = {
 };
 
 type PropsFooter = {
-  onClose: () => null,
+  onClose: () => void,
   onSkipDevice: Function,
   data: DataProp,
 };

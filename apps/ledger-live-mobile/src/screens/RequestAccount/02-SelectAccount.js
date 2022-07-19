@@ -34,7 +34,7 @@ type RouteParams = {
   currency: CryptoCurrency | TokenCurrency,
   allowAddAccount?: boolean,
 
-  onSuccess: (account: Account) => void,
+  onSuccess: (account: AccountLike, parentAccount: Account) => void,
   onError: (error: Error) => void,
 };
 
