@@ -27,13 +27,10 @@ export default function PlatformApp({ match, appId: propsAppId }: Props) {
   const { state: urlParams, search } = useLocation();
   const appId = propsAppId || match.params?.appId;
 
-  console.log(match);
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
 
   const manifest = localManifest || remoteManifest;
-
-  console.log(appId, manifest);
 
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);

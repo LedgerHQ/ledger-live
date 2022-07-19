@@ -56,7 +56,7 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
     // PTX smart routing redirect to live app or to native implementation
     if (ptxSmartRouting?.enabled) {
       const params = {
-        currency: currency.id,
+        currency: currency?.id,
         mode: "buy", // buy or sell
       };
 
@@ -74,13 +74,7 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
         },
       });
     }
-  }, [
-    currency,
-    handleClose,
-    history,
-    ptxSmartRouting?.enabled,
-    ptxSmartRouting?.params?.liveAppId,
-  ]);
+  }, [currency, handleClose, history, ptxSmartRouting]);
 
   const TokenCurrencyIcon = getTokenCurrencyIcon(currency);
   const buyAvailable = supportedBuyCurrenciesIds.includes(currency.id);

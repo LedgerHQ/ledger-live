@@ -138,7 +138,7 @@ export default function MarketCoinScreen() {
       // PTX smart routing redirect to live app or to native implementation
       if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
         const params = {
-          currency: currency.internalCurrency.id,
+          currency: currency.internalCurrency?.id,
           mode: "buy", // buy or sell
         };
 
@@ -157,7 +157,7 @@ export default function MarketCoinScreen() {
         });
       }
     },
-    [currency, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
+    [currency, history, ptxSmartRouting],
   );
 
   const openAddAccounts = useCallback(() => {

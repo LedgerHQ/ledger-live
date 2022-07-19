@@ -103,7 +103,7 @@ function MarketRowItem({
       // PTX smart routing redirect to live app or to native implementation
       if (ptxSmartRouting?.enabled && currency?.internalCurrency) {
         const params = {
-          currency: currency.internalCurrency.id,
+          currency: currency.internalCurrency?.id,
           mode: "buy", // buy or sell
         };
 
@@ -122,7 +122,7 @@ function MarketRowItem({
         });
       }
     },
-    [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId],
+    [currency, history, ptxSmartRouting],
   );
 
   const onSwap = useCallback(

@@ -45,14 +45,7 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency, account: A
         },
       });
     }
-  }, [
-    account,
-    currency,
-    dispatch,
-    history,
-    ptxSmartRouting?.enabled,
-    ptxSmartRouting?.params?.liveAppId,
-  ]);
+  }, [account, currency, dispatch, history, ptxSmartRouting]);
 
   if (!isCurrencySupported("BUY", currency)) {
     return null;

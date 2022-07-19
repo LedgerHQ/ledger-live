@@ -70,8 +70,8 @@ export default function AccountContextMenu({
           setTrackingSource("account context menu");
           if (ptxSmartRouting?.enabled) {
             const params = {
-              currency: currency.id,
-              account: mainAccount.freshAddress,
+              currency: currency?.id,
+              account: mainAccount?.freshAddress,
               mode: "buy", // buy or sell
             };
 
@@ -102,8 +102,8 @@ export default function AccountContextMenu({
           setTrackingSource("account context menu");
           if (ptxSmartRouting?.enabled) {
             const params = {
-              currency: currency.id,
-              account: mainAccount.freshAddress,
+              currency: currency?.id,
+              account: mainAccount?.freshAddress,
               mode: "sell", // buy or sell
             };
 
@@ -177,12 +177,13 @@ export default function AccountContextMenu({
     return items;
   }, [
     account,
-    history,
     parentAccount,
+    swapSelectableCurrencies,
     withStar,
     dispatch,
+    ptxSmartRouting,
+    history,
     refreshAccountsOrdering,
-    swapSelectableCurrencies,
   ]);
 
   const currency = getAccountCurrency(account);

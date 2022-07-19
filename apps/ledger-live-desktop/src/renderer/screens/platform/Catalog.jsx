@@ -83,8 +83,6 @@ const PlatformCatalog = () => {
   const dismissedBanners = useSelector(dismissedBannersSelector);
   const isDismissed = dismissedBanners.includes(DAPP_DISCLAIMER_ID);
 
-  console.log({ filteredManifests });
-
   const { t } = useTranslation();
 
   const handleClick = useCallback(

@@ -108,7 +108,7 @@ export default function AssetBalanceSummaryHeader({
     // PTX smart routing redirect to live app or to native implementation
     if (ptxSmartRouting?.enabled) {
       const params = {
-        currency: currency.id,
+        currency: currency?.id,
         mode: "buy", // buy or sell
       };
 
@@ -126,7 +126,7 @@ export default function AssetBalanceSummaryHeader({
         },
       });
     }
-  }, [currency.id, history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId]);
+  }, [currency.id, history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("asset header actions");

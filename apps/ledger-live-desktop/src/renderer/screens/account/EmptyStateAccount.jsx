@@ -80,8 +80,8 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
     // PTX smart routing redirect to live app or to native implementation
     if (ptxSmartRouting?.enabled) {
       const params = {
-        currency: currency.id,
-        account: mainAccount.freshAddress,
+        currency: currency?.id,
+        account: mainAccount?.freshAddress,
         mode: "buy", // buy or sell
       };
 
@@ -100,14 +100,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
         },
       });
     }
-  }, [
-    currency.id,
-    history,
-    mainAccount.freshAddress,
-    mainAccount.id,
-    ptxSmartRouting?.enabled,
-    ptxSmartRouting?.params?.liveAppId,
-  ]);
+  }, [currency, history, mainAccount, ptxSmartRouting]);
 
   if (!mainAccount) return null;
 

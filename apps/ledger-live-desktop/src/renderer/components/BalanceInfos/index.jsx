@@ -131,7 +131,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
         pathname: "/exchange",
       });
     }
-  }, [history, ptxSmartRouting?.enabled, ptxSmartRouting?.params?.liveAppId]);
+  }, [history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("Page Market");
