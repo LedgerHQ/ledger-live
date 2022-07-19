@@ -5,26 +5,26 @@ import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import Track from "~/renderer/analytics/Track";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 
 import type { StepId, StepProps, St } from "./types";
-import type { Account, Operation } from "@ledgerhq/live-common/types/index";
+import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import type { TFunction } from "react-i18next";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
-import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 import { BigNumber } from "bignumber.js";
 
 import Stepper from "~/renderer/components/Stepper";
@@ -121,8 +121,9 @@ const Body = ({
   } = useBridgeTransaction(() => {
     const { account } = params;
 
-    invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
+    // invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
 
+    console.log("account: ", account);
     const bridge = getAccountBridge(account, undefined);
 
     const t = bridge.createTransaction(account);

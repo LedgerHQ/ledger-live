@@ -5,11 +5,11 @@ import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { useSelector } from "react-redux";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
@@ -43,7 +43,8 @@ function StepConfirmation({
   signed,
   transaction,
 }: StepProps & { theme: * }) {
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
 
   if (optimisticOperation) {

@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import type { TFunction } from "react-i18next";
 
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useLedgerFirstShuffledValidatorsCosmos } from "@ledgerhq/live-common/families/cosmos/react";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/lib/families/cosmos/react";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -11,13 +11,13 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/ValidatorRow";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import type { Account, TransactionStatus } from "@ledgerhq/live-common/lib/types";
 import type {
   CosmosDelegation,
   CosmosValidatorItem,
-} from "@ledgerhq/live-common/families/cosmos/types";
+} from "@ledgerhq/live-common/lib/families/cosmos/types";
 
 type Props = {
   t: TFunction,
@@ -38,8 +38,8 @@ const ValidatorField = ({
 }: Props) => {
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
-
+  const currencyName = account.currency.name.toLowerCase();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
   const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
     return (
       <ValidatorRow

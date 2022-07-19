@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -14,9 +14,9 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
 
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -30,7 +30,8 @@ export default function StepConfirmation({
   transaction,
 }: StepProps) {
   const { t } = useTranslation();
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
 
   if (optimisticOperation) {
@@ -45,16 +46,17 @@ export default function StepConfirmation({
     const amount =
       unit && validator && formatCurrencyUnit(unit, validator.amount, { showCode: true, locale });
 
+    const currencyName = account.currency.name.toLowerCase();
     return (
       <Container>
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={t("cosmos.undelegation.flow.steps.confirmation.success.title")}
+          title={t(`${currencyName}.undelegation.flow.steps.confirmation.success.title`)}
           description={
             <div>
               <Trans
-                i18nKey="cosmos.undelegation.flow.steps.confirmation.success.description"
+                i18nKey={`${currencyName}.undelegation.flow.steps.confirmation.success.description`}
                 values={{
                   amount,
                   validator: v && v.name,
@@ -75,7 +77,7 @@ export default function StepConfirmation({
         <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={t("cosmos.undelegation.flow.steps.confirmation.broadcastError")}
+            title={t(`${currencyName}.undelegation.flow.steps.confirmation.broadcastError`)}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs />
@@ -121,6 +123,7 @@ export function StepConfirmationFooter({
       });
     }
   }, [onClose, account, concernedOperation, parentAccount]);
+  const currencyName = account.currency.name;
 
   return (
     <Box horizontal alignItems="right">
@@ -132,10 +135,10 @@ export function StepConfirmationFooter({
         <Button
           primary
           ml={2}
-          event="Undelegation Cosmos Flow Step 3 View OpD Clicked"
+          event={`Undelegation ${currencyName} Flow Step 3 View OpD Clicked`}
           onClick={onViewDetails}
         >
-          {t("cosmos.undelegation.flow.steps.confirmation.success.cta")}
+          {t(`${currencyName.toLowerCase()}.undelegation.flow.steps.confirmation.success.cta`)}
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

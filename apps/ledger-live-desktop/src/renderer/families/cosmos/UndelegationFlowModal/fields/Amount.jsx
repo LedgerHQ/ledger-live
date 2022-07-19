@@ -2,8 +2,8 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import type { Account, TransactionStatus } from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import type { Account, TransactionStatus } from "@ledgerhq/live-common/lib/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";

@@ -4,14 +4,14 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/live-common/types/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import {
-  useCosmosPreloadData,
-  useCosmosMappedDelegations,
-} from "@ledgerhq/live-common/families/cosmos/react";
-import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+  useCosmosFamilyPreloadData,
+  useCosmosFamilyMappedDelegations,
+} from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -24,7 +24,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header, UnbondingHeader } from "./Header";
 import { Row, UnbondingRow } from "./Row";
 
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
@@ -56,9 +56,11 @@ const Delegation = ({ account }: Props) => {
 
   const delegationEnabled = canDelegate(account);
 
-  const mappedDelegations = useCosmosMappedDelegations(account);
+  const mappedDelegations = useCosmosFamilyMappedDelegations(account);
 
-  const { validators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyName);
+
   const unit = getAccountUnit(account);
 
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
