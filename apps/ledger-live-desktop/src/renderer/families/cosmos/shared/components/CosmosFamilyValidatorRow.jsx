@@ -1,10 +1,10 @@
 // @flow
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
-import type { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/osmosis/utils";
-import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/lib/types";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
+import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
+import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/types/index";
 
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";

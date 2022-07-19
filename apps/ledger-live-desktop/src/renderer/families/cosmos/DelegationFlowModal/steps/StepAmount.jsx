@@ -1,6 +1,6 @@
 // @flow
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";

@@ -117,68 +117,8 @@ export class CosmosAPI {
       if (elem.denom === currency.units[1].code)
         amount = amount.plus(elem.amount);
     }
-    // eslint-disable-next-line no-empty
-  } catch (e) {}
-  return response;
-};
 
-export const getChainId = async (): Promise<string> => {
-  const { data } = await network({
-    method: "GET",
-    url: `${defaultEndpoint}/node_info`,
-  });
-
-  return data.node_info.network;
-};
-
-const getHeight = async (): Promise<number> => {
-  const { data } = await network({
-    method: "GET",
-    url: `${defaultEndpoint}/cosmos/base/tendermint/v1beta1/blocks/latest`,
-  });
-
-  return data.block.header.height;
-};
-
-const getAllBalances = async (
-  address: string,
-  currency: CryptoCurrency
-): Promise<BigNumber> => {
-  const { data } = await network({
-    method: "GET",
-    url: `${defaultEndpoint}/cosmos/bank/v1beta1/balances/${address}`,
-  });
-
-  let amount = new BigNumber(0);
-
-  for (const elem of data.balances) {
-    if (elem.denom === currency.units[1].code)
-      amount = amount.plus(elem.amount);
-  }
-
-  return amount;
-};
-
-const getDelegations = async (
-  address: string,
-  currency: CryptoCurrency
-): Promise<any> => {
-  const delegations: Array<any> = [];
-
-  const { data: data1 } = await network({
-    method: "GET",
-    url: `${defaultEndpoint}/cosmos/staking/v1beta1/delegations/${address}`,
-  });
-
-  data1.delegation_responses = data1.delegation_responses.filter(
-    (d) => d.balance.amount !== "0"
-  );
-
-  let status = "unbonded";
-  const statusMap = {
-    BOND_STATUS_UNBONDED: "unbonded",
-    BOND_STATUS_UNBONDING: "unbonding",
-    BOND_STATUS_BONDED: "bonded",
+    return amount;
   };
 
   getDelegations = async (
@@ -191,6 +131,10 @@ const getDelegations = async (
       method: "GET",
       url: `${this._defaultEndpoint}/cosmos/staking/v1beta1/delegations/${address}`,
     });
+
+    data1.delegation_responses = data1.delegation_responses.filter(
+      (d) => d.balance.amount !== "0"
+    );
 
     let status = "unbonded";
     const statusMap = {

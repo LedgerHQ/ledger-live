@@ -8,7 +8,7 @@ import {
 import { CosmosExtraTxInfo } from "../cosmos/types";
 
 function formatOperationSpecifics(op: Operation): string {
-  const { memo, validators, claimedRewards } = op.extra;
+  const { memo, validators, autoClaimedRewards } = op.extra;
   let str = " ";
   if (validators && validators.length > 0) {
     str += validators
@@ -18,10 +18,9 @@ function formatOperationSpecifics(op: Operation): string {
       .join("");
   }
 
-  if (claimedRewards) {
-    console.log("->>>>>>>>>>>>>>> claimed rewards is: ", claimedRewards);
-    str += `\n auto claimed rewards is: ${claimedRewards.toString()}`;
-    // str += claimedRewards
+  if (autoClaimedRewards) {
+    str += `\n auto claimed rewards is: ${autoClaimedRewards.toString()}`;
+    // str += autoClaimedRewards
     //   .map((r) => `\n -> -> auto claimed reward: ${r}`)
     //   .join("");
   }
@@ -44,18 +43,18 @@ export function fromOperationExtraRaw(
       })),
     };
   }
-  if (extra && extra.claimedRewards) {
-    console.log(
-      `fromOperationExtraRaw hit. extra.claimedRewards is not undefined, therefore, extra is: ${JSON.stringify(
-        extra
-      )}`
-    );
+  if (extra && extra.autoClaimedRewards) {
+    // console.log(
+    //   `fromOperationExtraRaw hit. extra.autoClaimedRewards is not undefined, therefore, extra is: ${JSON.stringify(
+    //     extra
+    //   )}`
+    // );
   }
 
-  // if (extra && extra.claimedRewards) {
+  // if (extra && extra.autoClaimedRewards) {
   //   e = {
   //     ...extra,
-  //     claimedRewards: extra.claimedRewards.map((o) => ({
+  //     autoClaimedRewards: extra.autoClaimedRewards.map((o) => ({
   //       ...o,
   //       amount: new BigNumber(o),
   //       hello: "something else",
@@ -79,16 +78,16 @@ export function toOperationExtraRaw(
       })),
     };
   }
-  if (extra && extra.claimedRewards) {
-    console.log(
-      `extra.claimedRewards is not undefined, therefore, extra is: ${JSON.stringify(
-        extra
-      )}`
-    );
+  if (extra && extra.autoClaimedRewards) {
+    // console.log(
+    //   `extra.autoClaimedRewards is not undefined, therefore, extra is: ${JSON.stringify(
+    //     extra
+    //   )}`
+    // );
   }
   //   e = {
   //     ...extra,
-  //     claimedRewards: extra.claimedRewards.map((o) => ({
+  //     autoClaimedRewards: extra.autoClaimedRewards.map((o) => ({
   //       ...o,
   //       hello: "something",
   //     })),

@@ -1,8 +1,8 @@
 // @flow
-import type { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 
 import React from "react";
-import { COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES } from "@ledgerhq/live-common/families/cosmos/utils"
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";

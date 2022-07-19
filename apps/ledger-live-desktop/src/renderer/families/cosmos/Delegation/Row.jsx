@@ -9,13 +9,13 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   canRedelegate,
   canUndelegate,
   getRedelegationCompletionDate,
-} from "@ledgerhq/live-common/lib/families/cosmos/logic";
+} from "@ledgerhq/live-common/families/cosmos/logic";
 
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";

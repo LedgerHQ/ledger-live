@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 
 import type { StepProps } from "../types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import ValidatorField from "../fields/ValidatorField";
 

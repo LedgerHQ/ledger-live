@@ -61,5 +61,5 @@ export interface OsmosisStakingEventContent {
 export interface OsmosisEvent {
   id: string;
   kind: typeof OsmosisTransactionTypeEnum;
-  sub: OsmosisSendEventContent[];
+  sub: OsmosisSendEventContent[] | OsmosisStakingEventContent[];
 }

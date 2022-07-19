@@ -4,13 +4,13 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import moment from "moment";
 
-import type { CosmosMappedDelegation } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   canRedelegate,
   canUndelegate,
   getRedelegationCompletionDate,
-} from "@ledgerhq/live-common/lib/families/cosmos/logic";
+} from "@ledgerhq/live-common/families/cosmos/logic";
 
 import {
   ManageDropDownItem,

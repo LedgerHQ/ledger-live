@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
-import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import type { CosmosMappedDelegation } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
+import type { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";

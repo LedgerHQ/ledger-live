@@ -3,10 +3,10 @@ import { BigNumber } from "bignumber.js";
 import React from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import type { Operation, Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import type { Operation, Account } from "@ledgerhq/live-common/types/index";
 
 import { urls } from "~/config/urls";
 import {
@@ -50,7 +50,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const locale = useSelector(localeSelector);
 
   const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const { validators: osmosisValidators } = useCosmosFamilyPreloadData(currencyName);
 
   const formatConfig = {
     disableRounding: true,
@@ -62,9 +62,10 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
 
   let ret = null;
 
-  const { claimedRewards } = extra;
-  console.log("claimedRewards: ", claimedRewards);
-  console.log("extra: ", extra);
+  let { autoClaimedRewards } = extra;
+  if (autoClaimedRewards != null) {
+    autoClaimedRewards = new BigNumber(autoClaimedRewards);
+  }
 
   switch (type) {
     case "DELEGATE": {
@@ -79,15 +80,15 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             currency={currency}
             delegations={delegations}
             account={account}
-            validators={validators}
+            validators={osmosisValidators}
           />
-          {claimedRewards != null ? (
+          {autoClaimedRewards != null && autoClaimedRewards.gt(0) ? (
             <OpDetailsSection>
               <OpDetailsTitle>
-                <Trans i18nKey={"operationDetails.extra.rewards"} />
+                <Trans i18nKey={"operationDetails.extra.autoClaimedRewards"} />
               </OpDetailsTitle>
               <OpDetailsData>
-                {formatCurrencyUnit(unit, new BigNumber(claimedRewards), formatConfig)}
+                {formatCurrencyUnit(unit, autoClaimedRewards, formatConfig)}
               </OpDetailsData>
             </OpDetailsSection>
           ) : null}
@@ -98,7 +99,9 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       const { validators: undelegations } = extra;
       if (!undelegations || undelegations.length <= 0) return null;
       const validator = extra.validators[0];
-      const formattedValidator = validators.find(v => v.validatorAddress === validator.address);
+      const formattedValidator = osmosisValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
 
       ret = (
@@ -121,19 +124,30 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>{formattedAmount}</OpDetailsData>
           </OpDetailsSection>
+          {autoClaimedRewards != null && autoClaimedRewards.gt(0) ? (
+            <OpDetailsSection>
+              <OpDetailsTitle>
+                <Trans i18nKey={"operationDetails.extra.autoClaimedRewards"} />
+              </OpDetailsTitle>
+              <OpDetailsData>
+                {formatCurrencyUnit(unit, autoClaimedRewards, formatConfig)}
+              </OpDetailsData>
+            </OpDetailsSection>
+          ) : null}
         </>
       );
       break;
     }
     case "REDELEGATE": {
-      const { sourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !sourceValidator) return null;
-
+      const { sourceValidator, validators: redelegations } = extra;
+      if (!redelegations || redelegations.length <= 0 || !sourceValidator) return null;
       const validator = extra.validators[0];
-
-      const formattedValidator = validators.find(v => v.validatorAddress === validator.address);
-
-      const formattedSourceValidator = validators.find(v => v.validatorAddress === sourceValidator);
+      const formattedValidator = osmosisValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
+      const formattedSourceValidator = osmosisValidators.find(
+        v => v.validatorAddress === sourceValidator,
+      );
 
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
 
@@ -168,13 +182,13 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>{formattedAmount}</OpDetailsData>
           </OpDetailsSection>
-          {claimedRewards != null ? (
+          {autoClaimedRewards != null && autoClaimedRewards.gt(0) ? (
             <OpDetailsSection>
               <OpDetailsTitle>
-                <Trans i18nKey={"operationDetails.extra.rewards"} />
+                <Trans i18nKey={"operationDetails.extra.autoClaimedRewards"} />
               </OpDetailsTitle>
               <OpDetailsData>
-                {formatCurrencyUnit(unit, new BigNumber(claimedRewards), formatConfig)}
+                {formatCurrencyUnit(unit, autoClaimedRewards, formatConfig)}
               </OpDetailsData>
             </OpDetailsSection>
           ) : null}
@@ -188,7 +202,9 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
 
       const validator = extra.validators[0];
 
-      const formattedValidator = validators.find(v => v.validatorAddress === validator.address);
+      const formattedValidator = osmosisValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
 
       ret = (
         <>

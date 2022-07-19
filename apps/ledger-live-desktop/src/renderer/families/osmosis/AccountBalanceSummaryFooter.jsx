@@ -119,7 +119,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
         <BalanceDetail>
           <ToolTip
             content={
-              <Trans i18nKey="account.undelegatingTooltip" values={{ timelockInDays: 21 }} />
+              <Trans i18nKey="account.undelegatingTooltip" values={{ timelockInDays: 14 }} />
             }
           >
             <TitleWrapper>

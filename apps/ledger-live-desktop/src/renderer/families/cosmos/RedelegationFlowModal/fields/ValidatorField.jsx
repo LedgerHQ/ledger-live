@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import Box from "~/renderer/components/Box";
 import { NoResultPlaceholder } from "~/renderer/components/Delegation/ValidatorSearchInput";

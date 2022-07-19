@@ -47,7 +47,6 @@ export function useCosmosFamilyPreloadData(
     getUpdates = getOsmosisPreloadDataUpdates;
   }
 
-  console.log("-> -> -> useCosmosFamilyPreloadData was called");
   const [state, setState] = useState(getCurrent);
   useEffect(() => {
     const sub = getUpdates().subscribe(setState);
@@ -197,8 +196,10 @@ export function useMappedExtraOperationDetails({
       ? mapDelegationInfo([extra.validator], validators, unit)[0]
       : undefined,
     sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
-    claimedRewards:
-      extra.claimedRewards != null ? extra.claimedRewards : "empty string",
+    autoClaimedRewards:
+      extra.autoClaimedRewards != null
+        ? extra.autoClaimedRewards
+        : "empty string",
   };
 }
 

@@ -118,7 +118,6 @@ export class CosmosValidatorsManager {
             ),
           };
         });
-        console.log("LOGGING VALIDATORS: ", data.validators);
         return validators;
       }
     },
@@ -131,7 +130,6 @@ export class CosmosValidatorsManager {
         ? await this._rewardsState()
         : await this.getStargateRewardsState();
 
-      console.log("REWARDS STATE IS: ", rewardsState);
       // validators need the rewardsState ONLY to compute voting power as
       // percentage instead of raw uatoms amounts
       return await this.cacheValidators(rewardsState);

@@ -1,12 +1,12 @@
 // @flow
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import Box from "~/renderer/components/Box";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Label from "~/renderer/components/Label";

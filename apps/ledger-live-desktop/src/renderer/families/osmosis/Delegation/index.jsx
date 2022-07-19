@@ -4,15 +4,15 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,
-} from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/logic";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/osmosis/logic";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/families/cosmos/react";
+import { mapUnbondings } from "@ledgerhq/live-common/families/cosmos/logic";
+import { canDelegate } from "@ledgerhq/live-common/families/osmosis/logic";
+import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -25,7 +25,7 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header, UnbondingHeader } from "../../cosmos/Delegation/Header";
 import { Row, UnbondingRow } from "./Row";
 
-import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/osmosis/utils";
+import { LEDGER_OSMOSIS_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/osmosis/utils";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";

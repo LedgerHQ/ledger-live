@@ -4,6 +4,7 @@ import network from "../../../network";
 import { encodeOperationId } from "../../../operation";
 import { Operation, OperationType } from "../../../types";
 import { CosmosAPI } from "../../cosmos/api/Cosmos";
+import { CosmosDelegationInfo } from "../../cosmos/types";
 import {
   OsmosisDistributionParams,
   OsmosisEpochProvisions,
@@ -209,9 +210,15 @@ export class OsmosisAPI extends CosmosAPI {
             break;
           }
           case OsmosisTransactionTypeEnum.Reward: {
+            // For the time being we'll be creating duplicate ops for the edge case of
+            // rewards txs that contain multiple claim messages.
+            // The idea is that a few duplicate operations won't affect performance
+            // significantly, and the duplicate will be removed anyways by mergeOps in js-sync.
+            // If this doesn't work then simply add a check here to see if there's already
+            // an operation in the operations[] array with the current tx hash.
+
             const ops = await this.convertRewardTransactionToOperation(
               accountId,
-              events[j],
               accountTransactions[i],
               memo
             );
@@ -300,32 +307,8 @@ export class OsmosisAPI extends CosmosAPI {
           ),
         },
       ],
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
     };
-
-    // BEGIN EXPERIMENTAL ------------
-    let amount = new BigNumber(0);
-    if (delegateEvent.transfers != null) {
-      if (delegateEvent.transfers.reward) {
-        amount = getMicroOsmoAmount(delegateEvent.transfers.reward[0].amounts);
-      }
-    }
-    let rewardOperation;
-    if (amount.gt(0)) {
-      // Option 1: Append rewards to extra
-      extra["claimedRewards"] = amount.toString();
-      // Option 2: Return additional operation
-      rewardOperation = convertTransactionToOperation(
-        accountId,
-        "REWARD",
-        amount,
-        tx,
-        [],
-        [],
-        extra
-      );
-      if (rewardOperation != null) ops.push(rewardOperation);
-    }
-    // END EXPERIMENTAL ------------
 
     ops.push(
       convertTransactionToOperation(
@@ -339,6 +322,40 @@ export class OsmosisAPI extends CosmosAPI {
       )
     );
     return ops;
+  };
+
+  calculateAutoClaimedRewards = (tx: OsmosisAccountTransaction): BigNumber => {
+    //  These types are the only types for which auto claim rewards are supported
+    const SUPPORTED_TYPES = [
+      OsmosisTransactionTypeEnum.Delegate,
+      OsmosisTransactionTypeEnum.Redelegate,
+      OsmosisTransactionTypeEnum.Undelegate,
+    ];
+    let totalRewardsAmount = new BigNumber(0);
+    tx.events.forEach((event) => {
+      if (Object.prototype.hasOwnProperty.call(event, "sub")) {
+        const eventContent: OsmosisStakingEventContent[] =
+          event.sub as OsmosisStakingEventContent[];
+        if (eventContent.length > 0) {
+          const rewardEvent = eventContent[0];
+          if (
+            rewardEvent != null &&
+            SUPPORTED_TYPES.includes(rewardEvent.type[0])
+          ) {
+            let amount = new BigNumber(0);
+            if (rewardEvent.transfers != null) {
+              if (rewardEvent.transfers.reward) {
+                amount = getMicroOsmoAmount(
+                  rewardEvent.transfers.reward[0].amounts
+                );
+                totalRewardsAmount = totalRewardsAmount.plus(amount);
+              }
+            }
+          }
+        }
+      }
+    });
+    return totalRewardsAmount;
   };
 
   convertRedelegateTransactionToOperation = async (
@@ -367,35 +384,11 @@ export class OsmosisAPI extends CosmosAPI {
           amount: new BigNumber(
             getMicroOsmoAmount([redelegEvent.amount.delegate])
           ),
-          sourceValidator: redelegEvent.node.validator_source[0].id,
         },
       ],
+      sourceValidator: redelegEvent.node.validator_source[0].id,
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
     };
-
-    // BEGIN EXPERIMENTAL ------------
-    let amount = new BigNumber(0);
-    if (redelegEvent.transfers != null) {
-      if (redelegEvent.transfers.reward) {
-        amount = getMicroOsmoAmount(redelegEvent.transfers.reward[0].amounts);
-      }
-    }
-    let rewardOperation;
-    if (amount.gt(0)) {
-      // Option 1: Append rewards to extra
-      extra["claimedRewards"] = amount.toString();
-      // Option 2: Return additional operation
-      rewardOperation = convertTransactionToOperation(
-        accountId,
-        "REWARD",
-        amount,
-        tx,
-        [],
-        [],
-        extra
-      );
-      if (rewardOperation != null) ops.push(rewardOperation);
-    }
-    // END EXPERIMENTAL ------------
 
     ops.push(
       convertTransactionToOperation(
@@ -439,32 +432,8 @@ export class OsmosisAPI extends CosmosAPI {
           ),
         },
       ],
+      autoClaimedRewards: this.calculateAutoClaimedRewards(tx).toString(),
     };
-
-    // BEGIN EXPERIMENTAL ------------
-    let amount = new BigNumber(0);
-    if (undelegEvent.transfers != null) {
-      if (undelegEvent.transfers.reward) {
-        amount = getMicroOsmoAmount(undelegEvent.transfers.reward[0].amounts);
-      }
-    }
-    let rewardOperation;
-    if (amount.gt(0)) {
-      // Option 1: Append rewards to extra
-      extra["claimedRewards"] = amount.toString();
-      // Option 2: Return additional operation
-      rewardOperation = convertTransactionToOperation(
-        accountId,
-        "REWARD",
-        amount,
-        tx,
-        [],
-        [],
-        extra
-      );
-      if (rewardOperation != null) ops.push(rewardOperation);
-    }
-    // END EXPERIMENTAL ------------
 
     ops.push(
       convertTransactionToOperation(
@@ -482,78 +451,53 @@ export class OsmosisAPI extends CosmosAPI {
 
   convertRewardTransactionToOperation = async (
     accountId: string,
-    event: any,
     tx: OsmosisAccountTransaction,
     memo: string
   ): Promise<Operation[]> => {
     const ops: Operation[] = [];
 
-    if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
-      return ops;
-    }
-    const eventContent: OsmosisStakingEventContent[] = event.sub;
-    if (!(eventContent.length > 0)) return ops;
-    const rewardEvent = eventContent.find(
-      (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
-    );
-    if (rewardEvent == null) return ops;
-    const type = "REWARD";
-    let amount = new BigNumber(0);
-    if (rewardEvent.transfers != null) {
-      if (rewardEvent.transfers.reward) {
-        amount = getMicroOsmoAmount(rewardEvent.transfers.reward[0].amounts);
+    let totalRewardsAmount = new BigNumber(0);
+    const rewardValidators: CosmosDelegationInfo[] = [];
+    tx.events.forEach((event) => {
+      if (!Object.prototype.hasOwnProperty.call(event, "sub")) {
+        return ops;
       }
-    }
+      const eventContent: OsmosisStakingEventContent[] =
+        event.sub as OsmosisStakingEventContent[];
+      if (!(eventContent.length > 0)) return ops;
+      const rewardEvent = eventContent.find(
+        (event) => event.type[0] === OsmosisTransactionTypeEnum.Reward
+      );
+      if (rewardEvent == null) return ops;
+      let amount = new BigNumber(0);
+      if (rewardEvent.transfers != null) {
+        if (rewardEvent.transfers.reward) {
+          amount = getMicroOsmoAmount(rewardEvent.transfers.reward[0].amounts);
+          totalRewardsAmount = totalRewardsAmount.plus(amount);
+          rewardValidators.push({
+            address: rewardEvent.node.validator[0].id,
+            amount,
+          });
+        }
+      }
+    });
+    const type = "REWARD";
     const extra = {
       memo: memo,
-      validators: [
-        {
-          address: rewardEvent.node.validator[0].id,
-          amount,
-        },
-      ],
+      validators: rewardValidators,
     };
     ops.push(
-      convertTransactionToOperation(accountId, type, amount, tx, [], [], extra)
-    );
-    return ops;
-  };
-
-  // Sometimes the action of delegating, undelegating redelegating auto claims rewards, so we check if that's the case
-  // and add a REWARD operation to account for that
-  handleRewardOperation = async (
-    event: OsmosisStakingEventContent,
-    accountId: string,
-    transaction: OsmosisAccountTransaction,
-    extra: Record<string, any>
-  ): Promise<any> => {
-    let amount = new BigNumber(0);
-    let rewardOperation: Operation | undefined;
-    if (event.transfers != null) {
-      if (event.transfers.reward) {
-        amount = getMicroOsmoAmount(event.transfers.reward[0].amounts);
-      }
-    }
-    if (amount.gt(0)) {
-      rewardOperation = convertTransactionToOperation(
+      convertTransactionToOperation(
         accountId,
-        "REWARD",
-        amount,
-        transaction,
+        type,
+        totalRewardsAmount,
+        tx,
         [],
         [],
         extra
-      );
-    }
-    return rewardOperation;
-  };
-
-  queryMintParams = async (): Promise<OsmosisMintParams> => {
-    const { data } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/osmosis/mint/v1beta1/params`,
-    });
-    return data?.params;
+      )
+    );
+    return ops;
   };
 
   queryTotalSupply = async (
@@ -565,22 +509,6 @@ export class OsmosisAPI extends CosmosAPI {
     });
     const { amount } = data;
     return { ...amount };
-  };
-
-  queryEpochProvisions = async (): Promise<OsmosisEpochProvisions> => {
-    const { data: epochProvisions } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/osmosis/mint/v1beta1/epoch_provisions`,
-    });
-    return epochProvisions;
-  };
-
-  queryEpochs = async (): Promise<OsmosisEpochs> => {
-    const { data: epochs } = await network({
-      method: "GET",
-      url: `${this._defaultEndpoint}/osmosis/epochs/v1beta1/epochs`,
-    });
-    return epochs;
   };
 
   queryPool = async (): Promise<OsmosisPool> => {

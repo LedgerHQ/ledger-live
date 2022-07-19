@@ -38,16 +38,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     unbondings,
     withdrawAddress,
   } = await osmosisAPI.getAccountInfo(xpubOrAddress, currency);
-  console.log(
-    `balances: ${balances}, blockHeight: ${blockHeight}, delegations: ${JSON.stringify(
-      delegations
-    )}, redelegations: ${JSON.stringify(
-      redelegations
-    )}, unbondings: ${JSON.stringify(
-      unbondings
-    )}, withdrawAddress: ${withdrawAddress},
-    `
-  );
 
   const oldOperations = initialAccount?.operations || [];
 
@@ -122,8 +112,6 @@ const getAccountShape: GetAccountShape = async (info) => {
     },
   };
 
-  console.log("shape.cosmosResources: ", JSON.stringify(shape.cosmosResources));
-
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {
     shape.spendableBalance = new BigNumber(0);
   }
@@ -131,8 +119,5 @@ const getAccountShape: GetAccountShape = async (info) => {
   return { ...shape, operations };
 };
 
-export const scanAccounts = makeScanAccounts({
-  getAccountShape: getAccountShape,
-});
-
-export const sync = makeSync({ getAccountShape: getAccountShape });
+export const scanAccounts = makeScanAccounts({ getAccountShape });
+export const sync = makeSync({ getAccountShape });

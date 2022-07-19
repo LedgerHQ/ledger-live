@@ -4,7 +4,7 @@ import invariant from "invariant";
 import React from "react";
 
 import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";

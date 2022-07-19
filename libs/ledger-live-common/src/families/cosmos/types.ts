@@ -126,7 +126,7 @@ export type CosmosExtraTxInfo = {
   validators?: CosmosDelegationInfo[];
   sourceValidator?: string | null | undefined;
   validator?: CosmosDelegationInfo;
-  claimedRewards?: string | null | undefined; // this is experimental to better represent auto claimed rewards
+  autoClaimedRewards?: string | null | undefined; // this is experimental to better represent auto claimed rewards
 };
 
 export type CosmosDelegationInfo = {
