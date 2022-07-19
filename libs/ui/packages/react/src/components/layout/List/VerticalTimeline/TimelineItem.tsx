@@ -1,11 +1,13 @@
 import React from "react";
 
 import { Theme } from "src/styles/theme";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import { Item, ItemStatus } from ".";
 import { Flex } from "../..";
 import { Text } from "../../..";
+import Tag from "../../../Tag";
+
 import TimelineIndicator from "./TimelineIndicator";
 
 export type Props = {
@@ -47,7 +49,13 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   padding: 20px 16px;
 `;
 
+const TimelineIndicatorContentHeader = styled(Flex)`
+  justify-content: space-between;
+`;
+
 export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
+  const theme = useTheme();
+
   return (
     <Flex flexDirection="row">
       <TimelineIndicator
@@ -57,14 +65,29 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         mr={4}
       />
       <Container status={item.status} isLastItem={isLastItem} mb={4} flexDirection="column">
-        <Text
-          variant="body"
-          color={
-            item.status === "inactive" ? "neutral.c80" : isLastItem ? "success.c100" : "primary.c90"
-          }
-        >
-          {item.title}
-        </Text>
+        <TimelineIndicatorContentHeader>
+          <Text
+            variant="body"
+            color={
+              item.status === "inactive"
+                ? "neutral.c80"
+                : isLastItem
+                ? "success.c100"
+                : "primary.c90"
+            }
+          >
+            {item.title}
+          </Text>
+          {item?.estimatedTime && item.status === "active" && (
+            <Tag
+              size="small"
+              type="opacity"
+              active
+              disabled
+              textProps={{ color: theme.colors.palette.shade100 }}
+            >{`${item.estimatedTime / 60} min`}</Tag>
+          )}
+        </TimelineIndicatorContentHeader>
         {item.renderBody && item.status === "active" && (
           <Flex position="relative">
             <Flex pt={6}>{item.renderBody(item.status === "active")}</Flex>

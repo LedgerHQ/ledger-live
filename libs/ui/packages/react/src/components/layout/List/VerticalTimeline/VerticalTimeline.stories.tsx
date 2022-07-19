@@ -22,14 +22,19 @@ const steps = [
        */
       title: string;
       /**
-       * renderBody is an optional props which is a ReactNode to be rendered next to the title
+       * renderBody is an optional prop which is a ReactNode to be rendered next to the title
        */
       renderBody?: (isDisplayed?: boolean) => ReactNode;
+      /**
+       * estimatedTime is an optional prop that take the estimated time to complete the time in second and display it in a tag in minute
+       */
+       estimatedTime?: number;
     },
     {  
       status: ItemStatus;
       title: string;
       renderBody?: (isDisplayed?: boolean) => ReactNode;
+      estimatedTime?: number;
     }
   ];
 
@@ -67,6 +72,7 @@ const Template = () => {
           {`Your PIN can be 4 to 8 digits long. Anyone with access to your Nano and to your PIN can also access all your crypto and NFT assets.`}
         </Text>
       ),
+      estimatedTime: 120,
     },
     {
       status: "inactive",
@@ -76,6 +82,7 @@ const Template = () => {
           {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
         </Text>
       ),
+      estimatedTime: 300,
     },
     {
       status: "inactive",

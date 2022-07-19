@@ -10,6 +10,7 @@ export type Item = {
   status: ItemStatus;
   title: string;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
+  estimatedTime?: number;
 };
 
 export type Props = BaseStyledProps & {

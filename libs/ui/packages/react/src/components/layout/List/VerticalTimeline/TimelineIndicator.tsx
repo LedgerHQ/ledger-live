@@ -55,6 +55,10 @@ const CenterSegment = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>
   justify-content: center;
 `;
 
+const IconWrapper = styled(Flex)`
+  flex: none;
+`;
+
 export type Props = FlexProps & {
   status: "inactive" | "active" | "completed";
   isFirstItem?: boolean;
@@ -69,10 +73,12 @@ export default function TimelineIndicator({ status, isFirstItem, isLastItem, ...
       <TopSegment status={status} hidden={isFirstItem} />
       <CenterSegment status={status} isLastItem={isLastItem}>
         {status === "completed" && (
-          <CircledCheckSolidMedium
-            color={isLastItem ? colors.success.c100 : colors.primary.c80}
-            size={24}
-          />
+          <IconWrapper>
+            <CircledCheckSolidMedium
+              color={isLastItem ? colors.success.c100 : colors.primary.c80}
+              size={24}
+            />
+          </IconWrapper>
         )}
       </CenterSegment>
       <BottomSegment status={status} hidden={isLastItem} />
