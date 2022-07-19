@@ -1,10 +1,13 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.0.2",
+  "version": "22.1.0-next.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
-    "url": "git://github.com/LedgerHQ/ledger-live-common"
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "bin": {
     "ledger-live": "./bin/index.js"

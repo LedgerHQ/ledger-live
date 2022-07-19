@@ -22,14 +22,12 @@ import "@ledgerhq/live-common/reactNative";
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
-import VersionNumber from "react-native-version-number";
 
 import { getEnv } from "@ledgerhq/live-common/env";
 import BackgroundRunnerService from "./services/BackgroundRunnerService";
-import App, { routingInstrumentation } from "./src";
+import App from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 import logReport from "./src/log-report";
-import pkg from "./package.json";
 import { getAllDivergedFlags } from "./src/components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./src/experimental";
 
@@ -40,9 +38,11 @@ const excludedErrorName = [
   "Network Error",
   "NetworkDown",
   "NotConnectedError",
+  // timeouts
   "TimeoutError",
   "WebsocketConnectionError",
   "TronTransactionExpired", // user waits too long on device, possibly network slowness too
+  "SolanaTxConfirmationTimeout",
   // bad usage of device
   "BleError",
   "EthAppPleaseEnableContractData",
@@ -57,6 +57,9 @@ const excludedErrorName = [
   // other
   "InvalidAddressError",
   "SwapNoAvailableProviders",
+  "AccountNeedResync",
+  "DeviceAppVerifyNotSupported",
+  "AccountAwaitingSendPendingOperations",
 ];
 const excludedErrorDescription = [
   // networking
@@ -68,6 +71,7 @@ const excludedErrorDescription = [
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
+  /Ledger Device is busy/,
   // others
   "Transaction signing request was rejected by the user",
   "Transaction approval request was rejected",

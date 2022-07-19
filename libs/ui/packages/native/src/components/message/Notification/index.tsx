@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import FlexBox from "../../Layout/Flex";
+import FlexBox, { FlexBoxProps } from "../../Layout/Flex";
 import { TextProps, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import Text from "../../Text";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
@@ -8,10 +8,12 @@ import { Flex } from "../../Layout";
 import { space } from "styled-system";
 import { ExternalLinkMedium } from "@ledgerhq/icons-ui/native";
 
+type NotificationVariant = "primary" | "secondary" | "success" | "warning" | "error" | string;
+
 type Props = {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   iconColor?: string;
-  variant?: "primary" | "secondary";
+  variant?: NotificationVariant;
   title: string;
   subtitle?: string;
   numberOfLines?: TextProps["numberOfLines"];
@@ -20,20 +22,50 @@ type Props = {
   onLinkPress?: TouchableOpacityProps["onPress"];
 };
 
-const NotificationContainer = styled.View<Partial<Props>>`
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  align-items: center;
-  ${(p) =>
-    p.variant === "primary" &&
-    `
-     padding: 16px;
-  `}
-  background-color: ${(p) =>
-    p.variant === "primary" ? p.theme.colors.primary.c90 : "transparent"};
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-`;
+const variantProps: Record<NotificationVariant, Record<string, any>> = {
+  primary: {
+    bg: "primary.c90",
+    color: "neutral.c00",
+    padding: 6,
+  },
+  success: {
+    bg: "success.c100",
+    color: "neutral.c00",
+    padding: 6,
+  },
+  warning: {
+    bg: "warning.c100",
+    color: "neutral.c00",
+    padding: 6,
+  },
+  error: {
+    bg: "error.c100",
+    color: "neutral.c00",
+    padding: 6,
+  },
+  neutral: {
+    bg: "neutral.c30",
+    color: "neutral.c100",
+    linkColor: "primary.c80",
+    padding: 6,
+  },
+  secondary: {
+    bg: "transparent",
+    color: "neutral.c100",
+    padding: 0,
+  },
+};
+
+const NotificationContainer = styled(FlexBox).attrs(
+  (p: FlexBoxProps & { variant: NotificationVariant }) => ({
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    bg: variantProps[p.variant]?.bg ?? variantProps.primary.bg,
+    p: variantProps[p.variant]?.padding,
+    borderRadius: 1,
+  }),
+)``;
 
 const ClosePressableExtendedBounds = styled.TouchableOpacity.attrs({
   p: 5,
@@ -54,7 +86,8 @@ export default function Notification({
   onLinkPress,
 }: Props): React.ReactElement {
   const { colors } = useTheme();
-  const textColor = variant === "primary" ? colors.neutral.c00 : colors.neutral.c100;
+  const textColor = variantProps[variant]?.color ?? variantProps.primary.color;
+  const linkColor = variantProps[variant]?.linkColor || textColor;
 
   return (
     <NotificationContainer variant={variant}>
@@ -86,10 +119,10 @@ export default function Notification({
           <Flex mt={3}>
             <TouchableOpacity onPress={onLinkPress}>
               <Flex flexDirection={"row"} alignItems={"center"}>
-                <Text variant={"body"} fontWeight={"semiBold"} color={textColor} mr={3}>
+                <Text variant={"body"} fontWeight={"semiBold"} color={linkColor} mr={3}>
                   {linkText}
                 </Text>
-                <ExternalLinkMedium size={16} color={textColor} />
+                <ExternalLinkMedium size={16} color={linkColor} />
               </Flex>
             </TouchableOpacity>
           </Flex>

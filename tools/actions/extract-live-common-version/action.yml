@@ -20,5 +20,5 @@ outputs:
     description: version of LLC found in yarn.lock
 
 runs:
-  using: "node12"
+  using: node16
   main: "build/index.js"

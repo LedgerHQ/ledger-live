@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, memo } from "react";
+import React, { useCallback, useMemo, memo, useEffect } from "react";
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
@@ -9,6 +9,7 @@ import {
   listTokens,
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import TrackScreen from "../../../analytics/TrackScreen";
 import NoResultsFound from "../../../icons/NoResultsFound";
 
@@ -22,18 +23,19 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Props = {
   navigation: any;
   route: { params?: { currency?: string; search?: string } };
+  screen: "Wallet" | "Assets";
 };
 
 const maxReadOnlyCryptoCurrencies = 10;
 
-function ReadOnlyAccounts({ navigation, route }: Props) {
+function ReadOnlyAccounts({ navigation, route, screen }: Props) {
   const listSupportedTokens = useCallback(
     () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
     [],
@@ -56,7 +58,11 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoCurrency }) => (
-      <ReadOnlyAccountRow navigation={navigation} currency={item} />
+      <ReadOnlyAccountRow
+        navigation={navigation}
+        currency={item}
+        screen={screen}
+      />
     ),
     [navigation],
   );
@@ -129,9 +135,11 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     [t],
   );
 
+  const previousRoute = usePreviousRouteName();
+
   return (
     <TabBarSafeAreaView>
-      <TrackScreen category="Accounts" accountsLength={accounts.length} />
+      <TrackScreen category="ReadOnly" name="Assets" source={previousRoute} />
       <Flex flex={1} bg={"background.main"}>
         <AccountsNavigationHeader readOnly />
         <FilteredSearchBar
