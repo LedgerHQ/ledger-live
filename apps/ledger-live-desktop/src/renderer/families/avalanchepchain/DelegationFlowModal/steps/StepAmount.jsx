@@ -1,5 +1,5 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -11,11 +11,6 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import type { StepProps } from "../types";
-// import Datetime from 'react-datetime';
-// import "react-datetime/css/react-datetime.css";
-// import moment from "moment";
-// import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-// import { DateTimePicker } from '@mui/x-date-pickers';
 
 const StepAmount = ({
   t,

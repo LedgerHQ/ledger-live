@@ -1,13 +1,13 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types";
 import invariant from "invariant";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/avalanchepchain/utils";
+import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 type Props = {
   account: AccountLike,
@@ -18,7 +18,6 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
-
   const { avalanchePChainResources } = mainAccount;
   invariant(avalanchePChainResources, "Avalanche account with avalanchePChainResources expected");
   const isDelegationEnabled = canDelegate(account);

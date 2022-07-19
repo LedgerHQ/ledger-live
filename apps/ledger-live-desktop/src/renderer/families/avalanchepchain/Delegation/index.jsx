@@ -1,6 +1,6 @@
+// @flow
 import React, { useCallback } from "react";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import invariant from "invariant";
 import { useDispatch } from "react-redux";
@@ -19,7 +19,7 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/avalanchepchain/utils";
+import { canDelegate } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 type Props = {
   account: Account,

@@ -1,15 +1,14 @@
 // @flow
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
-import type { AccountBridge, Operation, Account } from "@ledgerhq/live-common/lib/types";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { Transaction } from "@ledgerhq/live-common/families/avalanchepchain/types";
+import type { AccountBridge, Operation, Account } from "@ledgerhq/live-common/types";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
@@ -23,8 +22,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
-import type { St, StepProps, StepId } from "./types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { St, StepProps } from "./types";
 
 type OwnProps = {|
   stepId: StepId,
@@ -114,7 +112,10 @@ const Body = ({
   } = useBridgeTransaction(() => {
     const { account } = params;
 
-    invariant(account && account.avalanchePChainResources, "avalanche: account and avalanchePChainResources required");
+    invariant(
+      account && account.avalanchePChainResources,
+      "avalanche: account and avalanchePChainResources required",
+    );
 
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
 

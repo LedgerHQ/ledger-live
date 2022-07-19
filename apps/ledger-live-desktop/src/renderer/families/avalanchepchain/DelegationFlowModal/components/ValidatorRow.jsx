@@ -1,8 +1,8 @@
 //@flow
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
-import type { AvalanchePChainValidator } from "@ledgerhq/live-common/lib/families/avalanchepchain/types";
-import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/lib/types";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import type { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
+import type { CryptoCurrency, Unit } from "@ledgerhq/live-common/types";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -16,7 +16,7 @@ import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Logo from "~/renderer/icons/Logo";
-import { isDefaultValidatorNode } from "@ledgerhq/live-common/lib/families/avalanchepchain/utils";
+import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 type Props = {
   currency: CryptoCurrency,
@@ -27,14 +27,7 @@ type Props = {
   unit: Unit,
 };
 
-function AvalancheValidatorRow({
-  validator,
-  active,
-  showStake,
-  onClick,
-  unit,
-  currency,
-}: Props) {
+function AvalancheValidatorRow({ validator, active, showStake, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
 
   const onExternalLink = useCallback(
@@ -75,7 +68,10 @@ function AvalancheValidatorRow({
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
-              <Trans color="palette.text.shade50" i18nKey="avalanchepchain.delegation.validatorStake" />
+              <Trans
+                color="palette.text.shade50"
+                i18nKey="avalanchepchain.delegation.validatorStake"
+              />
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
