@@ -209,7 +209,7 @@ export class OsmosisAPI extends CosmosAPI {
             break;
           }
           case OsmosisTransactionTypeEnum.Reward: {
-            const ops = await this.convertUndelegateTransactionToOperation(
+            const ops = await this.convertRewardTransactionToOperation(
               accountId,
               events[j],
               accountTransactions[i],
