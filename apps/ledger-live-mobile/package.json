@@ -6,7 +6,7 @@
   "version": "3.5.0",
   "private": true,
   "scripts": {
-    "postinstall": "bash ./scripts/post.sh",
+    "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "start": "react-native start",
     "ios": "react-native run-ios",
@@ -50,8 +50,7 @@
     "test": "",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
-    "test-deep-links": "ws --spa ./deep-links-test-page.html",
-    "test-script": "zx ./scripts/sync-families-dispatch.mjs"
+    "test-deep-links": "ws --spa ./deep-links-test-page.html"
   },
   "jest": {
     "preset": "react-native",

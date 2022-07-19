@@ -33,14 +33,16 @@ async function genTarget(target) {
   const outpath = path.join(generatedPath, target);
 
   for (const family of families) {
-    const p = path.join(rendererPath, "families", family, target);
-    const exists = await fs.exists(path.join(rendererPath, "families", family, target));
-    if (exists) {
+    try {
+      await fs.promises.access(
+        path.join(rendererPath, "families", family, target),
+        fs.constants.R_OK,
+      );
       imports += `
 import ${family} from "../families/${family}/${target}";`;
       exprts += `
   ${family},`;
-    }
+    } catch (error) {}
   }
 
   exprts += `
