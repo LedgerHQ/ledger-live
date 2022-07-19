@@ -64,7 +64,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: "SwapForm",
       }),
     [onNavigate],
   );

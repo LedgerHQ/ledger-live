@@ -37,7 +37,6 @@ import AddAssetsCard from "./AddAssetsCard";
 import Assets from "./Assets";
 import { PortfolioHistoryList } from "./PortfolioHistory";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { useProviders } from "../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
@@ -139,11 +138,9 @@ function PortfolioScreen({ navigation }: Props) {
   const discreetMode = useSelector(discreetModeSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
-  const openAddModal = useCallback(
-    () => setAddModalOpened(true),
-    [setAddModalOpened],
-  );
-  useProviders();
+  const openAddModal = useCallback(() => setAddModalOpened(true), [
+    setAddModalOpened,
+  ]);
 
   const closeAddModal = useCallback(
     () => setAddModalOpened(false),

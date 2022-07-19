@@ -34,7 +34,6 @@ import Header from "../Header";
 import { screen, track } from "../../../analytics";
 import { NavigatorName } from "../../../const";
 import ReadOnlyAssets from "./ReadOnlyAssets";
-import { useProviders } from "../../Swap/SwapEntry";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
@@ -153,7 +152,6 @@ function PortfolioScreen({ navigation }: Props) {
     counterValueCurrencySelector,
   );
   const portfolio = usePortfolio();
-  useProviders();
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);

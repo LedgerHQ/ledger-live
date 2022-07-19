@@ -2,17 +2,17 @@ import {
   isSwapOperationPending,
   operationStatusList,
 } from "@ledgerhq/live-common/exchange/swap/index";
+import { Icon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { rgba } from "../../colors";
-import IconSwap from "../../icons/Swap";
+import { SwapIcon } from "../../icons/swap/index";
 
 export const getStatusColor = (
   status: string,
   colors: any,
-  colorKey = false,
+  colorKey: boolean = false,
 ) => {
   let key = "grey";
 
@@ -31,13 +31,13 @@ export const getStatusColor = (
   return colorKey ? key : colors[key];
 };
 
-const SwapStatusIndicator = ({
+export function SwapStatusIndicator({
   status,
   small,
 }: {
   status: string;
   small?: boolean;
-}) => {
+}) {
   const { colors } = useTheme();
   const statusColor = getStatusColor(status, colors);
   const sizeDependantStyles = {
@@ -45,29 +45,28 @@ const SwapStatusIndicator = ({
     width: small ? 38 : 54,
     height: small ? 38 : 54,
   };
+
   return (
     <View style={[styles.status, sizeDependantStyles]}>
-      <IconSwap color={statusColor} size={small ? 16 : 26} />
-      {isSwapOperationPending(status) ? (
+      <SwapIcon color={statusColor} size={small ? 16 : 26} />
+      {isSwapOperationPending(status) && (
         <View
           style={[
             styles.pending,
             {
+              // @ts-expect-error
               backgroundColor: colors.white,
+              // @ts-expect-error
               borderColor: colors.white,
             },
           ]}
         >
-          <IconAD
-            size={small ? 10 : 14}
-            name="clockcircleo"
-            color={rgba(colors.darkBlue, 0.6)}
-          />
+          <Icon name="Clock" size={small ? 10 : 14} color="primary.c70" />
         </View>
-      ) : null}
+      )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   status: {
@@ -84,4 +83,3 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
 });
-export default SwapStatusIndicator;

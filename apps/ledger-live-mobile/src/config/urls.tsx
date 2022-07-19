@@ -88,6 +88,14 @@ export const urls = {
         main: "https://support.sendwyre.com/hc/en-us/requests/new",
         tos: "https://www.sendwyre.com/user-agreement/",
       },
+      ftx: {
+        main: "https://ftx.com",
+        support: "https://ftx.com/support",
+      },
+      ftxus: {
+        main: "https://ftx.us/",
+        support: "https://help.ftx.us/hc/en-us",
+      },
     },
   },
   // Banners

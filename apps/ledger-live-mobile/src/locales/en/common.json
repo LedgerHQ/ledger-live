@@ -82,7 +82,8 @@
     "moreInfo": "More info",
     "buyEth": "Buy Ethereum",
     "popular": "popular",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "getSupport": "Get support"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -679,6 +680,9 @@
     "StellarSourceHasMultiSign": {
       "title": "Please disable multisign to make Stellar transactions"
     }
+  },
+  "crash": {
+    "title": "Something went wrong"
   },
   "bluetooth": {
     "required": "Sorry, it looks like Bluetooth is disabled",
@@ -2164,6 +2168,10 @@
       "clearCacheButton": "Clear",
       "exportLogs": "Save logs",
       "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
+      "resetThirdPartyData": "Reset third party data",
+      "resetThirdPartyDataDesc": "Erase all your local third party data, used to access third-party transaction provider.",
+      "resetThirdPartyDataModal": "Delete your local third party data",
+      "resetThirdPartyDataModalDesc": "Delete your local third party data. You may have to resubmit your KYC and/or login again to access services provided by our partners.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "This has no impact on your assets. Erases all data in Ledger Live, including account data, transaction histories and settings. Use your Ledger device to reload and manage your crypto assets on an empty Ledger Live.",
       "repairDevice": "Repair your Ledger device",
@@ -2548,19 +2556,79 @@
         }
       }
     },
-    "swapv2": {
+    "swap2": {
       "form": {
-        "summary": {
-          "from": "From",
-          "to": "To",
-          "send": "Send",
-          "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
-          "provider": "Provider",
-          "method": "Rate",
-          "fees": "Fees"
+        "ratesDrawer": {
+          "title": "Rate",
+          "quote": "Quote",
+          "receive": "Receive"
+        },
+        "title": "Exchange",
+        "cta": "Exchange",
+        "from": "From",
+        "to": "To",
+        "loading": "Loading...",
+        "disclaimer": {
+          "title": "Terms and conditions",
+          "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{providerName}}'s Terms & Conditions.",
+          "tos": "Terms & conditions",
+          "accept": "Accept"
+        },
+        "notAvailable": {
+          "title": "Swap is not available yet in your area",
+          "content": "Have a little more patience, we will launch this feature very soon"
+        },
+        "amount": {
+          "useMax": "Use max",
+          "available": "Total available"
+        },
+        "details": {
+          "label": {
+            "provider": "Provider",
+            "rate": "Rate",
+            "fees": "Network fees",
+            "target": "Target account"
+          },
+          "noAccount": "Create an account to receive {{name}}",
+          "noAccountCTA": "Add account"
+        },
+        "select": {
+          "from": {
+            "title": "From"
+          },
+          "to": {
+            "title": "To"
+          }
+        },
+        "providers": {
+          "kyc": {
+            "title": "KYC",
+            "required": "You need to complete your KYC",
+            "complete": "Complete KYC",
+            "update": "Refresh KYC",
+            "rejected": "KYC rejected, start the verification again",
+            "rejectedContactProviderSupport": "KYC rejected, please contact {{providerName}} support",
+            "updateRequired": "Complete or update your KYC",
+            "status": {
+              "pending": "KYC pending",
+              "approved": "KYC approved",
+              "closed": "KYC rejected",
+              "upgradeRequired": "KYC insufficient"
+            }
+          },
+          "login": {
+            "title": "Login",
+            "required": "You need to login with this provider",
+            "complete": "Login"
+          },
+          "mfa": {
+            "title": "MFA",
+            "required": "You need to set up MFA with this provider",
+            "complete": "Set up MFA"
+          },
+          "withdrawalsBlockedError": {
+            "message": "Your withdrawal has been blocked by {{providerName}}.\n\n Please contact their support for more information."
+          }
         }
       }
     },
