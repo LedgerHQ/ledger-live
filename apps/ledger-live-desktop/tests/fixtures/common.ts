@@ -40,8 +40,8 @@ const test = base.extend<TestFixtures>({
   manifestFile: async ({ manifest }, use) => {
     if (manifest) {
       const fullFilePath = path.join(__dirname, "../manifest/", `${manifest}.json`)
-      const jsonFile = fs.readFileSync(fullFilePath, "utf-8");
-      use(JSON.stringify(jsonFile));
+      const jsonFile = fs.readFileSync(fullFilePath, "utf8");
+      use(jsonFile);
     } else {
       use(false);
     }
@@ -66,7 +66,7 @@ const test = base.extend<TestFixtures>({
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
         LEDGER_MIN_HEIGHT: 768,
-        MOCK_REMOTE_LIVE_MANIFEST: manifestFile || "",
+        MOCK_REMOTE_LIVE_MANIFEST: manifestFile,
       },
       env,
     );
