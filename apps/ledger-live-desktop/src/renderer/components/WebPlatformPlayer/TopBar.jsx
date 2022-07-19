@@ -154,6 +154,20 @@ const WebPlatformTopBar = ({
   useEffect(() => {
     const webview = webviewRef.current;
 
+    /**
+     * Handle webview navigation events.
+     * The two events are complementary to enccompass the webview's navigation
+     *
+     * `did-navigate` is emitted when a navigation is done. But this event is not
+     * emitted for in-page navigations, such as clicking anchor links or updating
+     * the window.location.hash.
+     * That's why we use did-navigate-in-page event for this purpose.
+     * cf. doc bellow:
+     *
+     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate
+     * https://www.electronjs.org/docs/latest/api/webview-tag#event-did-navigate-in-page
+     */
+
     if (webview && shouldDisplayNavigation) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
