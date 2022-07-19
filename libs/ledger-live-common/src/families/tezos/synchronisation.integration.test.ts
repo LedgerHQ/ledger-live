@@ -1,7 +1,7 @@
 import { getEnv, setEnv } from "../../env";
 import { fetchAllTransactions } from "./synchronisation";
 
-jest.setTimeout(60 * 1000);
+jest.setTimeout(2 * 60 * 1000);
 
 describe("TEZOS_MAX_TX_QUERIES", () => {
   const bigAccount = "tz1cgQAQfECg5bPASYTMyJ9QJQjSUi8rfL67";
