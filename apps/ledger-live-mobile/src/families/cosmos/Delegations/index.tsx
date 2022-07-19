@@ -7,27 +7,27 @@ import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import {
   useCosmosMappedDelegations,
   useCosmosPreloadData,
-} from "@ledgerhq/live-common/lib/families/cosmos/react";
+} from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   mapUnbondings,
   canRedelegate,
   getRedelegation,
   canUndelegate,
   canDelegate,
-} from "@ledgerhq/live-common/lib/families/cosmos/logic";
+} from "@ledgerhq/live-common/families/cosmos/logic";
 import { Text } from "@ledgerhq/native-ui";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
@@ -50,7 +50,7 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import DateFromNow from "../../../components/DateFromNow";
 import ValidatorImage from "../shared/ValidatorImage";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 type Props = {
   account: Account,

@@ -1,15 +1,11 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import { TouchableWithoutFeedback, View } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import styled from "styled-components/native";
-import {
-  getCryptoCurrencyById,
-  getTokenById,
-} from "@ledgerhq/live-common/lib/currencies";
 import { Text } from "@ledgerhq/native-ui";
 
 import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
 import { scrollToTop } from "../../../navigation/utils";
+import useCurrency from "../../../helpers/useCurrency";
 
 const HeaderContainer = styled(View)`
   flex-direction: row;
@@ -26,15 +22,7 @@ const IconContainer = styled(View)`
 `;
 
 function AccountHeaderTitle() {
-  const route: any = useRoute();
-  const { currencyId, currencyType } = route.params;
-  const currency = useMemo(
-    () =>
-      currencyType === "CryptoCurrency"
-        ? getCryptoCurrencyById(currencyId)
-        : getTokenById(currencyId),
-    [currencyType, currencyId],
-  );
+  const currency = useCurrency();
 
   if (!currency) return null;
 

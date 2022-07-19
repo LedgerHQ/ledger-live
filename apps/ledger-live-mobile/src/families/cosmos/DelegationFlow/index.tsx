@@ -1,4 +1,4 @@
-import { CosmosValidatorItem } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";

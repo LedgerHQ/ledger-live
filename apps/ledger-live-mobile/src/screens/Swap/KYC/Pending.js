@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import { getKYCStatus } from "@ledgerhq/live-common/lib/exchange/swap";
+import { getKYCStatus } from "@ledgerhq/live-common/exchange/swap/index";
 import { swapKYCSelector } from "../../../reducers/settings";
 import { setSwapKYCStatus } from "../../../actions/settings";
 

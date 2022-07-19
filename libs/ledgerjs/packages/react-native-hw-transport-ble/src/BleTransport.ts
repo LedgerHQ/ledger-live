@@ -10,8 +10,8 @@ import {
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
-import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
+import { sendAPDU } from "@ledgerhq/devices/ble/sendAPDU";
+import { receiveAPDU } from "@ledgerhq/devices/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
 import { Observable, defer, merge, from, of, throwError } from "rxjs";
 import {

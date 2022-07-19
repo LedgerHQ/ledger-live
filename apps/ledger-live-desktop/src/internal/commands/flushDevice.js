@@ -1,7 +1,7 @@
 // @flow
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
-import flush from "@ledgerhq/live-common/lib/hw/flush";
+import flush from "@ledgerhq/live-common/hw/flush";
 
 type Input = string;
 type Result = void;

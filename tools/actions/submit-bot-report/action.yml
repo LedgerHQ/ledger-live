@@ -16,7 +16,7 @@ inputs:
   slackChannel:
     description: slack channel to post on (optional)
 runs:
-  using: node12
+  using: node16
   main: build/index.js
 
 branding:

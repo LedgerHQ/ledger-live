@@ -2,27 +2,27 @@ import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   getAddressExplorer,
   getDefaultExplorerView,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import {
   stakeActions,
   stakeActivePercent,
-} from "@ledgerhq/live-common/lib/families/solana/logic";
-import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/lib/families/solana/react";
+} from "@ledgerhq/live-common/families/solana/logic";
+import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import {
   SolanaStakeWithMeta,
   StakeAction,
-} from "@ledgerhq/live-common/lib/families/solana/types";
+} from "@ledgerhq/live-common/families/solana/types";
 import {
   assertUnreachable,
   sweetch,
   tupleOfUnion,
-} from "@ledgerhq/live-common/lib/families/solana/utils";
-import { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/solana/utils";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

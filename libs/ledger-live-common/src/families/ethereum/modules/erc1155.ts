@@ -8,8 +8,8 @@ import {
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
-import type { Account } from "../../../types";
 import { prepareTransaction } from "./erc721";
+import { Account } from "../../../types";
 
 const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 const NotEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
@@ -124,10 +124,17 @@ const erc1155Transfer: ModeModule = {
    */
   fillOptimisticOperation(a, t, op) {
     op.type = "FEES";
-    op.extra = {
-      ...op.extra,
-      approving: true, // workaround to track the status ENABLING
-    };
+    op.nftOperations = t.tokenIds?.map((tokenId, i) => ({
+      ...op,
+      id: "", // operation ID will be filled by patchOperationWithHash
+      type: "NFT_OUT",
+      senders: [eip55.encode(a.freshAddress)],
+      recipients: [eip55.encode(t.recipient)],
+      standard: "ERC1155",
+      contract: eip55.encode(t.collection ?? ""),
+      tokenId,
+      value: t.quantities?.[i] || new BigNumber(0),
+    }));
   },
 
   prepareTransaction,

@@ -3,19 +3,19 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import {
   Account,
   Operation,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 

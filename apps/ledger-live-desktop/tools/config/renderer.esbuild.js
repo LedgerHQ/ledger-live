@@ -6,6 +6,7 @@ const {
   electronRendererExternals,
   nodeExternals,
 } = require("esbuild-utils");
+const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
 module.exports = {
@@ -41,15 +42,7 @@ module.exports = {
         },
       ],
     }),
-    DotEnvPlugin(
-      process.env.TESTING
-        ? ".env.testing"
-        : process.env.STAGING
-        ? ".env.staging"
-        : process.env.NODE_ENV === "production"
-        ? ".env.production"
-        : ".env",
-    ),
+    DotEnvPlugin(DOTENV_FILE),
     // {
     //   name: "Side Effects",
     //   setup(build) {

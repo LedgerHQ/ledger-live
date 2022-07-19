@@ -10,12 +10,12 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import type {
   Account,
   AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   flattenAccountsEnforceHideEmptyTokenSelector,
   accountsSelector,

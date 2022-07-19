@@ -3,8 +3,8 @@ import { StyleSheet } from "react-native";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/nft/index";
+import { ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";

@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import Svg, { Path, G, Image } from "react-native-svg";
-import manager from "@ledgerhq/live-common/lib/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 import { Flex } from "@ledgerhq/native-ui";
 import AppIcon from "../screens/Manager/AppsList/AppIcon";
 

@@ -5,18 +5,18 @@ import { useTranslation } from "react-i18next";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import type {
   Account,
   OperationType,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
+} from "@ledgerhq/live-common/types/index";
+import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
-import type { CosmosDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";

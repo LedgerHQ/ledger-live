@@ -1,5 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import {
+  fromRangeRaw,
+  toRangeRaw,
   inferDynamicRange,
   projectRangeIndex,
   reverseRangeIndex,
@@ -29,11 +31,13 @@ test("inferDynamicRange", () => {
   expect(asString(inferDynamicRange(new BigNumber(100)))).toMatchSnapshot();
   expect(asString(inferDynamicRange(new BigNumber(99)))).toMatchSnapshot();
 });
+
 test("projectRangeIndex", () => {
   expect(
     asString(projectRangeIndex(inferDynamicRange(new BigNumber(0.4)), 2))
   ).toMatchSnapshot();
 });
+
 test("reverseRangeIndex", () => {
   const range = inferDynamicRange(new BigNumber(0.4));
 
@@ -41,4 +45,13 @@ test("reverseRangeIndex", () => {
     const n = projectRangeIndex(range, i);
     expect(reverseRangeIndex(range, n)).toBe(i);
   }
+});
+
+describe("RangeRaw", () => {
+  [0.4, 1, 10, 111, 666, 99999].forEach((v) => {
+    test("fromRangeRaw(toRangeRaw(x)) is identity for inferred " + v, () => {
+      const range = inferDynamicRange(new BigNumber(v));
+      expect(fromRangeRaw(toRangeRaw(range))).toEqual(range);
+    });
+  });
 });

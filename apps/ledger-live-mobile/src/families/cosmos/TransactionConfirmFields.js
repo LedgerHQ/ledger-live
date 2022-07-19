@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next";
 import {
   getAccountUnit,
   shortAddressPreview,
-} from "@ledgerhq/live-common/lib/account";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+} from "@ledgerhq/live-common/account/index";
+import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import {

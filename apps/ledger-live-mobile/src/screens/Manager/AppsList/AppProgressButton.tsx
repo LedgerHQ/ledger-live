@@ -1,11 +1,11 @@
 import React from "react";
 
-import type { State } from "@ledgerhq/live-common/lib/apps";
+import type { State } from "@ledgerhq/live-common/apps/index";
 import styled, { useTheme } from "styled-components/native";
 
 import { Box, ProgressLoader, Icons } from "@ledgerhq/native-ui";
 
-import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
+import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 
 type Props = {
   state: State,

@@ -7,13 +7,13 @@ import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
+import type { Account, Transaction } from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";

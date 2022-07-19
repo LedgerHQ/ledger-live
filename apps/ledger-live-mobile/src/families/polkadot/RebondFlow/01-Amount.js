@@ -1,7 +1,7 @@
 /* @flow */
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
@@ -15,13 +15,13 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";

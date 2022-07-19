@@ -4,7 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO_BOX } from "./BuyDeviceBanner";
 
-function SetupDeviceBanner() {
+type Props = {
+  screen: string;
+};
+
+function SetupDeviceBanner({ screen }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -25,6 +29,7 @@ function SetupDeviceBanner() {
       buttonLabel={t("postBuyDeviceSetupNanoWall.bannerCta")}
       buttonSize="small"
       event="button_clicked"
+      screen={screen}
       {...IMAGE_PROPS_SMALL_NANO_BOX}
     />
   );

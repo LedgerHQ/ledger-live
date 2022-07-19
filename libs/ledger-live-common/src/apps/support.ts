@@ -1,5 +1,5 @@
 import semver from "semver";
-import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/lib/shouldUseTrustedInputForSegwit";
+import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "../env";

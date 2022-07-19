@@ -7,8 +7,8 @@ import type {
   Account,
   AccountLikeArray,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
-import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/types/index";
+import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { ScreenName } from "../../../const";
 import { useFlattenSortAccounts } from "../../../actions/general";
 import TrackScreen from "../../../analytics/TrackScreen";

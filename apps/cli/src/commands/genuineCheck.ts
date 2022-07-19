@@ -1,8 +1,8 @@
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import genuineCheck from "@ledgerhq/live-common/lib/hw/genuineCheck";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import genuineCheck from "@ledgerhq/live-common/hw/genuineCheck";
 import { deviceOpt } from "../scan";
 export default {
   description: "Perform a genuine check with Ledger's HSM",

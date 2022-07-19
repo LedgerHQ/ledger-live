@@ -4,7 +4,7 @@ import type {
   AvailableProviderV3,
   Transaction,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 export type SwapStateType = {
   providers: ?Array<AvailableProviderV3>,
   pairs: ?$PropertyType<AvailableProviderV3, "pairs">,

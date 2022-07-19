@@ -1,7 +1,7 @@
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { useValidators } from "@ledgerhq/live-common/lib/families/solana/react";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/lib/families/solana/validator-app";
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { useValidators } from "@ledgerhq/live-common/families/solana/react";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";

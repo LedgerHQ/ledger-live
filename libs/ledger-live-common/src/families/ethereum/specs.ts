@@ -375,9 +375,9 @@ const ethereumClassic: AppSpec<Transaction> = {
     maxAccount: 4,
   }),
 };
-const ethereumRopsten: AppSpec<Transaction> = {
-  name: "Ethereum Ropsten",
-  currency: getCryptoCurrencyById("ethereum_ropsten"),
+const ethereumGoerli: AppSpec<Transaction> = {
+  name: "Ethereum Goerli",
+  currency: getCryptoCurrencyById("ethereum_goerli"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Ethereum",
@@ -387,7 +387,7 @@ const ethereumRopsten: AppSpec<Transaction> = {
     invariant(
       maxSpendable.gt(
         parseCurrencyUnit(
-          getCryptoCurrencyById("ethereum_ropsten").units[0],
+          getCryptoCurrencyById("ethereum_goerli").units[0],
           "0.01"
         )
       ),
@@ -498,5 +498,5 @@ export default {
   polygon,
   ethereum,
   ethereumClassic,
-  ethereumRopsten,
+  ethereumGoerli,
 };

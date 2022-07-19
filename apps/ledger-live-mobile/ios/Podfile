@@ -12,8 +12,7 @@ require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '12.0'
-
-flipperkit_version = '0.111.0'
+install! 'cocoapods', :deterministic_uuids => false
 
 # Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.
 platform_separator = Gem.win_platform? ? ";" : ":"
@@ -34,10 +33,16 @@ target 'ledgerlivemobile' do
   use_expo_modules!
   config = use_native_modules!
 
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => true
+    :hermes_enabled => true,
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   pod 'React-RCTText', :path => rct_text, :modular_headers => true
@@ -51,7 +56,7 @@ target 'ledgerlivemobile' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!() # should match the version of your Flipper client app
+  use_flipper!()
 
   post_install do |installer|
     react_native_post_install(installer)

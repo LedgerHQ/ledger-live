@@ -10,7 +10,7 @@ import type {
 } from "../../hw/getAddress/types";
 import { UnsupportedDerivation } from "../../errors";
 import Transport from "@ledgerhq/hw-transport";
-import BtcOld from "@ledgerhq/hw-app-btc/lib/BtcOld";
+import BtcOld from "@ledgerhq/hw-app-btc/BtcOld";
 
 const oldP2SH = {
   digibyte: 5,

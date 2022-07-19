@@ -929,6 +929,10 @@
       "earn" : {
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
+      },
+      "mint": {
+        "title": "ミント”,",
+        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
       }
     },
     "comingSoon" : "近日公開",
@@ -1656,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "取引詳細",
+    "title" : "トランザクションの詳細",
     "account" : "アカウント",
     "date" : "日付",
     "confirmed" : "確認済み",
@@ -1722,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
-    "noMoreOperations" : "その他のオペレーションはありません。"
+    "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
@@ -1763,7 +1767,7 @@
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
-    "lastOperations" : "最近の取引",
+    "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
       "title" : "暗号資産をまだお持ちでないですか？",
       "desc" : "受取を開始する前に、<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してください。",
@@ -2140,10 +2144,6 @@
     },
     "fees" : {
       "title" : "手数料を編集"
-    },
-    "manageCard" : {
-      "title" : "CLカードを管理",
-      "description" : "CLカードを注文して管理する"
     },
     "receive" : {
       "title" : "受け取る",
@@ -4388,7 +4388,10 @@
       "tokenContractCopied" : "トークンアドレスがコピーされました！",
       "tokenId" : "トークンID",
       "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "フロア価格"
+      }
     },
     "viewerModal" : {
       "viewOn" : "表示",

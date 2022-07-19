@@ -1,9 +1,9 @@
 import { listen } from "@ledgerhq/logs";
 import { map, reduce } from "rxjs/operators";
-import { accountFormatters } from "@ledgerhq/live-common/lib/account";
+import { accountFormatters } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 export default {
   description: "Generate a test for scan accounts (live-common dataset)",
   args: [

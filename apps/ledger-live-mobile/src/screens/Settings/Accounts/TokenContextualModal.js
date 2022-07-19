@@ -1,17 +1,17 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { connect } from "react-redux";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/types/index";
 import { View, StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getAccountContractExplorer,
   getDefaultExplorerView,
-} from "@ledgerhq/live-common/lib/explorers";
+} from "@ledgerhq/live-common/explorers";
 import { createStructuredSelector } from "reselect";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import LText from "../../../components/LText";

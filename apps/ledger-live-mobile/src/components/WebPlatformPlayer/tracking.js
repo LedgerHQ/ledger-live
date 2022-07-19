@@ -1,5 +1,5 @@
 // @flow
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "../../analytics/segment";
 
 /**

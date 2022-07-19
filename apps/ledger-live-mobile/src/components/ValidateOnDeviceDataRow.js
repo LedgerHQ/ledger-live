@@ -2,8 +2,8 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { shortAddressPreview } from "@ledgerhq/live-common/lib/account";
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import type { Unit } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -77,7 +77,7 @@ export function TextValueField({
 }: {
   label: React$Node,
   numberOfLines?: number,
-  value: string,
+  value: string | React$Element<*>,
 }) {
   const { colors } = useTheme();
   return (

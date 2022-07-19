@@ -1,6 +1,6 @@
 /* @flow */
 import invariant from "invariant";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback } from "react";
 import {
   View,
@@ -14,9 +14,9 @@ import { Trans } from "react-i18next";
 import type {
   Transaction,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { ScreenName } from "../../../../const";

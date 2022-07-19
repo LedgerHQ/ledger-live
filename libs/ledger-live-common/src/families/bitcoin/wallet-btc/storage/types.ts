@@ -1,5 +1,6 @@
 export interface TX {
   id: string;
+  hash?: string;
   account: number;
   index: number;
   received_at: string;

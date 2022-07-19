@@ -2,9 +2,9 @@ import React, { memo, useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
-import type { State } from "@ledgerhq/live-common/lib/apps";
+import type { State } from "@ledgerhq/live-common/apps/index";
 
-import { isLiveSupportedApp } from "@ledgerhq/live-common/lib/apps/logic";
+import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { NavigatorName } from "../../../const";

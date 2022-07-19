@@ -6,8 +6,10 @@ import { Trans } from "react-i18next";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
+/* eslint-disable import/named */
 // $FlowFixMe
 import { connect, context, STATUS } from "./Provider";
+/* eslint-enable import/named */
 
 type Props = {
   navigation: any,

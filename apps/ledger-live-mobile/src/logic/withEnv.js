@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
-import { changes, getAllEnvs } from "@ledgerhq/live-common/lib/env";
-import type { EnvName } from "@ledgerhq/live-common/lib/env";
+import { changes, getAllEnvs } from "@ledgerhq/live-common/env";
+import type { EnvName } from "@ledgerhq/live-common/env";
 import hoistNonReactStatics from "hoist-non-react-statics";
 
 const withEnv = (name: EnvName, propName: string = "env") => (Comp: any) => {

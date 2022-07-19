@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 
-import { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
+import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
 
 import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";

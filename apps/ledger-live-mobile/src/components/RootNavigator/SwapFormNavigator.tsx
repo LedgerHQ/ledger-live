@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 
-import { Account, AccountLike } from "@ledgerhq/live-common/lib/types/account";
+import { Account, AccountLike } from "@ledgerhq/live-common/types/account";
 
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";

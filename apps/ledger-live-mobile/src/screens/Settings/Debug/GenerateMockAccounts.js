@@ -2,8 +2,8 @@
 import React from "react";
 import sample from "lodash/sample";
 import { Alert } from "react-native";
-import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "../../../components/SettingsRow";
 import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";

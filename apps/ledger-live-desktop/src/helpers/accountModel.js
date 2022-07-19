@@ -2,10 +2,10 @@
  * @module models/account
  * @flow
  */
-import { createDataModel } from "@ledgerhq/live-common/lib/DataModel";
-import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/lib/account";
-import type { DataModel } from "@ledgerhq/live-common/lib/DataModel";
-import type { Account, AccountRaw, Operation } from "@ledgerhq/live-common/lib/types";
+import { createDataModel } from "@ledgerhq/live-common/DataModel";
+import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/account/index";
+import type { DataModel } from "@ledgerhq/live-common/DataModel";
+import type { Account, AccountRaw, Operation } from "@ledgerhq/live-common/types/index";
 
 /**
  * @memberof models/account

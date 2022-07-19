@@ -1,13 +1,13 @@
 // @flow
 
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type {
   Account,
   AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";

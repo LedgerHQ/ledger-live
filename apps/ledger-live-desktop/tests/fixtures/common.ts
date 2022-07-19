@@ -53,6 +53,7 @@ const test = base.extend<TestFixtures>({
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
         PLAYWRIGHT_RUN: true,
+        LEDGER_MIN_HEIGHT: 768,
       },
       env,
     );
@@ -62,7 +63,7 @@ const test = base.extend<TestFixtures>({
 
     const electronApp: ElectronApplication = await electron.launch({
       args: [
-        `${path.join(__dirname, '../../.webpack/main.bundle.js')}`,
+        `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
         `--user-data-dir=${userdataDestinationPath}`,
         // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
         "--force-device-scale-factor=1",

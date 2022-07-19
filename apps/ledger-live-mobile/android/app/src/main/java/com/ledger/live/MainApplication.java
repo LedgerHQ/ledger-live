@@ -1,27 +1,27 @@
 package com.ledger.live;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.res.Configuration;
-import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 
+import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import co.airbitz.fastcrypto.RNFastCryptoPackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
-import com.facebook.react.ReactInstanceManager;
-
-import com.brentvatne.react.ReactVideoPackage;
+import com.ledger.live.newarchitecture.MainApplicationReactNativeHost;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import expo.modules.ApplicationLifecycleDispatcher;
+import expo.modules.ReactNativeHostWrapper;
 
 public class MainApplication extends Application implements ReactApplication {
   public static String LO_NOTIFICATION_CHANNEL = "lo-llm";
@@ -66,14 +66,23 @@ public class MainApplication extends Application implements ReactApplication {
         }
       });
 
+  private final ReactNativeHost mNewArchitectureNativeHost =
+      new MainApplicationReactNativeHost(this);
+
   @Override
   public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+      return mNewArchitectureNativeHost;
+    } else {
+      return mReactNativeHost;
+    }
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    // If you opted-in for the New Architecture, we enable the TurboModule system
+    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
     ApplicationLifecycleDispatcher.onApplicationCreate(this);

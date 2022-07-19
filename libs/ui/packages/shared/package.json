@@ -16,7 +16,14 @@
     "./package.json": "./package.json"
   },
   "types": "lib/index.d.ts",
-  "repository": "https://github.com/LedgerHQ/ui/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/shared",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "license": "MIT",
   "files": [

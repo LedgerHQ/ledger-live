@@ -1,9 +1,9 @@
 /* eslint-disable import/named */
 import React, { ReactElement } from "react";
 import { useSelector } from "react-redux";
-import apiMock from "@ledgerhq/live-common/lib/market/api/api.mock";
+import apiMock from "@ledgerhq/live-common/market/api/api.mock";
 import Config from "react-native-config";
-import { MarketDataProvider } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
 import {
   counterValueCurrencySelector,

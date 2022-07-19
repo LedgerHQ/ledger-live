@@ -4,12 +4,12 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
-} from "@ledgerhq/live-common/lib/families/polkadot/logic";
+} from "@ledgerhq/live-common/families/polkadot/logic";
 
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";

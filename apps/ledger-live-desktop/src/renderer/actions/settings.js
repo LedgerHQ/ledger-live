@@ -4,9 +4,9 @@ import type { Dispatch } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import type { SettingsState as Settings } from "~/renderer/reducers/settings";
 import {
@@ -194,9 +194,17 @@ export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   payload: hasAcceptedIPSharing,
 });
 
-export const setSwapKYCStatus = (payload: { provider: string, id?: string, status?: string }) => ({
+export const setSwapKYCStatus = (payload: {
+  provider: string,
+  id?: string,
+  status?: string | null,
+}) => ({
   type: "SET_SWAP_KYC",
   payload,
+});
+
+export const resetSwapLoginAndKYCData = () => ({
+  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
 });
 
 export const addStarredMarketCoins = (payload: string) => ({

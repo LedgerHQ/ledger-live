@@ -11,7 +11,7 @@ import {
 import {
   SwapGenericAPIError,
   DeviceNotOnboarded,
-} from "@ledgerhq/live-common/lib/errors";
+} from "@ledgerhq/live-common/errors";
 import { useTheme } from "@react-navigation/native";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";

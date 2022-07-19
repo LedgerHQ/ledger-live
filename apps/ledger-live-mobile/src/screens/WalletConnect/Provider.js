@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ProviderCommon from "@ledgerhq/live-common/lib/walletconnect/Provider";
+import ProviderCommon from "@ledgerhq/live-common/walletconnect/Provider";
 import { saveWCSession, getWCSession } from "../../db";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
@@ -85,5 +85,5 @@ const Provider = ({ children }: { children: React$Node }) => {
   );
 };
 
-export * from "@ledgerhq/live-common/lib/walletconnect/Provider";
+export * from "@ledgerhq/live-common/walletconnect/Provider";
 export default Provider;

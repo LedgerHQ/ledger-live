@@ -1,7 +1,7 @@
 // @flow
 
 import type { Observable } from "rxjs";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 // meta object are accumulated over steps
 export type Step = {

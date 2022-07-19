@@ -1,0 +1,130 @@
+// @flow
+import React, { useCallback, useEffect } from "react";
+import { BigNumber } from "bignumber.js";
+import { Trans } from "react-i18next";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type {
+  Account,
+  AccountLike,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/types/index";
+import type { TFunction } from "react-i18next";
+
+import Box from "~/renderer/components/Box";
+import Label from "~/renderer/components/Label";
+import RequestAmount from "~/renderer/components/RequestAmount";
+import Switch from "~/renderer/components/Switch";
+import Text from "~/renderer/components/Text";
+
+type Props = {
+  parentAccount: ?Account,
+  account: AccountLike,
+  transaction: Transaction,
+  onChangeTransaction: (*) => void,
+  status: TransactionStatus,
+  bridgePending: boolean,
+  t: TFunction,
+  initValue?: BigNumber,
+  walletConnectProxy?: boolean,
+  resetInitValue?: () => void,
+};
+
+const AmountField = ({
+  account,
+  parentAccount,
+  transaction,
+  onChangeTransaction,
+  status,
+  bridgePending,
+  t,
+  initValue,
+  resetInitValue,
+  walletConnectProxy,
+}: Props) => {
+  const bridge = getAccountBridge(account, parentAccount);
+
+  useEffect(() => {
+    if (initValue && !initValue.eq(transaction.amount || BigNumber(0))) {
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount: initValue }));
+      resetInitValue && resetInitValue();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onChange = useCallback(
+    (amount: BigNumber) => {
+      onChangeTransaction(bridge.updateTransaction(transaction, { amount }));
+    },
+    [bridge, transaction, onChangeTransaction],
+  );
+
+  const onChangeSendMax = useCallback(
+    (useAllAmount: boolean) => {
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, { useAllAmount, amount: BigNumber(0) }),
+      );
+    },
+    [bridge, transaction, onChangeTransaction],
+  );
+
+  if (!status) return null;
+  const { useAllAmount } = transaction;
+  const { amount, errors, warnings } = status;
+  let { amount: amountError, gasPrice: messageGas } = errors;
+  let { amount: amountWarning } = warnings;
+
+  // we ignore zero case for displaying field error because field is empty.
+
+  if (amount.eq(0) && (bridgePending || !useAllAmount)) {
+    amountError = null;
+    amountWarning = null;
+  }
+
+  return (
+    <Box flow={1}>
+      <Box
+        horizontal
+        alignItems="center"
+        justifyContent="space-between"
+        style={{ width: "50%", paddingRight: 28 }}
+      >
+        <Label>{t("send.steps.details.amount")}</Label>
+        {typeof useAllAmount === "boolean" ? (
+          <Box horizontal alignItems="center">
+            <Text
+              color="palette.text.shade40"
+              ff="Inter|Medium"
+              fontSize={10}
+              style={{ paddingRight: 5 }}
+              onClick={() => {
+                if (!walletConnectProxy) {
+                  onChangeSendMax(!useAllAmount);
+                }
+              }}
+            >
+              <Trans i18nKey="send.steps.details.useMax" />
+            </Text>
+            <Switch
+              small
+              isChecked={useAllAmount}
+              onChange={onChangeSendMax}
+              disabled={walletConnectProxy}
+            />
+          </Box>
+        ) : null}
+      </Box>
+      <RequestAmount
+        disabled={!!useAllAmount || walletConnectProxy}
+        account={account}
+        validTransactionError={amountError || messageGas}
+        validTransactionWarning={amountWarning}
+        onChange={onChange}
+        value={walletConnectProxy ? transaction.amount : amount}
+        showCountervalue={false}
+        autoFocus={!initValue}
+      />
+    </Box>
+  );
+};
+
+export default AmountField;

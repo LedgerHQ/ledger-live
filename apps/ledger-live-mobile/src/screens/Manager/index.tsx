@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import manager from "@ledgerhq/live-common/lib/manager";
-import { disconnect } from "@ledgerhq/live-common/lib/hw";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import manager from "@ledgerhq/live-common/manager/index";
+import { disconnect } from "@ledgerhq/live-common/hw/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { Text } from "@ledgerhq/native-ui";
 import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";

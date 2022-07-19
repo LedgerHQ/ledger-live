@@ -9,22 +9,22 @@ import {
   filter,
   map,
 } from "rxjs/operators";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
-import network from "@ledgerhq/live-common/lib/network";
-import installApp from "@ledgerhq/live-common/lib/hw/installApp";
-import uninstallApp from "@ledgerhq/live-common/lib/hw/uninstallApp";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import network from "@ledgerhq/live-common/network";
+import installApp from "@ledgerhq/live-common/hw/installApp";
+import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import type {
   DeviceInfo,
   ApplicationVersion,
   Application,
-} from "@ledgerhq/live-common/lib/types/manager";
-import { initState, reducer, runAll } from "@ledgerhq/live-common/lib/apps";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import { delay } from "@ledgerhq/live-common/lib/promise";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { getDependencies } from "@ledgerhq/live-common/lib/apps/polyfill";
+} from "@ledgerhq/live-common/types/manager";
+import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
+import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import { delay } from "@ledgerhq/live-common/promise";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
 import { deviceOpt } from "../scan";
 type ResultCommon = {
   versionId: number;

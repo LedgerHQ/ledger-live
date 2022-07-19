@@ -1,39 +1,36 @@
+import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
+import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
+import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
+import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
+import { useTheme } from "@react-navigation/native";
 import React, {
   useCallback,
-  useRef,
   useEffect,
-  useState,
   useMemo,
+  useRef,
+  useState,
 } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import {
+  Animated,
+  RefreshControl,
+  SectionList,
   StyleSheet,
   View,
-  Animated,
-  SectionList,
-  RefreshControl,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { Trans, useTranslation } from "react-i18next";
 import Share from "react-native-share";
-import { useTheme } from "@react-navigation/native";
-
-import getCompleteSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/getCompleteSwapHistory";
-import updateAccountSwapStatus from "@ledgerhq/live-common/lib/exchange/swap/updateAccountSwapStatus";
-import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/exchange/swap/csvExport";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
-
-import useInterval from "../../../components/useInterval";
+import { useDispatch, useSelector } from "react-redux";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
-import LText from "../../../components/LText";
-import Button from "../../../components/Button";
-import Alert from "../../../components/Alert";
-import logger from "../../../logger";
-import DownloadFileIcon from "../../../icons/DownloadFile";
 import { TrackScreen } from "../../../analytics";
-
-import OperationRow from "./OperationRow";
+import Alert from "../../../components/Alert";
+import Button from "../../../components/Button";
+import LText from "../../../components/LText";
+import useInterval from "../../../components/useInterval";
+import DownloadFileIcon from "../../../icons/DownloadFile";
+import logger from "../../../logger";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
 import EmptyState from "./EmptyState";
+import OperationRow from "./OperationRow";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
@@ -78,7 +75,7 @@ const History = () => {
     if (sections) {
       for (const section of sections) {
         for (const swapOperation of section.data) {
-          if (operationStatusList.pending.includes(swapOperation.status)) {
+          if (isSwapOperationPending(swapOperation.status)) {
             return true;
           }
         }

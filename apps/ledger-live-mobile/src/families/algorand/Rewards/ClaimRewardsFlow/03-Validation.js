@@ -7,7 +7,7 @@ import invariant from "invariant";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { useSignWithDevice } from "../../../../logic/screenTransactionHooks";

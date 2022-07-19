@@ -5,8 +5,11 @@ import { useTheme } from "styled-components/native";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/helpers";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { accountsSelector } from "../../reducers/accounts";

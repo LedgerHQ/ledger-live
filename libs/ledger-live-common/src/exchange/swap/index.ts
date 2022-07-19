@@ -1,45 +1,60 @@
-import type { ExchangeProviderNameAndSignature } from "../";
-import getExchangeRates from "./getExchangeRates";
-import getStatus from "./getStatus";
-import getProviders from "./getProviders";
-import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import getKYCStatus from "./getKYCStatus";
-import submitKYC from "./submitKYC";
-import initSwap from "./initSwap";
+import type { SwapProviderConfig } from "../";
 import { getEnv } from "../../env";
 import {
-  JSONRPCResponseError,
-  JSONDecodeError,
-  NoIPHeaderError,
-  CurrencyNotSupportedError,
-  CurrencyDisabledError,
+  AccessDeniedError,
   CurrencyDisabledAsInputError,
   CurrencyDisabledAsOutputError,
+  CurrencyDisabledError,
   CurrencyNotSupportedByProviderError,
+  CurrencyNotSupportedError,
+  JSONDecodeError,
+  JSONRPCResponseError,
+  NoIPHeaderError,
+  NotImplementedError,
   TradeMethodNotSupportedError,
   UnexpectedError,
-  NotImplementedError,
   ValidationError,
-  AccessDeniedError,
 } from "../../errors";
+import checkQuote from "./checkQuote";
+import getCompleteSwapHistory from "./getCompleteSwapHistory";
+import getExchangeRates from "./getExchangeRates";
+import getKYCStatus from "./getKYCStatus";
+import getProviders from "./getProviders";
+import initSwap from "./initSwap";
+import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
+import submitKYC from "./submitKYC";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
   finishedKO: ["refunded"],
-  pending: ["pending", "onhold", "expired"],
 };
+
+// A swap operation is considered pending if it is not in a finishedOK or finishedKO state
+export const isSwapOperationPending: (status: string) => boolean = (status) =>
+  !operationStatusList.finishedOK.includes(status) &&
+  !operationStatusList.finishedKO.includes(status);
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
-const swapProviders: Record<
-  string,
-  {
-    nameAndPubkey: Buffer;
-    signature: Buffer;
-    curve: string;
-    needsKYC: boolean;
-  }
-> = {
+const ftx = {
+  nameAndPubkey: Buffer.concat([
+    Buffer.from([3]),
+    Buffer.from("FTX", "ascii"),
+    Buffer.from(
+      "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
+      "hex"
+    ),
+  ]),
+  signature: Buffer.from(
+    "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
+    "hex"
+  ),
+  curve: "secp256k1",
+  needsKYC: true,
+  needsBearerToken: true,
+};
+
+const swapProviders: Record<string, SwapProviderConfig> = {
   changelly: {
     nameAndPubkey: Buffer.from(
       "094368616e67656c6c790480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
@@ -51,6 +66,7 @@ const swapProviders: Record<
     ),
     curve: "secpk256k1",
     needsKYC: false,
+    needsBearerToken: false,
   },
   wyre: {
     nameAndPubkey: Buffer.from(
@@ -63,12 +79,13 @@ const swapProviders: Record<
     ),
     curve: "secpk256k1",
     needsKYC: true,
+    needsBearerToken: false,
   },
+  ftx,
+  ftxus: ftx,
 };
 
-const getProviderNameAndSignature = (
-  providerName: string
-): ExchangeProviderNameAndSignature => {
+const getProviderConfig = (providerName: string): SwapProviderConfig => {
   const res = swapProviders[providerName.toLowerCase()];
 
   if (!res) {
@@ -77,6 +94,8 @@ const getProviderNameAndSignature = (
 
   return res;
 };
+
+export const getAvailableProviders = (): string[] => Object.keys(swapProviders);
 
 const USStates = {
   AL: "Alabama",
@@ -160,14 +179,16 @@ export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
 
 export {
   getSwapAPIBaseURL,
-  getProviderNameAndSignature,
+  getProviderConfig,
   getProviders,
-  getStatus,
   getExchangeRates,
   getCompleteSwapHistory,
+  postSwapAccepted,
+  postSwapCancelled,
   initSwap,
   getKYCStatus,
   submitKYC,
+  checkQuote,
   USStates,
   countries,
 };

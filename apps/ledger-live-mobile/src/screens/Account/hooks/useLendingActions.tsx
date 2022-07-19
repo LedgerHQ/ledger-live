@@ -1,9 +1,9 @@
 /* @flow */
 import React from "react";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import { NavigatorName, ScreenName } from "../../../const";
 import Plus from "../../../icons/Plus";
 import Supply from "../../../icons/Supply";

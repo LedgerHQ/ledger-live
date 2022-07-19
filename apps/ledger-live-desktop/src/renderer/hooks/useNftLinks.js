@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/live-common/lib/types";
+import type { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/live-common/types/index";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";

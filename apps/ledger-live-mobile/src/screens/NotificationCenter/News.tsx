@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SectionList, RefreshControl, View } from "react-native";
-import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
-import { groupAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/helpers";
+import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
+import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
 
 import { Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";

@@ -18,24 +18,24 @@ import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/i
 import type {
   Transaction,
   PolkadotValidator,
-} from "@ledgerhq/live-common/lib/families/polkadot/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/families/polkadot/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/explorers";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,
-} from "@ledgerhq/live-common/lib/families/polkadot/logic";
-import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/lib/families/polkadot/errors";
+} from "@ledgerhq/live-common/families/polkadot/logic";
+import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/families/polkadot/errors";
 import {
   usePolkadotPreloadData,
   useSortedValidators,
-} from "@ledgerhq/live-common/lib/families/polkadot/react";
+} from "@ledgerhq/live-common/families/polkadot/react";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";

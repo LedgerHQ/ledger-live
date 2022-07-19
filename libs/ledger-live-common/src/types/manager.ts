@@ -68,6 +68,11 @@ export type McuVersion = {
   date_creation: string;
   date_last_modified: string;
 };
+export enum SeedPhraseType {
+  Twelve = "12-words",
+  Eighteen = "18-words",
+  TwentyFour = "24-words",
+}
 export type FirmwareInfo = {
   isBootloader: boolean;
   rawVersion: string; // if SE seVersion, if BL blVersion

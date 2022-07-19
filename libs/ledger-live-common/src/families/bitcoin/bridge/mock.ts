@@ -32,7 +32,6 @@ const createTransaction = (): Transaction => ({
   rbf: false,
   utxoStrategy: {
     strategy: 0,
-    pickUnconfirmedRBF: false,
     excludeUTXOs: [],
   },
 });

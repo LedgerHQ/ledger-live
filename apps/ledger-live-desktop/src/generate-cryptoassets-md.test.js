@@ -8,7 +8,7 @@ import {
   listCryptoCurrencies,
   isCurrencySupported,
   listTokens,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 
 const outputFile = "cryptoassets.md";
 test("generate cryptoassets.md", () => {

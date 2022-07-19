@@ -13,7 +13,7 @@ inputs:
     required: false
     default: ${{ github.actor }}
 runs:
-  using: node12
+  using: node16
   main: build/index.js
 
 branding:

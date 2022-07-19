@@ -1,6 +1,6 @@
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { Transaction } from "@ledgerhq/live-common/lib/families/solana/types";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { Transaction } from "@ledgerhq/live-common/families/solana/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import i18next from "i18next";
 import invariant from "invariant";

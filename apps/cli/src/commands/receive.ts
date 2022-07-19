@@ -1,10 +1,10 @@
 import { of, concat, EMPTY } from "rxjs";
 import { ignoreElements, concatMap, map } from "rxjs/operators";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import { asQR } from "../qr";
-import { FreshAddressIndexInvalid } from "@ledgerhq/live-common/lib/errors";
+import { FreshAddressIndexInvalid } from "@ledgerhq/live-common/errors";
 export default {
   description: "Receive crypto-assets (verify on device)",
   args: [

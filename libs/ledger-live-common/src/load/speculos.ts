@@ -316,9 +316,7 @@ export function appCandidatesMatches(
           hackBadSemver(appCandidate.firmware),
           searchFirmware
         ))) &&
-    ((!search.appVersion &&
-      !appCandidate.appVersion.includes("prerelease") &&
-      !appCandidate.appVersion.includes("rc")) ||
+    ((!search.appVersion && !appCandidate.appVersion.includes("-")) ||
       (search.appVersion &&
         semver.satisfies(appCandidate.appVersion, search.appVersion)))
   );

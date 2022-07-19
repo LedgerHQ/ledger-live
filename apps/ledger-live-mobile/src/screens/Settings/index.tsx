@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
-import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";

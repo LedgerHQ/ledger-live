@@ -1,8 +1,8 @@
 // @flow
 
 import { handleActions } from "redux-actions";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { getEnv } from "@ledgerhq/live-common/env";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type DevicesState = {
   currentDevice: ?Device,

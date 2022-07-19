@@ -8,7 +8,7 @@ import type {
   CryptoCurrency,
   TokenCurrency,
   NFT,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   flattenAccounts,
   clearAccount,
@@ -17,8 +17,8 @@ import {
   isUpToDateAccount,
   withoutToken,
   nestedSortAccounts,
-} from "@ledgerhq/live-common/lib/account";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/account/index";
+import { getEnv } from "@ledgerhq/live-common/env";
 import logger from "./../../logger/logger";
 import accountModel from "./../../helpers/accountModel";
 import type { State } from ".";

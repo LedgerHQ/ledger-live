@@ -6,15 +6,15 @@ import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/types/index";
+import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../reducers/accounts";
 import DeviceAction from "../components/DeviceAction";

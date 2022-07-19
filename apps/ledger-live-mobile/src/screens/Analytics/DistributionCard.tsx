@@ -2,8 +2,8 @@ import React, { useCallback, useMemo } from "react";
 import {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types/currencies";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/types/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
 import styled, { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";

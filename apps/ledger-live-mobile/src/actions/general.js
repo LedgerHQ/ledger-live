@@ -4,15 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-common/lib/account";
-import type { FlattenAccountsOptions } from "@ledgerhq/live-common/lib/account";
-import type { TrackingPair } from "@ledgerhq/live-common/lib/countervalues/types";
+} from "@ledgerhq/live-common/account/index";
+import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
+import type { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useCountervaluesPolling,
   useTrackingPairForAccounts,
-} from "@ledgerhq/live-common/lib/countervalues/react";
-import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/lib/portfolio/v2/react";
+} from "@ledgerhq/live-common/countervalues/react";
+import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/portfolio/v2/react";
 import { BehaviorSubject } from "rxjs";
 import { reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";

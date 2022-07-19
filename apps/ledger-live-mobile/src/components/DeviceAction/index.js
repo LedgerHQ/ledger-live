@@ -1,11 +1,8 @@
 // @flow
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import type {
-  Action,
-  Device,
-} from "@ledgerhq/live-common/lib/hw/actions/types";
-import { DeviceNotOnboarded } from "@ledgerhq/live-common/lib/errors";
+import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";

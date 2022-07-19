@@ -3,12 +3,12 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 
 import {
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";

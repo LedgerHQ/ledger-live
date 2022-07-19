@@ -1,11 +1,12 @@
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import AddAccount from "./AddAccount";
 import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import AddAccount from "./AddAccount";
 import Touchable from "../../components/Touchable";
 import { ScreenName } from "../../const";
+import { track } from "../../analytics";
 
 type Props = {
   readOnly?: boolean;
@@ -16,13 +17,25 @@ function AccountsNavigationHeader({ readOnly }: Props) {
   const { t } = useTranslation();
 
   const handleOnReadOnlyAddAccountPress = useCallback(() => {
+    track("button_clicked", {
+      button: "Add Account '+'",
+      screen: "Assets",
+    });
     navigation.navigate(ScreenName.NoDeviceWallScreen);
+  }, [navigation]);
+
+  const goBack = useCallback(() => {
+    track("button_clicked", {
+      button: "Back",
+      screen: "Assets",
+    });
+    navigation.goBack();
   }, [navigation]);
 
   return (
     <Flex p={6} flexDirection="row" alignItems="center">
       <Box mr={3}>
-        <TouchableOpacity onPress={navigation.goBack}>
+        <TouchableOpacity onPress={goBack}>
           <Icons.ArrowLeftMedium size={24} />
         </TouchableOpacity>
       </Box>

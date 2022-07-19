@@ -3,13 +3,13 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
-import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
+import type { TokenAccount } from "@ledgerhq/live-common/types/index";
+import { listCurrentRates } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 
-import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
+import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import InfoItem from "../../../components/BalanceSummaryInfoItem";

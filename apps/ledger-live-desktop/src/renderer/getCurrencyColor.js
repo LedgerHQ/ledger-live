@@ -1,8 +1,8 @@
 // @flow
 
 import { useMemo } from "react";
-import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import type { Currency } from "@ledgerhq/live-common/lib/types/currencies";
+import { getCurrencyColor as commonGetCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import type { Currency } from "@ledgerhq/live-common/types/currencies";
 
 import ensureContrast from "~/renderer/ensureContrast";
 

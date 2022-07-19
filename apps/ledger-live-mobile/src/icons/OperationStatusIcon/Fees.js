@@ -1,4 +1,4 @@
-import type { OperationType } from "@ledgerhq/live-common/lib/types";
+import type { OperationType } from "@ledgerhq/live-common/types/index";
 import React from "react";
 import OperationStatusWrapper from "./Wrapper";
 import IconFees from "../Fees";

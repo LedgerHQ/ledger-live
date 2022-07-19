@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { USStates } from "@ledgerhq/live-common/lib/exchange/swap";
+import { USStates } from "@ledgerhq/live-common/exchange/swap/index";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 // NB for the first version we don't care about the country since only US is selected,

@@ -6,7 +6,11 @@ export default class InternalTransport extends Transport {
       this.emit("logged", log);
     });
 
-    console.log(JSON.stringify({ type: "log", log }));
+    try {
+      console.log(JSON.stringify({ type: "log", log }));
+    } catch (e) {
+      console.error(String(e) + ": " + String(log?.message || ""));
+    }
 
     callback();
   }

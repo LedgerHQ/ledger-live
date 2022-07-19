@@ -4,7 +4,7 @@ module.exports = {
   CopyPlugin: require("./plugins/copy"),
   DotEnvPlugin: require("./plugins/dotenv"),
   NodeExternalsPlugin: require("./plugins/nodeExternals"),
-  StripFlowPlugin: require("esbuild-plugin-flow"),
+  StripFlowPlugin: require("./plugins/flow"),
   HtmlPlugin: require("@craftamap/esbuild-plugin-html").htmlPlugin,
   ImportGlobPlugin: require("esbuild-plugin-import-glob").default,
   ...require("./externals"),

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import NoResultsFound from "../icons/NoResultsFound";

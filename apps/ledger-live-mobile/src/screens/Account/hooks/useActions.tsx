@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
-import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import {
   getAccountCurrency,
   getMainAccount,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui";

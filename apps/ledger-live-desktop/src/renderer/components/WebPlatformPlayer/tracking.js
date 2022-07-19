@@ -1,6 +1,6 @@
 // @flow
 import { track } from "~/renderer/analytics/segment";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 /**
  * Obtain Event data from Platform App manifest

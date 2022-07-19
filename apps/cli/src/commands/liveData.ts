@@ -3,8 +3,8 @@ import { reduce, mergeMap } from "rxjs/operators";
 import fs from "fs";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { toAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { toAccountRaw } from "@ledgerhq/live-common/account/serialization";
+import { Account } from "@ledgerhq/live-common/types/index";
 export default {
   description: "utility for Ledger Live app.json file",
   args: [

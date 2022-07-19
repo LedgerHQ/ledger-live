@@ -1,5 +1,5 @@
 // @flow
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo } from "react";

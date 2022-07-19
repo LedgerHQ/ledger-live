@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { connect } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";

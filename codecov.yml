@@ -1,0 +1,7 @@
+coverage:
+  status:
+    project:
+      default:
+        threshold: 10%
+  notify:
+    after_n_builds: 2 # sync it with the nb of runs in the matrix of test.yml

@@ -160,7 +160,6 @@ export const SwapSubmitKYCFailed = createCustomErrorClass(
   "SwapSubmitKYCFailed"
 );
 
-export const SwapUnknownSwapId = createCustomErrorClass("SwapUnknownSwapId");
 export const SwapGenericAPIError = createCustomErrorClass(
   "SwapGenericAPIError"
 );

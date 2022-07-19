@@ -2,7 +2,7 @@
 import "./setup";
 import { BrowserWindow, screen, shell, app } from "electron";
 import path from "path";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
 import * as remoteMain from "@electron/remote/main";
 

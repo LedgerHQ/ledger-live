@@ -4,13 +4,13 @@ import type {
   AccountLike,
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
   usePortfolio as usePortfolioCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
-} from "@ledgerhq/live-common/lib/portfolio/v2/react";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+} from "@ledgerhq/live-common/portfolio/v2/react";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,

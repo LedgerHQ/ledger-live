@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
   View,
@@ -12,9 +12,9 @@ import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { Transaction } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { Transaction } from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import { GraphTabs, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";

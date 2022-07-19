@@ -2,11 +2,11 @@
 
 import React, { useCallback, useState, useMemo } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import type { ClosedLoanHistory } from "@ledgerhq/live-common/lib/compound/types";
+import type { ClosedLoanHistory } from "@ledgerhq/live-common/compound/types";
 import {
   getAccountName,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";

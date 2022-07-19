@@ -5,7 +5,7 @@ import {
   toTransactionStatusRaw,
   formatTransactionStatus,
   formatTransaction,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferTransactionsOpts } from "../transaction";

@@ -3,10 +3,10 @@ import flatMap from "lodash/flatMap";
 import groupBy from "lodash/groupBy";
 import { from } from "rxjs";
 import { concatMap, reduce } from "rxjs/operators";
-import { flattenAccounts } from "@ledgerhq/live-common/lib/account";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 export default {
   description: "Detect operation collisions",
   args: [...scanCommonOpts],

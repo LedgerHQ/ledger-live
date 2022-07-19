@@ -4,16 +4,16 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { useCosmosMappedDelegations } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";

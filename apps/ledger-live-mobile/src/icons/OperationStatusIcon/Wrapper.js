@@ -1,5 +1,5 @@
 // @flow
-import type { OperationType } from "@ledgerhq/live-common/lib/types";
+import type { OperationType } from "@ledgerhq/live-common/types/index";
 import React, { useCallback } from "react";
 import Svg, { Circle, G, Rect, Path } from "react-native-svg";
 import { useTheme } from "@react-navigation/native";

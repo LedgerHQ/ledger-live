@@ -8,7 +8,7 @@
   "platform" : {
     "flows" : {
       "requestAccount" : {
-        "title" : "اختار حسابًا"
+        "title" : "اختر حساب"
       },
       "broadcast" : {
         "toast" : {
@@ -20,28 +20,28 @@
     "app" : {
       "informations" : {
         "title" : "معلومات",
-        "website" : "موقع الويب"
+        "website" : "الموقع الإلكتروني"
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "اكتشف",
       "branch" : {
         "soon" : "سيأتي قريباً",
         "experimental" : "تجريبي",
         "debug" : "تصحيح الأخطاء"
       },
       "banner" : {
-        "title" : "اكتشف كتالوج التطبيقات الحية",
-        "description" : "نحن نعمل جاهدين لنتيح لك الوصول إلى عالم DeFi، NFTs وأخرين، وبأمان مباشرةً من داخل Ledger Live!"
+        "title" : "اكتشف كتالوج التطبيقات الحية لدينا",
+        "description" : "نحن نعمل جاهدين لنتيح لك الوصول إلى عالم التمويل اللامركزي (DeFi)، وNFTs وغير ذلك الكثير، بأمان مباشرةً داخل Ledger Live!"
       },
       "twitterBanner" : {
-        "description" : "أخبرنا ما الخدمة التالية التي تريد رؤيتها على Ledger Live باستخدام علامة المربع (الهاشتاج)",
-        "tweetText" : "تطبيق ليدجر القادم يجب أن يكون..."
+        "description" : "أخبرنا ما الخدمة التالية التي تريد رؤيتها على Ledger Live عن طريق الهاشتاج",
+        "tweetText" : "تطبيق Ledger القادم يجب أن يكون..."
       },
       "pollCTA" : {
         "title" : "استطلاع",
         "description" : "ما الخدمة التي تريد رؤيتها في Ledger Live؟",
-        "button" : "لنصوت!"
+        "button" : "هيا نصوت!"
       },
       "developerCTA" : {
         "title" : "للمطوّرين",
@@ -58,29 +58,29 @@
     }
   },
   "common" : {
-    "never" : "أبدًا",
-    "apply" : "تطبيق",
+    "never" : "أبداً",
+    "apply" : "تقديم",
     "done" : "تم",
     "confirm" : "تأكيد",
     "reject" : "رفض",
     "cancel" : "إلغاء",
     "getSupport" : "الحصول على الدعم",
     "delete" : "Remove account from portfolio",
-    "launch" : "بدء",
+    "launch" : "تشغيل",
     "continue" : "متابعة",
     "previous" : "السابق",
     "learnMore" : "تعرّف على المزيد",
     "help" : "مساعدة",
     "needHelp" : "بحاجة إلى مساعدة؟",
     "areYouSure" : "هل أنت متأكد؟",
-    "selectAccount" : "اختار حسابًا",
+    "selectAccount" : "اختار حساباً",
     "selectAccountNoOption" : "لا يوجد حساب مطابق \"{{accountName}}\"",
-    "selectCurrency" : "اختار أصل مشفّر",
+    "selectCurrency" : "اختر أصل مشفّر",
     "selectCurrencyNoOption" : "لا يوجد أصل مشفّر \"{{currencyName}}\"",
     "selectCurrencyEmptyOption" : "لا يوجد أصل مشفر",
-    "selectValidatorNoOption" : "لا يوجد مدقق مطابق\"{{accountName}}\"",
+    "selectValidatorNoOption" : "لا يوجد مدقق مطابق \"{{accountName}}\"",
     "selectNoResults" : "لم يتم العثور على نتائج مطابقة \"{{query}}\"",
-    "sortBy" : "ترتيب النتائج",
+    "sortBy" : "فرز حسب",
     "save" : "حفظ",
     "lock" : "إقفال",
     "showMore" : "عرض المزيد",
@@ -95,22 +95,22 @@
     "western" : "غربي",
     "reverify" : "إعادة التحقق",
     "verify" : "تحقق",
-    "verifyMyAddress" : "قم بتأكيد عنواني",
+    "verifyMyAddress" : "التحقق من عنواني",
     "copy" : "نسخ",
     "copied" : "تم النسخ",
     "addressCopied" : "تم نسخ العنوان",
-    "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في الحافظة.",
+    "addressCopiedSuspicious" : "عدم تطابق العنوان المنسوخ والعنوان الموجود في ذاكرة النصوص.",
     "experimentalFeature" : "تجريبي",
     "information" : "معلومات",
     "search" : "جارٍ البحث...",
     "searchWithoutEllipsis" : "بحث",
     "manage" : "إدارة",
     "lockScreen" : {
-      "title" : "مرحباً بك مجددًا",
+      "title" : "مرحباً بك مجدداً",
       "subTitle" : null,
       "description" : "أدخل كلمة المرور الخاصة بك للمتابعة",
       "inputPlaceholder" : "اكتب كلمة المرور الخاصة بك",
-      "lostPassword" : "نسيت كلمة المرور"
+      "lostPassword" : "فقدت كلمة المرور الخاصة بي"
     },
     "sync" : {
       "syncing" : "جارٍ المزامنة...",
@@ -129,7 +129,7 @@
     "nanoS" : "Nano S",
     "nanoSP" : "Nano S Plus",
     "nanoX" : "Nano X",
-    "blue" : "أزرق"
+    "blue" : "Blue"
   },
   "operation" : {
     "type" : {
@@ -139,16 +139,16 @@
       "NFT_OUT" : "NFT Sent",
       "CREATE" : "تم إنشاؤه",
       "REVEAL" : "تم الإظهار",
-      "DELEGATE" : "تفويض",
-      "REDELEGATE" : "أُعيد تفويضها",
+      "DELEGATE" : "تم التفويض",
+      "REDELEGATE" : "تمت إعادة التفويض",
       "UNDELEGATE" : "غير مفوّض",
-      "SUPPLY" : "أودعت",
+      "SUPPLY" : "تم الإيداع",
       "REDEEM" : "مسحوب",
-      "APPROVE" : "موافق عليه",
+      "APPROVE" : "مُعتمد",
       "VOTE" : "تم التصويت",
-      "FREEZE" : "تجميد",
+      "FREEZE" : "مُجمد",
       "UNFREEZE" : "تمت إزالة التجميد",
-      "REWARD" : "المكافأة التي تمت المطالبة بها",
+      "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "OPT_IN" : "الانضمام",
       "OPT_OUT" : "إلغاء الانضمام",
@@ -165,8 +165,8 @@
   },
   "byteSize" : {
     "bytes" : "{{size}} بايت",
-    "kbUnit" : "{{size}} KB",
-    "mbUnit" : "{{size}} MB"
+    "kbUnit" : "{{size}} كيلوبايت",
+    "mbUnit" : "{{size}} ميجابايت"
   },
   "time" : {
     "minute" : "دقيقة",
@@ -174,7 +174,7 @@
     "hour" : "ساعة",
     "hour_plural" : "ساعات",
     "range" : {
-      "day" : "1يوم",
+      "day" : "1 يوم",
       "week" : "1 أسبوع",
       "month" : "1 شهر",
       "year" : "1 سنة",
@@ -182,7 +182,7 @@
     }
   },
   "fees" : {
-    "advanced" : "متقدم",
+    "advanced" : "مُتَقدم",
     "custom" : "مُخصّص",
     "fast" : "سريع",
     "high" : "مرتفعة",
@@ -206,17 +206,17 @@
     "market" : "السوق"
   },
   "stars" : {
-    "placeholder" : "قم بتفضيل حسابًا لعرضه هنا.",
+    "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
     "tooltip" : "تفضيل حساب"
   },
   "bridge" : {
-    "modalTitle" : "Open Device Bridge",
+    "modalTitle" : "فتح جسر (bridge) الجهاز",
     "openHeader" : "اكشف حسابات جهازك من خلال WebSocket",
-    "openDescription" : "فتح جسر (bridge) يعرض جميع حساباتك لتطبيقات الطرف الخارجي.",
+    "openDescription" : "فتح جسر (bridge) يكشف جميع حساباتك لتطبيقات الطرف الثالث.",
     "openedHeader" : "تم فتح جسر {{appName}}",
-    "openedDescription" : "يمكنك الآن الوصول إلى حسابك {{appName}} على تطبيق ويب لطرف خارجي من خلال WebSocket.",
+    "openedDescription" : "يمكنك الآن الوصول إلى حسابك {{appName}} على تطبيق ويب طرف ثالث من خلال WebSocket.",
     "completeHeader" : "تم إكمال جلسة الجسر",
-    "completeDescription" : "تم إغلاق جسر websocket الآن.",
+    "completeDescription" : "جسر websocket مُغلق الآن.",
     "openButton" : "فتح",
     "disconnectButton" : "قطع الاتصال"
   },
@@ -228,16 +228,17 @@
       "kyc" : "KYC"
     },
     "form" : {
+      "changeCTA" : "تغيير",
       "ratesDrawer" : {
-        "title" : "معدل",
+        "title" : "مُعدل",
         "quote" : "Quote",
         "receive" : "تلقي"
       },
       "details" : {
         "label" : {
-          "provider" : "provider",
-          "rate" : "rate",
-          "fees" : "network fees",
+          "provider" : "مزود",
+          "rate" : "مُعدل",
+          "fees" : "رسوم الشبكة",
           "target" : "target account"
         },
         "tooltip" : {
@@ -267,19 +268,33 @@
           "complete" : "Complete KYC",
           "update" : "Refresh KYC",
           "rejected" : "KYC rejected, start the verification again",
+          "rejectedContactProviderSupport" : "تم رفض اعرف عميلك (KYC)، برجاء التواصل مع دعم {{providerName}}",
+          "updateRequired" : "استكمل أو حدّث بيانات اعرف عميلك (KYC) الخاصة بك",
           "status" : {
             "pending" : "KYC pending",
             "approved" : "KYC approved",
-            "closed" : "KYC rejected"
+            "closed" : "KYC rejected",
+            "upgradeRequired" : "بيانات اعرف عميلك (KYC) غير كافية"
           }
+        },
+        "login" : {
+          "required" : "تحتاج لتسجيل الدخول مع هذا المزود",
+          "complete" : "تسجيل الدخول"
+        },
+        "mfa" : {
+          "required" : "تحتاج لإعداد المصادقة متعددة العوامل (MFA) مع هذا المزود",
+          "complete" : "إعداد المصادقة متعددة العوامل (MFA)"
+        },
+        "withdrawalsBlockedError" : {
+          "message" : "تم حظر عملية السحب خاصتك من قِبل {{providerName}}.\n\n يرجى التواصل مع فريق الدعم لديهم للمزيد من المعلومات."
         }
       }
     },
     "history" : {
-      "disclaimer" : "عمليات المبادلة لتطبيق سطح المكتب الخاص بك غير متزامنة مع تطبيق Ledger Live للجوال",
+      "disclaimer" : "مبادلاتك على سطح المكتب غير متزامنة مع تطبيق Ledger Live للجوال",
       "empty" : {
         "title" : "ستظهر مبادلاتك السابقة هنا",
-        "description" : "إما أنك لم تقم بأي مبادلات حتى الآن، أو تمت إعادة تعيين ليدجر لايف (Ledger Live) في غضون ذلك."
+        "description" : "إما أنك لم تقم بأي مبادلات بعد، أو تمت إعادة تعيين Ledger Live في هذه الأثناء."
       },
       "export" : "تصدير العمليات",
       "exporting" : "Exporting..."
@@ -313,7 +328,7 @@
           "city" : "المدينة",
           "state" : "الولاية",
           "country" : "الدولة",
-          "postalCode" : "Zip Code",
+          "postalCode" : "الرمز البريدي",
           "dateOfBirth" : "تاريخ الميلاد",
           "firstNamePlaceholder" : "Enter your first name",
           "lastNamePlaceholder" : "Enter your last name",
@@ -346,19 +361,20 @@
     "title" : "مبادلة",
     "titleCrypto" : "مبادلة {{currency}}",
     "whatIsSwap" : "ما هي المبادلة",
+    "decentralizedSwapAvailable" : "بالنسبة لبعض المعاملات يمكنك التفكير في استخدام المبادلة اللامركزية. اكتشف <0>Paraswap</0> و <1>1inch</1>.",
     "paraswap" : {
       "cta" : " تفقد هذا",
-      "description" : "تبحث عن Paraswap؟ لقد تم نقله إلى علامة تبويب الاكتشاف."
+      "description" : "تبحث عن Paraswap؟ لقد تم نقلها إلى علامة تبويب اكتشف."
     },
     "tabs" : {
       "exchange" : "تبادل",
       "history" : "السجل"
     },
     "history" : {
-      "disclaimer" : "عمليات المبادلة لتطبيق سطح المكتب الخاص بك غير متزامنة مع تطبيق Ledger Live للجوال",
+      "disclaimer" : "مبادلاتك على سطح المكتب غير متزامنة مع تطبيق Ledger Live للجوال",
       "empty" : {
         "title" : "ستظهر مبادلاتك السابقة هنا",
-        "description" : "إما أنك لم تقم بأي مبادلات حتى الآن، أو تمت إعادة تعيين ليدجر لايف (Ledger Live) في غضون ذلك."
+        "description" : "إما أنك لم تقم بأي مبادلات بعد، أو تمت إعادة تعيين Ledger Live في هذه الأثناء."
       }
     },
     "landing" : {
@@ -367,12 +383,12 @@
       "sorry" : "الخدمة غير متوفرة مؤقتًا أو غير متوفرة في بلدك"
     },
     "missingApp" : {
-      "title" : "يرجى تحديث تطبيق {{appName}} على جهازك",
+      "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
       "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
       "cta" : "الانتقال إلى المدير"
     },
     "outdatedApp" : {
-      "title" : "يرجى تحديث تطبيق {{appName}} على جهازك",
+      "title" : "يرجى تثبيت تطبيق {{appName}} على جهازك",
       "subtitle" : "انتقل إلى المدير وقم بتثبيت تطبيق {{appName}} لمبادلة الأصول.",
       "cta" : "الانتقال إلى المدير"
     },
@@ -392,16 +408,16 @@
       }
     },
     "ip" : {
-      "title" : "مرحبًا بك في المبادلة",
+      "title" : "مرحباً بك في المبادلة",
       "subtitle" : "Exchange crypto assets directly from your Ledger device.",
-      "disclaimer" : "من خلال المتابعة، أنت تقبل مشاركة بيانات موقعك مع موفري خدمات الطرف الخارجي حتى يتمكنوا من الامتثال لإجراءات AML/KYC الخاصة بهم."
+      "disclaimer" : "بالمتابعة، فإنك توافق على أنه قد تتم مشاركة بيانات موقعك مع مزودي خدمة الطرف الثالث من أجل امتثالهم لإجراءات مكافحة غسيل الأموال / KYC (اعرف عميلك)."
     },
     "kyc" : {
       "updateRequired" : "We are unable to complete the KYC process until you update the application",
       "wyre" : {
         "disclaimer" : "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our",
         "policy" : "سياسة الخصوصية",
-        "title" : "التحقق من هويتك",
+        "title" : "قم بتأكيد هويتك",
         "subtitle" : "Please enter your information to swap with Wyre.",
         "pending" : {
           "cta" : "متابعة",
@@ -423,7 +439,7 @@
           "city" : "المدينة",
           "state" : "الولاية",
           "country" : "الدولة",
-          "postalCode" : "Zip Code",
+          "postalCode" : "الرمز البريدي",
           "dateOfBirth" : "تاريخ الميلاد",
           "firstNamePlaceholder" : "Enter your first name",
           "lastNamePlaceholder" : "Enter your last name",
@@ -449,42 +465,42 @@
       "from" : {
         "title" : "من",
         "account" : "حساب",
-        "amount" : "المبلغ المراد إرساله",
+        "amount" : "المبلغ المطلوب إرساله",
         "currency" : "الأصول المشفرة"
       },
       "to" : {
         "title" : "إلى",
         "account" : "حساب",
-        "amount" : "المبلغ المراد استلامه",
+        "amount" : "المبلغ المطلوب تلقيه",
         "currency" : "الأصول المشفرة",
         "addAccountCTA" : "إضافة حساب جديد"
       },
       "tradeMethod" : {
-        "title" : "معدل",
-        "float" : "معدل متغير",
-        "floatUnavailable" : "المعدل المتغير غير مدعوم لهذا الثنائي",
-        "fixed" : "معدل ثابت",
-        "fixedUnavailable" : "المعدل الثابت غير مدعوم لهذا الثنائي",
-        "floatDesc" : "قد يتغير المبلغ الخاص بك تبعًا لظروف السوق.",
+        "title" : "مُعدل",
+        "float" : "مُعدل متغير",
+        "floatUnavailable" : "المُعدل المتغير غير مدعوم لهذا الثنائي",
+        "fixed" : "مُعدل ثابت",
+        "fixedUnavailable" : "المُعدل الثابت غير مدعوم لهذا الثنائي",
+        "floatDesc" : "يمكن أن يتغير المبلغ الخاص بك اعتماداً على ظروف السوق.",
         "fixedDesc" : "سيبقى المبلغ الخاص بك كما هو حتى لو تغير السوق. يتم التحديث كل 60 ثانية.",
-        "by" : "مقدم من"
+        "by" : "مُقدم من"
       },
       "exchange" : "تبادل",
       "helpCTA" : "ما هي المبادلة؟",
-      "bubble" : "نحن نستخدم سعراً ثابتاً، هذا هو المبلغ الذي ستحصل عليه بالضبط.",
+      "bubble" : "نحن نستخدم سعراً ثابتاً، هذا هو بالضبط المبلغ الذي ستحصل عليه.",
       "noAccounts" : "ليس لديك حسابات {{currencyName}} بها رصيد",
-      "noApp" : "تطبيق {{currencyName}} غير مثبت.",
-      "outdatedApp" : "يتوفر تحديث لتطبيق {{currencyName}}.",
-      "loadingRates" : "جارٍ تحميل أسعار الصرف..."
+      "noApp" : "تطبيق {{currencyName}} غير مُثبت.",
+      "outdatedApp" : "تحديث تطبيق {{currencyName}} متوفر.",
+      "loadingRates" : "جارٍ تحميل المعدلات ..."
     },
     "unauthorizedRatesModal" : {
       "title" : "Ledger Live needs an update",
       "subtitle" : "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
       "cta" : "Reset verification"
     },
-    "resetKYCModal" : {
-      "title" : "Delete your KYC",
-      "subtitle" : "Delete your KYC to erase all tokens stored locally on your computer. You will have to resubmit your KYC to access services provided by our partners.",
+    "resetThirdPartyDataModal" : {
+      "title" : "حذف بياناتك لدى الطرف الثالث المحلي",
+      "subtitle" : "قم بحذف بياناتك لدى الطرف الثالث المحلي. قد تحتاج لإعادة تقديم بيانات اعرف عميلك (KYC) و/أو تسجيل الدخول مجدداً للوصول إلى الخدمات التي يُقدّمها شركائنا.",
       "cta" : "تأكيد"
     },
     "modal" : {
@@ -494,9 +510,9 @@
           "title" : "الملخص",
           "from" : "من",
           "to" : "إلى",
-          "toExchange" : "المبلغ المراد إرساله",
-          "toReceive" : "المبلغ المراد استلامه",
-          "terms" : "الشروط والأحكام الخاصة به",
+          "toExchange" : "المبلغ المطلوب إرساله",
+          "toReceive" : "المبلغ المطلوب تلقيه",
+          "terms" : "الشروط والأحكام",
           "disclaimer" : {
             "description" : "By clicking \"Confirm\", I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s",
             "acceptedDescription" : "This service is exclusively governed by <0>{{provider}}</0>'s"
@@ -505,8 +521,8 @@
             "provider" : "المزود",
             "tradeMethod" : {
               "title" : "النوع",
-              "float" : "معدل متغير",
-              "fixed" : "معدل ثابت"
+              "float" : "مُعدل متغير",
+              "fixed" : "مُعدل ثابت"
             },
             "address" : "عنوان"
           }
@@ -515,7 +531,7 @@
           "title" : "جهاز"
         },
         "dependencies" : {
-          "title" : "التحقق من التطبيق"
+          "title" : "التحققات من التطبيق"
         },
         "finished" : {
           "title" : "مُعلقّة",
@@ -523,26 +539,26 @@
           "swap" : "معرّف المبادلة الخاص بك:",
           "seeDetails" : "رؤية التفاصيل",
           "disclaimer" : "Take note of your Swap ID number in case you’d need assistance from <0><0>{{provider}}</0> support</0>.",
-          "description" : "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. يمكن أن يستغرق الامر مدة تصل إلى ساعة قبل أن تستلم {{targetCurrency}}."
+          "description" : "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. يمكن أن يستغرق الأمر مدة تصل إلى ساعة قبل أن تتلقى {{targetCurrency}} الخاصة بك."
         }
       }
     },
     "operationDetailsModal" : {
       "title" : "مبادلة",
       "provider" : "المزود",
-      "txid" : "معرّف المبادلة",
+      "txid" : "مُعرّف المبادلة",
       "status" : "الوضع الحالي",
       "statusTooltips" : {
-        "expired" : "يرجى الاتصال بمزود المبادلة باستخدام معرف مبادلتك للمزيد من المعلومات.",
-        "refunded" : "يرجى الاتصال بمزود المبادلة باستخدام معرف مبادلتك للمزيد من المعلومات.",
-        "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بإتمام المعاملة.",
-        "onhold" : "يرجى الاتصال بمزود المبادلة باستخدام معرف مبادلتك لحل المشكلة.",
+        "expired" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات.",
+        "refunded" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك للمزيد من المعلومات.",
+        "pending" : "يُرجى الانتظار بينما يقوم مزود المبادلة بمعالجة المعاملة.",
+        "onhold" : "يرجى التواصل مع مزود المبادلة باستخدام مُعرف مبادلتك لحل المشكلة.",
         "finished" : "تم تنفيذ مبادلتك بنجاح."
       },
       "date" : "التاريخ",
       "from" : "من",
-      "fromAddress" : "عنوان المرسل",
-      "fromAddress_plural" : "عناوين المرسِلين",
+      "fromAddress" : "عنوان المصدر",
+      "fromAddress_plural" : "عناوين المصدر",
       "to" : "إلى",
       "toProvider" : "عنوان المزود",
       "initialAmount" : "المبلغ الأولي",
@@ -554,7 +570,7 @@
   },
   "fullNode" : {
     "status" : "الوضع الحالي",
-    "connect" : "اتصال",
+    "connect" : "تواصل",
     "disconnect" : "قطع الاتصال",
     "checkNodeSettings" : "تحقق من إعدادات العقدة",
     "edit" : "تعديل",
@@ -563,21 +579,21 @@
       "disconnectTitle" : "فصل العقدة الكاملة",
       "steps" : {
         "landing" : {
-          "header" : "ابدأ عقدتك الكاملة. لا تثق، تحقق.",
-          "description" : "عقدة البيتكوين الكاملة تتحقق من جميع المعاملات والكتل، مما يسمح لك باستخدام البيتكوين بطريقة عدم الثقة أثناء المساهمة في شبكة البيتكوين.",
+          "header" : "ابدأ عقدتك الكاملة. لا تثق، ولكن تحقق.",
+          "description" : "عقدة البيتكوين الكاملة تتحقق من جميع المعاملات والكتل، مما يسمح لك باستخدام بيتكوين بطريقة بدون ثقة أثناء المساهمة في شبكة بيتكوين.",
           "list" : {
             "item1" : "قم بإعداد Bitcoin Core على جهاز يحتوي على موارد كافية.",
             "item2" : "انتظر حتى تتم مزامنة عقدتك بشكل كامل.",
-            "item3" : "سَجل بيانات اعتماد الـ RPC الخاصة بعقدتك، وعنوان الـ IP ورقم المنفذ الخاص بك."
+            "item3" : "سَجل بيانات اعتماد RPC الخاصة بعقدتك، وعنوان IP ورقم المنفذ الخاص بك."
           },
-          "disclaimer" : "يتطلب تشغيل عقدة كاملة حاسوبًا يحتوي على موارد كافية واتصال عريض النطاق بدون قيود بيانات."
+          "disclaimer" : "تشغيل عقدة كاملة يتطلب كمبيوتر يحتوي على موارد كافية واتصال عريض النطاق بدون قيود بيانات."
         },
         "node" : {
           "title" : "عقدة",
           "connectionSteps" : {
             "notConnected" : {
               "header" : "أدخل معلمات العقدة الخاصة بك",
-              "disclaimer" : "يجب أن تكون العقدة الكاملة متزامنة بالكامل قبل الاتصال مع ليدجر لايف (Ledger Live).",
+              "disclaimer" : "يجب أن تكون العقدة الكاملة الخاصة بك متزامنة بالكامل قبل توصيل Ledger Live.",
               "fields" : {
                 "nodeHost" : {
                   "title" : "المضيف",
@@ -585,23 +601,23 @@
                 },
                 "rpcCredentials" : {
                   "title" : "بيانات اعتماد RPC",
-                  "tooltip" : "أدخل اسم مستخدم الـ RPC وكلمة مرور عقدتك، الموجودة في ملف bitcoin.conf.",
+                  "tooltip" : "أدخل اسم مستخدم وكلمة مرور RPC لعقدتك، الموجودة في ملف bitcoin.conf.",
                   "usernamePlaceholder" : "اسم المستخدم",
                   "passwordPlaceholder" : "كلمة المرور"
                 },
                 "tls" : {
                   "title" : "استخدام TLS",
-                  "tooltip" : "أمان طبقة النقل (TLS)، يمكن استخدامه على سبيل المثال، إذا كنت تستخدم حل العقدة المستضافة."
+                  "tooltip" : "قم بتمكين طبقة المنافذ الآمنة (TLS)، على سبيل المثال، عند استخدام حل العقدة المستضافة."
                 }
               }
             },
             "connecting" : {
-              "header" : "اختبار اتصال العقدة",
+              "header" : "جارٍ اختبار اتصال العقدة",
               "description" : "يُرجى الانتظار بينما نتحقق مما إذا كانت عقدتك الكاملة تستجيب."
             },
             "success" : {
-              "header" : "نجاح الاتصال بالعقدة الكاملة",
-              "description" : "يمكنك الآن تكوين عقدة كاملة لفحص حساباتك على سلسلة الكتل."
+              "header" : "تم الاتصال بالعقدة الكاملة بنجاح",
+              "description" : "يمكنك الآن تكوين عقدتك الكاملة للبحث عن حساباتك على سلسلة الكتل."
             },
             "failure" : {
               "header" : "تعذر الوصول إلى العقدة الكاملة",
@@ -1030,7 +1046,7 @@
       "desc" : "تحقق من حالة نظامنا"
     },
     "helpCenter" : {
-      "title" : "دعم ليدجر (Ledger)",
+      "title" : "دعم Ledger",
       "desc" : "الحصول على المساعدة"
     },
     "ledgerAcademy" : {
@@ -1186,7 +1202,7 @@
       "desc" : "أضف حساباً لبدء إدارة أصولك المشفرة. يجب أن يكون لديك التطبيق الخاص بأصولك المشفرة مثبت على جهازك.",
       "buttons" : {
         "addAccount" : "إضافة حساب",
-        "installApp" : "انتقل إلى المدير لتثبيت التطبيق",
+        "installApp" : "الانتقال إلى المدير لتثبيت التطبيقات",
         "help" : "مساعدة"
       }
     }
@@ -1220,7 +1236,7 @@
     "marketList" : {
       "crypto" : "الأصول المشفرة",
       "price" : "السعر",
-      "change" : "Change",
+      "change" : "تغيير",
       "marketCap" : "الحد الأقصى للسوق",
       "last7d" : "Last 7 days"
     },
@@ -1283,7 +1299,8 @@
         "description" : "الوصف",
         "tokenAddress" : "Token Address",
         "tokenId" : "Token ID",
-        "quantity" : "الكمية"
+        "quantity" : "الكمية",
+        "floorPrice" : "أقل سعر"
       }
     },
     "collections" : {
@@ -1518,7 +1535,8 @@
       "fees" : "رسوم",
       "provider" : "المزود",
       "payoutNetworkFees" : "رسوم الدفع",
-      "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك"
+      "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
+      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
     },
     "swap2" : {
       "amountSent" : "المبلغ المراد إرساله",
@@ -1533,8 +1551,8 @@
       "confirm" : "تأكيد معاملة البيع"
     },
     "fund" : {
-      "notice" : "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them.",
-      "confirm" : "Confirm Fund transaction"
+      "notice" : "تحقق من تفاصيل الأموال على جهازك قبل إرسالها. يتم تبادل العناوين بأمان حتى لا تضطر إلى التحقق منهم.",
+      "confirm" : "تأكيد معاملة الأموال"
     }
   },
   "manager" : {
@@ -1564,7 +1582,7 @@
     "applist" : {
       "placeholder" : "لا يوجد تطابق للبحث مع التصفيات المحددة",
       "placeholderNoAppsInstalled" : "لا توجد تطبيقات مثبتة على جهازك",
-      "placeholderGoToCatalog" : "الذهاب إلى كتالوج التطبيق لتثبيت التطبيقات",
+      "placeholderGoToCatalog" : "الانتقال إلى كتالوج التطبيقات لتثبيت التطبيقات",
       "noResultsFound" : "لم يتم العثور على نتائج",
       "noResultsDesc" : "من فضلك تأكد من التهجئة وحاول مرة أخرى",
       "filter" : {
@@ -2068,10 +2086,10 @@
     "replaceable" : "قابل للاستبدال",
     "cannotSelect" : {
       "unconfirmed" : "لا يمكنك اختيار نقود من المعاملات الغير مؤكدة والقابلة للاستبدال.",
+      "pending" : "لا يمكنك اختيار عملات من المعاملات المعلقة. (باستثناء الناتج من الباقي لديك)",
       "last" : "تحتاج أن تختار على الاقل واحد"
     },
     "pending" : "مُعلّق",
-    "pickUnconfirmedRBF" : "تحديد العملات من المعاملات غير المؤكدة، القابلة للاستبدال.",
     "pickingStrategy" : "استراتيجية اختيار UTXO",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "أقدم العملات أولاً (FIFO)",
@@ -2581,10 +2599,10 @@
       "delegatedInfoTooltip" : "Total amount that is delegated to validators.",
       "withdrawableInfoTooltip" : "Total amount that is withdrawable from delegations.",
       "withdrawableTitle" : "قابل للسحب",
-      "statusUpdateNotice" : "The status of the delegation will be updated when the transaction is confirmed.",
+      "statusUpdateNotice" : "ستُحدّث حالة التفويض عندما يتم تأكيد المعاملة.",
       "ledgerByFigmentTC" : "Ledger by Figment T&Cs",
       "emptyState" : {
-        "description" : "You can earn SOL rewards by delegating your assets.",
+        "description" : "يمكنك كسب مكافآت SOL عن طريق تفويض أصولك.",
         "info" : "كيف يعمل التفويض",
         "delegation" : "اكسب المكافآت"
       },
@@ -2844,8 +2862,8 @@
       "softResetTitle" : "حذف الذاكرة المؤقتة",
       "softResetDesc" : "احذف الذاكرة المؤقتة الخاصة بليدجر لايف (Ledger Live) لفرض إعادة المزامنة مع البلوك تشين.",
       "softReset" : "حذف",
-      "resetKYC" : "Reset KYC data",
-      "resetKYCDesc" : "Erase all your Know your Customer data stored locally used to access third-party transaction provider.",
+      "resetThirdPartyData" : "إعادة تعيين بيانات الطرف الثالث",
+      "resetThirdPartyDataDesc" : "مسح جميع بياناتك لدى الطرف الثالث المحلي، والتي تُستخدم للوصول إلى مزود معاملات الطرف الثالث.",
       "hardResetTitle" : "إعادة تعيين ليدجر لايف (Ledger Live)",
       "hardResetDesc" : "حذف جميع بيانات ليدجر لايف (Ledger Live) المخزنة على جهاز الكمبيوتر لديك، بما في ذلك حساباتك والإعدادات وسجلات المعاملات.",
       "hardReset" : "إعادة تعيين",
@@ -2860,7 +2878,7 @@
       "version" : "الإصدار",
       "releaseNotesBtn" : "تفاصيل",
       "termsBtn" : "قراءة",
-      "faq" : "دعم ليدجر (Ledger)",
+      "faq" : "دعم Ledger",
       "faqDesc" : "إذا كانت لديك مشكلة، فاحصل على المساعدة لاستخدام ليدجر لايف (Ledger Live) مع محفظتك للأجهزة.",
       "terms" : "شروط الاستخدام",
       "termsDesc" : "باستخدام ليدجر لايف(Ledger Live)، سوف يُعتبر أنك قد قبلت شروط الاستخدام الخاصة بنا.",
@@ -3399,7 +3417,7 @@
             "keepItOffline" : "أدخل هذه الكلمات في محفظتك للأجهزة فقط، وليس على أجهزة الكمبيوتر أو الهواتف الذكية.",
             "neverShowToAnyone" : "لا تشارك أبدًا كلماتك الـ24 مع أي شخص، ولا حتى مع Ledger.",
             "buttons" : {
-              "next" : "حسنا، لقد انتهيت!",
+              "next" : "حسناً، لقد انتهيت!",
               "prev" : "الخطوة السابقة",
               "help" : "أحتاج إلى مساعدة",
               "learn" : "تعلم كيف تقوم بإخفائها"
@@ -3710,8 +3728,8 @@
   },
   "families" : {
     "cardano" : {
-      "memoPlaceholder" : "Optional",
-      "memo" : "Memo"
+      "memoPlaceholder" : "اختياري",
+      "memo" : "ملاحظة (تسمية الوجهة)"
     },
     "stellar" : {
       "memo" : "ملاحظة",
@@ -3781,11 +3799,11 @@
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "حدث خطأ ما (الخطأ #1)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeTxDecode" : {
       "title" : "حدث خطأ ما (الخطأ #2)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeInvalidSequence" : {
       "title" : "تسلسل غير صالح",
@@ -3801,7 +3819,7 @@
     },
     "CosmosBroadcastCodeUnknownRequest" : {
       "title" : "حدث خطأ ما (الخطأ #6)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeInvalidAddress" : {
       "title" : "عنوان غير صحيح",
@@ -3809,7 +3827,7 @@
     },
     "CosmosBroadcastCodeInvalidPubKey" : {
       "title" : "حدث خطأ ما (الخطأ #8)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeUnknownAddress" : {
       "title" : "عنوان غير معروف",
@@ -3821,11 +3839,11 @@
     },
     "CosmosBroadcastCodeInvalidCoins" : {
       "title" : "حدث خطأ ما (الخطأ #11)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeOutOfGas" : {
       "title" : "حدث خطأ ما (الخطأ #12)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeMemoTooLarge" : {
       "title" : "حقل الملاحظة أطول من المسموح",
@@ -3833,19 +3851,19 @@
     },
     "CosmosBroadcastCodeInsufficientFee" : {
       "title" : "حدث خطأ ما (الخطأ #14)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeTooManySignatures" : {
       "title" : "حدث خطأ ما (الخطأ #15)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeGasOverflow" : {
       "title" : "حدث خطأ ما (الخطأ #16)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosBroadcastCodeNoSignatures" : {
       "title" : "حدث خطأ ما (الخطأ #17)",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "CosmosDelegateAllFundsWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
@@ -3864,7 +3882,7 @@
     },
     "DeviceInOSUExpected" : {
       "title" : "عذرًا، فشل التحديث",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger"
     },
     "DeviceHalted" : {
       "title" : "يرجى إعادة تشغيل جهاز ليدجر الخاص بك وإعادة المحاولة",
@@ -3908,7 +3926,7 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "لم يتم التعرف على البرنامج الثابت للجهاز",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "HardResetFail" : {
       "title" : "عفواً، تعذر إعادة التعيين",
@@ -3920,7 +3938,7 @@
     },
     "LedgerAPI4xx" : {
       "title" : "{{message}}",
-      "description" : "يرجى التحقق من الاتصال الخاص بك والمحاولة مرة أخرى أو الاتصال بدعم ليدجر."
+      "description" : "يرجى التحقق من الاتصال الخاص بك والمحاولة مرة أخرى أو التواصل مع دعم Ledger."
     },
     "LedgerAPI5xx" : {
       "title" : "عذرًا، حاول مرة أخرى.",
@@ -3928,7 +3946,7 @@
     },
     "LedgerAPINotAvailable" : {
       "title" : "عذراً، خدمات {{currencyName}} غير متوفرة",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger"
     },
     "ManagerAppAlreadyInstalled" : {
       "title" : "عذراً، هذا مثبت بالفعل",
@@ -4078,7 +4096,7 @@
     },
     "TransactionRefusedOnDevice" : {
       "title" : "تم رفض العملية على الجهاز",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر إذا كان لديك شك"
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
     },
     "UserRefusedAddress" : {
       "title" : "عنوان استقبال مرفوض",
@@ -4143,7 +4161,7 @@
     },
     "UnknownMCU" : {
       "title" : "إصدار MCU غير معروف",
-      "description" : "يرجى الاتصال بدعم ليدجر"
+      "description" : "يرجى التواصل مع دعم Ledger"
     },
     "MCUNotGenuineToDashboard" : {
       "title" : "قم بالوصول إلى لوحة المعلومات للتحديث",
@@ -4180,7 +4198,7 @@
     },
     "LedgerAPIErrorWithMessage" : {
       "title" : "{{message}}",
-      "description" : "يرجى إعادة المحاولة أو الاتصال بدعم ليدجر."
+      "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger."
     },
     "ManagerAppRelyOnBTC" : {
       "title" : "تحتاج تطبيقات البيتكوين والإيثيريوم",
@@ -4342,7 +4360,7 @@
     "SolanaUseAllAmountStakeWarning" : {
       "title" : "تأكد أن لديك رصيد كافي متبقي لرسوم المعاملات المستقبلية"
     },
-    "SolanaTxSimulationFailedPendingOp" : {
+    "SolanaTxSimulationFailedWhilePendingOp" : {
       "title" : "معاملتك السابقة لم تتم معالجتها بعد. يُرجى الانتظار لحظة ثم التحقق من سجل المعاملات قبل المحاولة مرة أخرى."
     },
     "SolanaTxConfirmationTimeout" : {

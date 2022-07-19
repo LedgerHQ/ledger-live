@@ -6,7 +6,7 @@ import type {
   FiatCurrency,
   Currency,
   CryptoCurrencyIds,
-} from "@ledgerhq/cryptoassets/lib/types";
+} from "@ledgerhq/cryptoassets";
 export type {
   Unit,
   ExplorerView,

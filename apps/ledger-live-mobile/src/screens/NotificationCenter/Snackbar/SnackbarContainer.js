@@ -4,8 +4,8 @@ import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
 
-import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider/index";
-import type { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 
 import { useSelector } from "react-redux";
 import Snackbar from "./Snackbar";

@@ -1,8 +1,8 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useTheme } from "@react-navigation/native";
 import { addMockAnnouncement } from "./__mocks__/announcements";
 

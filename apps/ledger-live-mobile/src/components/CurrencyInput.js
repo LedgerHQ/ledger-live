@@ -7,11 +7,11 @@ import { BigNumber } from "bignumber.js";
 import {
   formatCurrencyUnit,
   sanitizeValueString,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+import type { Unit } from "@ledgerhq/live-common/types/index";
 
 import { localeSelector } from "../reducers/settings";
 import getFontStyle from "./LText/getFontStyle";

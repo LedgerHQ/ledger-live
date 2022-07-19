@@ -9,8 +9,8 @@ import type {
   TransactionStatus,
   Operation,
   SignedOperation,
-} from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+} from "@ledgerhq/live-common/types/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Step } from "~/renderer/components/Stepper";
 export type StepId = "amount" | "device";
 

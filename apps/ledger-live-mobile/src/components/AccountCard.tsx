@@ -2,13 +2,13 @@ import React, { ReactNode } from "react";
 import {
   getAccountName,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/helpers";
+import { getTagDerivationMode } from "@ledgerhq/live-common/derivation";
+import { Account, CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";

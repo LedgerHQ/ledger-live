@@ -929,6 +929,10 @@
       "earn": {
         "title": "Earn",
         "desc": "Earn passive income and grow your crypto assets"
+      },
+      "mint": {
+        "title": "Mint",
+        "desc": "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon": "Coming soon",
@@ -4390,7 +4394,10 @@
       "tokenContractCopied": "Token Address copied !",
       "tokenId": "Token ID",
       "tokenIdCopied": "Token ID copied !",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "attributes" : {
+        "floorPrice" : "Floor Price"
+      }
     },
     "viewerModal": {
       "viewOn": "View on",

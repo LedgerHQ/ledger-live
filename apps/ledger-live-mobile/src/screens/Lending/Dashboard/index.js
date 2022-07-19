@@ -2,7 +2,7 @@
 import React from "react";
 import { ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
-import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
+import { listCurrentRates } from "@ledgerhq/live-common/families/ethereum/modules/compound";
 import { useTheme } from "@react-navigation/native";
 import { useCompoundSummaries } from "../useCompoundSummaries";
 import { useFlattenSortAccounts } from "../../../actions/general";

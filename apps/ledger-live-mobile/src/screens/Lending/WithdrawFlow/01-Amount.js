@@ -1,17 +1,17 @@
 /* @flow */
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/lib/compound/logic";
-import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
+import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
 import {
   findCompoundToken,
   formatCurrencyUnit,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/currencies/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { localeSelector } from "../../../reducers/settings";
 import { ScreenName } from "../../../const";

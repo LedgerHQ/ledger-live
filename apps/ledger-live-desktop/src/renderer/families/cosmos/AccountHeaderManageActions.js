@@ -1,7 +1,7 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { canDelegate } from "@ledgerhq/live-common/lib/families/cosmos/logic";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import invariant from "invariant";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";

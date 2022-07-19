@@ -2,12 +2,12 @@
 
 import React, { useCallback, useState, useMemo } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
-import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
+import type { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import {
   getAccountName,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
+} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import LText from "../../../components/LText";

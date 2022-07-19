@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { useTheme } from "styled-components";
-import { SparklineSvgData } from "@ledgerhq/live-common/lib/market/types";
+import { SparklineSvgData } from "@ledgerhq/live-common/market/types";
 
 type Props = {
   sparklineIn7d: SparklineSvgData;

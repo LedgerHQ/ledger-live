@@ -1,11 +1,14 @@
 const childProcess = require("child_process");
-const webpack = require("webpack");
-const WebpackBar = require("webpackbar");
 const { prerelease } = require("semver");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const pkg = require("../../package.json");
+const path = require("path");
+const { StripFlowPlugin, DotEnvPlugin } = require("esbuild-utils");
+const { flowPlugin } = require("@bunchtogether/vite-plugin-flow");
+const electronPlugin = require("vite-plugin-electron/renderer");
+const reactPlugin = require("@vitejs/plugin-react");
 
 const SENTRY_URL = process.env?.SENTRY_URL;
+const pkg = require("../../package.json");
+const lldRoot = path.resolve(__dirname, "..", "..");
 
 const GIT_REVISION = childProcess
   .execSync("git rev-parse --short HEAD")
@@ -19,6 +22,14 @@ if (parsed) {
   PRERELEASE = !!(parsed && parsed.length);
   CHANNEL = parsed[0];
 }
+
+const DOTENV_FILE = process.env.TESTING
+  ? ".env.testing"
+  : process.env.STAGING
+  ? ".env.staging"
+  : process.env.NODE_ENV === "production"
+  ? ".env.production"
+  : ".env";
 
 // TODO: ADD BUNDLE ANALYZER
 
@@ -35,7 +46,7 @@ const buildMainEnv = (mode, argv) => {
   };
 
   if (mode === "development") {
-    env.INDEX_URL = JSON.stringify(`http://localhost:${argv.port}/webpack/index.html`);
+    env.INDEX_URL = JSON.stringify(`http://localhost:${argv.port}/index.html`);
   }
 
   return env;
@@ -55,52 +66,90 @@ const buildRendererEnv = mode => {
   return env;
 };
 
-const buildRendererConfig = (mode, wpConf) => {
-  const entry =
-    mode === "development"
-      ? Array.isArray(wpConf.entry)
-        ? ["webpack-hot-middleware/client", ...wpConf.entry]
-        : ["webpack-hot-middleware/client", wpConf.entry]
-      : wpConf.entry;
-
-  const plugins =
-    mode === "development"
-      ? [
-          ...wpConf.plugins,
-          new ReactRefreshWebpackPlugin(),
-          new webpack.HotModuleReplacementPlugin(),
-        ]
-      : wpConf.plugins;
-
-  return {
-    ...wpConf,
-    mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : undefined,
-    entry,
-    plugins: [
-      ...plugins,
-      new WebpackBar({ name: "renderer" }),
-      new webpack.DefinePlugin(buildRendererEnv(mode)),
+const buildViteConfig = argv => ({
+  configFile: false,
+  root: path.resolve(lldRoot, "src", "renderer"),
+  server: {
+    port: argv.port,
+    // force: true,
+  },
+  define: {
+    ...buildRendererEnv("development"),
+    ...DotEnvPlugin.buildDefine(DOTENV_FILE),
+  },
+  resolve: {
+    conditions: ["node", "import", "module", "browser", "default"],
+    alias: {
+      "~": path.resolve(lldRoot, "src"),
+      qrloop: require.resolve("qrloop"),
+      "@ledgerhq/react-ui": path.join(
+        path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
+        "lib",
+      ),
+      electron: path.join(__dirname, "electronRendererStubs.js"),
+    },
+  },
+  optimizeDeps: {
+    // The common.js dependencies and files need to be force-added below:
+    include: [
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/asa.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/bep20.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20-signatures.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/erc20.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/esdt.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/polygon-erc20.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/spl.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc10.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/trc20.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/coins.js",
+      "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/erc20.js",
+      "@ledgerhq/cryptoassets",
+      "@ledgerhq/cryptoassets/data/erc20-signatures",
+      "@ledgerhq/hw-app-eth/erc20",
     ],
-    node: {
-      __dirname: false,
-      __filename: false,
+    esbuildOptions: {
+      target: ["es2020"],
+      plugins: [
+        StripFlowPlugin(/.jsx?$/),
+        {
+          name: "fix require('buffer/') calls",
+          setup(build) {
+            build.onResolve({ filter: /^buffer\/$/ }, args => {
+              if (!args.importer) return;
+
+              const result = require.resolve(args.path, {
+                paths: [args.resolveDir],
+              });
+
+              return {
+                path: result,
+              };
+            });
+          },
+        },
+      ],
     },
-    output: {
-      ...wpConf.output,
-      publicPath: mode === "production" ? "./" : "/webpack",
-    },
-    watchOptions:
-      mode === "development"
-        ? {
-            aggregateTimeout: 150,
-          }
-        : undefined,
-  };
-};
+  },
+  plugins: [
+    flowPlugin(),
+    reactPlugin(),
+    electronPlugin(),
+    // {
+    //   name: "override:electron:config-serve",
+    //   apply: "serve",
+    //   config(config) {
+    //     // Override stubs to add missing remote and WebviewTag exports
+    //     config.resolve.alias.electron = path.join(__dirname, "electronRendererStubs.js");
+    //   },
+    // },
+  ],
+});
 
 module.exports = {
   buildMainEnv,
   buildRendererEnv,
-  buildRendererConfig,
+  buildViteConfig,
+  lldRoot,
+  DOTENV_FILE,
 };

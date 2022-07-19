@@ -1,8 +1,8 @@
 import React, { memo, useCallback } from "react";
 import { FlatList } from "react-native";
 import { Trans } from "react-i18next";
-import { InstalledItem } from "@ledgerhq/live-common/lib/apps";
-import { State, App } from "@ledgerhq/live-common/lib/types/manager";
+import { InstalledItem } from "@ledgerhq/live-common/apps/index";
+import { State, App } from "@ledgerhq/live-common/types/manager";
 import styled from "styled-components/native";
 import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
 

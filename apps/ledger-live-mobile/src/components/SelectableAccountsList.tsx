@@ -15,8 +15,8 @@ import {
   FlatList,
 } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";

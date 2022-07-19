@@ -1,6 +1,6 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
@@ -17,14 +17,14 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import {
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { isFirstBond } from "@ledgerhq/live-common/lib/families/polkadot/logic";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 
 import { urls } from "../../../config/urls";
 import { accountScreenSelector } from "../../../reducers/accounts";

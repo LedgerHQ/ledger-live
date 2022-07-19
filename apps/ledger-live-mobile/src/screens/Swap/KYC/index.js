@@ -7,8 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
-import { submitKYC, countries } from "@ledgerhq/live-common/lib/exchange/swap";
-import type { KYCData } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import {
+  submitKYC,
+  countries,
+} from "@ledgerhq/live-common/exchange/swap/index";
+import type { KYCData } from "@ledgerhq/live-common/exchange/swap/types";
 import { ScreenName } from "../../../const";
 
 import IconWyre from "../../../icons/swap/Wyre";

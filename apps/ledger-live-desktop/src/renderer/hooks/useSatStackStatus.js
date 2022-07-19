@@ -1,7 +1,7 @@
 // @flow
 import { useMemo } from "react";
-import { useObservable } from "@ledgerhq/live-common/lib/observable";
-import type { SatStackStatus } from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
+import { useObservable } from "@ledgerhq/live-common/observable";
+import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { command } from "~/renderer/commands";
 
 let lastState;

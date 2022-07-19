@@ -5,7 +5,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import type {
   Account,
   AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 

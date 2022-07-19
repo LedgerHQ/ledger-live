@@ -34,7 +34,7 @@ module.exports = {
     ".svg": "dataurl",
   },
   logOverride: {
-    "this-is-undefined-in-esm": "debug",
+    "this-is-undefined-in-esm": "silent",
     "ignored-bare-import": "debug",
   },
 };

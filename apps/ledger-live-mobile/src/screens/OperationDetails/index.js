@@ -3,12 +3,12 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+import type { Operation } from "@ledgerhq/live-common/types/index";
 import {
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/explorers";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import { accountScreenSelector } from "../../reducers/accounts";

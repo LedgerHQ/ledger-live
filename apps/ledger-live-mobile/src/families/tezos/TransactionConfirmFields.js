@@ -6,17 +6,17 @@ import type {
   AccountLike,
   Account,
   Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import { useBaker } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+} from "@ledgerhq/live-common/types/index";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   shortAddressPreview,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import { toLocaleString } from "@ledgerhq/live-common/lib/currencies/BigNumberToLocaleString";
+} from "@ledgerhq/live-common/explorers";
+import { toLocaleString } from "@ledgerhq/live-common/currencies/BigNumberToLocaleString";
 import { useSelector } from "react-redux";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";

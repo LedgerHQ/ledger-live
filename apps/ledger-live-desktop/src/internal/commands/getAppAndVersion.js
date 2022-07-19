@@ -1,7 +1,7 @@
 // @flow
 import type { Observable } from "rxjs";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { from } from "rxjs";
 
 type Input = {

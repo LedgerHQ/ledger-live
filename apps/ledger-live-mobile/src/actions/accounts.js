@@ -1,7 +1,7 @@
 // @flow
 
-import { implicitMigration } from "@ledgerhq/live-common/lib/migrations/accounts";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import accountModel from "../logic/accountModel";
 
 export const importStore = (state: *) => ({

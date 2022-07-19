@@ -2,7 +2,7 @@
 
 import { handleActions } from "redux-actions";
 
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import type { State } from "~/renderer/reducers";
 

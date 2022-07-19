@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import {
   Vote,
   SuperRepresentative,
-} from "@ledgerhq/live-common/lib/families/tron/types";
+} from "@ledgerhq/live-common/families/tron/types";
 
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import * as Animatable from "react-native-animatable";

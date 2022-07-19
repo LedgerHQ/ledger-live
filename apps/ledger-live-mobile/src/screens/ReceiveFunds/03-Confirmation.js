@@ -12,15 +12,15 @@ import type {
   Account,
   TokenAccount,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";

@@ -194,12 +194,20 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     );
   }
 
-  const withoutFunds = results
+  const specsWithoutFunds = results.filter(
+    (s) =>
+      !s.fatalError &&
+      ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+        (s.mutations && s.mutations.every((r) => !r.mutation)))
+  );
+
+  const withoutFunds = specsWithoutFunds
     .filter(
       (s) =>
-        !s.fatalError &&
-        ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
-          (s.mutations && s.mutations.every((r) => !r.mutation)))
+        // ignore coin that are backed by testnet that have funds
+        !specsWithoutFunds.some(
+          (o) => o.spec.currency.isTestnetFor === s.spec.currency.id
+        )
     )
     .map((s) => s.spec.name);
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
@@ -324,9 +332,13 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
 
   if (withoutFunds.length) {
-    body += `> ⚠️ ${
+    const missingFundsWarn = `> ⚠️ ${
       withoutFunds.length
-    } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+    } specs don't have enough funds! (${withoutFunds.join(
+      ", "
+    )})\n (and aren't covered by testnet)`;
+    body += missingFundsWarn;
+    slackBody += missingFundsWarn;
   }
 
   body += "<details>\n";

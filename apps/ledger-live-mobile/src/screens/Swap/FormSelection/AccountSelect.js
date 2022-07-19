@@ -7,10 +7,10 @@ import { useTheme } from "@react-navigation/native";
 import {
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import type { SwapDataType } from "@ledgerhq/live-common/lib/exchange/swap/hooks";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/types/index";
+import type { SwapDataType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import type { SwapRouteParams } from "..";
 
 import SearchIcon from "../../../icons/Search";

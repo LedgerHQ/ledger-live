@@ -8,7 +8,11 @@ module.exports = (mappings) => ({
         mappings = [mappings];
       }
 
-      const resolveCallback = async function(args) {
+      const resolveCallback = async function (args) {
+        if (args.resolveDir === "") {
+          return; // Ignore unresolvable paths
+        }
+
         const errors = [];
 
         for (const mapping of mappings) {

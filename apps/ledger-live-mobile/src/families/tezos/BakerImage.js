@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Image } from "react-native";
-import type { Baker } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
 import Circle from "../../components/Circle";
 
 type Props = {

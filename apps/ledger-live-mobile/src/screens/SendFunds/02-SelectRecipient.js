@@ -1,14 +1,14 @@
 /* @flow */
 import invariant from "invariant";
 import { RecipientRequired } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   SyncOneAccountOnMount,
   SyncSkipUnderPriority,
-} from "@ledgerhq/live-common/lib/bridge/react";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { isNftTransaction } from "@ledgerhq/live-common/lib/nft";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/bridge/react/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { track, TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";

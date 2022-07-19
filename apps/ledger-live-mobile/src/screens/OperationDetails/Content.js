@@ -9,22 +9,22 @@ import {
   Account,
   Operation,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
-} from "@ledgerhq/live-common/lib/operation";
+} from "@ledgerhq/live-common/operation";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";

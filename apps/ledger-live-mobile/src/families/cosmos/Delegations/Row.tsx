@@ -4,15 +4,15 @@ import { useTranslation } from "react-i18next";
 import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import ValidatorImage from "../shared/ValidatorImage";
-import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;

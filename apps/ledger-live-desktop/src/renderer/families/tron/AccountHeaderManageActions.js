@@ -1,11 +1,11 @@
 // @flow
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/lib/account";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import IconCoins from "~/renderer/icons/Coins";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";

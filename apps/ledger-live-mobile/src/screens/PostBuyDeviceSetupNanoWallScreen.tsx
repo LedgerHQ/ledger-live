@@ -8,6 +8,8 @@ import { NavigatorName, ScreenName } from "../const";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
+import { TrackScreen } from "../analytics";
+import { useCurrentRouteName } from "../helpers/routeHooks";
 
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
@@ -25,6 +27,8 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
     });
   }, [navigation]);
 
+  const currentRoute = useCurrentRouteName();
+
   return (
     <SafeAreaView
       style={{
@@ -33,6 +37,12 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         justifyContent: "flex-end",
       }}
     >
+      <TrackScreen
+        category="ReadOnly"
+        name="Have you Received Device?"
+        type="drawer"
+        source={currentRoute}
+      />
       {/* A transparent clickable overlay filling the remaining space on the screen */}
       <Pressable
         style={[
@@ -49,7 +59,7 @@ export default function PostBuyDeviceSetupNanoWallScreen() {
         py={6}
         px={6}
       >
-        <ModalHeaderCloseButton onClose={navigation.goBack}/>
+        <ModalHeaderCloseButton onClose={navigation.goBack} />
         <Text textAlign="center" variant="h4" mb={5}>
           {t("postBuyDeviceSetupNanoWall.title")}
         </Text>

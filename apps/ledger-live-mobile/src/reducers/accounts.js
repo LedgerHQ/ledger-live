@@ -8,11 +8,11 @@ import type {
   AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
-} from "@ledgerhq/live-common/lib/compound/logic";
+} from "@ledgerhq/live-common/compound/logic";
 
 import {
   addAccounts,
@@ -24,7 +24,7 @@ import {
   withoutToken,
   clearAccount,
   nestedSortAccounts,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import type { State } from "./index.js";
 import accountModel from "../logic/accountModel";
 

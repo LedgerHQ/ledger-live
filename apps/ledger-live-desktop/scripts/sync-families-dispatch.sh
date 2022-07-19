@@ -4,20 +4,20 @@ set -e
 cd $(dirname $0)
 
 targets="\
-operationDetails.js \
-accountActions.js \
-TransactionConfirmFields.js \
+operationDetails.jsx \
+accountActions.jsx \
+TransactionConfirmFields.jsx \
 AccountBodyHeader.js \
-AccountSubHeader.js \
-SendAmountFields.js \
-SendRecipientFields.js \
+AccountSubHeader.jsx \
+SendAmountFields.jsx \
+SendRecipientFields.jsx \
 SendWarning.js \
-ReceiveWarning.js \
-AccountBalanceSummaryFooter.js \
-TokenList.js \
+ReceiveWarning.jsx \
+AccountBalanceSummaryFooter.jsx \
+TokenList.jsx \
 AccountHeaderManageActions.js \
-StepReceiveFunds.js \
-NoAssociatedAccounts.js
+StepReceiveFunds.jsx \
+NoAssociatedAccounts.jsx
 "
 
 cd ../src/renderer
@@ -62,8 +62,8 @@ done
 
 for t in $targets; do
   out=../generated/$t
-  if [[ "$out" != *.js ]]; then
-    out=$out.js
-  fi
+  # if [[ "$out" != *.js ]]; then
+  #   out=$out.js
+  # fi
   genTarget $t > $out
 done

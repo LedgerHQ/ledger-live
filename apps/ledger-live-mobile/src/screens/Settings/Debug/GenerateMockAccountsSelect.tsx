@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
-import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useNavigation } from "@react-navigation/native";
 import { Alert, ScrollView, Text } from "react-native";
 import { Button, Checkbox, Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import SettingsRow from "../../../components/SettingsRow";
 import accountModel from "../../../logic/accountModel";
 import { saveAccounts } from "../../../db";

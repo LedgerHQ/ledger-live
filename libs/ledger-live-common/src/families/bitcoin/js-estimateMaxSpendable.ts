@@ -30,7 +30,6 @@ const estimateMaxSpendable = async ({
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction?.utxoStrategy?.excludeUTXOs || [],
-    transaction?.utxoStrategy?.pickUnconfirmedRBF || false,
     transaction ? [transaction.recipient] : []
   );
   return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;

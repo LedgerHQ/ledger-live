@@ -2,9 +2,9 @@ import { map, switchMap } from "rxjs/operators";
 import {
   accountFormatters,
   decodeAccountId,
-} from "@ledgerhq/live-common/lib/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 export default {

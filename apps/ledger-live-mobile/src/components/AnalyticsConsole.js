@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { map } from "rxjs/operators";
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { trackSubject } from "../analytics/segment";
 
 let id = 0;
@@ -31,6 +31,10 @@ const AnalyticsConsole = () => {
     trackSubject.pipe(map(item => ({ ...item, id: ++id }))).subscribe(addItem);
   }, [addItem]);
   const render = useEnv("ANALYTICS_CONSOLE");
+
+  useEffect(() => {
+    setItems([]);
+  }, [render]);
 
   return render ? (
     <View style={styles.root} pointerEvents="none">

@@ -1,8 +1,8 @@
 // @flow
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type { Unit } from "@ledgerhq/live-common/lib/types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import type { Unit } from "@ledgerhq/live-common/types/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 
 type RestProps = {

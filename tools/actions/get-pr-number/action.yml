@@ -5,7 +5,7 @@ outputs:
   pr:
     description: The PR's number if the PR was found
 runs:
-  using: node12
+  using: node16
   main: build/index.js
 
 branding:

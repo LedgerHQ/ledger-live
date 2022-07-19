@@ -72,26 +72,38 @@ export type Tx = {
     time: string;
   };
 };
+
 export type ERC20BalancesInput = Array<{
   address: string;
   contract: string;
 }>;
+
 export type ERC20BalanceOutput = Array<{
   address: string;
   contract: string;
   balance: BigNumber;
 }>;
+
 export type NFTMetadataInput = Readonly<
   Array<{
     contract: string;
     tokenId: string;
   }>
 >;
+
 export type NFTCollectionMetadataInput = Readonly<
   Array<{
     contract: string;
   }>
 >;
+
+export type BlockByHashOutput = {
+  hash: string;
+  height: number;
+  time: string;
+  txs: string[];
+};
+
 export type API = {
   getTransactions: (
     address: string,
@@ -133,6 +145,7 @@ export type API = {
     medium: BigNumber;
     high: BigNumber;
   }>;
+  getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
 };
 export const apiForCurrency = (currency: CryptoCurrency): API => {
   const baseURL = blockchainBaseURL(currency);
@@ -328,5 +341,23 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         maxAge: 30 * 1000,
       }
     ),
+
+    async getBlockByHash(blockHash) {
+      if (!blockHash) {
+        return undefined;
+      }
+
+      try {
+        const { data }: { data: BlockByHashOutput[] } = await network({
+          method: "GET",
+          url: `${baseURL}/blocks/${blockHash}`,
+          transformResponse: JSONBigNumber.parse,
+        });
+
+        return data[0];
+      } catch (e) {
+        return undefined;
+      }
+    },
   };
 };

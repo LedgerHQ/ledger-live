@@ -5,9 +5,9 @@ import { useTheme } from "@react-navigation/native";
 import {
   useBridgeSync,
   useAccountSyncState,
-} from "@ledgerhq/live-common/lib/bridge/react";
-import type { Sync } from "@ledgerhq/live-common/lib/bridge/react/types";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
+} from "@ledgerhq/live-common/bridge/react/index";
+import type { Sync } from "@ledgerhq/live-common/bridge/react/types";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {

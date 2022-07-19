@@ -2,14 +2,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 
 import { BigNumber } from "bignumber.js";
 
 import {
   MIN_TRANSACTION_AMOUNT,
   getLastVotedDate,
-} from "@ledgerhq/live-common/lib/families/tron/react";
+} from "@ledgerhq/live-common/families/tron/react";
 
 import { Icons } from "@ledgerhq/native-ui";
 import FreezeIcon from "../../icons/Freeze";

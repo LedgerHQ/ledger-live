@@ -7,8 +7,8 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import type {
   TokenAccount,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
-import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/types/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";

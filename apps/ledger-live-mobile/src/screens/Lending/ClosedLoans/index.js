@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { makeClosedHistoryForAccounts } from "@ledgerhq/live-common/lib/compound/logic";
+import { makeClosedHistoryForAccounts } from "@ledgerhq/live-common/compound/logic";
 
 import { useCompoundSummaries } from "../useCompoundSummaries";
 import { useFlattenSortAccounts } from "../../../actions/general";

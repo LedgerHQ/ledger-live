@@ -2,11 +2,11 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import {
   getAccountUnit,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account/helpers";
+} from "@ledgerhq/live-common/account/helpers";
 import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";

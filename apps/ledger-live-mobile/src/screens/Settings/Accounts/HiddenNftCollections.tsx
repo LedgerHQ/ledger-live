@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
 import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import {
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft/NftMetadataProvider";
+} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";

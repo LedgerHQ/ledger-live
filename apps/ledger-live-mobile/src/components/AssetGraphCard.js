@@ -2,13 +2,13 @@
 import React, { useState, useCallback } from "react";
 import { useTheme } from "@react-navigation/native";
 import { View, StyleSheet, Platform } from "react-native";
-import type { Unit, Currency } from "@ledgerhq/live-common/lib/types";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import type { Unit, Currency } from "@ledgerhq/live-common/types/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/lib/portfolio/v2/types";
+} from "@ledgerhq/live-common/portfolio/v2/types";
 
 import { ensureContrast } from "../colors";
 import { useTimeRange } from "../actions/settings";

@@ -1,22 +1,22 @@
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   formatCurrencyUnit,
   getCurrencyColor,
-} from "@ledgerhq/live-common/lib/currencies";
-import { useValidators } from "@ledgerhq/live-common/lib/families/solana/react";
+} from "@ledgerhq/live-common/currencies/index";
+import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import {
   SolanaStakeWithMeta,
   StakeAction,
   Transaction,
   TransactionModel,
-} from "@ledgerhq/live-common/lib/families/solana/types";
-import { assertUnreachable } from "@ledgerhq/live-common/lib/families/solana/utils";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/lib/families/solana/validator-app";
-import { AccountLike } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/solana/types";
+import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

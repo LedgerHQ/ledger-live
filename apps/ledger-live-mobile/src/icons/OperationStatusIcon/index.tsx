@@ -1,5 +1,5 @@
 import React from "react";
-import { OperationType } from "@ledgerhq/live-common/lib/types";
+import { OperationType } from "@ledgerhq/live-common/types/index";
 import { Icons, BoxedIcon } from "@ledgerhq/native-ui";
 import {
   DEFAULT_BOX_SIZE,

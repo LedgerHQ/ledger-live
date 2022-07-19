@@ -3,9 +3,9 @@ import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
 
-import type { State } from "@ledgerhq/live-common/lib/apps";
+import type { State } from "@ledgerhq/live-common/apps/index";
 
-import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
+import { useAppInstallProgress } from "@ledgerhq/live-common/apps/react";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";

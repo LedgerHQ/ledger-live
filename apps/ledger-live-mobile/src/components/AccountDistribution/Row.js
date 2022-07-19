@@ -1,13 +1,13 @@
 // @flow
 
-import { getAccountName } from "@ledgerhq/live-common/lib/account";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   Account,
   AccountLike,
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";

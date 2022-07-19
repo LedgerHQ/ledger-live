@@ -4,12 +4,12 @@ import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
-import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
+import { listApps } from "@ledgerhq/live-common/apps/hw";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { delay } from "@ledgerhq/live-common/lib/promise";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { delay } from "@ledgerhq/live-common/promise";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
@@ -18,6 +18,7 @@ import { addKnownDevice } from "../../actions/ble";
 import {
   installAppFirstTime,
   setLastSeenDeviceInfo,
+  setReadOnlyMode,
 } from "../../actions/settings";
 import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 import type { DeviceLike } from "../../reducers/ble";
@@ -170,6 +171,8 @@ function PairDevicesInner({ navigation, route }: Props) {
               appsInstalled,
             }),
           );
+
+          dispatchRedux(setReadOnlyMode(false));
 
           if (unmounted.current) return;
           dispatch({ type: "paired", skipCheck: false });

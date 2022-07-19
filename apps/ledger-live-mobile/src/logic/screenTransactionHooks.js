@@ -12,20 +12,20 @@ import type {
   Transaction,
   SignedOperation,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import {
   addPendingOperation,
   formatOperation,
   formatAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { formatTransaction } from "@ledgerhq/live-common/lib/transaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { execAndWaitAtLeast } from "@ledgerhq/live-common/lib/promise";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/account/index";
+import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { useDispatch } from "react-redux";
-import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
+import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 

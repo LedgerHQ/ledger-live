@@ -9,26 +9,26 @@ import { useNavigation } from "@react-navigation/native";
 import type {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import type {
   Exchange,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
-import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+} from "@ledgerhq/live-common/exchange/swap/types";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
+import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapHistory";
+import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import {
   addPendingOperation,
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { renderLoading } from "../../components/DeviceAction/rendering";
 import { ScreenName } from "../../const";

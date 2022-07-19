@@ -2,14 +2,14 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import { useRampCatalog } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/lib/platform/providers/RampCatalogProvider/helpers";
+} from "@ledgerhq/live-common/account/index";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { ScreenName, NavigatorName } from "../../const";
 
 import LText from "../../components/LText";

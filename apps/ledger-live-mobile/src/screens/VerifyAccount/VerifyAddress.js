@@ -4,10 +4,10 @@ import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import type { Account } from "@ledgerhq/live-common/lib/types/account";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import type { Account } from "@ledgerhq/live-common/types/account";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 

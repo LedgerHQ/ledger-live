@@ -1,14 +1,14 @@
 // @flow
 import React, { memo, useMemo } from "react";
 import { Image } from "react-native";
-import manager from "@ledgerhq/live-common/lib/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 import {
   findCryptoCurrencyById,
   getCurrencyColor,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import type { App } from "@ledgerhq/live-common/types/manager";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import ManagerAppIcon from "../../../images/managerAppIcon.png";

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import RetryButton from "../../../components/RetryButton";
