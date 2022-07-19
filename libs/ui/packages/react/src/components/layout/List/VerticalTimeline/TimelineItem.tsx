@@ -54,7 +54,7 @@ const TimelineIndicatorContentHeader = styled(Flex)`
 `;
 
 export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
-  const theme = useTheme();
+  const { colors } = useTheme();
 
   return (
     <Flex flexDirection="row">
@@ -84,7 +84,7 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
               type="opacity"
               active
               disabled
-              textProps={{ color: theme.colors.palette.shade100 }}
+              textProps={{ color: colors.neutral.c100 }}
             >{`${item.estimatedTime / 60} min`}</Tag>
           )}
         </TimelineIndicatorContentHeader>
