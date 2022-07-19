@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { HeaderBackButton } from "@react-navigation/elements";
+import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
 import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
@@ -23,50 +24,27 @@ import { track } from "../../analytics";
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const route = useRoute();
+
+  const onClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close 'x'",
+      screen: route.name,
+    });
+  }, [route]);
+
   const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
+    () => ({
+      ...getStackNavigatorConfig(colors, true),
+      headerRight: () => <HeaderRightClose onClose={onClose} />,
+    }),
+    [colors, onClose],
   );
-
-  const onSelectCryptoClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close 'x'",
-      screen: ScreenName.ReceiveSelectCrypto,
-    });
-  }, []);
-
-  const onSelectAccountClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close 'x'",
-      screen: ScreenName.ReceiveSelectAccount,
-    });
-  }, []);
-
-  const onConnectDeviceClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close 'x'",
-      screen: ScreenName.ReceiveConnectDevice,
-    });
-  }, []);
 
   const onConnectDeviceBack = useCallback(() => {
     track("button_clicked", {
       button: "Back arrow",
       screen: ScreenName.ReceiveConnectDevice,
-    });
-  }, []);
-
-  const onVerifyAddressClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close 'x'",
-      screen: ScreenName.ReceiveVerifyAddress,
-    });
-  }, []);
-
-  const onConfirmationClose = useCallback(() => {
-    track("button_clicked", {
-      button: "Close 'x'",
-      screen: ScreenName.ReceiveConfirmation,
     });
   }, []);
 
@@ -84,7 +62,6 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerLeft: null,
           headerTitle: "",
-          headerRight: <HeaderRightClose onClose={onSelectCryptoClose} />,
         }}
       />
 
@@ -94,7 +71,6 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveSelectAccount}
         options={{
           headerTitle: "",
-          headerRight: <HeaderRightClose onClose={onSelectAccountClose} />,
         }}
       />
 
@@ -138,7 +114,6 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          headerRight: <HeaderRightClose onClose={onConnectDeviceClose} />,
           headerLeft: <HeaderBackButton onPress={onConnectDeviceBack} />,
         }}
       />
@@ -149,7 +124,6 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerTitle: "",
           headerLeft: null,
-          headerRight: <HeaderRightClose onClose={onVerifyAddressClose} />,
         }}
       />
       {/* Add account(s) automatically */}
@@ -159,7 +133,6 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
-          headerRight: <HeaderRightClose onClose={onConfirmationClose} />,
         }}
       />
       {/* Receive Address Device Verification */}
