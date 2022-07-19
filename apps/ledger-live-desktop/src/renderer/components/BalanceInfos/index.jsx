@@ -11,7 +11,7 @@ import TransactionsPendingConfirmationWarning from "~/renderer/components/Transa
 import { PlaceholderLine } from "./Placeholder";
 
 // $FlowFixMe
-import Button from "~/renderer/components/Button.ui.tsx";
+import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 
