@@ -36,6 +36,7 @@ type Step = {
   key: CompanionStepKey;
   status: StepStatus;
   title: string;
+  estimatedTime?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
 
@@ -82,6 +83,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         key: CompanionStepKey.Pin,
         title: "Set your PIN",
         status: "inactive",
+        estimatedTime: 120,
         renderBody: () => (
           <Flex>
             <Text
@@ -98,6 +100,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         key: CompanionStepKey.Seed,
         title: "Recovery phrase",
         status: "inactive",
+        estimatedTime: 300,
         renderBody: () => (
           <Text variant="bodyLineHeight">
             {`Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.`}
