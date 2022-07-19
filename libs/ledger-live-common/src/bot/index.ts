@@ -324,9 +324,11 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
 
   if (withoutFunds.length) {
-    body += `> ⚠️ ${
+    const missingFundsWarn = `> ⚠️ ${
       withoutFunds.length
     } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+    body += missingFundsWarn;
+    slackBody += missingFundsWarn;
   }
 
   body += "<details>\n";

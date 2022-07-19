@@ -1,5 +1,54 @@
 # ledger-live-desktop
 
+## 2.45.0-next.0
+
+### Minor Changes
+
+- [#602](https://github.com/LedgerHQ/ledger-live/pull/602) [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Accept new message.sign call from the live-app-sdk
+
+### Patch Changes
+
+- [#386](https://github.com/LedgerHQ/ledger-live/pull/386) [`8917ca143`](https://github.com/LedgerHQ/ledger-live/commit/8917ca1436e780e3a52f66f968f8224ad35362b4) Thanks [@gre](https://github.com/gre)! - Log experimental and feature flags in Sentry error reports.
+
+* [#415](https://github.com/LedgerHQ/ledger-live/pull/415) [`6ef54d871`](https://github.com/LedgerHQ/ledger-live/commit/6ef54d871740f1b5378d2e259864c239aaea9c99) Thanks [@laure-lebon](https://github.com/laure-lebon)! - Ellipsis added to memo for Cosmos
+
+- [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
+- Updated dependencies [[`2de4b99c0`](https://github.com/LedgerHQ/ledger-live/commit/2de4b99c0c36766474d5ea037615f9f69942e905), [`e0516e387`](https://github.com/LedgerHQ/ledger-live/commit/e0516e3877fbbef458ec4da9e06bd9d7db09d0ee), [`7c15869a7`](https://github.com/LedgerHQ/ledger-live/commit/7c15869a7a2cf74f849f8cf0fe13b66133ff673a), [`e4b7dc326`](https://github.com/LedgerHQ/ledger-live/commit/e4b7dc32664d32b43dfae2821c29715ae94a6ab4), [`203b927b4`](https://github.com/LedgerHQ/ledger-live/commit/203b927b4e5bca3402c85a88c536d519adb18c5f), [`3be077f54`](https://github.com/LedgerHQ/ledger-live/commit/3be077f547cce51d8640a13fd37583d7782ab8a2), [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
+  - @ledgerhq/live-common@25.0.0-next.0
+  - @ledgerhq/react-ui@0.8.1-next.0
+  - @ledgerhq/errors@6.10.1-next.0
+  - @ledgerhq/devices@7.0.0-next.0
+  - @ledgerhq/hw-transport@6.27.2-next.0
+  - @ledgerhq/hw-transport-http@6.27.2-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.27.3-next.0
+
 ## 2.44.1
 
 ### Patch Changes
