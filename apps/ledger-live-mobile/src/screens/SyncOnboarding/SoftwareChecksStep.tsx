@@ -16,6 +16,8 @@ import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
 import GenuineCheckActiveDrawer from "./GenuineCheckActiveDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 
+const softwareStepLaunchDelay = 2500;
+
 type CheckStatus =
   | "inactive"
   | "requested"
@@ -105,7 +107,9 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
     }
 
     if (genuineCheckStepStatus === "inactive") {
-      setGenuineCheckStepStatus("requested");
+      setTimeout(() => {
+        setGenuineCheckStepStatus("requested");
+      }, softwareStepLaunchDelay);
     } else if (genuineState === "genuine") {
       setGenuineCheckStepStatus("completed");
     } else if (devicePermissionState === "unlock-needed") {
