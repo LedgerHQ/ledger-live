@@ -29,10 +29,15 @@ const GenuineCheckDrawer = ({ isOpen, onPress }: Props) => (
         size={48}
       />
     </Flex>
-    <Text variant="h4" fontWeight="semiBold" mb={4} mt={8}>
+    <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
       Verify that your Nano is authentic and safe to use
     </Text>
-    <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
+    <Text
+      textAlign="center"
+      variant="bodyLineHeight"
+      mb={8}
+      color="neutral.c80"
+    >
       {`We will perform a check to ensure your device hasn't been tampered with. You'll need to accept this on your Nano.`}
     </Text>
     <Button type="main" mb={6} onPress={onPress}>
