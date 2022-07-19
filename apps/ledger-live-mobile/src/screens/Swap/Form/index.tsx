@@ -153,7 +153,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     // we don't display it if user needs to login first
     if (
       currentBanner !== ActionRequired.Login &&
-      shouldShowKYCBanner({ provider, validKycStatus: kyc.status })
+      shouldShowKYCBanner({ provider, kycStatus: kyc.status })
     ) {
       setCurrentBanner(ActionRequired.KYC);
     }
