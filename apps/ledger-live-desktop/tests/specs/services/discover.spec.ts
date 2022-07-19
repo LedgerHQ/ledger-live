@@ -9,7 +9,7 @@ import * as server from "../../utils/serve-dummy-app";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", manifest: "dummy-live-app" });
 
 let continueTest = false;
 
@@ -21,7 +21,6 @@ test.beforeAll(async ({ request }) => {
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.manifest(port));
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }
