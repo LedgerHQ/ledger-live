@@ -1,6 +1,7 @@
 // @flow
 
-import React, { useCallback, useEffect } from "react";
+import { WebviewTag } from "electron";
+import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 
@@ -116,7 +117,7 @@ export type Props = {
   onClose?: Function,
   onHelp?: Function,
   config?: TopBarConfig,
-  webview: WebviewTag,
+  webviewRef: { current: null | WebviewTag },
 };
 
 const WebPlatformTopBar = ({
@@ -125,7 +126,7 @@ const WebPlatformTopBar = ({
   onHelp,
   onClose,
   config = {},
-  webview,
+  webviewRef,
 }: Props) => {
   const { name, icon } = manifest;
 
@@ -136,17 +137,23 @@ const WebPlatformTopBar = ({
     shouldDisplayNavigation = false,
   } = config;
 
-  const [canGoBack, setCanGoBack] = React.useState(false);
-  const [canGoForward, setCanGoForward] = React.useState(false);
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const dispatch = useDispatch();
 
   const handleDidNavigate = useCallback(() => {
-    setCanGoBack(webview.canGoBack());
-    setCanGoForward(webview.canGoForward());
-  }, [webview]);
+    const webview = webviewRef.current;
+
+    if (webview) {
+      setCanGoBack(webview.canGoBack());
+      setCanGoForward(webview.canGoForward());
+    }
+  }, [webviewRef]);
 
   useEffect(() => {
+    const webview = webviewRef.current;
+
     if (webview && shouldDisplayNavigation) {
       webview.addEventListener("did-navigate", handleDidNavigate);
       webview.addEventListener("did-navigate-in-page", handleDidNavigate);
@@ -158,29 +165,32 @@ const WebPlatformTopBar = ({
         webview.removeEventListener("did-navigate-in-page", handleDidNavigate);
       }
     };
-  }, [handleDidNavigate, webview, shouldDisplayNavigation]);
+  }, [handleDidNavigate, webviewRef, shouldDisplayNavigation]);
 
   const onClick = useCallback(() => {
     dispatch(openPlatformAppInfoDrawer({ manifest }));
   }, [manifest, dispatch]);
 
   const onOpenDevTools = useCallback(() => {
+    const webview = webviewRef.current;
     if (webview) {
       webview.openDevTools();
     }
-  }, [webview]);
+  }, [webviewRef]);
 
   const onGoBack = useCallback(() => {
+    const webview = webviewRef.current;
     if (webview) {
       webview.goBack();
     }
-  }, [webview]);
+  }, [webviewRef]);
 
   const onGoForward = useCallback(() => {
+    const webview = webviewRef.current;
     if (webview) {
       webview.goForward();
     }
-  }, [webview]);
+  }, [webviewRef]);
 
   return (
     <Container>

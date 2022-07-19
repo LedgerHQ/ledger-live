@@ -288,7 +288,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs = {}, conf
         manifest={manifest}
         onReload={handleReload}
         onClose={onClose}
-        webview={targetRef.current}
+        webviewRef={targetRef}
         config={config?.topBarConfig}
       />
 
