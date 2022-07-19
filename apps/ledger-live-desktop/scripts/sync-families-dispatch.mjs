@@ -1,12 +1,15 @@
 #!/usr/bin/env zx
 import "zx/globals";
+import rimraf from "rimraf";
 
 const basePath = path.join(__dirname, "..");
 const rendererPath = path.join(basePath, "src", "renderer");
 const generatedPath = path.join(rendererPath, "generated");
 
-await fs.promises.rm(generatedPath, { recursive: true, force: true });
-await fs.promises.mkdir(generatedPath);
+await rimraf(generatedPath, async e => {
+  if (!!e) return echo(chalk.red(e));
+  await fs.promises.mkdir(generatedPath);
+});
 
 const families = await fs.readdir(path.join(rendererPath, "families"));
 const targets = [

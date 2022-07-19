@@ -1,5 +1,6 @@
 #!/usr/bin/env zx
 import "zx/globals";
+import rimraf from "rimraf";
 
 cd(path.join(__dirname, ".."));
 
@@ -7,18 +8,20 @@ const syncFamilies = async () =>
   await $`zx ./scripts/sync-families-dispatch.mjs`;
 
 const patchers = async () => {
-  await $`patch -N -i scripts/patches/RNFastCrypto.h.patch node_modules/react-native-fast-crypto/ios/RNFastCrypto.h &2>/dev/null`;
+  await $`patch -N -i scripts/patches/RNFastCrypto.h.patch node_modules/react-native-fast-crypto/ios/RNFastCrypto.h 2>/dev/null`;
 
   // patching transitive gradle dependency
-  await $`patch -N -i ./scripts/patches/react-native-video.2575.patch node_modules/react-native-video/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java &2>/dev/null`;
-  await $`patch -N -i ./scripts/patches/react-native-video+5.2.0.patch node_modules/react-native-video/android-exoplayer/build.gradle &2>/dev/null`;
+  await $`patch -N -i ./scripts/patches/react-native-video.2575.patch node_modules/react-native-video/android-exoplayer/src/main/java/com/brentvatne/exoplayer/ReactExoplayerView.java 2>/dev/null`;
+  await $`patch -N -i ./scripts/patches/react-native-video+5.2.0.patch node_modules/react-native-video/android-exoplayer/build.gradle 2>/dev/null`;
 
   // See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
   // patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
 };
 
 const final = async () => {
-  await fs.promises.rm("third-party/glog-0.3.5/test-driver", { force: true });
+  rimraf("third-party/glog-0.3.5/test-driver", e => {
+    if (!!e) echo(chalk.red(e));
+  });
 
   // Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
   // Why would anyone bundle an external lib available on CocoaPods anyway?

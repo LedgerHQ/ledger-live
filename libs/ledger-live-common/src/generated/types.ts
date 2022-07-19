@@ -84,7 +84,8 @@ export type Transaction =
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
+
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -102,40 +103,4 @@ export type TransactionRaw =
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
-export type TransactionStatus =
-  | algorandTransactionStatus
-  | bitcoinTransactionStatus
-  | cardanoTransactionStatus
-  | celoTransactionStatus
-  | cosmosTransactionStatus
-  | crypto_orgTransactionStatus
-  | elrondTransactionStatus
-  | ethereumTransactionStatus
-  | filecoinTransactionStatus
-  | hederaTransactionStatus
-  | neoTransactionStatus
-  | polkadotTransactionStatus
-  | rippleTransactionStatus
-  | solanaTransactionStatus
-  | stellarTransactionStatus
-  | tezosTransactionStatus
-  | tronTransactionStatus
-export type TransactionStatusRaw =
-  | algorandTransactionStatusRaw
-  | bitcoinTransactionStatusRaw
-  | cardanoTransactionStatusRaw
-  | celoTransactionStatusRaw
-  | cosmosTransactionStatusRaw
-  | crypto_orgTransactionStatusRaw
-  | elrondTransactionStatusRaw
-  | ethereumTransactionStatusRaw
-  | filecoinTransactionStatusRaw
-  | hederaTransactionStatusRaw
-  | neoTransactionStatusRaw
-  | polkadotTransactionStatusRaw
-  | rippleTransactionStatusRaw
-  | solanaTransactionStatusRaw
-  | stellarTransactionStatusRaw
-  | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw
+  | tronTransactionRaw;
