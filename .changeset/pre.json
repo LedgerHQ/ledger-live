@@ -73,5 +73,22 @@
     "native-modules-tools": "1.0.1",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "afraid-experts-brush",
+    "brave-ears-teach",
+    "curvy-walls-greet",
+    "dull-timers-care",
+    "friendly-clocks-begin",
+    "funny-goats-poke",
+    "giant-buttons-retire",
+    "hot-avocados-dream",
+    "long-toes-sing",
+    "lucky-bugs-shake",
+    "odd-pigs-admire",
+    "shiny-swans-tickle",
+    "stale-kings-repeat",
+    "stale-trains-sneeze",
+    "tough-books-wave",
+    "wild-spies-cry"
+  ]
 }
