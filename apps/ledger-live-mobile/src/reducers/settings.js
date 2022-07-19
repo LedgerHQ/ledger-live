@@ -19,6 +19,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type { KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
@@ -93,9 +94,11 @@ export type SettingsState = {
   locale: ?string,
   swap: {
     hasAcceptedIPSharing: false,
-    acceptedProviders: [],
-    selectableCurrencies: [],
-    KYC: {},
+    acceptedProviders: string[],
+    selectableCurrencies: string[],
+    KYC: {
+      [key: string]: KYCStatus,
+    },
   },
   lastSeenDevice: ?DeviceModelInfo,
   starredMarketCoins: string[],
@@ -358,6 +361,7 @@ const handlers: Object = {
     ...state,
     locale: payload,
   }),
+  // TODO swap: remove
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
     swap: {
@@ -369,7 +373,8 @@ const handlers: Object = {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
-    if (id && status) {
+    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
+    if (id && typeof status !== "undefined") {
       KYC[provider] = { id, status };
     } else {
       delete KYC[provider];
@@ -438,6 +443,13 @@ const handlers: Object = {
   ) => ({
     ...state,
     marketFilterByStarredAccounts: payload,
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
   }),
   SET_SENSITIVE_ANALYTICS: (state: SettingsState, action) => ({
     ...state,
@@ -627,7 +639,7 @@ export const swapSelectableCurrenciesSelector = (state: Object) =>
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 
-export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
+export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
 
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;

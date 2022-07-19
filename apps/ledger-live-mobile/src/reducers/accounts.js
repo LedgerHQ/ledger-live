@@ -1,6 +1,10 @@
 // @flow
 import { handleActions } from "redux-actions";
-import { createSelector } from "reselect";
+import {
+  createSelector,
+  createSelectorCreator,
+  defaultMemoize,
+} from "reselect";
 import uniq from "lodash/uniq";
 import type { OutputSelector } from "reselect";
 import type {
@@ -13,6 +17,7 @@ import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
 } from "@ledgerhq/live-common/compound/logic";
+import isEqual from "lodash/isEqual";
 
 import {
   addAccounts,
@@ -112,6 +117,28 @@ export const exportSelector = (s: *) => ({
 });
 
 export const accountsSelector = (s: *): Account[] => s.accounts.active;
+
+// NB some components don't need to refresh every time an account is updated, usually it's only
+// when the balance/name/length/starred/swapHistory of accounts changes.
+const accountHash = (a: AccountLike) =>
+  `${a.type === "Account" ? a.name : ""}-${a.id}${
+    a.starred ? "-*" : ""
+  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+
+// TODO can we share with desktop in common?
+const shallowAccountsSelectorCreator = createSelectorCreator(
+  defaultMemoize,
+  (a, b) =>
+    isEqual(
+      flattenAccounts(a).map(accountHash),
+      flattenAccounts(b).map(accountHash),
+    ),
+);
+export const shallowAccountsSelector: OutputSelector<
+  State,
+  Account[],
+  Account[],
+> = shallowAccountsSelectorCreator(accountsSelector, a => a);
 
 export const migratableAccountsSelector = (s: *): Account[] =>
   s.accounts.active.filter(canBeMigrated);

@@ -28,7 +28,7 @@ const flattenStructuredSearchResults = structuredResults =>
 
 export const formatSearchResults = (
   searchResults: AccountLikeArray,
-  accounts: Account[],
+  accounts: AccountLike[],
 ): SearchResult[] => {
   const formated = reduce(
     searchResults,
