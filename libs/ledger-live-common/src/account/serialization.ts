@@ -55,6 +55,11 @@ import {
 } from "../families/solana/serialization";
 
 import {
+  toHeliumResourcesRaw,
+  fromHeliumResourcesRaw,
+} from "../families/helium/serialization";
+
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -81,6 +86,7 @@ export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toHeliumResourcesRaw, fromHeliumResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -722,6 +728,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     cryptoOrgResources,
     cardanoResources,
     solanaResources,
+    heliumResources,
     nfts,
   } = rawAccount;
   const subAccounts =
@@ -851,6 +858,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.solanaResources = fromSolanaResourcesRaw(solanaResources);
   }
 
+  if (heliumResources) {
+    res.heliumResources = fromHeliumResourcesRaw(heliumResources);
+  }
+
   return res;
 }
 export function toAccountRaw({
@@ -890,6 +901,7 @@ export function toAccountRaw({
   elrondResources,
   cryptoOrgResources,
   solanaResources,
+  heliumResources,
   nfts,
   cardanoResources,
 }: Account): AccountRaw {
@@ -977,6 +989,10 @@ export function toAccountRaw({
 
   if (solanaResources) {
     res.solanaResources = toSolanaResourcesRaw(solanaResources);
+  }
+
+  if (heliumResources) {
+    res.heliumResources = toHeliumResourcesRaw(heliumResources);
   }
 
   return res;

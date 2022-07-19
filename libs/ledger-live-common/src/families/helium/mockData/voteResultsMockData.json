@@ -1,0 +1,17 @@
+{
+  "outcomes": [
+    {
+      "value": "Against Redenomination",
+      "address": "13pPtEyg3idu2GDeFCjbuU1uVLaZax9yBqDouPPdgsAYznq7982",
+      "hntVoted": 385082830456751,
+      "uniqueWallets": 2995
+    },
+    {
+      "value": "For Redenomination",
+      "address": "13qVx7MRzocyKZ4bW3oEkvnQrTK4DftKEcjHVYP1zhMtUhnqYye",
+      "hntVoted": 1085118919867089,
+      "uniqueWallets": 5540
+    }
+  ],
+  "timestamp": 1637455936302
+}

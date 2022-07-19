@@ -65,6 +65,8 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "elrond",
   "cardano",
+  "helium",
+  "helium_testnet",
 ]);
 
 if (Config.VERBOSE) {

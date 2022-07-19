@@ -27,6 +27,7 @@ import {
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromHeliumResourcesRaw,
   fromNFTRaw,
   fromCardanoResourceRaw,
 } from "./account";
@@ -395,6 +396,11 @@ export function patchAccount(
 
   if (updatedRaw.solanaResources) {
     next.solanaResources = fromSolanaResourcesRaw(updatedRaw.solanaResources);
+    changed = true;
+  }
+
+  if (updatedRaw.heliumResources) {
+    next.heliumResources = fromHeliumResourcesRaw(updatedRaw.heliumResources);
     changed = true;
   }
 

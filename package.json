@@ -52,7 +52,7 @@
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
     "bot:github": "pnpm --filter live-github-bot",
-    "ljs:cryoptoassets": "pnpm --filter cryptoassets",
+    "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter cryptoassets",
     "ljs:errors": "pnpm --filter cryptoassets",
     "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
