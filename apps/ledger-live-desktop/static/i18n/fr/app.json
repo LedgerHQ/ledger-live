@@ -732,9 +732,11 @@
     "availableBalanceTooltip": "Ce montant est disponible.",
     "frozenAssetsTooltip": "Les actifs gelés sont utilisés pour voter sur TRON. Cela représente votre nombre total de votes.",
     "bandwidthTooltip": "Geler des actifs pour gagner de la Bande passante",
-    "energyTooltip": "Geler des actifs pour gagner de l’Énergie",
-    "delegatedAssetsTooltip": "Les actifs délégués sont utilisés pour voter sur Cosmos. Cela représente votre nombre total de votes.",
-    "undelegatingTooltip": "Les actifs dont la délégation est interrompue sont immobilisés pendant 21 jours avant d’être disponibles."
+    "energyTooltip": "Geler des actifs pour gagner de l'Énergie",
+    "cosmosDelegatedTooltip": "Les actifs délégués sont utilisés pour voter sur Cosmos. Cela représente votre nombre total de votes.",
+    "cosmosUndelegatingTooltip": "Les actifs dont la délégation est interrompue sont verrouillés pendant 21 jours avant d'être disponibles.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Choisissez parmi {{providerCount}} prestataire",

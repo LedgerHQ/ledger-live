@@ -12296,6 +12296,84 @@ packages:
       - debug
     dev: false
 
+  /@keplr-wallet/cosmos/0.9.16:
+    resolution: {integrity: sha512-pTbqgZdxMY/O4w37YVDTNFdfbueQUXGiYlMAVsrdtFWBQSz+s1j2UpAgtJoIoEoawYVPmlHSWXviafXr7Y7B7w==}
+    dependencies:
+      '@cosmjs/launchpad': 0.24.1
+      '@keplr-wallet/crypto': 0.9.10
+      '@keplr-wallet/types': 0.9.12
+      '@keplr-wallet/unit': 0.9.12
+      axios: 0.21.4
+      bech32: 1.1.4
+      buffer: 6.0.3
+      long: 4.0.0
+      protobufjs: 6.11.2
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@keplr-wallet/crypto/0.9.10:
+    resolution: {integrity: sha512-zjoUUL5Ky72eJBm7bd9kPNBTgQL/cFO6pbvPgVa32S8UZ6GlwsPSyiHuvq0k8z0t9X9GwdpuH0nrnlL4viU4fw==}
+    dependencies:
+      bip32: 2.0.6
+      bip39: 3.0.4
+      buffer: 6.0.3
+      crypto-js: 4.1.1
+      elliptic: 6.5.4
+      sha.js: 2.4.11
+    dev: false
+
+  /@keplr-wallet/proto-types/0.10.4:
+    resolution: {integrity: sha512-n/ZmiENgvARs1h0hedy/mh57DNF7SH/DgfTqeT89+JKHfwRs2ikrCwXw6HzCn3yaDiv+0H/LudnNPf8WVZcw+w==}
+    dependencies:
+      long: 4.0.0
+      protobufjs: 6.11.2
+    dev: true
+
+  /@keplr-wallet/types/0.10.5:
+    resolution: {integrity: sha512-CY1F+Rsfe2fs5uPioC1o80lKxQWsYHIwoILLptdebr2Sg1DjSuWVLHWScsB8EbBGm0LQQ9nQ+3LHklbsTNo2bw==}
+    dependencies:
+      '@cosmjs/launchpad': 0.24.1
+      '@cosmjs/proto-signing': 0.24.1
+      axios: 0.21.4
+      long: 4.0.0
+      secretjs: 0.17.5
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@keplr-wallet/types/0.9.12:
+    resolution: {integrity: sha512-vtAczeD3+CgGExSZCnU9Wzs9Y8BpdbOii+UjIFHwCR57OXFQphbWHh2j15QFpV4CbebpDcBzIm+/4IAyLeI0Yw==}
+    dependencies:
+      '@cosmjs/launchpad': 0.24.1
+      '@cosmjs/proto-signing': 0.24.1
+      axios: 0.21.4
+      long: 4.0.0
+      secretjs: 0.17.5
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@keplr-wallet/unit/0.10.5:
+    resolution: {integrity: sha512-7rk8IskEzo3/rM89XsaLpkzWPcYjsNCl8lbKjkPEjQ5hbmz7g352YoE9L1EhjgT0zCHfop/yM2CP8e/hq8AIog==}
+    dependencies:
+      '@keplr-wallet/types': 0.10.5
+      big-integer: 1.6.51
+      utility-types: 3.10.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@keplr-wallet/unit/0.9.12:
+    resolution: {integrity: sha512-24b3lSaaOrD3/ctdz+ADZn8vhqojsV5SGGzgD8F+DklI76uw8jYmmxSNcKyUAYpVUzRzTas6nnfB+4MwHBNU/Q==}
+    dependencies:
+      '@keplr-wallet/types': 0.9.12
+      big-integer: 1.6.51
+      utility-types: 3.10.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@koa/cors/3.3.0:
     resolution:
       {
@@ -29534,6 +29612,10 @@ packages:
       }
     dev: false
 
+  /curve25519-js/0.0.4:
+    resolution: {integrity: sha512-axn2UMEnkhyDUPWOwVKBMVIzSQy2ejH2xRGy1wq81dqRwApXfIzfbE3hIX0ZRFBIihf/KDqK158DLwESu4AK1w==}
+    dev: false
+
   /cyclist/1.0.1:
     resolution:
       {
@@ -43082,6 +43164,46 @@ packages:
       {
         integrity: sha512-qnAGsUIWrmzh5n+3AXqbxX1KsB9hkQmJZf3aA9DLAS7GpL/NEHCBreFFbW+imramoU+Q0TDyvkwhRbBRH1TVkg==,
       }
+    dev: false
+
+  /js-crypto-env/0.3.2:
+    resolution: {integrity: sha512-F1uHiCkSOo36qBuuZABA4sBf+xeFBzhJZ0Sd7af8FAruszIhm1Xxv+Zr5Ne90Zlh7/fnxCsrdkj0N8f0a3lVlQ==}
+    dev: false
+
+  /js-crypto-hash/0.6.3:
+    resolution: {integrity: sha512-SG8c9tM8y3sUb4k7WvpVfu5vU7zfPvX+eaYR5578TvehkehdaQbqAc+y+1FwxnqQ3WZ0gsYoOKp/mW+mqtNoWA==}
+    dependencies:
+      buffer: 5.4.3
+      hash.js: 1.1.7
+      js-crypto-env: 0.3.2
+      md5: 2.2.1
+      sha3: 2.1.4
+    dev: false
+
+  /js-crypto-hkdf/0.7.3:
+    resolution: {integrity: sha512-eAaVArAjS2GCacWGXY4hjBiexrLQYlI0PMOcbwtrSEj84XU3kUfMYZm9bpTyaTXgdHC/eQoXe/Of6biG+RSEaQ==}
+    dependencies:
+      js-crypto-env: 0.3.2
+      js-crypto-hmac: 0.6.3
+      js-crypto-random: 0.4.3
+      js-encoding-utils: 0.5.6
+    dev: false
+
+  /js-crypto-hmac/0.6.3:
+    resolution: {integrity: sha512-T0pKOaHACOSG6Xs6/06G8RDDeZouQwIQNBq9L/zoUGsd4F67gAjpT3q2lGigAGpUd1hiyy7vnhvLpz7VDt6DbA==}
+    dependencies:
+      js-crypto-env: 0.3.2
+      js-crypto-hash: 0.6.3
+    dev: false
+
+  /js-crypto-random/0.4.3:
+    resolution: {integrity: sha512-C3gzphPPfw9jfQ9Q/LjhJMZxQNp3AaoVRDvyZkiB+zYltfs8tKQPsskWkXACpg1Nzh01PtSRUvVijjptd2qGHQ==}
+    dependencies:
+      js-crypto-env: 0.3.2
+    dev: false
+
+  /js-encoding-utils/0.5.6:
+    resolution: {integrity: sha512-qnAGsUIWrmzh5n+3AXqbxX1KsB9hkQmJZf3aA9DLAS7GpL/NEHCBreFFbW+imramoU+Q0TDyvkwhRbBRH1TVkg==}
     dev: false
 
   /js-levenshtein/1.1.6:

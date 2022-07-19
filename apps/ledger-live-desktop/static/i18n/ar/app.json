@@ -733,8 +733,10 @@
     "frozenAssetsTooltip": "تُستخدم الأصول المجمدة في عملية تصويت ترون. هذا يمثل العدد الإجمالي للأصوات الخاصة بك.",
     "bandwidthTooltip": "قم بتجميد الأصول لكسب نطاق ترددي (Bandwidth)",
     "energyTooltip": "قم بتجميد الأصول للحصول على الطاقة",
-    "delegatedAssetsTooltip": "يتم استخدام الأصول المفوضة في عملية التصويت على كوزموس (Cosmos). وهذا يمثل مجموع عدد أصواتك.",
-    "undelegatingTooltip": "تكون الأصول غير المفوضة مقيدة في قفل زمني محدد بـ21 يومًا قبل أن تصبح متاحة."
+    "cosmosDelegatedTooltip": "يتم استخدام الأصول المفوضة في عملية التصويت على كوزموس (Cosmos). وهذا يمثل مجموع عدد أصواتك.",
+    "cosmosUndelegatingTooltip": "تكون الأصول غير المفوضة مقيدة في قفل زمني محدد بـ21 يومًا قبل أن تصبح متاحة.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Choose from {{providerCount}} provider",

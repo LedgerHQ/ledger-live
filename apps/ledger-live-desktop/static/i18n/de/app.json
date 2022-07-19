@@ -733,8 +733,10 @@
     "frozenAssetsTooltip": "Gesperrte Vermögenswerte werden bei der Tron-Abstimmung verwendet. Diese stellen Ihre Gesamtanzahl an Stimmen dar.",
     "bandwidthTooltip": "Vermögenswerte sperren, um Bandbreite zu gewinnen",
     "energyTooltip": "Vermögenswerte sperren, um Energie zu gewinnen",
-    "delegatedAssetsTooltip": "Delegierte Vermögenswerte werden im Cosmos-Abstimmungsprozess verwendet. Diese stellen Ihre Gesamtzahl an Stimmen dar.",
-    "undelegatingTooltip": "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind."
+    "cosmosDelegatedTooltip": "Delegierte Vermögenswerte werden im Cosmos-Abstimmungsprozess verwendet. Diese stellen Ihre Gesamtzahl an Stimmen dar.",
+    "cosmosUndelegatingTooltip": "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "Wählen Sie aus {{providerCount}} Anbieter",

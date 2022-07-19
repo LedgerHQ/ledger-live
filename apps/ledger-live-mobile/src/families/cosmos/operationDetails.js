@@ -10,9 +10,9 @@ import type {
   Account,
   OperationType,
   Operation,
-} from "@ledgerhq/live-common/types/index";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+} from "@ledgerhq/live-common/lib/types";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 

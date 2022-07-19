@@ -733,8 +733,10 @@
     "frozenAssetsTooltip": "冻结资产被用于 Tron 投票过程。这表示了您的投票总数。",
     "bandwidthTooltip": "冻结资产以获得带宽",
     "energyTooltip": "冻结资产以获得能量",
-    "delegatedAssetsTooltip": "已委托资产被用于 Cosmos 投票过程。这表示了您的投票总数。",
-    "undelegatingTooltip": "解除委托的资产会有 21 天的时间锁，之后才可用。"
+    "cosmosDelegatedTooltip": "已委托资产被用于 Cosmos 投票过程。这表示了您的投票总数。",
+    "cosmosUndelegatingTooltip": "解除委托的资产会有 21 天的时间锁，之后才可用。",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "从 {{providerCount}} 个供应商中选择",

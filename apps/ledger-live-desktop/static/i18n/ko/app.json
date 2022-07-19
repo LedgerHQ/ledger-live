@@ -733,8 +733,10 @@
     "frozenAssetsTooltip": "트론 투표 과정에 동결 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
     "bandwidthTooltip": "자산을 동결하여 대역폭을 확보합니다",
     "energyTooltip": "자산을 동결하여 에너지를 확보합니다",
-    "delegatedAssetsTooltip": "Cosmos(코스모스) 투표 과정에 위임 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
-    "undelegatingTooltip": "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
+    "cosmosDelegatedTooltip": "Cosmos(코스모스) 투표 과정에 위임 자산이 사용되었습니다. 총 투표 수를 나타내는 숫자입니다.",
+    "cosmosUndelegatingTooltip": "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다.",
+    "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
+    "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available."
   },
   "exchange": {
     "chooseProvider": "{{providerCount}} 제공자에서 선택",
