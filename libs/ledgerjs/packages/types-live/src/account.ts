@@ -29,7 +29,7 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
-// A token belongs to an Account and share the parent account address
+/** A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";
   id: string;
@@ -57,7 +57,7 @@ export type TokenAccount = {
   }>;
 };
 
-// A child account belongs to an Account but has its own address
+/** A child account belongs to an Account but has its own address */
 export type ChildAccount = {
   type: "ChildAccount";
   id: string;
@@ -80,11 +80,13 @@ export type ChildAccount = {
   swapHistory: SwapOperation[];
 };
 
+/** */
 export type Address = {
   address: string;
   derivationPath: string;
 };
 
+/** */
 export type Account = {
   type: "Account";
   // unique account identifier
@@ -178,13 +180,17 @@ export type Account = {
 
 /** super type that is either a token or a child account */
 export type SubAccount = TokenAccount | ChildAccount;
+
 /** One of the Account type */
 export type AccountLike = Account | SubAccount;
+
 /**
  * An array of AccountLikes
  */
 export type AccountLikeArray = // $FlowFixMe wtf mobile
   AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
+
+/** */
 export type TokenAccountRaw = {
   type: "TokenAccountRaw";
   id: string;
@@ -205,6 +211,8 @@ export type TokenAccountRaw = {
     value: string;
   }>;
 };
+
+/** */
 export type ChildAccountRaw = {
   type: "ChildAccountRaw";
   id: string;
@@ -221,6 +229,8 @@ export type ChildAccountRaw = {
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
 };
+
+/** */
 export type AccountRaw = {
   id: string;
   seedIdentifier: string;
@@ -252,9 +262,14 @@ export type AccountRaw = {
   syncHash?: string;
   nfts?: ProtoNFTRaw[];
 };
+
+/** */
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
+
+/** */
 export type AccountRawLike = AccountRaw | SubAccountRaw;
 
+/** */
 export type AccountIdParams = {
   type: string;
   version: string;

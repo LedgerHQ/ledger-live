@@ -21,7 +21,6 @@ There are two modes of usage of this library.
 
 *   [getAbandonSeedAddress](#getabandonseedaddress)
     *   [Parameters](#parameters)
-*   [CryptoCurrencyIds](#cryptocurrencyids)
 *   [registerCryptoCurrency](#registercryptocurrency)
     *   [Parameters](#parameters-1)
 *   [listCryptoCurrencies](#listcryptocurrencies)
@@ -78,10 +77,6 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 *   `currencyId` **any** 
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-
-### CryptoCurrencyIds
-
-Type: any
 
 ### registerCryptoCurrency
 

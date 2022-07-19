@@ -109,6 +109,7 @@ export interface CurrencyBridge {
     }) => Promise<NFTCollectionMetadataResponse>;
   };
 }
+
 /**
  * Abstraction related to an account
  */
@@ -170,6 +171,10 @@ export interface AccountBridge<T extends TransactionCommon> {
 }
 
 type ExpectFn = (...args: Array<any>) => any;
+
+/**
+ *
+ */
 export type CurrenciesData<T extends TransactionCommon> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
@@ -219,6 +224,10 @@ export type CurrenciesData<T extends TransactionCommon> = {
   }>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
 };
+
+/**
+ *
+ */
 export type DatasetTest<T extends TransactionCommon> = {
   implementations: string[];
   currencies:

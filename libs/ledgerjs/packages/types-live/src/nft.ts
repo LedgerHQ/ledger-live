@@ -8,8 +8,14 @@ export type CryptoCurrencyIds = string;
  */
 export type NFTStandard = "ERC721" | "ERC1155";
 
+/**
+ *
+ */
 export type NFTMediaSize = "preview" | "big" | "original";
 
+/**
+ *
+ */
 export type NFTMedias = Record<
   NFTMediaSize,
   {
@@ -18,6 +24,9 @@ export type NFTMedias = Record<
   }
 >;
 
+/**
+ *
+ */
 export type NFTMetadata = {
   tokenName: string | null;
   nftName: string | null;
@@ -27,10 +36,16 @@ export type NFTMetadata = {
   links: Record<NFTMetadataLinksProviders, string>;
 };
 
+/**
+ *
+ */
 export type NFTCollectionMetadata = {
   tokenName: string | null;
 };
 
+/**
+ *
+ */
 export type ProtoNFT = {
   // id crafted by live
   id: string;
@@ -43,16 +58,28 @@ export type ProtoNFT = {
   metadata?: NFTMetadata;
 };
 
+/**
+ *
+ */
 export type ProtoNFTRaw = Omit<ProtoNFT, "amount"> & {
   amount: string;
 };
 
+/**
+ *
+ */
 export type NFT = Omit<ProtoNFT, "metadata"> & {
   metadata: NFTMetadata;
 };
 
+/**
+ *
+ */
 export type NFTMetadataLinksProviders = "opensea" | "rarible" | "explorer";
 
+/**
+ *
+ */
 export type NFTMetadataResponse = {
   status: 200 | 404 | 500;
   result?: {
@@ -67,6 +94,9 @@ export type NFTMetadataResponse = {
   } | null;
 };
 
+/**
+ *
+ */
 export type NFTCollectionMetadataResponse = {
   status: 200 | 404 | 500;
   result?: {
@@ -75,6 +105,9 @@ export type NFTCollectionMetadataResponse = {
   } | null;
 };
 
+/**
+ *
+ */
 export type FloorPrice = {
   ticker: string;
   value: number;

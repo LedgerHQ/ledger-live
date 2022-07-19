@@ -129,10 +129,17 @@ export type OperationRaw = {
   nftOperations?: OperationRaw[];
 };
 
+/**
+ *
+ */
 export type DailyOperationsSection = {
   day: Date;
   data: Operation[];
 };
+
+/**
+ *
+ */
 export type DailyOperations = {
   // operations grouped by day
   sections: DailyOperationsSection[];
