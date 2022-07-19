@@ -235,7 +235,7 @@ export const SoftwareChecksStep = ({
         genuineCheckStepStatus === "failed") &&
       firmwareUpdateStepStatus === "inactive"
     ) {
-      setFirmwareUpdateStepStatus("active");
+      setFirmwareUpdateStepStatus("requested");
     }
 
     if (firmwareUpdateStepStatus === "active") {

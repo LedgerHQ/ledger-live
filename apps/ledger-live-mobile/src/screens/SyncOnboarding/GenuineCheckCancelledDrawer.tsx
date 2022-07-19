@@ -33,7 +33,12 @@ const GenuineCheckCancelledDrawer = ({ isOpen, onRetry, onSkip }: Props) => (
     <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={4} mt={8}>
       Authenticity check was cancelled on your Nano
     </Text>
-    <Text variant="bodyLineHeight" mb={8} color="neutral.c80">
+    <Text
+      textAlign="center"
+      variant="bodyLineHeight"
+      mb={8}
+      color="neutral.c80"
+    >
       {`We highly recommend performing this check to verify your Stax has not been tampered with.`}
     </Text>
     <Button type="main" mb={4} onPress={onRetry}>
