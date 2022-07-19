@@ -1,5 +1,8 @@
 import React, { useMemo, useCallback, useState } from "react";
-import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  SwapTransactionType,
+  ExchangeRate,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
@@ -53,6 +56,7 @@ export function Modal({
 
   const onError = useCallback(
     ({ error, swapId }) => {
+      onClose();
       if (!exchangeRate) {
         return;
       }
@@ -61,7 +65,7 @@ export function Modal({
 
       setError(error);
     },
-    [exchangeRate],
+    [exchangeRate, onClose],
   );
 
   const resetError = useCallback(() => {
