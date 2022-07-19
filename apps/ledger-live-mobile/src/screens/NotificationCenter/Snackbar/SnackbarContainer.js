@@ -41,6 +41,8 @@ export default function SnackbarContainer() {
     icon: "info",
   };
 
+  console.log("TOASTS", JSON.stringify(toasts, null, 4));
+
   return hasCompletedOnboarding &&
     toasts &&
     toasts.length &&

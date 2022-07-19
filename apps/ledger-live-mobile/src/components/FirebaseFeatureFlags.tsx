@@ -8,6 +8,8 @@ import { FeatureId } from "@ledgerhq/live-common/types/index";
 
 import { formatFeatureId } from "./FirebaseRemoteConfig";
 
+import { languageSelector } from "../reducers/settings";
+
 type Props = {
   children?: ReactNode;
 };

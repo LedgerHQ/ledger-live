@@ -2068,8 +2068,8 @@
       "disabledNotifications": {
         "title": "Your notifications are disabled",
         "desc": "{{platform}} is blocking notifications from Ledger Live. To get notifications on your phone, visit your device’s settings to turn on Ledger Live notifications.",
-        "androidCta": "Turn on notifications",
-        "iosCta": "Go to system settings"
+        "turnOnNotif": "Turn on notifications",
+        "goToSettings": "Go to system settings"
       },
       "allowed": {
         "title": "Allow notifications",
@@ -2128,7 +2128,7 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "desc": "Get the latest updates on Ledger Live and Ledger products.",
+      "desc": "Get the latest updates on Ledger Live, Ledger products, on market fluctuations and price alerts on your favorite coins. Opt out anytime.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     }
