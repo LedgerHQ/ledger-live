@@ -40,6 +40,11 @@ import {
 } from "../families/solana/serialization";
 
 import {
+  toHeliumResourcesRaw,
+  fromHeliumResourcesRaw,
+} from "../families/helium/serialization";
+
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -91,6 +96,7 @@ import {
   CryptoOrgAccountRaw,
 } from "../families/crypto_org/types";
 import { SolanaAccount, SolanaAccountRaw } from "../families/solana/types";
+import { HeliumAccount, HeliumAccountRaw } from "../families/helium/types";
 import { TezosAccount, TezosAccountRaw } from "../families/tezos/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -102,6 +108,7 @@ export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 export { toCardanoResourceRaw, fromCardanoResourceRaw };
 export { toSolanaResourcesRaw, fromSolanaResourcesRaw };
+export { toHeliumResourcesRaw, fromHeliumResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -852,6 +859,14 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
           fromSolanaResourcesRaw(solanaResourcesRaw);
       break;
     }
+    case "helium": {
+      const heliumResourcesRaw = (rawAccount as HeliumAccountRaw)
+        .heliumResources;
+      if (heliumResourcesRaw)
+        (res as HeliumAccount).heliumResources =
+          fromHeliumResourcesRaw(heliumResourcesRaw);
+      break;
+    }
     case "crypto_org": {
       const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
         .cryptoOrgResources;
@@ -984,6 +999,11 @@ export function toAccountRaw(account: Account): AccountRaw {
     case "solana":
       (res as SolanaAccountRaw).solanaResources = toSolanaResourcesRaw(
         (account as SolanaAccount).solanaResources
+      );
+      break;
+    case "helium":
+      (res as HeliumAccountRaw).heliumResources = toHeliumResourcesRaw(
+        (account as HeliumAccount).heliumResources
       );
       break;
     case "crypto_org":

@@ -25,6 +25,7 @@ import {
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
+  fromHeliumResourcesRaw,
   fromNFTRaw,
   fromCardanoResourceRaw,
   toCryptoOrgResourcesRaw,
@@ -451,6 +452,11 @@ export function patchAccount(
       }
       break;
     }
+  }
+
+  if (updatedRaw.heliumResources) {
+    next.heliumResources = fromHeliumResourcesRaw(updatedRaw.heliumResources);
+    changed = true;
   }
 
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);

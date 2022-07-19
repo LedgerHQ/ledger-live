@@ -69,6 +69,13 @@ import MODAL_SOLANA_DELEGATION_DEACTIVATE from "../families/solana/DelegationDea
 import MODAL_SOLANA_DELEGATION_REACTIVATE from "../families/solana/DelegationReactivateFlowModal";
 import MODAL_SOLANA_DELEGATION_WITHDRAW from "../families/solana/DelegationWithdrawFlowModal";
 
+import MODAL_HELIUM_REWARDS_INFO from "../families/helium/StakeFlowModal/Info";
+import MODAL_HELIUM_STAKE from "../families/helium/StakeFlowModal";
+import MODAL_HELIUM_UNSTAKE from "../families/helium/UnstakeFlowModal";
+import MODAL_HELIUM_TRANSFER_STAKE from "../families/helium/TransferStakeFlowModal";
+import MODAL_HELIUM_VOTE_INFO from "../families/helium/VoteFlowModal/Info";
+import MODAL_HELIUM_VOTE from "../families/helium/VoteFlowModal";
+
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
 import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
@@ -135,6 +142,12 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SOLANA_DELEGATION_DEACTIVATE,
   MODAL_SOLANA_DELEGATION_REACTIVATE,
   MODAL_SOLANA_DELEGATION_WITHDRAW,
+  MODAL_HELIUM_VOTE_INFO,
+  MODAL_HELIUM_REWARDS_INFO,
+  MODAL_HELIUM_STAKE,
+  MODAL_HELIUM_UNSTAKE,
+  MODAL_HELIUM_TRANSFER_STAKE,
+  MODAL_HELIUM_VOTE,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,

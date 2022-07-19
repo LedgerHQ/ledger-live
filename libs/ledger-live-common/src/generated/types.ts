@@ -38,6 +38,8 @@ import { Transaction as hederaTransaction } from "../families/hedera/types";
 import { TransactionRaw as hederaTransactionRaw } from "../families/hedera/types";
 import { TransactionStatus as hederaTransactionStatus } from "../families/hedera/types";
 import { TransactionStatusRaw as hederaTransactionStatusRaw } from "../families/hedera/types";
+import { Transaction as heliumTransaction } from "../families/helium/types";
+import { TransactionRaw as heliumTransactionRaw } from "../families/helium/types";
 import { Transaction as neoTransaction } from "../families/neo/types";
 import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
 import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
@@ -78,13 +80,14 @@ export type Transaction =
   | ethereumTransaction
   | filecoinTransaction
   | hederaTransaction
+  | heliumTransaction
   | neoTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -96,13 +99,14 @@ export type TransactionRaw =
   | ethereumTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
+  | heliumTransactionRaw
   | neoTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
+  | tronTransactionRaw;
 export type TransactionStatus =
   | algorandTransactionStatus
   | bitcoinTransactionStatus
@@ -120,7 +124,7 @@ export type TransactionStatus =
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus
+  | tronTransactionStatus;
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | bitcoinTransactionStatusRaw
@@ -138,4 +142,4 @@ export type TransactionStatusRaw =
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw
+  | tronTransactionStatusRaw;

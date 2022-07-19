@@ -63,6 +63,7 @@ type Props = {
   forwardedRef: ?ElementRef<any>,
   placeholder?: string,
   loading: boolean,
+  readOnly?: boolean,
 };
 
 type State = {
@@ -201,6 +202,7 @@ class InputCurrency extends PureComponent<Props, State> {
       subMagnitude,
       locale,
       placeholder,
+      readOnly,
       ...rest
     } = this.props;
     const { displayValue } = this.state;
@@ -215,6 +217,7 @@ class InputCurrency extends PureComponent<Props, State> {
         onBlur={this.handleBlur}
         renderRight={renderRight || this.renderListUnits()}
         loading={this.props.loading}
+        readOnly={readOnly}
         placeholder={
           displayValue
             ? ""

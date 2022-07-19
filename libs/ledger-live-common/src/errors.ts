@@ -76,6 +76,7 @@ export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
 export const CosmosTooManyValidators = createCustomErrorClass(
   "CosmosTooManyValidators"
 );
+
 export const NotEnoughDelegationBalance = createCustomErrorClass(
   "NotEnoughDelegationBalance"
 );
@@ -210,3 +211,4 @@ export * from "./families/polkadot/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
+export * from "./families/helium/errors";

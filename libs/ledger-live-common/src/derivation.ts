@@ -181,6 +181,12 @@ const modes = Object.freeze({
     purpose: 1852,
     overridesDerivation: "1852'/1815'/<account>'/<node>/<address>",
   },
+  helium: {
+    overridesDerivation: "44'/904'/<account>'/0'/0'",
+  },
+  helium_testnet: {
+    overridesDerivation: "44'/905'/<account>'/0'/0'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -361,6 +367,8 @@ const disableBIP44 = {
   hedera: true,
   cardano: true,
   cardano_testnet: true,
+  helium: true,
+  helium_testnet: true,
 };
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
@@ -434,6 +442,11 @@ export const getDerivationModesForCurrency = (
 
   if (currency.family === "solana") {
     all.push("solanaMain", "solanaSub");
+  }
+  if (currency.id === "helium") {
+    all.push("helium");
+  } else if (currency.id === "helium_testnet") {
+    all.push("helium_testnet");
   }
 
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {

@@ -26,11 +26,11 @@ test("getVersion", async () => {
   });
 });
 
-const bobB58 = "13M8dUbxymE3xtiAXszRkGMmezMhBS8Li7wEsMojLdb4Sdxc4wc";
+const bobB58 = "1boMNxPq1TvUXZtDeWa6gcEAqrEEFXNQ7K3N2hbLeWwJxnUMUe3";
 const aliceB58 = "148d8KTRcKA5JKPekBcKFd4KfvprvFRpjGtivhtmRmnZ8MFYnP3";
 const susanB58 = "139Qksd9iF2UBoV4tckS3z4Dw5135t5bKdQ8gubmD2a27AQpdfC";
 
-const DERIVATION = "44'/904'/0'/0'/0'";
+const DERIVATION = "44'/905'/0'/0'/0'";
 
 test("getAddress without display", async () => {
   const transport = await openTransportReplayer(

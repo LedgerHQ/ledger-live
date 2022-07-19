@@ -940,6 +940,11 @@ importers:
       '@ethereumjs/common': ^2.6.2
       '@ethereumjs/tx': ^3.5.0
       '@hashgraph/sdk': ^2.10.1
+      '@helium/address': ^4.3.1
+      '@helium/crypto': ^4.6.0
+      '@helium/currency': ^4.6.0
+      '@helium/http': ^4.3.1
+      '@helium/transactions': ^4.6.0
       '@ledgerhq/compressjs': github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets': workspace:^
       '@ledgerhq/devices': workspace:^
@@ -948,6 +953,7 @@ importers:
       '@ledgerhq/hw-app-btc': workspace:^
       '@ledgerhq/hw-app-cosmos': workspace:^
       '@ledgerhq/hw-app-eth': workspace:^
+      '@ledgerhq/hw-app-helium': workspace:^
       '@ledgerhq/hw-app-polkadot': workspace:^
       '@ledgerhq/hw-app-solana': workspace:^
       '@ledgerhq/hw-app-str': workspace:^
@@ -1108,6 +1114,11 @@ importers:
       '@ethereumjs/common': 2.6.4
       '@ethereumjs/tx': 3.5.1
       '@hashgraph/sdk': 2.14.2
+      '@helium/address': 4.3.1
+      '@helium/crypto': 4.6.0
+      '@helium/currency': 4.6.0
+      '@helium/http': 4.6.0
+      '@helium/transactions': 4.6.0
       '@ledgerhq/compressjs': github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets': link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices': link:../ledgerjs/packages/devices
@@ -1116,6 +1127,7 @@ importers:
       '@ledgerhq/hw-app-btc': link:../ledgerjs/packages/hw-app-btc
       '@ledgerhq/hw-app-cosmos': link:../ledgerjs/packages/hw-app-cosmos
       '@ledgerhq/hw-app-eth': link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/hw-app-helium': link:../ledgerjs/packages/hw-app-helium
       '@ledgerhq/hw-app-polkadot': link:../ledgerjs/packages/hw-app-polkadot
       '@ledgerhq/hw-app-solana': link:../ledgerjs/packages/hw-app-solana
       '@ledgerhq/hw-app-str': link:../ledgerjs/packages/hw-app-str
@@ -1557,9 +1569,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-helium:
     specifiers:
-      '@helium/address': ^4.0.0
-      '@helium/proto': ^1.5.0
-      '@helium/transactions': ^4.1.0
+      '@helium/address': ^4.3.1
+      '@helium/proto': ^1.6.0
+      '@helium/transactions': ^4.6.0
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-transport': workspace:^
       '@ledgerhq/hw-transport-mocker': workspace:^
@@ -1579,9 +1591,9 @@ importers:
       ts-node: ^10.4.0
       typescript: ^4
     dependencies:
-      '@helium/address': 4.2.0
-      '@helium/proto': 1.5.0
-      '@helium/transactions': 4.3.1
+      '@helium/address': 4.3.1
+      '@helium/proto': 1.6.0
+      '@helium/transactions': 4.6.0
       '@ledgerhq/errors': link:../errors
       '@ledgerhq/hw-transport': link:../hw-transport
       '@ledgerhq/logs': link:../logs
@@ -8362,14 +8374,6 @@ packages:
       utf8: 3.0.0
     dev: false
 
-  /@helium/address/4.2.0:
-    resolution: {integrity: sha512-++poYfMZpSro1b5m8zsNPdCHssLNXgLYEgLG+K8syU+V2oADsb+OZDp5gthvWIBC7dBY0V+YmnxjDhBsyWKRiQ==}
-    dependencies:
-      bs58: 5.0.0
-      js-sha256: 0.9.0
-      multiformats: 9.6.5
-    dev: false
-
   /@helium/address/4.3.1:
     resolution: {integrity: sha512-5f24ncoR3uOQgzFEtU2+YsHZTXW3+WYEBVdMVQEc5Hkou0bOTAOjVJZNhMqpIWLRzQXto2NOrDVIWXcFqqYnkg==}
     dependencies:
@@ -8378,17 +8382,45 @@ packages:
       multiformats: 9.6.5
     dev: false
 
-  /@helium/proto/1.5.0:
-    resolution: {integrity: sha512-dP3M6rApsNG0fl7IZgYu0R0kxEbhZ/z6BhBoYdmCQDyX9FX+kNlzuPWMji4P9jUFcAs7UAXTZLHR5XATJifVPw==}
-    dependencies:
-      protobufjs: 6.11.2
-    dev: false
-
-  /@helium/transactions/4.3.1:
-    resolution: {integrity: sha512-acH0gDLrC/aTDtM4Jljd8xdQCzITWVNBsGvyTClfrS5dRos++A9wisvCx/VwUyl3w9x/NNU/+V5q8Is6fPJtJw==}
+  /@helium/crypto/4.6.0:
+    resolution: {integrity: sha512-o2C02MkrjYN7Qeb3MK1wTrtEkQscdQTYwEpZ0mvmKSaxIOaJVnvsU7ODvYZwXFSRwpkmucKFY99CC3PjCprpcQ==}
     dependencies:
       '@helium/address': 4.3.1
-      '@helium/proto': 1.5.0
+      create-hash: 1.2.0
+      libsodium-wrappers: 0.7.10
+    dev: false
+
+  /@helium/currency/4.6.0:
+    resolution: {integrity: sha512-l5GrtH+MVrG5xgCGKxEkr2Qb1emr4pETgbJ4TdGuUQY4VGLfwmVEKvyEJwAnyCb9phtWT3djTFjtrWvJcp2Irg==}
+    dependencies:
+      '@helium/transactions': 4.6.0
+      bignumber.js: 9.0.2
+    dev: false
+
+  /@helium/http/4.6.0:
+    resolution: {integrity: sha512-xN4nxtHQ6+iZAceksPUoQdIsmQwKoGZ/Y+lSj/ev51yBZYTXVS5U/NRTMzke5u+gXExcvWeLrMJ7tcxIpvEpow==}
+    dependencies:
+      '@helium/address': 4.3.1
+      '@helium/currency': 4.6.0
+      '@helium/transactions': 4.6.0
+      axios: 0.21.4
+      camelcase-keys: 6.2.2
+      qs: 6.10.3
+      retry-axios: 2.6.0_axios@0.21.4
+      snakecase-keys: 5.4.2
+    dev: false
+
+  /@helium/proto/1.6.0:
+    resolution: {integrity: sha512-aoVjhYDcic5g+n/iwKGXmGgMruPXTffpyr2ziGjuhAvU0phPSv6gnTbyHKY7FqBCUOYX4jHzEKJgX7M27UOGGg==}
+    dependencies:
+      protobufjs: 6.11.3
+    dev: false
+
+  /@helium/transactions/4.6.0:
+    resolution: {integrity: sha512-t+fAOvt8+CeMbHfB6B32NQz3L5qgAS3ke5UcSd4Zv93FWZAkphxqGVXOXutbzi1wVkqTiU832kgQTyzeOL4T3w==}
+    dependencies:
+      '@helium/address': 4.3.1
+      '@helium/proto': 1.6.0
       '@types/libsodium-wrappers': 0.7.9
       long: 4.0.0
       path: 0.12.7
@@ -21676,7 +21708,6 @@ packages:
       camelcase: 5.3.1
       map-obj: 4.3.0
       quick-lru: 4.0.1
-    dev: true
 
   /camelcase/4.1.0:
     resolution: {integrity: sha512-FxAv7HpHrXbh3aPo4o2qxHay2lkLY3x5Mw3KeE4KQE8ysVfziWeRZDwcjauvwBSGEC/nXUPzZy8zeh4HokqOnw==}
@@ -39402,7 +39433,7 @@ packages:
     engines: {node: '>=8'}
 
   /path/0.12.7:
-    resolution: {integrity: sha1-1NwqUGxM4hl+tIHr/NWzbAFAsQ8=}
+    resolution: {integrity: sha512-aXXC6s+1w7otVF9UletFkFcDsJeO7lSZBPUQhtb5O0xJe8LtYhj/GxldoL09bBj9+ZmE2hNoHqQSFMN5fikh4Q==}
     dependencies:
       process: 0.11.10
       util: 0.10.4
@@ -41707,7 +41738,7 @@ packages:
     dev: false
 
   /process/0.11.10:
-    resolution: {integrity: sha1-czIwDoQBYb2j5podHZGn1LwW8YI=}
+    resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
 
   /progress/2.0.3:
@@ -41867,6 +41898,26 @@ packages:
 
   /protobufjs/6.11.2:
     resolution: {integrity: sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/long': 4.0.2
+      '@types/node': 17.0.32
+      long: 4.0.0
+    dev: false
+
+  /protobufjs/6.11.3:
+    resolution: {integrity: sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==}
     hasBin: true
     requiresBuild: true
     dependencies:
@@ -42112,7 +42163,6 @@ packages:
   /quick-lru/4.0.1:
     resolution: {integrity: sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==}
     engines: {node: '>=8'}
-    dev: true
 
   /quick-lru/5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
@@ -44844,6 +44894,15 @@ packages:
     resolution: {integrity: sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==}
     engines: {node: '>=0.12'}
 
+  /retry-axios/2.6.0_axios@0.21.4:
+    resolution: {integrity: sha512-pOLi+Gdll3JekwuFjXO3fTq+L9lzMQGcSq7M5gIjExcl3Gu1hd4XXuf5o3+LuSBsaULQH7DiNbsqPd1chVpQGQ==}
+    engines: {node: '>=10.7.0'}
+    peerDependencies:
+      axios: '*'
+    dependencies:
+      axios: 0.21.4
+    dev: false
+
   /retry/0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
     engines: {node: '>= 4'}
@@ -45851,12 +45910,28 @@ packages:
     resolution: {integrity: sha512-TK5ZA9U5RqCwMpfoMq/l1mrH0JAR7y7KRvOBx0n2869aLxch+gT9GhN3yUfjiw+d/DiF1mKo14+hd62JyMmoBg==}
     dev: false
 
+  /snake-case/3.0.4:
+    resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
+    dependencies:
+      dot-case: 3.0.4
+      tslib: 2.4.0
+    dev: false
+
   /snakecase-keys/3.2.1:
     resolution: {integrity: sha512-CjU5pyRfwOtaOITYv5C8DzpZ8XA/ieRsDpr93HI2r6e3YInC6moZpSQbmUtg8cTk58tq2x3jcG2gv+p1IZGmMA==}
     engines: {node: '>=8'}
     dependencies:
       map-obj: 4.3.0
       to-snake-case: 1.0.0
+    dev: false
+
+  /snakecase-keys/5.4.2:
+    resolution: {integrity: sha512-6mzBNP9t1ghArxcaCxZNGIJewE9qyH+eUQIGba9I7MJcZoV4WX4fM2Y+/K9+BGHCFB94ZASfoC3F44UxLXce+A==}
+    engines: {node: '>=12'}
+    dependencies:
+      map-obj: 4.3.0
+      snake-case: 3.0.4
+      type-fest: 2.16.0
     dev: false
 
   /snapdragon-node/2.1.1:
@@ -48524,6 +48599,11 @@ packages:
   /type-fest/0.8.1:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
+
+  /type-fest/2.16.0:
+    resolution: {integrity: sha512-qpaThT2HQkFb83gMOrdKVsfCN7LKxP26Yq+smPzY1FqoHRjqmjqHXA7n5Gkxi8efirtbeEUxzfEdePthQWCuHw==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /type-is/1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}

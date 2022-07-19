@@ -350,6 +350,26 @@ const envDefinitions = {
     parser: intParser,
     desc: "how much time to timeout a GET http call",
   },
+  HELIUM_API_ENDPOINT: {
+    def: "https://api.helium.io/v1",
+    parser: stringParser,
+    desc: "Helium API url",
+  },
+  HELIUM_STAGING_API_ENDPOINT: {
+    def: "https://api.helium.wtf/v1",
+    parser: stringParser,
+    desc: "Helium Staging API url",
+  },
+  HELIUM_TESTNET_API_ENDPOINT: {
+    def: "https://testnet-api.helium.wtf/v1",
+    parser: stringParser,
+    desc: "Helium Testnet API url",
+  },
+  HELIUM_DEVNET_API_ENDPOINT: {
+    def: "https://testnet-api.helium.wtf/v1",
+    parser: stringParser,
+    desc: "Helium Devnet API url",
+  },
   HIDE_EMPTY_TOKEN_ACCOUNTS: {
     def: false,
     parser: boolParser,

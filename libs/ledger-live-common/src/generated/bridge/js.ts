@@ -18,6 +18,8 @@ import filecoin from "../../families/filecoin/bridge/js";
 
 import hedera from "../../families/hedera/bridge/js";
 
+import helium from "../../families/helium/bridge/js";
+
 import neo from "../../families/neo/bridge/js";
 
 import polkadot from "../../families/polkadot/bridge/js";
@@ -44,6 +46,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  helium,
   neo,
   polkadot,
   ripple,

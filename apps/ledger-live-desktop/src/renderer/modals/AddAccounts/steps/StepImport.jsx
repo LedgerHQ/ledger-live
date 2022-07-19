@@ -252,6 +252,8 @@ class StepImport extends PureComponent<StepProps, { showAllCreatedAccounts: bool
     if (!currency) return null;
     const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
 
+    console.log("SCANNED ACCOUNTS", scannedAccounts);
+
     // Find accounts that are (scanned && !existing && !used)
     const newAccountSchemes = scannedAccounts
       .filter(a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used)

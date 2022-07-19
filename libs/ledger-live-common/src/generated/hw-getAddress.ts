@@ -18,6 +18,8 @@ import filecoin from "../families/filecoin/hw-getAddress";
 
 import hedera from "../families/hedera/hw-getAddress";
 
+import helium from "../families/helium/hw-getAddress";
+
 import neo from "../families/neo/hw-getAddress";
 
 import polkadot from "../families/polkadot/hw-getAddress";
@@ -44,6 +46,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  helium,
   neo,
   polkadot,
   ripple,

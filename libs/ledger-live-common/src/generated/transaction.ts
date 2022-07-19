@@ -18,6 +18,8 @@ import filecoin from "../families/filecoin/transaction";
 
 import hedera from "../families/hedera/transaction";
 
+import helium from "../families/helium/transaction";
+
 import neo from "../families/neo/transaction";
 
 import polkadot from "../families/polkadot/transaction";
@@ -44,6 +46,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  helium,
   neo,
   polkadot,
   ripple,

@@ -1302,6 +1302,36 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  helium_testnet: {
+    type: "CryptoCurrency",
+    id: "helium_testnet",
+    coinType: 905,
+    name: "Helium testnet",
+    managerAppName: "TNT",
+    ticker: "HNT",
+    scheme: "helium_testnet",
+    color: "#E43B70",
+    family: "helium",
+    isTestnetFor: "helium",
+    units: [
+      {
+        name: "HNT",
+        code: "HNT",
+        magnitude: 8,
+      },
+      {
+        name: "bones",
+        code: "bones",
+        magnitude: 0,
+      },
+    ].map(makeTestnetUnit),
+    explorerViews: [
+      {
+        tx: "https://explorer.helium.wtf/txns/$hash",
+        address: "https://explorer.helium.wtf/accounts/$address",
+      },
+    ],
+  },
   hpb: {
     type: "CryptoCurrency",
     id: "hpb",

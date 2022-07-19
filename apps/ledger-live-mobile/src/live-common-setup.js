@@ -66,6 +66,8 @@ setSupportedCurrencies([
   "elrond",
   "hedera",
   "cardano",
+  "helium",
+  "helium_testnet",
 ]);
 
 if (Config.VERBOSE) {

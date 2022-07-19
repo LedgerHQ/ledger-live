@@ -727,6 +727,7 @@
     "bandwidth": "Bandwidth",
     "energy": "Energy",
     "stake": "Stake",
+    "vote": "Vote",
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
     "availableBalanceTooltip": "This amount is disposable.",
@@ -2733,6 +2734,147 @@
       }
     }
   },
+  "helium": {
+    "common": {
+      "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+      "viewDetails": "View details",
+      "connectDevice": {
+        "title": "Device"
+      },
+      "confirmation": {
+        "title": "Confirmation"
+      }
+    },
+    "votes": {
+      "listHeader": "Helium Improvement Proposals",
+      "name": "Name",
+      "description": "Description",
+      "estTime": "Est. time Remaining",
+      "votingClosed": "Voting closed",
+      "totalVotes": "Total Votes",
+      "votes": "Votes",
+      "statusUpdateNotice": "The status of the vote will be updated when the transaction is confirmed.",
+      "voteInfo": {
+        "description": "Helium vote is where the Helium Community comes together to make decisions on the Network.",
+        "bullet": {
+          "0": "Each vote is driven by a Helium Improvement Proposal (HIP).",
+          "1": "Each HIP will have two voting choices. Vote For or Against by submitting a burn transaction.",
+          "2": "Your Vote Power is determined by the amount of HNT in the account at the end of the vote."
+        },
+        "warning": "Burn transactions have a small fee."
+      },
+      "flow": {
+        "title": "Cast a Vote",
+        "steps": {
+          "vote": {
+            "title": "vote",
+            "for": "For",
+            "against": "Against"
+          },
+          "confirmation": {
+            "success": {
+              "title": "You have successfully casted your vote."
+            }
+          }
+        }
+      }
+    },
+    "delegation": {
+      "totalStake": "Total stake",
+      "commission": "Commission",
+      "delegate": "Add",
+      "listHeader": "Validators",
+      "availableBalance": "Withdrawable",
+      "active": "Active",
+      "activeTooltip": "Active validators generate rewards",
+      "inactiveTooltip": "Inactive validators do not generate rewards",
+      "stakedTooltip": "Validator is currently staked",
+      "unstakedTooltip": "Validator is not currently staked. 6 month hold until funds are released.",
+      "delegatedInfoTooltip": "Total amount that is staked to validators.",
+      "withdrawableInfoTooltip": "Total amount that is withdrawable from stakes.",
+      "withdrawableTitle": "Withdrawable",
+      "statusUpdateNotice": "The status of the stake will be updated when the transaction is confirmed.",
+      "ledgerByFigmentTC": "Ledger by Figment T&Cs",
+      "emptyState": {
+        "description": "You can earn HNT rewards by staking your assets.",
+        "info": "How Staking works",
+        "delegation": "Earn rewards"
+      },
+      "earnRewards": {
+        "description": "You may earn rewards by staking your HNT assets to a validator.",
+        "bullet": {
+          "0": "A minimum of 10,000 HNT is required on your account",
+          "1": "Delegate using your Ledger device",
+          "2": "Assets will be available 6 months after unstaking"
+        },
+        "warning": "Choose your validator wisely: Part of your staked assets may be irrevocably lost if the validator does not behave appropriately."
+      },
+      "flow": {
+        "title": "Stake",
+        "steps": {
+          "validator": {
+            "title": "Validator"
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "confirmation": {
+            "success": {
+              "title": "You have successfully staked your assets"
+            }
+          }
+        }
+      },
+      "transfer": {
+        "flow": {
+          "title": "Transfer",
+          "help": "Use the helium ledger companion app to transfer to different owners.",
+          "steps": {
+            "validator": {
+              "title": "Validator"
+            },
+            "newOwner": {
+              "title": "New Owner"
+            },
+            "amount": {
+              "title": "Payment Amount"
+            },
+            "confirmation": {
+              "success": {
+                "title": "You have successfully transfered your assets.",
+                "text": "Your account balance will be updated when the transaction is confirmed."
+              }
+            }
+          }
+        }
+      },
+      "stake": {
+        "flow": {
+          "title": "Stake",
+          "steps": {
+            "confirmation": {
+              "success": {
+                "title": "You have successfully activated your stake."
+              }
+            }
+          }
+        }
+      },
+      "unstake": {
+        "flow": {
+          "title": "Unstake",
+          "steps": {
+            "confirmation": {
+              "success": {
+                "title": "You have successfully unstaked your assets.",
+                "text": "Your account balance will be updated when the transaction is confirmed. Unstaked assets will be available 6 months after unstaking."   
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -2754,6 +2896,9 @@
     "earnRewards": "Earn rewards",
     "overdelegated": "Overdelegated",
     "status": "Status",
+    "name": "Name",
+    "staked": "Staked",
+    "validators": "Validators",
     "flow": {
       "steps": {
         "starter": {
@@ -3810,6 +3955,18 @@
       "memo": "Memo",
       "memoPlaceholder": "Optional",
       "memoWarningText": "When using a memo, carefully check the information with the recipient"
+    },
+    "helium": {
+      "memo": "Memo",
+      "memoPlaceholder": "Optional",
+      "validatorAddress": "Validator Address",
+      "addressPlaceholder": "Enter Helium Address",
+      "newOwnerSignaturePlaceholder": "Enter New Owner Signature",
+      "oldValidatorAddress": "Old Validator Address",
+      "newValidatorAddress": "New Validator Address",
+      "newOwnerAddress": "New Owner Address",
+      "newOwnerSignature": "New Owner Signature",
+      "generateSignatureInfo": "For more info on how to generate an account signature click here."
     },
     "solana": {
       "memo": "Memo",
