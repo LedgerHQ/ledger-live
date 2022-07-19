@@ -80,7 +80,8 @@
     },
     "seeMore" : "詳細を表示",
     "moreInfo" : "詳細はこちら",
-    "buyEth" : "Ethereumを購入"
+    "buyEth" : "Ethereumを購入",
+    "popular" : "人気"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "最低{{amount}} ADA以上必要"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "Bluetooth LEには位置情報が必要です。",
     "locationRequiredMessage" : "AndroidでBluetooth LEデバイスを一覧表示するには、位置情報サービスへのアクセスが必要です。",
     "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。"
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "接続なし",
+      "description" : "インターネットにアクセスできません。接続を確認して、もう一度やり直してください。"
+    }
   },
   "location" : {
     "required" : "位置情報サービスが必要です",
@@ -795,6 +805,16 @@
         "title" : "暗号資産マーケット",
         "description" : "暗号資産の価格や市場動向をアプリでチェックする",
         "cta" : "画面をチェックする"
+      },
+      "manageCard" : {
+        "title" : "CLカードのご紹介",
+        "description" : "CLカード Powered by Ledgerを注文・管理",
+        "cta" : "詳細はこちら"
+      },
+      "discoverWeb3" : {
+        "title" : "Web 3をチェック",
+        "description" : "デバイスが届くまでの間に、Web 3の世界を覗いてみましょう！",
+        "cta" : "チェック"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "認証済みのセキュリティ",
       "desc" : "当社の商品は、国家サイバーセキュリティ機関によってセキュリティが認定された、唯一のハードウェアウォレットです。"
     },
-    "title" : "Ledgerをゲット",
-    "desc" : "業界をリードするセキュリティで暗号資産とNFTを保護",
+    "title" : "Ledgerが必要です",
+    "desc" : "セキュリティーの都合上、Ledger Liveはデバイス上でのみ機能します。継続にはデバイスが必要です。",
     "cta" : "Ledgerを今すぐ購入",
-    "footer" : "既にデバイスを持っており、セットアップを開始可能"
+    "footer" : "既にデバイスを持っており、セットアップを開始可能",
+    "bannerTitle" : "暗号資産とNFTを安全に保管",
+    "bannerTitle2" : "Ledgerデバイスを使って取引するには、",
+    "bannerSubtitle" : "Ledgerデバイスにお任せ",
+    "bannerButtonTitle" : "Nanoをチェック",
+    "bannerButtonTitle2" : "デバイスを購入する",
+    "setupCta" : "すでにデバイスを持っている場合の設定"
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "デバイスをお受け取りになりましたか？",
+    "desc" : "デバイスを受け取ったら、Ledger Liveでセットアップを開始できます!",
+    "cta" : "デバイスをセットアップ",
+    "bannerTitle" : "デバイスを受け取りましたか？",
+    "bannerCta" : "セットアップを始める",
+    "continue" : "続行"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "デバイスを購入",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "iframe URLをアップデート",
+        "subtitle" : "デバッグ設定",
+        "cta" : "お得"
+      },
+      "message" : {
+        "successTitle" : "トランザクション完了",
+        "errorTitle" : "トランザクションエラー",
+        "subtitle" : "受信したメッセージ",
+        "type" : "タイプ： {{type}}",
+        "deviceId" : "デバイス ID： {{deviceId}}",
+        "price" : "価格： {{price}}",
+        "currency" : "通貨： {{currency}}",
+        "value" : "価値： {{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "購入手続きに成功",
+    "title" : "おめでとうございます！",
+    "desc" : "注文を処理しています。\nLedgerの受取までもうすぐです。ご注文確認のメールをご確認ください。"
   },
   "discover" : {
     "title" : "Discover",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
+      },
+      "mint": {
+        "title": "ミント”,",
+        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
       }
     },
     "comingSoon" : "近日公開",
@@ -877,8 +940,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "最も安全な暗号資産とNFTのウォレット",
-      "subtitle" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
+      "title" : "ようこそ、Ledgerへ",
+      "subtitle" : "デジタルの所有権を安全かつシンプルにします。",
       "start" : "はじめに",
       "noDevice" : "デバイスをお持ちでない場合",
       "buy" : "{{fullDeviceName}}を購入",
@@ -887,9 +950,16 @@
       "privacyLink" : "プライバシーポリシー",
       "and" : "そして"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "Ledgerデバイスをお持ちですか？",
+      "subtitle" : "はじめに",
+      "yes" : "はい。",
+      "no" : "いいえ。"
+    },
     "postWelcomeStep" : {
-      "title" : "セットアップ",
-      "subtitle" : "Ledgerをセットアップ、または今すぐ購入してください。",
+      "title" : "ご自由にお選びください",
+      "subtitle_yes" : "Ledgerのセットアップを開始、またはアプリをチェックすることが可能です",
+      "subtitle_no" : "アプリをチェック、またはNano Xデバイスを購入することが可能です",
       "noLedgerLink" : "Ledgerをまだ持っておらず、購入を検討中",
       "setupLedger" : {
         "title" : "Ledgerをセットアップ",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "Ledger Nano Xを購入する",
-        "subtitle" : "Web3への鍵 — 資産の主導権をゲットする"
+        "subtitle" : "ハードウェアウォレットは、資産を安全に保管するための唯一の方法です "
       },
       "discoverLedger" : {
-        "title" : "Ledger Liveについて",
-        "subtitle" : "アプリをチェック"
+        "title" : "Ledger Liveを詳しく見る",
+        "subtitle" : "アプリを探索し、それぞれの利点について学ぶ "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "デバイスなしで探索する",
+      "buyALedgerNow" : "今すぐLedgerを購入する",
       "0" : {
-        "title" : "すべての暗号資産のニーズに一箇所で対応",
-        "desc" : "資産のモニタリング・購入・売却・スワップ・運用・管理など、暗号資産を完全に把握しましょう"
+        "title" : "すべての暗号資産を安全に保護します。"
       },
       "1" : {
-        "title" : "鍵を持たぬ者は暗号資産を持たず",
-        "desc" : "ハードウェアウォレットの使用は、暗号資産を安全に所有して保護するための最善かつ唯一の方法です。"
+        "title" : "常にマーケットをチェック。"
       },
       "2" : {
-        "title" : "お金への権利を取り戻す",
-        "desc" : "Ledger Nano Xは、コインをオフラインで保管・保護します。Ledger Liveアプリと組み合わせて、最大限のセキュリティを確保しながら暗号資産をコントロール可能です。",
-        "cta" : "旅を始める"
+        "title" : "様々なアプリを見つけて、Web3について学びます。"
+      },
+      "3" : {
+        "title" : "暗号資産とNFTを安全に保管。"
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "ラーニング",
-    "noConnection" : "接続なし",
-    "noConnectionDesc" : "インターネットにアクセスできません。接続を確認して、もう一度やり直してください。",
     "sectionShows" : "表示",
     "sectionVideo" : "動画",
     "sectionPodcast" : "ポッドキャスト",
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "取引詳細",
+    "title" : "トランザクションの詳細",
     "account" : "アカウント",
     "date" : "日付",
     "confirmed" : "確認済み",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
-    "noMoreOperations" : "その他のオペレーションはありません。"
+    "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
@@ -1698,7 +1767,7 @@
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
-    "lastOperations" : "最近の取引",
+    "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
       "title" : "暗号資産をまだお持ちでないですか？",
       "desc" : "受取を開始する前に、<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してください。",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "NFTを受け取る",
       "howTo" : "NFTを追加するには、<1>{{currency}}アドレス</1>を使用して<0>受け取る</0>必要があります。"
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "トランザクションはありません",
+        "subtitle" : "{{assetName}}の購入と受け取りには、デバイスが必要です"
+      }
     }
   },
   "accounts" : {
@@ -1829,7 +1904,13 @@
       }
     },
     "noResultsFound" : "資産が見つかりません",
-    "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
+    "noResultsDesc" : "スペルを確認してから、もう一度お試しください。",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "6000以上の暗号資産",
+        "subtitle" : "Ledgerは6000以上のコインやトークンに対応"
+      }
+    }
   },
   "distribution" : {
     "header" : "資産配分",
@@ -2058,13 +2139,15 @@
       "input" : "アドレスを入力"
     },
     "send" : {
-      "title" : "送付"
+      "title" : "送付",
+      "description" : "暗号資産を別のウォレットに送付。"
     },
     "fees" : {
       "title" : "手数料を編集"
     },
     "receive" : {
       "title" : "受け取る",
+      "description" : "暗号資産を別のウォレットから受け取る。",
       "titleReadOnly" : "未確認のアドレス",
       "headerTitle" : "暗号資産",
       "titleDevice" : "デバイスを接続",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "暗号資産が見つかりません",
       "noResultsDesc" : "スペルを確認してから、もう一度お試しください。"
     },
+    "buy" : {
+      "title" : "購入",
+      "description" : "暗号資産を現金で安全に購入。"
+    },
+    "sell" : {
+      "title" : "売却",
+      "description" : "暗号資産を安全に売却して現金化。"
+    },
     "exchange" : {
       "title" : "購入/売却"
     },
     "swap" : {
       "title" : "スワップ",
+      "description" : "暗号資産を別の暗号資産と交換。",
       "selectDevice" : "お使いのデバイスを選択してください",
       "broadcasting" : "スワップをブロードキャスト中",
       "loadingFees" : "ネットワーク手数料を読み込み中…",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "暗号資産をレンディング（貸し出す）",
-      "titleTransferTab" : "レンディング",
+      "titleTransferTab" : "報酬獲得",
+      "descriptionTransferTab" : "不労所得を得る。",
       "actionTitle" : "レンディング",
       "accountActions" : {
         "approve" : "承認",
@@ -2836,11 +2929,16 @@
     },
     "confirmSwap" : {
       "title" : "スワップ処理をデバイス上で確認する",
-      "alert" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
+      "alert" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します"
     },
     "confirmSell" : {
       "title" : "売却をデバイスで確認する",
       "alert" : "送金する前に、売却の詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
+    },
+    "confirmFund" : {
+      "title" : "資金のトランザクションを確定",
+      "alert" : "送付する前に、資金の詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
     "button" : {
       "openManager" : "管理画面を開く",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "暗号資産を購入",
       "tabTitle" : "購入",
       "selectCurrency" : "通貨を選択",
       "selectAccount" : "アカウントを選択",
+      "wantToBuy" : "購入する",
       "connectDevice" : "デバイスを接続",
       "title" : "パートナーから暗号資産を購入する",
       "coinifyTitle" : "パートナーから暗号資産を購入する",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "暗号資産を売却",
       "tabTitle" : "売却",
       "selectCurrency" : "通貨を選択",
       "selectAccount" : "アカウントを選択",
+      "wantToSell" : "売却する",
       "connectDevice" : "デバイスを接続",
       "title" : "パートナーで暗号資産を売却する",
       "description" : "Ledgerアカウントから、Coinifyで暗号資産を直接売却し、銀行口座で法定通貨を受け取ることができます。",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "履歴"
+    },
+    "providerList" : {
+      "title" : "プロバイダーを選択"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "トークンアドレスがコピーされました！",
       "tokenId" : "トークンID",
       "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "フロア価格"
+      }
     },
     "viewerModal" : {
       "viewOn" : "表示",

@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-mobile/**
   pull_request:
@@ -16,18 +18,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  is-org-member:
-    name: "Check Org Member"
-    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ./.github/workflows/pr-is-fork.yml
     with:
-      username: ${{ github.actor }}
-      organisation: ledgerhq
+      non-pr-result: true
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
-    needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -48,8 +49,8 @@ jobs:
 
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member, start-runner]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -70,20 +71,20 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
         env:
           ImageOS: ubuntu20
-      - name: setup JDK 1.8
+      - name: setup JDK 11
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 11
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
@@ -115,7 +116,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:llm:android --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -128,8 +129,8 @@ jobs:
 
   build-mobile-app-android-external:
     name: "Build Ledger Live Mobile (Android)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member]
+    if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork]
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -146,20 +147,20 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
         env:
           ImageOS: ubuntu20
-      - name: setup JDK 1.8
+      - name: setup JDK 11
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 11
       - name: setup Android SDK
         uses: android-actions/setup-android@v2.0.6
       - name: install dependencies
@@ -191,7 +192,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:llm:android --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -218,11 +219,11 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: bump npm
-        run: npm i -g npm
+        run: npm i -g npm@8.12.2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7

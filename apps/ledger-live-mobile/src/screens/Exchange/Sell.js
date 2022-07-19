@@ -1,24 +1,70 @@
 // @flow
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { NavigatorName } from "../../const";
+import { useTheme } from "@react-navigation/native";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
+import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import LText from "../../components/LText";
-import ExchangeIcon from "../../icons/Exchange";
-import Button from "../../components/Button";
-import PoweredByCoinify from "./PoweredByCoinify";
+import BigSpinner from "../../icons/BigSpinner";
+import { useRampCatalogCurrencies } from "./hooks";
+import SelectAccountCurrency from "./SelectAccountCurrency";
 
 const forceInset = { bottom: "always" };
 
-export default function Buy() {
+type Props = {
+  navigation: any,
+  route: {
+    params: {
+      defaultAccountId?: string,
+      defaultCurrencyId?: string,
+      defaultTicker?: string,
+    },
+  },
+};
+
+type State = {
+  sortedCurrencies: Array<TokenCurrency | CryptoCurrency>,
+  isLoading: boolean,
+};
+
+// To avoid recreating a ref on each render and triggering hooks
+const emptyArray = [];
+
+export default function OffRamp({ route }: Props) {
+  const [currencyState, setCurrencyState] = useState<State>({
+    sortedCurrencies: [],
+    isLoading: true,
+  });
   const { colors } = useTheme();
-  const { t } = useTranslation();
-  const navigation = useNavigation();
+  const rampCatalog = useRampCatalog();
+  const allCurrencies = useRampCatalogCurrencies(
+    rampCatalog?.value?.offRamp || emptyArray,
+  );
+
+  const { defaultAccountId, defaultCurrencyId, defaultTicker } =
+    route.params || {};
+
+  useEffect(() => {
+    const filteredCurrencies = defaultTicker
+      ? allCurrencies.filter(currency => currency.ticker === defaultTicker)
+      : allCurrencies;
+
+    currenciesByMarketcap(filteredCurrencies).then(sortedCurrencies => {
+      setCurrencyState({
+        sortedCurrencies,
+        isLoading: false,
+      });
+    });
+    // Only get on first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SafeAreaView
@@ -31,30 +77,19 @@ export default function Buy() {
       ]}
       forceInset={forceInset}
     >
-      <TrackScreen category="Sell Crypto" />
-      <View style={styles.body}>
-        <View
-          style={[styles.iconContainer, { backgroundColor: colors.lightLive }]}
-        >
-          <ExchangeIcon size={22} color={colors.live} />
+      <TrackScreen category="Multibuy" name="Sell" />
+      {currencyState.isLoading ? (
+        <View style={styles.spinner}>
+          <BigSpinner size={42} />
         </View>
-        <LText style={styles.title} semiBold>
-          {t("exchange.sell.title")}
-        </LText>
-        <LText style={styles.description} color="smoke">
-          {t("exchange.sell.description")}
-        </LText>
-        <View style={styles.buttonContainer}>
-          <Button
-            containerStyle={styles.button}
-            event="ExchangeStartSellFlow"
-            type="primary"
-            title={t("exchange.sell.CTAButton")}
-            onPress={() => navigation.navigate(NavigatorName.ExchangeSellFlow)}
-          />
-        </View>
-      </View>
-      <PoweredByCoinify />
+      ) : (
+        <SelectAccountCurrency
+          flow="sell"
+          allCurrencies={currencyState.sortedCurrencies}
+          defaultCurrencyId={defaultCurrencyId}
+          defaultAccountId={defaultAccountId}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -63,38 +98,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  body: {
-    flex: 1,
+  spinner: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    margin: 16,
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 50,
-    marginBottom: 24,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    textAlign: "center",
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  description: {
-    textAlign: "center",
-    fontSize: 14,
-  },
-  buttonContainer: {
-    paddingTop: 24,
-    paddingLeft: 16,
-    paddingRight: 16,
-    flexDirection: "row",
-  },
-  button: {
-    flex: 1,
+    marginTop: 10,
   },
 });

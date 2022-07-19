@@ -17,6 +17,7 @@ import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
+import BuyDeviceNavigator from "./BuyDeviceNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -66,6 +67,11 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.ImportAccounts}
         component={ImportAccountsNavigator}
+      />
+      <Stack.Screen
+        name={NavigatorName.BuyDevice}
+        component={BuyDeviceNavigator}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.PairDevices}

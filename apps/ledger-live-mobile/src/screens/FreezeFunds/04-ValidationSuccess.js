@@ -7,9 +7,9 @@ import invariant from "invariant";
 import {
   useTronPowerLoading,
   getLastVotedDate,
-} from "@ledgerhq/live-common/lib/families/tron/react";
-import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/tron/react";
+import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
+import type { Operation } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";

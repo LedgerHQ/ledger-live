@@ -2,7 +2,7 @@
 import type { TFunction } from "react-i18next";
 import type { Step } from "~/renderer/components/Stepper";
 
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 
 export type StepId = "paste" | "confirm";
 

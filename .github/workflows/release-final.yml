@@ -28,9 +28,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
       - uses: ruby/setup-ruby@v1
         with:
@@ -43,7 +43,7 @@ jobs:
       - name: publish release
         run: pnpm changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
       - name: check if desktop versions are different
         id: desktop-changed
         run: |
@@ -60,17 +60,47 @@ jobs:
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: generate desktop changelog
+        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
+        id: desktop-changelog
+        with:
+          package-path: ${{ github.workspace }}/apps/ledger-live-desktop/package.json
+          changelog-path: ${{ github.workspace }}/apps/ledger-live-desktop/CHANGELOG.md
+          output-path: ${{ github.workspace }}
+          name: desktop-changelog
       - name: tag desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 }}
         run: |
           git tag @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }}
+      - name: generate mobile changelog
+        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        uses: ledgerhq/ledger-live/tools/actions/generate-release-message@develop
+        id: mobile-changelog
+        with:
+          package-path: ${{ github.workspace }}/apps/ledger-live-mobile/package.json
+          changelog-path: ${{ github.workspace }}/apps/ledger-live-mobile/CHANGELOG.md
+          output-path: ${{ github.workspace }}
+          name: mobile-changelog
       - name: tag mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 }}
         run: |
           git tag @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }}
       - name: push changes
         run: |
-          git push origin main --follow-tags
+          git push origin main --tags
+      - name: create desktop github release
+        if: ${{ steps.desktop-changed.outputs.status != 0 }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create @ledgerhq/live-desktop@${{ steps.desktop-version.outputs.version }} -F ${{ steps.desktop-changelog.outputs.path }}
+      - name: create mobile github release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ steps.mobile-changed.outputs.status != 0 }}
+        run: |
+          gh release create @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
       - uses: actions/github-script@v6
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 }}

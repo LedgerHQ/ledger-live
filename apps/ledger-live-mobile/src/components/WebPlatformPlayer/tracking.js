@@ -1,5 +1,5 @@
 // @flow
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "../../analytics/segment";
 
 /**
@@ -91,4 +91,33 @@ export function platformBroadcastSuccess(manifest: AppManifest) {
 // Successfully broadcast a signed transaction
 export function platformBroadcastOperationDetailsClick(manifest: AppManifest) {
   track("Platform Broadcast OpD Clicked", getEventData(manifest));
+}
+
+// Generate Exchange nonce modal open
+export function platformStartExchangeRequested(manifest: AppManifest) {
+  track("Platform start Exchange Nonce request", getEventData(manifest));
+}
+
+// Successfully generated an Exchange app nonce
+export function platformStartExchangeSuccess(manifest: AppManifest) {
+  track("Platform start Exchange Nonce success", getEventData(manifest));
+}
+
+// Failed to generate an Exchange app nonce
+export function platformStartExchangeFail(manifest: AppManifest) {
+  track("Platform start Exchange Nonce fail", getEventData(manifest));
+}
+
+export function platformCompleteExchangeRequested(manifest: AppManifest) {
+  track("Platform complete Exchange requested", getEventData(manifest));
+}
+
+// Successfully completed an Exchange
+export function platformCompleteExchangeSuccess(manifest: AppManifest) {
+  track("Platform complete Exchange success", getEventData(manifest));
+}
+
+// Failed to complete an Exchange
+export function platformCompleteExchangeFail(manifest: AppManifest) {
+  track("Platform complete Exchange Nonce fail", getEventData(manifest));
 }

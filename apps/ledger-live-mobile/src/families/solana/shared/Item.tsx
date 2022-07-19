@@ -1,6 +1,6 @@
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { SolanaValidatorWithMeta } from "@ledgerhq/live-common/lib/families/solana/types";
-import { Unit } from "@ledgerhq/live-common/lib/types";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { SolanaValidatorWithMeta } from "@ledgerhq/live-common/families/solana/types";
+import { Unit } from "@ledgerhq/live-common/types/index";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";

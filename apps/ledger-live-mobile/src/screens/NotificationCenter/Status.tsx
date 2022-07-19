@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { Linking, FlatList } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
-import { Incident } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider/types";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+import { Incident } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { Alert, Flex, IconBox, Notification, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled, { useTheme } from "styled-components/native";

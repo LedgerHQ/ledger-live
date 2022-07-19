@@ -83,6 +83,14 @@ export function filterAnnouncements(
         )
           return false;
       }
+      if (
+        lastSeenDevice === undefined &&
+        device &&
+        device.modelIds &&
+        !device.modelIds.includes("no_nano")
+      ) {
+        return false;
+      }
 
       // filter out by platform
       if (

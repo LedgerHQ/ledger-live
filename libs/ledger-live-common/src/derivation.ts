@@ -157,12 +157,13 @@ const modes = Object.freeze({
   // glif legacy derivation
   gliflegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
-    tag: "legacy",
+    tag: "glif-legacy",
   },
   // glif normal derivation
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
     startsAt: 1,
+    tag: "glif",
   },
   solanaMain: {
     isNonIterable: true,

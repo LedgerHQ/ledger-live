@@ -208,7 +208,7 @@ const txToOp =
         type = "CREATE";
         maybeValue = new BigNumber(tx.contractBalance || 0);
         senders = [address];
-        recipients = [tx.originatedContract.address];
+        recipients = [tx.originatedContract?.address || ""];
         break;
       case "activation":
         type = "IN";

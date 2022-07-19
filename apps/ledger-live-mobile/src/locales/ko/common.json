@@ -80,7 +80,8 @@
     },
     "seeMore" : "더 보기",
     "moreInfo" : "자세한 정보",
-    "buyEth" : "이더리움 구매"
+    "buyEth" : "이더리움 구매",
+    "popular" : "인기 있는"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+    },
+    "CardanoMinAmountError" : {
+      "title" : "최소 {{amount}} ADA 필요"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "블루투스 LE 사용을 위해 위치 정보가 필요합니다.",
     "locationRequiredMessage" : "안드로이드에서 블루투스 LE 장치를 열거하려면 위치를 허용해야 합니다.",
     "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요."
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "연결 없음",
+      "description" : "인터넷에 액세스할 수 없습니다. 연결을 확인하고 다시 시도하세요."
+    }
   },
   "location" : {
     "required" : "위치 서비스가 필요합니다",
@@ -795,6 +805,16 @@
         "title" : "암호화폐 시장",
         "description" : "앱에서 바로 암호화폐 가격 및 시장 추세 확인",
         "cta" : "둘러보기"
+      },
+      "manageCard" : {
+        "title" : "CL 카드 소개",
+        "description" : "Ledger 기반 CL 카드 신청 및 관리",
+        "cta" : "자세히 알아보기"
+      },
+      "discoverWeb3" : {
+        "title" : "Web3 탐색",
+        "description" : "내 장치를 기다리며 web3에 관한 모든 것을 살펴보세요!",
+        "cta" : "탐색"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "인증된 보안",
       "desc" : "당사 제품은 국가 사이버 보안 기관에서 보안에 대해 인증한 유일한 하드웨어 지갑입니다."
     },
-    "title" : "여러분만의 Ledger를 사용해 보세요!",
-    "desc" : "업계 최고의 보안으로 여러분의 암호화폐 및 NFT를 보호하세요",
+    "title" : "Ledger 제품이 필요하시군요",
+    "desc" : "보안을 위해 Ledger Live는 오직 Ledger 장치에서만 작동합니다. 계속하려면 장치가 필요합니다.",
     "cta" : "지금 여러분의 Ledger를 구매하세요",
-    "footer" : "이미 장치가 있습니다. 지금 설정하세요."
+    "footer" : "이미 장치가 있습니다. 지금 설정하세요.",
+    "bannerTitle" : "암호화폐와 NFT를 안전하게 보호하세요",
+    "bannerTitle2" : "Ledger 장치로 거래하려면",
+    "bannerSubtitle" : "Nano가 필요합니다",
+    "bannerButtonTitle" : "Nano 살펴보기",
+    "bannerButtonTitle2" : "장치 구매",
+    "setupCta" : "이미 장치가 있습니다. 설정을 진행합니다"
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "장치를 셨나요?",
+    "desc" : "장치를 수령했다면 Ledger Live를 통해 장치 설정을 시작할 수 있습니다.",
+    "cta" : "내 장치 설정",
+    "bannerTitle" : "장치를 받으셨나요?",
+    "bannerCta" : "설정 시작하기",
+    "continue" : "계속"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "장치 구매",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "iframe URL 업데이트",
+        "subtitle" : "디버그 설정",
+        "cta" : "Ledger Nano S를"
+      },
+      "message" : {
+        "successTitle" : "트랜잭션 완료",
+        "errorTitle" : "트랜잭션 오류",
+        "subtitle" : "메시지 수신 완료",
+        "type" : "유형: {{type}}",
+        "deviceId" : "장치 ID: {{deviceId}}",
+        "price" : "가격: {{price}}",
+        "currency" : "통화: {{currency}}",
+        "value" : "가치: {{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "구매 완료",
+    "title" : "축하합니다!",
+    "desc" : "주문을 처리 중입니다.\n곧 Ledger 장치를 받게 됩니다. 주문 확인 이메일을 확인해 주세요."
   },
   "discover" : {
     "title" : "탐색",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "소득 창출",
         "desc" : "불로소득을 얻고 암호화폐를 성장시키세요"
+      },
+      "mint": {
+        "title": "민팅",
+        "desc": "[ L ] Market 독점 콜라보레이션 NFT 민팅"
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -877,8 +940,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "가장 안전한 암호화폐 및 NFT 지갑",
-      "subtitle" : "Ledger Live에서 암호화폐 및 NFT를 안전하게 관리, 구매 및 성장시키세요.",
+      "title" : "Ledger에 오신 것을 환영합니다",
+      "subtitle" : "당사는 디지털 소유권을 안전하고 간단하게 만들어 드립니다.",
       "start" : "시작하기",
       "noDevice" : "장치가 없나요?",
       "buy" : "{{fullDeviceName}} 구매",
@@ -887,9 +950,16 @@
       "privacyLink" : "개인 정보 보호 정책",
       "and" : "및"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "Ledger를 가지고 계신가요?",
+      "subtitle" : "하지만 먼저",
+      "yes" : "네, 그렇습니다",
+      "no" : "아니요, 아직입니다"
+    },
     "postWelcomeStep" : {
-      "title" : "시작해봅시다",
-      "subtitle" : "Ledger를 설정하거나 지금 구입하세요.",
+      "title" : "사용자의 선택",
+      "subtitle_yes" : "Ledger를 설정하거나 앱을 먼저 둘러볼 수 있습니다",
+      "subtitle_no" : "선택 가능 옵션: 먼저 앱을 살펴보거나 Nano X 장치를 구매하세요",
       "noLedgerLink" : "Ledger가 없는데 하나 사고 싶습니다",
       "setupLedger" : {
         "title" : "내 Ledger 설정",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "Ledger Nano X 구매하기",
-        "subtitle" : "Web3로의 키 — 자산을 통제할 수 있는 자유를 누리세요"
+        "subtitle" : "하드웨어 지갑은 자산을 안전하게 보호할 수 있는 유일한 방법입니다. "
       },
       "discoverLedger" : {
-        "title" : "Ledger Live 살펴보기",
-        "subtitle" : "앱 살펴보기"
+        "title" : "Ledger Live를 살펴보세요",
+        "subtitle" : "앱을 살펴보고 어떤 이점이 있는지 알아보세요 "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "장치가 없어도 가능합니다",
+      "buyALedgerNow" : "지금 Ledger 구매하기",
       "0" : {
-        "title" : "암호화폐 관련 모든 필요한 부분을 해결해주는 단 하나의 솔루션",
-        "desc" : "자산을 안전하게 모니터링, 구매, 판매, 스왑, 성장 및 관리하고 최고의 암호화폐 인사이트를 얻으세요"
+        "title" : "내 모든 암호화폐를 안전하게 보호하세요."
       },
       "1" : {
-        "title" : "여러분의 키, 여러분의 암호화폐가 아닙니다",
-        "desc" : "하드웨어 지갑으로 자산을 보호하는 것은 암호화폐를 소유하고 보호하는 가장 좋은 유일한 방법입니다."
+        "title" : "시장을 주시하세요."
       },
       "2" : {
-        "title" : "본인 자산에 대한 권한을 되찾게 해줍니다.",
-        "desc" : "Ledger Nano X가 오프라인상에서 코인을 안전하게 보호해 줍니다. Ledger Nano X는 코인을 오프라인 상태로 유지하고 보호합니다. 최대 보안 및 암호화폐 제어를 위해 Ledger Live 앱과 결합",
-        "cta" : "여행을 시작하세요"
+        "title" : "앱과 web3에 대해 알아보세요."
+      },
+      "3" : {
+        "title" : "내 암호화폐와 NFT를 안전하게 보호하세요."
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "알아보기",
-    "noConnection" : "연결 없음",
-    "noConnectionDesc" : "인터넷에 액세스할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
     "sectionShows" : "쇼",
     "sectionVideo" : "동영상",
     "sectionPodcast" : "팟캐스트",
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "작업 세부 정보",
+    "title" : "트랜잭션 세부 사항",
     "account" : "계정",
     "date" : "날짜",
     "confirmed" : "확인됨",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "거래 없음",
-    "noMoreOperations" : "다른 작업 없음"
+    "noMoreTransactions" : "다른 트랜잭션 없음"
   },
   "selectableAccountsList" : {
     "deselectAll" : "모두 선택 취소",
@@ -1698,7 +1767,7 @@
     "sell" : "판매",
     "swap" : "스왑",
     "manage" : "관리",
-    "lastOperations" : "마지막 거래",
+    "lastTransactions" : "마지막 트랜잭션",
     "emptyState" : {
       "title" : "아직 암호화폐가 없나요?",
       "desc" : "<1><0>{{managerAppName}}</0></1> 앱이 설치되어 있는지 확인하고 수령하세요",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "NFT 수령",
       "howTo" : "NFT를 추가하려면 <1>{{currency}} 주소</1>를 사용하여 <0>수령</0>해야 합니다."
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "아직 트랜잭션 내역이 없습니다.",
+        "subtitle" : "{{assetName}} 구매 또는 수령에는 장치가 필요합니다"
+      }
     }
   },
   "accounts" : {
@@ -1829,7 +1904,13 @@
       }
     },
     "noResultsFound" : "발견된 자산 없음",
-    "noResultsDesc" : "철자를 확인하고 재시도하세요"
+    "noResultsDesc" : "철자를 확인하고 재시도하세요",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "+6,000가지 이상 지원",
+        "subtitle" : "Ledger는 6,000가지 이상의 코인과 토큰을 지원합니다"
+      }
+    }
   },
   "distribution" : {
     "header" : "자산 배분",
@@ -2058,13 +2139,15 @@
       "input" : "주소 입력"
     },
     "send" : {
-      "title" : "전송"
+      "title" : "전송",
+      "description" : "암호화폐를 다른 지갑으로 전송합니다"
     },
     "fees" : {
       "title" : "수수료 편집"
     },
     "receive" : {
       "title" : "수령",
+      "description" : "다른 지갑에서 암호화폐를 수령합니다",
       "titleReadOnly" : "미인증 주소",
       "headerTitle" : "암호화폐",
       "titleDevice" : "장치 연결",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "암호화폐가 없습니다",
       "noResultsDesc" : "철자를 확인하고 재시도하세요"
     },
+    "buy" : {
+      "title" : "구매",
+      "description" : "현금으로 암호화폐를 안전하게 구매하세요."
+    },
+    "sell" : {
+      "title" : "판매",
+      "description" : "암호화폐를 안전하게 현금으로 매도하세요."
+    },
     "exchange" : {
       "title" : "매수 / 매도"
     },
     "swap" : {
       "title" : "스왑",
+      "description" : "암호화폐끼리 교환하세요.",
       "selectDevice" : "장치를 선택하세요",
       "broadcasting" : "스왑 브로드캐스팅",
       "loadingFees" : "네트워크 수수료 로딩...",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "암호화폐를 대출",
-      "titleTransferTab" : "대출",
+      "titleTransferTab" : "소득 창출",
+      "descriptionTransferTab" : "불로소득을 올리세요.",
       "actionTitle" : "대출",
       "accountActions" : {
         "approve" : "승인",
@@ -2836,11 +2929,16 @@
     },
     "confirmSwap" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
-      "alert" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
+      "alert" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다."
     },
     "confirmSell" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : "장치에서 매도 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
+    },
+    "confirmFund" : {
+      "title" : "자금 트랜잭션을 확인하세요",
+      "alert" : "장치에서 자금 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
     "button" : {
       "openManager" : "관리자 열기",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "암호화폐 구매",
       "tabTitle" : "구매",
       "selectCurrency" : "통화를 선택하세요",
       "selectAccount" : "계정 선택",
+      "wantToBuy" : "구매하고 싶습니다",
       "connectDevice" : "내 장치 연결하기",
       "title" : "파트너를 통해 암호화폐 구매",
       "coinifyTitle" : "파트너를 통해 암호화폐 구매",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "암호화폐를 판매",
       "tabTitle" : "판매",
       "selectCurrency" : "통화를 선택하세요",
       "selectAccount" : "계정 선택",
+      "wantToSell" : "판매하고 싶습니다",
       "connectDevice" : "내 장치 연결하기",
       "title" : "파트너를 통해 암호화폐 판매",
       "description" : "Coinify를 통해 귀하의 Ledger 계좌에서 암호와 자산을 바로 매도하고 은행 계좌로 명목 화폐를 받아보세요.",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "내역"
+    },
+    "providerList" : {
+      "title" : "공급자를 선택하세요"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "토큰 주소 복사됨 !",
       "tokenId" : "토큰 ID",
       "tokenIdCopied" : "토큰 ID가 복사되었습니다!",
-      "quantity" : "수량"
+      "quantity" : "수량",
+      "attributes" : {
+        "floorPrice" : "가격 하한선"
+      }
     },
     "viewerModal" : {
       "viewOn" : "다음에서 보기:",

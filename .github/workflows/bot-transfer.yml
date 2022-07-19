@@ -48,9 +48,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build

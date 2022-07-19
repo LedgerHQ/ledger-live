@@ -3,7 +3,8 @@
 import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
-import "react-native-gesture-handler";
+// $FlowFixMe
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, {
   Component,
   useCallback,
@@ -14,28 +15,35 @@ import React, {
 import { connect, useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
-  View,
   Text,
   Linking,
   Appearance,
   AppState,
+  Platform,
 } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  getStateFromPath,
+  NavigationContainer,
+} from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import { FeatureToggle } from "@ledgerhq/live-common/lib/featureFlags";
-import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
-import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
-
-import { NftMetadataProvider } from "@ledgerhq/live-common/lib/nft";
-import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { PlatformAppProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
-import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
+import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
+import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
+import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
+import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { GlobalCatalogProvider } from "@ledgerhq/live-common/platform/providers/GlobalCatalogProvider/index";
+import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import {
+  RemoteLiveAppProvider,
+  useRemoteLiveAppContext,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
@@ -61,10 +69,12 @@ import useDBSaveEffect from "./components/DBSave";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
+/* eslint-disable import/named */
 import WalletConnectProvider, {
   // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
+/* eslint-enable import/named */
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";
@@ -90,6 +100,8 @@ import StyleProvider from "./StyleProvider";
 // $FlowFixMe
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
+import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
+import { useFilteredManifests } from "./screens/Platform/shared";
 
 const themes = {
   light: lightTheme,
@@ -183,7 +195,7 @@ function App({ importDataString }: AppProps) {
   });
 
   return (
-    <View style={styles.root}>
+    <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
 
@@ -194,7 +206,7 @@ function App({ importDataString }: AppProps) {
       <FeatureToggle feature="ratings">
         <RatingsModal />
       </FeatureToggle>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -225,7 +237,7 @@ const linkingOptions = {
       Linking.removeEventListener("url", onReceiveURL);
     };
   },
-  prefixes: ["ledgerlive://"],
+  prefixes: ["ledgerlive://", "https://ledger.com"],
   config: {
     screens: {
       [NavigatorName.Base]: {
@@ -236,6 +248,12 @@ const linkingOptions = {
            * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
            */
           [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+          /**
+           * @params ?platform: string
+           * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+           */
+          [ScreenName.PlatformApp]: "discover/:platform",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
             screens: {
@@ -259,22 +277,21 @@ const linkingOptions = {
               [NavigatorName.Market]: {
                 screens: {
                   /**
-                   * @params ?platform: string
-                   * ie: "ledgerlive://discover" will open the catalog
-                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                   * ie: "ledgerlive://market" will open the market screen
                    */
                   [ScreenName.MarketList]: "market",
                 },
               },
               [NavigatorName.Discover]: {
-                screens: {
-                  /**
-                   * @params ?platform: string
-                   * ie: "ledgerlive://discover" will open the catalog
-                   * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
-                   */
-                  [ScreenName.PlatformCatalog]: "discover/:platform?",
-                },
+                screens:
+                  Platform.OS === "ios"
+                    ? {}
+                    : {
+                        /**
+                         * ie: "ledgerlive://discover" will open the catalog
+                         */
+                        [ScreenName.PlatformCatalog]: "discover",
+                      },
               },
               [NavigatorName.Manager]: {
                 screens: {
@@ -319,23 +336,13 @@ const linkingOptions = {
               [ScreenName.SendCoin]: "send",
             },
           },
-          [NavigatorName.ExchangeBuyFlow]: {
-            screens: {
-              /**
-               * @params currency: string
-               * ie: "ledgerlive://buy/bitcoin" -> will redirect to the prefilled search currency in the buy crypto flow
-               */
-              [ScreenName.ExchangeSelectCurrency]: "buy/:currency",
-            },
-          },
           /**
            * ie: "ledgerlive://buy" -> will redirect to the main exchange page
            */
           [NavigatorName.Exchange]: {
             initialRouteName: "buy",
             screens: {
-              [ScreenName.ExchangeBuy]: "buy",
-              [ScreenName.Coinify]: "buy/coinify",
+              [ScreenName.ExchangeBuy]: "buy/:currency?",
             },
           },
           /**
@@ -363,28 +370,82 @@ const linkingOptions = {
   },
 };
 
+const linkingOptionsOnboarding = {
+  ...linkingOptions,
+  config: {
+    screens: {
+      [NavigatorName.Base]: {
+        initialRouteName: NavigatorName.Main,
+        screens: {
+          [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
+        },
+      },
+    },
+  },
+};
+
+const platformManifestFilterParams = {
+  private: true,
+  branches: undefined, // will override & having it to undefined makes all branches valid
+};
+
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
+  const { state: remoteLiveAppState } = useRemoteLiveAppContext();
+  const liveAppProviderInitialized =
+    !!remoteLiveAppState.value || !!remoteLiveAppState.error;
+  const filteredManifests = useFilteredManifests(platformManifestFilterParams);
 
   const linking = useMemo(
     () => ({
-      ...linkingOptions,
-      enabled:
-        hasCompletedOnboarding &&
-        wcContext.initDone &&
-        !wcContext.session.session,
+      ...(hasCompletedOnboarding ? linkingOptions : linkingOptionsOnboarding),
+      enabled: wcContext.initDone && !wcContext.session.session,
+      getStateFromPath: (path, config) => {
+        const url = new URL(`ledgerlive://${path}`);
+        const { hostname, pathname } = url;
+        const platform = pathname.split("/")[1];
+        if (hostname === "discover" && platform) {
+          /**
+           * Upstream validation of "ledgerlive://discover/:platform":
+           *  - checking that a manifest exists
+           *  - adding "name" search param
+           * */
+          if (!liveAppProviderInitialized) {
+            /**
+             * The provider isn't initialized yet so the manifest will possibly
+             * not be found.
+             * We redirect because this scenario happens when deep linking
+             * triggers a cold app start. The platform app screen will show an
+             * error in case the app isn't found.
+             */
+            return getStateFromPath(path, config);
+          }
+          const manifest = filteredManifests.find(
+            m => m.id.toLowerCase() === platform.toLowerCase(),
+          );
+          if (!manifest) return undefined;
+          url.pathname = `/${manifest.id}`;
+          url.searchParams.set("name", manifest.name);
+          return getStateFromPath(url.href?.split("://")[1], config);
+        }
+        return getStateFromPath(path, config);
+      },
     }),
-    [hasCompletedOnboarding, wcContext.initDone, wcContext.session.session],
+    [
+      hasCompletedOnboarding,
+      wcContext.initDone,
+      wcContext.session.session,
+      filteredManifests,
+      liveAppProviderInitialized,
+    ],
   );
 
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) {
-      return;
-    }
+    if (!wcContext.initDone) return;
     setIsReady(true);
   }, [wcContext.initDone]);
 
@@ -440,6 +501,8 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   );
 };
 
+const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
+
 export default class Root extends Component<
   { importDataString?: string },
   { appState: * },
@@ -465,6 +528,8 @@ export default class Root extends Component<
   render() {
     const importDataString = __DEV__ ? this.props.importDataString : "";
 
+    const provider = __DEV__ ? "staging" : "production";
+
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
@@ -474,54 +539,68 @@ export default class Root extends Component<
                 <SetEnvsFromSettings />
                 <HookSentry />
                 <AdjustProvider />
+                <DelayedTrackingProvider />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
-                  <PlatformAppProvider
-                    platformAppsServerURL={
-                      getProvider(__DEV__ ? "staging" : "production").url
-                    }
+                  <RemoteLiveAppProvider
+                    provider={provider}
+                    updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
                   >
-                    <FirebaseRemoteConfigProvider>
-                      <FirebaseFeatureFlagsProvider>
-                        <SafeAreaProvider>
-                          <DeepLinkingNavigator>
-                            <StyledStatusBar />
-                            <NavBarColorHandler />
-                            <AuthPass>
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
-                                  <BridgeSyncProvider>
-                                    <CounterValuesProvider
-                                      initialState={initialCountervalues}
-                                    >
-                                      <ButtonUseTouchable.Provider value={true}>
-                                        <OnboardingContextProvider>
-                                          <ToastProvider>
-                                            <NotificationsProvider>
-                                              <SnackbarContainer />
-                                              <NftMetadataProvider>
-                                                <MarketDataProvider>
-                                                  <App
-                                                    importDataString={
-                                                      importDataString
-                                                    }
-                                                  />
-                                                </MarketDataProvider>
-                                              </NftMetadataProvider>
-                                            </NotificationsProvider>
-                                          </ToastProvider>
-                                        </OnboardingContextProvider>
-                                      </ButtonUseTouchable.Provider>
-                                    </CounterValuesProvider>
-                                  </BridgeSyncProvider>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </AuthPass>
-                          </DeepLinkingNavigator>
-                        </SafeAreaProvider>
-                      </FirebaseFeatureFlagsProvider>
-                    </FirebaseRemoteConfigProvider>
-                  </PlatformAppProvider>
+                    <LocalLiveAppProvider>
+                      <GlobalCatalogProvider
+                        provider={provider}
+                        updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
+                      >
+                        <RampCatalogProvider
+                          provider={provider}
+                          updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
+                        >
+                          <FirebaseRemoteConfigProvider>
+                            <FirebaseFeatureFlagsProvider>
+                              <SafeAreaProvider>
+                                <DeepLinkingNavigator>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+                                  <AuthPass>
+                                    <I18nextProvider i18n={i18n}>
+                                      <LocaleProvider>
+                                        <BridgeSyncProvider>
+                                          <CounterValuesProvider
+                                            initialState={initialCountervalues}
+                                          >
+                                            <ButtonUseTouchable.Provider
+                                              value={true}
+                                            >
+                                              <OnboardingContextProvider>
+                                                <ToastProvider>
+                                                  <NotificationsProvider>
+                                                    <SnackbarContainer />
+                                                    <NftMetadataProvider>
+                                                      <MarketDataProvider>
+                                                        <App
+                                                          importDataString={
+                                                            importDataString
+                                                          }
+                                                        />
+                                                      </MarketDataProvider>
+                                                    </NftMetadataProvider>
+                                                  </NotificationsProvider>
+                                                </ToastProvider>
+                                              </OnboardingContextProvider>
+                                            </ButtonUseTouchable.Provider>
+                                          </CounterValuesProvider>
+                                        </BridgeSyncProvider>
+                                      </LocaleProvider>
+                                    </I18nextProvider>
+                                  </AuthPass>
+                                </DeepLinkingNavigator>
+                              </SafeAreaProvider>
+                            </FirebaseFeatureFlagsProvider>
+                          </FirebaseRemoteConfigProvider>
+                        </RampCatalogProvider>
+                      </GlobalCatalogProvider>
+                    </LocalLiveAppProvider>
+                  </RemoteLiveAppProvider>
                 </WalletConnectProvider>
               </>
             ) : (

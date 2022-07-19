@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - develop
+      - release
+      - hotfix
   pull_request:
   workflow_dispatch:
 
@@ -13,6 +15,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ./.github/workflows/pr-is-fork.yml
+    with:
+      non-pr-result: true
+    secrets:
+      token: ${{ secrets.COMMON_READ_ORG }}
+
   typecheck:
     name: "Ledger Live Desktop TypeCheck"
     env:
@@ -28,23 +38,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-          bundler-cache: true
-      - name: Bump npm to latest
-        run: npm i -g npm
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
@@ -52,30 +47,39 @@ jobs:
           server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx @playwright/test install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
+        run: pnpm build:lld:deps --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: Run code checkers
         run: pnpm desktop test:codecheck
 
+  matrix_prep:
+    needs: [pr-is-fork]
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          if [[ "${{ needs.pr-is-fork.outputs.pr-is-fork }}" == "true" ]]; then
+            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\", \"macos-latest\"]}"
+          else
+            echo "::set-output name=matrix::{\"os\": [\"ubuntu-latest\", \"windows-latest\"]}"
+          fi
+
   test-desktop-app:
     name: "Ledger Live Desktop Tests"
+    needs: [matrix_prep]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
       FORCE_COLOR: 3
       CI_OS: ${{ matrix.os }}
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     strategy:
       fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          # - macos-latest
-          - windows-latest
-
+      matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
     runs-on: ${{ matrix.os }}
     steps:
       - name: format os name
@@ -94,72 +98,58 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.ref || github.ref }}
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-          bundler-cache: true
-      - name: Bump npm to latest
-        run: npm i -g npm
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx @playwright/test install-deps
-      - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
-      - name: Run unit tests [Linux]
-        if: matrix.os == 'ubuntu-latest'
-        run: pnpm desktop test:jest
-      - name: Run playwright tests [Linux => xvfb-run]
-        if: matrix.os == 'ubuntu-latest'
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-        shell: bash
-      - name: Run playwright tests
-        if: matrix.os != 'ubuntu-latest'
-        run: pnpm desktop test:playwright
-        shell: bash
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ledgerhq/ledger-live/tools/actions/upload-images@develop
-        id: imgur
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
         with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
           os: ${{ steps.os.outputs.result }}
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
+
+  test-desktop-app-mac-internal:
+    name: "Ledger Live Desktop Tests (macos-latest)"
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    runs-on: [ledger-live, macos]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "macos-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    steps:
+      - name: format os name
+        id: os
+        uses: actions/github-script@v6
         with:
-          name: images
-          path: images-${{steps.os.outputs.result}}.json
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
+          result-encoding: string
+          script: return "macos"
+      - uses: actions/checkout@v3
         with:
-          name: ${{ format('playwright-results-{0}', matrix.os) }}
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
+          ref: ${{ github.event.inputs.ref || github.ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+      - uses: ./tools/actions/composites/test-desktop
+        id: test-desktop
+        with:
+          os: ${{ steps.os.outputs.result }}
 
   report:
-    needs: [test-desktop-app]
+    needs: [test-desktop-app, test-desktop-app-mac-internal]
     runs-on: ubuntu-latest
     if: ${{ always()  && !cancelled() && github.event.pull_request != '' }}
     steps:
@@ -189,7 +179,7 @@ jobs:
           script: |
             const fs = require("fs");
 
-            const files = ["images-linux", "images-windows"];
+            const files = ["images-linux", "images-windows", "images-macos"];
 
             let result = {};
             for (const file of files) {

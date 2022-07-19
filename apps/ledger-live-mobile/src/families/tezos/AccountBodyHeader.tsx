@@ -2,13 +2,13 @@ import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
-import { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
+import { AccountLike, Account } from "@ledgerhq/live-common/types/index";
 import {
   shortAddressPreview,
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import { useDelegation } from "@ledgerhq/live-common/lib/families/tezos/bakers";
+} from "@ledgerhq/live-common/account/index";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";

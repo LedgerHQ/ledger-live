@@ -1,6 +1,16 @@
 import { keyframes, css, DefaultTheme } from "styled-components";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
+export type screensBreakpoints = "sm" | "md" | "lg" | "xl" | "xxl";
+
+export const breakpoints = {
+  sm: "640px",
+  md: "768px",
+  lg: "1024px",
+  xl: "1280px",
+  xxl: "1536px",
+} as Record<screensBreakpoints, string>;
+
 /* space indexes:
   0, 1, 2, 3, 4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
  */
@@ -256,6 +266,7 @@ declare module "styled-components" {
       palette: ColorPalette;
     };
     fontWeights: Record<string, string>;
+    breakpoints: Record<screensBreakpoints, string>;
     zIndexes: number[];
   }
 }
@@ -300,6 +311,7 @@ const theme: DefaultTheme = {
   overflow,
   transition,
   zIndexes,
+  breakpoints,
 };
 
 export default theme;

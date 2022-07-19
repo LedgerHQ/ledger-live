@@ -4,7 +4,7 @@ on:
     - cron: "0 8-16/2 * * 1-5"
   push:
     branches:
-      - bot-phosphore
+      - support/bot-phosphore
 
 concurrency:
   group: bot-seed6
@@ -48,9 +48,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build
@@ -82,8 +82,3 @@ jobs:
         with:
           name: botreport
           path: libs/ledger-live-common/botreport/
-      - name: Test coverage
-        if: always()
-        run: npx codecov -F bot
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}

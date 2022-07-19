@@ -7,7 +7,7 @@ import {
   areFramesComplete,
   progressOfFrames,
 } from "qrloop";
-import { decode } from "@ledgerhq/live-common/lib/cross";
+import { decode } from "@ledgerhq/live-common/cross";
 
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";

@@ -52,6 +52,10 @@ export type IconBoxProps = {
    */
   Badge?: IconType;
   /**
+   * Color of the background, only applied if no Badge is provided
+   */
+  backgroundColor?: string;
+  /**
    * Color of the border
    */
   borderColor?: string;
@@ -151,6 +155,7 @@ export const IconBox = ({
   size = DEFAULT_BOX_SIZE,
   children,
   borderColor = "neutral.c40",
+  backgroundColor = "transparent",
   badgeColor,
   badgeSize = DEFAULT_BADGE_SIZE,
   variant = "square",
@@ -171,6 +176,7 @@ export const IconBox = ({
           size={size}
           borderColor={borderColor}
           variant={variant}
+          backgroundColor={backgroundColor}
         />
       )}
       {children}

@@ -22,11 +22,10 @@ import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError } from "./formatters";
 import {
   initialState,
-  calculate,
   loadCountervalues,
   inferTrackingPairForAccounts,
 } from "../countervalues/logic";
-import { getPortfolio } from "../portfolio";
+import { getPortfolio } from "../portfolio/v2";
 type Arg = Partial<{
   currency: string;
   family: string;
@@ -119,23 +118,15 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   });
   const period = "month";
 
-  const calc = (c, v, date) =>
-    countervaluesState
-      ? new BigNumber(
-          calculate(countervaluesState, {
-            date,
-            value: v.toNumber(),
-            from: c,
-            to: usd,
-          }) || 0
-        )
-      : new BigNumber(0);
-
-  const portfolio = getPortfolio(allAccountsAfter, period, calc);
-  const totalUSD = countervaluesState
+  const portfolio = countervaluesState
+    ? getPortfolio(allAccountsAfter, period, countervaluesState, usd)
+    : null;
+  const totalUSD = portfolio
     ? formatCurrencyUnit(
         usd.units[0],
-        portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
+        new BigNumber(
+          portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
+        ),
         {
           showCode: true,
         }
@@ -203,12 +194,22 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     );
   }
 
-  const withoutFunds = results
+  const specsWithoutFunds = results.filter(
+    (s) =>
+      !s.fatalError &&
+      ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+        (s.mutations && s.mutations.every((r) => !r.mutation)))
+  );
+
+  const withoutFunds = specsWithoutFunds
     .filter(
       (s) =>
-        !s.fatalError &&
-        ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
-          (s.mutations && s.mutations.every((r) => !r.mutation)))
+        // ignore coin that are backed by testnet that have funds
+        !results.some(
+          (o) =>
+            o.spec.currency.isTestnetFor === s.spec.currency.id &&
+            !specsWithoutFunds.includes(o)
+        )
     )
     .map((s) => s.spec.name);
   const { GITHUB_RUN_ID, GITHUB_WORKFLOW } = process.env;
@@ -333,9 +334,13 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
   body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
 
   if (withoutFunds.length) {
-    body += `> ⚠️ ${
+    const missingFundsWarn = `> ⚠️ ${
       withoutFunds.length
-    } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+    } specs don't have enough funds! (${withoutFunds.join(
+      ", "
+    )}) _(aren't covered by testnet neither)_`;
+    body += missingFundsWarn;
+    slackBody += missingFundsWarn;
   }
 
   body += "<details>\n";
@@ -378,14 +383,25 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     }
 
     if (countervaluesState && r.accountsAfter) {
-      const portfolio = getPortfolio(r.accountsAfter, period, calc);
-      const totalUSD = formatCurrencyUnit(
-        usd.units[0],
-        portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
-        {
-          showCode: true,
-        }
+      const portfolio = getPortfolio(
+        r.accountsAfter,
+        period,
+        countervaluesState,
+        usd
       );
+      const totalUSD = portfolio
+        ? formatCurrencyUnit(
+            usd.units[0],
+            new BigNumber(
+              portfolio.balanceHistory[
+                portfolio.balanceHistory.length - 1
+              ].value
+            ),
+            {
+              showCode: true,
+            }
+          )
+        : "";
       balance += " (" + totalUSD + ")";
     }
 

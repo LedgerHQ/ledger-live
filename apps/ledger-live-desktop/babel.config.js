@@ -1,4 +1,5 @@
 const babelPlugins = require("./babel.plugins");
+const semver = require("semver");
 const electronVersion = require("./package.json").devDependencies.electron;
 
 module.exports = api =>
@@ -9,7 +10,7 @@ module.exports = api =>
             "@babel/preset-env",
             {
               targets: {
-                electron: electronVersion,
+                electron: semver.major(semver.coerce(electronVersion)),
                 node: "current",
               },
               modules: "commonjs",
@@ -17,6 +18,7 @@ module.exports = api =>
           ],
           "@babel/preset-react",
           "@babel/preset-flow",
+          "@babel/preset-typescript",
         ],
         plugins: [
           ...babelPlugins,

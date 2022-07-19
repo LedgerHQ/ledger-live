@@ -12,13 +12,13 @@ import {
   nftsByCollections,
   useNftCollectionMetadata,
   useNftMetadata,
-} from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/nft/index";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/live-common/lib/types";
+import { Account, ProtoNFT } from "@ledgerhq/live-common/types/index";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
-import NftImage from "../../components/Nft/NftImage";
+import NftMedia from "../../components/Nft/NftMedia";
 import Skeleton from "../../components/Skeleton";
 import ChevronIcon from "../../icons/Chevron";
 import LText from "../../components/LText";
@@ -52,10 +52,11 @@ const CollectionRow = memo(
     return (
       <TouchableOpacity style={styles.collectionRow} onPress={goToNftSelection}>
         <View style={styles.nftImageContainer}>
-          <NftImage
+          <NftMedia
             style={styles.nftImage}
-            src={nftMetadata?.media}
+            metadata={nftMetadata}
             status={nftStatus}
+            mediaFormat={"preview"}
           />
         </View>
         <View style={styles.tokenNameContainer}>

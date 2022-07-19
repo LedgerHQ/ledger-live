@@ -26,9 +26,9 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
-          # cache: pnpm
-          # cache-dependency-path: "**/pnpm-lock.yaml"
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
       - name: install dependencies
         run: pnpm i -F "ledger-live"
       - name: enter prerelease mode
@@ -44,6 +44,6 @@ jobs:
       - name: push
         run: |
           git push origin hotfix
-          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" --body "Hotfix ${{ steps.date.outputs.date }}" --base main --head hotfix
+          gh pr create --title ":fire: Hotfix ${{ steps.date.outputs.date }}" -F ./.github/templates/hotfix.md --base main --head hotfix
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -1,13 +1,15 @@
 // @flow
 
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import IconAD from "react-native-vector-icons/dist/AntDesign";
-import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import {
+  isSwapOperationPending,
+  operationStatusList,
+} from "@ledgerhq/live-common/exchange/swap/index";
 import { useTheme } from "@react-navigation/native";
-
-import IconSwap from "../../icons/Swap";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { rgba } from "../../colors";
+import IconSwap from "../../icons/Swap";
 
 export const getStatusColor = (
   status: string,
@@ -16,15 +18,18 @@ export const getStatusColor = (
 ) => {
   let key = "grey";
 
-  if (operationStatusList.pending.includes(status)) {
+  if (isSwapOperationPending(status)) {
     key = status === "onhold" ? "orange" : "live";
   }
+
   if (operationStatusList.finishedOK.includes(status)) {
     key = "green";
   }
+
   if (operationStatusList.finishedKO.includes(status)) {
     key = "alert";
   }
+
   return colorKey ? key : colors[key];
 };
 
@@ -46,7 +51,7 @@ const SwapStatusIndicator = ({
   return (
     <View style={[styles.status, sizeDependantStyles]}>
       <IconSwap color={statusColor} size={small ? 16 : 26} />
-      {operationStatusList.pending.includes(status) ? (
+      {isSwapOperationPending(status) ? (
         <View
           style={[
             styles.pending,

@@ -1,13 +1,13 @@
 import React, { memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import { View, StyleSheet, Platform } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import { ProtoNFT } from "@ledgerhq/live-common/lib/types";
-import { NFTResource } from "@ledgerhq/live-common/lib/nft/NftMetadataProvider/types";
+import { NFTMetadata, ProtoNFT } from "@ledgerhq/live-common/types/index";
+import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { NavigatorName, ScreenName } from "../../const";
 import Skeleton from "../Skeleton";
-import NftImage from "./NftImage";
+import NftMedia from "./NftMedia";
 import LText from "../LText";
 
 type Props = {
@@ -24,7 +24,7 @@ const NftCardView = ({
   nft: ProtoNFT;
   style?: Object;
   status: NFTResource["status"];
-  metadata?: Object;
+  metadata: NFTMetadata;
 }) => {
   const amount = nft?.amount?.toFixed();
   const { colors } = useTheme();
@@ -49,7 +49,12 @@ const NftCardView = ({
           });
         }}
       >
-        <NftImage style={styles.image} src={metadata?.media} status={status} />
+        <NftMedia
+          style={styles.image}
+          metadata={metadata}
+          mediaFormat={"preview"}
+          status={status}
+        />
         <View style={styles.nftNameContainer}>
           <Skeleton style={styles.tokenNameSkeleton} loading={loading}>
             <LText

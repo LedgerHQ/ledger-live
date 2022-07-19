@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { Observable, Subject, from } from "rxjs";
 import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepRunnerModal from "./StepRunnerModal";
 import type { Step } from "./types";
 import type { DeviceNames } from "../../screens/Onboarding/types";

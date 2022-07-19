@@ -1,13 +1,13 @@
 import { log } from "@ledgerhq/logs";
-import { withDevicePolling } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
+import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import { NativeModules } from "react-native";
-import { hasFinalFirmware } from "@ledgerhq/live-common/lib/hw/hasFinalFirmware";
-import { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
-import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
-import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
+import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
+import { FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
+import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 
 import { addBackgroundEvent } from "../src/actions/appstate";
 import { store } from "../src/context/LedgerStore";

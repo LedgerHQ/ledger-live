@@ -1,7 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { Observable, interval, from } from "rxjs";
 import semver from "semver";
-import url from "url";
 import { share, switchMap, filter } from "rxjs/operators";
 import {
   SatStackVersionTooOld,
@@ -37,12 +36,17 @@ export type RPCNodeConfig = {
   password: string;
   tls?: boolean;
 };
+
 export function isValidHost(host: string): boolean {
-  const splits = host.split(":");
-  if (splits.length > 2) return false;
-  // domainToASCII returns "" when a domain is invalid
-  return Boolean(url.domainToASCII(splits[0]));
+  const pattern = new RegExp(
+    "^" + // beginning of url
+      "(((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,})|^[a-z\\d-]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*$"
+  ); // port and path
+  return !!pattern.test(host);
 }
+
 // we would call this only during the user validation of the rpc node configuration
 export function validateRPCNodeConfig(config: RPCNodeConfig): Array<{
   field: string;

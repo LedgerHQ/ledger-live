@@ -11,30 +11,30 @@ import {
 import {
   listSupportedCurrencies,
   getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountBridge,
   getCurrencyBridge,
-} from "@ledgerhq/live-common/lib/bridge";
-import { getEnv, setEnv } from "@ledgerhq/live-common/lib/env";
-import { promiseAllBatched } from "@ledgerhq/live-common/lib/promise";
-import { Account } from "@ledgerhq/live-common/lib/types";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
+} from "@ledgerhq/live-common/bridge/index";
+import { getEnv, setEnv } from "@ledgerhq/live-common/env";
+import { promiseAllBatched } from "@ledgerhq/live-common/promise";
+import { Account } from "@ledgerhq/live-common/types/index";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import {
   autoSignTransaction,
   getImplicitDeviceAction,
-} from "@ledgerhq/live-common/lib/bot/engine";
+} from "@ledgerhq/live-common/bot/engine";
 import {
   createImplicitSpeculos,
   releaseSpeculosDevice,
-} from "@ledgerhq/live-common/lib/load/speculos";
-import { formatOperation } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/load/speculos";
+import { formatOperation } from "@ledgerhq/live-common/account/index";
 import {
   calculate,
   inferTrackingPairForAccounts,
   initialState,
   loadCountervalues,
-} from "@ledgerhq/live-common/lib/countervalues/logic";
+} from "@ledgerhq/live-common/countervalues/logic";
 
 const CONCURRENT = 3;
 

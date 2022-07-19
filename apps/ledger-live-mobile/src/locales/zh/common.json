@@ -80,7 +80,8 @@
     },
     "seeMore" : "查看更多",
     "moreInfo" : "更多信息",
-    "buyEth" : "购买以太坊"
+    "buyEth" : "购买以太坊",
+    "popular" : "热门"
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -641,6 +642,9 @@
     },
     "SolanaTxConfirmationTimeout" : {
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "至少需要 {{amount}} 个 ADA"
     }
   },
   "bluetooth" : {
@@ -648,6 +652,12 @@
     "locationRequiredTitle" : "Bluetooth LE 需要定位",
     "locationRequiredMessage" : "Android 安卓系统需要开启定位许可，从而显示 Bluetooth LE 蓝牙低功耗设备列表。",
     "checkEnabled" : "请在您手机的设置中启用蓝牙。"
+  },
+  "webview" : {
+    "noConnectionError" : {
+      "title" : "无连接",
+      "description" : "您似乎无法访问互联网。请检查您的连接并重试。"
+    }
   },
   "location" : {
     "required" : "需要定位服务",
@@ -795,6 +805,16 @@
         "title" : "加密市场",
         "description" : "在应用程序中查看加密价格和市场趋势",
         "cta" : "浏览"
+      },
+      "manageCard" : {
+        "title" : "隆重推出 CL 卡",
+        "description" : "订购和管理您的由 Ledger 支持的 CL 卡",
+        "cta" : "了解更多"
+      },
+      "discoverWeb3" : {
+        "title" : "探索 Web3",
+        "description" : "在您的设备抵达之前，探索关于 web3 的一切！",
+        "cta" : "发现"
       }
     }
   },
@@ -849,10 +869,49 @@
       "title" : "经核证的安全性",
       "desc" : "我们的产品是经由国家网络安全机构安全认证的唯一硬件钱包。"
     },
-    "title" : "获取您的 LEDGER",
-    "desc" : "以行业领先的安全性保护您的加密货币和 NFT",
+    "title" : "您需要 Ledger 设备",
+    "desc" : "为了保障安全，Ledger Live 只能搭配设备使用。您需要有设备才能继续。",
     "cta" : "立即购买您的 Ledger 设备",
-    "footer" : "我已经有一个设备了，现在就设置吧"
+    "footer" : "我已经有一个设备了，现在就设置吧",
+    "bannerTitle" : "确保您的加密货币和 NFT 安全",
+    "bannerTitle2" : "您需要用 Nano ",
+    "bannerSubtitle" : "来通过 Ledger 设备进行交易",
+    "bannerButtonTitle" : "了解 Nano",
+    "bannerButtonTitle2" : "购买设备",
+    "setupCta" : "我已经有设备，请设置该设备"
+  },
+  "postBuyDeviceSetupNanoWall" : {
+    "title" : "收到您的设备了吗？",
+    "desc" : "收到设备后，您可以立即通过 Ledger Live 开始设置！",
+    "cta" : "设置我的设备",
+    "bannerTitle" : "收到了您的设备？",
+    "bannerCta" : "开始设置",
+    "continue" : "继续"
+  },
+  "purchaseDevice" : {
+    "pageTitle" : "购买设备",
+    "debugDrawers" : {
+      "url" : {
+        "title" : "更新 iframe 网址",
+        "subtitle" : "调试设置",
+        "cta" : "保存"
+      },
+      "message" : {
+        "successTitle" : "交易完成",
+        "errorTitle" : "交易错误",
+        "subtitle" : "收到消息",
+        "type" : "类型：{{type}}",
+        "deviceId" : "设备 ID：{{deviceId}}",
+        "price" : "价格：{{price}}",
+        "currency" : "货币：{{currency}}",
+        "value" : "价值：{{value}}"
+      }
+    }
+  },
+  "postBuyDevice" : {
+    "headerTitle" : "购买成功",
+    "title" : "恭喜",
+    "desc" : "您的订单正在处理中。\n您将很快收到您的 Ledger。请查收您的电子邮件以确认订单。"
   },
   "discover" : {
     "title" : "发现",
@@ -870,6 +929,10 @@
       "earn" : {
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
+      },
+      "mint": {
+        "title": "铸造",
+        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
       }
     },
     "comingSoon" : "敬请期待",
@@ -877,8 +940,8 @@
   },
   "onboarding" : {
     "stepWelcome" : {
-      "title" : "最安全的加密货币和 NFT 钱包",
-      "subtitle" : "在 Ledger Live 上安全地管理、购买和增长您的加密货币和 NFT。",
+      "title" : "欢迎使用 Ledger",
+      "subtitle" : "我们使数字所有权变得安全而简单。",
       "start" : "开始",
       "noDevice" : "没有设备？",
       "buy" : "购买一个 {{fullDeviceName}}",
@@ -887,9 +950,16 @@
       "privacyLink" : "隐私政策",
       "and" : "和"
     },
+    "stepDoYouHaveALedgerDevice" : {
+      "title" : "您拥有 Ledger 设备吗？",
+      "subtitle" : "首要事情",
+      "yes" : "是的，我有",
+      "no" : "还没有"
+    },
     "postWelcomeStep" : {
-      "title" : "开始操作",
-      "subtitle" : "设置您的 Ledger 设备，或现在就购买一个。",
+      "title" : "这是您的选择",
+      "subtitle_yes" : "您可以选择设置您的 Ledger，或者先浏览一下应用程序。",
+      "subtitle_no" : "您可以选择先看看应用程序，或者购买 Nano X 设备",
       "noLedgerLink" : "我没有 Ledger 设备，我想买一个。",
       "setupLedger" : {
         "title" : "设置我的 Ledger 设备",
@@ -897,26 +967,27 @@
       },
       "buyNano" : {
         "title" : "购买 Ledger Nano X",
-        "subtitle" : "您通往 Web3 的钥匙 - 解锁掌控您资产的自由"
+        "subtitle" : "硬件钱包是确保您资产安全的唯一途径 "
       },
       "discoverLedger" : {
         "title" : "探索 Ledger Live",
-        "subtitle" : "浏览应用程序"
+        "subtitle" : "探索应用程序并了解其好处 "
       }
     },
     "discoverLive" : {
+      "exploreWithoutADevice" : "不使用设备探索",
+      "buyALedgerNow" : "立即购买 Ledger 设备",
       "0" : {
-        "title" : "一站式满足您的所有加密货币需求",
-        "desc" : "安全地监控、买入、卖出、互换、增长和管理您的资产并获得最佳的加密见解"
+        "title" : "保护您的所有加密资产。"
       },
       "1" : {
-        "title" : "没有密钥，加密货币就不真正属于您。",
-        "desc" : "使用硬件钱包确保您的资产安全是拥有和保护您的加密资产的最佳和唯一方式"
+        "title" : "时刻留意市场动态。"
       },
       "2" : {
-        "title" : "收回资金控制权",
-        "desc" : "Ledger Nano X 使您的币离线且受到保护。将其与 Ledger Live 应用程序合并使用以获得最大的安全性和对您的加密货币的掌控性",
-        "cta" : "开启您的旅程"
+        "title" : "发现应用程序并了解 web3。"
+      },
+      "3" : {
+        "title" : "保护您的加密货币和 NFT。"
       }
     },
     "stepLanguage" : {
@@ -1464,8 +1535,6 @@
   },
   "learn" : {
     "pageTitle" : "学习",
-    "noConnection" : "无连接",
-    "noConnectionDesc" : "您似乎无法访问互联网。请检查您的连接并重试。",
     "sectionShows" : "显示",
     "sectionVideo" : "视频",
     "sectionPodcast" : "播客",
@@ -1591,7 +1660,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "操作详情",
+    "title" : "交易详情",
     "account" : "账户",
     "date" : "日期",
     "confirmed" : "已确认",
@@ -1657,7 +1726,7 @@
   },
   "operationList" : {
     "noOperations" : "不作操作",
-    "noMoreOperations" : "无其他操作"
+    "noMoreTransactions" : "无其他交易"
   },
   "selectableAccountsList" : {
     "deselectAll" : "取消全选",
@@ -1698,7 +1767,7 @@
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
-    "lastOperations" : "最后操作",
+    "lastTransactions" : "最近交易",
     "emptyState" : {
       "title" : "还没有加密资产？",
       "desc" : "确保已安装了 <1><0>{{managerAppName}}</0></1> 应用程序并开始接收。",
@@ -1801,6 +1870,12 @@
     "nft" : {
       "receiveNft" : "接收 NFT",
       "howTo" : "要添加 NFT，您需要使用您的 <1>{{currency}} 地址</1><0>来接收</0>。"
+    },
+    "readOnly" : {
+      "noTransaction" : {
+        "title" : "您没有任何交易",
+        "subtitle" : "您需要有设备才能买入或接收 {{assetName}}"
+      }
     }
   },
   "accounts" : {
@@ -1829,7 +1904,13 @@
       }
     },
     "noResultsFound" : "未找到资产。",
-    "noResultsDesc" : "请检查拼写后重试。"
+    "noResultsDesc" : "请检查拼写后重试。",
+    "readOnly" : {
+      "moreCrypto" : {
+        "title" : "+ 其他 6000 多种",
+        "subtitle" : "Ledger 支持 6000 多种币和代币"
+      }
+    }
   },
   "distribution" : {
     "header" : "资产配置",
@@ -2058,13 +2139,15 @@
       "input" : "输入地址"
     },
     "send" : {
-      "title" : "发送"
+      "title" : "发送",
+      "description" : "将加密货币发送到另一个钱包。"
     },
     "fees" : {
       "title" : "编辑费用"
     },
     "receive" : {
       "title" : "接收",
+      "description" : "从另一个钱包接收加密货币。",
       "titleReadOnly" : "未经验证的地址",
       "headerTitle" : "加密资产",
       "titleDevice" : "连接设备",
@@ -2091,11 +2174,20 @@
       "noResultsFound" : "未找到加密资产",
       "noResultsDesc" : "请检查拼写后重试。"
     },
+    "buy" : {
+      "title" : "买入",
+      "description" : "用现金安全购买加密货币。"
+    },
+    "sell" : {
+      "title" : "卖出",
+      "description" : "安全出售加密货币以换取现金。"
+    },
     "exchange" : {
       "title" : "买入 / 卖出"
     },
     "swap" : {
       "title" : "互换",
+      "description" : "将加密货币兑换成加密货币。",
       "selectDevice" : "选择您的设备",
       "broadcasting" : "正在播送互换交易",
       "loadingFees" : "正在加载网络费用...",
@@ -2312,7 +2404,8 @@
     },
     "lending" : {
       "title" : "借出加密货币",
-      "titleTransferTab" : "借出",
+      "titleTransferTab" : "赚取",
+      "descriptionTransferTab" : "赚取被动收入。",
       "actionTitle" : "借出",
       "accountActions" : {
         "approve" : "批准",
@@ -2836,11 +2929,16 @@
     },
     "confirmSwap" : {
       "title" : "在设备上确认互换操作",
-      "alert" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
+      "alert" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+      "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>"
     },
     "confirmSell" : {
       "title" : "在设备上确认卖出操作",
       "alert" : "发送之前请验证卖出详情。地址会被安全地交换因此您不必对其进行验证。"
+    },
+    "confirmFund" : {
+      "title" : "确认资金交易",
+      "alert" : "发送资金之前，请先在您的设备上核实资金详情。地址会安全交换，因此您无需进行核实。"
     },
     "button" : {
       "openManager" : "打开 Manager（管理器）",
@@ -4045,9 +4143,11 @@
   },
   "exchange" : {
     "buy" : {
+      "screenTitle" : "买入加密货币",
       "tabTitle" : "买入",
       "selectCurrency" : "选择一种货币",
       "selectAccount" : "选择账户",
+      "wantToBuy" : "我想买入",
       "connectDevice" : "连接您的设备",
       "title" : "通过我们的合作伙伴买入加密货币",
       "coinifyTitle" : "通过我们的合作伙伴买入加密货币",
@@ -4071,9 +4171,11 @@
       }
     },
     "sell" : {
+      "screenTitle" : "卖出加密货币",
       "tabTitle" : "卖出",
       "selectCurrency" : "选择一种货币",
       "selectAccount" : "选择账户",
+      "wantToSell" : "我想卖出",
       "connectDevice" : "连接您的设备",
       "title" : "通过我们的合作伙伴卖出加密资产",
       "description" : "直接从您的 Ledger 账户通过 Coinify 卖出加密资产，并在您的银行账户中接收 FIAT 法币。",
@@ -4086,6 +4188,9 @@
     },
     "history" : {
       "tabTitle" : "历史记录"
+    },
+    "providerList" : {
+      "title" : "选择提供商"
     }
   },
   "banner" : {
@@ -4283,7 +4388,10 @@
       "tokenContractCopied" : "代币地址已复制！",
       "tokenId" : "代币 ID",
       "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "底价"
+      }
     },
     "viewerModal" : {
       "viewOn" : "查看",

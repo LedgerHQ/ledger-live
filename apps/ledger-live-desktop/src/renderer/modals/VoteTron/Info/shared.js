@@ -1,6 +1,6 @@
 // @flow
 import React, { useContext } from "react";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 
 export type Props = {
   name?: string,

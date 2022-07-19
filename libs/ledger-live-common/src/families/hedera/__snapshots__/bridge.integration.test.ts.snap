@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `Array []`;
+
+exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `Array []`;

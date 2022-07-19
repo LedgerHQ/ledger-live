@@ -4,16 +4,20 @@ import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import {
+  filterRampCatalogEntries,
+  getAllSupportedCryptoCurrencyIds,
+} from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 
 import {
   AccountLike,
   Account,
   CryptoCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import { Icons } from "@ledgerhq/native-ui";
-import { isCurrencySupported } from "../screens/Exchange/coinifyConfig";
 
 import {
   readOnlyModeEnabledSelector,
@@ -24,25 +28,19 @@ import { NavigatorName, ScreenName } from "../const";
 import FabAccountButtonBar, { ActionButton } from "./FabAccountButtonBar";
 import useActions from "../screens/Account/hooks/useActions";
 
-type Props = {
-  account?: AccountLike;
-  parentAccount?: Account;
-  currency?: CryptoCurrency;
-  accounts?: AccountLike[];
-};
-
 type FabAccountActionsProps = {
   account: AccountLike;
   parentAccount?: Account;
 };
 
 const iconBuy = Icons.PlusMedium;
+const iconSell = Icons.MinusMedium;
 const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
 
-export const FabAccountActionsComponent = ({
+export const FabAccountActionsComponent: React.FC<FabAccountActionsProps> = ({
   account,
   parentAccount,
 }: FabAccountActionsProps) => {
@@ -57,7 +55,25 @@ export const FabAccountActionsComponent = ({
     swapSelectableCurrencies.includes(currency.id) && account.balance.gt(0);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const canBeBought = isCurrencySupported(currency, "buy");
+  const rampCatalog = useRampCatalog();
+
+  const [canBeBought, canBeSold] = useMemo(() => {
+    if (!rampCatalog.value || !currency) {
+      return [false, false];
+    }
+
+    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
+      rampCatalog.value.onRamp,
+    );
+    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
+      rampCatalog.value.offRamp,
+    );
+
+    return [
+      allBuyableCryptoCurrencyIds.includes(currency.id),
+      allSellableCryptoCurrencyIds.includes(currency.id),
+    ];
+  }, [rampCatalog.value, currency]);
 
   const actionButtonSwap: ActionButton = {
     navigationParams: [
@@ -82,9 +98,8 @@ export const FabAccountActionsComponent = ({
       {
         screen: ScreenName.ExchangeBuy,
         params: {
-          accountId: account.id,
-          // mode: "buy",
-          parentId: parentAccount && parentAccount.id,
+          defaultCurrencyId: currency && currency.id,
+          defaultAccountId: account && account.id,
         },
       },
     ],
@@ -96,9 +111,29 @@ export const FabAccountActionsComponent = ({
     },
   };
 
+  const actionButtonSell: ActionButton = {
+    navigationParams: [
+      NavigatorName.Exchange,
+      {
+        screen: ScreenName.ExchangeSell,
+        params: {
+          defaultCurrencyId: currency && currency.id,
+          defaultAccountId: account && account.id,
+        },
+      },
+    ],
+    label: t("account.sell"),
+    Icon: iconSell,
+    event: "Sell Crypto Account Button",
+    eventProperties: {
+      currencyName: currency.name,
+    },
+  };
+
   const allActions: ActionButton[] = [
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
+    ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...useActions({ account, parentAccount, colors }),
   ];
 
@@ -111,7 +146,18 @@ export const FabAccountActionsComponent = ({
   );
 };
 
-const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
+type Props = {
+  account?: AccountLike;
+  parentAccount?: Account;
+  currency?: CryptoCurrency;
+  accounts?: AccountLike[];
+};
+
+const FabMarketActionsComponent: React.FC<Props> = ({
+  currency,
+  accounts,
+  ...props
+}) => {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -126,9 +172,27 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
   const availableOnSwap =
     currency && swapSelectableCurrencies.includes(currency.id);
 
-  const canBeBought = currency && isCurrencySupported(currency, "buy");
+  const rampCatalog = useRampCatalog();
 
-  const actions: ActionButton[] = useMemo(
+  const [canBeBought, canBeSold] = useMemo(() => {
+    if (!rampCatalog.value || !currency) {
+      return [false, false];
+    }
+
+    const onRampProviders = filterRampCatalogEntries(rampCatalog.value.onRamp, {
+      tickers: [currency.ticker],
+    });
+    const offRampProviders = filterRampCatalogEntries(
+      rampCatalog.value.offRamp,
+      {
+        tickers: [currency.ticker],
+      },
+    );
+
+    return [onRampProviders.length > 0, offRampProviders.length > 0];
+  }, [rampCatalog.value, currency]);
+
+  const actions = useMemo<ActionButton[]>(
     () => [
       ...(canBeBought
         ? [
@@ -140,7 +204,33 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
                 NavigatorName.Exchange,
                 {
                   screen: ScreenName.ExchangeBuy,
-                  params: { currencyId: currency?.id, defaultAccount },
+                  params: {
+                    defaultTicker:
+                      currency &&
+                      currency.ticker &&
+                      currency.ticker.toUpperCase(),
+                  },
+                },
+              ],
+            },
+          ]
+        : []),
+      ...(canBeSold
+        ? [
+            {
+              event: "TransferExchange",
+              label: t("exchange.sell.tabTitle"),
+              Icon: iconSell,
+              navigationParams: [
+                NavigatorName.Exchange,
+                {
+                  screen: ScreenName.ExchangeSell,
+                  params: {
+                    defaultTicker:
+                      currency &&
+                      currency.ticker &&
+                      currency.ticker.toUpperCase(),
+                  },
                 },
               ],
             },
@@ -217,6 +307,7 @@ const FabMarketActionsComponent = ({ currency, accounts, ...props }: Props) => {
     [
       availableOnSwap,
       canBeBought,
+      canBeSold,
       currency,
       defaultAccount,
       hasAccounts,
@@ -232,13 +323,15 @@ type FabActionsProps = {
   areAccountsEmpty?: boolean;
 };
 
-const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
+const FabActions: React.FC<FabActionsProps> = ({
+  areAccountsEmpty = false,
+}) => {
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
   const hasAccounts = accountsCount > 0;
 
-  const actions: ActionButton[] = useMemo(() => {
+  const actions = useMemo<ActionButton[]>(() => {
     const actionButtonBuy: ActionButton = {
       event: "TransferExchange",
       label: t("exchange.buy.tabTitle"),
@@ -247,6 +340,18 @@ const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
         NavigatorName.Exchange,
         {
           screen: ScreenName.ExchangeBuy,
+        },
+      ],
+    };
+
+    const actionButtonSell: ActionButton = {
+      event: "TransferExchange",
+      label: t("exchange.sell.tabTitle"),
+      Icon: iconSell,
+      navigationParams: [
+        NavigatorName.Exchange,
+        {
+          screen: ScreenName.ExchangeSell,
         },
       ],
     };
@@ -293,6 +398,7 @@ const FabActions = ({ areAccountsEmpty = false }: FabActionsProps) => {
         ? [actionButtonTransferSwap]
         : []),
       actionButtonBuy,
+      actionButtonSell,
       ...(hasAccounts && !readOnlyModeEnabled
         ? [actionButtonTransferReceive, actionButtonTransferSend]
         : []),
@@ -306,4 +412,4 @@ export const FabAccountActions = memo(FabAccountActionsComponent);
 
 export const FabMarketActions = memo(FabMarketActionsComponent);
 
-export default memo<Props>(FabActions);
+export default memo(FabActions);

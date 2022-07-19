@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "../../analytics";
+import { track, TrackScreen, updateIdentify } from "../../analytics";
 import useRatings from "../../logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
@@ -35,6 +35,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
+    updateIdentify();
   }, [
     setStep,
     handleSatisfied,
@@ -54,6 +55,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       ratingsFeatureParams?.conditions?.disappointed_delay,
       { satisfaction: "disappointed" },
     );
+    updateIdentify();
   }, [
     setStep,
     ratingsHappyMoment?.route_name,
