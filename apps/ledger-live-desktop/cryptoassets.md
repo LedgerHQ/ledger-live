@@ -109,7 +109,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10097)
+## Tokens (10098)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -9852,6 +9852,7 @@
 | Tron | UPELT | TDyNdZD4UdpSZvk1yPAzghBv7KMktu2QSd | UPVOTEELITEMEMBERSHIP | delisted, countervalues disabled | tron/trc10/1002036 |
 | Tron | URUN | TSfjkVSKJGW4aybDQcxi4bpythU7WCXV3v | URUNIT | delisted, countervalues disabled | tron/trc10/1000096 |
 | Tron | USD | TXLivevusxZUuzS3cUyczryRCjd4f3FRqk | USD | delisted, countervalues disabled | tron/trc10/1000016 |
+| Tron | USDC | TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 | USD Coin |  | tron/trc20/TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 |
 | Tron | USDA | TVJ3JLWC9yQvUWKWqzVsyGLvATGiz3tsoH | USDA | delisted, countervalues disabled | tron/trc10/1002808 |
 | Tron | USDB | TEshuqjp4EV9W5T16WgjNL6BbnBhQwL91T | USDB | delisted, countervalues disabled | tron/trc10/1002205 |
 | Tron | USDM | TWijmkvquZi81YtPfjexRfZAx1wpzrnXMY | USDM | delisted, countervalues disabled | tron/trc10/1002587 |
