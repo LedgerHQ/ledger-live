@@ -7,7 +7,14 @@ import {
 } from "@ledgerhq/cryptoassets";
 const directDep = {};
 const reverseDep = {};
+
+// whitelist dependencies
+export const whitelistDependencies = ["Decred", "Decred Testnet", "Zcash"];
+
 export function declareDep(name: string, dep: string) {
+  if (whitelistDependencies.includes(name)) {
+    return;
+  }
   directDep[name] = (directDep[name] || []).concat(dep);
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
@@ -25,8 +32,6 @@ listCryptoCurrencies(true, true).forEach((a) => {
     declareDep(a.managerAppName + " Test", dep.managerAppName);
   }
 });
-// whitelist dependencies
-export const whitelistDependencies = ["Decred", "Decred Testnet"];
 
 // extra dependencies
 [
