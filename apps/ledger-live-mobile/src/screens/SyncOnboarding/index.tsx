@@ -69,12 +69,17 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
     () => [
       {
         key: CompanionStepKey.Paired,
-        title: "Nano paired",
+        title: "Nano is paired",
         status: "inactive",
+        renderBody: () => (
+          <Text variant="bodyLineHeight">
+            {`Continue setting up on your Nano and look back here for step by step assistance.`}
+          </Text>
+        ),
       },
       {
         key: CompanionStepKey.Pin,
-        title: "Set your PIN",
+        title: "Choose your PIN",
         status: "inactive",
         estimatedTime: 120,
         renderBody: () => (
@@ -91,7 +96,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.Seed,
-        title: "Recovery phrase",
+        title: "Set your secret recovery phrase",
         status: "inactive",
         estimatedTime: 300,
         renderBody: () => (
@@ -102,7 +107,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.SoftwareCheck,
-        title: "Software check",
+        title: "Operating system check",
         status: "inactive",
         renderBody: (isDisplayed?: boolean) => (
           <SoftwareChecksStep
@@ -208,6 +213,8 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
         break;
       case DeviceOnboardingStep.WelcomeScreen:
       case DeviceOnboardingStep.SetupChoice:
+        setCompanionStepKey(CompanionStepKey.Paired);
+        break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
         break;
