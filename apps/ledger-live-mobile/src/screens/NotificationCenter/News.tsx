@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, SectionList, RefreshControl, View } from "react-native";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
@@ -9,7 +9,6 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import FormatDate from "../../components/FormatDate";
 import NewsRow from "./NewsRow";
-import PromptNotification from "../../modals/PromptNotification";
 
 const viewabilityConfig = {
   viewAreaCoveragePercentThreshold: 95,
@@ -42,16 +41,6 @@ export default function NotificationCenter() {
       title: d.day,
     }),
   );
-
-  const [isModalOpened, setIsModalOpened] = useState(false);
-
-  const onModalClose = useCallback(() => {
-    setIsModalOpened(false);
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => setIsModalOpened(true), 3000);
-  }, []);
 
   return (
     <>
@@ -124,11 +113,6 @@ export default function NotificationCenter() {
             </Text>
           </Flex>
         }
-      />
-      <PromptNotification
-        isOpen={isModalOpened}
-        onClose={onModalClose}
-        type="generic"
       />
     </>
   );

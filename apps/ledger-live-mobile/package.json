@@ -86,6 +86,7 @@
     "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/netinfo": "^6.0.1",
     "@react-native-firebase/app": "^14.3.1",
+    "@react-native-firebase/messaging": "^14.5.1",
     "@react-native-firebase/remote-config": "^14.3.1",
     "@react-native-masked-view/masked-view": "^0.2.6",
     "@react-navigation/bottom-tabs": "^6.0.9",

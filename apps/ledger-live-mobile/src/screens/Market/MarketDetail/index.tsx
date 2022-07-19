@@ -37,6 +37,7 @@ import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../components/TabBar/TabBarSafeAreaView";
 import { usePreviousRouteName } from "../../../helpers/routeHooks";
+import useNotifications from "../../../logic/notifications";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
   <Button
@@ -61,8 +62,7 @@ function MarketDetail({
   const dispatch = useDispatch();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
-
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  const { triggerMarketPushNotificationModal } = useNotifications();
 
   const {
     selectedCoinData: currency,
@@ -106,7 +106,7 @@ function MarketDetail({
     const action = isStarred ? removeStarredMarketCoins : addStarredMarketCoins;
     dispatch(action(currencyId));
 
-    if (!isStarred) setIsModalOpened(true);
+    if (!isStarred) triggerMarketPushNotificationModal();
   }, [dispatch, isStarred, currencyId]);
 
   const { range } = chartRequestParams;
@@ -171,10 +171,6 @@ function MarketDetail({
   }, [readOnlyModeEnabled, previousRoute]);
 
   const [hoveredItem, setHoverItem] = useState<any>(null);
-
-  const onModalClose = useCallback(() => {
-    setIsModalOpened(false);
-  }, []);
 
   return (
     <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>

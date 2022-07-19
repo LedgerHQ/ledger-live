@@ -33,6 +33,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.68.2)
   - Firebase/CoreOnly (8.15.0):
     - FirebaseCore (= 8.15.0)
+  - Firebase/Messaging (8.15.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 8.15.0)
   - Firebase/RemoteConfig (8.15.0):
     - Firebase/CoreOnly
     - FirebaseRemoteConfig (~> 8.15.0)
@@ -52,6 +55,15 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
+  - FirebaseMessaging (8.15.0):
+    - FirebaseCore (~> 8.0)
+    - FirebaseInstallations (~> 8.0)
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Reachability (~> 7.7)
+    - GoogleUtilities/UserDefaults (~> 7.7)
+    - nanopb (~> 2.30908.0)
   - FirebaseRemoteConfig (8.15.0):
     - FirebaseABTesting (~> 8.0)
     - FirebaseCore (~> 8.0)
@@ -125,11 +137,21 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.7.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
   - GoogleUtilities/Environment (7.7.0):
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.7.0):
     - GoogleUtilities/Environment
+  - GoogleUtilities/Network (7.7.0):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (7.7.0)"
+  - GoogleUtilities/Reachability (7.7.0):
+    - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - hermes-engine (0.11.0)
@@ -514,6 +536,10 @@ PODS:
   - RNFBApp (14.9.3):
     - Firebase/CoreOnly (= 8.15.0)
     - React-Core
+  - RNFBMessaging (14.11.1):
+    - Firebase/Messaging (= 8.15.0)
+    - React-Core
+    - RNFBApp
   - RNFBRemoteConfig (14.9.3):
     - Firebase/RemoteConfig (= 8.15.0)
     - React-Core
@@ -680,6 +706,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.6_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-masked-view/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-fast-image`)"
   - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@14.9.3_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@14.11.1_ljhxmmg6zhnbalfqtji2e6aebm/node_modules/@react-native-firebase/messaging`)"
   - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.9.3_ljhxmmg6zhnbalfqtji2e6aebm/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.5.0_mk7ksnag22facomrynqrp7v6gy/node_modules/react-native-gesture-handler`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
@@ -705,6 +732,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseInstallations
+    - FirebaseMessaging
     - FirebaseRemoteConfig
     - Flipper
     - Flipper-Boost-iOSX
@@ -860,7 +888,9 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.5.11_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.9.3_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.9.3_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-firebase/app"
+  RNFBMessaging:
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@14.11.1_ljhxmmg6zhnbalfqtji2e6aebm/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
     :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.9.3_ljhxmmg6zhnbalfqtji2e6aebm/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
@@ -909,6 +939,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
+  FirebaseMessaging: 5e5118a2383b3531e730d974680954c679ca0a13
   FirebaseRemoteConfig: 2d6e2cfdb49af79535c8af8a80a4a5009038ec2b
   Flipper: 26fc4b7382499f1281eb8cb921e5c3ad6de91fe0
   Flipper-Boost-iOSX: fd1e2b8cbef7e662a122412d7ac5f5bea715403c
@@ -983,6 +1014,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFBApp: b6276fc67748c7174275cace56776f0228ae58b2
+  RNFBMessaging: 3e2682ea5e15fe86da24d16d16019395a881f33c
   RNFBRemoteConfig: e2ab6deecf08a4f7d41274425163ddfdc6ae268a
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f

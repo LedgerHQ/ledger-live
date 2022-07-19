@@ -75,13 +75,15 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
-      <SettingsCard
-        title={t("settings.notifications.title")}
-        desc={t("settings.notifications.desc")}
-        Icon={Icons.NotificationsMedium}
-        onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
-        arrowRight
-      />
+      <FeatureToggle feature="pushNotifications">
+        <SettingsCard
+          title={t("settings.notifications.title")}
+          desc={t("settings.notifications.desc")}
+          Icon={Icons.NotificationsMedium}
+          onClick={() => navigation.navigate(ScreenName.NotificationsSettings)}
+          arrowRight
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.help.title")}
         desc={t("settings.help.desc")}
