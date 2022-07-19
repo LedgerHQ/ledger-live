@@ -20,6 +20,7 @@ const ConfirmUnverified = ({
 }: Props) => {
   const route = useRoute();
   const [doNotRemindUserAgain, setDoNotRemindUserAgain] = useState(false);
+  const lastRoute = usePreviousRouteName();
   const toggleDoNotRemindUserAgain = useCallback(() => {
     track("button_clicked", {
       button: "Do not remind me",
@@ -55,7 +56,7 @@ const ConfirmUnverified = ({
         category="ReceiveFunds"
         name="No Verification Confirmation"
         type="drawer"
-        source={usePreviousRouteName()}
+        source={lastRoute}
       />
       <Text
         variant="h4"

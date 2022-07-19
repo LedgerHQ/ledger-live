@@ -20,6 +20,7 @@ type Props = {
 
 const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
   const route = useRoute();
+  const lastRoute = usePreviousRouteName();
 
   const onDontVerify = useCallback(() => {
     track("button_clicked", {
@@ -43,7 +44,7 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
       <TrackScreen
         category="ReceiveFunds"
         name="Verification Security Disclaimer"
-        source={usePreviousRouteName()}
+        source={lastRoute}
         type="drawer"
       />
       <Text
