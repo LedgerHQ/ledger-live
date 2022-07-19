@@ -140,7 +140,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/json-bignumber": "^1.1.0",
-    "@ledgerhq/live-app-sdk": "github:LedgerHQ/live-app-sdk#adding-token-support",
+    "@ledgerhq/live-app-sdk": "^0.7.0",
     "@ledgerhq/logs": "workspace:^",
     "@polkadot/types": "8.5.1",
     "@polkadot/types-known": "8.5.1",
