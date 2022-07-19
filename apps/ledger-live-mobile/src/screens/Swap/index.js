@@ -21,8 +21,8 @@ import type {
 import type {
   CryptoCurrency,
   TokenCurrency,
-  TransactionStatus,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
+import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";

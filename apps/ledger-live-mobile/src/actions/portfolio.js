@@ -1,10 +1,10 @@
 // @flow
 import { useSelector } from "react-redux";
+import type { AccountLike } from "@ledgerhq/types-live";
 import type {
-  AccountLike,
   TokenCurrency,
   CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-cryptoassets";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
   usePortfolio as usePortfolioCommon,

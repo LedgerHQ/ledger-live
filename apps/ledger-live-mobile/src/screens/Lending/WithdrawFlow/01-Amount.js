@@ -5,7 +5,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
-import type { TokenCurrency } from "@ledgerhq/live-common/types/index";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   findCompoundToken,
   formatCurrencyUnit,

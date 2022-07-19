@@ -3,7 +3,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
 import LText from "../../components/LText";
 import Space from "../../components/Space";

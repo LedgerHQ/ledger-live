@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { isUpToDateSelector } from "../../reducers/accounts";

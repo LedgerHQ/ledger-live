@@ -2,10 +2,8 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
-import type {
-  CryptoCurrency,
-  AccountLike,
-} from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike } from "@ledgerhq/types-live";
 import {
   useCurrenciesByMarketcap,
   findCryptoCurrencyById,
