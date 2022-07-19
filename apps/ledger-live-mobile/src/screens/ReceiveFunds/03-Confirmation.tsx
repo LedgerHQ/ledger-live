@@ -31,6 +31,7 @@ import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
+import PreventNativeBack from "../../components/PreventNativeBack";
 
 type Props = {
   account?: (TokenAccount | Account),
@@ -153,6 +154,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   return (
     <Flex flex={1} mb={9}>
+      <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
         <TrackScreen category="ReceiveFunds" name="Receive Qr Code" source={lastRoute} currency={currency.name} />
         <Flex p={6} alignItems="center" justifyContent="center">
