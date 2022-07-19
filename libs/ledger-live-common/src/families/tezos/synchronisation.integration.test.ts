@@ -4,7 +4,7 @@ import { fetchAllTransactions } from "./synchronisation";
 jest.setTimeout(2 * 60 * 1000);
 
 describe("TEZOS_MAX_TX_QUERIES", () => {
-  const bigAccount = "tz1cgQAQfECg5bPASYTMyJ9QJQjSUi8rfL67";
+  const bigAccount = "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7";
   test("default have more than 100 txs", async () => {
     const txs = await fetchAllTransactions(bigAccount);
     expect(txs.length).toBeGreaterThan(100);
