@@ -95,13 +95,10 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       );
     }
     case "UNDELEGATE": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
-
+      const { validators: undelegations } = extra;
+      if (!undelegations || undelegations.length <= 0) return null;
       const validator = extra.validators[0];
-
       const formattedValidator = validators.find(v => v.validatorAddress === validator.address);
-
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
 
       ret = (
