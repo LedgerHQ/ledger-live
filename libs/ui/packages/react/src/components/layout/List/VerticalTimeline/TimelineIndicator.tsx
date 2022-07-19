@@ -9,21 +9,20 @@ import { Theme } from "src/styles/theme";
 const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
   height: 20px;
   border-width: ${(p) => (p.hidden ? 0 : 1)}px;
-  border-style: solid;
+  border-style: dashed;
   border-color: ${(p) =>
     p.status === "inactive" ? p.theme.colors.neutral.c50 : p.theme.colors.primary.c80};
-  background: ${(p) =>
-    p.status === "inactive" ? p.theme.colors.neutral.c50 : p.theme.colors.primary.c80};
+  background: ${(p) => p.status !== "inactive" && p.theme.colors.primary.c80};
+  margin-top: ${(p) => p.status === "inactive" && "2px"};
 `;
 
 const BottomSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
   flex: 1;
   border-width: ${(p) => (p.hidden ? 0 : 1)}px;
-  border-style: solid;
+  border-style: dashed;
   border-color: ${(p) =>
     p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c50};
-  background: ${(p) =>
-    p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c50};
+  background: ${(p) => p.status === "completed" && p.theme.colors.primary.c80};
 `;
 
 const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {

@@ -108,7 +108,7 @@ const Template = () => {
       setCurrentIndex(currentIndex + 1);
       setItems(newItems);
     }, 1000);
-  }, [items]);
+  }, [items, currentIndex]);
 
   return (
     <Flex width={300}>

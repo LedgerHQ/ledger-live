@@ -40,6 +40,7 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
+  width: 404px;
   border-radius: ${(p) => p.theme.radii[2]}px;
   background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
@@ -55,7 +56,7 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         isLastItem={isLastItem}
         mr={4}
       />
-      <Container status={item.status} isLastItem={isLastItem} mb={4}>
+      <Container status={item.status} isLastItem={isLastItem} mb={4} flexDirection="column">
         <Text
           variant="body"
           color={
@@ -64,11 +65,8 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         >
           {item.title}
         </Text>
-        {item.renderBody && (
+        {item.renderBody && item.status === "active" && (
           <Flex position="relative">
-            <Flex pt={6} position="absolute" opacity={0}>
-              {item.renderBody(false)}
-            </Flex>
             <Flex pt={6}>{item.renderBody(item.status === "active")}</Flex>
           </Flex>
         )}
