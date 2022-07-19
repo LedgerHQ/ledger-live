@@ -18,9 +18,9 @@ const GenuineCheckCancelledDrawer = ({ isOpen, onRetry, onSkip }: Props) => (
   <BottomDrawer isOpen={isOpen} preventBackdropClick noCloseButton>
     <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
       <BoxedIcon
-        Icon={<ShieldCheckMedium color="primary.c90" size={24} />}
+        Icon={<ShieldCheckMedium color="warning.c100" size={24} />}
         variant="circle"
-        backgroundColor="primary.c30"
+        backgroundColor="warning.c30"
         borderColor="transparent"
         size={48}
       />
