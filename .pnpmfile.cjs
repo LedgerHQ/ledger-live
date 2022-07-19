@@ -112,6 +112,7 @@ function readPackage(pkg, context) {
       // Crashes ios build if removed /!\
       addDependencies("react-native", {
         mkdirp: "*",
+        yargs: "*",
       }),
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
