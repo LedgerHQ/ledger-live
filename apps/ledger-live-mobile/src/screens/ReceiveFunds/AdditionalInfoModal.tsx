@@ -13,6 +13,7 @@ type Props = {
 
 const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
   const route = useRoute();
+  const lastRoute = usePreviousRouteName();
 
   const onUnderstood = useCallback(() => {
     track("button_clicked", {
@@ -37,7 +38,7 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
       <TrackScreen
         category="ReceiveFunds"
         name="Explication Account Import/Creation"
-        source={usePreviousRouteName()}
+        source={lastRoute}
         type="drawer"
       />
       <Text
