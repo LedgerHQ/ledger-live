@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.0.0-next.2
+
+### Patch Changes
+
+- [#486](https://github.com/LedgerHQ/ledger-live/pull/486) [`345706e24`](https://github.com/LedgerHQ/ledger-live/commit/345706e24e91ba4c397d4a6ffc1b2b174a0ddc84) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Countervalues API - updated pairs method to use new GET format
+
 ## 25.0.0-next.1
 
 ### Minor Changes
