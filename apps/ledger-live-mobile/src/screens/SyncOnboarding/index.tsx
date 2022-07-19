@@ -47,8 +47,8 @@ type Props = StackScreenProps<
 
 const pollingPeriodMs = 1000;
 const pollingTimeoutMs = 60000;
-const readyRedirectDelay = 1000;
-const resyncDelay = 2000;
+const readyRedirectDelay = 2500;
+const resyncDelay = 10000;
 
 /* eslint-disable no-unused-vars */
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
@@ -103,7 +103,7 @@ export const SyncOnboarding = ({ navigation, route }: Props) => {
       },
       {
         key: CompanionStepKey.Seed,
-        title: "Set your secret recovery phrase",
+        title: "Set your recovery phrase",
         status: "inactive",
         estimatedTime: 300,
         renderBody: () => (
