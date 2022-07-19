@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 25.0.0-next.2
+
+### Patch Changes
+
+- [#486](https://github.com/LedgerHQ/ledger-live/pull/486) [`345706e24`](https://github.com/LedgerHQ/ledger-live/commit/345706e24e91ba4c397d4a6ffc1b2b174a0ddc84) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLC - Countervalues API - updated pairs method to use new GET format
+
+## 25.0.0-next.1
+
+### Minor Changes
+
+- [#471](https://github.com/LedgerHQ/ledger-live/pull/471) [`03da88df2`](https://github.com/LedgerHQ/ledger-live/commit/03da88df2f9c06c054081dcbf34226cb440809c0) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support of Stellar assets (tokens)
+
+### Patch Changes
+
+- Updated dependencies [[`03da88df2`](https://github.com/LedgerHQ/ledger-live/commit/03da88df2f9c06c054081dcbf34226cb440809c0)]:
+  - @ledgerhq/cryptoassets@6.30.0-next.1
+  - @ledgerhq/hw-app-eth@6.29.2-next.1
+
 ## 25.0.0-next.0
 
 ### Major Changes
