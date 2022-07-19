@@ -18,9 +18,11 @@ import {
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
+import invariant from "invariant";
 
 import { JSONRPCRequest } from "json-rpc-2.0";
 
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -551,6 +553,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
       try {
         const account = accounts.find(account => account.id === accountId);
+        invariant(account, "account not found");
         formattedMessage = prepareMessageToSign(account, message);
       } catch (error) {
         return Promise.reject(error);
@@ -570,7 +573,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             },
           },
           onClose: () => {
-            reject(new Error("Signature aborted by user"));
+            reject(new UserRefusedOnDevice());
           },
         });
       });
