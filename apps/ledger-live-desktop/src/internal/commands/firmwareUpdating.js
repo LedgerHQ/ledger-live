@@ -18,4 +18,6 @@ const cmd = ({ deviceId }: Input): Observable<Result> =>
     () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
   );
 
+cmd.inferSentryTransaction = () => ({});
+
 export default cmd;

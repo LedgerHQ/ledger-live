@@ -38,9 +38,11 @@ const excludedErrorName = [
   "Network Error",
   "NetworkDown",
   "NotConnectedError",
+  // timeouts
   "TimeoutError",
   "WebsocketConnectionError",
   "TronTransactionExpired", // user waits too long on device, possibly network slowness too
+  "SolanaTxConfirmationTimeout",
   // bad usage of device
   "BleError",
   "EthAppPleaseEnableContractData",
@@ -55,6 +57,9 @@ const excludedErrorName = [
   // other
   "InvalidAddressError",
   "SwapNoAvailableProviders",
+  "AccountNeedResync",
+  "DeviceAppVerifyNotSupported",
+  "AccountAwaitingSendPendingOperations",
 ];
 const excludedErrorDescription = [
   // networking
@@ -66,6 +71,7 @@ const excludedErrorDescription = [
   // base usage of device
   /Device .* was disconnected/,
   "Invalid channel",
+  /Ledger Device is busy/,
   // others
   "Transaction signing request was rejected by the user",
   "Transaction approval request was rejected",
