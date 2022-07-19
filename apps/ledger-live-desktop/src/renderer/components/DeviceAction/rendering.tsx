@@ -52,7 +52,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
-import { Flex, Log } from "@ledgerhq/react-ui"
+import { Flex, Log, ProgressLoader } from "@ledgerhq/react-ui"
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 export const AnimationWrapper = styled.div`
@@ -339,17 +339,20 @@ export const InstallingApp = ({
 export const renderInstallingLanguage = withV3StyleProvider(({
   progress,
   t
-}: {  progress: number,
+}: {
+  progress: number,
   t: TFunction
 }) => {
+  const cleanProgress = Math.round(progress * 100);
+
   return (
-    <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
-      <ProgressWrapper>        
-        <ProgressCircle size={58} progress={progress} />        
+    <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column" >
+      <ProgressWrapper>
+        <ProgressLoader progress={cleanProgress} />
       </ProgressWrapper>
-        <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
-          {t("deviceLocalization.installingLanguage")}
-        </Log> 
+      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={30}>
+        {t("deviceLocalization.installingLanguage")}
+      </Log> 
     </Flex>
   );
 });
