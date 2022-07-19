@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.1.1-nightly.0
+
+### Patch Changes
+
+- [#627](https://github.com/LedgerHQ/ledger-live/pull/627) [`2de4b99c0`](https://github.com/LedgerHQ/ledger-live/commit/2de4b99c0c36766474d5ea037615f9f69942e905) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix undefined xpub bug and the field "hash" to "id" migration bug
+
 ## 24.1.0
 
 ### Minor Changes

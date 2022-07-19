@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 22.1.0-nightly.0
+
+### Minor Changes
+
+- [#676](https://github.com/LedgerHQ/ledger-live/pull/676) [`55bcd848d`](https://github.com/LedgerHQ/ledger-live/commit/55bcd848d60f70f8152537e20faa24158fefbda9) Thanks [@LFBarreto](https://github.com/LFBarreto)! - CLI - add solana to list of supported currencies
+
+### Patch Changes
+
+- Updated dependencies [[`2de4b99c0`](https://github.com/LedgerHQ/ledger-live/commit/2de4b99c0c36766474d5ea037615f9f69942e905)]:
+  - @ledgerhq/live-common@24.1.1-nightly.0
+
 ## 22.0.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/react-ui
 
+## 0.8.1-nightly.1
+
+### Patch Changes
+
+- [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`e0516e387`](https://github.com/LedgerHQ/ledger-live/commit/e0516e3877fbbef458ec4da9e06bd9d7db09d0ee) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix background color of Popin & Drawer components
+
+* [#667](https://github.com/LedgerHQ/ledger-live/pull/667) [`3be077f54`](https://github.com/LedgerHQ/ledger-live/commit/3be077f547cce51d8640a13fd37583d7782ab8a2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix overlay color of Popin component
+
 ## 0.8.1-nightly.0
 
 ### Patch Changes
