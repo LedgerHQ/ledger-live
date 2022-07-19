@@ -173,7 +173,7 @@ export default function WebPlatformPlayer({ manifest, onClose, inputs, config }:
     ({ accountId, message }: { accountId: string; message: string }) => {
       return signMessageLogic({ manifest, dispatch, accounts }, accountId, message);
     },
-    [accounts, dispatch],
+    [accounts, dispatch, manifest],
   );
 
   const handlers = useMemo(
