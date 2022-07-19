@@ -58,7 +58,7 @@ export default function AssetBalanceSummaryHeader({
   const history = useHistory();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const cvUnit = counterValue.units[0];
   const data = useMemo(

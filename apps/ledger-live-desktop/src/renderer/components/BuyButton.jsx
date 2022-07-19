@@ -18,7 +18,7 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency, account: A
   const dispatch = useDispatch();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const onClick = useCallback(() => {
     dispatch(closeAllModal());

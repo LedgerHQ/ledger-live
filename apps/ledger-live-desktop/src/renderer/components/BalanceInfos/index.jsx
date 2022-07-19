@@ -111,7 +111,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   const history = useHistory();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");

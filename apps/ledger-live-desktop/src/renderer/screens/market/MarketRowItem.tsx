@@ -68,7 +68,7 @@ function MarketRowItem({
   const dispatch = useDispatch();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   const openAddAccounts = useCallback(() => {
     if (currency)

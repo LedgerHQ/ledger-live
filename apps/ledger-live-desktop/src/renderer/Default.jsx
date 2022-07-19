@@ -143,7 +143,7 @@ export default function Default() {
   useUSBTroubleshooting();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   useProviders(); // prefetch data from swap providers here
 

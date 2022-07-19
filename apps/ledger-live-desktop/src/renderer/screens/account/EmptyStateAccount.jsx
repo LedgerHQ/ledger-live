@@ -52,7 +52,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
   const rampCatalog = useRampCatalog();
 
   // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptx_smart_routing");
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   // eslint-disable-next-line no-unused-vars
   const [availableOnBuy, availableOnSell] = useMemo(() => {
