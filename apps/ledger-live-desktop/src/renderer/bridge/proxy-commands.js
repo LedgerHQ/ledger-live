@@ -33,6 +33,7 @@ import {
   formatOperation,
   formatAccount,
 } from "@ledgerhq/live-common/account/index";
+import { startSpan } from "@ledgerhq/live-common/performance";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { toScanAccountEventRaw } from "@ledgerhq/live-common/bridge/index";
 import * as bridgeImpl from "@ledgerhq/live-common/bridge/impl";
@@ -41,6 +42,9 @@ const cmdCurrencyPreload = ({ currencyId }: { currencyId: string }): Observable<
   const currency = getCryptoCurrencyById(currencyId);
   return from(bridgeImpl.getCurrencyBridge(currency).preload(currency));
 };
+cmdCurrencyPreload.inferSentryTransaction = ({ currencyId }) => ({
+  tags: { currencyId },
+});
 
 const cmdCurrencyScanAccounts = (o: {
   currencyId: string,
@@ -57,6 +61,9 @@ const cmdCurrencyScanAccounts = (o: {
     })
     .pipe(map(toScanAccountEventRaw));
 };
+cmdCurrencyScanAccounts.inferSentryTransaction = ({ currencyId }) => ({
+  tags: { currencyId },
+});
 
 const cmdAccountReceive = (o: {
   account: AccountRaw,
@@ -84,16 +91,24 @@ const cmdAccountSync = (o: {
   syncConfig: SyncConfig,
 }): Observable<AccountRaw> => {
   accountsCache[o.account.id] = o.account;
+  const span = startSpan("sync", "fromAccountRaw");
   const account = fromAccountRaw(o.account);
+  span.finish();
   const bridge = bridgeImpl.getAccountBridge(account, null);
   return bridge.sync(account, o.syncConfig).pipe(
     map(f => {
+      const span = startSpan("sync", "toAccountRaw");
       const fromCache = accountsCache[o.account.id];
       const latestAccount = fromCache === o.account ? account : fromAccountRaw(fromCache);
-      return toAccountRaw(f(latestAccount));
+      const r = toAccountRaw(f(latestAccount));
+      span.finish();
+      return r;
     }),
   );
 };
+cmdAccountSync.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountPrepareTransaction = (o: {
   account: AccountRaw,
@@ -140,6 +155,9 @@ const cmdAccountSignOperation = (o: {
     }),
   );
 };
+cmdAccountSignOperation.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountBroadcast = (o: {
   account: AccountRaw,
@@ -158,6 +176,9 @@ const cmdAccountBroadcast = (o: {
     }),
   );
 };
+cmdAccountBroadcast.inferSentryTransaction = ({ account }) => ({
+  tags: { currencyId: account.currencyId },
+});
 
 const cmdAccountEstimateMaxSpendable = (o: {
   account: AccountRawLike,

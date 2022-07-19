@@ -1,4 +1,3 @@
-// @flow
 import React, { useMemo, memo, useCallback } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
 import { SwitchTransition, Transition } from "react-transition-group";

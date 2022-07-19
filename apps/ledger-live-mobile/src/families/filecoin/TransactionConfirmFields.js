@@ -20,7 +20,7 @@ const FilecoinField = ({
   transaction,
   field,
 }: {
-  transaction: Transaction,
+  transaction: *,
   field: DeviceTransactionField,
 }) => {
   invariant(transaction.family === "filecoin", "filecoin transaction");

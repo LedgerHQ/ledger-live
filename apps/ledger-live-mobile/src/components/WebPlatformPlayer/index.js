@@ -520,7 +520,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               feesStrategy,
             },
             device,
-            onResult: (result: { operation?: Operation, error?: Error }) => {
+            onResult: (result: { operation?: any, error?: Error }) => {
               if (result.error) {
                 tracking.platformStartExchangeFail(manifest);
                 reject(result.error);
