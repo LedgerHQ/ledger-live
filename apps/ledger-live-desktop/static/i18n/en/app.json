@@ -2004,6 +2004,13 @@
       }
     }
   },
+  "cardano": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Total balance doesn't include staking rewards"
+      }
+    }
+  },
   "tron": {
     "voting": {
       "emptyState": {
@@ -4419,6 +4426,12 @@
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
+    },
+    "CardanoMinAmountError": {
+      "title": "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds": {
+      "title": "Please ensure you have enough funds to pay for fees"
     },
     "StellarWrongMemoFormat": {
       "title": "Memo format is wrong"

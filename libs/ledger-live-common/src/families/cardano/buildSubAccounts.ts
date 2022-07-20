@@ -83,6 +83,10 @@ const mapTxToTokenAccountOperation = ({
 
       const tokenOperationType = token.amount.lt(0) ? "OUT" : "IN";
       const memo = getMemoFromTx(tx);
+      const extra = {};
+      if (memo) {
+        extra["memo"] = memo;
+      }
       const operation: Operation = {
         accountId: tokenAccountId,
         id: encodeOperationId(tokenAccountId, tx.hash, tokenOperationType),
@@ -102,9 +106,7 @@ const mapTxToTokenAccountOperation = ({
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),
-        extra: {
-          memo,
-        },
+        extra: extra,
         blockHash: undefined,
       };
       operations.push(operation);
