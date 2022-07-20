@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
