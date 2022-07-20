@@ -100,25 +100,18 @@ const useNotifications = () => {
     const navigation = useNavigation();
 
     const getIsNotifEnabled = async () => {
-        console.log("--- HAS PERM ---");
         const authStatus = await messaging().hasPermission();
-        console.log("AUTH STATUS :", authStatus);
-        console.log("AUTHORIZED :", messaging.AuthorizationStatus.AUTHORIZED);
-        console.log("PROVISIONAL :", messaging.AuthorizationStatus.PROVISIONAL);
-        
+
         return authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     };
 
     const listenForNotifications = useCallback(async () => {
-        console.log("LISTEN");
         if (!notificationsToken) {
             const token = await messaging().getToken();
             setNotificationsToken(token);
             messaging().onMessage(async remoteMessage => {
-                console.log("NOTIF FOREGROUND", remoteMessage);
                 if (remoteMessage && remoteMessage.notification) {
-                    console.log("ID :", remoteMessage.messageId);
                     pushToast({
                         id: remoteMessage.messageId,
                         title: remoteMessage.notification.title,
@@ -127,14 +120,13 @@ const useNotifications = () => {
                     });
                 }
             });
+            // Needed to avoid a warning
             messaging().setBackgroundMessageHandler(async remoteMessage => {
-                console.log("NOTIF BACKGROUND", JSON.stringify(remoteMessage));
             });
         }
     }, [notificationsToken]);
 
     const clearNotificationsListeners = useCallback(() => {
-        console.log("CLEAR");
         if (notificationsToken) {
             messaging().deleteToken(notificationsToken);
             setNotificationsToken(undefined);
@@ -144,8 +136,15 @@ const useNotifications = () => {
     const handlePushNotificationsPermission = useCallback(async () => {
         if (Platform.OS === "android") {
             Linking.openSettings();
+        } else {
+            const permission = await messaging().hasPermission();
+
+            if (permission === messaging.AuthorizationStatus.DENIED) {
+                Linking.openSettings();
+            } else if (permission === messaging.AuthorizationStatus.NOT_DETERMINED) {
+                messaging().requestPermission();
+            }
         }
-        messaging().requestPermission();
     }, []);
 
     const setPushNotificationsModalOpenCallback = useCallback(
@@ -155,7 +154,6 @@ const useNotifications = () => {
             dispatch(setNotificationsModalOpen(isModalOpen));
           } else {
             getIsNotifEnabled().then(isNotifEnabled => {
-                console.log("OPEN MODAL", isNotifEnabled, notificationsSettings.allowed);
                 if (!isNotifEnabled || !notificationsSettings.allowed) {
                     dispatch(setNotificationsModalOpen(isModalOpen)); 
                 }
@@ -228,16 +226,14 @@ const useNotifications = () => {
             eventTrigger.route_name === pushNotificationsOldRoute),
         [pushNotificationsOldRoute],
     );
-    
+
     const onRouteChange = useCallback(
         newRoute => {
           if (pushNotificationsEventTriggered?.timeout) {
             clearTimeout(pushNotificationsEventTriggered?.timeout);
           }
     
-          console.log("ON ROUTE CHANGE",JSON.stringify(pushNotificationsDataOfUser, null, 2));
           if (!areConditionsMet()) return;
-          console.log("CONDITIONS MET");
 
           for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
             if (isEventTriggered(eventTrigger, newRoute)) {
