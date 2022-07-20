@@ -9,7 +9,7 @@ import { withTranslation } from "react-i18next";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurrency";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { ModalBody } from "~/renderer/components/Modal";

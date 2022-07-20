@@ -20,7 +20,7 @@ import QRCode from "~/renderer/components/QRCode";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 
 import type { StepProps } from "~/renderer/modals/Receive/Body";
-import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
 
 const QRCodeWrapper = styled.div`
   border: 24px solid white;

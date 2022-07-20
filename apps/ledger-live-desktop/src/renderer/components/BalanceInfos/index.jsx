@@ -2,7 +2,8 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import type { Unit, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";

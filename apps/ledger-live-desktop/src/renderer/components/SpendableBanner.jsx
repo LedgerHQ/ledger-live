@@ -2,7 +2,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import type { Account, AccountLike, Transaction } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { urls } from "~/config/urls";
 
 import Alert from "./Alert";

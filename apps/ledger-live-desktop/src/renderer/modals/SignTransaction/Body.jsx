@@ -8,7 +8,7 @@ import type { TFunction } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { Trans, withTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import type { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";

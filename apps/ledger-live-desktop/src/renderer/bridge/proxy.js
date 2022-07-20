@@ -3,13 +3,8 @@
 
 import { BigNumber } from "bignumber.js";
 import { map, tap } from "rxjs/operators";
-import type {
-  CryptoCurrency,
-  Account,
-  AccountLike,
-  CurrencyBridge,
-  AccountBridge,
-} from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, CurrencyBridge, AccountBridge } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
   fromTransactionRaw,

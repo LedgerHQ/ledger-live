@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike, SignedOperation } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

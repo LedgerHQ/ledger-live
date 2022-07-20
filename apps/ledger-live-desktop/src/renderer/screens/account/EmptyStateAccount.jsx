@@ -6,7 +6,7 @@ import { compose } from "redux";
 import { withTranslation, Trans } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import type { TFunction } from "react-i18next";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 

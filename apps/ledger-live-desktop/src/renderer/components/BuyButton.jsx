@@ -6,7 +6,8 @@ import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import { closeAllModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
-import type { Account, CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";

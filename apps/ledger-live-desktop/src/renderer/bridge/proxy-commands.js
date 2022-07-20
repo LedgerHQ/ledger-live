@@ -8,15 +8,17 @@ import { log } from "@ledgerhq/logs";
 import type {
   AccountRawLike,
   AccountRaw,
-  TransactionStatus,
-  TransactionStatusRaw,
-  TransactionRaw,
   SyncConfig,
   ScanAccountEventRaw,
   SignOperationEventRaw,
   SignedOperationRaw,
   OperationRaw,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/types-live";
+import type {
+  TransactionStatus,
+  TransactionStatusRaw,
+  TransactionRaw,
+} from "@ledgerhq/live-common/generated/types";
 import {
   fromTransactionRaw,
   toTransactionRaw,

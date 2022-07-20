@@ -3,7 +3,7 @@ import { useMemo, useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { OutputSelector } from "reselect";
 import { createSelector } from "reselect";
-import type { Account } from "@ledgerhq/live-common/types/index";
+import type { Account } from "@ledgerhq/types-live";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   flattenSortAccounts,

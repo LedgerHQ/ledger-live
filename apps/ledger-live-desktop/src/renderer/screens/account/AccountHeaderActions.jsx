@@ -9,7 +9,7 @@ import {
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import type { TFunction } from "react-i18next";
 import { Trans, withTranslation } from "react-i18next";
