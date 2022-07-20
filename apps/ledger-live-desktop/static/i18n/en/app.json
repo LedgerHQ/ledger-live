@@ -2711,6 +2711,7 @@
       },
       "notEnoughToDelegate": "You must have at least 25 available AVAX on the P chain to become a delegator.",
       "validatorStake": "Validator Stake",
+      "validatorRemainingStake": "Available",
       "flow": {
         "title": "Delegate",
         "steps": {
@@ -2719,6 +2720,11 @@
           },
           "validator": {
             "title": "Validators"
+          },
+          "endDate": {
+            "title": "End Date",
+            "text": "Select a time for this delegation to end. The end date for this delegation must be between {{minEndDate}} and {{maxEndDate}}.",
+            "label": "Delegation end date"
           },
           "connectDevice": {
             "title": "Device"
@@ -4422,6 +4428,9 @@
     },
     "NotEnoughNftOwned": {
       "title": "You have exceeded the number of available tokens"
+    },
+    "AvalancheInvalidDateTimeError": {
+      "title": "Invalid staking end date selected"
     }
   },
   "cryptoOrg": {

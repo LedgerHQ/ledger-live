@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import type { AvalanchePChainValidator } from "@ledgerhq/live-common/families/avalanchepchain/types";
@@ -63,14 +63,14 @@ function AvalancheValidatorRow({ validator, active, showStake, onClick, unit, cu
         <Box style={{ flexDirection: "row" }}>
           <Box style={{ flexDirection: "column" }}>
             <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
-              {formatCurrencyUnit(unit, new BigNumber(validator.stakeAmount.toString()), {
+              {formatCurrencyUnit(unit, validator.remainingStake, {
                 showCode: true,
               })}
             </Text>
             <Text fontSize={2} textAlign="right">
               <Trans
                 color="palette.text.shade50"
-                i18nKey="avalanchepchain.delegation.validatorStake"
+                i18nKey="avalanchepchain.delegation.validatorRemainingStake"
               />
             </Text>
           </Box>

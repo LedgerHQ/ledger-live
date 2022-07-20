@@ -7,6 +7,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import Input from "~/renderer/components/Input";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
@@ -55,13 +56,8 @@ const StepAmount = ({
 };
 
 export class StepAmountFooter extends PureComponent<StepProps> {
-  onNext = async () => {
-    const { transitionTo } = this.props;
-    transitionTo("connectDevice");
-  };
-
   render() {
-    const { account, parentAccount, status, bridgePending } = this.props;
+    const { account, parentAccount, status, bridgePending, transitionTo } = this.props;
     const { errors } = status;
     if (!account) return null;
 
@@ -78,7 +74,7 @@ export class StepAmountFooter extends PureComponent<StepProps> {
           isLoading={bridgePending}
           primary
           disabled={!canNext}
-          onClick={this.onNext}
+          onClick={() => transitionTo("endDate")}
         >
           <Trans i18nKey="common.continue" isLoading={bridgePending} disabled={!canNext} />
         </Button>

@@ -22,6 +22,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
+import StepEndDate, { StepEndDateFooter } from "./steps/StepEndDate";
 import type { St, StepProps } from "./types";
 
 type OwnProps = {|
@@ -61,6 +62,14 @@ const steps: Array<St> = [
     onBack: ({ transitionTo }: StepProps) => transitionTo("validator"),
     noScroll: true,
     footer: StepAmountFooter,
+  },
+  {
+    id: "endDate",
+    label: <Trans i18nKey="avalanchepchain.delegation.flow.steps.endDate.title" />,
+    component: StepEndDate,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
+    noScroll: true,
+    footer: StepEndDateFooter,
   },
   {
     id: "connectDevice",

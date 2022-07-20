@@ -19,7 +19,6 @@ export default function StepDelegation({
   onUpdateTransaction,
   transaction,
   status,
-  bridgePending,
   error,
   t,
 }: StepProps) {
@@ -31,17 +30,17 @@ export default function StepDelegation({
   const { avalanchePChainResources } = account;
   const delegations = avalanchePChainResources.delegations || [];
 
-  const updateValidator = ({ address, endTime }: { address: string }) => {
+  const updateValidator = ({ address, endTime }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(tx => {
-      return bridge.updateTransaction(transaction, {
+      return bridge.updateTransaction(tx, {
         recipient: address,
         endTime: new BigNumber(endTime),
+        maxEndTime: new BigNumber(endTime),
       });
     });
   };
 
-  //TODO: verify this is correct
   const chosenVoteAccAddr = transaction.recipient;
 
   return (
