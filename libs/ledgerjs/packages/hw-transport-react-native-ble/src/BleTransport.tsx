@@ -89,7 +89,7 @@ class Ble extends Transport {
 
   private onBridgeEvent = (rawEvent) => {
     const { event, type, data } = rawEvent;
-    Ble.log("raw bridge", rawEvent)
+    Ble.log("raw bridge", rawEvent);
     if (event === "task") {
       if (this.queueObserver) {
         if (type === "runComplete") {
@@ -170,10 +170,6 @@ class Ble extends Transport {
     observer: Observer<DescriptorEvent<unknown>>
   ): Subscription => {
     Ble.scanObserver = observer;
-    Ble.globalBridgeEventSubscription = EventEmitter?.addListener(
-      "BleTransport",
-      Ble.onBridgeGlobalEvent
-    );
 
     NativeBle.listen()
       .then(() => {
@@ -217,7 +213,7 @@ class Ble extends Transport {
       "network-down": NetworkDown,
     };
 
-    if (error?.code in mappedErrors)
+    if (error?.code in mappedErrors) 
       return new mappedErrors[error?.code](extras);
     return new TransportError(error?.code, error);
   };
@@ -229,5 +225,11 @@ class Ble extends Transport {
     NativeBle.runner(url);
   };
 }
+
+// Register a listener for `BleTransport` events, iOS won't work without this.
+Ble.globalBridgeEventSubscription = EventEmitter?.addListener(
+  "BleTransport",
+  Ble.onBridgeGlobalEvent
+);
 
 export default Ble;

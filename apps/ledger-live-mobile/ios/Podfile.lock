@@ -777,7 +777,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   BleTransport:
-    :commit: e8614bd7622c181121ba6857da1238ba684ab4d3
+    :commit: c277a47c8b37604175365435d8a6ef1dd62561c3
     :git: https://github.com/LedgerHQ/hw-transport-ios-ble.git
   Bluejay:
     :branch: fail-when-wrong-characteristic-property
@@ -935,7 +935,7 @@ EXTERNAL SOURCES:
   RNVectorIcons:
     :path: "../../../node_modules/.pnpm/react-native-vector-icons@8.1.0/node_modules/react-native-vector-icons"
   storyly-react-native:
-    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.1_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
+    :path: "../../../node_modules/.pnpm/storyly-react-native@1.24.0_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/storyly-react-native"
   TcpSockets:
     :path: "../../../node_modules/.pnpm/react-native-tcp@4.0.0_react-native@0.68.2/node_modules/react-native-tcp"
   Yoga:

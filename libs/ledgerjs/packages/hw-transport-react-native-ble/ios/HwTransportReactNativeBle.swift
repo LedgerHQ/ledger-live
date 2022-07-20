@@ -30,8 +30,6 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         super.init()
         print(BleTransport.shared)
         EventEmitter.sharedInstance.registerEventEmitter(eventEmitter: self)
-        
-        
     }
 
     @objc func observeBluetooth() -> Void {
@@ -97,7 +95,6 @@ class HwTransportReactNativeBle: RCTEventEmitter {
     
     @objc func connect(
         _ uuid: String,
-        serviceUUID: String,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) -> Void {
@@ -110,7 +107,7 @@ class HwTransportReactNativeBle: RCTEventEmitter {
         var consumed = false /// Callbacks can only be called once in rn
 
         DispatchQueue.main.async {
-            BleTransport.shared.connect(toPeripheralID: peripheral){
+            BleTransport.shared.connect(toPeripheralID: peripheral, timeout: .seconds(5)){
                 /// Disconnect callback is called regardless of the original -connect- having resolved already
                 /// we use this to notify exchanges (background or foreground) about the disconnection.
                 if consumed {
