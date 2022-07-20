@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.45.0-next.5
+
+### Minor Changes
+
+- [#104](https://github.com/LedgerHQ/ledger-live/pull/104) [`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add memo capability to hedera coin family.
+
+### Patch Changes
+
+- Updated dependencies [[`6adbe47e2`](https://github.com/LedgerHQ/ledger-live/commit/6adbe47e2d3037a9a53e5a59b4198f265f644bdf)]:
+  - @ledgerhq/live-common@25.0.0-next.4
+
 ## 2.45.0-next.4
 
 ### Minor Changes
