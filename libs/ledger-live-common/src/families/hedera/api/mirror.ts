@@ -136,7 +136,7 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: { consensus_timestamp },
+      extra: {},
       fee,
       hash,
       recipients,

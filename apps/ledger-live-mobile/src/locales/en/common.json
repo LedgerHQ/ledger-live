@@ -4502,5 +4502,15 @@
     "operations": {
       "title": "Transaction history"
     }
+  },
+  "hedera": {
+    "name": "hedera",
+    "createHederaAccountHelp": {
+      "text": "Please refer to this support article for",
+      "link": "how to create a Hedera account"
+    },
+    "currentAddress": {
+      "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    }
   }
 }
