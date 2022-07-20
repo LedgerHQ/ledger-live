@@ -9,7 +9,7 @@ import * as server from "../../utils/serve-dummy-app";
 // Comment out to disable recorder
 // process.env.PWDEBUG = "1";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", manifest: "dummy-live-app" });
 
 let continueTest = false;
 
@@ -21,7 +21,6 @@ test.beforeAll(async ({ request }) => {
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.manifest(port));
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }
@@ -52,8 +51,8 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("catalog.png");
   });
 
-  await test.step("Open Test App", async () => {
-    await discoverPage.openTestApp();
+  await test.step("Launch Test App", async () => {
+    await discoverPage.launchApp();
     await expect.soft(page).toHaveScreenshot("open-test-app.png");
   });
 
@@ -80,7 +79,7 @@ test("Discover", async ({ page }) => {
   });
 
   await test.step("Request Account - select BTC", async () => {
-    await discoverPage.selectAccount();
+    await discoverPage.selectAccount("BTC");
     await expect.soft(page).toHaveScreenshot("live-app-request-account-modal-3.png");
   });
 

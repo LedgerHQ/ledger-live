@@ -1,0 +1,23 @@
+{
+  "id": "ledger-referral-staging",
+  "name": "Ledger-referral-staging",
+  "url": "https://ledger-website-headless-stg.aws.stg.ldg-tech.com/referral-ll",
+  "homepageUrl": "https://ledger-website-headless-stg.aws.stg.ldg-tech.com/referral-ll",
+  "icon": "https://ledger-website-headless-stg.aws.stg.ldg-tech.com/referral-ll/assets/images/referral.png",
+  "platform": "all",
+  "apiVersion": "0.0.1",
+  "manifestVersion": "1",
+  "branch": "stable",
+  "categories": ["buy"],
+  "currencies": ["bitcoin"],
+  "content": {
+    "shortDescription": {
+      "en": "Refer your friends and earn Bitcoin!"
+    },
+    "description": {
+      "en": "Earn $10 worth of Bitcoin for every friend who purchases a Nano!"
+    }
+  },
+  "permissions": [],
+  "domains": ["https://*"]
+}
