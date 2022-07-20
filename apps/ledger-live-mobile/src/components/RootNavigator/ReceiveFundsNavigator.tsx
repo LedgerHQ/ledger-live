@@ -114,7 +114,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          headerLeft: <HeaderBackButton onPress={onConnectDeviceBack} />,
+          headerLeft: () => <HeaderBackButton onPress={onConnectDeviceBack} />,
         }}
       />
       {/* Select / Connect Device */}
