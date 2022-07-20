@@ -116,46 +116,37 @@ class EventEmitter {
         
         while self.queuedEvents.count > 0 && self.isJavaScriptAvailable {
             let event = self.queuedEvents.removeFirst()
-            do {
-                let encodedData = try JSONEncoder().encode(event)
-                let payload = String(data: encodedData, encoding: .utf8)
 
-                let exec: () -> Void = {
-                    if let payload = payload {
-                        self.eventEmitter.sendEvent(withName:Event.parent.rawValue, body: payload)
-                        self.lastEventType = event.type
-                        self.lastEventTime = Date().timeIntervalSince1970
+            let exec: () -> Void = {
+                self.eventEmitter.sendEvent(withName:Event.parent.rawValue, body: event.dictionary)
+                self.lastEventType = event.type
+                self.lastEventTime = Date().timeIntervalSince1970
 
-                        if self.pendingEvent != nil {
-                          self.pendingEvent.cancel()
-                          self.pendingEvent = nil
-                        }
-                    }
-//
+                if self.pendingEvent != nil {
+                  self.pendingEvent.cancel()
+                  self.pendingEvent = nil
                 }
+            }
+            
+            /// There's a scheduled event of the same type, replace it with this one
+            if (self.pendingEvent != nil && self.lastEventType == event.type) {
+                // We know we can replace this with our event, no need to touch the
+                self.pendingEvent.setEventHandler(handler: exec)
+            }
+            /// It's too soon to dispatch another event of the same type
+            else if (self.lastEventTime + Double(self.throttle)/1000) >= Date().timeIntervalSince1970 &&
+                        self.lastEventType == event.type {
+                let offset = Date(timeIntervalSince1970: TimeInterval((self.lastEventTime))).timeIntervalSinceNow
+                let msOffset = Int(offset * 1000) + self.throttle
                 
-                /// There's a scheduled event of the same type, replace it with this one
-                if (self.pendingEvent != nil && self.lastEventType == event.type) {
-                    // We know we can replace this with our event, no need to touch the
-                    self.pendingEvent.setEventHandler(handler: exec)
-                }
-                /// It's too soon to dispatch another event of the same type
-                else if (self.lastEventTime + Double(self.throttle)/1000) >= Date().timeIntervalSince1970 &&
-                            self.lastEventType == event.type {
-                    let offset = Date(timeIntervalSince1970: TimeInterval((self.lastEventTime))).timeIntervalSinceNow
-                    let msOffset = Int(offset * 1000) + self.throttle
-                    
-                    self.pendingEvent = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
-                    self.pendingEvent.schedule(deadline: .now() + .milliseconds(msOffset))
-                    self.pendingEvent.setEventHandler(handler: exec)
-                    self.pendingEvent.resume()
-                }
-                /// All other cases can safely dispatch the event
-                else {
-                    exec()
-                }
-            } catch {
-                print(error)
+                self.pendingEvent = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+                self.pendingEvent.schedule(deadline: .now() + .milliseconds(msOffset))
+                self.pendingEvent.setEventHandler(handler: exec)
+                self.pendingEvent.resume()
+            }
+            /// All other cases can safely dispatch the event
+            else {
+                exec()
             }
         }
         
@@ -166,4 +157,11 @@ class EventEmitter {
     lazy var allEvents: [String] = {
         return ["BleTransport"] // All events can be wrapped through this channel.
     }()
+}
+
+extension Encodable {
+  var dictionary: [String: Any]? {
+    guard let data = try? JSONEncoder().encode(self) else { return nil }
+    return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? [String: Any] }
+  }
 }
