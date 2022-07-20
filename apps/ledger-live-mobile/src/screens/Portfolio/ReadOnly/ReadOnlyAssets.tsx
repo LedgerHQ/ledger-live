@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
 import ReadOnlyAccountRow from "../../Accounts/ReadOnly/ReadOnlyAccountRow";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 
