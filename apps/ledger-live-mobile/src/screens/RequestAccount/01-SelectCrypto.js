@@ -1,15 +1,13 @@
 // @flow
-import React, { useMemo } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
+  Currency,
   CryptoCurrency,
   AccountLike,
 } from "@ledgerhq/live-common/types/index";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
@@ -28,7 +26,7 @@ type Props = {
 };
 
 type RouteParams = {
-  currencies: string[],
+  currencies: Currency[],
   allowAddAccount?: boolean,
   accounts: AccountLike[],
 };
@@ -50,12 +48,7 @@ export default function RequestAccountsSelectCrypto({
   const { colors } = useTheme();
   const { currencies } = route.params;
 
-  const cryptoCurrencies = useMemo(
-    () => currencies.map(findCryptoCurrencyById).filter(Boolean),
-    [currencies],
-  );
-
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
 
   const onPressCurrency = (currency: CryptoCurrency) => {
     navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
@@ -80,7 +73,7 @@ export default function RequestAccountsSelectCrypto({
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="RequestAccounts" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView>
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}

@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 25.0.0-next.3
+
+### Minor Changes
+
+- [#81](https://github.com/LedgerHQ/ledger-live/pull/81) [`76b2825e8`](https://github.com/LedgerHQ/ledger-live/commit/76b2825e84730e9d5a2f7906abd7c00a191de4db) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - feat: add ERC20 token support to the Platform API
+
 ## 25.0.0-next.2
 
 ### Patch Changes

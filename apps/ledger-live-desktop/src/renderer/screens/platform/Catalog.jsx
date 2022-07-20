@@ -11,7 +11,8 @@ import {
   dismissedBannersSelector,
 } from "~/renderer/reducers/settings";
 
-import { filterPlatformApps } from "@ledgerhq/live-common/platform/PlatformAppProvider/helpers";
+import { filterPlatformApps } from "@ledgerhq/live-common/platform/filters";
+import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
@@ -75,7 +76,7 @@ const PlatformCatalog = () => {
     }
 
     return filterPlatformApps(Array.from(manifests.values()), {
-      version: "0.0.1",
+      version: getPlatformVersion(),
       platform: "desktop",
       branches,
     });

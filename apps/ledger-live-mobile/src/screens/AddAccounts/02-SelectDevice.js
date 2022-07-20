@@ -3,11 +3,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
+import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -26,7 +30,7 @@ type Props = {
 };
 
 type RouteParams = {
-  currency: CryptoCurrency,
+  currency: CryptoCurrency | TokenCurrency,
   inline?: boolean,
   returnToSwap?: boolean,
   analyticsPropertyFlow?: string,
@@ -35,6 +39,7 @@ type RouteParams = {
 const action = createAction(connectApp);
 
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+  const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
   const [device, setDevice] = useState<?Device>();
   const dispatch = useDispatch();
@@ -68,11 +73,11 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
 
   useEffect(() => {
     // load ahead of time
-    prepareCurrency(route.params.currency);
-  }, [route.params.currency]);
+    prepareCurrency(
+      isTokenCurrency(currency) ? currency.parentCurrency : currency,
+    );
+  }, [currency]);
 
-  const currency = route.params.currency;
-  const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   return (
     <SafeAreaView
       style={[
@@ -100,10 +105,9 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : currency,
+          currency: isTokenCurrency(currency)
+            ? currency.parentCurrency
+            : currency,
         }}
         onSelectDeviceLink={() => setDevice()}
         analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
