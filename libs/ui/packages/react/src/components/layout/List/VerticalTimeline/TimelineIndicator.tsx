@@ -7,7 +7,7 @@ import { ItemStatus } from "./index";
 import { Theme } from "src/styles/theme";
 
 const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  height: 20px;
+  height: 18px;
   border-width: ${(p) => (p.hidden ? 0 : 1)}px;
   border-style: dashed;
   border-color: ${(p) =>
