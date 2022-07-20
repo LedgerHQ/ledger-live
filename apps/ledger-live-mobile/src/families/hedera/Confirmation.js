@@ -1,9 +1,8 @@
 // @flow
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { of } from "rxjs";
-import { delay } from "rxjs/operators";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
@@ -12,16 +11,16 @@ import type {
   Account,
   TokenAccount,
   AccountLike,
-} from "@ledgerhq/live-common/types/index";
+} from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+} from "@ledgerhq/live-common/lib/account";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
+
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -30,6 +29,7 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import Alert from "../../components/Alert";
 import BottomModal from "../../components/BottomModal";
+import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
@@ -37,14 +37,11 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { urls } from "../../config/urls";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
-import logger from "../../logger";
-import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
-import byFamily from "../../generated/Confirmation";
+
+const forceInset = { bottom: "always" };
 
 type Props = {
   account: ?(TokenAccount | Account),
@@ -67,49 +64,13 @@ type RouteParams = {
 export default function ReceiveConfirmation({ navigation, route }: Props) {
   const { colors, dark } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const [verified, setVerified] = useState(false);
+  const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
   const onModalHide = useRef(() => {});
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
   const [zoom, setZoom] = useState(false);
-  const [allowNavigation, setAllowNavigation] = useState(true);
-  const sub = useRef();
-
-  const { onSuccess, onError } = route.params;
-
-  const verifyOnDevice = useCallback(
-    async (device: Device): Promise<void> => {
-      if (!account) return;
-      const mainAccount = getMainAccount(account, parentAccount);
-
-      sub.current = (mainAccount.id.startsWith("mock")
-        ? // $FlowFixMe
-          of({}).pipe(delay(1000), rejectionOp())
-        : getAccountBridge(mainAccount).receive(mainAccount, {
-            deviceId: device.deviceId,
-            verify: true,
-          })
-      ).subscribe({
-        complete: () => {
-          setVerified(true);
-          setAllowNavigation(true);
-          onSuccess && onSuccess(mainAccount.freshAddress);
-        },
-        error: error => {
-          if (error && error.name !== "UserRefusedAddress") {
-            logger.critical(error);
-          }
-          setError(error);
-          setIsModalOpened(true);
-          setAllowNavigation(true);
-          onError && onError();
-        },
-      });
-    },
-    [account, onError, onSuccess, parentAccount],
-  );
+  const [allowNavigation] = useState(true);
 
   function onRetry(): void {
     if (isModalOpened) {
@@ -154,29 +115,22 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     });
   }, [allowNavigation, colors, navigation]);
 
-  useEffect(() => {
-    const device = route.params.device;
-
-    if (device && !verified) {
-      verifyOnDevice(device);
-    }
-    setAllowNavigation(true);
-  }, [route.params, verified, verifyOnDevice]);
-
   if (!account) return null;
   const { width } = getWindowDimensions();
   const unsafe = !route.params.device?.deviceId;
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = getMainAccount(account, parentAccount);
+  const address =
+    mainAccount.hederaResources?.accountId?.toString() ??
+    mainAccount.freshAddress;
   const currency = getAccountCurrency(account);
-
-  // check for coin specific UI
-  const CustomConfirmation = byFamily[currency.family];
-  if (CustomConfirmation)
-    return <CustomConfirmation {...{ navigation, route }} />;
+  const name = mainAccount.name;
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen
         category="ReceiveFunds"
         name="Confirmation"
@@ -190,7 +144,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <SkipLock />
         </>
       )}
-      <NavigationScrollView style={{ flex: 1 }}>
+      <NavigationScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.root}
+      >
         <View style={styles.container}>
           <Touchable event="QRZoom" onPress={onZoom}>
             {width < 350 ? (
@@ -205,11 +162,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
                   dark ? { backgroundColor: "white" } : {},
                 ]}
               >
-                <QRCode
-                  size={QRSize}
-                  value={mainAccount.freshAddress}
-                  ecl="H"
-                />
+                <QRCode size={QRSize} value={address} ecl="H" />
               </View>
             )}
           </Touchable>
@@ -225,10 +178,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             </LText>
           </View>
           <View style={styles.address}>
-            <DisplayAddress
-              address={mainAccount.freshAddress}
-              verified={verified}
-            />
+            <DisplayAddress address={address} verified={verified} />
           </View>
           {mainAccount.derivationMode === "taproot" ? (
             <View style={styles.taprootWarning}>
@@ -241,74 +191,30 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <View style={styles.copyLink}>
             <CopyLink
               style={styles.copyShare}
-              string={mainAccount.freshAddress}
+              string={address}
               replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
             >
               <Trans i18nKey="transfer.receive.copyAddress" />
             </CopyLink>
             <View style={styles.copyShare}>
-              <ShareLink value={mainAccount.freshAddress}>
+              <ShareLink value={address}>
                 <Trans i18nKey="transfer.receive.shareAddress" />
               </ShareLink>
             </View>
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          {unsafe ? (
-            <Alert type="warning">
+          {/* warning message for unverified address */}
+          {
+            <Alert type="security" mt={4}>
               <Trans
-                i18nKey={
-                  readOnlyModeEnabled
-                    ? "transfer.receive.readOnly.verify"
-                    : "transfer.receive.verifySkipped"
-                }
-                values={{
-                  accountType: mainAccount.currency.managerAppName,
-                }}
+                i18nKey="hedera.currentAddress.messageIfVirtual"
+                values={{ name }}
               />
             </Alert>
-          ) : verified ? (
-            <Alert type="help" learnMoreUrl={urls.verifyTransactionDetails}>
-              <Trans i18nKey="transfer.receive.verified" />
-            </Alert>
-          ) : (
-            <Alert type="help">
-              <Trans
-                i18nKey="transfer.receive.verifyPending"
-                values={{
-                  currencyName: mainAccount.currency.managerAppName,
-                }}
-              />
-            </Alert>
-          )}
+          }
         </View>
       </NavigationScrollView>
-      {verified && (
-        <View
-          style={[
-            styles.footer,
-            {
-              borderTopColor: colors.lightFog,
-              backgroundColor: colors.background,
-            },
-          ]}
-        >
-          <Button
-            event="ReceiveDone"
-            containerStyle={styles.button}
-            onPress={onDone}
-            type="secondary"
-            title={<Trans i18nKey="common.close" />}
-          />
-          <Button
-            event="ReceiveVerifyAgain"
-            containerStyle={styles.bigButton}
-            type="primary"
-            title={<Trans i18nKey="transfer.receive.verifyAgain" />}
-            onPress={onRetry}
-          />
-        </View>
-      )}
       <ReactNativeModal
         isVisible={zoom}
         onBackdropPress={onZoom}
@@ -317,7 +223,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         hideModalContentWhileAnimating
       >
         <View style={[styles.qrZoomWrapper, { backgroundColor: "#FFF" }]}>
-          <QRCode size={width - 66} value={mainAccount.freshAddress} ecl="H" />
+          <QRCode size={width - 66} value={address} ecl="H" />
         </View>
       </ReactNativeModal>
       <BottomModal
@@ -340,8 +246,15 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             </View>
           </View>
         ) : null}
+        <Touchable
+          event="ReceiveClose"
+          style={styles.close}
+          onPress={onModalClose}
+        >
+          <Close color={colors.fog} size={20} />
+        </Touchable>
       </BottomModal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -350,7 +263,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flex: 1,
     paddingHorizontal: 16,
     paddingTop: 24,
     alignItems: "center",
@@ -435,7 +347,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    marginVertical: 8,
+    paddingHorizontal: 8,
     alignItems: "flex-end",
     flexGrow: 1,
   },
@@ -445,12 +357,18 @@ const styles = StyleSheet.create({
   },
   bigButton: {
     flexGrow: 2,
+    marginHorizontal: 8,
   },
   footer: {
     flexDirection: "row",
     marginBottom: 16,
     paddingHorizontal: 8,
     paddingTop: 8,
+  },
+  close: {
+    position: "absolute",
+    right: 10,
+    top: 10,
   },
   learnmore: {
     paddingLeft: 8,

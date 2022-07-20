@@ -167,4 +167,8 @@ export const urls = {
     mint:
       "ledgerlive://discover/lmarket"
   },
+  hedera: {
+    supportArticleLink:
+      "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
+  },
 };
