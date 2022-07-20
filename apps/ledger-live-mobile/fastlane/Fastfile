@@ -270,7 +270,9 @@ platform :ios do
           app_version: package["version"],
           build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
           notify_external_testers: true,
-          reject_build_waiting_for_review: !options[:ci]
+          reject_build_waiting_for_review: !options[:ci],
+          skip_waiting_for_build_processing: false,
+          wait_processing_timeout_duration: 1800, # 30mn
         )
       rescue => e
         raise unless e.message.include? "Another build is in review"
