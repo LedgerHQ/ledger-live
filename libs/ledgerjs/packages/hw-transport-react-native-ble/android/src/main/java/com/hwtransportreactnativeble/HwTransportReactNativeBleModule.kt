@@ -5,13 +5,13 @@ import com.hwtransportreactnativeble.tasks.Queue
 import com.ledger.live.ble.BleManager
 import timber.log.Timber
 
+
 class HwTransportReactNativeBleModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
     private var tag: String = "BleTransport"
     private var onDisconnect: ((Any) -> Void)? = null
 
-    private var context: ReactApplicationContext = reactContext
-    private var bleManager = BleManager.Companion.getInstance(context)
+    private var bleManager = BleManager.Companion.getInstance(reactContext)
     private var eventEmitter = EventEmitter.getInstance(reactContext)
     private var queue: Queue? = null
     private var planted: Boolean = false
