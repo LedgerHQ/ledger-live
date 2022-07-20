@@ -64,6 +64,7 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-20)
 *   [findCompoundToken](#findcompoundtoken)
     *   [Parameters](#parameters-21)
+*   [CryptoCurrencyIds](#cryptocurrencyids)
 
 ### getAbandonSeedAddress
 
@@ -252,6 +253,10 @@ if a given token account is a token that can be used in compound, give the assoc
 *   `token` **any** 
 
 Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+
+### CryptoCurrencyIds
+
+Type: any
 
 ## Maintainance notes
 
