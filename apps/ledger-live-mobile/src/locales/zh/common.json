@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "不再支持这种传统地址格式"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo 格式错误"
-    },
     "SourceHasMultiSign" : {
       "title" : "请禁用多重签名以发送 {{currencyName}}"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "发送到该接收方时需要添加 memo"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis 区块链已经进化，可能无法正确工作。对原有 Stratis 区块链的技术支持，将会持续到 2021 年 10 月 16 日。"
@@ -645,6 +639,41 @@
     },
     "CardanoMinAmountError" : {
       "title" : "至少需要 {{amount}} 个 ADA"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo 格式错误"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "发送到该接收方时需要添加 memo"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "此接收人还没有 {{assetCode}} 的信任额度"
+    },
+    "StellarAssetRequired" : {
+      "title" : "应在添加信任额度之前先选择 Stellar（恒星）资产"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "找不到所选的 Stellar（恒星）资产"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金足够支付交易费用"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "所选费用低于建议费用"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低交易费用为 0.00001 XLM"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "抱歉，资金不足",
+      "description" : "请确保账户内的资金多于新的信任额度"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar（恒星）账户不存在"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "要进行 Stellar（恒星）交易，请禁用多重签名"
     }
   },
   "bluetooth" : {
@@ -930,9 +959,9 @@
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
       },
-      "mint": {
-        "title": "铸造",
-        "desc": "通过 [ L ] Market 市场上的独家合作来铸造 NFT"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1753,6 +1782,13 @@
         "howTo" : "您可以将资产添加到您的 Algorand 账户。",
         "addAsa" : "添加 ASA (资产)",
         "howAsaWorks" : "ASA (资产) 如何运作？"
+      },
+      "stellar" : {
+        "seeMore" : "查看更多资产",
+        "seeLess" : "查看更少资产",
+        "addTokens" : "添加资产",
+        "howTo" : "您可以将资产添加到 Stellar（恒星）账户。",
+        "addAsset" : "添加资产"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1937,12 @@
         "showTokens_plural" : "显示 {{length}} ASA",
         "hideTokens" : "隐藏 ASA",
         "hideTokens_plural" : "隐藏 ASA"
+      },
+      "stellar" : {
+        "showTokens" : "显示 {{length}} 种资产",
+        "showTokens_plural" : "显示 {{length}} 种资产",
+        "hideTokens" : "隐藏资产",
+        "hideTokens_plural" : "隐藏资产"
       }
     },
     "noResultsFound" : "未找到资产。",
@@ -3734,6 +3776,7 @@
     }
   },
   "stellar" : {
+    "token" : "多种资产",
     "memo" : {
       "title" : "Memo",
       "warning" : "当使用 Memo 标签时，请仔细核对接收方的类型。"
@@ -3744,6 +3787,48 @@
       "MEMO_ID" : "Memo ID",
       "MEMO_HASH" : "Memo Hash 标签哈希",
       "MEMO_RETURN" : "Memo 返回"
+    },
+    "fee" : "网络费用",
+    "feeAction" : "更新费用",
+    "recommendedFee" : "建议费用",
+    "recommenndedFeeInfo" : "您仍可以低于建议的费用提交此交易，但交易可能无法完成",
+    "suggested" : "建议",
+    "networkCongestion" : "网络拥塞",
+    "networkCongestionLevel" : {
+      "LOW" : "低",
+      "MEDIUM" : "中",
+      "HIGH" : "高"
+    },
+    "assetCode" : "资产代码",
+    "assetIssuer" : "资产发行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "添加资产",
+        "connectDevice" : "连接设备",
+        "verification" : "验证",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "资产已添加",
+              "description" : "您的 Stellar（恒星）账户中已有 {{token}} 资产。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "已成功添加 {{token}} 资产！",
+              "text" : "您现在可以在 Stellar（恒星）账户上接收和发送 {{token}} 资产了。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能已失败。请在几分钟后查看并在确保您的交易的确没有通过后，才再次重试。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
