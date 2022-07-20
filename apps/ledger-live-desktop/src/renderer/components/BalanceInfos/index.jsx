@@ -15,6 +15,8 @@ import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 type BalanceSinceProps = {
   valueChange: ValueChange,
   totalBalance: number,
@@ -108,12 +110,28 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   const { t } = useTranslation();
   const history = useHistory();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
+
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
-    history.push({
-      pathname: "/exchange",
-    });
-  }, [history]);
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+      });
+    }
+  }, [history, ptxSmartRouting]);
 
   const onSwap = useCallback(() => {
     setTrackingSource("Page Market");
