@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "현재 지원되지 않는 레거시 주소 형식입니다"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "메모 형식이 잘못되었습니다"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratis 블록체인 진화로 더 이상 제대로 작동하지 않을 수 있습니다. 기존 Stratis 블록체인은 2021년 10월 16일까지 지원됩니다."
@@ -645,6 +639,41 @@
     },
     "CardanoMinAmountError" : {
       "title" : "최소 {{amount}} ADA 필요"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "메모 형식이 잘못되었습니다"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "이 수령인은 아직 {{assetCode}}에 대한 트러스트라인(trustline)이 없습니다."
+    },
+    "StellarAssetRequired" : {
+      "title" : "트러스트라인 추가 전 스텔라 자산을 선택해야 합니다."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "선택한 스텔라 자산을 찾을 수 없습니다."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 수수료를 지불할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "권장 수수료 대비 선택 수수료가 낮습니다"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "최소 트랜잭션 수수료는 0.00001 XLM입니다"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 신규 트러스트라인을 추가할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "스텔라 계정이 없습니다"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
   },
   "bluetooth" : {
@@ -930,9 +959,9 @@
         "title" : "소득 창출",
         "desc" : "불로소득을 얻고 암호화폐를 성장시키세요"
       },
-      "mint": {
-        "title": "민팅",
-        "desc": "[ L ] Market 독점 콜라보레이션 NFT 민팅"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -1753,6 +1782,13 @@
         "howTo" : "귀하의 Algorand 계정에 자산을 추가할 수 있습니다.",
         "addAsa" : "ASA(자산) 추가",
         "howAsaWorks" : "ASA(자산)는 어떻게 운영되나요?"
+      },
+      "stellar" : {
+        "seeMore" : "더 많은 자산 보기",
+        "seeLess" : "자산 보기 줄이기",
+        "addTokens" : "자산 추가",
+        "howTo" : "스텔라 계정에 자산을 추가할 수 있습니다.",
+        "addAsset" : "자산 추가"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1937,12 @@
         "showTokens_plural" : "{{length}} ASA 보기",
         "hideTokens" : "ASA 숨기기",
         "hideTokens_plural" : "ASA 숨기기"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}} 자산 표시",
+        "showTokens_plural" : "{{length}} 자산 표시",
+        "hideTokens" : "자산 숨기기",
+        "hideTokens_plural" : "자산 숨기기"
       }
     },
     "noResultsFound" : "발견된 자산 없음",
@@ -3734,6 +3776,7 @@
     }
   },
   "stellar" : {
+    "token" : "자산",
     "memo" : {
       "title" : "메모",
       "warning" : "메모 기능을 사용할 때는 수령인과 메모 유형을 신중하게 확인하세요"
@@ -3744,6 +3787,48 @@
       "MEMO_ID" : "메모 ID",
       "MEMO_HASH" : "메모 해시",
       "MEMO_RETURN" : "메모 반환"
+    },
+    "fee" : "네트워크 수수료",
+    "feeAction" : "수수료 업데이트",
+    "recommendedFee" : "권장 수수료",
+    "recommenndedFeeInfo" : "권장 수수료보다 낮은 수수료로도 여전히 트랜잭션 제출이 가능하지만 거래가 체결되지 않을 수 있습니다.",
+    "suggested" : "추천",
+    "networkCongestion" : "네트워크 혼잡",
+    "networkCongestionLevel" : {
+      "LOW" : "낮음",
+      "MEDIUM" : "Medium",
+      "HIGH" : "높음"
+    },
+    "assetCode" : "자산 코드",
+    "assetIssuer" : "자산 발행인",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "자산 추가",
+        "connectDevice" : "장치 연결",
+        "verification" : "인증",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "자산이 이미 추가되었습니다",
+              "description" : "이미 스텔라 계정에 {{token}} 자산을 보유하고 있습니다."
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}} 자산이 성공적으로 추가되었습니다",
+              "text" : "이제 스텔라 계정에서 {{token}} 자산을 보내고 받을 수 있습니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 트랜잭션이 전송되지 않았는지 몇 분 후 다시 확인하고 재시도하세요."
+          }
+        }
+      }
     }
   },
   "polkadot" : {
