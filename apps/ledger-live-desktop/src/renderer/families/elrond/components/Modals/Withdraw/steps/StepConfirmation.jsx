@@ -4,7 +4,7 @@ import styled, { withTheme } from "styled-components";
 
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -14,7 +14,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import type { StepProps } from "../types";
+import { StepProps } from "../types";
 
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
@@ -28,42 +28,28 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
 `;
 
 function StepConfirmation({
-  account,
-  t,
   optimisticOperation,
   error,
-  theme,
-  device,
   signed,
   transaction,
-  validators,
 }: StepProps & { theme: * }) {
   if (optimisticOperation) {
-    const validator = transaction && transaction.recipient;
-
-    const v = validator && validators.find(({ providers }) => providers.includes(validator));
-
     const amount = `${denominate({
       input: String(transaction.amount),
       showLastNonZeroDecimal: true,
     })} ${constants.egldLabel}`;
 
-    const titleKey = transaction?.mode === "claimRewards" ? "title" : "titleCompound";
-    const textKey = transaction?.mode === "claimRewards" ? "text" : "textCompound";
-
     return (
       <Container>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmed" />
+        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={
-            <Trans i18nKey={`elrond.claimRewards.flow.steps.confirmation.success.${titleKey}`} />
-          }
+          title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.success.title" />}
           description={
             <div>
               <Trans
-                i18nKey={`elrond.claimRewards.flow.steps.confirmation.success.${textKey}`}
-                values={{ amount, validator: v && v.name }}
+                i18nKey="elrond.withdraw.flow.steps.confirmation.success.text"
+                values={{ amount }}
               >
                 <b></b>
               </Trans>
@@ -77,10 +63,10 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmation Error" />
+        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
-            title={<Trans i18nKey="elrond.claimRewards.flow.steps.confirmation.broadcastError" />}
+            title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.broadcastError" />}
           />
         ) : null}
         <ErrorDisplay error={error} withExportLogs={true} />
@@ -92,12 +78,10 @@ function StepConfirmation({
 }
 
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
 }: StepProps) {
@@ -117,7 +101,7 @@ export function StepConfirmationFooter({
         <Button
           primary={true}
           ml={2}
-          event="ClaimRewards Elrond Flow Step 3 View OpD Clicked"
+          event="ClaimRewards Withdraw Flow Step 3 View OpD Clicked"
           onClick={() => {
             onClose();
             if (account && concernedOperation) {
@@ -129,7 +113,7 @@ export function StepConfirmationFooter({
             }
           }}
         >
-          <Trans i18nKey="elrond.claimRewards.flow.steps.confirmation.success.cta" />
+          <Trans i18nKey="elrond.withdraw.flow.steps.confirmation.success.cta" />
         </Button>
       ) : error ? (
         <RetryButton primary ml={2} onClick={onRetry} />

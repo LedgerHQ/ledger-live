@@ -10,19 +10,25 @@ import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../types";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { StepProps } from "../types";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
+const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(() => ({
+  alignItems: "center",
+  grow: true,
+  color: "palette.text.shade100",
+}))`
+  justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
+`;
+
 export default function StepConfirmation({
-  account,
   optimisticOperation,
   error,
-  device,
   signed,
   transaction,
   validators,
@@ -79,21 +85,12 @@ export default function StepConfirmation({
   return null;
 }
 
-const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(() => ({
-  alignItems: "center",
-  grow: true,
-  color: "palette.text.shade100",
-}))`
-  justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
-`;
-
 export function StepConfirmationFooter({
   account,
   parentAccount,
   error,
   onClose,
   onRetry,
-  openModal,
   optimisticOperation,
 }: StepProps) {
   const { t } = useTranslation();

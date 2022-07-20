@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/lib/types";
 
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
 import { UnbondingType } from "~/renderer/families/elrond/types";
@@ -8,8 +8,8 @@ import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Unbonding from "~/renderer/families/elrond/components/Unbondings/components/Unbonding";
 
 type UnbondingsType = {
-  unbondings: Array<UnbondingType>,
-  account: Account,
+  unbondings: Array<UnbondingType>;
+  account: Account;
 };
 
 const Unbondings: FC = (props: UnbondingsType) => {

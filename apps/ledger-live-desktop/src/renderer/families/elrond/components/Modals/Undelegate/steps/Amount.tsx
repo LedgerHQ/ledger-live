@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { StepProps } from "../types";
+import { StepProps } from "../types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -16,8 +16,6 @@ import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator
 
 export default function StepAmount({
   account,
-  transaction,
-  bridgePending,
   onUpdateTransaction,
   status,
   error,
@@ -99,7 +97,6 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   const { t } = useTranslation();
 

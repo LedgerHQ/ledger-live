@@ -1,10 +1,10 @@
-import React, { Fragment, useCallback, useMemo, useState, useEffect } from "react";
+import React, { Fragment, useCallback, useMemo, useState, useEffect, ReactNode } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/lib/types";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -28,7 +28,7 @@ import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
 
 type Props = {
-  account: Account,
+  account: Account;
 };
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -39,7 +39,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 
-const withDelegation = Component => props =>
+const withDelegation = (Component: ReactNode) => (props: any) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
 const Delegation = (props: Props) => {

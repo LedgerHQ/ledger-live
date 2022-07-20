@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
-import type { StepProps } from "../types";
+import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -23,11 +23,8 @@ export default function StepDelegation({
   onUpdateTransaction,
   transaction,
   status,
-  bridgePending,
   error,
   validators,
-  delegations,
-  t,
 }: StepProps) {
   const [initialAmount, setInitialAmount] = useState(BigNumber(0));
   const [value, setValue] = useState(BigNumber(0));
@@ -113,7 +110,6 @@ export function StepDelegationFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;

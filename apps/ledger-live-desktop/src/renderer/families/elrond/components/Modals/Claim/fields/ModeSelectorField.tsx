@@ -24,8 +24,8 @@ export default function ModeSelectorField({
   mode,
   onChange,
 }: {
-  mode: string,
-  onChange: (r: string) => void,
+  mode: string;
+  onChange: (r: string) => void;
 }) {
   return (
     <Box style={{ width: 300 }} alignSelf="center">

@@ -8,9 +8,9 @@ import { DelegationType, ValidatorType } from "~/renderer/families/elrond/types"
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 
 type DelegationsType = {
-  delegations: Array<DelegationType>,
-  validators: Array<ValidatorType>,
-  account: AccountType,
+  delegations: Array<DelegationType>;
+  validators: Array<ValidatorType>;
+  account: AccountType;
 };
 
 const Delegations = ({ delegations, validators, account }: DelegationsType) => {

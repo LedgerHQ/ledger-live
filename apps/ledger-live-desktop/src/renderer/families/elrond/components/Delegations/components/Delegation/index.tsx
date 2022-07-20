@@ -19,15 +19,31 @@ import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
 type RenderDropdownItemType = {
-  isActive: boolean,
+  isActive: boolean;
   item: {
-    key: string,
-    label: string,
-    disabled: boolean,
-    tooltip: ReactNode,
-    show: boolean,
-  },
+    key: string;
+    label: string;
+    disabled: boolean;
+    tooltip: ReactNode;
+    show: boolean;
+  };
 };
+
+const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
+  <Fragment>
+    {item.key === constants.modals.claim && <Divider />}
+
+    <ToolTip content={item.tooltip} containerStyle={{ width: "100%" }}>
+      <DropDownItem disabled={item.disabled} isActive={isActive}>
+        <Box horizontal={true} alignItems="center" justifyContent="center">
+          <Text ff="Inter|SemiBold">
+            <Trans i18nKey={item.label} />
+          </Text>
+        </Box>
+      </DropDownItem>
+    </ToolTip>
+  </Fragment>
+);
 
 const Delegation: FC = ({
   contract,
@@ -145,21 +161,5 @@ const Delegation: FC = ({
     </Wrapper>
   );
 };
-
-const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
-  <Fragment>
-    {item.key === constants.modals.claim && <Divider />}
-
-    <ToolTip content={item.tooltip} containerStyle={{ width: "100%" }}>
-      <DropDownItem disabled={item.disabled} isActive={isActive}>
-        <Box horizontal={true} alignItems="center" justifyContent="center">
-          <Text ff="Inter|SemiBold">
-            <Trans i18nKey={item.label} />
-          </Text>
-        </Box>
-      </DropDownItem>
-    </ToolTip>
-  </Fragment>
-);
 
 export default Delegation;

@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-const TableLine: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const TableLine: ThemedComponent<*> = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   horizontal: true,
@@ -44,7 +44,7 @@ const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs
       : ``}
 `;
 
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis: ThemedComponent<*> = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -52,7 +52,7 @@ const Ellipsis: ThemedComponent<{}> = styled.div`
   white-space: nowrap;
 `;
 
-const Withdraw: ThemedComponent<{}> = styled.div`
+const Withdraw: ThemedComponent<*> = styled.div`
   line-height: 1;
   cursor: pointer;
 `;

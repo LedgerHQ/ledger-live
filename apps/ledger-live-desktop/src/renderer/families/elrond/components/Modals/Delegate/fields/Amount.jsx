@@ -2,10 +2,10 @@ import React, { useMemo, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import type { Account, Unit, TransactionStatus } from "@ledgerhq/live-common/lib/types";
+import { Unit } from "@ledgerhq/live-common/lib/types";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { constants } from "~/renderer/families/elrond/constants";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
@@ -13,6 +13,67 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import { denominate } from "~/renderer/families/elrond/helpers";
+
+
+
+const Availability = styled.div`
+  text-align: right;
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+`;
+
+const InputLeft = styled(Box).attrs(() => ({
+  textAlign: "right",
+  color: "palette.text.shade60",
+  fontSize: 4,
+  justifyContent: "center",
+  horizontal: true,
+  pl: 3,
+}))``;
+
+const InputRight = styled(Box).attrs(() => ({
+  ff: "Inter|Medium",
+  color: "palette.text.shade60",
+  fontSize: 4,
+  justifyContent: "center",
+  horizontal: true,
+}))`
+  padding: ${p => p.theme.space[2]}px;
+`;
+
+const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = styled.button.attrs(
+  () => ({
+    type: "button",
+  }),
+)`
+  background-color: ${p =>
+    p.error
+      ? p.theme.colors.lightRed
+      : p.active
+      ? p.theme.colors.palette.primary.main
+      : p.theme.colors.palette.action.hover};
+  color: ${p =>
+    p.error
+      ? p.theme.colors.alertRed
+      : p.active
+      ? p.theme.colors.palette.primary.contrastText
+      : p.theme.colors.palette.primary.main}!important;
+  border: none;
+  border-radius: 4px;
+  padding: 0px ${p => p.theme.space[2]}px;
+  margin: 0 2.5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  &:hover {
+    filter: contrast(2);
+  }
+`;
+
 
 export default function AmountField({
   amount,
@@ -128,61 +189,3 @@ export default function AmountField({
     </Box>
   );
 }
-
-const Availability = styled.div`
-  text-align: right;
-  display: flex;
-  margin-left: auto;
-  align-items: center;
-`;
-
-const InputLeft = styled(Box).attrs(() => ({
-  textAlign: "right",
-  color: "palette.text.shade60",
-  fontSize: 4,
-  justifyContent: "center",
-  horizontal: true,
-  pl: 3,
-}))``;
-
-const InputRight = styled(Box).attrs(() => ({
-  ff: "Inter|Medium",
-  color: "palette.text.shade60",
-  fontSize: 4,
-  justifyContent: "center",
-  horizontal: true,
-}))`
-  padding: ${p => p.theme.space[2]}px;
-`;
-
-const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = styled.button.attrs(
-  () => ({
-    type: "button",
-  }),
-)`
-  background-color: ${p =>
-    p.error
-      ? p.theme.colors.lightRed
-      : p.active
-      ? p.theme.colors.palette.primary.main
-      : p.theme.colors.palette.action.hover};
-  color: ${p =>
-    p.error
-      ? p.theme.colors.alertRed
-      : p.active
-      ? p.theme.colors.palette.primary.contrastText
-      : p.theme.colors.palette.primary.main}!important;
-  border: none;
-  border-radius: 4px;
-  padding: 0px ${p => p.theme.space[2]}px;
-  margin: 0 2.5px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 200ms ease-out;
-  &:hover {
-    filter: contrast(2);
-  }
-`;

@@ -3,13 +3,14 @@
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
-import type { StepId } from "./types";
+import { StepId } from "./types";
+
 type State = {
-  stepId: StepId,
+  stepId: StepId;
 };
 
 const INITIAL_STATE = {
-  stepId: "withdraw",
+  stepId: "claimRewards",
 };
 
 class ClaimRewardsModal extends PureComponent<{ name: string }, State> {
@@ -38,12 +39,7 @@ class ClaimRewardsModal extends PureComponent<{ name: string }, State> {
             name={name}
             onClose={onClose}
             onChangeStepId={this.handleStepChange}
-            params={{
-              contract: data.contract,
-              account: data.account,
-              amount: data.amount,
-              unbondings: data.unbondings,
-            }}
+            params={data || {}}
           />
         )}
       />

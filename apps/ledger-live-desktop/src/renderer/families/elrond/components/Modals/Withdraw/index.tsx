@@ -3,16 +3,17 @@
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
-import type { StepId } from "./types";
+import { StepId } from "./types";
+
 type State = {
-  stepId: StepId,
+  stepId: StepId;
 };
 
 const INITIAL_STATE = {
-  stepId: "castDelegations",
+  stepId: "withdraw",
 };
 
-class DelegationModal extends PureComponent<{ name: string }, State> {
+class ClaimRewardsModal extends PureComponent<{ name: string }, State> {
   state = INITIAL_STATE;
 
   handleReset = () => this.setState({ ...INITIAL_STATE });
@@ -28,18 +29,22 @@ class DelegationModal extends PureComponent<{ name: string }, State> {
     return (
       <Modal
         name={name}
-        centered={true}
+        centered
         refocusWhenChange={stepId}
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
-        width={550}
         render={({ onClose, data }) => (
           <Body
             stepId={stepId}
             name={name}
             onClose={onClose}
             onChangeStepId={this.handleStepChange}
-            params={data || {}}
+            params={{
+              contract: data.contract,
+              account: data.account,
+              amount: data.amount,
+              unbondings: data.unbondings,
+            }}
           />
         )}
       />
@@ -47,4 +52,4 @@ class DelegationModal extends PureComponent<{ name: string }, State> {
   }
 }
 
-export default DelegationModal;
+export default ClaimRewardsModal;

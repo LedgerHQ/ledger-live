@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
@@ -11,19 +10,13 @@ import { openURL } from "~/renderer/linking";
 import { constants } from "~/renderer/families/elrond/constants";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 
-type Props = {
-  name?: string,
-  account: AccountLike,
-  parentAccount: ?Account,
-};
-
 export default function ElrondEarnRewardsInfoModal({
   name,
   account,
   parentAccount,
   validators,
   delegations,
-}) {
+}: any) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
