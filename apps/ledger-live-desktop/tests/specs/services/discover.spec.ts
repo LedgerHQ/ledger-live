@@ -117,4 +117,5 @@ test("Discover", async ({ page }) => {
   await test.step("Sign Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-output.png");
+  });
 });
