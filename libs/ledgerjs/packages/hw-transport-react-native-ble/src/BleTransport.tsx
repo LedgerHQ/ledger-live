@@ -25,6 +25,7 @@ class Ble extends Transport {
   static scanObserver: Observer<DescriptorEvent<unknown>>;
   static stateObserver: Observer<{ type: string }>;
   static globalBridgeEventSubscription: EventSubscription;
+  static disconnecting = false;
 
   queueObserver: Observer<RunnerEvent> | undefined;
   appStateSubscription: EventSubscription;
@@ -36,7 +37,7 @@ class Ble extends Transport {
 
   static log(...m: string[]): void {
     const tag = "ble-verbose";
-    log(tag, JSON.stringify([...m]));
+    console.log(tag, JSON.stringify([...m]));
   }
 
   constructor(deviceId: string) {
@@ -170,6 +171,10 @@ class Ble extends Transport {
     observer: Observer<DescriptorEvent<unknown>>
   ): Subscription => {
     Ble.scanObserver = observer;
+    Ble.globalBridgeEventSubscription = EventEmitter?.addListener(
+      "BleTransport",
+      Ble.onBridgeGlobalEvent
+    );
 
     NativeBle.listen()
       .then(() => {
@@ -189,8 +194,19 @@ class Ble extends Transport {
     Ble.log("Stop scanning devices");
   };
 
+  close = async (): Promise<void> => {
+    Ble.log("close");
+    await Ble.disconnect();
+    return;
+  };
+
   static disconnect = async (): Promise<boolean> => {
-    console.trace();
+    if (Ble.disconnecting) {
+      Ble.log("already disconnecting, skipping disconnect");
+      return true;
+    }
+
+    Ble.disconnecting = true;
     Ble.log("disconnecting, and removing listeners");
 
     instances.forEach((instance) => {
@@ -201,6 +217,7 @@ class Ble extends Transport {
     instances = [];
 
     await NativeBle.disconnect();
+    Ble.disconnecting = false;
     Ble.log("disconnected");
     return true;
   };
@@ -213,7 +230,7 @@ class Ble extends Transport {
       "network-down": NetworkDown,
     };
 
-    if (error?.code in mappedErrors) 
+    if (error?.code in mappedErrors)
       return new mappedErrors[error?.code](extras);
     return new TransportError(error?.code, error);
   };
@@ -225,11 +242,5 @@ class Ble extends Transport {
     NativeBle.runner(url);
   };
 }
-
-// Register a listener for `BleTransport` events, iOS won't work without this.
-Ble.globalBridgeEventSubscription = EventEmitter?.addListener(
-  "BleTransport",
-  Ble.onBridgeGlobalEvent
-);
 
 export default Ble;
