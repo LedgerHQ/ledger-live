@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.5.0-next.5
+
+### Patch Changes
+
+- Updated dependencies [[`816f2b7e9`](https://github.com/LedgerHQ/ledger-live/commit/816f2b7e942967bf0ed670dc43464521bd0b5d01)]:
+  - @ledgerhq/live-common@25.0.0-next.5
+
 ## 3.5.0-next.4
 
 ### Minor Changes

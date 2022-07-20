@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 6.30.0-next.2
+
+### Minor Changes
+
+- [#462](https://github.com/LedgerHQ/ledger-live/pull/462) [`816f2b7e9`](https://github.com/LedgerHQ/ledger-live/commit/816f2b7e942967bf0ed670dc43464521bd0b5d01) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support of Cardano tokens in LLD
+
 ## 6.30.0-next.1
 
 ### Minor Changes
