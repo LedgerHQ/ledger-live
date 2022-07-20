@@ -204,9 +204,14 @@ export default function DeviceAction<R, H, P>({
       device: selectedDevice,
       colors,
       theme,
-      provider:
-        (request && request.exchangeRate && request.exchangeRate.provider) ||
-        undefined,
+      // $FlowFixMe
+      transaction: request.transaction,
+      // $FlowFixMe
+      exchangeRate: request.exchangeRate,
+      // $FlowFixMe
+      exchange: request.exchange,
+      amountExpectedTo: status.amountExpectedTo,
+      estimatedFees: status.estimatedFees,
     });
   }
 

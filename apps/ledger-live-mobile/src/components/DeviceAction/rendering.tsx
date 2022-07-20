@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types"
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   InfiniteLoader,
   Text,
@@ -14,6 +17,17 @@ import {
   Icons,
   Log,
 } from "@ledgerhq/native-ui";
+import BigNumber from "bignumber.js";
+import {
+  ExchangeRate,
+  Exchange,
+} from "@ledgerhq/live-common/src/exchange/swap/types";
+import {
+  getAccountUnit,
+  getMainAccount,
+  getAccountName,
+} from "@ledgerhq/live-common/lib/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import { setModalLock } from "../../actions/appstate";
 import { urls } from "../../config/urls";
 import Alert from "../Alert";
@@ -26,9 +40,12 @@ import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
 import { track } from "../../analytics";
+import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
+import CurrencyIcon from "../CurrencyIcon";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -211,27 +228,136 @@ export function renderConfirmSwap({
   t,
   device,
   theme,
-  provider,
+  transaction,
+  exchangeRate,
+  exchange,
+  amountExpectedTo,
+  estimatedFees,
 }: RawProps & {
   device: Device;
-  provider?: TermsProviders;
+  transaction: Transaction;
+  exchangeRate: ExchangeRate;
+  exchange: Exchange;
+  amountExpectedTo?: string;
+  estimatedFees?: string;
+}) {
+  const ProviderIcon = providerIcons[exchangeRate.provider.toLowerCase()];
+
+  return (
+    <ScrollView>
+      <Wrapper width="100%">
+        <Flex paddingX={4}>
+          <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+            {t("DeviceAction.confirmSwap.alert")}
+          </Alert>
+          <AnimationContainer
+            marginTop="16px"
+            withVerifyAddressHeight={device.modelId !== "blue"}
+          >
+            <Animation
+              source={getDeviceAnimation({ device, key: "validate", theme })}
+            />
+          </AnimationContainer>
+          <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+
+          <Flex justifyContent={"space-between"} width="100%">
+            <FieldItem title={t("DeviceAction.swap2.amountSent")}>
+              <Text>
+                <CurrencyUnitValue
+                  value={transaction.amount}
+                  unit={getAccountUnit(exchange.fromAccount)}
+                  disableRounding
+                  showCode
+                />
+              </Text>
+            </FieldItem>
+
+            <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
+              <Text>
+                <CurrencyUnitValue
+                  unit={getAccountUnit(exchange.toAccount)}
+                  value={
+                    amountExpectedTo
+                      ? new BigNumber(amountExpectedTo)
+                      : exchangeRate.toAmount
+                  }
+                  disableRounding
+                  showCode
+                />
+              </Text>
+            </FieldItem>
+
+            <FieldItem title={t("DeviceAction.swap2.provider")}>
+              <Flex flexDirection="row" alignItems="center">
+                <Flex paddingRight={2}>
+                  <ProviderIcon size={14} />
+                </Flex>
+
+                <Text>{getProviderName(exchangeRate.provider)}</Text>
+              </Flex>
+            </FieldItem>
+
+            <FieldItem title={t("DeviceAction.swap2.fees")}>
+              <Text>
+                <CurrencyUnitValue
+                  unit={getAccountUnit(
+                    getMainAccount(
+                      exchange.fromAccount,
+                      exchange.fromParentAccount,
+                    ),
+                  )}
+                  value={new BigNumber(estimatedFees || 0)}
+                  disableRounding
+                  showCode
+                />
+              </Text>
+            </FieldItem>
+
+            <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
+              <Flex flexDirection="row">
+                <CurrencyIcon
+                  size={16}
+                  currency={getAccountCurrency(exchange.fromAccount)}
+                />
+                <Text marginLeft={8}>
+                  {getAccountName(exchange.fromAccount)}
+                </Text>
+              </Flex>
+            </FieldItem>
+
+            <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
+              <Flex flexDirection="row">
+                <CurrencyIcon
+                  size={16}
+                  currency={getAccountCurrency(exchange.toAccount)}
+                />
+                <Text marginLeft={8}>{getAccountName(exchange.toAccount)}</Text>
+              </Flex>
+            </FieldItem>
+          </Flex>
+
+          <TermsFooter provider={exchangeRate.provider} />
+        </Flex>
+      </Wrapper>
+    </ScrollView>
+  );
+}
+
+function FieldItem({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
-    <Wrapper width="100%">
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-        {t("DeviceAction.confirmSwap.alert")}
-      </Alert>
-      <AnimationContainer
-        marginTop="16px"
-        withVerifyAddressHeight={device.modelId !== "blue"}
-      >
-        <Animation
-          source={getDeviceAnimation({ device, key: "validate", theme })}
-        />
-      </AnimationContainer>
-      <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-      <TermsFooter provider={provider} />
-    </Wrapper>
+    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
+      <Text color="neutral.c70">{title}</Text>
+
+      <Flex flexDirection="row" alignItems="center">
+        {children}
+      </Flex>
+    </Flex>
   );
 }
 
