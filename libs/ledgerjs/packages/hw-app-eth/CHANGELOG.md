@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.29.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`03da88df2`](https://github.com/LedgerHQ/ledger-live/commit/03da88df2f9c06c054081dcbf34226cb440809c0)]:
+  - @ledgerhq/cryptoassets@6.30.0-next.1
+
 ## 6.29.2-next.0
 
 ### Patch Changes
