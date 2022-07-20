@@ -27,6 +27,8 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
   const unit = getAccountUnit(account);
   const { validators } = useAvalanchePChainPreloadData();
 
+  if (!status) return null;
+
   const renderItem = (validator: AvalanchePChainValidator, validatorIdx: number) => {
     return (
       <ValidatorRow
@@ -49,7 +51,11 @@ const ValidatorField = ({ account, status, t, onChangeValidator, chosenVoteAccAd
               ? validators
               : [validators.find(v => v.nodeID === chosenVoteAccAddr) || validators[0]]
           }
-          style={{ flex: showAll ? "1 0 240px" : "1 0 56px", marginBottom: 0, paddingLeft: 0 }}
+          style={{
+            flex: showAll ? "1 0 240px" : "1 0 56px",
+            marginBottom: 0,
+            paddingLeft: 0,
+          }}
           renderItem={renderItem}
           noResultPlaceholder={null}
         />

@@ -4,6 +4,7 @@ import { avalancheClient } from "./api/client";
 import { UnixNow } from "avalanche/dist/utils";
 import { HDHelper } from "./hdhelper";
 import type { Account } from "../../types";
+import { FIVE_MINUTES } from "./utils";
 
 const buildTransaction = async (
   account: Account,
@@ -17,7 +18,7 @@ const buildTransaction = async (
   const pAddresses = hdHelper.getAllDerivedAddresses();
   const changeAddress = hdHelper.getFirstAvailableAddress();
   const nodeId = transaction.recipient;
-  const startTime: BN = UnixNow().add(new BN(60 * 5)); //5 minutes from now
+  const startTime: BN = UnixNow().add(new BN(FIVE_MINUTES));
   const endTime: BN = new BN(transaction.endTime?.toString());
   const stakeAmount: BN = transaction.useAllAmount
     ? new BN(account.spendableBalance.minus(transaction.fees || 0).toString())

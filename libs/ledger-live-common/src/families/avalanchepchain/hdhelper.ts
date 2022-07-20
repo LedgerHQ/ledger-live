@@ -1,8 +1,8 @@
 import { avalancheClient } from "./api/client";
-import { binTools } from "./logic";
-import HDKey from 'hdkey';
-import { KeyPair as AVMKeyPair } from 'avalanche/dist/apis/avm';
-import { AVAX_HRP } from "./api/sdk";
+import { binTools } from "./utils";
+import HDKey from "hdkey";
+import { KeyPair as AVMKeyPair } from "avalanche/dist/apis/avm";
+import { AVAX_HRP } from "./utils";
 import { AmountOutput, PlatformVMConstants, StakeableLockOut, UTXOSet } from "avalanche/dist/apis/platformvm";
 import BigNumber from "bignumber.js";
 import { BN } from "avalanche";

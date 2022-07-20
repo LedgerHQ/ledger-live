@@ -6,20 +6,23 @@ import { withDevice } from "../../hw/deviceAccess";
 import buildTransaction from "./js-buildTransaction";
 import Avalanche, { AVAX_BIP32_PREFIX } from "./hw-app-avalanche";
 import { encodeOperationId } from "../../operation";
-import { binTools } from "./logic";
-import { Buffer as AvalancheBuffer } from 'avalanche';
-import { TransferableOperation, UnsignedTx as AVMUnsignedTx } from "avalanche/dist/apis/avm";
+import { binTools } from "./utils";
+import { Buffer as AvalancheBuffer } from "avalanche";
+import {
+  TransferableOperation,
+  UnsignedTx as AVMUnsignedTx,
+} from "avalanche/dist/apis/avm";
 import { OperationTx } from "avalanche/dist/apis/avm";
 import { Credential, SigIdx, Signature } from "avalanche/dist/common";
 import {
-    Tx as PlatformTx,
-    UnsignedTx as PlatformUnsignedTx,
-    SelectCredentialClass as PlatformSelectCredentialClass
-} from 'avalanche/dist/apis/platformvm';
+  Tx as PlatformTx,
+  UnsignedTx as PlatformUnsignedTx,
+  SelectCredentialClass as PlatformSelectCredentialClass,
+} from "avalanche/dist/apis/platformvm";
 import BIPPath from "bip32-path";
 import { HDHelper } from "./hdhelper";
 import { createHash } from "crypto";
-import { AVAX_HRP } from "./api/sdk";
+import { AVAX_HRP } from "./utils";
 
 const STAKEABLELOCKINID: number = 21;
 
@@ -364,14 +367,3 @@ const buildOptimisticOperation = (
 };
 
 export default signOperation;
-
-// "TypeError: bn.toArray is not a function
-//     at BinTools.fromBNToBuffer (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/utils/bintools.js:172:31)
-//     at new ValidatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:40:33)
-//     at new WeightedValidatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:114:9)
-//     at new AddDelegatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/validationtx.js:177:9)
-//     at UTXOSet.buildAddDelegatorTx (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/utxos.js:641:25)
-//     at PlatformVMAPI.<anonymous> (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/api.js:1172:45)
-//     at Generator.next (<anonymous>)
-//     at fulfilled (/Users/trent/projects/ledger-live/node_modules/.pnpm/avalanche@3.15.3/node_modules/avalanche/dist/apis/platformvm/api.js:5:58)
-//     at processTicksAndRejections (internal/process/task_queues.js:93:5)"
