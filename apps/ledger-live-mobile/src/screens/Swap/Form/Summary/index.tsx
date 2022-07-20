@@ -14,8 +14,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-// eslint-disable-next-line import/no-unresolved, import/named
-import { providerIcons } from "../../../../icons/swap";
+import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
 import { Item } from "./Item";
 
