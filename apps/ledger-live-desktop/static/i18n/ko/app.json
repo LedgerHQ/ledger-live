@@ -1348,6 +1348,14 @@
       "link" : "자산(ASA)은 어떻게 운영되나요?",
       "seeTokens" : "ASA 보기 ({{tokenCount}})",
       "hideTokens" : "ASA 숨기기 ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "자산",
+      "cta" : "자산 추가",
+      "placeholder" : "{{currencyName}} 계정에 자산을 추가할 수 있습니다.",
+      "link" : "스텔라 자산에 대해 자세히 알아보기",
+      "seeTokens" : "자산 표시({{tokenCount}})",
+      "hideTokens" : "자산 숨기기({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -2576,6 +2584,31 @@
       }
     }
   },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "자산 추가",
+      "steps" : {
+        "assets" : {
+          "title" : "자산",
+          "info" : "자산을 추가하려면 최소 수수료로 트랜잭션을 전송해야 합니다. 이 사항은 사용자의 트랜잭션 내역에 표시됩니다.",
+          "selectLabel" : "자산 선택",
+          "disabledTooltip" : "이미 스텔라 계정에 있는 자산입니다."
+        },
+        "connectDevice" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인",
+          "success" : {
+            "title" : "{{token}} 자산이 추가되었습니다",
+            "text" : "이제 스텔라 계정에서 <0>{{token}}</0> 자산을 보내고 받을 수 있습니다.",
+            "cta" : "세부사항 보기"
+          },
+          "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+        }
+      }
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",
@@ -3740,7 +3773,20 @@
         "MEMO_HASH" : "메모 해시",
         "MEMO_RETURN" : "메모 반환"
       },
-      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요"
+      "memoWarningText" : "메모 기능을 사용할 때는 사용한 메모 유형을 수령인과 확인하세요",
+      "fee" : "수수료",
+      "feeInfoText" : "스텔라 네트워크 상의 트랜잭션에는 최소 거래 수수료 0.00001 XLM이 필요합니다",
+      "suggested" : "추천",
+      "recommendedFee" : "권장 수수료",
+      "recommenndedFeeInfo" : "권장 수수료보다 낮은 수수료로도 여전히 트랜잭션 제출이 가능하지만 거래가 체결되지 않을 수 있습니다.",
+      "networkCongestion" : "네트워크 혼잡",
+      "networkCongestionLevel" : {
+        "LOW" : "낮음",
+        "MEDIUM" : "Medium",
+        "HIGH" : "높음"
+      },
+      "assetCode" : "자산 코드",
+      "assetIssuer" : "자산 발행인"
     },
     "cosmos" : {
       "memo" : "메모",
@@ -4293,14 +4339,8 @@
     "FeeTooHigh" : {
       "title" : "네트워크 수수료가 금액의 10%를 넘습니다"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "메모 형식이 잘못되었습니다"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}(을)를 보내려면 다중서명을 비활성화하세요"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "금액은 {{minAmountFromFormatted}} 이상이어야 합니다"
@@ -4368,6 +4408,41 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "사용 가능한 토큰 수를 초과했습니다"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "메모 형식이 잘못되었습니다"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "수령인에게 보낼 때 메모가 필요할 수 있습니다"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "이 수령인은 아직 {{assetCode}}에 대한 트러스트라인(trustline)이 없습니다."
+    },
+    "StellarAssetRequired" : {
+      "title" : "트러스트라인 추가 전 스텔라 자산을 선택해야 합니다."
+    },
+    "StellarAssetNotFound" : {
+      "title" : "선택한 스텔라 자산을 찾을 수 없습니다."
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 수수료를 지불할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "권장 수수료 대비 선택 수수료가 낮습니다"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "최소 트랜잭션 수수료는 0.00001 XLM입니다"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "죄송하지만 자금이 부족합니다",
+      "description" : "계정에 신규 트러스트라인을 추가할 수 있는 충분한 자금이 있는지 확인해 주세요"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "스텔라 계정이 없습니다"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "스텔라 트랜잭션을 수행하려면 다중서명을 비활성화하세요"
     }
   },
   "cryptoOrg" : {
@@ -4394,6 +4469,14 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "Ledger 장치에서 귀하의 {{name}} 주소를 확인할 수 없습니다. 사용은 본인의 책임입니다."
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "자산 선택"
+    },
+    "selectAccount" : {
+      "title" : "계정 선택"
     }
   }
 }
