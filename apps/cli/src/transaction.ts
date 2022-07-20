@@ -7,7 +7,7 @@ import flatMap from "lodash/flatMap";
 import { BigNumber } from "bignumber.js";
 import type {
   Transaction,
-} from "@ledgerhq/live-common/lib/types/index";
+} from "@ledgerhq/live-common/generated/types";
 import type {
   Account,
   AccountLike,
