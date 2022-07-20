@@ -560,14 +560,8 @@
     "NotSupportedLegacyAddress" : {
       "title" : "レガシーアドレス形式はサポートを終了しました。"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "メモのフォーマットに誤りがあります。"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}}を送付するにはマルチシグを無効にしてください。"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
     },
     "StratisDown2021Warning" : {
       "description" : "Stratisブロックチェーンのメジャーアップデートが実施されたため、正しく動作しない可能性があります。旧Stratisブロックチェーンのサポートは、2021年10月16日まで引き続き提供されます。"
@@ -645,6 +639,41 @@
     },
     "CardanoMinAmountError" : {
       "title" : "最低{{amount}} ADA以上必要"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "メモのフォーマットに誤りがあります。"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "この受取人に送金するには、Memo(メモ)が必要な場合があります"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "この受取人にはまだ{{assetCode}}へのトラストラインがありません"
+    },
+    "StellarAssetRequired" : {
+      "title" : "Stellar資産はトラストライン追加前に選択する必要があります"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "選択されたStellar資産が見つかりませんでした"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントにトランザクション手数料をカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "選択された手数料は推奨手数料を下回っています"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "最低トランザクション手数料は0.00001 XLMです"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "資金が不足しています。",
+      "description" : "アカウントに新しいトラストラインをカバーできる十分な資金があることをご確認ください。"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellarアカウントが存在しません"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellarトランザクションを行うには、マルチシグを無効にしてください"
     }
   },
   "bluetooth" : {
@@ -930,9 +959,9 @@
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
       },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "近日公開",
@@ -1753,6 +1782,13 @@
         "howTo" : "Algorandアカウントに資産を追加できます。",
         "addAsa" : "ASA（資産）の追加",
         "howAsaWorks" : "ASA（資産）の仕組み"
+      },
+      "stellar" : {
+        "seeMore" : "さらに資産を見る",
+        "seeLess" : "資産の表示を減らす",
+        "addTokens" : "資産を追加",
+        "howTo" : "Stellarアカウントに資産を追加できます。",
+        "addAsset" : "資産を追加"
       }
     },
     "subaccounts" : {
@@ -1901,6 +1937,12 @@
         "showTokens_plural" : "{{length}}ASAを表示",
         "hideTokens" : "ASAを非表示",
         "hideTokens_plural" : "ASAを非表示"
+      },
+      "stellar" : {
+        "showTokens" : "{{length}}資産を表示",
+        "showTokens_plural" : "{{length}}資産を表示",
+        "hideTokens" : "資産を非表示",
+        "hideTokens_plural" : "資産を非表示"
       }
     },
     "noResultsFound" : "資産が見つかりません",
@@ -3734,6 +3776,7 @@
     }
   },
   "stellar" : {
+    "token" : "資産",
     "memo" : {
       "title" : "Memo(メモ)",
       "warning" : "メモを使用する場合は、受取人とメモのタイプをしっかりと確認してください。"
@@ -3744,6 +3787,48 @@
       "MEMO_ID" : "メモID",
       "MEMO_HASH" : "メモハッシュ",
       "MEMO_RETURN" : "メモリターン"
+    },
+    "fee" : "ネットワーク手数料",
+    "feeAction" : "更新料",
+    "recommendedFee" : "推奨手数料",
+    "recommenndedFeeInfo" : "このトランザクションを推奨手数料より低額で提出可能ですが、完了しない場合があります",
+    "suggested" : "提案済み",
+    "networkCongestion" : "ネットワーク混雑",
+    "networkCongestionLevel" : {
+      "LOW" : "低速",
+      "MEDIUM" : "標準",
+      "HIGH" : "高速"
+    },
+    "assetCode" : "資産コード",
+    "assetIssuer" : "資産発行者",
+    "addAsset" : {
+      "stepperHeader" : {
+        "selectAsset" : "資産を追加",
+        "connectDevice" : "デバイスを接続",
+        "verification" : "認証",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "selectToken" : {
+            "warning" : {
+              "title" : "追加済みの資産",
+              "description" : "すでに、Stellarアカウントに{{token}}資産を所有しています。"
+            }
+          },
+          "verification" : {
+            "success" : {
+              "title" : "{{token}}資産が正常に追加されました！",
+              "text" : "Stellarアカウントで、{{token}}資産の受け取りや送付が可能になりました。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、トランザクションの不成立を確認した上で、もう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "polkadot" : {
