@@ -51,6 +51,11 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
     width: 53.83,
     height: 250.87,
   },
+  nanoFTS: {
+    Illustration: NanoX,
+    width: 53.83,
+    height: 250.87,
+  },
   blue: {
     Illustration: NanoS,
     width: 49.2,
