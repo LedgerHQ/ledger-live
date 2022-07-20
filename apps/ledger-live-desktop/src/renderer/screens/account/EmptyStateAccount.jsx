@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation, Trans } from "react-i18next";
@@ -28,6 +28,8 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const mapDispatchToProps = {
   openModal,
 };
@@ -49,6 +51,9 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
   const currency = getAccountCurrency(account);
   const rampCatalog = useRampCatalog();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
+
   // eslint-disable-next-line no-unused-vars
   const [availableOnBuy, availableOnSell] = useMemo(() => {
     if (!rampCatalog.value) {
@@ -69,6 +74,33 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
     mainAccount.subAccounts &&
     mainAccount.subAccounts.length &&
     mainAccount.subAccounts[0].type === "TokenAccount";
+
+  const onBuy = useCallback(() => {
+    setTrackingSource("empty state account");
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency?.id,
+        account: mainAccount?.freshAddress,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+          accountId: mainAccount.id,
+        },
+      });
+    }
+  }, [currency, history, mainAccount, ptxSmartRouting]);
 
   if (!mainAccount) return null;
 
@@ -117,22 +149,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
         </Description>
         <Box horizontal>
           {availableOnBuy ? (
-            <Button
-              mt={5}
-              mr={2}
-              primary
-              onClick={() => {
-                setTrackingSource("empty state account");
-                history.push({
-                  pathname: "/exchange",
-                  state: {
-                    mode: "onRamp",
-                    currencyId: currency.id,
-                    accountId: mainAccount.id,
-                  },
-                });
-              }}
-            >
+            <Button mt={5} mr={2} primary onClick={onBuy}>
               <Box horizontal flow={1} alignItems="center">
                 <IconExchange size={12} />
                 <Box>{t("account.emptyState.buttons.buy")}</Box>

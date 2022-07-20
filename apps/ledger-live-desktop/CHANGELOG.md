@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.45.0-next.4
+
+### Minor Changes
+
+- [#659](https://github.com/LedgerHQ/ledger-live/pull/659) [`eb83f93b1`](https://github.com/LedgerHQ/ledger-live/commit/eb83f93b1663404c2826692f2cc5f0be8cdd4bdd) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - buy and sell - redirect entry points of exchange app towards the new incoming live app
+
 ## 2.45.0-next.3
 
 ### Minor Changes

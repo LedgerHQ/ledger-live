@@ -15,6 +15,8 @@ import Text from "~/renderer/components/Text";
 import { supportedBuyCurrenciesIds } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const AmountUpWrapper = styled.div`
   padding: ${p => p.theme.space[3]}px;
   box-sizing: content-box;
@@ -36,6 +38,9 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
+
   const handleClose = useCallback(() => {
     dispatch(closeModal("MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT"));
   }, [dispatch]);
@@ -48,14 +53,28 @@ const NoEthereumAccountModal = ({ currency, account, ...rest }: Props) => {
   const handleBuy = useCallback(() => {
     handleClose();
     setTrackingSource("lending deposit");
-    history.push({
-      pathname: "/exchange",
-      state: {
-        tab: 0,
-        defaultCurrency: currency,
-      },
-    });
-  }, [history, handleClose, currency]);
+    // PTX smart routing redirect to live app or to native implementation
+    if (ptxSmartRouting?.enabled) {
+      const params = {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      };
+
+      history.push({
+        // replace 'multibuy' in case live app id changes
+        pathname: `/platform/${ptxSmartRouting?.params?.liveAppId ?? "multibuy"}`,
+        state: params,
+      });
+    } else {
+      history.push({
+        pathname: "/exchange",
+        state: {
+          mode: "onRamp",
+          currencyId: currency.id,
+        },
+      });
+    }
+  }, [currency, handleClose, history, ptxSmartRouting]);
 
   const TokenCurrencyIcon = getTokenCurrencyIcon(currency);
   const buyAvailable = supportedBuyCurrenciesIds.includes(currency.id);
