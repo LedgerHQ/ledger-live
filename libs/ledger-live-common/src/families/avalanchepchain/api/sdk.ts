@@ -8,7 +8,8 @@ import BinTools from "avalanche/dist/utils/bintools";
 import { avalancheClient } from "./client";
 import { makeLRUCache } from "../../../cache";
 import { HDHelper } from "../hdhelper";
-import { isDefaultValidatorNode } from "../utils";
+import { isDefaultValidatorNode, MINUTE, DAY, ONE_AVAX } from "../utils";
+import { PChainAlias } from "avalanche/dist/utils";
 
 const getIndexerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
@@ -16,13 +17,12 @@ const getIndexerUrl = (route: string): string =>
 const getExplorerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_EXPLORER_API")}${route || ""}`;
 
-const binTools = BinTools.getInstance();
-
-const INDEX_RANGE = 20;
-const SCAN_RANGE = 80;
 const P_IMPORT = "p_import";
 const P_EXPORT = "p_export";
-export const AVAX_HRP = "fuji"; //"fuji" for testnet
+
+//Does not appear the indexer makes it simple to get REWARD operations or calculate resulting AVAX rewards
+//see get rewardAmt() in avalanche wallet
+//in latest operations, probably just put latest ADD_DELEGATOR transactions...
 
 /**
  * Fetch operation list from indexer
@@ -163,28 +163,57 @@ const getUserDelegations = (delegators) => {
   return userDelegations;
 };
 
-const MINUTE_MS = 60000;
-const HOUR_MS = MINUTE_MS * 60;
-const DAY_MS = HOUR_MS * 24;
-
 export const getValidators = makeLRUCache(async () => {
   let { validators } = (await avalancheClient()
     .PChain()
     .getCurrentValidators()) as any;
 
-  validators = validators.filter(removeExpiringValidators);
+  validators = await calculateRemainingStake(validators);
 
   return customValidatorOrder(validators);
 });
 
-const removeExpiringValidators = (validator) => {
-  const now = Date.now();
-  const endTime = parseInt(validator.endTime) * 1000;
-  const diff = endTime - now;
-  const threshold = DAY_MS * 14 + 10 * MINUTE_MS;
+const calculateRemainingStake = async (validators) => {
+  const allPendingDelegators = await avalancheClient()
+    .PChain()
+    .getPendingValidators();
 
-  // If end time is less than 2 weeks + 1 hour, remove from validator list
-  return diff > threshold;
+  const THREE_MILLION_AVAX = new BigNumber(ONE_AVAX).multipliedBy(3000000);
+
+  return validators.map((v) => {
+    const validatorStakeAmount = new BigNumber(v.stakeAmount);
+    const absoluteMaxStake = new BigNumber(THREE_MILLION_AVAX);
+    const relativeMaxStake = new BigNumber(validatorStakeAmount).multipliedBy(
+      5
+    );
+    const stakeLimit = BigNumber.minimum(absoluteMaxStake, relativeMaxStake);
+    const nodePendingDelegators = allPendingDelegators[v.nodeID];
+
+    const delegatedStake = calculateDelegatedAmount(v.delegators);
+    const delegatedPendingStake = calculateDelegatedAmount(
+      nodePendingDelegators
+    );
+
+    const remainingStake = stakeLimit
+      .minus(validatorStakeAmount)
+      .minus(delegatedStake)
+      .minus(delegatedPendingStake);
+
+    return {
+      ...v,
+      remainingStake: new BigNumber(remainingStake),
+    };
+  });
+};
+
+const calculateDelegatedAmount = (delegators) => {
+  if (delegators) {
+    return delegators.reduce((acc, d) => {
+      return acc.plus(new BigNumber(d.stakeAmount));
+    }, new BigNumber(0));
+  }
+
+  return new BigNumber(0);
 };
 
 const customValidatorOrder = (validators) => {
@@ -221,6 +250,16 @@ const orderByStakeAmount = () => (a, b) => {
   }
 };
 
+export const removeExpiringValidators = (validator) => {
+  const now = Math.floor(Date.now() / 1000);
+  const endTime = parseInt(validator.endTime);
+  const diff = endTime - now;
+  const threshold = DAY * 14 + 10 * MINUTE;
+
+  // If end time is less than 2 weeks and 10 minutes, remove from validator list
+  return diff > threshold;
+};
+
 export const getAddressChains = async (addresses: string[]) => {
   const rawAddresses = addresses.map(removeChainPrefix);
 
@@ -235,140 +274,3 @@ export const getAddressChains = async (addresses: string[]) => {
 
   return data.addressChains;
 };
-
-//TODO: replace this with HdHelper
-//OR, see walletPlatformBalance in assets.ts in avalanche-wallet
-//Should be able to easily calculate all P chain balances
-//To get stake amount, see getStakeForAddresses in utxo_helper.ts
-//Will need this info for "Staking info Dashboard" ticket
-
-/**
- * @param hdKey
- * @returns Total balance of this wallet's P-chain addresses
- */
-// export const fetchBalances = async (hdKey) => {
-
-//     let balanceTotal = new BigNumber(0);
-//     const assetID = await avalancheClient().PChain().getAVAXAssetID();
-
-//     const batchFunction = async (batch: AddressBatch) => {
-//         for (const [_, utxoids] of Object.entries<{}>(batch.utxoset.addressUTXOs)) {
-//             let balance = new BigNumber(0);
-
-//             for (const utxoid of Object.keys(utxoids)) {
-//                 const utxo = batch.utxoset.utxos[utxoid];
-
-//                 if (utxo.getAssetID().equals(assetID)) {
-//                     balance = balance.plus(utxo.getOutput().getAmount());
-//                 }
-//                 balanceTotal = balanceTotal.plus(balance);
-//             }
-//         }
-//     }
-
-//     await getUsedKeys(hdKey, batchFunction);
-
-//     return balanceTotal;
-// }
-
-//walletPlatformBalance
-// export const getPChainBalances = async (publicKey, chainCode) => {
-//     const balances = {
-//         available: new BN(0),
-//         locked: new BN(0),
-//         lockedStakeable: new BN(0),
-//         multisig: new BN(0),
-//     };
-
-//     const hdHelper = HDHelper.getInstance(publicKey, chainCode);
-//     const utxoSet: UTXOSet = await hdHelper.fetchUTXOs();
-//     const now = UnixNow();
-
-//     const utxos = utxoSet.getAllUTXOs();
-
-//     for (let n = 0; n < utxos.length; n++) {
-//         const utxo = utxos[n];
-//         const utxoOut = utxo.getOutput();
-//         const outId = utxoOut.getOutputID();
-//         const threshold = utxoOut.getThreshold();
-
-//         if (threshold > 1) {
-//             balances.multisig.iadd((utxoOut as AmountOutput).getAmount());
-//             continue;
-//         }
-
-//         const isStakeableLock = outId === PlatformVMConstants.STAKEABLELOCKOUTID;
-
-//         let locktime;
-//         if (isStakeableLock) {
-//             locktime = (utxoOut as StakeableLockOut).getStakeableLocktime();
-//         } else {
-//             locktime = (utxoOut as AmountOutput).getLocktime();
-//         }
-
-//         if (locktime.lte(now)) {
-//             balances.available.iadd((utxoOut as AmountOutput).getAmount());
-//         }
-//         else if (!isStakeableLock) {
-//             balances.locked.iadd((utxoOut as AmountOutput).getAmount());
-//         }
-//         else if (isStakeableLock) {
-//             balances.lockedStakeable.iadd((utxoOut as AmountOutput).getAmount());
-//         }
-//     }
-
-//     return {
-//         available: new BigNumber(balances.available.toString()),
-//         locked: new BigNumber(balances.locked.toString()),
-//         lockedStakeable: new BigNumber(balances.lockedStakeable.toString()),
-//         multisig: new BigNumber(balances.multisig.toString()))
-//     };
-// }
-
-/**
- * Liberally inspired by avalanche-wallet-cli
- * Traverses the wallet, finding all used keys.
- * Batching 40 used keys at a time, hit the node to retrieve each key's UTXOs.
- * Then, call the batchFunction on that group of 40 used keys.
- * @param hdKey
- * @param batchFunction
- */
-// const getUsedKeys = async (hdKey, batchFunction) => {
-//     let allAddressesAreUnused = false;
-//     let index = 0;
-
-//     while (!allAddressesAreUnused || index < SCAN_RANGE) {
-//         const batch: AddressBatch = {
-//             nonChange: { addresses: [], pkhs: [] },
-//             change: { addresses: [], pkhs: [] },
-//             utxoset: {}
-//         }
-
-//         for (let i = 0; i < INDEX_RANGE; i++) {
-//             const child = hdKey.deriveChild(0).deriveChild(index + i);
-//             const changeChild = hdKey.deriveChild(1).deriveChild(index + i);
-
-//             const publicKeyHash = AVMKeyPair.addressFromPublicKey(child.publicKey);
-//             const changePublicKeyHash = AVMKeyPair.addressFromPublicKey(changeChild.publicKey);
-//             const address = binTools.addressToString(AVAX_HRP, "P", publicKeyHash);
-//             const changeAddress = binTools.addressToString(AVAX_HRP, "P", changePublicKeyHash);
-
-//             batch.nonChange.pkhs.push(publicKeyHash);
-//             batch.change.pkhs.push(changePublicKeyHash);
-//             batch.nonChange.addresses.push(address);
-//             batch.change.addresses.push(changeAddress);
-//         }
-
-//         const batchedAddresses = batch.nonChange.addresses.concat(batch.change.addresses);
-
-//         const pchain = avalancheClient().PChain();
-
-//         let { utxos } = await pchain.getUTXOs(batchedAddresses);
-//         batch.utxoset = utxos;
-
-//         await batchFunction(batch);
-
-//         index += INDEX_RANGE;
-//         allAddressesAreUnused = batch.utxoset.getAllUTXOs().length === 0;
-//     }
-// };
