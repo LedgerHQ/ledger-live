@@ -2,16 +2,15 @@ import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
   RecipientRequired,
-  InvalidAddress,
-  FeeNotLoaded,
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
+import { AvalancheInvalidDateTimeError } from "./errors";
 import { Account, TransactionStatus } from "../../types";
 import { Transaction } from "./types";
-import { isValidAddress } from "./logic";
 import { AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
+import { FIFTEEN_MINUTES, TWO_WEEKS } from "./utils";
 
 const getTransactionStatus = async (
   account: Account,
@@ -51,6 +50,21 @@ const getTransactionStatus = async (
 
   if (!transaction.recipient) {
     errors.recipient = new RecipientRequired();
+  }
+
+  const isBeyondValidStakeTimeRange =
+    transaction.maxEndTime && transaction.endTime?.gt(transaction.maxEndTime);
+
+  const twoWeeksAndfifteenMinutesFromNow = new BigNumber(
+    Math.round(new Date().getTime() / 1000) + FIFTEEN_MINUTES + TWO_WEEKS
+  );
+
+  const isUnderValidStakeTimeRange =
+    transaction.endTime &&
+    transaction.endTime?.lt(twoWeeksAndfifteenMinutesFromNow);
+
+  if (isBeyondValidStakeTimeRange || isUnderValidStakeTimeRange) {
+    errors.time = new AvalancheInvalidDateTimeError();
   }
 
   return Promise.resolve({

@@ -1,8 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
-// import getFeesForTransaction from "./js-getFeesForTransaction";
-// import estimateMaxSpendable from "./js-estimateMaxSpendable";
 
 const createTransaction = (): Transaction => ({
   family: "avalanchepchain",
@@ -13,6 +11,7 @@ const createTransaction = (): Transaction => ({
   mode: "delegate",
   startTime: null,
   endTime: null,
+  maxEndTime: null,
 });
 
 const prepareTransaction = async (

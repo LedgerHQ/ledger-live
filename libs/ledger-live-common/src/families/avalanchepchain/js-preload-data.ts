@@ -4,7 +4,7 @@ import type {
   AvalanchePChainValidator,
 } from "./types";
 import { log } from "@ledgerhq/logs";
-import { getValidators } from "./api/sdk";
+import { getValidators, removeExpiringValidators } from "./api/sdk";
 import BigNumber from "bignumber.js";
 
 const TEN_MINUTES = 60 * 10000;
@@ -43,7 +43,7 @@ export const preload = async (): Promise<AvalanchePChainPreloadData> => {
     log("avalanche/preload", "refreshing avalanche validators...");
 
     try {
-      validators = await getValidators();
+      validators = (await getValidators()).filter(removeExpiringValidators);
     } catch (error) {
       log("avalanche/preload", "failed to fetch validators", {
         error,
@@ -92,5 +92,6 @@ function fromHydrateValidator(
     uptime: new BigNumber(validatorRaw.uptime),
     connected: validatorRaw.connected,
     delegators: validatorRaw.delegators,
+    remainingStake: new BigNumber(validatorRaw.remainingStake),
   };
 }

@@ -33,6 +33,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       mode: tr.mode,
       startTime: tr.startTime ? new BigNumber(tr.startTime) : null,
       endTime: tr.endTime ? new BigNumber(tr.endTime) : null,
+      maxEndTime: tr.maxEndTime ? new BigNumber(tr.maxEndTime) : null,
     };
 };
 
@@ -45,6 +46,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       mode: t.mode,
       startTime: t.startTime?.toString() ?? null,
       endTime: t.endTime?.toString() ?? null,
+      maxEndTime: t.maxEndTime?.toString() ?? null,
     };
 };
 

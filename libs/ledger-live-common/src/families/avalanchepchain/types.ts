@@ -16,6 +16,7 @@ export type Transaction = TransactionCommon & {
   mode: string;
   startTime: BigNumber | null;
   endTime: BigNumber | null;
+  maxEndTime: BigNumber | null;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -24,6 +25,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode: string;
   startTime: string | null;
   endTime: string | null;
+  maxEndTime: string | null;
 };
 
 export type AvalanchePChainResources = {
@@ -60,6 +62,7 @@ export type AvalanchePChainValidator = {
   uptime: BigNumber;
   connected: boolean;
   delegators: AvalancheDelegation[];
+  remainingStake: BigNumber;
 };
 
 export type AvalancheDelegation = {
