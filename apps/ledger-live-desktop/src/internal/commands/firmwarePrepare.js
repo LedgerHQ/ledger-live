@@ -13,4 +13,8 @@ type Result = { progress: number, displayedOnDevice: boolean };
 
 const cmd = ({ deviceId, firmware }: Input): Observable<Result> => prepare(deviceId, firmware);
 
+cmd.inferSentryTransaction = ({ firmware }) => ({
+  data: { finalVersion: firmware?.final?.version },
+});
+
 export default cmd;

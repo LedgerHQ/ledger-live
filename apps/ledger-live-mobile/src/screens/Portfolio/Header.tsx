@@ -104,38 +104,13 @@ function PortfolioHeader({
     };
   }, [graphCardEndPosition]);
 
-  const ContainerStyle = useAnimatedStyle(() => {
-    const borderBottomWidth = interpolate(
-      currentPositionY.value,
-      [graphCardEndPosition, graphCardEndPosition + 30],
-      [0, 1],
-      Extrapolate.CLAMP,
-    );
-
-    return {
-      borderBottomWidth,
-    };
-  }, [graphCardEndPosition]);
-
   const isAvailable = portfolio.balanceAvailable;
   const balanceHistory = portfolio.balanceHistory;
   const currentPortfolio = balanceHistory[balanceHistory.length - 1];
   const unit = counterValueCurrency.units[0];
 
   return (
-    <Animated.View
-      style={[
-        ContainerStyle,
-        {
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          borderBottomColor: colors.background.main,
-          paddingHorizontal: space[6],
-          paddingVertical: space[4],
-        },
-      ]}
-    >
+    <Flex flexDirection="row" alignItems="center" px={6} py={4}>
       <TouchableWithoutFeedback onPress={scrollToTop}>
         <Flex
           flexDirection={"row"}
@@ -215,7 +190,7 @@ function PortfolioHeader({
           <SettingsMedium size={24} color={"neutral.c100"} />
         </Touchable>
       </Box>
-    </Animated.View>
+    </Flex>
   );
 }
 

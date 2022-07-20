@@ -13,4 +13,8 @@ type Input = {
 const cmd = ({ deviceId, deviceInfo }: Input): Observable<ListAppsEvent> =>
   withDevice(deviceId)(transport => listApps(transport, deviceInfo));
 
+cmd.inferSentryTransaction = ({ deviceInfo }) => ({
+  data: deviceInfo,
+});
+
 export default cmd;

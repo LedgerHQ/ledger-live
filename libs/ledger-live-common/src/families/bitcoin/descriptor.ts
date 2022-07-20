@@ -15,6 +15,8 @@ import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { decodeAccountId } from "../../account/accountId";
+
 export type AccountDescriptor = {
   internal: string;
   external: string;
@@ -59,7 +61,8 @@ export function inferDescriptorFromAccount(
   account: Account
 ): AccountDescriptor | null | undefined {
   if (account.currency.family !== "bitcoin") return;
-  const { xpub, derivationMode, seedIdentifier, currency, index } = account;
+  const { id, derivationMode, seedIdentifier, currency, index } = account;
+  const xpub = decodeAccountId(id).xpubOrAddress;
   const fingerprint = makeFingerprint(
     compressPublicKeySECP256(Buffer.from(seedIdentifier, "hex"))
   );
