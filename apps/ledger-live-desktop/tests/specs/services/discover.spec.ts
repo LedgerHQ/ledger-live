@@ -2,8 +2,8 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { Layout } from "../../models/Layout";
-import { Modal } from "tests/models/Modal";
 import { Drawer } from "tests/models/Drawer";
+import { Modal } from "tests/models/Modal";
 import { DeviceAction } from "tests/models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
@@ -71,16 +71,19 @@ test("Discover", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("live-app-list-all-accounts.png");
   });
 
-  await test.step("Request Account modal - open", async () => {
+  await test.step("Request Account drawer - open", async () => {
     await discoverPage.requestAccount();
-    await expect.soft(page).toHaveScreenshot("live-app-request-account-modal.png");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-drawer.png");
   });
-  
-  await test.step("Request Account - single account output", async () => {
-    await discoverPage.openAccountDropdown();
+
+  await test.step("Request Account - select asset", async () => {
+    await discoverPage.selectAsset();
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-select-account.png");
+  });
+
+  await test.step("Request Account - select BTC", async () => {
     await discoverPage.selectAccount();
-    await modal.continue();
-    await expect.soft(page).toHaveScreenshot("live-app-request-single-account-output.png");
+    await expect.soft(page).toHaveScreenshot("live-app-request-account-output.png");
   });
 
   await test.step("List currencies", async () => {
@@ -114,5 +117,4 @@ test("Discover", async ({ page }) => {
   await test.step("Sign Transaction - signature output", async () => {
     await modal.waitForModalToDisappear();
     await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-output.png");
-  });
 });

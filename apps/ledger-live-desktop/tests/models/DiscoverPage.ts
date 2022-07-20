@@ -8,7 +8,7 @@ export class DiscoverPage {
   readonly getAllAccountsButton: Locator;
   readonly requestAccountButton: Locator;
   readonly selectAccountTitle: Locator;
-  readonly selectAccountDropdown: Locator;
+  readonly selectBtcAsset: Locator;
   readonly selectBtcAccount: Locator;
   readonly disclaimerCheckbox: Locator;
   readonly signContinueButton: Locator;
@@ -22,8 +22,8 @@ export class DiscoverPage {
     this.getAllAccountsButton = page.locator("data-test-id=get-all-accounts-button"); // TODO: make this into its own model
     this.requestAccountButton = page.locator("data-test-id=request-single-account-button");
     this.selectAccountTitle = page.locator("text=Choose a crypto asset)");
-    this.selectAccountDropdown = page.locator(".select__dropdown-indicator").last();
-    this.selectBtcAccount = page.locator("text=Bitcoin (BTC)");
+    this.selectBtcAsset = page.locator("text=Bitcoin").first();
+    this.selectBtcAccount = page.locator("text=Bitcoin 1 (legacy)");
     this.disclaimerCheckbox = page.locator("data-test-id=dismiss-disclaimer");
     this.signContinueButton = page.locator('text=Continue');
     this.confirmText = page.locator('text=Please confirm the operation on your device to finalize it');
@@ -41,14 +41,13 @@ export class DiscoverPage {
     await this.clickWebviewElement("[data-test-id=request-single-account-button]");
   }
 
-  async openAccountDropdown() {
-    // FIXME - this isn't working without force. 'subtree intercepts pointer events' error
-    await this.selectAccountDropdown.click({ force: true });
+  async selectAsset() {
+    await this.selectBtcAsset.click();
   }
 
   async selectAccount() {
     // TODO: make this dynamic with passed in variable
-    await this.selectBtcAccount.click({ force: true });
+    await this.selectBtcAccount.click();
   }
 
   async verifyAddress() {

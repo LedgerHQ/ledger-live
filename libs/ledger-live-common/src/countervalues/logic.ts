@@ -230,6 +230,7 @@ export async function loadCountervalues(
           };
         })
         .catch((e) => {
+          if (settings.disableAutoRecoverErrors) throw e;
           // TODO work on the semantic of failure.
           // do we want to opt-in for the 404 cases and make other fails it all?
           // do we want to be resilient on individual pulling / keep error somewhere?
@@ -254,7 +255,7 @@ export async function loadCountervalues(
           return null;
         })
     ),
-    fetchLatest(latestToFetch)
+    fetchLatest(latestToFetch, settings.disableAutoRecoverErrors)
       .then((rates) => {
         const out = {};
         let hasData = false;
@@ -271,6 +272,7 @@ export async function loadCountervalues(
         return out;
       })
       .catch((e) => {
+        if (settings.disableAutoRecoverErrors) throw e;
         log(
           "countervalues-error",
           "Failed to fetch latest for " +

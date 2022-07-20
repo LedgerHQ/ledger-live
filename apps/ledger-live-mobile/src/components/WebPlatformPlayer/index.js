@@ -14,32 +14,33 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
-
 import { JSONRPCRequest } from "json-rpc-2.0";
-
-import type {
+import {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/rawTypes";
 
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getMainAccount,
+  isTokenAccount,
+  flattenAccounts,
+} from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
-  listCryptoCurrencies,
   findCryptoCurrencyById,
+  listAndFilterCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
-  currencyToPlatformCurrency,
+  getPlatformTransactionSignFlowInfos,
 } from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
@@ -47,13 +48,17 @@ import {
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/serializers";
+import {
+  useListPlatformAccounts,
+  useListPlatformCurrencies,
+  usePlatformUrl,
+} from "@ledgerhq/live-common/platform/react";
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
-
 import * as tracking from "./tracking";
 
 type Props = {
@@ -107,9 +112,9 @@ const InfoPanelButton = ({
 
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
-  const accounts = useSelector(accountsSelector);
-  const currencies = useMemo(() => listCryptoCurrencies(), []);
+  const accounts = flattenAccounts(useSelector(accountsSelector));
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
@@ -117,63 +122,51 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const [device, setDevice] = useState();
 
-  const uri = useMemo(() => {
-    const url = new URL(manifest.url);
-
-    if (inputs) {
-      for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
-          url.searchParams.set(key, inputs[key]);
-        }
-      }
-    }
-
-    url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
-    url.searchParams.set("textColor", new Color(theme.colors.text).hex());
-    url.searchParams.set("loadDate", loadDate.valueOf().toString());
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-    return url;
-  }, [manifest.url, manifest.params, loadDate, theme, inputs]);
-
-  const navigation = useNavigation();
-
-  const listAccounts = useCallback(
-    () =>
-      accounts.map(account =>
-        serializePlatformAccount(accountToPlatformAccount(account)),
-      ),
-    [accounts],
+  const uri = usePlatformUrl(
+    manifest,
+    {
+      background: new Color(theme.colors.card).hex(),
+      text: new Color(theme.colors.text).hex(),
+      loadDate,
+    },
+    inputs,
   );
 
-  const listCurrencies = useCallback(
-    // TODO: use type ListCurrenciesParams from LedgerLiveApiSdk
-    () => currencies.map(currencyToPlatformCurrency),
-    [currencies],
-  );
+  const listAccounts = useListPlatformAccounts(accounts);
+  const listPlatformCurrencies = useListPlatformCurrencies();
 
   const requestAccount = useCallback(
     ({
-      currencies: currencyIds = [],
-      allowAddAccount,
+      currencies: currencyIds,
+      allowAddAccount = true,
+      includeTokens,
     }: // TODO: use type RequestAccountParams from LedgerLiveApiSdk
     // }: RequestAccountParams) =>
     {
       currencies?: string[],
       allowAddAccount?: boolean,
+      includeTokens?: boolean,
     }) =>
       new Promise((resolve, reject) => {
         tracking.platformRequestAccountRequested(manifest);
 
+        const allCurrencies = listAndFilterCurrencies({
+          currencies: currencyIds,
+          includeTokens,
+        });
         // handle no curencies selected case
-        const cryptoCurrencies =
-          currencyIds.length > 0 ? currencyIds : currencies.map(({ id }) => id);
+        const cryptoCurrencyIds =
+          currencyIds && currencyIds.length > 0
+            ? currencyIds
+            : allCurrencies.map(({ id }) => id);
 
-        const foundAccounts =
-          cryptoCurrencies && cryptoCurrencies.length
-            ? accounts.filter(a => cryptoCurrencies.includes(a.currency.id))
-            : accounts;
+        const foundAccounts = cryptoCurrencyIds?.length
+          ? accounts.filter(a =>
+              cryptoCurrencyIds.includes(
+                isTokenAccount(a) ? a.token.id : a.currency.id,
+              ),
+            )
+          : accounts;
 
         // @TODO replace with correct error
         if (foundAccounts.length <= 0 && !allowAddAccount) {
@@ -182,24 +175,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           return;
         }
 
-        // // if single account found return it
-        // if (foundAccounts.length === 1 && !allowAddAccount) {
-        //   resolve(
-        //     serializePlatformAccount(
-        //       accountToPlatformAccount(foundAccounts[0]),
-        //     ),
-        //   );
-        //   return;
-        // }
-
         // list of queried cryptoCurrencies with one or more accounts -> used in case of not allowAddAccount and multiple accounts selectable
         const currenciesDiff = allowAddAccount
-          ? cryptoCurrencies
+          ? cryptoCurrencyIds
           : foundAccounts
-              .map(a => a.currency.id)
+              .map(a => (isTokenAccount(a) ? a.token.id : a.currency.id))
               .filter(
                 (c, i, arr) =>
-                  cryptoCurrencies.includes(c) && i === arr.indexOf(c),
+                  cryptoCurrencyIds.includes(c) && i === arr.indexOf(c),
               );
 
         // if single currency available redirect to select account directly
@@ -214,13 +197,16 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
             params: {
-              currencies: currenciesDiff,
+              currencies: allCurrencies,
               currency,
               allowAddAccount,
-              onSuccess: account => {
+              includeTokens,
+              onSuccess: (account, parentAccount) => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
-                  serializePlatformAccount(accountToPlatformAccount(account)),
+                  serializePlatformAccount(
+                    accountToPlatformAccount(account, parentAccount),
+                  ),
                 );
               },
               onError: error => {
@@ -233,12 +219,15 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectCrypto,
             params: {
-              currencies: currenciesDiff,
+              currencies: allCurrencies,
               allowAddAccount,
-              onSuccess: account => {
+              includeTokens,
+              onSuccess: (account, parentAccount) => {
                 tracking.platformRequestAccountSuccess(manifest);
                 resolve(
-                  serializePlatformAccount(accountToPlatformAccount(account)),
+                  serializePlatformAccount(
+                    accountToPlatformAccount(account, parentAccount),
+                  ),
                 );
               },
               onError: error => {
@@ -249,7 +238,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           });
         }
       }),
-    [manifest, accounts, currencies, navigation],
+    [manifest, accounts, navigation],
   );
 
   const receiveOnAccount = useCallback(
@@ -257,18 +246,22 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       tracking.platformReceiveRequested(manifest);
       const account = accounts.find(account => account.id === accountId);
 
-      return new Promise((resolve, reject) => {
-        if (!account) {
-          tracking.platformReceiveFail(manifest);
-          reject();
-          return;
-        }
+      if (!account) {
+        tracking.platformReceiveFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
 
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+
+      return new Promise((resolve, reject) => {
         navigation.navigate(ScreenName.VerifyAccount, {
           account,
+          parentId: parentAccount ? parentAccount.id : undefined,
           onSuccess: account => {
             tracking.platformReceiveSuccess(manifest);
-            resolve(account.freshAddress);
+            resolve(accountToPlatformAccount(account, parentAccount).address);
           },
           onClose: () => {
             tracking.platformReceiveFail(manifest);
@@ -300,6 +293,27 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       const platformTransaction = deserializePlatformTransaction(transaction);
       const account = accounts.find(account => account.id === accountId);
 
+      tracking.platformSignTransactionRequested(manifest);
+
+      if (!account) {
+        tracking.platformSignTransactionFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : undefined;
+
+      if (
+        (isTokenAccount(account)
+          ? parentAccount?.currency.family
+          : account.currency.family) !== platformTransaction.family
+      ) {
+        return Promise.reject(
+          new Error("Transaction family not matching account currency family"),
+        );
+      }
+
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!transaction) {
@@ -307,24 +321,23 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
           reject(new Error("Transaction required"));
           return;
         }
-        if (!account) {
-          tracking.platformSignTransactionFail(manifest);
-          reject(new Error("Account required"));
-          return;
-        }
 
-        const bridge = getAccountBridge(account);
+        const bridge = getAccountBridge(account, parentAccount);
+
+        const { liveTx } = getPlatformTransactionSignFlowInfos(
+          platformTransaction,
+        );
 
         const t = bridge.createTransaction(account);
-        const { recipient, ...txData } = platformTransaction;
+        const { recipient, ...txData } = liveTx;
         const t2 = bridge.updateTransaction(t, {
           recipient,
-          feesStrategy: "custom",
+          subAccountId: isTokenAccount(account) ? account.id : undefined,
         });
 
         const tx = bridge.updateTransaction(t2, {
-          ...txData,
           userGasLimit: txData.gasLimit,
+          ...txData,
         });
 
         navigation.navigate(NavigatorName.SignTransaction, {
@@ -334,6 +347,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             nextNavigation: ScreenName.SignTransactionSelectDevice,
             transaction: tx,
             accountId,
+            parentId: parentAccount ? parentAccount.id : undefined,
             appName: params.useApp,
             onSuccess: ({ signedOperation, transactionSignError }) => {
               if (transactionSignError) {
@@ -358,7 +372,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   );
 
   const broadcastTransaction = useCallback(
-    async ({
+    ({
       accountId,
       signedTransaction,
     }: {
@@ -367,16 +381,20 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }) => {
       const account = accounts.find(account => account.id === accountId);
 
+      if (!account) {
+        tracking.platformBroadcastFail(manifest);
+        return Promise.reject(new Error("Account required"));
+      }
+
+      const parentAccount = isTokenAccount(account)
+        ? accounts.find(a => a.id === account.parentId)
+        : null;
+
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!signedTransaction) {
           tracking.platformBroadcastFail(manifest);
           reject(new Error("Transaction required"));
-          return;
-        }
-        if (!account) {
-          tracking.platformBroadcastFail(manifest);
-          reject(new Error("Account required"));
           return;
         }
 
@@ -386,7 +404,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         );
 
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          broadcastSignedTx(account, null, signedOperation).then(
+          broadcastSignedTx(account, parentAccount, signedOperation).then(
             op => {
               tracking.platformBroadcastSuccess(manifest);
               resolve(op.hash);
@@ -545,7 +563,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
-      "currency.list": listCurrencies,
+      "currency.list": listPlatformCurrencies,
       "account.request": requestAccount,
       "account.receive": receiveOnAccount,
       "transaction.sign": signTransaction,
@@ -555,7 +573,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     }),
     [
       listAccounts,
-      listCurrencies,
+      listPlatformCurrencies,
       requestAccount,
       receiveOnAccount,
       signTransaction,

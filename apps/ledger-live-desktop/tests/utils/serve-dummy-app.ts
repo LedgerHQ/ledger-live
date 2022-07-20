@@ -32,7 +32,7 @@ export const manifest = (port: number) => [
     homepageUrl: "https://developers.ledger.com/",
     icon: "",
     platform: "all",
-    apiVersion: "0.0.1",
+    apiVersion: "^1.0.0 || ~0.0.1",
     manifestVersion: "1",
     branch: "stable",
     categories: ["tools"],
