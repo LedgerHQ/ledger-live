@@ -34,9 +34,14 @@ export function SelectDevice() {
 
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
-      track("Onboarding Device - Selection", { deviceModelId });
-      setDeviceModelId(deviceModelId);
-      history.push("/onboarding/select-use-case");
+      // TODO: use a feature flag to do this properly
+      if (deviceModelId === "nanoFTS") {
+        history.push("/sync-onboarding");
+      } else {
+        track("Onboarding Device - Selection", { deviceModelId });
+        setDeviceModelId(deviceModelId);
+        history.push("/onboarding/select-use-case");
+      }
     },
     [history, setDeviceModelId],
   );

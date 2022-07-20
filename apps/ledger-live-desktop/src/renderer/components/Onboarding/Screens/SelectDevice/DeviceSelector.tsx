@@ -15,6 +15,10 @@ const DeviceSelectContainer = styled(Flex).attrs({
 
 const devices = [
   {
+    id: "nanoFTS",
+    enabled: true,
+  },
+  {
     id: "nanoS",
     enabled: true,
   },
