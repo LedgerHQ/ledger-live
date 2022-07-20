@@ -19,9 +19,8 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { createAction as initSellCreateAction } from "@ledgerhq/live-common/hw/actions/initSell";
-import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { toTransactionRaw, toTransactionStatusRaw } from "@ledgerhq/live-common/transaction/index";
 import { toAccountLikeRaw, toAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { toTransactionStatusRaw } from "@ledgerhq/live-common/transaction/status";
 import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 
