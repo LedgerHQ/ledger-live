@@ -60,7 +60,6 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
 
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { onboardingRelaunchedSelector } from "~/renderer/reducers/onboarding";
 
 // $FlowFixMe
 import Market from "~/renderer/screens/market";
@@ -146,7 +145,6 @@ export default function Default() {
   const ref: React$ElementRef<any> = useRef();
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const onboardingRelaunched = useSelector(onboardingRelaunchedSelector);
 
   useDeeplink();
   useUSBTroubleshooting();
@@ -189,10 +187,9 @@ export default function Default() {
             {process.env.DISABLE_TRANSACTION_BROADCAST ? (
               <DisableTransactionBroadcastWarning />
             ) : null}
-            {!hasCompletedOnboarding || onboardingRelaunched ? (
+            <Switch>
               <Route path="/onboarding" render={props => <Onboarding {...props} />} />
-            ) : (
-              <Switch>
+              {hasCompletedOnboarding && (
                 <Route>
                   <Route exact path="/walletconnect">
                     <WalletConnect />
@@ -289,8 +286,8 @@ export default function Default() {
                     <LetInternalSendCrashTest />
                   </KeyboardContent>
                 </Route>
-              </Switch>
-            )}
+              )}
+            </Switch>
           </ContextMenuWrapper>
         </BridgeSyncProvider>
       </IsUnlocked>
