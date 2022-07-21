@@ -32,8 +32,6 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import { usePreviousRouteName } from "../../helpers/routeHooks";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import { track, TrackScreen } from "../../analytics";
-import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 type Props = {
   account?: (TokenAccount | Account),
