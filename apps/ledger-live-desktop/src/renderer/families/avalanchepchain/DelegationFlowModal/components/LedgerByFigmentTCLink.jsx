@@ -12,7 +12,7 @@ const LedgerByFigmentTC = () => {
 
   return (
     <LinkWithExternalIcon
-      label={t("avalanche.flow.steps.validator.ledgerByFigmentTC")}
+      label={t("avalanchepchain.delegation.flow.steps.validator.ledgerByFigmentTC")}
       onClick={openLedgerByFigmentTC}
     />
   );
