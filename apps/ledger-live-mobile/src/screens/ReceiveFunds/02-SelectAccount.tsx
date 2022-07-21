@@ -6,7 +6,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import type { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
-import { useRoute , useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
