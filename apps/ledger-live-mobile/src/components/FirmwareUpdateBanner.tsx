@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
 import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
+import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -103,12 +103,10 @@ const FirmwareUpdateBanner = () => {
       <BottomDrawer
         isOpen={showDrawer}
         onClose={onCloseDrawer}
-        Icon={DownloadMedium}
+        Icon={fwUpdateActivatedButNotWired ? UsbMedium : DownloadMedium}
         title={
           fwUpdateActivatedButNotWired
-            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle", {
-                deviceName: lastConnectedDevice?.deviceName,
-              })
+            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle")
             : t("FirmwareUpdate.drawerUpdate.title")
         }
         description={
@@ -120,13 +118,7 @@ const FirmwareUpdateBanner = () => {
         }
         noCloseButton
       >
-        {fwUpdateActivatedButNotWired ? (
-          <Button
-            type="primary"
-            title={t("common.retry")}
-            onPress={onExperimentalFirmwareUpdate}
-          />
-        ) : (
+        {!fwUpdateActivatedButNotWired && (
           <Button
             type="primary"
             title={t("common.close")}
