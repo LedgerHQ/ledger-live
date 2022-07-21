@@ -357,10 +357,12 @@ const buildOptimisticOperation = (
     blockHash: null,
     blockHeight: null,
     senders,
-    recipients: [transaction.recipient],
+    recipients: [],
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      validators: transaction.recipient
+    },
   };
 
   return operation;
