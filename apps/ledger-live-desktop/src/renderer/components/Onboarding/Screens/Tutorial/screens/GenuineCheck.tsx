@@ -23,7 +23,7 @@ const Success = ({ device }: { device: Device }) => {
   return (
     <Column>
       <Bullet
-        icon="Check"
+        icon="CheckAlone"
         text={t("onboarding.screens.tutorial.screens.genuineCheck.success.title")}
         subText={t("onboarding.screens.tutorial.screens.genuineCheck.success.desc", {
           deviceName: t(`devices.${device.modelId}`),
