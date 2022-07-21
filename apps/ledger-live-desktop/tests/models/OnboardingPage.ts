@@ -46,7 +46,9 @@ export class OnboardingPage {
     this.selectDeviceButton = (deviceId: string): Locator =>
       page.locator(`data-test-id=v3-device-${deviceId}`);
     this.checkMyNanoButton = page.locator('button:has-text("Check my Nano")');
-    this.continueButton = page.locator('button:has-text("Continue")');
+    this.continueButton = page.locator(
+      '[data-test-id="modal-container"] button:has-text("Continue")',
+    );
     this.newDeviceButton = page.locator("data-test-id=v3-onboarding-new-device");
     this.connectDeviceButton = page.locator("data-test-id=v3-onboarding-initialized-device");
     this.restoreDeviceButton = page.locator("data-test-id=v3-onboarding-restore-device");
@@ -111,7 +113,7 @@ export class OnboardingPage {
     expect(await this.page.screenshot()).toMatchSnapshot([group, "get-started-1.png"]);
     await this.continueTutorial();
 
-    expect(await this.page.screenshot()).toHaveScreenshot([group, `get-started-2-${nano}.png`]);
+    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, `get-started-2-${nano}.png`]);
     await this.continueTutorial();
   }
 
@@ -122,7 +124,7 @@ export class OnboardingPage {
     expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-2.png"]);
     await this.continueTutorial();
 
-    expect(await this.page.screenshot()).toHaveScreenshot([group, "pin-code-3.png"]);
+    expect.soft(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-3.png"]);
     await this.continueTutorial();
 
     expect(await this.page.screenshot()).toMatchSnapshot([group, "pin-code-4.png"]);
