@@ -888,7 +888,7 @@ EXTERNAL SOURCES:
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.5.11_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/react-native-fast-image"
   RNFBApp:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.9.3_jtrxi44z2zn3egoyupbz6wol6a/node_modules/@react-native-firebase/app"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+app@14.9.3_zqxy7fpkavjkgz5xll7ed4r6rq/node_modules/@react-native-firebase/app"
   RNFBMessaging:
     :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@14.11.1_ljhxmmg6zhnbalfqtji2e6aebm/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:

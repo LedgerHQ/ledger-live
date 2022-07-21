@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider";
+import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
-import type { Account } from "@ledgerhq/live-common/types";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   notificationsModalOpenSelector,
@@ -23,7 +23,6 @@ import {
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
 } from "../actions/notifications";
-import { languageSelector } from "../reducers/settings";
 import { notificationsSelector } from "../reducers/settings";
 import { ScreenName, NavigatorName } from "../const";
 
@@ -78,8 +77,14 @@ async function setPushNotificationsDataOfUserInStorage(dataOfUser) {
       JSON.stringify(dataOfUser),
     );
 }
-  
-  
+
+const getIsNotifEnabled = async () => {
+    const authStatus = await messaging().hasPermission();
+
+    return authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+};
+
 const useNotifications = () => {
     const pushNotificationsFeature = useFeature("pushNotifications");
     const { pushToast } = useToasts();
@@ -92,19 +97,11 @@ const useNotifications = () => {
     const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
     const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
     const accounts: Account[] = useSelector(accountsSelector);
-    const currAppLanguage = useSelector(languageSelector);
 
     const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
     const dispatch = useDispatch();
     const navigation = useNavigation();
-
-    const getIsNotifEnabled = async () => {
-        const authStatus = await messaging().hasPermission();
-
-        return authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    };
 
     const listenForNotifications = useCallback(async () => {
         if (!notificationsToken) {
@@ -124,7 +121,7 @@ const useNotifications = () => {
             messaging().setBackgroundMessageHandler(async remoteMessage => {
             });
         }
-    }, [notificationsToken]);
+    }, [notificationsToken, pushToast]);
 
     const clearNotificationsListeners = useCallback(() => {
         if (notificationsToken) {
@@ -160,7 +157,7 @@ const useNotifications = () => {
             });
           }
         },
-        [dispatch, setNotificationsModalType, setNotificationsModalOpen, getIsNotifEnabled, notificationsSettings.allowed],
+        [dispatch, getIsNotifEnabled, notificationsSettings.allowed],
     );
     
     const areConditionsMet = useCallback(() => {
@@ -211,12 +208,12 @@ const useNotifications = () => {
     
         return true;
       }, [
-        currAppLanguage,
         pushNotificationsDataOfUser,
-        accountsWithAmountCount,
-        pushNotificationsFeature?.params?.conditions?.minimum_accounts_number,
+        pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number,
         pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number,
-      ]);
+        pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
+        accountsWithAmountCount,
+    ]);
     
     const isEventTriggered = useCallback(
         (eventTrigger: EventTrigger, newRoute?: string) =>
