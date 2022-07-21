@@ -1000,6 +1000,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "デバイスを選択してください"
     },
@@ -1656,7 +1657,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "取引詳細",
+    "title" : "トランザクションの詳細",
     "account" : "アカウント",
     "date" : "日付",
     "confirmed" : "確認済み",
@@ -1722,7 +1723,7 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
-    "noMoreOperations" : "その他のオペレーションはありません。"
+    "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
@@ -1763,7 +1764,7 @@
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
-    "lastOperations" : "最近の取引",
+    "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
       "title" : "暗号資産をまだお持ちでないですか？",
       "desc" : "受取を開始する前に、<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してください。",
