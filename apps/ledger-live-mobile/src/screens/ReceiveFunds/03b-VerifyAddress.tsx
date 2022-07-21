@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
-import { TouchableOpacity, TouchableWithoutFeedback, Share, Linking } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import QRCode from "react-native-qrcode-svg";
+import { TouchableOpacity, Linking } from "react-native";
+import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type {
   Account,
@@ -13,35 +12,25 @@ import type {
 import {
   getMainAccount,
   getAccountCurrency,
-  getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { useTheme } from "styled-components/native";
-import { Flex, Link as TextLink } from "@ledgerhq/native-ui";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import styled, { useTheme } from "styled-components/native";
+import { Flex } from "@ledgerhq/native-ui";
+import { useRoute } from "@react-navigation/native";
+import { track, TrackScreen } from "../../analytics";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import BottomModal from "../../components/BottomModal";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import CopyLink from "../../components/CopyLink";
-import NavigationScrollView from "../../components/NavigationScrollView";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../logic/debugReject";
-import GenericErrorView from "../../components/GenericErrorView";
-import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import AdditionalInfoModal from "./AdditionalInfoModal";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/src/types";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
-import { replaceAccounts } from "../../actions/accounts";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Animation from "../../components/Animation";
 import getDeviceAnimation from "../../components/DeviceAction/getDeviceAnimation";
-import styled from "styled-components/native";
 import Illustration from "../../images/illustration/Illustration";
 import { urls } from "../../config/urls";
 
@@ -85,6 +74,8 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
+  const routerRoute = useRoute();
+  const lastRoute = usePreviousRouteName();
 
   const onModalClose = useCallback(() => {
     setError(null)
@@ -127,19 +118,32 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const onRetry = useCallback(() => {
+    track("button_clicked", {
+      button: "Retry",
+      screen: routerRoute.name
+    })
     onModalClose();
     if (device) {
       verifyOnDevice(device);
     }
-  },[device, onModalClose, verifyOnDevice]);
+  },[device, onModalClose, routerRoute.name, verifyOnDevice]);
 
   const goBack = useCallback(() => {
+    track("button_clicked", {
+      button: "Cancel",
+      screen: routerRoute.name
+    })
     navigation.navigate(ScreenName.ReceiveConfirmation, { ...route.params, verified: false });
-  }, [navigation, route.params]);
+  }, [navigation, route.params, routerRoute.name]);
 
   const redirectToSupport = useCallback(() => {
+    track("message_clicked", {
+      message: "contact us asap",
+      screen: routerRoute.name,
+      url: urls.receiveVerifyAddress
+    })
     Linking.openURL(urls.receiveVerifyAddress);
-  }, []);
+  }, [routerRoute.name]);
 
   useEffect(() => {
     if (device) {
@@ -154,6 +158,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <PreventNativeBack />
       <SkipLock />
         { error ? <>
+          <TrackScreen category="ReceiveFunds" name="Address Verification Denied" source={lastRoute} />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration lightSource={illustrations.light}
               darkSource={illustrations.dark}
@@ -172,6 +177,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>{t("common.retry")}</Button>
           </Flex>
         </> : <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
+          <TrackScreen category="ReceiveFunds" name="Verify Address" source={lastRoute}/>
           <LText variant="h4" textAlign="center" mb={6}>{t("transfer.receive.verifyAddress.title")}</LText>
         <LText variant="body" color="neutral.c70" textAlign="center">{t("transfer.receive.verifyAddress.subtitle")}</LText>
         <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>

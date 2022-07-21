@@ -16,13 +16,15 @@ import {
 import {Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { Account, TokenAccount } from "@ledgerhq/live-common/src/types";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
+import { useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { flattenAccountsSelector } from "../../reducers/accounts";
-import { makeEmptyTokenAccount } from "@ledgerhq/live-common/src/account";
+import { usePreviousRouteName } from "../../helpers/routeHooks";
 
 const SEARCH_KEYS = ["name", "ticker"];
 
@@ -51,7 +53,9 @@ const findAccountByCurrency = (accounts: (TokenAccount | Account)[], currency: C
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const {t } = useTranslation();
+  const routerRoute = useRoute()
   const { filterCurrencyIds = [] } = route.params || {};
+  const lastRoute = usePreviousRouteName()
   const cryptoCurrencies = useMemo(
     () =>
       listSupportedCurrencies()
@@ -68,7 +72,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 
   const onPressItem = useCallback((currency: CryptoCurrency | TokenCurrency) => {
-    
+    track('currency_clicked', {screen: routerRoute.name, currency: currency.name})
+
     const accs = findAccountByCurrency(accounts, currency);
     if(accs.length > 1) {
       navigation.navigate(ScreenName.ReceiveSelectAccount, {
@@ -123,7 +128,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen category="AddAccounts" name="SelectCrypto" />
+      <TrackScreen category="ReceiveFunds" name="Receive Select Crypto" source={lastRoute} />
       <LText fontSize={32} fontFamily="InterMedium" semiBold px={6} my={3}>{t("transfer.receive.selectCrypto.title")}</LText>
         <FilteredSearchBar
           keys={SEARCH_KEYS}

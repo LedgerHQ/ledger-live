@@ -3,6 +3,9 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
+import { useRoute } from "@react-navigation/native";
+import { track, TrackScreen } from "../../../analytics";
+import { usePreviousRouteName } from "../../../helpers/routeHooks";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -16,12 +19,34 @@ type Props = {
 };
 
 const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
-  const onDontVerify = useCallback(() => {
-    setStep("confirmUnverified");
-  }, [setStep]);
+  const route = useRoute();
+  const lastRoute = usePreviousRouteName();
 
+  const onDontVerify = useCallback(() => {
+    track("button_clicked", {
+      button: "Reveal my address without verifying",
+      screen: route.name,
+      drawer: "initMessage",
+    });
+    setStep("confirmUnverified");
+  }, [setStep, route]);
+
+  const handleVerifyAddress = useCallback(() => {
+    track("button_clicked", {
+      button: "Verify my address",
+      screen: route.name,
+      drawer: "initMessage",
+    });
+    onVerifyAddress();
+  }, [route, onVerifyAddress]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
+      <TrackScreen
+        category="ReceiveFunds"
+        name="Verification Security Disclaimer"
+        source={lastRoute}
+        type="drawer"
+      />
       <Text
         variant="h4"
         fontWeight="semiBold"
@@ -48,7 +73,7 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
         <Trans i18nKey="transfer.receive.securityVerify.subtitle2" />
       </Text>
       <Flex alignSelf="stretch" my={8}>
-        <Button onPress={onVerifyAddress} type="main" size="large">
+        <Button onPress={handleVerifyAddress} type="main" size="large">
           <Trans i18nKey="transfer.receive.securityVerify.verifyCta" />
         </Button>
         <NotNowButton onPress={onDontVerify}>
