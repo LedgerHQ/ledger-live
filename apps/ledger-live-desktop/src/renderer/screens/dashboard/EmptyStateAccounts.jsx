@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import NoAccounts from "./NoAccountsImage";
@@ -14,10 +14,12 @@ import { withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const EmptyStateAccounts = ({ theme }: { theme: any }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
+  const locale = useSelector(languageSelector) || "en";
 
   const handleInstallApp = useCallback(() => {
     push("/manager");
@@ -75,7 +77,7 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
             style={{ color: theme.colors.palette.text.shade60 }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.accounts.buttons.help" />}
-            onClick={() => openURL(urls.faq)}
+            onClick={() => openURL(urls.faq[locale in urls.faq ? locale : "en"])}
           />
         </Box>
       </Box>
