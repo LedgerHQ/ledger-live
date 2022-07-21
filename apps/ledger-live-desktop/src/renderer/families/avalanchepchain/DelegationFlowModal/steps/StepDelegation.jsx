@@ -12,6 +12,8 @@ import type { AccountBridge, Transaction } from "@ledgerhq/live-common/types";
 import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import LedgerByFigmentTC from "../components/LedgerByFigmentTCLink";
+import { isDefaultValidatorNode } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 export default function StepDelegation({
   account,
@@ -36,7 +38,6 @@ export default function StepDelegation({
       return bridge.updateTransaction(tx, {
         recipient: address,
         endTime: new BigNumber(endTime),
-        maxEndTime: new BigNumber(endTime),
       });
     });
   };
@@ -71,10 +72,12 @@ export function StepDelegationFooter({
   invariant(account, "avalanche account required");
 
   const canNext = !bridgePending && transaction?.recipient;
+  const displayTC = isDefaultValidatorNode(transaction.recipient);
 
   return (
     <>
       <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      {displayTC && <LedgerByFigmentTC />}
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />
