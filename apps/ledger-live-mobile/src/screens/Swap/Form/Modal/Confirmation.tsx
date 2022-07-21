@@ -50,7 +50,7 @@ interface Props {
   exchangeRate?: ExchangeRate;
   provider: string;
   deviceMeta: DeviceMeta;
-  onError: (error: Error) => void;
+  onError: (error: { error: Error; swapId: string }) => void;
   onCancel: () => void;
   isOpen: boolean;
 }
@@ -203,9 +203,9 @@ export function Confirmation({
                   transaction: swapTx.transaction as SwapTransaction,
                   userId: providerKYC?.id,
                 }}
-                onResult={({ initSwapResult, initSwapError }) => {
+                onResult={({ initSwapResult, initSwapError, swapId }) => {
                   if (initSwapError) {
-                    onError(initSwapError);
+                    onError({ error: initSwapError, swapId });
                   } else {
                     setSwapData(initSwapResult);
                   }
@@ -225,9 +225,13 @@ export function Confirmation({
                   transaction: swapData.transaction as Transaction,
                   appName: "Exchange",
                 }}
-                onResult={({ transactionSignError, signedOperation }) => {
+                onResult={({
+                  transactionSignError,
+                  signedOperation,
+                  swapId,
+                }) => {
                   if (transactionSignError) {
-                    onError(transactionSignError);
+                    onError({ error: transactionSignError, swapId });
                   } else {
                     setSignedOperation(signedOperation);
                   }
