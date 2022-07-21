@@ -2699,6 +2699,7 @@
     "delegation": {
       "header": "Delegations",
       "add": "Add",
+      "commission": "Commission",
       "validator": "NodeID",
       "startTime": "Start Time",
       "endTime": "End Time",

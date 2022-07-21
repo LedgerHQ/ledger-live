@@ -22,12 +22,11 @@ type Props = {
   currency: CryptoCurrency,
   validator: AvalanchePChainValidator,
   active?: boolean,
-  showStake?: boolean,
   onClick?: (v: AvalanchePChainValidator) => void,
   unit: Unit,
 };
 
-function AvalancheValidatorRow({ validator, active, showStake, onClick, unit, currency }: Props) {
+function AvalancheValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
 
   const onExternalLink = useCallback(
@@ -56,7 +55,6 @@ function AvalancheValidatorRow({ validator, active, showStake, onClick, unit, cu
         </IconContainer>
       }
       title={validator.nodeID}
-      subtitle={null}
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={
@@ -77,6 +75,14 @@ function AvalancheValidatorRow({ validator, active, showStake, onClick, unit, cu
           <Box ml={2} justifyContent="center" alignContent="center">
             <ChosenMark active={active ?? false} />
           </Box>
+        </Box>
+      }
+      subtitle={
+        <Box>
+          <Text ff="Inter|Medium" fontSize={2} color="palette.text.shade50">
+            <Trans i18nKey={`avalanchepchain.delegation.commission`} />{" "}
+            {`${validator.delegationFee} %`}
+          </Text>
         </Box>
       }
     />
