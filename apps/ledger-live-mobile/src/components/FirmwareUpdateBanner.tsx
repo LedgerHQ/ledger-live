@@ -68,11 +68,14 @@ const FirmwareUpdateBanner = () => {
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
+  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired;
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
-    lastConnectedDevice?.wired &&
     isUsbFwVersionUpdateSupported;
+
+  const fwUpdateActivatedButNotWired =
+    usbFwUpdateActivated && !isDeviceConnectedViaUSB;
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
@@ -89,7 +92,9 @@ const FirmwareUpdateBanner = () => {
           type="color"
           title={t("FirmwareUpdate.update")}
           onPress={
-            usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress
+            usbFwUpdateActivated && isDeviceConnectedViaUSB
+              ? onExperimentalFirmwareUpdate
+              : onPress
           }
           outline={false}
         />
@@ -99,15 +104,35 @@ const FirmwareUpdateBanner = () => {
         isOpen={showDrawer}
         onClose={onCloseDrawer}
         Icon={DownloadMedium}
-        title={t("FirmwareUpdate.drawerUpdate.title")}
-        description={t("FirmwareUpdate.drawerUpdate.description")}
+        title={
+          fwUpdateActivatedButNotWired
+            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle", {
+                deviceName: lastConnectedDevice?.deviceName,
+              })
+            : t("FirmwareUpdate.drawerUpdate.title")
+        }
+        description={
+          fwUpdateActivatedButNotWired
+            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
+                deviceName: lastConnectedDevice?.deviceName,
+              })
+            : t("FirmwareUpdate.drawerUpdate.description")
+        }
         noCloseButton
       >
-        <Button
-          type="primary"
-          title={t("common.close")}
-          onPress={onCloseDrawer}
-        />
+        {fwUpdateActivatedButNotWired ? (
+          <Button
+            type="primary"
+            title={t("common.retry")}
+            onPress={onExperimentalFirmwareUpdate}
+          />
+        ) : (
+          <Button
+            type="primary"
+            title={t("common.close")}
+            onPress={onCloseDrawer}
+          />
+        )}
       </BottomDrawer>
     </>
   ) : null;

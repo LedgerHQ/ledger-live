@@ -3257,7 +3257,9 @@
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
       "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+      "pleaseConnectUsbTitle": "Connect your {{deviceName}}",
+      "pleaseConnectUsbDescription": "Plug your {{deviceName}} to your phone with a USB cable to start the firmware update."
     }
   },
   "FirmwareUpdateReleaseNotes": {
