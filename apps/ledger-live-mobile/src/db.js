@@ -24,6 +24,10 @@ export async function setUser(user: { id: string }): Promise<void> {
   await store.update("user", user);
 }
 
+export async function updateUser(user: { id: string }): Promise<void> {
+  await store.update("user", user);
+}
+
 export async function getSettings(): Promise<*> {
   const settings = await store.get("settings");
   return settings;

@@ -87,6 +87,30 @@ export function decodeOperationId(id: string): {
   };
 }
 
+export function encodeSubOperationId(
+  accountId: string,
+  hash: string,
+  type: string,
+  index: string | number
+): string {
+  return `${accountId}-${hash}-${type}-i${index}`;
+}
+
+export function decodeSubOperationId(id: string): {
+  accountId: string;
+  hash: string;
+  type: string;
+  index: number;
+} {
+  const [accountId, hash, type, index] = id.split("-");
+  return {
+    accountId,
+    hash,
+    type,
+    index: Number(index),
+  };
+}
+
 export function patchOperationWithHash(
   operation: Operation,
   hash: string

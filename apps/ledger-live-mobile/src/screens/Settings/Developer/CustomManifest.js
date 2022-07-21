@@ -9,8 +9,8 @@ import { ScreenName } from "../../../const";
 import KeyboardView from "../../../components/KeyboardView";
 import ImportIcon from "../../../icons/Import";
 
-const DebuggerButton: React.FC<{
-  noPress: Function,
+const DebuggerButton: React$ComponentType<{
+  onPress: Function,
 }> = ({ onPress }) => {
   const { colors } = useTheme();
 
