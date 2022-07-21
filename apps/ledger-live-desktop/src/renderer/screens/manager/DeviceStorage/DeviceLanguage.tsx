@@ -36,7 +36,11 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
           Language
         </Text>
       </Flex>
-      <Button Icon={Icons.ChevronRightMedium} onClick={() => setIsLanguageInstallation(true)}>
+      <Button
+        Icon={Icons.ChevronRightMedium}
+        onClick={() => setIsLanguageInstallation(true)}
+        data-test-id="manager-change-language-button"
+      >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}
       </Button>
       <DeviceLanguageInstallation
@@ -52,6 +56,5 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device }: Props) => {
     </Flex>
   );
 };
-
 
 export default withV3StyleProvider(DeviceLanguage);

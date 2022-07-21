@@ -120,6 +120,8 @@ const reducer = (state: State, e: Event): State => {
         installingLanguage: true,
         progress: e.progress,
       };
+    default:
+      return { ...state };
   }
 };
 

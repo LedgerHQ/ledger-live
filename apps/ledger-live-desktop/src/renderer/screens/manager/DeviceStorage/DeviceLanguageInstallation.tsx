@@ -1,14 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  Button,
-  Flex,
-  Icons,
-  Drawer,
-  Radio,
-  BoxedIcon,
-  Divider,
-  Log,
-} from "@ledgerhq/react-ui";
+import { Button, Flex, Icons, Drawer, Radio, BoxedIcon, Divider, Log } from "@ledgerhq/react-ui";
 import { DeviceInfo } from "@ledgerhq/live-common/types/manager";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Language } from "@ledgerhq/live-common/types/languages";
@@ -37,18 +28,16 @@ type Props = {
 const DeviceLanguageInstalled = ({
   onContinue,
   onMount,
-  installedLanguage,
 }: {
   onContinue: () => void;
   onMount: () => void;
-  installedLanguage: Language;
 }) => {
   useEffect(() => onMount(), [onMount]);
 
   const { t } = useTranslation();
 
   return (
-    <Flex height="100%" flexDirection="column">
+    <Flex height="100%" flexDirection="column" data-test-id="language-installed">
       <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
         <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c100" size={64} iconSize={24} />
         <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
@@ -58,7 +47,11 @@ const DeviceLanguageInstalled = ({
       <Flex flexDirection="column" rowGap={10}>
         <Divider variant="light" />
         <Flex alignSelf="end">
-          <Button variant="main" onClick={onContinue}>
+          <Button
+            variant="main"
+            onClick={onContinue}
+            data-test-id="close-language-installation-button"
+          >
             {t("common.close")}
           </Button>
         </Flex>
@@ -90,7 +83,6 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const Result = useCallback(() => {
     return (
       <DeviceLanguageInstalled
-        installedLanguage={selectedLanguage}
         onContinue={onCloseDrawer}
         onMount={onSuccess}
       />
@@ -125,7 +117,10 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
                   }}
                   label={({ checked }: { checked: boolean }) => (
                     <Flex flex={1} justifyContent="space-between">
-                      <Radio.ListElement.Label checked={checked}>
+                      <Radio.ListElement.Label
+                        checked={checked}
+                        data-test-id={`manager-language-option-${language}`}
+                      >
                         {t(`deviceLocalization.languages.${language}`)}
                       </Radio.ListElement.Label>
                       {currentLanguage === language && (
@@ -142,6 +137,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
               <Divider variant="light" />
               <Flex alignSelf="end">
                 <Button
+                  data-test-id="install-language-button"
                   variant="main"
                   onClick={onInstall}
                   disabled={currentLanguage === selectedLanguage}

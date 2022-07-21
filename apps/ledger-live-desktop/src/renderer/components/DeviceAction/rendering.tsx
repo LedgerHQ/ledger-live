@@ -346,7 +346,13 @@ export const renderInstallingLanguage = withV3StyleProvider(({
   const cleanProgress = Math.round(progress * 100);
 
   return (
-    <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column" >
+    <Flex 
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      data-test-id="installing-language-progress"
+    >
       <ProgressWrapper>
         <ProgressLoader progress={cleanProgress} />
       </ProgressWrapper>
@@ -408,7 +414,13 @@ export const renderAllowLanguageInstallation = ({
   type: "light" | "dark",
   t: TFunction,
 }) => (
-  <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+  <Flex
+    flex={1}
+    flexDirection="column"
+    justifyContent="center"
+    alignItems="center"
+    data-test-id="allow-language-installation"
+  >
     <DeviceBlocker />
     <AnimationWrapper modelId={modelId}>
       <Animation animation={getDeviceAnimation(modelId, type, "validate")} />

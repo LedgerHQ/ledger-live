@@ -8,6 +8,7 @@ import { deserializeError } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
   deviceInfo155,
+  deviceInfo210lo2,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 
@@ -180,6 +181,46 @@ const swapEvents = [
   },
 ];
 
+const localizationEvents = [
+  {
+    name: "listAppsWithLocalization",
+    event: {
+      type: "listingApps",
+      deviceInfo: deviceInfo210lo2,
+    },
+  },
+  {
+    name: "resultWithLocalization",
+    event: {
+      type: "result",
+      result: mockListAppsResult(
+        "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+        "Bitcoin,Tron,Litecoin,Ethereum (outdated)",
+        deviceInfo210lo2,
+      ),
+    },
+  },
+  {
+    name: "requestLanguageInstallation",
+    event: {
+      type: "devicePermissionRequested"
+    },
+  },
+  {
+    name: "languageInstallationProgress50",
+    event: {
+      type: "progress",
+      progress: 0.5
+    },
+  },
+  {
+    name: "languageInstallationComplete",
+    event: {
+      type: "languageInstalled"
+    },
+  },
+];
+
 if (getEnv("MOCK")) {
   window.mock = {
     events: {
@@ -267,6 +308,7 @@ const DebugMock = () => {
   const [expanded, setExpanded] = useState(true);
   const [expandedQueue, setExpandedQueue] = useState(true);
   const [expandedSwap, setExpandedSwap] = useState(false);
+  const [expandedLocalization, setExpandedLocalization] = useState(false);
   const [expandedQuick, setExpandedQuick] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState(true);
   const [expandedNotif, setExpandedNotif] = useState(false);
@@ -297,6 +339,7 @@ const DebugMock = () => {
     expandedHistory,
   ]);
   const toggleExpandedSwap = useCallback(() => setExpandedSwap(!expandedSwap), [expandedSwap]);
+  const toggleExpandedLocalization = useCallback(() => setExpandedLocalization(!expandedLocalization), [expandedLocalization]);
   const toggleExpandedNotif = useCallback(() => setExpandedNotif(!expandedNotif), [expandedNotif]);
 
   const queueEvent = useCallback(
@@ -472,6 +515,31 @@ const DebugMock = () => {
             </Text>
             {expandedSwap
               ? swapEvents.map(({ name, event }, i) => (
+                  <Text
+                    smx={1}
+                    ff="Inter|Regular"
+                    color="palette.text.shade100"
+                    fontSize={3}
+                    key={i}
+                    onClick={() => queueEvent(event)}
+                  >
+                    {name}
+                  </Text>
+                ))
+              : null}
+          </Box>
+          <Box vertical px={1}>
+            <Text
+              color="palette.text.shade100"
+              ff="Inter|SemiBold"
+              fontSize={3}
+              onClick={toggleExpandedLocalization}
+            >
+              {"localization "}
+              {expandedLocalization ? "[ - ]" : "[ + ]"}
+            </Text>
+            {expandedLocalization
+              ? localizationEvents.map(({ name, event }, i) => (
                   <Text
                     smx={1}
                     ff="Inter|Regular"

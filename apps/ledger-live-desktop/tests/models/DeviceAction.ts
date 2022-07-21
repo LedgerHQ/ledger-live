@@ -1,6 +1,7 @@
 import { Page, Locator } from "@playwright/test";
 import {
   deviceInfo155 as deviceInfo,
+  deviceInfo210lo2,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 
@@ -90,9 +91,55 @@ export class DeviceAction {
     await this.loader.waitFor({ state: "hidden" });
   }
 
+  async accessManagerWithL10n(
+    appDesc: string = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    installedDesc: string = "Bitcoin,Litecoin,Ethereum (outdated)",
+  ) {
+    const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo2);
+
+    await this.page.evaluate(
+      args => {
+        const [deviceInfo210lo2, result] = args;
+
+        (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "listingApps",
+            deviceInfo: deviceInfo210lo2,
+          },
+          {
+            type: "result",
+            result,
+          },
+          { type: "complete" },
+        );
+      },
+      [deviceInfo210lo2, result],
+    );
+
+    await this.loader.waitFor({ state: "hidden" });
+  }
+
   async complete() {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "complete" });
+    });
+  }
+
+  async initiateLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "devicePermissionRequested" });
+    });
+  }
+
+  async add50ProgressToLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
+    });
+  }
+
+  async completeLanguageInstallation() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "languageInstalled" });
     });
   }
 
