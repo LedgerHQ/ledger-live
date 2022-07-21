@@ -2716,6 +2716,14 @@
       "flow": {
         "title": "Delegate",
         "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your AVAX assets to a validator.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "AVAX must be delegated for a minimum of 2 weeks"
+            ]
+          },
           "amount": {
             "title": "Amount"
           },
