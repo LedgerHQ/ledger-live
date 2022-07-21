@@ -246,98 +246,96 @@ export function renderConfirmSwap({
   return (
     <ScrollView>
       <Wrapper width="100%">
-        <Flex paddingX={4}>
-          <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
-            {t("DeviceAction.confirmSwap.alert")}
-          </Alert>
-          <AnimationContainer
-            marginTop="16px"
-            withVerifyAddressHeight={device.modelId !== "blue"}
-          >
-            <Animation
-              source={getDeviceAnimation({ device, key: "validate", theme })}
-            />
-          </AnimationContainer>
-          <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+        <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+          {t("DeviceAction.confirmSwap.alert")}
+        </Alert>
+        <AnimationContainer
+          marginTop="16px"
+          withVerifyAddressHeight={device.modelId !== "blue"}
+        >
+          <Animation
+            source={getDeviceAnimation({ device, key: "validate", theme })}
+          />
+        </AnimationContainer>
+        <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
 
-          <Flex justifyContent={"space-between"} width="100%">
-            <FieldItem title={t("DeviceAction.swap2.amountSent")}>
-              <Text>
-                <CurrencyUnitValue
-                  value={transaction.amount}
-                  unit={getAccountUnit(exchange.fromAccount)}
-                  disableRounding
-                  showCode
-                />
-              </Text>
-            </FieldItem>
+        <Flex justifyContent={"space-between"} width="100%">
+          <FieldItem title={t("DeviceAction.swap2.amountSent")}>
+            <Text>
+              <CurrencyUnitValue
+                value={transaction.amount}
+                unit={getAccountUnit(exchange.fromAccount)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
 
-            <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
-              <Text>
-                <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.toAccount)}
-                  value={
-                    amountExpectedTo
-                      ? new BigNumber(amountExpectedTo)
-                      : exchangeRate.toAmount
-                  }
-                  disableRounding
-                  showCode
-                />
-              </Text>
-            </FieldItem>
+          <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(exchange.toAccount)}
+                value={
+                  amountExpectedTo
+                    ? new BigNumber(amountExpectedTo)
+                    : exchangeRate.toAmount
+                }
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
 
-            <FieldItem title={t("DeviceAction.swap2.provider")}>
-              <Flex flexDirection="row" alignItems="center">
-                <Flex paddingRight={2}>
-                  <ProviderIcon size={14} />
-                </Flex>
-
-                <Text>{getProviderName(exchangeRate.provider)}</Text>
+          <FieldItem title={t("DeviceAction.swap2.provider")}>
+            <Flex flexDirection="row" alignItems="center">
+              <Flex paddingRight={2}>
+                <ProviderIcon size={14} />
               </Flex>
-            </FieldItem>
 
-            <FieldItem title={t("DeviceAction.swap2.fees")}>
-              <Text>
-                <CurrencyUnitValue
-                  unit={getAccountUnit(
-                    getMainAccount(
-                      exchange.fromAccount,
-                      exchange.fromParentAccount,
-                    ),
-                  )}
-                  value={new BigNumber(estimatedFees || 0)}
-                  disableRounding
-                  showCode
-                />
+              <Text>{getProviderName(exchangeRate.provider)}</Text>
+            </Flex>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.fees")}>
+            <Text>
+              <CurrencyUnitValue
+                unit={getAccountUnit(
+                  getMainAccount(
+                    exchange.fromAccount,
+                    exchange.fromParentAccount,
+                  ),
+                )}
+                value={new BigNumber(estimatedFees || 0)}
+                disableRounding
+                showCode
+              />
+            </Text>
+          </FieldItem>
+
+          <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.fromAccount)}
+              />
+              <Text marginLeft={2}>
+                {getAccountName(exchange.fromAccount)}
               </Text>
-            </FieldItem>
+            </Flex>
+          </FieldItem>
 
-            <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
-              <Flex flexDirection="row">
-                <CurrencyIcon
-                  size={16}
-                  currency={getAccountCurrency(exchange.fromAccount)}
-                />
-                <Text marginLeft={8}>
-                  {getAccountName(exchange.fromAccount)}
-                </Text>
-              </Flex>
-            </FieldItem>
-
-            <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
-              <Flex flexDirection="row">
-                <CurrencyIcon
-                  size={16}
-                  currency={getAccountCurrency(exchange.toAccount)}
-                />
-                <Text marginLeft={8}>{getAccountName(exchange.toAccount)}</Text>
-              </Flex>
-            </FieldItem>
-          </Flex>
-
-          <TermsFooter provider={exchangeRate.provider} />
+          <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
+            <Flex flexDirection="row" alignItems="center">
+              <CurrencyIcon
+                size={20}
+                currency={getAccountCurrency(exchange.toAccount)}
+              />
+              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+            </Flex>
+          </FieldItem>
         </Flex>
+
+        <TermsFooter provider={exchangeRate.provider} />
       </Wrapper>
     </ScrollView>
   );
