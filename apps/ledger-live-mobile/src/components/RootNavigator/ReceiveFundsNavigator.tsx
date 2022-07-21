@@ -48,6 +48,20 @@ export default function ReceiveFundsNavigator() {
     });
   }, []);
 
+  const onConfirmationClose = useCallback(() => {
+    track("button_clicked", {
+      button: "HeaderRight Close",
+      screen: ScreenName.ReceiveConfirmation,
+    });
+  }, []);
+
+  const onVerificationConfirmationClose = useCallback(() => {
+    track("button_clicked", {
+      button: "HeaderRight Close",
+      screen: ScreenName.ReceiveVerificationConfirmation,
+    });
+  }, []);
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -60,7 +74,7 @@ export default function ReceiveFundsNavigator() {
         name={ScreenName.ReceiveSelectCrypto}
         component={ReceiveSelectCrypto}
         options={{
-          headerLeft: null,
+          headerLeft: () => null,
           headerTitle: "",
         }}
       />
@@ -123,7 +137,7 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveVerifyAddress}
         options={{
           headerTitle: "",
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       {/* Add account(s) automatically */}
@@ -133,11 +147,22 @@ export default function ReceiveFundsNavigator() {
         component={ReceiveConfirmation}
         options={{
           headerTitle: "",
-          headerLeft: null,
-          headerRight: <HeaderRightClose onClose={onConfirmationClose} />,
+          headerLeft: () => null,
+          headerRight: () => <HeaderRightClose onClose={onConfirmationClose} />,
         }}
       />
       {/* Receive Address Device Verification */}
+      <Stack.Screen
+        name={ScreenName.ReceiveVerificationConfirmation}
+        component={ReceiveConfirmation}
+        options={{
+          headerTitle: "",
+          headerLeft: () => null,
+          headerRight: () => (
+            <HeaderRightClose onClose={onVerificationConfirmationClose} />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }

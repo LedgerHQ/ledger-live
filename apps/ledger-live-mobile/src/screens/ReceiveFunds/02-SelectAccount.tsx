@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import type { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
+import { AccountLike, Currency } from "@ledgerhq/live-common/lib/types";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
 import { useRoute } from "@react-navigation/native";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
@@ -20,9 +20,9 @@ type Props = {
 };
 
 function ReceiveSelectAccount({ navigation, route }: Props) {
-  const lastRoute = usePreviousRouteName()
+  const lastRoute = usePreviousRouteName();
   const currency = route.params?.currency;
-  const routerRoute = useRoute()
+  const routerRoute = useRoute();
   const { t } = useTranslation();
 
   const accounts = useSelector(
@@ -57,7 +57,10 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   const selectAccount = useCallback(
     (account: AccountLike) => {
-      track("account_clicked", { currency: currency.name, screen: routerRoute.name})
+      track("account_clicked", {
+        currency: currency.name,
+        screen: routerRoute.name,
+      });
       navigation.navigate(ScreenName.ReceiveConfirmation, {
         ...route.params,
         accountId: account?.parentId || account.id,
@@ -73,8 +76,10 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
         <AccountCard
           account={account}
           AccountSubTitle={
-            (account.parentAccount || account.token?.parentCurrency) ? (
-              <LText color="neutral.c70">{(account.parentAccount || account.token.parentCurrency).name}</LText>
+            account.parentAccount || account.token?.parentCurrency ? (
+              <LText color="neutral.c70">
+                {(account.parentAccount || account.token.parentCurrency).name}
+              </LText>
             ) : null
           }
           onPress={() => selectAccount(account)}
@@ -88,7 +93,12 @@ function ReceiveSelectAccount({ navigation, route }: Props) {
 
   return aggregatedAccounts.length > 1 ? (
     <>
-      <TrackScreen category="ReceiveFunds" name="Receive Account Select" source={lastRoute} currency={currency.name} />
+      <TrackScreen
+        category="ReceiveFunds"
+        name="Receive Account Select"
+        source={lastRoute}
+        currency={currency.name}
+      />
       <Flex p={6}>
         <LText fontSize="32px" fontFamily="InterMedium" semiBold>
           {t("transfer.receive.selectAccount.title")}
