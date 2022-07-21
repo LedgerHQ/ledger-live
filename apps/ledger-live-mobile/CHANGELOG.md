@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.5.0-next.6
+
+### Minor Changes
+
+- [#624](https://github.com/LedgerHQ/ledger-live/pull/624) [`947c33140`](https://github.com/LedgerHQ/ledger-live/commit/947c33140e906ca35bf1fbfdf7831e28fe99dd67) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add Searching bar for validators list of ATOM and SOL
+
+### Patch Changes
+
+- Updated dependencies [[`947c33140`](https://github.com/LedgerHQ/ledger-live/commit/947c33140e906ca35bf1fbfdf7831e28fe99dd67)]:
+  - @ledgerhq/live-common@25.0.0-next.6
+
 ## 3.5.0-next.5
 
 ### Patch Changes
