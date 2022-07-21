@@ -1000,6 +1000,7 @@
       "nanoS" : "Nano S",
       "nanoSP" : "Nano S Plus",
       "nanoX" : "Nano X",
+      "nanoFTS" : "Nano FTS",
       "blue" : "Blue",
       "chooseDevice" : "Elige tu dispositivo"
     },
@@ -1656,7 +1657,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Detalles de la operación",
+    "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
     "date" : "Fecha",
     "confirmed" : "Confirmada",
@@ -1722,7 +1723,7 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
-    "noMoreOperations" : "No hay otras operaciones"
+    "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deseleccionar todo",
@@ -1763,7 +1764,7 @@
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
-    "lastOperations" : "Últimas operaciones",
+    "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
       "title" : "¿Aún no tienes activos cripto?",
       "desc" : "Verifica que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada para comenzar a recibir",
