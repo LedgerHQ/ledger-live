@@ -69,7 +69,7 @@ const FirmwareUpdateBanner = () => {
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
-  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired;
+  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired === true;
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
