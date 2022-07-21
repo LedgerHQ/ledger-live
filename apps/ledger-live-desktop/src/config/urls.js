@@ -43,6 +43,16 @@ export const urls = {
       "https://support.ledger.com/hc/es/categories/4404369571601-Soporte?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
     de:
       "https://support.ledger.com/hc/de/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ru:
+      "https://support.ledger.com/hc/ru/categories/4404369571601-%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B8?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    zh:
+      "https://support.ledger.com/hc/zh-cn/categories/4404369571601-%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    tr:
+      "https://support.ledger.com/hc/tr/categories/4404369571601-Destek?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ja:
+      "https://support.ledger.com/hc/ja/categories/4404369571601-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+    ko:
+      "https://support.ledger.com/hc/ko/categories/4404369571601-%EC%A7%80%EC%9B%90?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
   },
   ledgerStatus: "https://status.ledger.com/",
   syncErrors:
@@ -51,11 +61,21 @@ export const urls = {
     en:
       "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     fr:
-      "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://shop.ledger.com/pages/conditions-dutilisation-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     es:
-      "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://shop.ledger.com/pages/condiciones-de-uso-de-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
     de:
-      "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+      "https://shop.ledger.com/pages/nutzungsbedingungen-von-ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ru:
+      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    zh:
+      "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    tr:
+      "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ja:
+      "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+    ko:
+      "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   },
   noDevice: {
     buyNew:
@@ -86,6 +106,14 @@ export const urls = {
       "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
     de:
       "https://shop.ledger.com/pages/unsere-datenschutzrichtlinie?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    zh:
+      "https://www.ledger.com/zh-hans/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    tr:
+      "https://www.ledger.com/tr/gizlilik-politikasi?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ja:
+      "https://www.ledger.com/ja/%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%83%9D%E3%83%AA%E3%82%B7%E3%83%BC?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    ko:
+      "https://www.ledger.com/ko/%EA%B0%9C%EC%9D%B8-%EC%A0%95%EB%B3%B4-%EB%B3%B4%ED%98%B8-%EC%A0%95%EC%B1%85?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   },
   troubleshootingUSB:
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
