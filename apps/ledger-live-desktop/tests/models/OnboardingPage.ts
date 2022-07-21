@@ -195,6 +195,7 @@ export class OnboardingPage {
 
   async reachApp() {
     await this.continue();
+    await this.page.waitForTimeout(500);
     expect(await this.page.screenshot()).toMatchSnapshot("v3-onboarding-complete.png");
   }
 }
