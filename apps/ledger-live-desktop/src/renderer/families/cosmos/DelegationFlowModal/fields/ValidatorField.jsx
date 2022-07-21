@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -19,6 +19,8 @@ import type {
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
 
+import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+
 type Props = {
   t: TFunction,
   account: Account,
@@ -37,8 +39,15 @@ const ValidatorField = ({
   chosenVoteAccAddr,
 }: Props) => {
   const [showAll, setShowAll] = useState(false);
+  const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
-  const validators = useLedgerFirstShuffledValidatorsCosmos();
+  const validators = useLedgerFirstShuffledValidatorsCosmos(search);
+
+  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+
+  const chosenValidator = useMemo(() => {
+    return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
+  }, [validators, chosenVoteAccAddr]);
 
   const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
     return (
@@ -54,26 +63,25 @@ const ValidatorField = ({
   };
 
   return (
-    <ValidatorsFieldContainer>
-      <Box p={1}>
-        <ScrollLoadingList
-          data={
-            showAll
-              ? validators
-              : [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]]
-          }
-          style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
-          renderItem={renderItem}
-          noResultPlaceholder={null}
-        />
-      </Box>
-      <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
-        <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
-          <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
-        </Text>
-        <IconAngleDown size={16} />
-      </SeeAllButton>
-    </ValidatorsFieldContainer>
+    <>
+      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      <ValidatorsFieldContainer>
+        <Box p={1}>
+          <ScrollLoadingList
+            data={showAll ? validators : chosenValidator}
+            style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
+            renderItem={renderItem}
+            noResultPlaceholder={null}
+          />
+        </Box>
+        <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
+          <Text color="wallet" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey={showAll ? "distribution.showLess" : "distribution.showAll"} />
+          </Text>
+          <IconAngleDown size={16} />
+        </SeeAllButton>
+      </ValidatorsFieldContainer>
+    </>
   );
 };
 
