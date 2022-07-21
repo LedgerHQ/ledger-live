@@ -5,6 +5,8 @@ import { urls } from "~/config/urls";
 import { Switch, Route, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
 import { ImportYourRecoveryPhrase } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/ImportYourRecoveryPhrase";
 import { DeviceHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo";
 import { DeviceHowTo2 } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/DeviceHowTo2";
@@ -90,8 +92,10 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleBack,
   handleContinue,
 }) => {
+  const locale = useSelector(languageSelector) || "en";
+
   const handleHelp = useCallback(() => {
-    openURL(urls.faq);
+    openURL(urls.faq[locale in urls.faq ? locale : "en"]);
   }, []);
 
   const { t } = useTranslation();
