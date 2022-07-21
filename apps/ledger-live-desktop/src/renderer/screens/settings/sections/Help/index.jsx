@@ -4,6 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { urls } from "~/config/urls";
+import { languageSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ExportLogsBtn from "~/renderer/components/ExportLogsButton";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
@@ -19,6 +20,7 @@ import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 const SectionHelp = () => {
   const { t } = useTranslation();
   const swapKYC = useSelector(swapKYCSelector);
+  const locale = useSelector(languageSelector) || "en";
 
   const hasSwapLoginOrKYCInfo = Object.keys(swapKYC).length !== 0;
 
@@ -26,7 +28,11 @@ const SectionHelp = () => {
     <>
       <TrackPage category="Settings" name="Help" />
       <Body>
-        <RowItem title={t("settings.help.faq")} desc={t("settings.help.faqDesc")} url={urls.faq} />
+        <RowItem
+          title={t("settings.help.faq")}
+          desc={t("settings.help.faqDesc")}
+          url={urls.faq[locale in urls.faq ? locale : "en"]}
+        />
         <Row
           title={t("settings.profile.softResetTitle")}
           desc={t("settings.profile.softResetDesc")}
