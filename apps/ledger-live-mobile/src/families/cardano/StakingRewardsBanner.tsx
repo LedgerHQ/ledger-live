@@ -6,7 +6,7 @@ import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import LText from "../../components/LText";
 
-const Container = styled(Flex).attrs(p => ({
+const Container = styled(Flex).attrs(() => ({
   backgroundColor: "neutral.c30",
   padding: 5,
   borderRadius: 2,
