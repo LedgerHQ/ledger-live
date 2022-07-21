@@ -41,6 +41,14 @@ const Delegation = ({ account }: Props) => {
 
   const { delegations } = avalanchePChainResources;
 
+  const onEarnRewards = useCallback(() => {
+    dispatch(
+      openModal("MODAL_AVALANCHE_REWARDS_INFO", {
+        account,
+      }),
+    );
+  }, [account, dispatch]);
+
   const onDelegate = useCallback(() => {
     dispatch(
       openModal("MODAL_AVALANCHE_DELEGATE", {
@@ -121,7 +129,7 @@ const Delegation = ({ account }: Props) => {
               </Box>
             </Box>
             <Box>
-              <Button primary small onClick={onDelegate}>
+              <Button primary small onClick={onEarnRewards}>
                 <Box horizontal flow={1} alignItems="center">
                   <IconChartLine size={12} />
                   <Box>

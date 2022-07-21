@@ -25,11 +25,19 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const hasDelegations = avalanchePChainResources.delegations.length > 0;
 
   const onClick = useCallback(() => {
-    dispatch(
-      openModal("MODAL_AVALANCHE_DELEGATE", {
-        account,
-      }),
-    );
+    if (hasDelegations) {
+      dispatch(
+        openModal("MODAL_AVALANCHE_DELEGATE", {
+          account,
+        }),
+      );
+    } else {
+      dispatch(
+        openModal("MODAL_AVALANCHE_REWARDS_INFO", {
+          account,
+        }),
+      );
+    }
   }, [dispatch, account, hasDelegations]);
 
   if (parentAccount) return null;

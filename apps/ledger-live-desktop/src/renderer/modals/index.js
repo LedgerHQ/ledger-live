@@ -69,6 +69,7 @@ import MODAL_SOLANA_DELEGATION_REACTIVATE from "../families/solana/DelegationRea
 import MODAL_SOLANA_DELEGATION_WITHDRAW from "../families/solana/DelegationWithdrawFlowModal";
 
 import MODAL_AVALANCHE_DELEGATE from "../families/avalanchepchain/DelegationFlowModal";
+import MODAL_AVALANCHE_REWARDS_INFO from "../families/avalanchepchain/EarnRewardsInfoModal/EarnRewardsInfoModal";
 
 // Lending
 import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
@@ -137,6 +138,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_SOLANA_DELEGATION_REACTIVATE,
   MODAL_SOLANA_DELEGATION_WITHDRAW,
   MODAL_AVALANCHE_DELEGATE,
+  MODAL_AVALANCHE_REWARDS_INFO,
   MODAL_FULL_NODE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,
