@@ -137,10 +137,10 @@ importers:
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.22.2
       '@polkadot/react-identicon': 0.89.2
-      '@sentry/cli': ^2.4.1
+      '@sentry/cli': ^2.5.0
       '@sentry/electron': ^3.0.7
-      '@sentry/node': ^7.6.0
-      '@sentry/tracing': ^7.6.0
+      '@sentry/node': ^7.7.0
+      '@sentry/tracing': ^7.7.0
       '@storybook/addon-actions': ^6.3.12
       '@storybook/addon-essentials': ^6.3.12
       '@storybook/addon-links': ^6.3.12
@@ -399,7 +399,7 @@ importers:
       '@mapbox/node-pre-gyp': 1.0.9
       '@octokit/rest': 18.12.0
       '@playwright/test': 1.22.2
-      '@sentry/cli': 2.4.1
+      '@sentry/cli': 2.5.0
       '@storybook/addon-actions': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
       '@storybook/addon-essentials': 6.4.22_xhrc4i4yvz6ygksqsyy5bus5sy
       '@storybook/addon-links': 6.4.22_sfoxds7t5ydpegc3knd667wn6m
@@ -12272,8 +12272,8 @@ packages:
       - supports-color
     dev: false
 
-  /@sentry/cli/2.4.1:
-    resolution: {integrity: sha512-3RlsT1Xx/zTLjZXB3WKKn0iOczr61zSGwXavOsnzFCTY1k18qY0egc98rrfMNj/BVXmzJj8RbUecx53vtMohPg==}
+  /@sentry/cli/2.5.0:
+    resolution: {integrity: sha512-vogUTzJyrGcl5AZ3cH08li1PgWSjoARXAbXwnmsrzu1yE2lWBRNnpFVBkRUXXrZsrDD2dgntEr8tgrxE3zQYlw==}
     engines: {node: '>= 12'}
     hasBin: true
     requiresBuild: true
@@ -25638,7 +25638,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_eslint@7.32.0
       object.assign: 4.1.2
       object.entries: 1.1.5
     dev: true
@@ -25655,7 +25655,7 @@ packages:
     dependencies:
       eslint: 7.32.0
       eslint-config-airbnb-base: 14.2.1_hpmu7kn6tcn2vnxpfzvv33bxmy
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_eslint@7.32.0
       eslint-plugin-jsx-a11y: 6.5.1_eslint@7.32.0
       eslint-plugin-react: 7.29.4_eslint@7.32.0
       eslint-plugin-react-hooks: 4.5.0_eslint@7.32.0
