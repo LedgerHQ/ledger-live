@@ -186,9 +186,9 @@ export default function Default() {
             {process.env.DISABLE_TRANSACTION_BROADCAST ? (
               <DisableTransactionBroadcastWarning />
             ) : null}
-            <Switch>
-              <Route path="/onboarding" render={props => <Onboarding {...props} />} />
-              {hasCompletedOnboarding && (
+            <Route path="/onboarding" render={props => <Onboarding {...props} />} />
+            {hasCompletedOnboarding && (
+              <Switch>
                 <Route>
                   <Route exact path="/walletconnect">
                     <WalletConnect />
@@ -285,8 +285,8 @@ export default function Default() {
                     <LetInternalSendCrashTest />
                   </KeyboardContent>
                 </Route>
-              )}
-            </Switch>
+              </Switch>
+            )}
           </ContextMenuWrapper>
         </BridgeSyncProvider>
       </IsUnlocked>
