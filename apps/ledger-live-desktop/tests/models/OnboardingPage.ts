@@ -46,9 +46,7 @@ export class OnboardingPage {
     this.selectDeviceButton = (deviceId: string): Locator =>
       page.locator(`data-test-id=v3-device-${deviceId}`);
     this.checkMyNanoButton = page.locator('button:has-text("Check my Nano")');
-    this.continueButton = page.locator(
-      '[data-test-id="modal-container"] button:has-text("Continue")',
-    );
+    this.continueButton = page.locator('button:has-text("Continue")');
     this.newDeviceButton = page.locator("data-test-id=v3-onboarding-new-device");
     this.connectDeviceButton = page.locator("data-test-id=v3-onboarding-initialized-device");
     this.restoreDeviceButton = page.locator("data-test-id=v3-onboarding-restore-device");
