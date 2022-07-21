@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
 import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
+import { getDeviceModel } from "@ledgerhq/devices";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -77,13 +78,17 @@ const FirmwareUpdateBanner = () => {
   const fwUpdateActivatedButNotWired =
     usbFwUpdateActivated && !isDeviceConnectedViaUSB;
 
+  const deviceName = lastConnectedDevice
+    ? getDeviceModel(lastConnectedDevice.modelId).productName
+    : "";
+
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
       <Alert type="info" showIcon={false}>
         <Text flexShrink={1}>
           {t("FirmwareUpdate.newVersion", {
             version,
-            deviceName: lastConnectedDevice?.deviceName,
+            deviceName,
           })}
         </Text>
         <Button
@@ -112,19 +117,17 @@ const FirmwareUpdateBanner = () => {
         description={
           fwUpdateActivatedButNotWired
             ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
-                deviceName: lastConnectedDevice?.deviceName,
+                deviceName,
               })
             : t("FirmwareUpdate.drawerUpdate.description")
         }
         noCloseButton
       >
-        {!fwUpdateActivatedButNotWired && (
-          <Button
-            type="primary"
-            title={t("common.close")}
-            onPress={onCloseDrawer}
-          />
-        )}
+        <Button
+          type="primary"
+          title={t("common.close")}
+          onPress={onCloseDrawer}
+        />
       </BottomDrawer>
     </>
   ) : null;
