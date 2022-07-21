@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openURL } from "~/renderer/linking";
@@ -16,8 +18,9 @@ const PinHelpContainer = styled.div`
 
 export default function RecoveryWarning() {
   const { t } = useTranslation();
+  const locale = useSelector(languageSelector) || "en";
 
-  const onClickLink = useCallback(() => openURL(urls.faq), []);
+  const onClickLink = useCallback(() => openURL(urls.faq[locale in urls.faq ? locale : "en"]), []);
 
   return (
     <ScrollArea isInsideDrawer>
