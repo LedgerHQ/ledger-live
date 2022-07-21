@@ -32,9 +32,9 @@ import type {
   DatasetTest,
   CurrenciesData,
   TransactionCommon,
+  TransactionStatusCommon,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TransactionStatus } from "../../generated/types";
 const warnDev = process.env.CI
   ? (..._args) => {}
   : (...msg) => console.warn(...msg);
@@ -679,7 +679,7 @@ export function testBridge<T extends TransactionCommon>(
 
                   expect(
                     toTransactionStatusRaw(
-                      s as TransactionStatus,
+                      s as TransactionStatusCommon,
                       account.currency.family
                     )
                   ).toMatchObject(restRaw);
