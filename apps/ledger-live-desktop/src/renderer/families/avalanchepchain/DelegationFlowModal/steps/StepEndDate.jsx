@@ -1,5 +1,5 @@
 // @flow
-import React, { Fragment } from "react";
+import React, { useEffect, Fragment } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -72,6 +72,15 @@ function StepEndDate({
   const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
   const minEndDateText = moment.unix(unixMinEndDate).add(1, 'minutes').format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
+
+  useEffect(() => {
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    onUpdateTransaction(tx => {
+      return bridge.updateTransaction(tx, {
+        startTime: new BigNumber(stakeStartTime),
+      });
+    });
+  }, []);
 
   const updateEndDate = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
