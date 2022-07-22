@@ -223,6 +223,9 @@ export const urls = {
     recipient_info: "https://support.ledger.com",
     ledgerByFigmentTC: "https://drive.google.com/file/d/1vlIh2gTwtbMon8_bzFQGjCLhTUqS5uQc",
   },
+  helium: {
+    staking: "https://www.helium.com/stake",
+  },
   hedera: {
     supportArticleLink:
       "https://support.ledger.com/hc/en-us/articles/4494505217565-Create-a-Ledger-Hedera-HBAR-account-via-HashPack?docs=true",

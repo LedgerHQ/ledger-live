@@ -44,7 +44,12 @@ export default function HeliumEarnRewardsInfoModal({ name, account, parentAccoun
         t("helium.delegation.earnRewards.bullet.2"),
       ]}
       additional={<WarnBox>{t("helium.delegation.earnRewards.warning")}</WarnBox>}
-      footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
+      footerLeft={
+        <LinkWithExternalIcon
+          label={t("helium.delegation.emptyState.info")}
+          onClick={onLearnMore}
+        />
+      }
     />
   );
 }
