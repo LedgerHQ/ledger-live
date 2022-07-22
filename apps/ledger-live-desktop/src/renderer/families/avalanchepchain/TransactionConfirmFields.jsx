@@ -1,7 +1,7 @@
 // @flow
 
 import invariant from "invariant";
-import React, { useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
@@ -15,7 +15,6 @@ import TransactionConfirmField from "~/renderer/components/TransactionConfirm/Tr
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
-import { useAvalanchePChainPreloadData } from "@ledgerhq/live-common/families/avalanchepchain/react";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import { openURL } from "~/renderer/linking";
@@ -68,57 +67,6 @@ const onExternalLink = (account, address) => {
   const URL = explorerView && getAddressExplorer(explorerView, address);
   if (URL) openURL(URL);
 };
-
-// export const AvalancheDelegateValidatorsField = ({
-//   account,
-//   parentAccount,
-//   transaction,
-//   field,
-// }: FieldComponentProps) => {
-//   const mainAccount = getMainAccount(account, parentAccount);
-//   invariant(
-//     transaction.family === "avalanchepchain",
-//     "not an avalanchepchain family transaction",
-//   );
-
-//   const unit = getAccountUnit(mainAccount);
-
-//   const { validators } = transaction;
-//   const currencyName = account.currency.name.toLowerCase();
-//   const { validators: avalancheValidators } = useAvalanchePChainPreloadData(currencyName);
-
-//   const mappedValidators = mapDelegationInfo(validators || [], avalancheValidators, unit, transaction);
-
-//   return mappedValidators?.length > 0 ? (
-//     <Box vertical justifyContent="space-between" mb={2}>
-//       <TransactionConfirmField label={field.label} />
-//       {mappedValidators.map(({ formattedAmount, validator, address }, i) => (
-//         <OpDetailsData key={address + i}>
-//           <OpDetailsVoteData>
-//             <Box>
-//               <Text>
-//                 <Trans
-//                   i18nKey="operationDetails.extra.votesAddress"
-//                   values={{
-//                     votes: formattedAmount,
-//                     name: validator?.name ?? address,
-//                   }}
-//                 >
-//                   <Text ff="Inter|SemiBold">{""}</Text>
-//                   {""}
-//                   <Text ff="Inter|SemiBold">{""}</Text>
-//                 </Trans>
-//               </Text>
-//             </Box>
-//             <AddressText onClick={() => onExternalLink(mainAccount, address)}>
-//               {address}
-//             </AddressText>
-//           </OpDetailsVoteData>
-//         </OpDetailsData>
-//       ))}
-//     </Box>
-//   ) : null;
-// };
 
 export const AvalancheValidatorNameField = ({
   account,
@@ -236,13 +184,10 @@ export const Title = ({ transaction }: { transaction: Transaction }) => {
 };
 
 const fieldComponents = {
-  //   "avalanchepchain.memo": CosmosMemoField,
-  //   "avalanchepchain.delegateValidators": CosmosDelegateValidatorsField,
   "avalanchepchain.validatorName": AvalancheValidatorNameField,
   "avalanchepchain.validatorAmount": AvalancheValidatorAmountField,
   "avalanchepchain.stakeStart": AvalancheStakeStartField,
   "avalanchepchain.stakeEnd": AvalancheStakeEndField,
-  //   "avalanchepchain.sourceValidatorName": CosmosSourceValidatorField,
 };
 
 export default {

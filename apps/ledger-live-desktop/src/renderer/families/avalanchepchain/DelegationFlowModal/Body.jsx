@@ -141,7 +141,6 @@ const Body = ({
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
-  //TODO: verify onChangeStepId argument is correct
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("connectDevice");
