@@ -8,7 +8,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import SelectAmount from "../../../shared/02-SelectAmount";
 import { ScreenName } from "../../../../../const";
 
-const Amount = props => {
+const Amount = (props: any) => {
   const { navigation, route } = props;
 
   const account = route.params.account;

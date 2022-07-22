@@ -26,13 +26,13 @@ import Check from "../../../../../icons/Check";
 import { constants } from "../../../constants";
 import { nominate } from "../../../helpers";
 
-type RouteParams = {
+interface RouteParams {
   accountId: string,
   transaction: Transaction,
   fromSelectAmount?: true,
 };
 
-type Props = {
+interface Props {
   navigation: any,
   route: { params: RouteParams },
 };
@@ -380,7 +380,7 @@ const Validator = (props: Props) => {
   );
 };
 
-const Item = props => {
+const Item = (props: any) => {
   const [provider] = props.item.providers;
 
   const { onSelect, item, unit, recipient, amount } = props;

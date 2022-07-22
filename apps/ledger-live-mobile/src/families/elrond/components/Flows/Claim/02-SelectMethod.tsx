@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function ClaimRewardsAmount({ navigation, route }) {
+function ClaimRewardsAmount({ navigation, route }: any) {
   const { colors } = useTheme();
 
   const account = route.params.account;

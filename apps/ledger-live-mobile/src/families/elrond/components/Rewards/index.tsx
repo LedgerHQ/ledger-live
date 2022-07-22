@@ -1,13 +1,12 @@
 import React, { Fragment, useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
 import {
   getAccountCurrency,
   getAccountUnit,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { ScreenName, NavigatorName } from "../../../../const";
 import AccountSectionLabel from "../../../../components/AccountSectionLabel";
@@ -38,7 +37,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Rewards = props => {
+const Rewards = (props: any) => {
   const { account, value, delegations } = props;
   const { t } = useTranslation();
   const { colors } = useTheme();

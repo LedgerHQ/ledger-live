@@ -1,23 +1,16 @@
 // @flow
-import invariant from "invariant";
-import React, { useCallback, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 
-import type {
-  CosmosValidatorItem,
-  Transaction,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountUnit,
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
@@ -29,20 +22,6 @@ import CurrencyUnitValue from "../../../../../components/CurrencyUnitValue";
 import CounterValue from "../../../../../components/CounterValue";
 import FirstLetterIcon from "../../../../../components/FirstLetterIcon";
 import TranslatedError from "../../../../../components/TranslatedError";
-
-type RouteParams = {
-  accountId: string,
-  transaction?: Transaction,
-  validator: CosmosValidatorItem,
-  value: BigNumber,
-};
-
-type Props = {
-  navigation: any,
-  route: {
-    params: RouteParams,
-  },
-};
 
 const styles = StyleSheet.create({
   root: {
@@ -107,7 +86,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function WithdrawAmount({ navigation, route }: Props) {
+function WithdrawAmount({ navigation, route }: any) {
   const { colors } = useTheme();
 
   const account = route.params.account;

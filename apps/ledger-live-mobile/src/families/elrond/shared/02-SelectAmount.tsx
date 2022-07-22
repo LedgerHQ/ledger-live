@@ -20,10 +20,10 @@ import KeyboardView from "../../../components/KeyboardView";
 import { constants } from "../constants";
 import { nominate } from "../helpers";
 
-type Props = {
-  navigation: any,
-  route: { params: any },
-};
+interface Props {
+  navigation: any;
+  route: { params: any };
+}
 
 const styles = StyleSheet.create({
   root: {

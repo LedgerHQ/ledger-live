@@ -2,8 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, Linking } from "react-native";
 import { BigNumber } from "bignumber.js";
-import DelegationDrawer from "../../../../components/DelegationDrawer";
-import type { IconProps } from "../../../../components/DelegationDrawer";
+import { useNavigation, useTheme } from "@react-navigation/native";
+
+import DelegationDrawer, {
+  IconProps,
+} from "../../../../components/DelegationDrawer";
 import Touchable from "../../../../components/Touchable";
 import { rgba } from "../../../../colors";
 import Circle from "../../../../components/Circle";
@@ -15,7 +18,6 @@ import WithdrawIcon from "../../../../icons/Withdraw";
 import DateFromNow from "../../../../components/DateFromNow";
 import { denominate } from "../../helpers";
 import { constants } from "../../constants";
-import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../../../const";
 
 const styles = StyleSheet.create({
@@ -24,7 +26,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Drawer = props => {
+const Drawer = (props: any) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { onCloseDrawer, account, drawer } = props;
