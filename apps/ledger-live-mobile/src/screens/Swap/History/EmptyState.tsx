@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
