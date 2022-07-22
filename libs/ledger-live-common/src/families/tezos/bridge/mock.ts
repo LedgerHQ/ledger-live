@@ -173,7 +173,6 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
     estimatedFees,
     amount,
     totalSpent,
-    family: t.family,
   });
 };
 

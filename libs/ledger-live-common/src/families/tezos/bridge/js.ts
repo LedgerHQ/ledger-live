@@ -175,7 +175,6 @@ const getTransactionStatus = async (
   }
 
   const result = {
-    family: t.family,
     errors,
     warnings,
     estimatedFees,

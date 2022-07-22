@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
 import { delay } from "../promise";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 export type State = {
   account: AccountLike | null | undefined;

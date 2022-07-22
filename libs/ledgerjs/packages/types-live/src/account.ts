@@ -86,7 +86,19 @@ export type Address = {
   derivationPath: string;
 };
 
-/** */
+/**
+ * Account type is the main level account of a blockchain currency.
+ * Each family maybe need an extra field, to solve this, you can have some subtyping like this:
+
+
+    export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources }
+
+and all parts where we would need it, we would need to cast,
+
+    const bitcoinAccount = account as BitcoinAccount;
+
+and that BitcoinAccount type would be part of a coin integration family specific indeed.
+ */
 export type Account = {
   type: "Account";
   // unique account identifier

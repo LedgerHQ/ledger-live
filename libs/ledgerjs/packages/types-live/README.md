@@ -206,6 +206,17 @@ Type: {address: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refer
 
 ### Account
 
+Account type is the main level account of a blockchain currency.
+Each family maybe need an extra field, to solve this, you can have some subtyping like this:
+
+export type BitcoinAccount = Account & { bitcoinResources: BitcoinResources }
+
+and all parts where we would need it, we would need to cast,
+
+const bitcoinAccount = account as BitcoinAccount;
+
+and that BitcoinAccount type would be part of a coin integration family specific indeed.
+
 Type: {type: `"Account"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), seedIdentifier: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpub: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, derivationMode: [DerivationMode](#derivationmode), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), freshAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddressPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddresses: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Address](#address)>, name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), used: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), balance: BigNumber, spendableBalance: BigNumber, creationDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), blockHeight: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), currency: CryptoCurrency, unit: Unit, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, lastSyncDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), endpointConfig: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, subAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SubAccount](#subaccount)>?, balanceHistoryCache: BalanceHistoryCache, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperation](#swapoperation)>, syncHash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, nfts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ProtoNFT](#protonft)>?}
 
 #### Properties
