@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 24.1.1-nightly.1
+
+### Patch Changes
+
+- [#707](https://github.com/LedgerHQ/ledger-live/pull/707) [`331794cfb`](https://github.com/LedgerHQ/ledger-live/commit/331794cfbdb901f9224fed759c57f419861ec364) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a bridge test for AmountRequired error
+
 ## 24.1.1-nightly.0
 
 ### Patch Changes
