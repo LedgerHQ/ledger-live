@@ -1,12 +1,10 @@
-import { Flex, Icons, Text, Button, BoxedIcon } from "@ledgerhq/native-ui";
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Language } from "@ledgerhq/live-common/lib/types/languages";
 import BottomModal from "../../../components/BottomModal";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import DeviceActionModal from "../../../components/DeviceActionModal";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/installLanguage";
-import installLanguage from "@ledgerhq/live-common/lib/hw/installLanguage";
+import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
@@ -16,34 +14,6 @@ type Props = {
   currentLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
-};
-
-const DeviceLanguageInstalled: React.FC<{
-  onContinue: () => void;
-  onMount: () => void;
-  installedLanguage: Language;
-}> = ({ onContinue, onMount, installedLanguage }) => {
-  useEffect(() => onMount(), [onMount]);
-  const { t } = useTranslation();
-
-  return (
-    <Flex alignItems="center">
-      <BoxedIcon
-        Icon={Icons.CheckAloneMedium}
-        iconColor="success.c100"
-        size={48}
-        iconSize={24}
-      />
-      <Text variant="h4" textAlign="center" my={7} fontWeight="semiBold">
-        {t("deviceLocalization.languageInstalled", {
-          language: t(`deviceLocalization.languages.${installedLanguage}`),
-        })}
-      </Text>
-      <Button type="main" alignSelf="stretch" onPress={onContinue}>
-        {t("common.continue")}
-      </Button>
-    </Flex>
-  );
 };
 
 const DeviceLanguage: React.FC<Props> = ({
@@ -70,17 +40,6 @@ const DeviceLanguage: React.FC<Props> = ({
     deviceForActionModal,
     setDeviceForActionModal,
   ] = useState<Device | null>(null);
-
-  const action = useMemo(
-    () =>
-      createAction(() =>
-        installLanguage({
-          deviceId: device.deviceId,
-          language: selectedLanguage,
-        }),
-      ),
-    [selectedLanguage, device.deviceId],
-  );
 
   const closeChangeLanguageModal = useCallback(
     () => setIsChangeLanguageOpen(false),
@@ -152,17 +111,11 @@ const DeviceLanguage: React.FC<Props> = ({
           availableLanguages={availableLanguages}
         />
       </BottomModal>
-      <DeviceActionModal
-        action={action}
+      <ChangeDeviceLanguageAction
         onClose={closeDeviceActionModal}
         device={deviceForActionModal}
-        renderOnResult={() => (
-          <DeviceLanguageInstalled
-            onContinue={closeDeviceActionModal}
-            onMount={refreshDeviceLanguage}
-            installedLanguage={selectedLanguage}
-          />
-        )}
+        language={selectedLanguage}
+        onResult={refreshDeviceLanguage}
       />
     </>
   );
