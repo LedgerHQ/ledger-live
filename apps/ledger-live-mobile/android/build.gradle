@@ -51,21 +51,6 @@ allprojects {
             }
         }
         google()
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/LedgerHQ/hw-transport-android-ble")
-
-            def buildProperties = new Properties()
-            rootProject.file("github.properties").withInputStream {
-                stream -> buildProperties.load(stream)
-            }
-            //Add the credentials in your github.properties file
-            credentials {
-                username = buildProperties["ghp.usr"]
-                password = buildProperties["ghp.key"]
-            }
-
-        }
         maven { url 'https://jitpack.io' }
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
