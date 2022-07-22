@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
@@ -50,24 +50,34 @@ export default function RequestAccountsSelectCrypto({
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
 
-  const onPressCurrency = (currency: CryptoCurrency) => {
-    navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
-      ...route.params,
-      currency,
-    });
-  };
+  const onPressCurrency = useCallback(
+    (currency: CryptoCurrency) => {
+      navigation.navigate(ScreenName.RequestAccountsSelectAccount, {
+        ...route.params,
+        currency,
+      });
+    },
+    [navigation, route.params],
+  );
 
-  const renderList = items => (
-    <FlatList
-      contentContainerStyle={styles.list}
-      data={items}
-      renderItem={({ item }) => (
-        <CurrencyRow currency={item} onPress={onPressCurrency} />
-      )}
-      keyExtractor={keyExtractor}
-      showsVerticalScrollIndicator={false}
-      keyboardDismissMode="on-drag"
-    />
+  const renderItem = useCallback(
+    ({ item }) => <CurrencyRow currency={item} onPress={onPressCurrency} />,
+    [onPressCurrency],
+  );
+
+  const renderList = useCallback(
+    items => (
+      <FlatList
+        initialNumToRender={20}
+        contentContainerStyle={styles.list}
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+      />
+    ),
+    [renderItem],
   );
 
   return (
