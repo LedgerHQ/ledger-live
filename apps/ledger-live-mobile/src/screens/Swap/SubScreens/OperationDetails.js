@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import Icon from "react-native-vector-icons/dist/Ionicons";
+import { Icon } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
@@ -84,7 +84,7 @@ export function OperationDetails({ route }: OperationDetailsProps) {
           />
         </LText>
         <View style={styles.arrow}>
-          <Icon name={"ios-arrow-round-forward"} size={30} color={colors.fog} />
+          <Icon name="ArrowBottom" size={30} color="neutral.c70" />
         </View>
         <LText tertiary style={styles.toAmount} color={statusColorKey}>
           <CurrencyUnitValue
@@ -245,7 +245,6 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   arrow: {
-    transform: [{ rotate: "90deg" }],
     marginVertical: 8,
   },
   toAmount: {

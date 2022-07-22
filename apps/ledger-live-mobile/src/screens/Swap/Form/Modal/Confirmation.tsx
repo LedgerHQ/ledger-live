@@ -9,6 +9,7 @@ import {
   SwapTransaction,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { getSwapOperationMap } from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
@@ -28,6 +29,7 @@ import {
   postSwapCancelled,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";
@@ -140,14 +142,24 @@ export function Confirmation({
           ),
         ),
       );
-      // @ts-expect-error
-      navigation.replace("PendingOperation", {
-        swapId,
-        provider: exchangeRate.provider,
-        targetCurrency: targetCurrency.name,
-        operation,
+
+      const swapOperation: MappedSwapOperation = {
         fromAccount,
         fromParentAccount,
+        toAccount,
+        toParentAccount,
+        toExists: false,
+        operation,
+        provider,
+        swapId,
+        status: "pending",
+        fromAmount: swapTx.swap.from.amount,
+        toAmount: exchangeRate.toAmount,
+      };
+
+      // @ts-expect-error
+      navigation.replace("PendingOperation", {
+        swapOperation,
       });
     },
     [
@@ -158,7 +170,11 @@ export function Confirmation({
       exchangeRate,
       targetCurrency,
       swapTx.transaction,
+      swapTx.swap,
       exchange,
+      provider,
+      toAccount,
+      toParentAccount,
     ],
   );
 

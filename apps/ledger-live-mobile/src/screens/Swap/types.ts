@@ -84,12 +84,7 @@ export type SwapNavParamList = {
     provider: string;
   };
   PendingOperation: {
-    swapId: string;
-    provider: string;
-    targetCurrency: string;
-    operation: Operation;
-    fromAccount?: AccountLike;
-    fromParentAccount?: AccountLike;
+    swapOperation: MappedSwapOperation;
   };
   OperationDetails: {
     swapOperation: MappedSwapOperation;

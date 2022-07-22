@@ -56,7 +56,7 @@ export default function SwapNavigator() {
               title={t(`transfer.swap2.form.select.${target}.title`)}
             />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         })}
       />
 
@@ -67,7 +67,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap2.form.select.to.title")} />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         }}
       />
 
@@ -80,7 +80,7 @@ export default function SwapNavigator() {
               title={t("transfer.swap2.form.details.label.provider")}
             />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         }}
       />
 
@@ -91,7 +91,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={t("transfer.swap2.form.details.label.fees")} />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         }}
       />
 
@@ -102,7 +102,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={getProviderName(route.params.provider)} />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         })}
       />
 
@@ -113,7 +113,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={getProviderName(route.params.provider)} />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         })}
       />
 
@@ -124,7 +124,7 @@ export default function SwapNavigator() {
           headerTitle: () => (
             <StepHeader title={getProviderName(route.params.provider)} />
           ),
-          headerRight: undefined,
+          headerRight: () => null,
         })}
       />
 
@@ -133,7 +133,7 @@ export default function SwapNavigator() {
         component={PendingOperation}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: undefined,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen
@@ -141,7 +141,7 @@ export default function SwapNavigator() {
         component={OperationDetails}
         options={{
           headerTitle: () => <StepHeader title={t("transfer.swap.title")} />,
-          headerLeft: undefined,
+          headerLeft: () => null,
         }}
       />
     </Stack.Navigator>

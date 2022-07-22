@@ -22,21 +22,16 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
     swapId,
     provider,
     targetCurrency,
-    operation,
     fromAccount,
-    fromParentAccount,
-  } = route.params;
+  } = route.params.swapOperation;
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
 
   const onComplete = useCallback(() => {
     navigation.navigate("OperationDetails", {
-      accountId: fromAccount.id,
-      parentId: fromParentAccount && fromParentAccount.id,
-      operation,
-      key: operation.id,
+      swapOperation: route.params.swapOperation,
     });
-  }, [fromAccount.id, fromParentAccount, navigation, operation]);
+  }, [navigation, route.params.swapOperation]);
 
   return (
     <SafeAreaView
@@ -76,15 +71,7 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
               <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
             </LText>
 
-            <LText
-              style={[
-                styles.swapID,
-                {
-                  backgroundColor: colors.fog,
-                },
-              ]}
-              color="darkBlue"
-            >
+            <LText style={[styles.swapID]} color="darkBlue">
               {swapId}
             </LText>
           </View>
@@ -162,7 +149,6 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   label: {
-    flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
   },

@@ -5,7 +5,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
-import { getEnv } from "@ledgerhq/live-common/src/env";
 import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";
@@ -73,8 +72,6 @@ export function Modal({
     setError(undefined);
     onClose();
   }, [onClose]);
-
-  console.log(getEnv("DISABLE_TRANSACTION_BROADCAST"));
 
   if (!provider) {
     return null;

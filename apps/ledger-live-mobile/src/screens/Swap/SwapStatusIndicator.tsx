@@ -2,14 +2,12 @@ import {
   isSwapOperationPending,
   operationStatusList,
 } from "@ledgerhq/live-common/exchange/swap/index";
+import { Icon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-// @ts-expect-error
-import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { rgba } from "../../colors";
-// eslint-disable-next-line import/named
-import { SwapIcon } from "../../icons/Swap";
+import { SwapIcon } from "../../icons/swap/index";
 
 export const getStatusColor = (
   status: string,
@@ -51,7 +49,7 @@ export function SwapStatusIndicator({
   return (
     <View style={[styles.status, sizeDependantStyles]}>
       <SwapIcon color={statusColor} size={small ? 16 : 26} />
-      {isSwapOperationPending(status) ? (
+      {isSwapOperationPending(status) && (
         <View
           style={[
             styles.pending,
@@ -63,14 +61,9 @@ export function SwapStatusIndicator({
             },
           ]}
         >
-          <IconAD
-            size={small ? 10 : 14}
-            name="clockcircleo"
-            // @ts-expect-error
-            color={rgba(colors.darkBlue, 0.6)}
-          />
+          <Icon name="Clock" size={small ? 10 : 14} color="primary.c70" />
         </View>
-      ) : null}
+      )}
     </View>
   );
 }
