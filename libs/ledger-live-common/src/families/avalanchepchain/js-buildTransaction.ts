@@ -1,10 +1,8 @@
 import type { Transaction } from "./types";
 import { BN } from "avalanche";
 import { avalancheClient } from "./api/client";
-import { UnixNow } from "avalanche/dist/utils";
 import { HDHelper } from "./hdhelper";
 import type { Account } from "../../types";
-import { FIVE_MINUTES } from "./utils";
 
 const buildTransaction = async (
   account: Account,
@@ -18,7 +16,7 @@ const buildTransaction = async (
   const pAddresses = hdHelper.getAllDerivedAddresses();
   const changeAddress = hdHelper.getFirstAvailableAddress();
   const nodeId = transaction.recipient;
-  const startTime: BN = UnixNow().add(new BN(FIVE_MINUTES));
+  const startTime: BN = new BN(transaction.startTime?.toString());
   const endTime: BN = new BN(transaction.endTime?.toString());
   const stakeAmount: BN = transaction.useAllAmount
     ? new BN(account.spendableBalance.minus(transaction.fees || 0).toString())
@@ -27,6 +25,7 @@ const buildTransaction = async (
   //for testing
   //   const info = avalancheClient().Info();
   //   const nodeId = await info.getNodeID();
+  //  const startTime: BN = UnixNow().add(new BN(FIVE_MINUTES));
   //   const endTime: BN = startTime.add(new BN(1814400)); //TODO: get this from UI
   //   console.log("UTXOs:", utxos);
   //   console.log("ADDRESSES: ", utxos.getAllUTXOStrings());
