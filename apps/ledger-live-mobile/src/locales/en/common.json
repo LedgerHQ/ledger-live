@@ -2128,7 +2128,7 @@
   "notifications": {
     "prompt": {
       "title": "Turn notifications on",
-      "desc": "Get the latest updates on Ledger Live, Ledger products, on market fluctuations and price alerts on your favorite coins. Opt out anytime.",
+      "desc": "Get important updates on Ledger Live, Ledger products and security. Opt out anytime.",
       "allow": "Allow notifications",
       "later": "Maybe later"
     }
