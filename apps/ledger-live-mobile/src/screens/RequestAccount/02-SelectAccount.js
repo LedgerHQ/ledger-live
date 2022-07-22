@@ -1,6 +1,7 @@
 /* @flow */
 
 import React, { useCallback, useMemo } from "react";
+import type { Node } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import type {
@@ -82,8 +83,8 @@ const List = ({
   renderFooter,
 }: {
   items: AccountLike[],
-  renderItem: ({ item: AccountLike }) => React.ReactNode,
-  renderFooter: () => React.ReactNode,
+  renderItem: ({ item: AccountLike }) => Node,
+  renderFooter: () => Node,
 }) => {
   const formatedList = useMemo(() => formatSearchResultsTuples(items), [items]);
   return (
