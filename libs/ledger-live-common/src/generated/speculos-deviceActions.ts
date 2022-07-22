@@ -12,8 +12,6 @@ import crypto_org from "../families/crypto_org/speculos-deviceActions";
 
 import elrond from "../families/elrond/speculos-deviceActions";
 
-import ethereum from "../families/ethereum/speculos-deviceActions";
-
 import filecoin from "../families/filecoin/speculos-deviceActions";
 
 import hedera from "../families/hedera/speculos-deviceActions";
@@ -39,7 +37,6 @@ export default {
   cosmos,
   crypto_org,
   elrond,
-  ethereum,
   filecoin,
   hedera,
   polkadot,

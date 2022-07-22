@@ -398,9 +398,10 @@ export function genAccount(
 
   if (
     [
+      /*
       "ethereum",
       "ethereum_ropsten",
-      "ethereum_goerli",
+      "ethereum_goerli",*/
       "tron",
       "algorand",
     ].includes(currency.id)

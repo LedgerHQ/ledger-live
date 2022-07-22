@@ -46,7 +46,7 @@ const bitcoinUnits: Unit[] = [
     magnitude: 0,
   },
 ];
-
+/*
 const ethereumUnits = (name, code) => [
   {
     name,
@@ -73,7 +73,7 @@ const ethereumUnits = (name, code) => [
     code: "wei",
     magnitude: 0,
   },
-];
+];*/
 
 const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   near: {
@@ -963,7 +963,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
-  },
+  },/*
   ethereum: {
     type: "CryptoCurrency",
     id: "ethereum",
@@ -1067,7 +1067,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       chainId: 31102,
     },
     explorerViews: [],
-  },
+  },*/
   expanse: {
     type: "CryptoCurrency",
     id: "expanse",
@@ -2190,7 +2190,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://explorer.qtum.org/address/$address",
       },
     ],
-  },
+  },/*
   songbird: {
     type: "CryptoCurrency",
     id: "songbird",
@@ -2215,7 +2215,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
           "https://songbird-explorer.flare.network/address/$address/transactions",
       },
     ],
-  },
+  },*/
   nem: {
     type: "CryptoCurrency",
     id: "nem",
@@ -3072,6 +3072,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
       },
     ],
   },
+  /*
   ethereum_ropsten: {
     type: "CryptoCurrency",
     id: "ethereum_ropsten",
@@ -3127,7 +3128,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
         address: "https://goerli.etherscan.io/address/$address",
       },
     ],
-  },
+  },*/
   stacks: {
     type: "CryptoCurrency",
     id: "stacks",

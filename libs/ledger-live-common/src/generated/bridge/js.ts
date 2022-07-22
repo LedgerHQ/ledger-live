@@ -12,8 +12,6 @@ import crypto_org from "../../families/crypto_org/bridge/js";
 
 import elrond from "../../families/elrond/bridge/js";
 
-import ethereum from "../../families/ethereum/bridge/js";
-
 import filecoin from "../../families/filecoin/bridge/js";
 
 import hedera from "../../families/hedera/bridge/js";
@@ -41,7 +39,6 @@ export default {
   cosmos,
   crypto_org,
   elrond,
-  ethereum,
   filecoin,
   hedera,
   neo,

@@ -1,10 +1,10 @@
 import type { TokenCurrency, CryptoCurrency } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
-import erc20tokens from "../data/erc20";
+//import erc20tokens from "../data/erc20";
 import trc10tokens from "../data/trc10";
 import trc20tokens from "../data/trc20";
-import bep20tokens from "../data/bep20";
-import polygonTokens from "../data/polygon-erc20";
+//import bep20tokens from "../data/bep20";
+//import polygonTokens from "../data/polygon-erc20";
 import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
 //import spltokens from "../data/spl";
@@ -17,11 +17,11 @@ const tokensById: Record<string, TokenCurrency> = {};
 const tokensByTicker: Record<string, TokenCurrency> = {};
 const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
-addTokens(erc20tokens.map(convertERC20));
-addTokens(polygonTokens.map(convertERC20));
+//addTokens(erc20tokens.map(convertERC20));
+//addTokens(polygonTokens.map(convertERC20));
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
 addTokens(trc20tokens.map(convertTRONTokens("trc20")));
-addTokens(bep20tokens.map(convertBEP20));
+//addTokens(bep20tokens.map(convertBEP20));
 addTokens(asatokens.map(convertAlgorandASATokens));
 addTokens(esdttokens.map(convertElrondESDTTokens));
 //addTokens(spltokens.map(convertSplTokens));
@@ -176,7 +176,7 @@ function addTokens(list: TokenCurrency[]) {
     tokensByCryptoCurrencyWithDelisted[parentCurrency.id].push(token);
   });
 }
-
+/*
 function convertERC20([
   parentCurrencyId,
   token,
@@ -249,7 +249,7 @@ function convertBEP20([
       },
     ],
   };
-}
+}*/
 
 function convertAlgorandASATokens([
   id,
