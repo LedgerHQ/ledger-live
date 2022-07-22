@@ -930,9 +930,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "Çok yakında",
