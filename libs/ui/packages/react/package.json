@@ -64,6 +64,7 @@
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
+    "lint:css":"stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui test:react"
   },
@@ -123,6 +124,10 @@
     "styled-components": "^5.3.3",
     "tiny-glob": "^0.2.9",
     "typescript": "^4.3.5",
-    "webpack": "*"
+    "webpack": "*",
+    "stylelint": "^14.9.1",
+    "stylelint-config-recommended": "^8.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0"
   }
 }
