@@ -3,7 +3,8 @@
 import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
-import "react-native-gesture-handler";
+// $FlowFixMe
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, {
   Component,
   useCallback,
@@ -14,7 +15,6 @@ import React, {
 import { connect, useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
-  View,
   Text,
   Linking,
   Appearance,
@@ -195,7 +195,7 @@ function App({ importDataString }: AppProps) {
   });
 
   return (
-    <View style={styles.root}>
+    <GestureHandlerRootView style={styles.root}>
       <SyncNewAccounts priority={5} />
       <ExperimentalHeader />
 
@@ -206,7 +206,7 @@ function App({ importDataString }: AppProps) {
       <FeatureToggle feature="ratings">
         <RatingsModal />
       </FeatureToggle>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 

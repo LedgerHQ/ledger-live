@@ -10,9 +10,13 @@ import "../env";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 
-let productionBuildSampleRate = 0.01;
+let productionBuildSampleRate = 0.2;
+let tracesSampleRate = 0.1;
+
 if (process.env.SENTRY_SAMPLE_RATE) {
-  productionBuildSampleRate = parseFloat(process.env.SENTRY_SAMPLE_RATE);
+  const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
+  productionBuildSampleRate = v;
+  tracesSampleRate = v;
 }
 
 const ignoreErrors = [
@@ -31,7 +35,7 @@ const ignoreErrors = [
   "ERR_CONNECTION_TIMED_OUT",
 ];
 
-export function init(Sentry: any) {
+export function init(Sentry: any, opts: any) {
   if (!__SENTRY_URL__) return false;
   Sentry.init({
     dsn: __SENTRY_URL__,
@@ -40,11 +44,13 @@ export function init(Sentry: any) {
     debug: __DEV__,
     ignoreErrors,
     sampleRate: __DEV__ ? 1 : productionBuildSampleRate,
+    tracesSampleRate: __DEV__ ? 1 : tracesSampleRate,
     initialScope: {
       tags: {
         git_commit: __GIT_REVISION__,
         osType: os.type(),
         osRelease: os.release(),
+        process: process?.title || "",
       },
       user: {
         ip_address: null,
@@ -79,6 +85,8 @@ export function init(Sentry: any) {
       }
       return breadcrumb;
     },
+
+    ...opts,
   });
 
   Sentry.withScope(scope => scope.setExtra("process", pname));

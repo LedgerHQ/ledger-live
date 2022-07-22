@@ -27,6 +27,9 @@ module.name_mapper='^@ledgerhq/live-common/\(.*\)' ->'<PROJECT_ROOT>/../../libs/
 munge_underscores=true
 esproposal.optional_chaining=enable
 
+module.file_ext=.tsx
+module.file_ext=.ts
+
 [strict]
 
 [untyped]
