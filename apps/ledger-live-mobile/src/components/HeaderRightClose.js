@@ -35,7 +35,7 @@ export default function HeaderRightClose({
 
   function close(): void {
     if (skipNavigation) {
-      // onClose should always be call at the end of the close method,
+      // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
       if (onClose) {
         onClose();
