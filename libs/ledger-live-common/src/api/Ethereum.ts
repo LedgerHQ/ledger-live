@@ -9,6 +9,7 @@ import type {
   NFTMetadataResponse,
 } from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
+import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
@@ -140,10 +141,11 @@ export type API = {
     address: string,
     request: EthereumGasLimitRequest
   ) => Promise<BigNumber>;
-  getGasTrackerBarometer: () => Promise<{
+  getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
     low: BigNumber;
     medium: BigNumber;
     high: BigNumber;
+    next_base: BigNumber;
   }>;
   getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
 };
@@ -325,18 +327,19 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     getGasTrackerBarometer: makeLRUCache(
-      async () => {
+      async (currency) => {
         const { data } = await network({
           method: "GET",
-          url: `${baseURL}/gastracker/barometer`,
+          url: `${baseURL}/gastracker/barometer${EIP1559ShouldBeUsed(currency) ? '?display=eip1559' : ''}`,
         });
         return {
           low: new BigNumber(data.low),
           medium: new BigNumber(data.medium),
           high: new BigNumber(data.high),
+          next_base: new BigNumber(data.next_base),
         };
       },
-      () => "",
+      (currency) => currency.id,
       {
         maxAge: 30 * 1000,
       }
