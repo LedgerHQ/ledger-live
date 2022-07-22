@@ -3,11 +3,17 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { DatasetTest } from "../../types";
 import { BigNumber } from "bignumber.js";
 import {
+  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
+import {
+  NewValidatorAddressRequired,
+  OldValidatorAddressRequired,
+  ValidatorAddressRequired,
+} from "./errors";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
@@ -56,7 +62,11 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: new BigNumber(100),
                 recipient:
-                  "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {
@@ -71,7 +81,11 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: new BigNumber("100"),
                 recipient:
-                  "MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {
@@ -86,7 +100,11 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: new BigNumber("1000"),
                 recipient:
-                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {},
@@ -99,7 +117,11 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance,
                 recipient:
-                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {
@@ -114,7 +136,11 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance.minus("100"),
                 recipient:
-                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {
@@ -127,11 +153,13 @@ const dataset: DatasetTest<Transaction> = {
               name: "send Token",
               transaction: (t) => ({
                 ...t,
-                subAccountId:
-                  "js:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:+312769",
                 amount: new BigNumber("1000"),
                 recipient:
-                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {},
@@ -143,15 +171,237 @@ const dataset: DatasetTest<Transaction> = {
               name: "send Token - more than available",
               transaction: (t) => ({
                 ...t,
-                subAccountId:
-                  "js:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:+312769",
                 amount: new BigNumber("100000000000"),
                 recipient:
-                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                  "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                model: {
+                  mode: "send",
+                  memo: "",
+                },
               }),
               expectedStatus: {
                 errors: {
                   amount: new NotEnoughBalance(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Stake - validator address required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "stake",
+                  validatorAddress: "",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new ValidatorAddressRequired(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Stake - validator invalid address",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "stake",
+                  validatorAddress: "1234",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddress(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Stake - validator address is also source",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "stake",
+                  validatorAddress:
+                    "13DTKSEQYRfMgUHXFzgWqUKqokcpd2E4XBF9whPWXJZmT8iBw6N",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Stake - validator min amount required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("1"),
+                model: {
+                  mode: "stake",
+                  validatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Unstake - validator address required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "unstake",
+                  validatorAddress: "",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new ValidatorAddressRequired(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Unstake - validator invalid address",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "unstake",
+                  validatorAddress: "1234",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddress(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Unstake - validator address is also source",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "unstake",
+                  validatorAddress:
+                    "13DTKSEQYRfMgUHXFzgWqUKqokcpd2E4XBF9whPWXJZmT8iBw6N",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Unstake - validator min amount required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("1"),
+                model: {
+                  mode: "unstake",
+                  validatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Transfer Stake - old validator address required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "transfer",
+                  oldValidatorAddress: "",
+                  newValidatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                  paymentAmount: new BigNumber(0),
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new OldValidatorAddressRequired(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Transfer Stake - invalid old validator address",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "transfer",
+                  oldValidatorAddress: "123",
+                  newValidatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                  paymentAmount: new BigNumber(0),
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new InvalidAddress(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Transfer Stake - new validator address required",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "transfer",
+                  oldValidatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                  newValidatorAddress: "",
+                  paymentAmount: new BigNumber(0),
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NewValidatorAddressRequired(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Transfer Stake - invalid new validator address",
+              transaction: (t) => ({
+                ...t,
+                amount: new BigNumber("100000000000"),
+                model: {
+                  mode: "transfer",
+                  oldValidatorAddress:
+                    "1br5rK7f4MCpHuezwJjxywLr4pmeMoRMtrkfurNfXAAtJ2Xuk8v",
+                  newValidatorAddress: "123",
+                  paymentAmount: new BigNumber(0),
+                },
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NewValidatorAddressRequired(),
                 },
                 warnings: {},
               },

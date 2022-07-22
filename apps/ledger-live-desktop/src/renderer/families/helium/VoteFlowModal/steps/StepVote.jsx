@@ -34,8 +34,6 @@ export default function StepVote({
 
   votes = votes.filter(vote => vote.blocksRemaining > 0);
 
-  console.log("transaction", transaction);
-
   const updateVote = (vote: any) => {
     onUpdateTransaction(tx => {
       return bridge.updateTransaction(transaction, {
@@ -86,8 +84,6 @@ export default function StepVote({
 
 export class StepVoteFooter extends PureComponent<StepProps> {
   onNext = async () => {
-    console.log("Transaction => ");
-    console.log(this.props.transaction);
     const { transitionTo } = this.props;
     transitionTo("connectDevice");
   };

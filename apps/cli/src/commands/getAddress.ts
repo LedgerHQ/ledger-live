@@ -36,7 +36,6 @@ export default {
       verify: boolean;
     }>
   ) => {
-    console.log("here!", arg);
     return inferCurrency(arg).pipe(
       mergeMap((currency) => {
         if (!currency) {
