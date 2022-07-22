@@ -50,7 +50,6 @@ class CopyLink extends PureComponent<Props, State> {
     const { copied } = this.state;
     return (
       <Touchable
-        event="CopyLink"
         style={[styles.linkContainer, style]}
         onPress={this.onPress}
       >

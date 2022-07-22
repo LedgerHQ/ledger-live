@@ -158,7 +158,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <PreventNativeBack />
       <SkipLock />
         { error ? <>
-          <TrackScreen category="ReceiveFunds" name="Address Verification Denied" source={lastRoute} />
+          <TrackScreen category="Receive" name="Address Verification Denied" source={lastRoute} />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration lightSource={illustrations.light}
               darkSource={illustrations.dark}

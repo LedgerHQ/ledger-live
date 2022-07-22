@@ -36,7 +36,7 @@ const AdditionalInfoModal = ({ isOpen, onClose, currencyTicker }: Props) => {
   return (
     <BottomDrawer isOpen={isOpen} onClose={handleClose}>
       <TrackScreen
-        category="ReceiveFunds"
+        category="Receive"
         name="Explication Account Import/Creation"
         source={lastRoute}
         type="drawer"

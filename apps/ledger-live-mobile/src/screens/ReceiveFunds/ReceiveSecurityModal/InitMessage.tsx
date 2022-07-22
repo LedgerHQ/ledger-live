@@ -26,7 +26,7 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
     track("button_clicked", {
       button: "Reveal my address without verifying",
       screen: route.name,
-      drawer: "initMessage",
+      drawer: "Verification Security Disclaimer",
     });
     setStep("confirmUnverified");
   }, [setStep, route]);
@@ -35,14 +35,14 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
     track("button_clicked", {
       button: "Verify my address",
       screen: route.name,
-      drawer: "initMessage",
+      drawer: "Verification Security Disclaimer",
     });
     onVerifyAddress();
   }, [route, onVerifyAddress]);
   return (
     <Flex flex={1} justifyContent="center" mt={3}>
       <TrackScreen
-        category="ReceiveFunds"
+        category="Receive"
         name="Verification Security Disclaimer"
         source={lastRoute}
         type="drawer"

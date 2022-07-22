@@ -156,7 +156,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     <Flex flex={1} mb={9}>
       <PreventNativeBack />
       <NavigationScrollView style={{ flex: 1 }}>
-        <TrackScreen category="ReceiveFunds" name="Receive Qr Code" source={lastRoute} currency={currency.name} />
+        <TrackScreen category="Receive" name="Qr Code" source={lastRoute} currency={currency.name} />
         <Flex p={6} alignItems="center" justifyContent="center">
           <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
             {t("transfer.receive.receiveConfirmation.title", { currencyTicker: currency.ticker })}
