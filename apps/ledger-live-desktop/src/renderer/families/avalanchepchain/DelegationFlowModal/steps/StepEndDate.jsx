@@ -1,12 +1,9 @@
 // @flow
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import React, { Fragment, PureComponent } from "react";
+import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Input from "~/renderer/components/Input";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import type { StepProps } from "../types";
@@ -22,7 +19,7 @@ import styled, { withTheme } from "styled-components";
 import { useAvalanchePChainPreloadData } from "@ledgerhq/live-common/families/avalanchepchain/react";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import {
-  FIFTEEN_MINUTES,
+  FIVE_MINUTES,
   YEAR,
   THREE_WEEKS,
   MIN_STAKE_DURATION,
@@ -65,14 +62,14 @@ function StepEndDate({
   const { validators } = useAvalanchePChainPreloadData();
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
-  const stakeStartTime = moment().unix() + FIFTEEN_MINUTES;
+  const stakeStartTime = moment().unix() + FIVE_MINUTES;
   const unixMinEndDate = stakeStartTime + MIN_STAKE_DURATION;
   const unixMaxEndDate = Math.min(stakeStartTime + YEAR, Number(selectedValidator.endTime));
   const unixDefaultEndDate = Math.min(stakeStartTime + THREE_WEEKS, unixMaxEndDate);
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
-  const minEndDateText = moment.unix(unixMinEndDate).format("MM/DD/YYYY, h:mm a");
+  const minEndDateText = moment.unix(unixMinEndDate).add(1, 'minutes').format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
   const defaultEndDateText = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
 
@@ -80,6 +77,7 @@ function StepEndDate({
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(tx => {
       return bridge.updateTransaction(tx, {
+        startTime: new BigNumber(stakeStartTime),
         endTime: new BigNumber(moment(endTime).unix()),
         maxEndTime: new BigNumber(unixMaxEndDate),
       });

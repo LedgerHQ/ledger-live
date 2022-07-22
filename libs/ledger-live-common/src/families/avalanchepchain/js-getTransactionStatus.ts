@@ -10,7 +10,7 @@ import { AvalancheInvalidDateTimeError } from "./errors";
 import { Account, TransactionStatus } from "../../types";
 import { Transaction } from "./types";
 import { AVAX_MINIMUM_STAKE_AMOUNT } from "./utils";
-import { FIFTEEN_MINUTES, TWO_WEEKS } from "./utils";
+import { FIVE_MINUTES, TWO_WEEKS } from "./utils";
 
 const getTransactionStatus = async (
   account: Account,
@@ -55,13 +55,13 @@ const getTransactionStatus = async (
   const isBeyondValidStakeTimeRange =
     transaction.maxEndTime && transaction.endTime?.gt(transaction.maxEndTime);
 
-  const twoWeeksAndfifteenMinutesFromNow = new BigNumber(
-    Math.round(new Date().getTime() / 1000) + FIFTEEN_MINUTES + TWO_WEEKS
+  const twoWeeksAndfiveMinutesFromNow = new BigNumber(
+    Math.round(new Date().getTime() / 1000) + TWO_WEEKS + FIVE_MINUTES
   );
 
   const isUnderValidStakeTimeRange =
     transaction.endTime &&
-    transaction.endTime?.lt(twoWeeksAndfifteenMinutesFromNow);
+    transaction.endTime?.lt(twoWeeksAndfiveMinutesFromNow);
 
   if (isBeyondValidStakeTimeRange || isUnderValidStakeTimeRange) {
     errors.time = new AvalancheInvalidDateTimeError();
