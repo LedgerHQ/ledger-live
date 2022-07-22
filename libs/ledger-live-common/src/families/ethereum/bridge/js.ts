@@ -22,6 +22,7 @@ import {
   getGasLimit,
   inferEthereumGasLimitRequest,
   estimateGasLimit,
+  EIP1559ShouldBeUsed,
 } from "../transaction";
 import { getAccountShape } from "../synchronisation";
 import {
@@ -80,6 +81,7 @@ const getTransactionStatus = (a, t) => {
   const estimatedFees = (t.gasPrice || new BigNumber(0)).times(gasLimit);
   const errors: {
     gasPrice?: Error;
+    gasBaseAndPriorityFee?: Error;
     gasLimit?: Error;
     recipient?: Error;
   } = {};
@@ -98,9 +100,13 @@ const getTransactionStatus = (a, t) => {
   m.fillTransactionStatus(a, t, result);
 
   // generic gas error and warnings
-  if (!t.gasPrice) {
+  if(EIP1559ShouldBeUsed(a.currency)) {
+    if (!t.maxFeePerGas || !t.maxPriorityFeePerGas)
+      errors.gasBaseAndPriorityFee = new FeeNotLoaded();
+  } else if (!t.gasPrice) {
     errors.gasPrice = new FeeNotLoaded();
-  } else if (gasLimit.eq(0)) {
+  }
+  if (gasLimit.eq(0)) {
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     if (estimatedFees.gt(a.balance)) {
@@ -127,18 +133,31 @@ const getNetworkInfoByOneGasPrice = async (c) => {
 
 const getNetworkInfoByGasTrackerBarometer = async (c) => {
   const api = apiForCurrency(c);
-  const { low, medium, high } = await api.getGasTrackerBarometer();
+  const { low, medium, high, next_base } = await api.getGasTrackerBarometer(c);
   const minValue = low;
   const maxValue = high.lte(low) ? low.times(2) : high;
   const initial = medium;
-  const gasPrice = inferDynamicRange(initial, {
-    minValue,
-    maxValue,
-  });
-  return {
-    family: "ethereum",
-    gasPrice,
-  };
+  if (EIP1559ShouldBeUsed(c)) {
+    const maxPriorityFeePerGas = inferDynamicRange(initial, {
+      minValue,
+      maxValue,
+    });
+    const maxFeePerGas = next_base;
+    return {
+      family: "ethereum",
+      maxPriorityFeePerGas,
+      maxFeePerGas
+    };
+  } else {
+    const gasPrice = inferDynamicRange(initial, {
+      minValue,
+      maxValue,
+    });
+    return {
+      family: "ethereum",
+      gasPrice,
+    };
+  }
 };
 
 const getNetworkInfo = (c) =>
@@ -153,20 +172,42 @@ const getNetworkInfo = (c) =>
 
 const inferGasPrice = (t: Transaction, networkInfo: NetworkInfo) => {
   return t.feesStrategy === "slow"
-    ? networkInfo.gasPrice.min
+    ? networkInfo?.gasPrice?.min
     : t.feesStrategy === "medium"
-    ? networkInfo.gasPrice.initial
+    ? networkInfo?.gasPrice?.initial
     : t.feesStrategy === "fast"
-    ? networkInfo.gasPrice.max
-    : t.gasPrice || networkInfo.gasPrice.initial;
+    ? networkInfo?.gasPrice?.max
+    : t.gasPrice || networkInfo?.gasPrice?.initial;
+};
+
+const inferMaxBaseFee = (t: Transaction, networkInfo: NetworkInfo) => {
+  return networkInfo?.maxFeePerGas;
+};
+
+const inferPriorityFee = (t: Transaction, networkInfo: NetworkInfo) => {
+  return t.feesStrategy === "slow"
+    ? networkInfo?.maxPriorityFeePerGas?.min
+    : t.feesStrategy === "medium"
+    ? networkInfo?.maxPriorityFeePerGas?.initial
+    : t.feesStrategy === "fast"
+    ? networkInfo?.maxPriorityFeePerGas?.max
+    : t.maxPriorityFeePerGas || networkInfo?.maxPriorityFeePerGas?.initial;
 };
 
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const networkInfo = t.networkInfo || (await getNetworkInfo(a.currency));
-  const gasPrice = inferGasPrice(t, networkInfo as NetworkInfo);
 
-  if (t.gasPrice !== gasPrice || t.networkInfo !== networkInfo) {
-    t = { ...t, networkInfo: networkInfo as NetworkInfo, gasPrice };
+  if (EIP1559ShouldBeUsed(a.currency)) {
+    const maxFeePerGas = inferMaxBaseFee(t, networkInfo as NetworkInfo);
+    const maxPriorityFeePerGas = inferPriorityFee(t, networkInfo as NetworkInfo);
+    if (t.maxFeePerGas !== maxFeePerGas || t.maxPriorityFeePerGas !== maxPriorityFeePerGas  || t.networkInfo !== networkInfo) {
+      t = { ...t, networkInfo: networkInfo as NetworkInfo, maxFeePerGas, maxPriorityFeePerGas };
+    }
+  } else {
+    const gasPrice = inferGasPrice(t, networkInfo as NetworkInfo);
+    if (t.gasPrice !== gasPrice || t.networkInfo !== networkInfo) {
+      t = { ...t, networkInfo: networkInfo as NetworkInfo, gasPrice };
+    }
   }
 
   let estimatedGasLimit;

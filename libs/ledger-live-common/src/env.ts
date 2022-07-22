@@ -46,6 +46,11 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
+const stringArrayParser = (v: any): string[] | null | undefined => {
+  const v_array = typeof v === "string" ? v.split(",") : null;
+  if (Array.isArray(v_array) && v_array.length > 0) return v_array;
+};
+
 const envDefinitions = {
   ANALYTICS_CONSOLE: {
     def: false,
@@ -281,6 +286,11 @@ const envDefinitions = {
     def: true,
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
+  },
+  EIP1559_ENABLED_CURRENCIES: {
+    def: "ethereum,ethereum_goerli",
+    parser: stringArrayParser,
+    desc: "set the currency ids where EIP1559 is enabled",
   },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,

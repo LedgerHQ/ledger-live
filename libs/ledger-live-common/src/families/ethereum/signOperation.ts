@@ -15,15 +15,27 @@ import type {
   Account,
   SignOperationEvent,
 } from "@ledgerhq/types-live";
-import { getGasLimit, buildEthereumTx } from "./transaction";
+import {
+  getGasLimit,
+  buildEthereumTx,
+  EIP1559ShouldBeUsed,
+} from "./transaction";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { Transaction as EthereumTx } from "@ethereumjs/tx";
+import {
+  FeeMarketEIP1559TxData,
+  Transaction as EthereumTx,
+} from "@ethereumjs/tx";
 import { erc20SignatureInfo } from "./modules/erc20";
+import {
+  FeeMarketEIP1559Transaction,
+  Transaction as LegacyEthereumTx,
+} from "@ethereumjs/tx";
+
 export const signOperation = ({
   account,
   deviceId,
@@ -47,16 +59,28 @@ export const signOperation = ({
             async function main() {
               // First, we need to create a partial tx and send to the device
               const { freshAddressPath, freshAddress } = account;
-              const { gasPrice } = transaction;
+              const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } =
+                transaction;
               const gasLimit = getGasLimit(transaction);
 
-              if (!gasPrice || !new BigNumber(gasLimit).gt(0)) {
+              let dataMissing = !new BigNumber(gasLimit).gt(0);
+              let missingDataString = "";
+              if (EIP1559ShouldBeUsed(account.currency)) {
+                missingDataString = ` maxFeePerGas=${String(
+                  maxFeePerGas
+                )} maxPriorityFeePerGas=${String(maxPriorityFeePerGas)}`;
+                dataMissing =
+                  dataMissing && (!maxFeePerGas || !maxPriorityFeePerGas);
+              } else {
+                missingDataString = ` gasPrice=${String(gasPrice)}`;
+                dataMissing = dataMissing && !gasPrice;
+              }
+              if (dataMissing) {
                 log(
                   "ethereum-error",
-                  "buildTransaction missingData: gasPrice=" +
-                    String(gasPrice) +
-                    " gasLimit=" +
-                    String(gasLimit)
+                  `buildTransaction missingData: ${missingDataString} gasLimit=${String(
+                    gasLimit
+                  )}`
                 );
                 throw new FeeNotLoaded();
               }
@@ -67,10 +91,19 @@ export const signOperation = ({
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
+
               // rawData Format: `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
-              const rawData = tx.raw();
-              rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
-              const txHex = Buffer.from(encode(rawData)).toString("hex");
+              // EIP1559 Format: 0x02 || rlp([chain_id, nonce, max_priority_fee_per_gas, max_fee_per_gas, gas_limit, destination, amount, data, access_list, signature_y_parity, signature_r, signature_s])
+              const txHex = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return tx.getMessageToSign(false).toString("hex");
+                }
+
+                const rawData = tx.raw();
+                rawData[6] = Buffer.from([common.chainIdBN().toNumber()]);
+                return Buffer.from(encode(rawData)).toString("hex");
+              })();
+
               const loadConfig: LoadConfig = {
                 cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
               };
@@ -129,11 +162,19 @@ export const signOperation = ({
               const r = `0x${result.r}`;
               const s = `0x${result.s}`;
 
-              const signedTx = new EthereumTx(
-                { ...ethTxObject, v, r, s },
-                { common }
-              );
+              const signedTx = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return new FeeMarketEIP1559Transaction(
+                    { ...ethTxObject, v, r, s } as FeeMarketEIP1559TxData,
+                    { common }
+                  );
+                }
 
+                return new LegacyEthereumTx(
+                  { ...ethTxObject, v, r, s },
+                  { common }
+                );
+              })();
               // Generate the signature ready to be broadcasted
               const signature = `0x${signedTx.serialize().toString("hex")}`;
 
@@ -142,7 +183,16 @@ export const signOperation = ({
 
               const senders = [freshAddress];
               const recipients = [to];
-              const fee = gasPrice.times(gasLimit);
+
+              const fee = (() => {
+                if (EIP1559ShouldBeUsed(account.currency)) {
+                  return maxFeePerGas!
+                    .plus(maxPriorityFeePerGas!)
+                    .times(gasLimit);
+                }
+                return gasPrice!.times(gasLimit);
+              })();
+
               const transactionSequenceNumber = nonce;
               const accountId = account.id;
               // currently, all mode are always at least one OUT tx on ETH parent
