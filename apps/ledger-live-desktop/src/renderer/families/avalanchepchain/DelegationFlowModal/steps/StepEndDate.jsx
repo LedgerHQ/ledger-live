@@ -69,9 +69,9 @@ function StepEndDate({
 
   const minEndDate = moment.unix(unixMinEndDate).format("YYYY-MM-DDTh:mm");
   const maxEndDate = moment.unix(unixMaxEndDate).format("YYYY-MM-DDTh:mm");
+  const defaultEndDate = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
   const minEndDateText = moment.unix(unixMinEndDate).add(1, 'minutes').format("MM/DD/YYYY, h:mm a");
   const maxEndDateText = moment.unix(unixMaxEndDate).format("MM/DD/YYYY, h:mm a");
-  const defaultEndDateText = moment.unix(unixDefaultEndDate).format("YYYY-MM-DDTHH:mm");
 
   const updateEndDate = endTime => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
@@ -100,7 +100,7 @@ function StepEndDate({
       <Fragment key={account.id}>
         <Label>{t("avalanchepchain.delegation.flow.steps.endDate.label")}</Label>
         <Input
-          defaultValue={defaultEndDateText}
+          defaultValue={defaultEndDate}
           type="datetime-local"
           min={minEndDate}
           max={maxEndDate}
