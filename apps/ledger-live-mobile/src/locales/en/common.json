@@ -3381,6 +3381,13 @@
       }
     }
   },
+  "cardano": {
+    "info": {
+      "balanceDoesNotIncludeRewards": {
+        "title": "Total balance doesn't include staking rewards"
+      }
+    }
+  },
   "celo": {
     "info": {
       "available": {
