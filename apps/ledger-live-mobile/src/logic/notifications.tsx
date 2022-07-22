@@ -56,6 +56,7 @@ const getCurrentRouteName = (
     if (state.index === undefined || state.index < 0) {
       return undefined;
     }
+
     const nestedState = state.routes[state.index].state;
     if (nestedState !== undefined) {
       return getCurrentRouteName(nestedState);
@@ -105,9 +106,10 @@ const useNotifications = () => {
 
     const listenForNotifications = useCallback(async () => {
         if (!notificationsToken) {
-            const token = await messaging().getToken();
+            const fcm = messaging();
+            const token = await fcm.getToken();
             setNotificationsToken(token);
-            messaging().onMessage(async remoteMessage => {
+            fcm.onMessage(async remoteMessage => {
                 if (remoteMessage && remoteMessage.notification) {
                     pushToast({
                         id: remoteMessage.messageId,
@@ -118,7 +120,7 @@ const useNotifications = () => {
                 }
             });
             // Needed to avoid a warning
-            messaging().setBackgroundMessageHandler(async remoteMessage => {
+            fcm.setBackgroundMessageHandler(async remoteMessage => {
             });
         }
     }, [notificationsToken, pushToast]);
@@ -134,12 +136,13 @@ const useNotifications = () => {
         if (Platform.OS === "android") {
             Linking.openSettings();
         } else {
-            const permission = await messaging().hasPermission();
+            const fcm = messaging();
+            const permission = await fcm.hasPermission();
 
             if (permission === messaging.AuthorizationStatus.DENIED) {
                 Linking.openSettings();
             } else if (permission === messaging.AuthorizationStatus.NOT_DETERMINED) {
-                messaging().requestPermission();
+                fcm.requestPermission();
             }
         }
     }, []);
@@ -157,7 +160,7 @@ const useNotifications = () => {
             });
           }
         },
-        [dispatch, getIsNotifEnabled, notificationsSettings.allowed],
+        [dispatch, notificationsSettings.allowed],
     );
     
     const areConditionsMet = useCallback(() => {
@@ -304,7 +307,7 @@ const useNotifications = () => {
                 }),
             );
         }
-    }, [pushNotificationsDataOfUser?.doNotAskAgain]);
+    }, [dispatch, pushNotificationsDataOfUser?.doNotAskAgain, pushNotificationsFeature?.params?.marketCoinStarred, setPushNotificationsModalOpenCallback]);
 
     const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
         const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
@@ -320,7 +323,7 @@ const useNotifications = () => {
                 }),
             );
         }
-    }, []);
+    }, [dispatch, pushNotificationsFeature?.params?.justFinishedOnboarding, setPushNotificationsModalOpenCallback]);
 
     const handleSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
         if (delay !== null && delay !== undefined) {
@@ -344,7 +347,7 @@ const useNotifications = () => {
         if (pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts) {
             handleSetDateOfNextAllowedRequest(pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts);
         }
-    }, []);
+    }, [handleSetDateOfNextAllowedRequest, navigation, pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts, setPushNotificationsModalOpenCallback]);
 
     const modalDelayLater = useCallback(() => {
         setPushNotificationsModalOpenCallback(false);
@@ -361,7 +364,7 @@ const useNotifications = () => {
                 },
             );
         }
-    }, [pushNotificationsDataOfUser?.alreadyDelayedToLater]);
+    }, [handleSetDateOfNextAllowedRequest, pushNotificationsDataOfUser, pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts, pushNotificationsFeature?.params?.conditions?.maybe_later_delay, setPushNotificationsModalOpenCallback, updatePushNotificationsDataOfUserInStateAndStore]);
 
     return {
         initPushNotifications,

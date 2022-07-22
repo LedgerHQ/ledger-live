@@ -8,7 +8,6 @@ import {
   Link as TextLink,
   Button,
 } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
 import useNotifications from "../../logic/notifications";
 import Illustration from "../../images/illustration/Illustration";
 import PromptNotifGenericDark from "../../images/illustration/Dark/_PromptNotifGeneric.png";
@@ -32,7 +31,6 @@ const PushNotificationsModal = () => {
     clearNotificationsListeners,
   } = useNotifications();
   const notificationsSettings = useSelector(notificationsSelector);
-  const navigation = useNavigation();
 
   useEffect(() => {
     initPushNotifications();
@@ -75,29 +73,35 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-  <BottomDrawer
-    id="PromptNotification"
-    isOpen={isPushNotificationsModalOpen}
-    noCloseButton
-  >
-    <Flex mb={4}>
-      <Flex alignItems={"center"}>
-        <NotifIllustration />
-        <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
-          {t("notifications.prompt.title")}
-        </Text>
-        <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c70" textAlign="center" mt={3}>
-          {t("notifications.prompt.desc")}
-        </Text>
+    <BottomDrawer
+      id="PromptNotification"
+      isOpen={isPushNotificationsModalOpen}
+      noCloseButton
+    >
+      <Flex mb={4}>
+        <Flex alignItems={"center"}>
+          <NotifIllustration />
+          <Text variant="h4" fontWeight="semiBold" color="neutral.c100" mt={5}>
+            {t("notifications.prompt.title")}
+          </Text>
+          <Text
+            variant="bodyLineHeight"
+            fontWeight="medium"
+            color="neutral.c70"
+            textAlign="center"
+            mt={3}
+          >
+            {t("notifications.prompt.desc")}
+          </Text>
+        </Flex>
+        <Button type={"main"} mt={8} mb={7} onPress={modalAllowNotifications}>
+          {t("notifications.prompt.allow")}
+        </Button>
+        <TextLink type={"shade"} onPress={modalDelayLater}>
+          {t("notifications.prompt.later")}
+        </TextLink>
       </Flex>
-      <Button type={"main"} mt={8} mb={7} onPress={modalAllowNotifications}>
-        {t("notifications.prompt.allow")}
-      </Button>
-      <TextLink type={"shade"} onPress={modalDelayLater}>
-        {t("notifications.prompt.later")}
-      </TextLink>
-    </Flex>
-  </BottomDrawer>
+    </BottomDrawer>
   );
 };
 

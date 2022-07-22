@@ -122,13 +122,10 @@ function MarketDetail({
       <AccountRow
         navigation={navigation}
         navigationParams={[
-          NavigatorName.Accounts,
+          ScreenName.Account,
           {
-            screen: ScreenName.Account,
-            params: {
-              parentId: item?.parentId,
-              accountId: item.id,
-            },
+            parentId: item?.parentId,
+            accountId: item.id,
           },
         ]}
         account={item}
