@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import styled from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";

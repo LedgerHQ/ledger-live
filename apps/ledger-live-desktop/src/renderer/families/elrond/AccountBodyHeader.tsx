@@ -27,9 +27,9 @@ import axios from "axios";
 import Unbondings from "~/renderer/families/elrond/components/Unbondings";
 import Delegations from "~/renderer/families/elrond/components/Delegations";
 
-type Props = {
+interface Props {
   account: Account;
-};
+}
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -39,6 +39,7 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 
+/* eslint-disable react/display-name */
 const withDelegation = (Component: ReactNode) => (props: any) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 

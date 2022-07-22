@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import axios from "axios";
+import { Account } from "@ledgerhq/live-common/types/index";
 
 import Delegations from "./components/Delegations";
 import Unbondings from "./components/Unbondings";
@@ -51,10 +52,14 @@ const styles = StyleSheet.create({
   },
 });
 
+interface Props {
+  account: Account;
+}
+
 const withStaking = Component => props =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
-const Staking = props => {
+const Staking = (props: Props) => {
   const { account } = props;
 
   const [drawer, setDrawer] = useState();

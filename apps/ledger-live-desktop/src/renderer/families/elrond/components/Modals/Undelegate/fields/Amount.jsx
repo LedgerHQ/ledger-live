@@ -1,13 +1,10 @@
 // @flow
 import React, { useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { Unit } from "@ledgerhq/live-common/lib/types";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { constants } from "~/renderer/families/elrond/constants";
 
 const InputLeft = styled(Box).attrs(() => ({
@@ -29,11 +26,9 @@ const InputRight = styled(Box).attrs(() => ({
   padding: ${p => p.theme.space[2]}px;
 `;
 
-const AmountButton: ThemedComponent<{ error: boolean, active: boolean }> = styled.button.attrs(
-  () => ({
-    type: "button",
-  }),
-)`
+const AmountButton = styled.button.attrs(() => ({
+  type: "button",
+}))`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed
@@ -73,7 +68,7 @@ export default function AmountField({
 
   const [focused, setFocused] = useState(false);
 
-  const onAmountChange = (amount: BigNumber, unit?: Unit): void => {
+  const onAmountChange = (amount, unit) => {
     onChange(amount, unit);
   };
 
