@@ -6,8 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../const";
 import { Alert, BottomDrawer, Text } from "@ledgerhq/native-ui";
-import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
@@ -69,18 +68,11 @@ const FirmwareUpdateBanner = () => {
       lastSeenDevice.deviceInfo,
       lastSeenDevice.modelId,
     );
-  const isDeviceConnectedViaUSB = lastConnectedDevice?.wired === true;
   const usbFwUpdateActivated =
     usbFwUpdateFeatureFlag?.enabled &&
     Platform.OS === "android" &&
+    lastConnectedDevice?.wired &&
     isUsbFwVersionUpdateSupported;
-
-  const fwUpdateActivatedButNotWired =
-    usbFwUpdateActivated && !isDeviceConnectedViaUSB;
-
-  const deviceName = lastConnectedDevice
-    ? getDeviceModel(lastConnectedDevice.modelId).productName
-    : "";
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
@@ -88,7 +80,7 @@ const FirmwareUpdateBanner = () => {
         <Text flexShrink={1}>
           {t("FirmwareUpdate.newVersion", {
             version,
-            deviceName,
+            deviceName: lastConnectedDevice?.deviceName,
           })}
         </Text>
         <Button
@@ -97,9 +89,7 @@ const FirmwareUpdateBanner = () => {
           type="color"
           title={t("FirmwareUpdate.update")}
           onPress={
-            usbFwUpdateActivated && isDeviceConnectedViaUSB
-              ? onExperimentalFirmwareUpdate
-              : onPress
+            usbFwUpdateActivated ? onExperimentalFirmwareUpdate : onPress
           }
           outline={false}
         />
@@ -108,19 +98,9 @@ const FirmwareUpdateBanner = () => {
       <BottomDrawer
         isOpen={showDrawer}
         onClose={onCloseDrawer}
-        Icon={fwUpdateActivatedButNotWired ? UsbMedium : DownloadMedium}
-        title={
-          fwUpdateActivatedButNotWired
-            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbTitle")
-            : t("FirmwareUpdate.drawerUpdate.title")
-        }
-        description={
-          fwUpdateActivatedButNotWired
-            ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
-                deviceName,
-              })
-            : t("FirmwareUpdate.drawerUpdate.description")
-        }
+        Icon={DownloadMedium}
+        title={t("FirmwareUpdate.drawerUpdate.title")}
+        description={t("FirmwareUpdate.drawerUpdate.description")}
         noCloseButton
       >
         <Button
