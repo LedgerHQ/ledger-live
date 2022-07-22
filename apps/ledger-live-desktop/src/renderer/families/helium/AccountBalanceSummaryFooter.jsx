@@ -66,8 +66,6 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
 
   const { stakes } = heliumResources;
 
-  console.log(stakes);
-
   const _stakedBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + (s.stake.integerBalance ?? 0), 0),
   );
