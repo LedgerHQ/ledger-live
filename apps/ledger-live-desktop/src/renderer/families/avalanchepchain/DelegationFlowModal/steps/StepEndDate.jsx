@@ -122,15 +122,11 @@ export function StepEndDateFooter({
   transitionTo,
   account,
   parentAccount,
-  onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "avalanche account required");
 
-  //TODO: set this correctly
-  //   const canNext = !bridgePending && hasValidEndDate
   const { errors } = status;
 
   const hasErrors = Object.keys(errors).length;
