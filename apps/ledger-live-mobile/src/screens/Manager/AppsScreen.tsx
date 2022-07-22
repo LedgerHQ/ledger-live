@@ -46,7 +46,7 @@ type Props = {
   deviceId: string;
   initialDeviceName: string;
   navigation: any;
-  blockNavigation: boolean;
+  pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
   searchQuery?: string;
@@ -67,7 +67,7 @@ const AppsScreen = ({
   initialDeviceName,
   device,
   navigation,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   searchQuery,
   optimisticState,
@@ -263,7 +263,7 @@ const AppsScreen = ({
               result={result}
               deviceId={deviceId}
               initialDeviceName={initialDeviceName}
-              blockNavigation={blockNavigation}
+              pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
@@ -307,7 +307,7 @@ const AppsScreen = ({
     ),
     [
       appFilter,
-      blockNavigation,
+      pendingInstalls,
       device,
       deviceId,
       deviceInfo,

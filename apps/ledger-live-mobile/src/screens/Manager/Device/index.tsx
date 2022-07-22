@@ -41,7 +41,7 @@ type Props = {
   result: ListAppsResult;
   deviceId: string;
   initialDeviceName: string;
-  blockNavigation: boolean;
+  pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
   setAppUninstallWithDependencies: (params: {
@@ -70,7 +70,7 @@ const DeviceCard = ({
   deviceId,
   device,
   initialDeviceName,
-  blockNavigation,
+  pendingInstalls,
   deviceInfo,
   setAppUninstallWithDependencies,
   dispatch,
@@ -116,7 +116,7 @@ const DeviceCard = ({
             deviceId={deviceId}
             deviceModel={deviceModel}
             initialDeviceName={initialDeviceName}
-            disabled={blockNavigation}
+            disabled={pendingInstalls}
           />
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
             <Text
@@ -148,6 +148,7 @@ const DeviceCard = ({
         <Flex px={6}>
           <Divider />
           <DeviceLanguage
+            pendingInstalls={pendingInstalls}
             currentLanguage={idsToLanguage[deviceInfo.languageId]}
             deviceInfo={deviceInfo}
             device={device}
