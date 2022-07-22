@@ -19,10 +19,6 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     font-size: 100%;
   }
 
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-
   * {
     margin: 0;
     padding: 0;
