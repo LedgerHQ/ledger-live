@@ -62,8 +62,9 @@ export function From({ swapTx, provider, pairs }: Props) {
       target: "from",
       accounts,
       provider,
+      currencyIds: [...new Set(pairs.map(p => p.from))],
     });
-  }, [navigation, accounts, provider]);
+  }, [navigation, accounts, provider, pairs]);
 
   return (
     <Flex

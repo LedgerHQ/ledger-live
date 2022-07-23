@@ -270,7 +270,11 @@ function AddAccountsAccounts({
       navigation.goBack();
     } else if (navigation.replace) {
       const { onSuccess } = route.params;
-      if (onSuccess) onSuccess({ scannedAccounts });
+      if (onSuccess)
+        onSuccess({
+          scannedAccounts,
+          selected: scannedAccounts.filter(a => selectedIds.includes(a.id)),
+        });
       else
         navigation.replace(ScreenName.AddAccountsSuccess, {
           ...route.params,

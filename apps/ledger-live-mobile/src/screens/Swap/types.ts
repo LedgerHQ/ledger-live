@@ -2,6 +2,7 @@ import {
   ExchangeRate,
   MappedSwapOperation,
   SwapDataType,
+  Pair,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   AccountLike,
@@ -12,6 +13,7 @@ import {
 } from "@ledgerhq/live-common/types/index";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
+import { LodashToPairs } from "lodash/fp";
 
 export type SwapFormProps = MaterialTopTabScreenProps<
   SwapFormNavParamList,

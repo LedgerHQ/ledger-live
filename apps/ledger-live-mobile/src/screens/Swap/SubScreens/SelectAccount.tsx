@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { AccountLike } from "@ledgerhq/live-common/types/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -17,10 +18,9 @@ import { NavigatorName, ScreenName } from "../../../const";
 
 export function SelectAccount({
   navigation,
-  route: {
-    params: { accounts, provider, currencyIds },
-  },
+  route: { params },
 }: SelectAccountProps) {
+  const { accounts, provider, currencyIds } = params;
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -46,7 +46,6 @@ export function SelectAccount({
       return (
         <Flex {...styleProps}>
           <AccountCard
-            // @ts-expect-error
             disabled={item.account.disabled}
             account={item.account}
             style={styles.card}
@@ -65,18 +64,24 @@ export function SelectAccount({
       params: {
         returnToSwap: true,
         filterCurrencyIds: currencyIds,
-        onSuccess: () => {
-          // @ts-expect-error
-          navigation.navigate("SwapForm");
+        onSuccess: ({ selected }: { selected: AccountLike[] }) => {
+          const addedAccounts = selected.map(a => ({
+            ...a,
+            disabled: !currencyIds.includes(getAccountCurrency(a).id),
+          }));
+
+          navigation.navigate("SelectAccount", {
+            ...params,
+            accounts: [...params.accounts, ...addedAccounts],
+          });
         },
         analyticsPropertyFlow: "swap",
       },
     });
-  }, [navigation, currencyIds]);
+  }, [navigation, currencyIds, params]);
 
   const renderList = useCallback(
     items => {
-      // @ts-expect-error
       const formatedList = formatSearchResults(items, accounts);
       return (
         <FlatList
@@ -114,6 +119,7 @@ export function SelectAccount({
   );
 
   return (
+    // @ts-expect-error
     <KeyboardView>
       <TrackScreen
         category="Swap Form"
@@ -124,7 +130,6 @@ export function SelectAccount({
         <FilteredSearchBar
           keys={["name", "unit.code", "token.name", "token.ticker"]}
           inputWrapperStyle={[styles.card, styles.searchBarContainer]}
-          // @ts-expect-error
           list={accounts}
           renderList={renderList}
           renderEmptySearch={() => (
