@@ -20,7 +20,7 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
+import { accountSelector } from "../../../reducers/accounts";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import LText from "../../../components/LText";
 import SectionSeparator from "../../../components/SectionSeparator";
@@ -38,15 +38,20 @@ export function OperationDetails({ route }: OperationDetailsProps) {
   const {
     swapId,
     provider,
-    toAccount,
+    toAccountId,
+    fromAccountId,
     fromAmount,
     toAmount,
     operation,
   } = swapOperation;
+  const fromAccount = useSelector(state =>
+    accountSelector(state, { accountId: fromAccountId }),
+  );
+  const toAccount = useSelector(state =>
+    accountSelector(state, { accountId: toAccountId }),
+  );
 
   const { colors } = useTheme();
-  const accounts = useSelector(flattenAccountsSelector);
-  const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
   const swap =
     fromAccount && fromAccount.swapHistory.find(s => s.swapId === swapId);
   const status = Config.DEBUG_SWAP_STATUS || swap.status;

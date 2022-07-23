@@ -84,11 +84,16 @@ export type SwapNavParamList = {
     provider: string;
   };
   PendingOperation: {
-    swapOperation: MappedSwapOperation;
+    swapOperation: SwapOperation;
   };
   OperationDetails: {
-    swapOperation: MappedSwapOperation;
+    swapOperation: SwapOperation;
   };
+};
+
+type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
+  fromAccountId: string;
+  toAccountId: string;
 };
 
 export type SwapFormNavParamList = {

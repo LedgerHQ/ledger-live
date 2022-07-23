@@ -6,6 +6,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useSelector } from "react-redux";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import IconCheck from "../../../icons/Check";
@@ -13,6 +14,7 @@ import IconClock from "../../../icons/Clock";
 import { rgba } from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import { PendingOperationProps } from "../types";
+import { accountSelector } from "../../../reducers/accounts";
 
 const forceInset = { bottom: "always" };
 
@@ -22,8 +24,11 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
     swapId,
     provider,
     targetCurrency,
-    fromAccount,
+    fromAccountId,
   } = route.params.swapOperation;
+  const fromAccount = useSelector(state =>
+    accountSelector(state, { accountId: fromAccountId }),
+  );
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
 

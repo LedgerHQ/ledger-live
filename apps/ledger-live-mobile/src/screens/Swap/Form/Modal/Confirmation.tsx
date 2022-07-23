@@ -143,23 +143,21 @@ export function Confirmation({
         ),
       );
 
-      const swapOperation: MappedSwapOperation = {
-        fromAccount,
-        fromParentAccount,
-        toAccount,
-        toParentAccount,
-        toExists: false,
-        operation,
-        provider,
-        swapId,
-        status: "pending",
-        fromAmount: swapTx.swap.from.amount,
-        toAmount: exchangeRate.toAmount,
-      };
-
       // @ts-expect-error
       navigation.replace("PendingOperation", {
-        swapOperation,
+        swapOperation: {
+          fromAccountId: fromAccount.id,
+          fromParentAccount,
+          toAccountId: toAccount.id,
+          toParentAccount,
+          toExists: false,
+          operation,
+          provider,
+          swapId,
+          status: "pending",
+          fromAmount: swapTx.swap.from.amount,
+          toAmount: exchangeRate.toAmount,
+        },
       });
     },
     [
