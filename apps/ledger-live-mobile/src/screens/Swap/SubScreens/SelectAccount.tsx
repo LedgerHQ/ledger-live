@@ -182,7 +182,6 @@ export function SelectAccount({
   );
 
   return (
-    // @ts-expect-error
     <KeyboardView>
       <TrackScreen
         category="Swap Form"

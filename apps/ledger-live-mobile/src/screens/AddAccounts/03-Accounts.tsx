@@ -262,6 +262,7 @@ function AddAccountsAccounts({
       if (onSuccess)
         onSuccess({
           scannedAccounts,
+          selected: scannedAccounts.filter(a => selectedIds.includes(a.id)),
         });
       else
         navigation.replace(ScreenName.AddAccountsSuccess, {
