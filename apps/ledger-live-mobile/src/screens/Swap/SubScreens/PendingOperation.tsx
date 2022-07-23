@@ -13,7 +13,11 @@ import IconClock from "../../../icons/Clock";
 import { rgba } from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import { PendingOperationProps } from "../types";
+<<<<<<< HEAD:apps/ledger-live-mobile/src/screens/Swap/SubScreens/PendingOperation.tsx
 import { flattenAccountsSelector } from "../../../reducers/accounts";
+=======
+import { accountSelector } from "../../../reducers/accounts";
+>>>>>>> 936081c7ce (pass account id instead of account itself for PendingOperation & OperationDetails screen):apps/ledger-live-mobile/src/screens/Swap/SubScreens/PendingOperation.js
 
 const forceInset = { bottom: "always" };
 
@@ -22,6 +26,7 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const {
     swapId,
     provider,
+<<<<<<< HEAD:apps/ledger-live-mobile/src/screens/Swap/SubScreens/PendingOperation.tsx
     toAccountId,
     fromAccountId,
   } = route.params.swapOperation;
@@ -34,6 +39,14 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
     accounts,
     toAccountId,
   ]);
+=======
+    targetCurrency,
+    fromAccountId,
+  } = route.params.swapOperation;
+  const fromAccount = useSelector(state =>
+    accountSelector(state, { accountId: fromAccountId }),
+  );
+>>>>>>> 936081c7ce (pass account id instead of account itself for PendingOperation & OperationDetails screen):apps/ledger-live-mobile/src/screens/Swap/SubScreens/PendingOperation.js
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
   const targetCurrency = toAccount && getAccountCurrency(toAccount);

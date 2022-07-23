@@ -20,8 +20,12 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
+<<<<<<< HEAD:apps/ledger-live-mobile/src/screens/Swap/SubScreens/OperationDetails.tsx
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccountsSelector } from "../../../reducers/accounts";
+=======
+import { accountSelector } from "../../../reducers/accounts";
+>>>>>>> 936081c7ce (pass account id instead of account itself for PendingOperation & OperationDetails screen):apps/ledger-live-mobile/src/screens/Swap/SubScreens/OperationDetails.js
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import LText from "../../../components/LText";
 import SectionSeparator from "../../../components/SectionSeparator";
@@ -45,6 +49,7 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     toAmount,
     operation,
   } = swapOperation;
+<<<<<<< HEAD:apps/ledger-live-mobile/src/screens/Swap/SubScreens/OperationDetails.tsx
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = useMemo(
     () => accounts.find(a => a.id === fromAccountId),
@@ -54,6 +59,14 @@ export function OperationDetails({ route }: OperationDetailsProps) {
     accounts,
     toAccountId,
   ]);
+=======
+  const fromAccount = useSelector(state =>
+    accountSelector(state, { accountId: fromAccountId }),
+  );
+  const toAccount = useSelector(state =>
+    accountSelector(state, { accountId: toAccountId }),
+  );
+>>>>>>> 936081c7ce (pass account id instead of account itself for PendingOperation & OperationDetails screen):apps/ledger-live-mobile/src/screens/Swap/SubScreens/OperationDetails.js
 
   const { colors } = useTheme();
   const swap =
