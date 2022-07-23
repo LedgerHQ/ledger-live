@@ -17,6 +17,8 @@ import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
 import { Item } from "./Item";
+import { Banner } from "../Banner";
+import { NavigatorName, ScreenName } from "../../../../const";
 
 interface Props {
   provider?: string;
@@ -61,6 +63,34 @@ export function Summary({
       selectedId: exchangeRate?.rateId,
     });
   }, [navigation, swap, provider, exchangeRate]);
+
+  const onAddAccount = useCallback(() => {
+    const params = {
+      returnToSwap: true,
+      onSuccess: () => {
+        navigation.pop();
+      },
+      analyticsPropertyFlow: "swap",
+    };
+
+    if (swap.to.currency.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
+        params: {
+          ...params,
+          token: swap.to.currency,
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        screen: ScreenName.AddAccountsSelectDevice,
+        params: {
+          ...params,
+          currency: swap.to.currency,
+        },
+      });
+    }
+  }, [navigation, swap]);
 
   if (
     !provider ||
@@ -120,14 +150,25 @@ export function Summary({
         </Text>
       </Item>
 
-      <Item
-        title={t("transfer.swap2.form.details.label.target")}
-        onEdit={() =>
-          navigation.navigate("SelectAccount", { target: "to", accountIds: [] })
-        }
-      >
-        <Text>{targetAccountName}</Text>
-      </Item>
+      {swap.to.account ? (
+        <Item
+          title={t("transfer.swap2.form.details.label.target")}
+          onEdit={() =>
+            navigation.navigate("SelectAccount", {
+              target: "to",
+              accountIds: [],
+            })
+          }
+        >
+          <Text>{targetAccountName}</Text>
+        </Item>
+      ) : (
+        <Banner
+          message={t("transfer.swap2.form.details.noAccount", to.currency)}
+          cta={t("transfer.swap2.form.details.noAccountCTA")}
+          onPress={onAddAccount}
+        />
+      )}
     </Flex>
   );
 }
