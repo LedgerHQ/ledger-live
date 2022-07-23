@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.5.0-nightly.2
+
+### Minor Changes
+
+- [#703](https://github.com/LedgerHQ/ledger-live/pull/703) [`aabfe4950`](https://github.com/LedgerHQ/ledger-live/commit/aabfe495061dbf7169945e77c7adb5fdccef6114) Thanks [@mehulcs](https://github.com/mehulcs)! - Rewards balance info banner for Cardanno currency
+
+### Patch Changes
+
+- Updated dependencies [[`aa2794813`](https://github.com/LedgerHQ/ledger-live/commit/aa2794813c05b1b39272814cc803cd662662584c)]:
+  - @ledgerhq/live-common@24.1.1-nightly.2
+
 ## 3.4.2-nightly.1
 
 ### Patch Changes

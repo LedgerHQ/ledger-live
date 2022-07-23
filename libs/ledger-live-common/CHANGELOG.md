@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 24.1.1-nightly.2
+
+### Patch Changes
+
+- [#673](https://github.com/LedgerHQ/ledger-live/pull/673) [`aa2794813`](https://github.com/LedgerHQ/ledger-live/commit/aa2794813c05b1b39272814cc803cd662662584c) Thanks [@gre](https://github.com/gre)! - Introduce env TEZOS_MAX_TX_QUERIES to configure safe max amount of transaction http fetches for a tezos sync. Increase the default to 100.
+
+- Updated dependencies [[`3eeb1e18c`](https://github.com/LedgerHQ/ledger-live/commit/3eeb1e18c883eca22201fb0d882799e2f6667b58)]:
+  - @ledgerhq/cryptoassets@6.30.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.29.2-nightly.2
+
 ## 24.1.1-nightly.1
 
 ### Patch Changes
