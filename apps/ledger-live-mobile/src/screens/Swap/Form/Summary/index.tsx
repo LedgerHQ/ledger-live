@@ -13,12 +13,14 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
 import { Item } from "./Item";
 import { Banner } from "../Banner";
 import { NavigatorName, ScreenName } from "../../../../const";
+import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 interface Props {
   provider?: string;
@@ -51,6 +53,11 @@ export function Summary({
 
   const targetAccountName = useMemo(
     () => to.account && getAccountName(to.account),
+    [to.account],
+  );
+
+  const targetAccountCurrency = useMemo(
+    () => to.account && getAccountCurrency(to.account),
     [to.account],
   );
 
@@ -160,7 +167,10 @@ export function Summary({
             })
           }
         >
-          <Text>{targetAccountName}</Text>
+          <Flex flexDirection="row" alignItems="center">
+            <CurrencyIcon size={20} currency={targetAccountCurrency} />
+            <Text marginLeft={2}>{targetAccountName}</Text>
+          </Flex>
         </Item>
       ) : (
         <Banner
