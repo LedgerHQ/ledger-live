@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Receptor no válido"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Language installation refused on device",
+      "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+    },
+    "LanguageNotFound" : {
+      "title" : "Language not found",
+      "description" : "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError" : {
       "title" : "No hay nada que actualizar",
       "description" : "Contacta al Soporte de Ledger si no puedes utilizar tu dispositivo."
@@ -929,6 +937,10 @@
       "earn" : {
         "title" : "Gana",
         "desc" : "Gana ingresos pasivos y haz crecer tus activos cripto"
+      },
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "próximamente",
@@ -1656,7 +1668,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Detalles de la operación",
+    "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
     "date" : "Fecha",
     "confirmed" : "Confirmada",
@@ -1722,7 +1734,7 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
-    "noMoreOperations" : "No hay otras operaciones"
+    "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Deseleccionar todo",
@@ -1763,7 +1775,7 @@
     "sell" : "Vender",
     "swap" : "Permutar",
     "manage" : "Administrar",
-    "lastOperations" : "Últimas operaciones",
+    "lastTransactions" : "Transacciones más recientes",
     "emptyState" : {
       "title" : "¿Aún no tienes activos cripto?",
       "desc" : "Verifica que la aplicación <1><0>{{managerAppName}}</0></1> esté instalada para comenzar a recibir",
@@ -2140,10 +2152,6 @@
     },
     "fees" : {
       "title" : "Editar tarifas"
-    },
-    "manageCard" : {
-      "title" : "Gestionar Tarjeta CL",
-      "description" : "Pedir y gestionar la Tarjeta CL"
     },
     "receive" : {
       "title" : "Recibir",
@@ -3287,6 +3295,19 @@
       "de" : "Alemán"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Idioma",
+    "deviceLanguage" : "Idioma del dispositivo",
+    "changeLanguage" : "Cambiar idioma",
+    "allowLanguageInstallation" : "Permitir instalación de idioma",
+    "languageInstalled" : "Idioma del dispositivo cambiado a {{language}}",
+    "installingLanguage" : "Instalando idioma",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identificador",
     "description" : "Presiona ambos botones a la vez en tu {{fullDeviceName}} si muestra el mismo identificador:"
@@ -4388,7 +4409,10 @@
       "tokenContractCopied" : "¡Dirección de token copiada!",
       "tokenId" : "ID de token",
       "tokenIdCopied" : "¡ID de token copiado!",
-      "quantity" : "Cantidad"
+      "quantity" : "Cantidad",
+      "attributes" : {
+        "floorPrice" : "Precio base"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ver en",
