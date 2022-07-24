@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "无效的接收方"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Language installation refused on device",
+      "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "LanguageNotFound" : {
+      "title" : "Language not found",
+      "description" : "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError" : {
       "title" : "对不起，没有可更新的内容",
       "description" : "如果设备无法使用，请联系 Ledger 客服。"
@@ -929,6 +937,10 @@
       "earn" : {
         "title" : "赚取",
         "desc" : "赚取被动收入并增长加密资产"
+      },
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1656,7 +1668,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "操作详情",
+    "title" : "交易详情",
     "account" : "账户",
     "date" : "日期",
     "confirmed" : "已确认",
@@ -1722,7 +1734,7 @@
   },
   "operationList" : {
     "noOperations" : "不作操作",
-    "noMoreOperations" : "无其他操作"
+    "noMoreTransactions" : "无其他交易"
   },
   "selectableAccountsList" : {
     "deselectAll" : "取消全选",
@@ -1763,7 +1775,7 @@
     "sell" : "卖出",
     "swap" : "互换",
     "manage" : "管理",
-    "lastOperations" : "最后操作",
+    "lastTransactions" : "最近交易",
     "emptyState" : {
       "title" : "还没有加密资产？",
       "desc" : "确保已安装了 <1><0>{{managerAppName}}</0></1> 应用程序并开始接收。",
@@ -2140,10 +2152,6 @@
     },
     "fees" : {
       "title" : "编辑费用"
-    },
-    "manageCard" : {
-      "title" : "管理 CL 卡",
-      "description" : "订购和管理 CL 卡"
     },
     "receive" : {
       "title" : "接收",
@@ -3287,6 +3295,19 @@
       "de" : "Deutsch"
     }
   },
+  "deviceLocalization" : {
+    "language" : "语言",
+    "deviceLanguage" : "设备语言",
+    "changeLanguage" : "更改语言",
+    "allowLanguageInstallation" : "允许安装语言",
+    "languageInstalled" : "设备语言已更改为 {{language}}",
+    "installingLanguage" : "正在安装语言",
+    "languages" : {
+      "english" : "English",
+      "french" : "Français",
+      "spanish" : "Español"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "标识符（identifier）",
     "description" : "如果您的 {{fullDeviceName}} 上显示了同样的标识符，请同时按下两个按钮："
@@ -4388,7 +4409,10 @@
       "tokenContractCopied" : "代币地址已复制！",
       "tokenId" : "代币 ID",
       "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "底价"
+      }
     },
     "viewerModal" : {
       "viewOn" : "查看",
