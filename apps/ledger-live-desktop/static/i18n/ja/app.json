@@ -361,7 +361,6 @@
     "title" : "スワップ",
     "titleCrypto" : "スワップ{{currency}}",
     "whatIsSwap" : "スワップとは",
-    "decentralizedSwapAvailable" : "一部のトランザクションでは、分散型スワップの使用を検討することができます。<0>ParaSwapと<1>1inch</1>の詳細をチェック",
     "paraswap" : {
       "cta" : " 確認する",
       "description" : "Paraswapをお探しですか？この項目は「Discover」タブに移動されました。"
@@ -1299,8 +1298,7 @@
         "description" : "説明",
         "tokenAddress" : "トークンアドレス",
         "tokenId" : "トークンID",
-        "quantity" : "数量",
-        "floorPrice" : "フロア価格"
+        "quantity" : "数量"
       }
     },
     "collections" : {
@@ -1535,8 +1533,7 @@
       "fees" : "手数料",
       "provider" : "プロバイダー",
       "payoutNetworkFees" : "ペイアウト手数料",
-      "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -1860,7 +1857,7 @@
     "steps" : {
       "chooseAccount" : {
         "title" : "アカウント",
-        "label" : "引き落としアカウント",
+        "label" : "受取アカウント",
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
@@ -2086,10 +2083,10 @@
     "replaceable" : "置き換え可能",
     "cannotSelect" : {
       "unconfirmed" : "未確認で変更可能なトランザクションのコインは選択できません。",
-      "pending" : "保留中のトランザクションからはコインを選択できません。(アウトプット変更を除く)",
       "last" : "1人以上のバリデーターを選択する必要があります。"
     },
     "pending" : "保留状態",
+    "pickUnconfirmedRBF" : "未確認で変更可能なトランザクションのコインを含む",
     "pickingStrategy" : "UTXOピッキング戦略",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "先入れ先出し方式(FIFO)",

@@ -361,7 +361,6 @@
     "title" : "互换",
     "titleCrypto" : "互换 {{currency}}",
     "whatIsSwap" : "什么是互换（ Swap）？",
-    "decentralizedSwapAvailable" : "进行某些交易时，您可以考虑使用去中心化互换。探索 <0>ParaSwap</0> 和 <1>1inch</1>。",
     "paraswap" : {
       "cta" : " 一探究竟",
       "description" : "寻找 Paraswap？它已被移动到 Discover（发现）选项卡。"
@@ -1299,8 +1298,7 @@
         "description" : "描述",
         "tokenAddress" : "代币地址",
         "tokenId" : "代币 ID",
-        "quantity" : "数量",
-        "floorPrice" : "底价"
+        "quantity" : "数量"
       }
     },
     "collections" : {
@@ -1535,8 +1533,7 @@
       "fees" : "费用",
       "provider" : "提供方",
       "payoutNetworkFees" : "支出费用",
-      "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -2086,10 +2083,10 @@
     "replaceable" : "可替换",
     "cannotSelect" : {
       "unconfirmed" : "您不能从未确认的、可替换的交易中选币。",
-      "pending" : "不能选择待处理交易中的币（除了您的零钱输出）。",
       "last" : "你需要至少选中一种"
     },
     "pending" : "待定",
+    "pickUnconfirmedRBF" : "包含未确认、可替换交易中的硬币。",
     "pickingStrategy" : "UTXO 选择策略",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "旧币优先（先入先出）",

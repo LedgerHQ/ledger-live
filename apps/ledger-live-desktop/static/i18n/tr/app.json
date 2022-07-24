@@ -361,7 +361,6 @@
     "title" : "Takas edin",
     "titleCrypto" : "{{currency}} takas edin",
     "whatIsSwap" : "Takas (Swap) Nedir?",
-    "decentralizedSwapAvailable" : "Bazı işlemler için merkeziyetsiz SWAP (takas) kullanmayı düşünebilirsiniz. <0>ParaSwap</0>'i ve <1>1inch</1>'i keşfedin.",
     "paraswap" : {
       "cta" : " Göz at",
       "description" : "Paraswap'ı mı arıyorsunuz? Keşfet sekmesine taşındı."
@@ -1299,8 +1298,7 @@
         "description" : "Açıklama",
         "tokenAddress" : "Token Adresi",
         "tokenId" : "Token Kimliği (Token ID)",
-        "quantity" : "Miktar",
-        "floorPrice" : "Taban Fiyat"
+        "quantity" : "Miktar"
       }
     },
     "collections" : {
@@ -1535,8 +1533,7 @@
       "fees" : "Ücretler",
       "provider" : "Sağlayıcı",
       "payoutNetworkFees" : "Ödeme ücretleri",
-      "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir"
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -1864,7 +1861,7 @@
         "parentAccount" : "1. {{currencyName}} hesabı seçin",
         "token" : "2. Token seçin",
         "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
-        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}/0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
+        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
       },
       "connectDevice" : {
         "title" : "Cihaz",
@@ -2086,10 +2083,10 @@
     "replaceable" : "değiştirilebilir",
     "cannotSelect" : {
       "unconfirmed" : "Onaylanmamış, değiştirilebilir işlemlerdeki coin'lerden seçemezsiniz.",
-      "pending" : "Bekleyen işlemlerdeki coin'lerden seçemezsiniz. (harcanmamış UTXO hariç)",
       "last" : "En az birinin seçili olması gerekiyor"
     },
     "pending" : "beklemede",
+    "pickUnconfirmedRBF" : "Onaylanmamış, değiştirilebilir işlemlerdeki coin'leri dahil edin.",
     "pickingStrategy" : "UTXO toplama stratejisi",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Önce en eski coin'ler (FIFO)",
@@ -3165,7 +3162,7 @@
       "welcome" : {
         "title" : "Ledger'a Hoş Geldiniz",
         "description" : "Kriptonuzu bilgisayarınızdan güvenli bir şekilde yönetin.",
-        "cta" : "Başlangıç",
+        "cta" : "Hemen başla",
         "noDevice" : "Cihazınız yok mu? <0>Bir Ledger Nano X satın alın</0>",
         "languageWarning" : {
           "title" : "{{language}} dilinde başlayın",
@@ -3202,7 +3199,7 @@
       },
       "tutorial" : {
         "steps" : {
-          "getStarted" : "Başlangıç",
+          "getStarted" : "Hemen başla",
           "pinCode" : "PIN kodu",
           "recoveryPhrase" : "Kurtarma ifadesi",
           "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
@@ -3714,7 +3711,7 @@
     "termsLabel" : "Hizmet Şartları",
     "privacyLabel" : "Gizlilik Politikası",
     "switchLabel" : "Hizmet Şartları ve Gizlilik Politikasını okudum ve kabul ediyorum",
-    "cta" : "Ledger uygulamasına girin"
+    "cta" : "Ledger uygulamasına gir"
   },
   "updatedTerms" : {
     "title" : "Kullanım Koşulları Güncellemesi",

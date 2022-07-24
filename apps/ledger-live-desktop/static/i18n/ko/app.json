@@ -361,7 +361,6 @@
     "title" : "스왑",
     "titleCrypto" : "{{currency}} 스왑",
     "whatIsSwap" : "스왑이란",
-    "decentralizedSwapAvailable" : "일부 거래 경우 탈중앙화 스왑을 고려해볼 수 있습니다. <0>파라스왑</0>과 <1>1inch</1>에 대해 살펴보세요.",
     "paraswap" : {
       "cta" : " 확인해 보세요",
       "description" : "Paraswap을 찾으세요? 찾기 탭으로 이동했습니다."
@@ -1299,8 +1298,7 @@
         "description" : "설명",
         "tokenAddress" : "토큰 주소",
         "tokenId" : "토큰 ID",
-        "quantity" : "수량",
-        "floorPrice" : "가격 하한선"
+        "quantity" : "수량"
       }
     },
     "collections" : {
@@ -1535,8 +1533,7 @@
       "fees" : "수수료",
       "provider" : "공급자",
       "payoutNetworkFees" : "지불금 비용",
-      "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다"
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -2086,10 +2083,10 @@
     "replaceable" : "대체 가능",
     "cannotSelect" : {
       "unconfirmed" : "대체 가능한 미검증 트랜잭션의 코인은 선택할 수 없습니다.",
-      "pending" : "트랜잭션이 보류 중인 코인을 선택할 수 없습니다. (출력 값을 변경하는 경우 제외)",
       "last" : "하나 이상을 선택해야 합니다"
     },
     "pending" : "대기 중",
+    "pickUnconfirmedRBF" : "대체 가능한 미검증 트랜잭션의 코인을 포함합니다.",
     "pickingStrategy" : "UTXO 선정 전략",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "가장 오래된 코인 먼저(FIFO)",

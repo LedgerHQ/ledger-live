@@ -256,7 +256,7 @@
         "currencyDisabledTooltip" : "Diese Währung ist für swap noch nicht verfügbar"
       },
       "to" : {
-        "title" : "Bis"
+        "title" : "An"
       },
       "notAvailable" : {
         "title" : "Swap ist in Ihrem Land noch nicht verfügbar",
@@ -361,7 +361,6 @@
     "title" : "Umtauschen",
     "titleCrypto" : "{{currency}} tauschen",
     "whatIsSwap" : "Was bedeutet Swap?",
-    "decentralizedSwapAvailable" : "Für einige Transaktionen können Sie den dezentralen Umtausch verwenden. Entdecken-Tab <0>ParaSwap</0> und <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Mehr erfahren",
       "description" : "Suchen Sie nach Paraswap? Es wurde auf die Registerkarte Entdecken verschoben."
@@ -469,7 +468,7 @@
         "currency" : "Krypto-Vermögenswert"
       },
       "to" : {
-        "title" : "Bis",
+        "title" : "An",
         "account" : "Konto",
         "amount" : "Zu erhaltender Betrag",
         "currency" : "Krypto-Vermögenswert",
@@ -509,7 +508,7 @@
         "summary" : {
           "title" : "Zusammenfassung",
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "toExchange" : "Zu sendender Betrag",
           "toReceive" : "Zu erhaltender Betrag",
           "terms" : "Allgemeine Geschäftsbedingungen",
@@ -559,7 +558,7 @@
       "from" : "Von",
       "fromAddress" : "Ursprungsadresse",
       "fromAddress_plural" : "Ursprungsadressen",
-      "to" : "Bis",
+      "to" : "An",
       "toProvider" : "Adresse des Anbieters",
       "initialAmount" : "Anfangsbetrag",
       "creditedAmount" : "Gutschrift"
@@ -1299,8 +1298,7 @@
         "description" : "Beschreibung",
         "tokenAddress" : "TOKEN-Adresse",
         "tokenId" : "Token ID",
-        "quantity" : "Menge",
-        "floorPrice" : "Tiefstpreis"
+        "quantity" : "Menge"
       }
     },
     "collections" : {
@@ -1458,7 +1456,7 @@
     "fees" : "Gebühr",
     "noFees" : "Keine Gebühr",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "identifier" : "Transaktions-ID",
     "viewOperation" : "Im Explorer ansehen",
     "showMore" : "Mehr {{recipients}} anzeigen",
@@ -1535,8 +1533,7 @@
       "fees" : "Gebühren",
       "provider" : "Anbieter",
       "payoutNetworkFees" : "Auszahlungsgebühren",
-      "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt"
     },
     "swap2" : {
       "amountSent" : "Zu sendender Betrag",
@@ -1907,7 +1904,7 @@
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
         "from" : "Von",
-        "to" : "Bis",
+        "to" : "An",
         "selectAccountDebit" : "Zu belastendes Konto",
         "recipientAddress" : "Adresse des Empfängers",
         "amount" : "Betrag",
@@ -2086,10 +2083,10 @@
     "replaceable" : "Ersetzbar",
     "cannotSelect" : {
       "unconfirmed" : "Sie können keine Coins aus unbestätigten, austauschbaren Transaktionen auswählen.",
-      "pending" : "Sie können keine Coins aus schwebenden Transaktionen auswählen. (außer Ihrer Wechselgeldausgabe)",
       "last" : "Sie benötigen mindestens eine ausgewählte Transaktion"
     },
     "pending" : "Ausstehend",
+    "pickUnconfirmedRBF" : "Inklusive Coins von nicht bestätigten und austauschbaren Transaktionen.",
     "pickingStrategy" : "UTXO Auswahlstrategie",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Älteste Coins zuerst (FIFO)",
