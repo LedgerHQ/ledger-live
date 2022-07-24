@@ -930,9 +930,9 @@
         "title" : "Verdienen",
         "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
       },
-      "mint": {
-        "title": "Minting",
-        "desc": "Minte NFTs von exklusiven Kollaborationen auf [ L ] Market"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "Erneut prüfen",
       "noAccount" : "Kein Konto gefunden",
       "address" : "Adresse für Konto",
-      "copyAddress" : "Adresse kopieren",
+      "copyAddress" : "Kopieren",
       "shareAddress" : "Adresse teilen",
-      "addressCopied" : "Adresse kopiert!",
+      "addressCopied" : "Kopiert",
       "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+      "selectCrypto" : {
+        "title" : "Eine Krypto auswählen"
+      },
+      "stepperHeader" : {
+        "range" : "Schritt {{currentStep}} von {{totalSteps}}",
+        "connectDevice" : "Verbundenes Gerät"
+      },
+      "selectAccount" : {
+        "title" : "Wählen Sie ein Konto",
+        "subtitle" : "Ihr {{currencyTicker}} wird auf dieses Konto eingezahlt."
+      },
+      "addAccount" : {
+        "title" : "Die Blockchain durchsuchen",
+        "subtitle" : "Prüfen Sie, ob Sie bereits {{currencyTicker}}-Konten besitzen.",
+        "foundAccounts" : "{{count}} Konten gefunden",
+        "stopSynchronization" : "Synchronisierung stoppen"
+      },
+      "verifyAddress" : {
+        "title" : "Adresse verifizieren",
+        "subtitle" : "Verifizieren Sie, dass die auf Ihrem Gerät angezeigte Adresse mit der unten stehenden Adresse übereinstimmt. Wenn Sie sich sicher sind, können Sie auf Ihrem Gerät auf \"Genehmigen\" klicken.",
+        "cancel" : {
+          "title" : "Sie haben gerade diese Adresse abgelehnt",
+          "subtitle" : "Sollte dies versehentlich geschehen sein, können Sie es erneut versuchen, indem Sie auf die Schaltfläche unten klicken.",
+          "info" : "Wenn Sie sich sicher sind, dass die Adressen nicht übereinstimmen, kann Ihr Telefon gefährdet sein. Wir empfehlen Ihnen, <0>sich so schnell wie möglich mit uns in Verbindung zu setzen.</0>"
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "Erhalte {{currencyTicker}}",
+        "addressVerified" : "Adresse verifizieren",
+        "verifyAddress" : "Tippen Sie hier, um Ihre Adresse zu verifizieren",
+        "adviceVerify" : "Wir empfehlen immer Ihre Adresse mit Ihrem Ledger Gerät zu verifizieren",
+        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen."
+      },
+      "securityVerify" : {
+        "title" : "Zu Ihrer Sicherheit empfehlen wir, diese Adresse mit Ihrem Ledger-Gerät zu verifizieren.",
+        "subtitle1" : "Die Verifizierung Ihrer Adresse gewährleistet Ihre Sicherheit. Die auf Ihrem Ledger-Gerät angezeigte Adresse kann nicht kompromittiert werden.",
+        "subtitle2" : "Durch die Verifizierung der Adresse können Sie bestätigen, dass die auf Ihrem Gerät angezeigte Adresse mit der in Ledger Live angezeigten Adresse übereinstimmt.",
+        "verifyCta" : "Meine Adresse verifizieren",
+        "dontVerifyCta" : "Meine Adresse ohne Verifizierung preisgeben"
+      },
+      "securityDontVerify" : {
+        "title" : "Sind Sie sicher?",
+        "subtitle" : "Die in Ledger Live angezeigte Adresse wird nicht verifiziert.",
+        "doNotRemindAgain" : "Nicht erneut erinnern",
+        "no" : "Nein",
+        "yes" : "Ja"
+      },
+      "toastMessages" : {
+        "accountImported" : "Wir haben ein {{currencyTicker}} Konto für Sie importiert. ",
+        "why" : "Sagen Sie mir, warum.",
+        "addressVerified" : "Ihre Adresse ist verifiziert"
+      },
+      "additionalInfoModal" : {
+        "title" : "Warum haben wir ein Konto importiert?",
+        "subtitle" : "Wir haben festgestellt, dass Sie ein früheres {{currencyTicker}} Konto auf Ihrem Seed hatten. Wir haben das Konto für Sie importiert.",
+        "closeCta" : "Ok, verstanden"
+      },
       "notSynced" : {
         "text" : "Synchronisieren",
         "desc" : "Dies kann einen Moment dauern, wenn Sie viele Transaktionen haben oder eine langsame Internetverbindung."
