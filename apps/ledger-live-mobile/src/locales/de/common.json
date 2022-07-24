@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "Ungültiger Empfänger"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Language installation refused on device",
+      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+    },
+    "LanguageNotFound" : {
+      "title" : "Language not found",
+      "description" : "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError" : {
       "title" : "Entschuldigung, es gibt nichts zu aktualisieren",
       "description" : "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
@@ -894,7 +902,7 @@
       "url" : {
         "title" : "iFrame-URL aktualisieren",
         "subtitle" : "Debugging-Einstellungen",
-        "cta" : "Sparen Sie"
+        "cta" : "Speichern"
       },
       "message" : {
         "successTitle" : "Transaktion abgeschlossen",
@@ -929,6 +937,10 @@
       "earn" : {
         "title" : "Verdienen",
         "desc" : "Verdienen Sie ein passives Einkommen und vermehren Sie Ihr Kryptovermögen"
+      },
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "In Kürze verfügbar",
@@ -1656,7 +1668,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "Details",
+    "title" : "Transaktionsdetails",
     "account" : "Konto",
     "date" : "Datum",
     "confirmed" : "Bestätigt",
@@ -1665,7 +1677,7 @@
     "fees" : "Netzgebühren",
     "noFees" : "Keine Gebühr",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "identifier" : "Transaktions-ID",
     "viewOperation" : "Im Explorer ansehen",
     "whatIsThis" : "Was ist diese Aktion?",
@@ -1722,7 +1734,7 @@
   },
   "operationList" : {
     "noOperations" : "Keine Aktionen",
-    "noMoreOperations" : "Keine anderen Vorgänge"
+    "noMoreTransactions" : "Keine anderen Transaktionen"
   },
   "selectableAccountsList" : {
     "deselectAll" : "Auswahl aufheben",
@@ -1763,7 +1775,7 @@
     "sell" : "Verkaufen",
     "swap" : "Umtauschen",
     "manage" : "Verwalten",
-    "lastOperations" : "Letzte Aktionen",
+    "lastTransactions" : "Letzte Transaktionen",
     "emptyState" : {
       "title" : "Noch keine Krypto-Werte?",
       "desc" : "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von",
@@ -2069,7 +2081,7 @@
       "clearCacheDesc" : "Die Transaktionen im Netzwerk werden gescannt und Ihre Konten werden neu berechnet.",
       "clearCacheModal" : "Sind Sie sicher?",
       "clearCacheModalDesc" : "Es wird ein neuer und vollständiger Scan der Transaktionen im Netzwerk durchgeführt. Die Kontoverläufe werden neu aufgebaut und die Salden werden neu berechnet.",
-      "clearCacheButton" : "Leeren",
+      "clearCacheButton" : "Löschen",
       "exportLogs" : "Protokolle speichern",
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
       "hardReset" : "Ledger Live zurücksetzen",
@@ -2140,10 +2152,6 @@
     },
     "fees" : {
       "title" : "Gebühren bearbeiten"
-    },
-    "manageCard" : {
-      "title" : "CL Card verwalten",
-      "description" : "Bestellen und verwalten Sie Ihre CL Card"
     },
     "receive" : {
       "title" : "Empfangen",
@@ -2288,7 +2296,7 @@
         "tab" : "Umtauschen",
         "button" : "Weiter",
         "from" : "Von",
-        "to" : "Bis",
+        "to" : "An",
         "source" : "Quelle",
         "target" : "Zielkonto",
         "noAccount" : "Sie haben kein {{currency}}-Konto",
@@ -2326,7 +2334,7 @@
         },
         "summary" : {
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "send" : "Senden",
           "payoutNetworkFees" : "Auszahlungsgebühren",
           "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
@@ -2350,7 +2358,7 @@
         "date" : "Datum",
         "from" : "Von",
         "fromAmount" : "Gesendeter Betrag",
-        "to" : "Bis",
+        "to" : "An",
         "toAmount" : "Zu erhaltender Betrag",
         "statusTooltips" : {
           "expired" : "Bitte kontaktieren Sie den Swap-Anbieter mit Ihrer Swap-ID für weitere Informationen.",
@@ -2390,7 +2398,7 @@
       "form" : {
         "summary" : {
           "from" : "Von",
-          "to" : "Bis",
+          "to" : "An",
           "send" : "Senden",
           "payoutNetworkFees" : "Auszahlungsgebühren",
           "payoutNetworkFeesTooltip" : "Dieser Betrag wird nicht auf Ihrem Gerät angezeigt",
@@ -2650,7 +2658,7 @@
       "total" : "Insgesamt",
       "amount" : "Betrag",
       "from" : "Von",
-      "to" : "Bis",
+      "to" : "An",
       "infoTotalTitle" : "Gesamtbelastung",
       "infoTotalDesc" : "Enthält den Transaktionsbetrag und die gewählten Netzwerkgebühren",
       "gasLimit" : "Gaslimit",
@@ -3285,6 +3293,19 @@
       "es" : "Spanisch",
       "zh" : "Chinesisch",
       "de" : "Deutsch"
+    }
+  },
+  "deviceLocalization" : {
+    "language" : "Sprache",
+    "deviceLanguage" : "Geräte-Sprache",
+    "changeLanguage" : "Sprache wechseln",
+    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "languageInstalled" : "Gerätesprache auf {{language}} gewechselt",
+    "installingLanguage" : "Sprache installieren",
+    "languages" : {
+      "english" : "Englisch",
+      "french" : "Französisch",
+      "spanish" : "Spanisch"
     }
   },
   "FirmwareUpdateCheckId" : {
@@ -4021,7 +4042,7 @@
     "undelegateMy" : "Delegierung aufheben meines",
     "warnUndelegation" : "Die Delegierung Ihres Kontos wird aufgehoben.",
     "warnDelegation" : "Das Delegieren Ihrer Stimmrechte garantiert keine Prämien durch Ihren Validator.",
-    "to" : "Bis",
+    "to" : "an",
     "from" : "Von",
     "forAnEstYield" : "für einen geschätzten Ertrag von",
     "yieldPerYear" : "{{yield}} / Jahr",
@@ -4114,7 +4135,7 @@
     "amount" : "Betrag",
     "account" : "Konto",
     "from" : "Von",
-    "to" : "Bis",
+    "to" : "An",
     "redelegationAmount" : "Zurückdelegierter Betrag",
     "gas" : "Gas",
     "validatorAddress" : "Validator-Adresse",
@@ -4388,7 +4409,10 @@
       "tokenContractCopied" : "Token-Adresse kopiert!",
       "tokenId" : "Token ID",
       "tokenIdCopied" : "Token-ID kopiert!",
-      "quantity" : "Menge"
+      "quantity" : "Menge",
+      "attributes" : {
+        "floorPrice" : "Tiefstpreis"
+      }
     },
     "viewerModal" : {
       "viewOn" : "Ansehen auf",
