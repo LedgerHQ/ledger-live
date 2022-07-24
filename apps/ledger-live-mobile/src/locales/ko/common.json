@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "유효하지 않은 수령인"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Language installation refused on device",
+      "description" : "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound" : {
+      "title" : "Language not found",
+      "description" : "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError" : {
       "title" : "죄송하지만 업데이트가 필요한 항목이 없습니다",
       "description" : "장치를 사용할 수 없다면 Ledger 지원 부서에 문의하세요."
@@ -929,6 +937,10 @@
       "earn" : {
         "title" : "소득 창출",
         "desc" : "불로소득을 얻고 암호화폐를 성장시키세요"
+      },
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -1656,7 +1668,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "작업 세부 정보",
+    "title" : "트랜잭션 세부 사항",
     "account" : "계정",
     "date" : "날짜",
     "confirmed" : "확인됨",
@@ -1722,7 +1734,7 @@
   },
   "operationList" : {
     "noOperations" : "거래 없음",
-    "noMoreOperations" : "다른 작업 없음"
+    "noMoreTransactions" : "다른 트랜잭션 없음"
   },
   "selectableAccountsList" : {
     "deselectAll" : "모두 선택 취소",
@@ -1763,7 +1775,7 @@
     "sell" : "판매",
     "swap" : "스왑",
     "manage" : "관리",
-    "lastOperations" : "마지막 거래",
+    "lastTransactions" : "마지막 트랜잭션",
     "emptyState" : {
       "title" : "아직 암호화폐가 없나요?",
       "desc" : "<1><0>{{managerAppName}}</0></1> 앱이 설치되어 있는지 확인하고 수령하세요",
@@ -2140,10 +2152,6 @@
     },
     "fees" : {
       "title" : "수수료 편집"
-    },
-    "manageCard" : {
-      "title" : "CL 카드 관리",
-      "description" : "CL 카드 신청 및 관리"
     },
     "receive" : {
       "title" : "수령",
@@ -3287,6 +3295,19 @@
       "de" : "독일어"
     }
   },
+  "deviceLocalization" : {
+    "language" : "언어",
+    "deviceLanguage" : "장치 언어",
+    "changeLanguage" : "언어 변경",
+    "allowLanguageInstallation" : "언어 설치 허용",
+    "languageInstalled" : "장치 언어가 {{language}}로 변경되었습니다",
+    "installingLanguage" : "언어 설치 중",
+    "languages" : {
+      "english" : "영어",
+      "french" : "프랑스어",
+      "spanish" : "스페인어"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "식별자",
     "description" : "동일한 식별자가 표시되면 {{fullDeviceName}}에서 양쪽 버튼을 함께 누르세요:"
@@ -4388,7 +4409,10 @@
       "tokenContractCopied" : "토큰 주소 복사됨 !",
       "tokenId" : "토큰 ID",
       "tokenIdCopied" : "토큰 ID가 복사되었습니다!",
-      "quantity" : "수량"
+      "quantity" : "수량",
+      "attributes" : {
+        "floorPrice" : "가격 하한선"
+      }
     },
     "viewerModal" : {
       "viewOn" : "다음에서 보기:",
