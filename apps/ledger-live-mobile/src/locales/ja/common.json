@@ -81,6 +81,7 @@
     "seeMore" : "詳細を表示",
     "moreInfo" : "詳細はこちら",
     "buyEth" : "Ethereumを購入",
+    "exchange" : "取引",
     "popular" : "人気"
   },
   "errors" : {
@@ -929,10 +930,6 @@
       "earn" : {
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
-      },
-      "mint": {
-        "title": "ミント”,",
-        "desc": "[ L ] MarketでコラボNFTをミントしましょう"
       }
     },
     "comingSoon" : "近日公開",
@@ -2076,6 +2073,10 @@
       "clearCacheButton" : "クリア",
       "exportLogs" : "ログを保存",
       "exportLogsDesc" : "トラブルを解決するために、Ledger Liveログの保存が必要になる場合があります。",
+      "resetThirdPartyData" : "サードパーティーのデータをリセット",
+      "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて削除します。",
+      "resetThirdPartyDataModal" : "ローカルのサードパーティーのデータを削除",
+      "resetThirdPartyDataModalDesc" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC(本人確認手続き)の再提出やログインが必要になる場合があります。",
       "hardReset" : "Ledger Liveをリセット",
       "hardResetDesc" : "これは、あなたの資産には影響しません。アカウントデータ、トランザクション履歴、設定など、Ledger Live上のすべてのデータを消去します。Ledgerデバイスを使って、初期化されたLedger Liveに暗号資産を再び読み込んで管理できます。",
       "repairDevice" : "Ledgerデバイスを修理する",
@@ -2144,6 +2145,10 @@
     },
     "fees" : {
       "title" : "手数料を編集"
+    },
+    "manageCard" : {
+      "title" : "CLカードを管理",
+      "description" : "CLカードを注文して管理する"
     },
     "receive" : {
       "title" : "受け取る",
@@ -2386,19 +2391,78 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "送付元",
-          "to" : "送付先",
-          "send" : "送る",
-          "payoutNetworkFees" : "ペイアウト手数料",
-          "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
-          "receive" : "数量",
-          "receiveFloat" : "サービス手数料を含まない受け取り額",
-          "provider" : "プロバイダー",
-          "method" : "レート",
-          "fees" : "手数料"
+        "ratesDrawer" : {
+          "title" : "レート",
+          "quote" : "見積もり",
+          "receive" : "受け取る"
+        },
+        "title" : "取引",
+        "from" : "送付元",
+        "to" : "送付先",
+        "loading" : "読み込み中...",
+        "disclaimer" : {
+          "title" : "利用規約",
+          "desc" : "「同意する」をクリックすることで、私はこのサービスが{{providerName}}の利用規約によって排他的に規定されていることを理解し、これに同意します。",
+          "tos" : "ご利用規約",
+          "accept" : "同意する"
+        },
+        "notAvailable" : {
+          "title" : "お住まいの地域では、スワップを利用できません。",
+          "content" : "この機能は近々追加予定ですので、今しばらくお待ちください。"
+        },
+        "amount" : {
+          "useMax" : "全額を選択",
+          "available" : "合計利用可能額"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "プロバイダー",
+            "rate" : "レート",
+            "fees" : "ネットワーク手数料",
+            "target" : "送付先アカウント"
+          },
+          "noAccount" : "{{name}}を受け取るアカウントを作成する",
+          "noAccountCTA" : "アカウントを追加"
+        },
+        "select" : {
+          "from" : {
+            "title" : "送付元"
+          },
+          "to" : {
+            "title" : "送付先"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "KYC(本人確認手続き)",
+            "required" : "KYCを完了する必要があります",
+            "complete" : "KYCを完了",
+            "update" : "KYCを更新",
+            "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
+            "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
+            "updateRequired" : "KYCを完了または更新する",
+            "status" : {
+              "pending" : "KYC申請中",
+              "approved" : "KYC承認済み",
+              "closed" : "KYC却下",
+              "upgradeRequired" : "KYC未完了"
+            }
+          },
+          "login" : {
+            "title" : "ログイン",
+            "required" : "このプロバイダーでログインする必要があります",
+            "complete" : "ログイン"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "このプロバイダーでMFA(多要素認証)を設定する必要があります",
+            "complete" : "MFAを設定"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
+          }
         }
       }
     },
@@ -4388,10 +4452,7 @@
       "tokenContractCopied" : "トークンアドレスがコピーされました！",
       "tokenId" : "トークンID",
       "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量",
-      "attributes" : {
-        "floorPrice" : "フロア価格"
-      }
+      "quantity" : "数量"
     },
     "viewerModal" : {
       "viewOn" : "表示",
