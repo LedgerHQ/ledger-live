@@ -322,6 +322,14 @@
     "InvalidRecipient" : {
       "title" : "無効な送付先"
     },
+    "LanguageInstallRefusedOnDevice" : {
+      "title" : "Language installation refused on device",
+      "description" : "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "LanguageNotFound" : {
+      "title" : "Language not found",
+      "description" : "The language you are trying to install was not found. Please try installing another language."
+    },
     "LatestMCUInstalledError" : {
       "title" : "アップデートの必要はありません。",
       "description" : "デバイスを使用できない場合は、Ledgerサポートに連絡してください。"
@@ -929,6 +937,10 @@
       "earn" : {
         "title" : "報酬獲得",
         "desc" : "不労所得を獲得して暗号資産を運用する"
+      },
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "近日公開",
@@ -1656,7 +1668,7 @@
     }
   },
   "operationDetails" : {
-    "title" : "取引詳細",
+    "title" : "トランザクションの詳細",
     "account" : "アカウント",
     "date" : "日付",
     "confirmed" : "確認済み",
@@ -1722,7 +1734,7 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
-    "noMoreOperations" : "その他のオペレーションはありません。"
+    "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
@@ -1763,7 +1775,7 @@
     "sell" : "売却",
     "swap" : "スワップ",
     "manage" : "管理",
-    "lastOperations" : "最近の取引",
+    "lastTransactions" : "最後のトランザクション",
     "emptyState" : {
       "title" : "暗号資産をまだお持ちでないですか？",
       "desc" : "受取を開始する前に、<1><0>{{managerAppName}}</0></1> アプリがインストールされていることを確認してください。",
@@ -2140,10 +2152,6 @@
     },
     "fees" : {
       "title" : "手数料を編集"
-    },
-    "manageCard" : {
-      "title" : "CLカードを管理",
-      "description" : "CLカードを注文して管理する"
     },
     "receive" : {
       "title" : "受け取る",
@@ -3287,6 +3295,19 @@
       "de" : "ドイツ語"
     }
   },
+  "deviceLocalization" : {
+    "language" : "言語",
+    "deviceLanguage" : "デバイスの言語",
+    "changeLanguage" : "言語の変更",
+    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "languageInstalled" : "デバイスの言語が{{language}}に変更されました",
+    "installingLanguage" : "言語をインストール",
+    "languages" : {
+      "english" : "英語",
+      "french" : "フランス語",
+      "spanish" : "スペイン語"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "識別子",
     "description" : "同じ識別子が表示されている場合は、{{fullDeviceName}}の両方のボタンを同時に押してください："
@@ -4388,7 +4409,10 @@
       "tokenContractCopied" : "トークンアドレスがコピーされました！",
       "tokenId" : "トークンID",
       "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量"
+      "quantity" : "数量",
+      "attributes" : {
+        "floorPrice" : "フロア価格"
+      }
     },
     "viewerModal" : {
       "viewOn" : "表示",
