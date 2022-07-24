@@ -930,9 +930,9 @@
         "title" : "Kazanın",
         "desc" : "Pasif gelir elde edin ve kripto varlıklarınızı artırın"
       },
-      "mint": {
-        "title": "Mintleyin",
-        "desc": "[ L ] Market’teki özel iş birlikleri kapsamında NFT’ler mintleyin"
+      "mint" : {
+        "title" : "Mint",
+        "desc" : "Mint NFTs from exclusive collaborations on [ L ] Market"
       }
     },
     "comingSoon" : "Çok yakında",
@@ -2157,10 +2157,67 @@
       "verifyAgain" : "Tekrar kontrol et",
       "noAccount" : "Hesap bulunamadı",
       "address" : "Hesap adresi",
-      "copyAddress" : "Adresi kopyala",
+      "copyAddress" : "Kopyala",
       "shareAddress" : "Adresi paylaş",
-      "addressCopied" : "Adres kopyalandı!",
+      "addressCopied" : "Kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "selectCrypto" : {
+        "title" : "Bir kripto seçin"
+      },
+      "stepperHeader" : {
+        "range" : "Adım {{currentStep}} / {{totalSteps}}",
+        "connectDevice" : "Cihazı Bağlayın"
+      },
+      "selectAccount" : {
+        "title" : "Bir hesap seçin",
+        "subtitle" : "{{currencyTicker}} varlıklarınız bu hesaba yatırılacak."
+      },
+      "addAccount" : {
+        "title" : "Blok zinciri aranıyor",
+        "subtitle" : "Önceden {{currencyTicker}} hesabınızın olup olmadığı kontrol ediliyor.",
+        "foundAccounts" : "{{count}} hesap bulundu",
+        "stopSynchronization" : "Senkronizasyonu durdur"
+      },
+      "verifyAddress" : {
+        "title" : "Adresi doğrula",
+        "subtitle" : "Cihazınızda gösterilen adresin aşağıda gösterilen adresle aynı olduğunu doğrulayın. Emin olduktan sonra cihazınızdan \"approve\" (doğrula) düğmesine basabilirsiniz.",
+        "cancel" : {
+          "title" : "Bu adresi reddettiniz",
+          "subtitle" : "Bunu yapmak istemediyseniz aşağıdaki düğmeye tıklayarak tekrar deneyebilirsiniz.",
+          "info" : "Adreslerin eşleşmediğinden eminseniz telefonunuza virüs bulaşmış olabilir. <0>En kısa sürede bizimle iletişime geçmenizi</0> öneririz."
+        }
+      },
+      "receiveConfirmation" : {
+        "title" : "{{currencyTicker}} al",
+        "addressVerified" : "Adres doğrulandı",
+        "verifyAddress" : "Adresinizi doğrulamak için buraya dokunun",
+        "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
+        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz."
+      },
+      "securityVerify" : {
+        "title" : "Güvenliğiniz açısından bu adresi Ledger cihazınızla doğrulamanızı öneririz.",
+        "subtitle1" : "Adresinizi doğrulamak güvende olmanızı sağlar. Ledger cihazınızda görüntülenen adresin hatalı olma ihtimali yoktur.",
+        "subtitle2" : "Adresi doğrulayarak cihazınızda gösterilen adresin Ledger Live'da gösterilen adresle aynı olduğunu onaylayabilirsiniz.",
+        "verifyCta" : "Adresimi doğrula",
+        "dontVerifyCta" : "Adresimi doğrulamadan göster"
+      },
+      "securityDontVerify" : {
+        "title" : "Emin misiniz?",
+        "subtitle" : "Ledger Live'da gösterilen adres doğrulanmayacak.",
+        "doNotRemindAgain" : "Tekrar hatırlatma",
+        "no" : "Hayır",
+        "yes" : "Evet"
+      },
+      "toastMessages" : {
+        "accountImported" : "Sizin için bir {{currencyTicker}} hesabını içe aktardık. ",
+        "why" : "Nedenini belirt.",
+        "addressVerified" : "Adresiniz doğrulandı"
+      },
+      "additionalInfoModal" : {
+        "title" : "Neden bir hesabı içe aktardık?",
+        "subtitle" : "Seed'inizde önceden bir {{currencyTicker}} hesabı olduğunu tespit ettik. Sizin için bu hesabı içe aktardık.",
+        "closeCta" : "Tamam, anladım"
+      },
       "notSynced" : {
         "text" : "Senkronize ediliyor",
         "desc" : "Çok sayıda işlem yaptıysanız veya internet bağlantınız yavaşsa bu işlem biraz zaman alabilir."
