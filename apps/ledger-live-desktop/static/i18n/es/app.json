@@ -361,7 +361,6 @@
     "title" : "Permutar",
     "titleCrypto" : "Permutar {{currency}}",
     "whatIsSwap" : "Qué es la permuta",
-    "decentralizedSwapAvailable" : "Para determinadas transacciones, quizás deberías considerar la opción de usar la permuta descentralizada. Descubre <0>ParaSwap</0> y <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Échale un vistazo",
       "description" : "¿Buscas Paraswap? Está en a la pestaña Discover."
@@ -1299,8 +1298,7 @@
         "description" : "Descripción",
         "tokenAddress" : "Dirección del token",
         "tokenId" : "ID de token",
-        "quantity" : "Cantidad",
-        "floorPrice" : "Precio base"
+        "quantity" : "Cantidad"
       }
     },
     "collections" : {
@@ -1535,8 +1533,7 @@
       "fees" : "Tarifas",
       "provider" : "Proveedor",
       "payoutNetworkFees" : "Tarifas de pago",
-      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
-      "acceptTerms" : "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>"
+      "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo"
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -2086,10 +2083,10 @@
     "replaceable" : "reemplazable",
     "cannotSelect" : {
       "unconfirmed" : "No puedes seleccionar monedas de transacciones reemplazables y no confirmadas.",
-      "pending" : "No puedes seleccionar monedas de transacciones pendientes (excepto la salida de cambio).",
       "last" : "Debes seleccionar al menos una"
     },
     "pending" : "pendiente",
+    "pickUnconfirmedRBF" : "Incluye monedas de transacciones reemplazables y no confirmadas.",
     "pickingStrategy" : "Estrategia de selección UTXO",
     "pickingStrategyLabels" : {
       "DEEP_OUTPUTS_FIRST" : "Las monedas más antiguas primero (FIFO)",
