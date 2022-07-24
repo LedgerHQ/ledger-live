@@ -81,6 +81,7 @@
     "seeMore" : "Voir plus",
     "moreInfo" : "Plus d’informations",
     "buyEth" : "Acheter de l’Ethereum",
+    "exchange" : "Échanger",
     "popular" : "Populaire"
   },
   "errors" : {
@@ -929,10 +930,6 @@
       "earn" : {
         "title" : "Gagner",
         "desc" : "Gagnez des récompenses passives et faites fructifier vos cryptos."
-      },
-      "mint": {
-        "title": "Minter",
-        "desc": "Mintez et acquérez des NFT de collaborations exclusives sur le [ L ] Market."
       }
     },
     "comingSoon" : "Prochainement",
@@ -1050,7 +1047,7 @@
       "2" : {
         "label" : "Les bases",
         "title" : "Restez hors ligne",
-        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction de vos cryptos avec votre Nano."
+        "desc" : "Achetez, vendez, gérez, échangez et gagnez des cryptos en toute sécurité sur Ledger Live. Vous devez valider chaque transaction en cryptos avec votre Nano."
       },
       "3" : {
         "label" : "Les bases",
@@ -1216,7 +1213,7 @@
         "nextStep" : "Étape suivante"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Cacher votre phrase de récupération",
+        "title" : "Cachez votre phrase de récupération",
         "desc" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
         "bullets" : {
           "0" : {
@@ -2076,6 +2073,10 @@
       "clearCacheButton" : "Effacer",
       "exportLogs" : "Enregistrer les logs",
       "exportLogsDesc" : "Sauvegardez les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
+      "resetThirdPartyData" : "Réinitialiser les données fournies à des tiers",
+      "resetThirdPartyDataDesc" : "Supprimez toutes vos données stockées localement et partagées avec des tiers, qui sont utilisées pour accéder aux prestataires de transactions tiers.",
+      "resetThirdPartyDataModal" : "Supprimer vos données locales partagées avec des tiers",
+      "resetThirdPartyDataModalDesc" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos partenaires.",
       "hardReset" : "Réinitialiser Ledger Live",
       "hardResetDesc" : "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l’historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice" : "Réparer son appareil Ledger",
@@ -2145,6 +2146,10 @@
     "fees" : {
       "title" : "Modifier les frais"
     },
+    "manageCard" : {
+      "title" : "Gérer ma carte CL",
+      "description" : "Commandez et gérez votre carte CL"
+    },
     "receive" : {
       "title" : "Recevoir",
       "description" : "Recevez des cryptos d’un autre wallet",
@@ -2157,7 +2162,7 @@
       "verifyAgain" : "Revérifier",
       "noAccount" : "Aucun compte trouvé",
       "address" : "Adresse du compte",
-      "copyAddress" : "Copier l’adresse",
+      "copyAddress" : "Copier",
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
@@ -2386,19 +2391,78 @@
         }
       }
     },
-    "swapv2" : {
+    "swap2" : {
       "form" : {
-        "summary" : {
-          "from" : "De",
-          "to" : "À",
-          "send" : "Envoyer",
-          "payoutNetworkFees" : "Frais de réception",
-          "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
-          "receive" : "Montant",
-          "receiveFloat" : "Montant à recevoir sans les frais de service",
-          "provider" : "Prestataire",
-          "method" : "Taux",
-          "fees" : "Frais"
+        "ratesDrawer" : {
+          "title" : "Taux",
+          "quote" : "Prix",
+          "receive" : "Recevoir"
+        },
+        "title" : "Échanger",
+        "from" : "De",
+        "to" : "À",
+        "loading" : "Chargement...",
+        "disclaimer" : {
+          "title" : "Conditions d’utilisation",
+          "desc" : "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d’utilisation de {{providerName}}.",
+          "tos" : "Conditions d’utilisation",
+          "accept" : "Accepter"
+        },
+        "notAvailable" : {
+          "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+          "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
+        },
+        "amount" : {
+          "useMax" : "Choisir le maximum",
+          "available" : "Total disponible"
+        },
+        "details" : {
+          "label" : {
+            "provider" : "Prestataire",
+            "rate" : "Taux",
+            "fees" : "Frais de réseau",
+            "target" : "Compte bénéficiaire"
+          },
+          "noAccount" : "Créez un compte pour recevoir des {{name}}.",
+          "noAccountCTA" : "Ajouter un compte"
+        },
+        "select" : {
+          "from" : {
+            "title" : "De"
+          },
+          "to" : {
+            "title" : "À"
+          }
+        },
+        "providers" : {
+          "kyc" : {
+            "title" : "Vérification",
+            "required" : "Vous devez passer la vérification d’identité.",
+            "complete" : "Vérifier",
+            "update" : "Actualiser",
+            "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
+            "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
+            "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
+            "status" : {
+              "pending" : "En attente",
+              "approved" : "Approuvé",
+              "closed" : "Rejeté",
+              "upgradeRequired" : "Incomplet"
+            }
+          },
+          "login" : {
+            "title" : "Connexion",
+            "required" : "Connectez-vous pour utiliser ce prestataire.",
+            "complete" : "Me connecter"
+          },
+          "mfa" : {
+            "title" : "MFA",
+            "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
+            "complete" : "Configurer une MFA"
+          },
+          "withdrawalsBlockedError" : {
+            "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
+          }
         }
       }
     },
@@ -4388,10 +4452,7 @@
       "tokenContractCopied" : "Adresse du token copiée",
       "tokenId" : "Identifiant du token",
       "tokenIdCopied" : "Identifiant du token copié",
-      "quantity" : "Nombre",
-      "attributes" : {
-        "floorPrice" : "Prix plancher"
-      }
+      "quantity" : "Nombre"
     },
     "viewerModal" : {
       "viewOn" : "Voir sur",
