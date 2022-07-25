@@ -87,7 +87,7 @@
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
     "ui:icons": "pnpm --filter icons-ui",
-    "ui:crypto-icons": "pnpm --filter icons-ui",
+    "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
     "ui:shared": "pnpm --filter shared-ui",
     "actions": "pnpm --filter @actions/*"
   },
