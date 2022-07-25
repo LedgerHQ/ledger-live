@@ -14,7 +14,7 @@ import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
 
-import AccountLendingFooter from "~/renderer/screens/lend/Account/AccountBalanceSummaryFooter";
+//import AccountLendingFooter from "~/renderer/screens/lend/Account/AccountBalanceSummaryFooter";
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
 
@@ -138,15 +138,6 @@ export default function AccountBalanceSummary({
           account={account}
           counterValue={counterValue}
           discreetMode={discreetMode}
-        />
-      )}
-      {isCompoundEnabled && account.type === "TokenAccount" && parentAccount && ctoken && (
-        <AccountLendingFooter
-          account={account}
-          parentAccount={parentAccount}
-          countervalue={counterValue}
-          discreetMode={discreetMode}
-          ctoken={ctoken}
         />
       )}
     </Card>

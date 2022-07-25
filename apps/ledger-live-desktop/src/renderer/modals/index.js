@@ -69,15 +69,16 @@ import MODAL_SOLANA_DELEGATION_REACTIVATE from "../families/solana/DelegationRea
 import MODAL_SOLANA_DELEGATION_WITHDRAW from "../families/solana/DelegationWithdrawFlowModal";
 
 // Lending
-import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
-import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
+//import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
+//import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
+/*
 import MODAL_LEND_SUPPLY from "../screens/lend/modals/Supply";
 import MODAL_LEND_SELECT_ACCOUNT from "../screens/lend/modals/SelectAccountStep";
 import MODAL_LEND_ENABLE_FLOW from "../screens/lend/modals/Enable";
 import MODAL_LEND_WITHDRAW_FLOW from "../screens/lend/modals/Withdraw";
 import MODAL_LEND_NO_ETHEREUM_ACCOUNT from "../screens/lend/modals/NoEthereumAccount";
 import MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT from "../screens/lend/modals/EmptyAccountDeposit";
-
+*/
 const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
@@ -138,6 +139,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_LOTTIE_DEBUGGER,
   MODAL_RECOVERY_SEED_WARNING,
   // Lending
+  /*
   MODAL_LEND_MANAGE,
   MODAL_LEND_ENABLE_INFO,
   MODAL_LEND_ENABLE_FLOW,
@@ -145,7 +147,7 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_LEND_SUPPLY,
   MODAL_LEND_WITHDRAW_FLOW,
   MODAL_LEND_NO_ETHEREUM_ACCOUNT,
-  MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT,
+  MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT,*/
   // Swap
   MODAL_SWAP_RESET_KYC,
   // Platform

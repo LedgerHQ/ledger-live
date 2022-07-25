@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/live-common/walletconnect/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
-import { apiForCurrency } from "@ledgerhq/live-common/api/Ethereum";
+//import { apiForCurrency } from "@ledgerhq/live-common/api/Ethereum";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { Operation, SignedOperation } from "@ledgerhq/live-common/types/index";
 type Opts = ScanCommonOpts &
@@ -82,13 +82,13 @@ const start = async (opts: Opts) => {
     );
     let result;
     const bridge = getAccountBridge(account);
-
+      /*
     if (wcCallRequest.type === "broadcast") {
       const api = apiForCurrency(account.currency);
       result = await api.broadcastTransaction(wcCallRequest.data);
       log("walletconnect", "hash", result);
       return result;
-    }
+    }*/
 
     if (wcCallRequest.type === "message") {
       log("walletconnect", "message to sign", wcCallRequest.data);

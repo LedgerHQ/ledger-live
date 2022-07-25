@@ -6,7 +6,7 @@ import type { AccountLike } from "@ledgerhq/live-common/types/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
-import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
+//import { getAccountCapabilities } from "@ledgerhq/live-common/compound/logic";
 
 import { useSelector } from "react-redux";
 import LText from "../../components/LText";
@@ -25,12 +25,13 @@ const LendingBanners = ({ account }: Props) => {
   invariant(account.type === "TokenAccount", "account must be a TokenAccount");
 
   const availableOnCompound = !!account.compoundBalance;
+  /*
   const compoundCapabilities: any = availableOnCompound
     ? getAccountCapabilities(account)
-    : {};
+    : {};*/
 
   let lendingInfoBanner = null;
-
+/*
   if (availableOnCompound && compoundCapabilities) {
     const lendingInfoBannerContent = !compoundCapabilities.status ? (
       <Trans i18nKey="transfer.lending.banners.needApproval" />
@@ -77,7 +78,7 @@ const LendingBanners = ({ account }: Props) => {
         </View>
       );
     }
-  }
+  }*/
 
   let lendingWarningBanner = null;
 

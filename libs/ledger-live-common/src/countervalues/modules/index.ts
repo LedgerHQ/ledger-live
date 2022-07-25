@@ -3,10 +3,10 @@ import type { Currency } from "../../types";
 import type { RateGranularity, TrackingPair } from "../types";
 import type { Module } from "./types";
 import api from "../api";
-import weth from "./weth";
-import ethbtc from "./ethbtc";
+//import weth from "./weth";
+//import ethbtc from "./ethbtc";
 
-const modules: Module[] = [weth, ethbtc];
+const modules: Module[] = [];
 
 export const installModule = (module: Module): void => {
   modules.push(module);

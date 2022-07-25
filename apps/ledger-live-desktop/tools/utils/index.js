@@ -106,7 +106,7 @@ const buildViteConfig = argv => ({
       "@ledgerhq/live-common > @ledgerhq/cryptoassets/data/exchange/erc20.js",
       "@ledgerhq/cryptoassets",
       "@ledgerhq/cryptoassets/data/erc20-signatures",
-      "@ledgerhq/hw-app-eth/erc20",
+      //"@ledgerhq/hw-app-eth/erc20",
     ],
     esbuildOptions: {
       target: ["es2020"],

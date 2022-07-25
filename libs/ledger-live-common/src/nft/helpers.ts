@@ -12,7 +12,7 @@ import type {
   CryptoCurrency,
   NFTCollectionMetadataResponse,
 } from "../types";
-import { API, apiForCurrency } from "../api/Ethereum";
+//import { API, apiForCurrency } from "../api/Ethereum";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
   const nftsMap = ops
@@ -122,6 +122,7 @@ export const getNftCollectionKey = (
  * Once the response is received, it will then spread the metadata to each request Promise,
  * just like if each request had been made separately.
  */
+/*
 const makeBatcher = (
   call: API["getNFTMetadata"] | API["getNFTCollectionMetadata"],
   chainId: number
@@ -182,13 +183,14 @@ const makeBatcher = (
   })();
 
 const batchersMap = new Map();
-
+*/
 /**
  * In order to `instanciate`/make only 1 batcher by currency,
  * they're `cached` in a Map and retrieved by this method
  * This method is still EVM based for now but can be improved
  * to implement an even more generic solution
  */
+/*
 export const metadataCallBatcher = (
   currency: CryptoCurrency
 ): { loadNft: Batcher["load"]; loadCollection: Batcher["load"] } => {
@@ -212,3 +214,4 @@ export const metadataCallBatcher = (
     loadCollection: batchers.collection.load,
   };
 };
+*/

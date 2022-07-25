@@ -6,7 +6,7 @@ import {
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
+//import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
@@ -30,7 +30,7 @@ import IconCoins from "~/renderer/icons/ClaimReward";
 import Graph from "~/renderer/icons/Graph";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
-import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
+//import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
@@ -143,10 +143,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const currency = getAccountCurrency(account);
 
   // check if account already has lending enabled
-  const summary =
-    account.type === "TokenAccount" && makeCompoundSummaryForAccount(account, parentAccount);
+  const summary = false;
+    //account.type === "TokenAccount" && makeCompoundSummaryForAccount(account, parentAccount);
 
-  const availableOnCompound = useCompoundAccountEnabled(account, parentAccount);
+  const availableOnCompound = false;//useCompoundAccountEnabled(account, parentAccount);
   const rampCatalog = useRampCatalog();
 
   // eslint-disable-next-line no-unused-vars

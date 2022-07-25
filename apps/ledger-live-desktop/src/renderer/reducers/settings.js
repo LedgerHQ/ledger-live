@@ -49,8 +49,8 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
 };
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
+//const ethereum = getCryptoCurrencyById("ethereum");
+export const possibleIntermediaries = [bitcoin];
 
 export const timeRangeDaysByKey = {
   day: 1,
