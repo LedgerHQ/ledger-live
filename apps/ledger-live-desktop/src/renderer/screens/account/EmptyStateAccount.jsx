@@ -81,7 +81,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
     if (ptxSmartRouting?.enabled) {
       const params = {
         currency: currency?.id,
-        account: mainAccount?.freshAddress,
+        account: mainAccount?.id,
         mode: "buy", // buy or sell
       };
 

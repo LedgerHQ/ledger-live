@@ -189,7 +189,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       if (ptxSmartRouting?.enabled) {
         const params = {
           currency: currency?.id,
-          account: mainAccount?.freshAddress,
+          account: mainAccount?.id,
           mode, // buy or sell
         };
 
