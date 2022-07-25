@@ -3,13 +3,8 @@ import { Linking, Platform, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-<<<<<<< HEAD
-import { useNavigation } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-=======
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/lib/featureFlags/useFeature";
->>>>>>> LIVE-2927 - Fix analytics for upsell modal
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
@@ -126,9 +121,8 @@ function Discover() {
           subTitle: t("discover.sections.mint.desc"),
           onPress: () => {
             readOnlyTrack("Mint");
-              track("Discover - Mint - OpenUrl", { url: urls.discover.mint});
-              Linking.openURL(urls.discover.mint);
-
+            track("Discover - Mint - OpenUrl", { url: urls.discover.mint });
+            Linking.openURL(urls.discover.mint);
           },
           disabled: false,
           Image: (

@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useCallback, useMemo, memo } from "react";
-=======
 import React, { useCallback, useMemo, memo, useContext } from "react";
->>>>>>> LIVE-2927 - Fix analytics for upsell modal
 import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";

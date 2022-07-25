@@ -25,13 +25,8 @@ import { Trans, useTranslation } from "react-i18next";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-<<<<<<< HEAD
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import { useRoute } from "@react-navigation/native";
-=======
-import { MarketListRequestParams } from "@ledgerhq/live-common/lib/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
->>>>>>> LIVE-2927 - Fix analytics for upsell modal
 import { useNetInfo } from "@react-native-community/netinfo";
 import {
   marketFilterByStarredAccountsSelector,
