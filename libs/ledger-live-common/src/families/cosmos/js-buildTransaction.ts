@@ -13,7 +13,7 @@ import {
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import { getAccount } from "./api/Cosmos";
+import { defaultCosmosAPI } from "./api/Cosmos";
 import BigNumber from "bignumber.js";
 
 export const buildTransaction = async (
@@ -100,7 +100,7 @@ export const buildTransaction = async (
 
     case "redelegate":
       if (
-        !transaction.cosmosSourceValidator ||
+        !transaction.sourceValidator ||
         !transaction.validators ||
         transaction.validators.length < 1 ||
         !transaction.validators[0].address ||
@@ -111,7 +111,7 @@ export const buildTransaction = async (
         msg.push({
           typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
           value: {
-            validatorSrcAddress: transaction.cosmosSourceValidator,
+            validatorSrcAddress: transaction.sourceValidator,
             delegatorAddress: account.freshAddress,
             validatorDstAddress: transaction.validators[0].address,
             amount: {
@@ -206,7 +206,7 @@ export const postBuildTransaction = async (
     ],
   ]);
 
-  const { sequence } = await getAccount(account.freshAddress);
+  const { sequence } = await defaultCosmosAPI.getAccount(account.freshAddress);
 
   const txBodyBytes = registry.encode(txBodyFields);
 

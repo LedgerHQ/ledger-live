@@ -4,11 +4,11 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { BigNumber } from "bignumber.js";
-import { getValidators } from "./validators";
+import cosmosValidatorsManager from "./validators";
 import type { Transaction, AccountLike } from "../../types";
 import { Transaction as CosmosTransaction } from "./types";
 import type { CosmosDelegationInfo } from "./types";
-import { getCryptoCurrencyById } from "../../currencies";
+
 const options = [
   {
     name: "mode",
@@ -31,7 +31,7 @@ const options = [
     desc: "add a memo to a transaction",
   },
   {
-    name: "cosmosSourceValidator",
+    name: "sourceValidator",
     type: String,
     desc: "for redelegate, add a source validator",
   },
@@ -81,7 +81,7 @@ function inferTransactions(
       fees: opts.fees ? inferAmount(account, opts.fees) : null,
       gas: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       validators: validators,
-      cosmosSourceValidator: opts.cosmosSourceValidator,
+      sourceValidator: opts.sourceValidator,
     } as CosmosTransaction;
   });
 }
@@ -109,7 +109,7 @@ const cosmosValidators = {
   }: Partial<{
     format: string;
   }>): Observable<string> =>
-    from(getValidators(getCryptoCurrencyById("cosmos"))).pipe(
+    from(cosmosValidatorsManager.getValidators()).pipe(
       map((validators) => {
         const f =
           (format && cosmosValidatorsFormatters[format]) ||

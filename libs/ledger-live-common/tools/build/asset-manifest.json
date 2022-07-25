@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7612b784.chunk.css",
+    "main.js": "/static/js/main.5d912cd5.chunk.js",
+    "main.js.map": "/static/js/main.5d912cd5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.5abd5aef.js",
+    "runtime-main.js.map": "/static/js/runtime-main.5abd5aef.js.map",
+    "static/css/2.d694ff75.chunk.css": "/static/css/2.d694ff75.chunk.css",
+    "static/js/2.b0572f9a.chunk.js": "/static/js/2.b0572f9a.chunk.js",
+    "static/js/2.b0572f9a.chunk.js.map": "/static/js/2.b0572f9a.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.87e33c11bb8acc0279b2dffde4ead7ca.js": "/precache-manifest.87e33c11bb8acc0279b2dffde4ead7ca.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.d694ff75.chunk.css.map": "/static/css/2.d694ff75.chunk.css.map",
+    "static/css/main.7612b784.chunk.css.map": "/static/css/main.7612b784.chunk.css.map",
+    "static/media/ledgerlive-logo.svg": "/static/media/ledgerlive-logo.9a7d658b.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5abd5aef.js",
+    "static/css/2.d694ff75.chunk.css",
+    "static/js/2.b0572f9a.chunk.js",
+    "static/css/main.7612b784.chunk.css",
+    "static/js/main.5d912cd5.chunk.js"
+  ]
+}

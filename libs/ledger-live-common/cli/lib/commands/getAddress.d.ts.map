@@ -1,0 +1,1 @@
+{"version":3,"file":"getAddress.d.ts","sourceRoot":"","sources":["../../src/commands/getAddress.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;eA8BS,QAAQ;QACX,QAAQ,EAAE,MAAM,CAAC;QACjB,MAAM,EAAE,MAAM,CAAC;QACf,IAAI,EAAE,MAAM,CAAC;QACb,cAAc,EAAE,MAAM,CAAC;QACvB,MAAM,EAAE,OAAO,CAAC;KACjB,CAAC;;AA9BN,wBAsDE"}

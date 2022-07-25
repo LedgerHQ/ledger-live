@@ -8,7 +8,7 @@ import { Trans } from "react-i18next";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import type {
   CosmosDelegationInfo,
   CosmosValidatorItem,
@@ -46,7 +46,7 @@ function getURLWhatIsThis(op: Operation): ?string {
   }
 }
 
-const redirectAddress = (currency: Currency, address: string) => () => {
+export const redirectAddress = (currency: Currency, address: string) => () => {
   /** $FlowFixMe */
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
@@ -59,7 +59,7 @@ type OperationDetailsDelegationProps = {
   delegations: Array<CosmosDelegationInfo>,
   account: Account,
   isTransactionField?: boolean,
-  cosmosValidators: CosmosValidatorItem[],
+  validators: CosmosValidatorItem[],
 };
 
 export const OperationDetailsDelegation = ({
@@ -69,12 +69,13 @@ export const OperationDetailsDelegation = ({
   delegations,
   account,
   isTransactionField,
-  cosmosValidators,
+  validators,
 }: OperationDetailsDelegationProps) => {
-  const mappedDelegationInfo = useMemo(
-    () => mapDelegationInfo(delegations, cosmosValidators, unit),
-    [delegations, cosmosValidators, unit],
-  );
+  const mappedDelegationInfo = useMemo(() => mapDelegationInfo(delegations, validators, unit), [
+    delegations,
+    validators,
+    unit,
+  ]);
 
   return (
     <OpDetailsSection>
@@ -121,7 +122,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { validators: cosmosValidators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
 
   const formatConfig = {
     disableRounding: true,
@@ -145,7 +147,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           currency={currency}
           delegations={delegations}
           account={account}
-          cosmosValidators={cosmosValidators}
+          validators={cosmosValidators}
         />
       );
     }
@@ -186,8 +188,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       break;
     }
     case "REDELEGATE": {
-      const { cosmosSourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !cosmosSourceValidator) return null;
+      const { sourceValidator, validators } = extra;
+      if (!validators || validators.length <= 0 || !sourceValidator) return null;
 
       const validator = extra.validators[0];
 
@@ -196,7 +198,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       );
 
       const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === cosmosSourceValidator,
+        v => v.validatorAddress === sourceValidator,
       );
 
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
@@ -209,8 +211,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
               <Trans i18nKey={"operationDetails.extra.redelegatedFrom"} />
             </OpDetailsTitle>
             <OpDetailsData>
-              <Address onClick={redirectAddress(currency, cosmosSourceValidator)}>
-                {formattedSourceValidator ? formattedSourceValidator.name : cosmosSourceValidator}
+              <Address onClick={redirectAddress(currency, sourceValidator)}>
+                {formattedSourceValidator ? formattedSourceValidator.name : sourceValidator}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
@@ -348,7 +350,7 @@ const UndelegateAmountCell = ({ operation, currency, unit }: Props) => {
   );
 };
 
-const amountCellExtra: { [key: string]: ComponentType<any> } = {
+export const amountCellExtra: { [key: string]: ComponentType<any> } = {
   REDELEGATE: RedelegateAmountCell,
   UNDELEGATE: UndelegateAmountCell,
 };

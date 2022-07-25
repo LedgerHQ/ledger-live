@@ -4,15 +4,16 @@ import type { Account, Unit } from "../../types";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import { CosmosOperation, CosmosExtraTxInfo } from "./types";
+import { CosmosOperation, CosmosExtraTxInfo, CosmosPreloadData } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
+import { getCurrentOsmosisPreloadData } from "../osmosis/preloadedData";
 
 function formatOperationSpecifics(
   op: CosmosOperation,
   unit: Unit | null | undefined
 ): string {
-  const { validators } = op.extra;
-  return (validators || [])
+  const { validators, autoClaimedRewards } = op.extra;
+  const validatorsString = (validators || [])
     .map(
       (v) =>
         `\n    to ${v.address} ${
@@ -25,12 +26,41 @@ function formatOperationSpecifics(
         }`
     )
     .join("");
+
+  const rewards = "";
+  // const rewards = (autoClaimedRewards || [])
+  //   .map(
+  //     (r) =>
+  //       `\n auto claimed reward: ${
+  //         unit
+  //           ? formatCurrencyUnit(unit, new BigNumber(r.amount), {
+  //               showCode: true,
+  //               disableRounding: true,
+  //             }).padEnd(16)
+  //           : r.amount
+  //       }`
+  //   )
+  //   .join("");
+
+  return `${validatorsString} \n ${rewards}`;
 }
 
-function formatAccountSpecifics(account: Account): string {
+function getCurrentCosmosFamilyPreloadData(
+  currencyName: string
+): CosmosPreloadData {
+  if (currencyName === "osmosis") {
+    return getCurrentOsmosisPreloadData();
+  } else {
+    return getCurrentCosmosPreloadData();
+  }
+}
+
+export function formatAccountSpecifics(account: Account): string {
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmos account expected");
-  const { validators } = getCurrentCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators } = getCurrentCosmosFamilyPreloadData(currencyName);
+
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
@@ -127,8 +157,9 @@ function formatAccountSpecifics(account: Account): string {
 export function fromOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -136,14 +167,15 @@ export function fromOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export function toOperationExtraRaw(
   extra: Record<string, any> | null | undefined
 ): CosmosExtraTxInfo | Record<string, any> | null | undefined {
+  let e = {};
+
   if (extra && extra.validators) {
-    return {
+    e = {
       ...extra,
       validators: extra.validators.map((o) => ({
         ...o,
@@ -151,8 +183,7 @@ export function toOperationExtraRaw(
       })),
     };
   }
-
-  return extra;
+  return e;
 }
 export default {
   formatAccountSpecifics,
