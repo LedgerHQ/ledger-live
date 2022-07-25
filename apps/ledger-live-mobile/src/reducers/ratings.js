@@ -13,6 +13,11 @@ export type RatingsState = {
   happyMoment?: RatingsHappyMoment,
   /** Data related to the user's app usage. We use this data to prompt the rating flow on certain conditions only */
   dataOfUser?: RatingsDataOfUser,
+  /**
+   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
+   * If true, it means another modal is already opened or being opened
+   */
+  isRatingsModalLocked: boolean,
 };
 
 const initialState: RatingsState = {
@@ -20,6 +25,7 @@ const initialState: RatingsState = {
   currentRouteName: null,
   happyMoment: null,
   dataOfUser: null,
+  isRatingsModalLocked: false,
 };
 
 const handlers: Object = {
@@ -29,6 +35,13 @@ const handlers: Object = {
   ) => ({
     ...state,
     isRatingsModalOpen,
+  }),
+  RATINGS_SET_MODAL_LOCKED: (
+    state: RatingsState,
+    { isRatingsModalLocked }: { isRatingsModalLocked: boolean },
+  ) => ({
+    ...state,
+    isRatingsModalLocked,
   }),
   RATINGS_SET_CURRENT_ROUTE: (
     state: RatingsState,
@@ -56,6 +69,9 @@ const handlers: Object = {
 // Selectors
 export const ratingsModalOpenSelector = (s: State) =>
   s.ratings.isRatingsModalOpen;
+
+export const ratingsModalLockedSelector = (s: State) =>
+  s.ratings.isRatingsModalLocked;
 
 export const ratingsCurrentRouteNameSelector = (s: State) =>
   s.ratings.currentRouteName;
