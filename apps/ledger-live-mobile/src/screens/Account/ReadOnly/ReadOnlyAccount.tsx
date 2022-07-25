@@ -7,14 +7,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getCryptoCurrencyById,
   getTokenById,
-<<<<<<< HEAD
 } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/live-common/types/index";
-=======
-} from "@ledgerhq/live-common/lib/currencies";
-import { Currency } from "@ledgerhq/live-common/lib/types";
 import { useFocusEffect } from "@react-navigation/native";
->>>>>>> LIVE-2927 - Fix analytics for upsell modal
 
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
