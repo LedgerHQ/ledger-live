@@ -5,13 +5,12 @@ import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import type {
   Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { useSelector } from "react-redux";
-import {
-  accountWithMandatoryTokens,
-  flattenAccounts,
-} from "@ledgerhq/live-common/lib/account/helpers";
+import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { accountsSelector } from "../../reducers/accounts";
@@ -24,40 +23,70 @@ import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import InfoIcon from "../../icons/Info";
 import { NavigatorName, ScreenName } from "../../const";
+import { getAccountTuplesForCurrency } from "./hooks";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
 type Props = {
-  accounts: Account[],
-  allAccounts: AccountLikeArray,
   navigation: any,
-  // TODO: add proper type
-  route: { params: any },
+  route: {
+    params: {
+      mode: "buy" | "sell",
+      currency: CryptoCurrency | TokenCurrency,
+      onAccountChange: (selectedAccount: Account | AccountLike) => void,
+      analyticsPropertyFlow?: string,
+    },
+  },
 };
 
 export default function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { mode, currency, device, analyticsPropertyFlow } = route.params;
+  const {
+    mode = "buy",
+    currency,
+    analyticsPropertyFlow,
+    onAccountChange,
+  } = route.params;
 
   const accounts = useSelector(accountsSelector);
 
+  const availableAccounts = useMemo(
+    () => (currency ? getAccountTuplesForCurrency(currency, accounts) : []),
+    [currency, accounts],
+  );
+
   const enhancedAccounts = useMemo(() => {
-    const filteredAccounts = accounts.filter(
-      acc =>
-        acc.currency.id ===
-        (currency.type === "TokenCurrency"
-          ? currency.parentCurrency.id
-          : currency.id),
-    );
+    const filteredAccounts = availableAccounts
+      .map(t => t.account)
+      .filter(
+        acc =>
+          acc &&
+          acc.currency &&
+          acc.currency.id ===
+            (currency.type === "TokenCurrency"
+              ? currency.parentCurrency.id
+              : currency.id),
+      );
     if (currency.type === "TokenCurrency") {
       return filteredAccounts.map(acc =>
         accountWithMandatoryTokens(acc, [currency]),
       );
     }
     return filteredAccounts;
-  }, [accounts, currency]);
+  }, [availableAccounts, currency]);
 
-  const allAccounts = flattenAccounts(enhancedAccounts);
+  const allAccounts = useMemo(() => {
+    const accounts = enhancedAccounts;
+    if (currency.type === "TokenCurrency") {
+      const subAccounts = availableAccounts.map(t => t.subAccount);
+
+      for (let i = 0; i < subAccounts.length; i++) {
+        accounts.push(subAccounts[i]);
+      }
+    }
+
+    return accounts;
+  }, [enhancedAccounts, currency.type, availableAccounts]);
 
   const { t } = useTranslation();
 
@@ -78,34 +107,45 @@ export default function SelectAccount({ navigation, route }: Props) {
             account={account}
             style={styles.card}
             onPress={() => {
-              if (mode === "buy") {
-                navigation.navigate("ExchangeConnectDevice", {
-                  account,
-                  mode,
-                  parentId:
-                    account.type !== "Account" ? account.parentId : undefined,
-                });
-              } else {
-                navigation.navigate(ScreenName.ExchangeCoinifyWidget, {
-                  account,
-                  mode,
-                  device,
-                });
-              }
+              onAccountChange && onAccountChange(account);
+              navigation.navigate(NavigatorName.Exchange, {
+                screen:
+                  mode === "buy"
+                    ? ScreenName.ExchangeBuy
+                    : ScreenName.ExchangeSell,
+              });
             }}
           />
         </View>
       );
     },
-    [colors.fog, navigation, device, mode],
+    [colors.fog, onAccountChange, navigation, mode],
   );
 
-  const elligibleAccountsForSelectedCurrency = allAccounts.filter(
-    account =>
-      (account.type === "TokenAccount"
-        ? account.token.id
-        : account.currency.id) === currency.id,
+  const elligibleAccountsForSelectedCurrency = useMemo(
+    () =>
+      allAccounts.filter(
+        account =>
+          (account?.type === "TokenAccount"
+            ? account?.token.id
+            : account?.currency.id) === currency.id,
+      ),
+    [allAccounts, currency.id],
   );
+
+  const onAddAccount = useCallback(() => {
+    if (currency && currency.type === "TokenCurrency") {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        token: currency,
+        analyticsPropertyFlow,
+      });
+    } else {
+      navigation.navigate(NavigatorName.AddAccounts, {
+        currency,
+        analyticsPropertyFlow,
+      });
+    }
+  }, [analyticsPropertyFlow, currency, navigation]);
 
   const renderList = useCallback(
     items => {
@@ -123,12 +163,7 @@ export default function SelectAccount({ navigation, route }: Props) {
               type="main"
               Icon={Icons.PlusMedium}
               iconPosition="left"
-              onPress={() =>
-                navigation.navigate(NavigatorName.AddAccounts, {
-                  currency,
-                  analyticsPropertyFlow,
-                })
-              }
+              onPress={onAddAccount}
               mt={3}
             >
               <Trans i18nKey="exchange.buy.emptyState.CTAButton" />
@@ -138,7 +173,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         />
       );
     },
-    [renderItem, navigation, currency, enhancedAccounts, analyticsPropertyFlow],
+    [enhancedAccounts, renderItem, onAddAccount],
   );
 
   // empty state if no accounts available for this currency
@@ -162,14 +197,7 @@ export default function SelectAccount({ navigation, route }: Props) {
           <Button
             event="ExchangeStartBuyFlow"
             type="main"
-            onPress={() =>
-              navigation.navigate(NavigatorName.AddAccounts, {
-                ...(currency.type === "TokenCurrency"
-                  ? { token: currency }
-                  : { currency }),
-                analyticsPropertyFlow,
-              })
-            }
+            onPress={onAddAccount}
           >
             <Trans i18nKey="exchange.buy.emptyState.CTAButton" />
           </Button>

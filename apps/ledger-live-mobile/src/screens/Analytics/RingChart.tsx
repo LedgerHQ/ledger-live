@@ -4,7 +4,7 @@ import React, { PureComponent } from "react";
 import * as d3shape from "d3-shape";
 import { View } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "./DistributionCard";
 import { ensureContrast, withTheme } from "../../colors";
 
@@ -67,7 +67,7 @@ class RingChart extends PureComponent<Props> {
 
   render() {
     const { size, colors } = this.props;
-    
+
     return (
       <View>
         <Svg width={size} height={size} viewBox="0 0 76 76">

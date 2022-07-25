@@ -49,6 +49,9 @@ describe("cosmos/react", () => {
       );
       const delegations = account.cosmosResources?.delegations;
       invariant(delegations, "cosmos: delegations is required");
+      expect(
+        account.cosmosResources?.delegations?.some((d) => d.amount[0] === 0)
+      ).toBe(false);
       expect(Array.isArray(result.current)).toBe(true);
       expect(result.current.length).toBe(
         (delegations as CosmosDelegation[]).length

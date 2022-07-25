@@ -8,12 +8,12 @@ import {
   getCryptoCurrencyById,
   listSupportedFiats,
   getFiatCurrencyByTicker,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/types/index";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
 import type { State } from ".";
 import regionsByKey from "../screens/settings/sections/General/regions.json";
@@ -318,7 +318,8 @@ const handlers: Object = {
     const { provider, id, status } = payload;
     const KYC = { ...state.swap.KYC };
 
-    if (id && status) {
+    // If we have an id but a "null" KYC status, this means user is logged in to provider but has not gone through KYC yet
+    if (id && typeof status !== "undefined") {
       KYC[provider] = { id, status };
     } else {
       delete KYC[provider];
@@ -355,6 +356,13 @@ const handlers: Object = {
   REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  RESET_SWAP_LOGIN_AND_KYC_DATA: (state: SettingsState) => ({
+    ...state,
+    swap: {
+      ...state.swap,
+      KYC: {},
+    },
   }),
 };
 

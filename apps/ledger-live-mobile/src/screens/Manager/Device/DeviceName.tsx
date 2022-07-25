@@ -34,6 +34,8 @@ export default function DeviceNameRow({
     [deviceId, navigation, savedName],
   );
 
+  const displayedName = savedName || initialDeviceName || productName;
+
   return (
     <Flex flexDirection={"row"} flexWrap={"nowrap"}>
       <Text
@@ -43,7 +45,7 @@ export default function DeviceNameRow({
         numberOfLines={2}
         ellipsizeMode="tail"
       >
-        {savedName || initialDeviceName || productName}
+        {displayedName.toUpperCase()}
       </Text>
       {id === "nanoX" && (
         <Flex

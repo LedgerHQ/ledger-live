@@ -11,6 +11,7 @@ import {
 } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
+import { encodeOperationId } from "../../../../operation";
 import flatMap from "lodash/flatMap";
 
 type TxsById = {
@@ -48,7 +49,7 @@ export const processTxs = (
 };
 
 export const mapTxToOps =
-  (id, { address }: GetAccountShapeArg0) =>
+  (accountId, { address }: GetAccountShapeArg0) =>
   (tx: TransactionResponse): Operation[] => {
     const { to, from, hash, timestamp, amount, fee } = tx;
     const ops: Operation[] = [];
@@ -61,14 +62,14 @@ export const mapTxToOps =
 
     if (isSending) {
       ops.push({
-        id: `${id}-${hash}-OUT`,
+        id: encodeOperationId(accountId, hash, "OUT"),
         hash,
         type: "OUT",
         value: value.plus(feeToUse),
         fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
-        accountId: id,
+        accountId,
         senders: [from],
         recipients: [to],
         date,
@@ -78,14 +79,14 @@ export const mapTxToOps =
 
     if (isReceiving) {
       ops.push({
-        id: `${id}-${hash}-IN`,
+        id: encodeOperationId(accountId, hash, "IN"),
         hash,
         type: "IN",
         value,
         fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
-        accountId: id,
+        accountId,
         senders: [from],
         recipients: [to],
         date,
@@ -137,14 +138,14 @@ export const getTxToBroadcast = (
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address, currency } = info;
+  const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
     xpubOrAddress: address,
-    derivationMode: "",
+    derivationMode,
   });
 
   const blockHeight = await fetchBlockHeight();

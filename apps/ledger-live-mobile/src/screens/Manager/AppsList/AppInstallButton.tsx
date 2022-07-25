@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import manager from "@ledgerhq/live-common/lib/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 
-import type { App } from "@ledgerhq/live-common/lib/types/manager";
-import type { Action, State } from "@ledgerhq/live-common/lib/apps";
-import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
+import type { App } from "@ledgerhq/live-common/types/manager";
+import type { Action, State } from "@ledgerhq/live-common/apps/index";
+import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
 import { Icons, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";

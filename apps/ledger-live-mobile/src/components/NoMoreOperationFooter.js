@@ -12,7 +12,7 @@ const el = () => (
       textAlign: "center",
     }}
   >
-    <Trans i18nKey="common:operationList.noMoreOperations" />
+    <Trans i18nKey="common:operationList.noMoreTransactions" />
   </LText>
 );
 

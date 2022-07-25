@@ -5,13 +5,13 @@ import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   isCurrencySupported,
   listTokens,
   useCurrenciesByMarketcap,
   listSupportedCurrencies,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";

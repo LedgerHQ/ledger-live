@@ -8,6 +8,8 @@ import { BluetoothRequired } from "@ledgerhq/errors";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
+import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
+
 
 type Props = {
   error: Error;
@@ -18,6 +20,8 @@ type Props = {
   withDescription?: boolean;
   withIcon?: boolean;
   hasExportLogButton?: boolean;
+  Icon?: IconOrElementType;
+  iconColor?: string;
   children?: React.ReactNode;
 };
 
@@ -35,6 +39,8 @@ const GenericErrorView = ({
   withIcon = true,
   hasExportLogButton = true,
   children,
+  Icon = CloseMedium,
+  iconColor = "error.c100"
 }: Props) => {
   useEffect(() => {
     if (error instanceof BluetoothRequired) {
@@ -56,10 +62,10 @@ const GenericErrorView = ({
       {withIcon ? (
         <Box mb={7}>
           <IconBox
-            Icon={CloseMedium}
+            Icon={Icon}
             iconSize={24}
             boxSize={64}
-            color={"error.c100"}
+            color={iconColor}
           />
         </Box>
       ) : null}

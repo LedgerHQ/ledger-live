@@ -1,7 +1,7 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 

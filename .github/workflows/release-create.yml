@@ -26,7 +26,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: install dependencies
@@ -44,6 +44,6 @@ jobs:
       - name: push
         run: |
           git push origin release
-          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" --body "Release ${{ steps.date.outputs.date }}" --base main --head release
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -1,16 +1,16 @@
 // @flow
 import invariant from "invariant";
 import { useCallback } from "react";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   SignedOperation,
   Operation,
   AccountLike,
   Account,
-} from "@ledgerhq/live-common/lib/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { execAndWaitAtLeast } from "@ledgerhq/live-common/lib/promise";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+} from "@ledgerhq/live-common/types/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 type SignTransactionArgs = {
   account: ?AccountLike,

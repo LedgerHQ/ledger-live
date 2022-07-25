@@ -1,0 +1,23 @@
+{
+    "domain": {
+        "chainId": 5,
+        "name": "Ether Mail",
+        "verifyingContract": "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+        "version": "1"
+    },
+    "message": {
+        "val" : "0x973bb640"
+    },
+    "primaryType": "Test",
+    "types": {
+        "EIP712Domain": [
+            { "name": "name", "type": "string" },
+            { "name": "version", "type": "string" },
+            { "name": "chainId", "type": "uint256" },
+            { "name": "verifyingContract", "type": "address" }
+        ],
+        "Test": [
+            { "name": "val", "type": "bytes4" }
+        ]
+    }
+}

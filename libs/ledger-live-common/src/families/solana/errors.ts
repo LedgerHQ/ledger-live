@@ -71,7 +71,7 @@ export const SolanaUseAllAmountStakeWarning = createCustomErrorClass(
   "SolanaUseAllAmountStakeWarning"
 );
 
-export const SolanaTxSimulationFailedPendingOp = createCustomErrorClass(
+export const SolanaTxSimulationFailedWhilePendingOp = createCustomErrorClass(
   "SolanaTxSimulationFailedWhilePendingOp"
 );
 

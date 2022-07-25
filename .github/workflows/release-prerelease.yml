@@ -36,7 +36,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
@@ -48,62 +48,66 @@ jobs:
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
-
       - name: install dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
       - name: build libs
         run: pnpm run build:libs
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
-
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-desktop-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-desktop
+      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
+        id: post-mobile-version
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: commit (from release branch)
         if: ${{ startsWith(github.ref_name, 'release') || startsWith(github.event.inputs.ref, 'release') }}
         run: |
           git add . &&
-          git commit -m ":rocket: release prerelease" ||
+          git commit -m ":rocket: release prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: commit (from hotfix branch)
         if: ${{ startsWith(github.event.inputs.ref, 'hotfix') }}
         run: |
           git add . &&
-          git commit -m ":fire: hotfix prerelease" ||
+          git commit -m ":fire: hotfix prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
       - name: commit (from ${{ github.event.inputs.ref }} branch) workflow dispatch
         if: ${{ !startsWith(github.ref_name, 'release') || !startsWith(github.ref_name, 'hotfix') }}
         run: |
           git add .
-          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease" ||
+          git commit -m ":rocket: ${{ github.event.inputs.ref }} prerelease [LLD(${{ steps.post-desktop-version.outputs.version }}), LLM(${{ steps.post-mobile-version.outputs.version }})]" ||
           echo ""
-
       - name: publish prerelease
         run: pnpm changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+      - name: tag desktop
+        if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
+        run: |
+          git tag @ledgerhq/live-desktop@${{ steps.post-desktop-version.outputs.version }}
+      - name: tag mobile
+        if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
+        run: |
+          git tag @ledgerhq/live-mobile@${{ steps.post-mobile-version.outputs.version }}
       - name: push changes (push event)
         if: ${{ github.event_name == 'push' }}
         run: |
+          git pull --rebase
           git push origin ${{ github.ref_name }} --follow-tags
       - name: push changes (other events)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
+          git pull --rebase
           git push origin ${{ github.event.inputs.ref }} --follow-tags
-
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
-        id: post-desktop-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-desktop
-
-      - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
-        id: post-mobile-version
-        with:
-          path: ${{ github.workspace }}/apps/ledger-live-mobile
-
       - uses: actions/github-script@v6
         name: trigger prerelease build for desktop
         if: ${{ steps.desktop-version.outputs.version != steps.post-desktop-version.outputs.version }}
@@ -119,7 +123,6 @@ jobs:
                 ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
               }
             });
-
       - uses: actions/github-script@v6
         name: trigger prerelease build of mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
@@ -131,4 +134,7 @@ jobs:
               repo: "ledger-live-build",
               ref: "main",
               workflow_id: "release-mobile.yml",
+              inputs: {
+                ref: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ref || github.ref_name }}",
+              }
             });

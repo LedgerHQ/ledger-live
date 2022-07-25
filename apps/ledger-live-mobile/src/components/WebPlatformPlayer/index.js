@@ -18,33 +18,40 @@ import {
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
+import invariant from "invariant";
 
 import { JSONRPCRequest } from "json-rpc-2.0";
 
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
-} from "@ledgerhq/live-common/lib/platform/rawTypes";
+} from "@ledgerhq/live-common/platform/rawTypes";
 
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies/index";
-import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+} from "@ledgerhq/live-common/currencies/index";
+import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/types";
 
-import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
+import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
   accountToPlatformAccount,
   currencyToPlatformCurrency,
-} from "@ledgerhq/live-common/lib/platform/converters";
+} from "@ledgerhq/live-common/platform/converters";
 import {
   serializePlatformAccount,
   deserializePlatformTransaction,
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
-} from "@ledgerhq/live-common/lib/platform/serializers";
+} from "@ledgerhq/live-common/platform/serializers";
+import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
+
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -112,6 +119,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
+
+  const [device, setDevice] = useState();
 
   const uri = useMemo(() => {
     const url = new URL(manifest.url);
@@ -398,6 +407,186 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     [manifest, accounts],
   );
 
+  const startExchange = useCallback(
+    ({ exchangeType }: { exchangeType: number }) => {
+      tracking.platformStartExchangeRequested(manifest);
+
+      return new Promise((resolve, reject) => {
+        navigation.navigate(NavigatorName.PlatformExchange, {
+          screen: ScreenName.PlatformStartExchange,
+          params: {
+            request: {
+              exchangeType,
+            },
+            onResult: (result: {
+              startExchangeResult?: number,
+              startExchangeError?: Error,
+              device: Device,
+            }) => {
+              if (result.startExchangeError) {
+                tracking.platformStartExchangeFail(manifest);
+                reject(result.startExchangeError);
+              }
+
+              if (result.startExchangeResult) {
+                tracking.platformStartExchangeSuccess(manifest);
+                setDevice(result.device);
+                resolve(result.startExchangeResult);
+              }
+
+              const n = navigation.getParent() || navigation;
+              n.pop();
+            },
+          },
+        });
+      });
+    },
+    [manifest, navigation],
+  );
+
+  const completeExchange = useCallback(
+    ({
+      provider,
+      fromAccountId,
+      toAccountId,
+      transaction,
+      binaryPayload,
+      signature,
+      feesStrategy,
+      exchangeType,
+    }: {
+      provider: string,
+      fromAccountId: string,
+      toAccountId: string,
+      transaction: RawPlatformTransaction,
+      binaryPayload: string,
+      signature: string,
+      feesStrategy: string,
+      exchangeType: number,
+    }) => {
+      // Nb get a hold of the actual accounts, and parent accounts
+      const fromAccount = accounts.find(a => a.id === fromAccountId);
+      let fromParentAccount;
+
+      const toAccount = accounts.find(a => a.id === toAccountId);
+      let toParentAccount;
+
+      if (!fromAccount) {
+        return null;
+      }
+
+      if (exchangeType === 0x00 && !toAccount) {
+        // if we do a swap, a destination account must be provided
+        return null;
+      }
+
+      if (fromAccount.type === "TokenAccount") {
+        fromParentAccount = accounts.find(a => a.id === fromAccount.parentId);
+      }
+      if (toAccount && toAccount.type === "TokenAccount") {
+        toParentAccount = accounts.find(a => a.id === toAccount.parentId);
+      }
+
+      const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+      const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+
+      // eslint-disable-next-line no-param-reassign
+      transaction.family = mainFromAccount.currency.family;
+
+      const platformTransaction = deserializePlatformTransaction(transaction);
+
+      platformTransaction.feesStrategy = feesStrategy;
+
+      let processedTransaction = accountBridge.createTransaction(
+        mainFromAccount,
+      );
+      processedTransaction = accountBridge.updateTransaction(
+        processedTransaction,
+        platformTransaction,
+      );
+
+      tracking.platformCompleteExchangeRequested(manifest);
+      return new Promise((resolve, reject) => {
+        navigation.navigate(NavigatorName.PlatformExchange, {
+          screen: ScreenName.PlatformCompleteExchange,
+          params: {
+            request: {
+              exchangeType,
+              provider,
+              exchange: {
+                fromAccount,
+                fromParentAccount,
+                toAccount,
+                toParentAccount,
+              },
+              transaction: processedTransaction,
+              binaryPayload,
+              signature,
+              feesStrategy,
+            },
+            device,
+            onResult: (result: { operation?: any, error?: Error }) => {
+              if (result.error) {
+                tracking.platformStartExchangeFail(manifest);
+                reject(result.error);
+              }
+
+              if (result.operation) {
+                tracking.platformStartExchangeSuccess(manifest);
+                resolve(result.operation);
+              }
+
+              setDevice();
+              const n = navigation.getParent() || navigation;
+              n.pop();
+            },
+          },
+        });
+      });
+    },
+    [accounts, manifest, navigation, device],
+  );
+
+  const signMessage = useCallback(
+    ({ accountId, message }: { accountId: string, message: string }) => {
+      tracking.platformSignMessageRequested(manifest);
+
+      let formattedMessage: MessageData | null;
+
+      try {
+        const account = accounts.find(account => account.id === accountId);
+        invariant(account, "account not found");
+        formattedMessage = prepareMessageToSign(account, message);
+      } catch (error) {
+        tracking.platformSignMessageFail(manifest);
+        return Promise.reject(error);
+      }
+
+      return new Promise((resolve, reject) => {
+        navigation.navigate(NavigatorName.SignMessage, {
+          screen: ScreenName.SignSummary,
+          params: {
+            message: formattedMessage,
+            accountId,
+            onConfirmationHandler: message => {
+              tracking.platformSignMessageSuccess(manifest);
+              resolve(message);
+            },
+            onFailHandler: error => {
+              tracking.platformSignMessageFail(manifest);
+              reject(error);
+            },
+          },
+          onClose: () => {
+            tracking.platformSignMessageUserRefused(manifest);
+            reject(new UserRefusedOnDevice());
+          },
+        });
+      });
+    },
+    [accounts, manifest, navigation],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -406,6 +595,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       "account.receive": receiveOnAccount,
       "transaction.sign": signTransaction,
       "transaction.broadcast": broadcastTransaction,
+      "exchange.start": startExchange,
+      "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -414,6 +606,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       receiveOnAccount,
       signTransaction,
       broadcastTransaction,
+      startExchange,
+      completeExchange,
+      signMessage,
     ],
   );
 

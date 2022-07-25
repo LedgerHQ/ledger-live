@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/live-common/lib/types/account";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { Account } from "@ledgerhq/live-common/types/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
 import ExternalLink from "../../icons/ExternalLink";
 import Button from "../../components/wrappedUi/Button";

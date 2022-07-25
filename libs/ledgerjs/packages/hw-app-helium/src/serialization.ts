@@ -9,6 +9,7 @@ import {
 } from "@helium/transactions";
 import BigNumber from "bignumber.js";
 import BIPPath from "bip32-path";
+import JSLong from "long";
 
 const serializePath = (path: number[]): Buffer => {
   const buf = Buffer.alloc(1 + path.length * 4);
@@ -41,6 +42,12 @@ const serializeNumber = (amount: number | BigNumber | undefined): Buffer => {
   return Buffer.from(u8);
 };
 
+const serializeMemo = (memo: string) => {
+  const memoBuffer = Buffer.from(memo, "base64");
+  const memoLong = JSLong.fromBytes(Array.from(memoBuffer), true, true);
+  return Buffer.from(memoLong.toBytesLE());
+};
+
 export const serializePaymentV2 = (txn: PaymentV2): Buffer => {
   if (txn.payments.length > 1) throw "multiple payments are not supported";
 
@@ -54,7 +61,7 @@ export const serializePaymentV2 = (txn: PaymentV2): Buffer => {
     Buffer.from([payee.version]),
     Buffer.from([payee.keyType]),
     Buffer.from(payee.publicKey),
-    Buffer.from(memo || ""),
+    serializeMemo(memo || ""),
   ]);
 
   return Buffer.from(txSerialized);
@@ -88,7 +95,7 @@ export const serializeTokenBurnV1 = (txn: TokenBurnV1): Buffer => {
     serializeNumber(txn.amount),
     serializeNumber(txn.fee),
     serializeNumber(txn.nonce),
-    Buffer.from(txn.memo),
+    serializeMemo(txn.memo),
     Buffer.from([payee.version]),
     Buffer.from([payee.keyType]),
     Buffer.from(payee.publicKey),

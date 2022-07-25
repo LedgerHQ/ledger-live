@@ -20,7 +20,7 @@ import type { Modes as ERC20Modes } from "./erc20";
 import type { Modes as SendModes } from "./send";
 import type { Modes as ERC721Modes } from "./erc721";
 import type { Modes as ERC1155Modes } from "./erc1155";
-import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 const modules = {
   erc20,

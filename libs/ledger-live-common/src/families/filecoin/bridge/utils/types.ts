@@ -1,5 +1,5 @@
 export interface EstimatedFeesRequest {
-  to: string;
+  to?: string;
   from: string;
 }
 

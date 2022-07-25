@@ -8,17 +8,17 @@ import { first, tap, map, take } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { log, listen } from "@ledgerhq/logs";
 import WalletConnect from "@walletconnect/client";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { parseCallRequest } from "@ledgerhq/live-common/lib/walletconnect";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { parseCallRequest } from "@ledgerhq/live-common/walletconnect/index";
 import type {
   WCCallRequest,
   WCPayload,
-} from "@ledgerhq/live-common/lib/walletconnect";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import signMessage from "@ledgerhq/live-common/lib/hw/signMessage";
-import { apiForCurrency } from "@ledgerhq/live-common/lib/api/Ethereum";
-import { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
-import { Operation, SignedOperation } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/walletconnect/index";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
+import { apiForCurrency } from "@ledgerhq/live-common/api/Ethereum";
+import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+import { Operation, SignedOperation } from "@ledgerhq/live-common/types/index";
 type Opts = ScanCommonOpts &
   Partial<{
     walletConnectURI: string;

@@ -2,19 +2,19 @@ import fs from "fs";
 import invariant from "invariant";
 import { from, of, forkJoin } from "rxjs";
 import { map, reduce, first, catchError } from "rxjs/operators";
-import { setEnv } from "@ledgerhq/live-common/lib/env";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { setEnv } from "@ledgerhq/live-common/env";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   AccountDescriptor,
   scanDescriptors,
-} from "@ledgerhq/live-common/lib/families/bitcoin/descriptor";
+} from "@ledgerhq/live-common/families/bitcoin/descriptor";
 import {
   parseSatStackConfig,
   stringifySatStackConfig,
   editSatStackConfig,
   checkRPCNodeConfig,
   validateRPCNodeConfig,
-} from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
+} from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { deviceOpt } from "../scan";
 import { jsonFromFile } from "../stream";
 const bitcoin = getCryptoCurrencyById("bitcoin");

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { NFTMetadata } from "@ledgerhq/live-common/lib/types";
+import { NFTMetadata } from "@ledgerhq/live-common/types/index";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 import OpenSeaIcon from "../../icons/OpenSea";

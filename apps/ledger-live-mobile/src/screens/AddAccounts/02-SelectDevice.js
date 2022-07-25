@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import type { CryptoCurrency } from "@ledgerhq/live-common/types/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
@@ -15,7 +15,10 @@ import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
-import { setLastConnectedDevice } from "../../actions/settings";
+import {
+  setLastConnectedDevice,
+  setReadOnlyMode,
+} from "../../actions/settings";
 
 type Props = {
   navigation: any,
@@ -40,6 +43,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     device => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
+      dispatch(setReadOnlyMode(false));
     },
     [dispatch],
   );

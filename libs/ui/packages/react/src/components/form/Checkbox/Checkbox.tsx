@@ -17,7 +17,7 @@ const Input = styled.input`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   position: relative;
 
-  width: ${(p) => p.theme.space[7]}px;
+  min-width: ${(p) => p.theme.space[7]}px;
   height: ${(p) => p.theme.space[7]}px;
   appearance: none;
   border: 1px solid ${(props) => props.theme.colors.neutral.c90};

@@ -27,12 +27,13 @@ jobs:
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
-  generate_screenshots:
+  generate-screenshots:
     needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
     strategy:
       fail-fast: false
       matrix:
@@ -50,21 +51,8 @@ jobs:
         if: ${{ !github.event.inputs.ref }}
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2.1.0
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "2.7.x"
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-          bundler-cache: true
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
       - name: Checkout PR
         if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
         run: gh pr checkout ${{ github.event.inputs.number }}
@@ -74,36 +62,53 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: Bump npm to latest
-        run: npm i -g npm
       - name: TurboRepo local server
         uses: felixmosh/turborepo-gh-artifacts@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           server-token: "yolo"
-      - name: Install dependencies
-        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
-      - name: Install playwright dependencies
-        run: npx playwright install-deps
-      - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
-      - name: Run playwright tests [Linux => xvfb-run]
-        if: matrix.os == 'ubuntu-latest'
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots
-        shell: bash
-      - name: Run playwright tests
-        if: matrix.os != 'ubuntu-latest'
-        run: pnpm desktop test:playwright:update-snapshots
-        shell: bash
-      - name: status
-        id: status
-        run: echo "::set-output name=status::$(git status --porcelain | wc -l)"
-      - name: Commit snapshots
-        if: steps.status.outputs.status != 0
-        run: >
-          git add ./apps/ledger-live-desktop/tests/specs &&
-          git commit -m 'update screenshots (${{ matrix.os }})' &&
-          git restore . &&
-          git pull --rebase &&
-          git push ||
-          echo ""
+      - uses: ./tools/actions/composites/update-snapshots-desktop
+        id: update-snapshots
+        with:
+          os: ${{ matrix.os }}
+
+  generate-screenshots-mac-internal:
+    needs: [is-org-member]
+    if: ${{ fromJSON(needs.is-org-member.outputs.is-org-member) }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+    runs-on: [ledger-live, macos]
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
+        with:
+          fetch-depth: 0
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_python: true
+          skip_ruby: true
+      - name: Checkout PR
+        if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
+        run: gh pr checkout ${{ github.event.inputs.number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+      - uses: ./tools/actions/composites/update-snapshots-desktop
+        id: update-snapshots
+        with:
+          os: "macos-latest"

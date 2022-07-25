@@ -2,8 +2,8 @@
 
 import type { Observable } from "rxjs";
 import { from } from "rxjs";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
-import manager from "@ledgerhq/live-common/lib/manager";
+import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/types/manager";
+import manager from "@ledgerhq/live-common/manager/index";
 
 type Result = ?FirmwareUpdateContext;
 

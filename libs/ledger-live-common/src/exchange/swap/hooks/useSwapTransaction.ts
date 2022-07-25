@@ -1,24 +1,24 @@
-import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
-import useBridgeTransaction, {
-  Result as UseBridgeTransactionReturnType,
-} from "../../../bridge/useBridgeTransaction";
-import type {
-  Account,
-  TokenAccount,
-  TokenCurrency,
-  CryptoCurrency,
-} from "../../../types";
-import { ExchangeRate } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
+import { BigNumber } from "bignumber.js";
+import { useMemo } from "react";
 import {
   RatesReducerState,
   useFromState,
   useProviderRates,
   useToState,
 } from ".";
+import useBridgeTransaction, {
+  Result as UseBridgeTransactionReturnType,
+} from "../../../bridge/useBridgeTransaction";
+import type {
+  Account,
+  CryptoCurrency,
+  TokenAccount,
+  TokenCurrency,
+} from "../../../types";
+import { ExchangeRate } from "../types";
 import { useReverseAccounts } from "./useReverseAccounts";
+import { useUpdateMaxAmount } from "./useUpdateMaxAmount";
 
 export type SwapSelectorStateType = {
   currency: null | undefined | TokenCurrency | CryptoCurrency;
@@ -65,6 +65,7 @@ export type OnNoRatesCallback = (arg: {
 export type SetExchangeRateCallback = (
   exchangeRate?: ExchangeRate | null
 ) => void;
+export type SetIsSendMaxLoading = (boolean) => void;
 
 export const useFromAmountError = (
   errors: Record<string, Error | undefined>
@@ -82,16 +83,16 @@ export const useFromAmountError = (
 
 export const useSwapTransaction = ({
   accounts,
-  exchangeRate,
   setExchangeRate,
+  setIsSendMaxLoading,
   defaultCurrency = selectorStateDefaultValues.currency,
   defaultAccount = selectorStateDefaultValues.account,
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
 }: {
   accounts?: Account[];
-  exchangeRate?: ExchangeRate;
   setExchangeRate?: SetExchangeRateCallback;
+  setIsSendMaxLoading?: SetIsSendMaxLoading;
   defaultCurrency?: SwapSelectorStateType["currency"];
   defaultAccount?: SwapSelectorStateType["account"];
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
@@ -136,12 +137,12 @@ export const useSwapTransaction = ({
     parentAccount: fromParentAccount,
     transaction,
     feesStrategy: transaction?.feesStrategy,
+    setIsSendMaxLoading,
   });
 
   const { rates, refetchRates } = useProviderRates({
     fromState,
     toState,
-    exchangeRate,
     transaction,
     onNoRates,
     setExchangeRate,

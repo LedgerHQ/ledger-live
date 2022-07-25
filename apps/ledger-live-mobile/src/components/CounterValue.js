@@ -2,11 +2,11 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { Currency } from "@ledgerhq/live-common/types/index";
 import {
   useCalculate,
   useCountervaluesPolling,
-} from "@ledgerhq/live-common/lib/countervalues/react";
+} from "@ledgerhq/live-common/countervalues/react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
