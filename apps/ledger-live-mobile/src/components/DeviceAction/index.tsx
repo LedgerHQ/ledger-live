@@ -35,29 +35,50 @@ type Props<R, H, P> = {
   onResult?: (_: any) => Promise<void> | void;
   onError?: (_: any) => Promise<void> | void;
   renderOnResult?: (_: P) => React.ReactNode;
-  action: Action<R, H, P>;
+  action?: Action<R, H, P>;
+  status?: any;
   request?: R;
   device: Device;
+  payload?: any;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
 };
+
 export default function DeviceAction<R, H, P>({
   action,
   request = null,
   device: selectedDevice,
+  ...props
+}: Props<R, H, P>): JSX.Element {
+  const status: any = action.useHook(selectedDevice, request);
+  const payload = action.mapResult(status);
+
+  return (
+    <DeviceActionDefaultRendering
+      status={status}
+      request={request}
+      payload={payload}
+      {...props}
+    />
+  );
+}
+
+export function DeviceActionDefaultRendering({
   onResult,
   onError,
   renderOnResult,
   onSelectDeviceLink,
   analyticsPropertyFlow = "unknown",
-}: Props<R, H, P>) {
+  status,
+  request,
+  payload,
+}: Props<R, H, P>): JSX.Element {
   const { colors, dark } = useTheme();
   const dispatch = useDispatch();
   const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation();
-  // TODO: fix flow type
-  const status: any = action.useHook(selectedDevice, request);
+
   const {
     appAndVersion,
     device,
@@ -96,6 +117,7 @@ export default function DeviceAction<R, H, P>({
     progress,
     listingApps,
   } = status;
+
   useEffect(() => {
     if (deviceInfo) {
       dispatch(
@@ -111,7 +133,7 @@ export default function DeviceAction<R, H, P>({
     if (error && onError) {
       onError(error);
     }
-  }, [error]);
+  }, [error, onError]);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -140,7 +162,7 @@ export default function DeviceAction<R, H, P>({
   if (requestQuitApp) {
     return renderRequestQuitApp({
       t,
-      device: selectedDevice,
+      device,
       colors,
       theme,
     });
@@ -190,7 +212,7 @@ export default function DeviceAction<R, H, P>({
     const wording = allowManagerRequestedWording;
     return renderAllowManager({
       t,
-      device: selectedDevice,
+      device,
       wording,
       colors,
       theme,
@@ -201,7 +223,7 @@ export default function DeviceAction<R, H, P>({
     return renderAllowLanguageInstallation({
       t,
       theme,
-      device: selectedDevice,
+      device,
     });
   }
 
@@ -220,7 +242,6 @@ export default function DeviceAction<R, H, P>({
     !completeExchangeError
   ) {
     return renderExchange({
-      // $FlowFixMe
       exchangeType: request?.exchangeType,
       t,
       device,
@@ -231,7 +252,7 @@ export default function DeviceAction<R, H, P>({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     return renderConfirmSwap({
       t,
-      device: selectedDevice,
+      device,
       colors,
       theme,
       transaction: request?.transaction,
@@ -245,7 +266,7 @@ export default function DeviceAction<R, H, P>({
   if (initSellRequested && !initSellResult && !initSellError) {
     return renderConfirmSell({
       t,
-      device: selectedDevice,
+      device,
     });
   }
 
@@ -255,9 +276,8 @@ export default function DeviceAction<R, H, P>({
     return renderAllowOpeningApp({
       t,
       navigation,
-      device: selectedDevice,
+      device,
       wording,
-      // $FlowFixMe
       tokenContext: request?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
@@ -311,7 +331,7 @@ export default function DeviceAction<R, H, P>({
   if ((!isLoading && !device) || unresponsive) {
     return renderConnectYourDevice({
       t,
-      device: selectedDevice,
+      device,
       unresponsive,
       colors,
       theme,
@@ -335,7 +355,6 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    // $FlowFixMe
     const { account, parentAccount, status, transaction } = request;
 
     if (account && status && transaction) {
@@ -361,7 +380,6 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && signMessageRequested) {
-    // $FlowFixMe
     const { account } = request;
     return (
       <>
@@ -389,8 +407,6 @@ export default function DeviceAction<R, H, P>({
       theme,
     });
   }
-
-  const payload = action.mapResult(status);
 
   if (!payload) {
     return null;
