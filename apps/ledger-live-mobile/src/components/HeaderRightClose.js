@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
@@ -16,6 +16,8 @@ type Props = {
   onClose: Function,
 };
 
+const emptyFunction = () => {};
+
 export default function HeaderRightClose({
   color,
   preferDismiss = true,
@@ -23,7 +25,7 @@ export default function HeaderRightClose({
   withConfirmation,
   confirmationTitle,
   confirmationDesc,
-  onClose = () => {},
+  onClose = emptyFunction,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -33,7 +35,7 @@ export default function HeaderRightClose({
   );
   const [onModalHide, setOnModalHide] = useState();
 
-  function close(): void {
+  const close = useCallback(() => {
     if (skipNavigation) {
       // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
@@ -52,28 +54,28 @@ export default function HeaderRightClose({
     navigation.goBack();
 
     onClose();
-  }
+  }, [navigation, onClose, preferDismiss, skipNavigation]);
 
-  function onPress(): void {
+  const openConfirmationModal = useCallback(() => {
+    setIsConfirmationModalOpened(true);
+  }, []);
+
+  const onPress = useCallback(() => {
     if (withConfirmation) {
       openConfirmationModal();
     } else {
       close();
     }
-  }
+  }, [close, openConfirmationModal, withConfirmation]);
 
-  function openConfirmationModal(): void {
-    setIsConfirmationModalOpened(true);
-  }
-
-  function closeConfirmationModal(): void {
+  const closeConfirmationModal = useCallback(() => {
     setIsConfirmationModalOpened(false);
-  }
+  }, []);
 
-  function onConfirm() {
+  const onConfirm = useCallback(() => {
     setOnModalHide(close);
     setIsConfirmationModalOpened(false);
-  }
+  }, [close]);
 
   return (
     <Touchable

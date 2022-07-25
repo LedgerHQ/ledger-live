@@ -560,6 +560,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         return Promise.reject(error);
       }
 
+      tracking.platformSignMessageRequested(manifest);
       return new Promise((resolve, reject) => {
         navigation.navigate(NavigatorName.SignMessage, {
           screen: ScreenName.SignSummary,

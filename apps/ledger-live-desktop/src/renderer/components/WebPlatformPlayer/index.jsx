@@ -420,6 +420,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         return Promise.reject(error);
       }
 
+      tracking.platformSignMessageRequested(manifest);
       return new Promise((resolve, reject) => {
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {

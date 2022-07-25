@@ -122,6 +122,10 @@ export function platformCompleteExchangeFail(manifest: AppManifest) {
   track("Platform complete Exchange Nonce fail", getEventData(manifest));
 }
 
+export function platformSignMessageRequested(manifest: AppManifest) {
+  track("Platform sign message requested", getEventData(manifest));
+}
+
 export function platformSignMessageSuccess(manifest: AppManifest) {
   track("Platform sign message success", getEventData(manifest));
 }
