@@ -9,6 +9,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsSelector } from "../reducers/accounts";
 import {
   ratingsModalOpenSelector,
+  ratingsModalLockedSelector,
   ratingsCurrentRouteNameSelector,
   ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
@@ -21,6 +22,7 @@ import {
 } from "../actions/ratings";
 import { languageSelector } from "../reducers/settings";
 import { track } from "../analytics";
+import { setNotificationsModalLocked } from "../actions/notifications";
 
 export type RatingsHappyMoment = {
     /** Name of the route that will trigger the rating flow */
@@ -84,6 +86,7 @@ const useRatings = () => {
   const ratingsFeature = useFeature("ratings");
 
   const isRatingsModalOpen = useSelector(ratingsModalOpenSelector);
+  const isRatingsModalLocked = useSelector(ratingsModalLockedSelector);
   const ratingsOldRoute = useSelector(ratingsCurrentRouteNameSelector);
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
@@ -97,9 +100,15 @@ const useRatings = () => {
 
   const setRatingsModalOpenCallback = useCallback(
     isRatingsModalOpen => {
-      dispatch(setRatingsModalOpen(isRatingsModalOpen));
+      if (!isRatingsModalOpen) {
+        dispatch(setRatingsModalOpen(isRatingsModalOpen));
+        dispatch(setNotificationsModalLocked(false));
+      } else if (!isRatingsModalLocked) {
+        dispatch(setRatingsModalOpen(isRatingsModalOpen));
+        dispatch(setNotificationsModalLocked(true));
+      }
     },
-    [dispatch],
+    [dispatch, isRatingsModalLocked],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -183,6 +192,7 @@ const useRatings = () => {
   const onRouteChange = useCallback(
     ratingsNewRoute => {
       if (ratingsHappyMoment?.timeout) {
+        dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
@@ -190,6 +200,7 @@ const useRatings = () => {
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
+          dispatch(setNotificationsModalLocked(true));
           const timeout = setTimeout(() => {
             setRatingsModalOpenCallback(true);
           }, happyMoment.timer);

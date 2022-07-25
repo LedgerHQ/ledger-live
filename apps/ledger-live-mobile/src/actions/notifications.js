@@ -7,6 +7,11 @@ export const setNotificationsModalOpen = (isPushNotificationsModalOpen: boolean)
   isPushNotificationsModalOpen,
 });
 
+export const setNotificationsModalLocked = (isPushNotificationsModalLocked: boolean) => ({
+  type: "NOTIFICATIONS_SET_MODAL_LOCKED",
+  isPushNotificationsModalLocked,
+});
+
 export const setNotificationsModalType = (notificationsModalType: string) => ({
   type: "NOTIFICATIONS_SET_MODAL_TYPE",
   notificationsModalType,

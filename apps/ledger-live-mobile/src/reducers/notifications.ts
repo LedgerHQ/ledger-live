@@ -15,10 +15,16 @@ export type NotificationsState = {
   eventTriggered?: EventTrigger,
   /** Data related to the user's app usage. We use this data to prompt the push notifications modal on certain conditions only */
   dataOfUser?: DataOfUser,
+  /**
+   * Used to avoid having multiple different modals opened at the same time (for example the push notifications and the ratings ones)
+   * If true, it means another modal is already opened or being opened
+   */
+  isPushNotificationsModalLocked: boolean,
 };
 
 const initialState: NotificationsState = {
   isPushNotificationsModalOpen: false,
+  isPushNotificationsModalLocked: false,
   notificationsModalType: "generic",
   currentRouteName: null,
   eventTriggered: null,
@@ -32,6 +38,13 @@ const handlers: Object = {
   ) => ({
     ...state,
     isPushNotificationsModalOpen,
+  }),
+  NOTIFICATIONS_SET_MODAL_LOCKED: (
+    state: NotificationsState,
+    { isPushNotificationsModalLocked }: { isPushNotificationsModalLocked: boolean },
+  ) => ({
+    ...state,
+    isPushNotificationsModalLocked,
   }),
   NOTIFICATIONS_SET_MODAL_TYPE: (
     state: NotificationsState,
@@ -66,6 +79,9 @@ const handlers: Object = {
 // Selectors
 export const notificationsModalOpenSelector = (s: State) =>
   s.notifications.isPushNotificationsModalOpen;
+
+export const notificationsModalLockedSelector = (s: State) =>
+  s.notifications.isPushNotificationsModalLocked;
 
 export const notificationsModalTypeSelector = (s: State) =>
   s.notifications.notificationsModalType;

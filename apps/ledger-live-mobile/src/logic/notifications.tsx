@@ -15,6 +15,7 @@ import {
   notificationsCurrentRouteNameSelector,
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
+  notificationsModalLockedSelector,
 } from "../reducers/notifications";
 import {
   setNotificationsModalOpen,
@@ -25,6 +26,7 @@ import {
 } from "../actions/notifications";
 import { notificationsSelector } from "../reducers/settings";
 import { ScreenName, NavigatorName } from "../const";
+import { setRatingsModalLocked } from "../actions/ratings";
 
 export type EventTrigger = {
     /** Name of the route that will trigger the push notification modal */
@@ -93,6 +95,7 @@ const useNotifications = () => {
 
     const [notificationsToken, setNotificationsToken] = useState();
     const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
+    const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
     const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
     const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
     const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
@@ -152,15 +155,17 @@ const useNotifications = () => {
           if (!isModalOpen) {
             dispatch(setNotificationsModalType("generic"));
             dispatch(setNotificationsModalOpen(isModalOpen));
-          } else {
+            dispatch(setRatingsModalLocked(false));
+          } else if (!isPushNotificationsModalLocked) {
             getIsNotifEnabled().then(isNotifEnabled => {
                 if (!isNotifEnabled || !notificationsSettings.allowed) {
                     dispatch(setNotificationsModalOpen(isModalOpen)); 
+                    dispatch(setRatingsModalLocked(true));
                 }
             });
           }
         },
-        [dispatch, notificationsSettings.allowed],
+        [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
     );
     
     const areConditionsMet = useCallback(() => {
@@ -231,12 +236,14 @@ const useNotifications = () => {
         newRoute => {
           if (pushNotificationsEventTriggered?.timeout) {
             clearTimeout(pushNotificationsEventTriggered?.timeout);
+            dispatch(setRatingsModalLocked(false));
           }
     
           if (!areConditionsMet()) return;
 
           for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
             if (isEventTriggered(eventTrigger, newRoute)) {
+              dispatch(setRatingsModalLocked(true));
               const timeout = setTimeout(() => {
                 setPushNotificationsModalOpenCallback(true);
               }, eventTrigger.timer);
@@ -295,6 +302,7 @@ const useNotifications = () => {
         if (pushNotificationsDataOfUser?.doNotAskAgain) return;
         const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
         if (marketCoinStarredParams?.enabled) {
+            dispatch(setRatingsModalLocked(true));
             const timeout = setTimeout(() => {
                 dispatch(setNotificationsModalType("market"));
                 setPushNotificationsModalOpenCallback(true);
@@ -312,6 +320,7 @@ const useNotifications = () => {
     const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
         const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
         if (justFinishedOnboardingParams?.enabled) {
+            dispatch(setRatingsModalLocked(true));
             const timeout = setTimeout(() => {
                 setPushNotificationsModalOpenCallback(true);
             }, justFinishedOnboardingParams?.timer);
