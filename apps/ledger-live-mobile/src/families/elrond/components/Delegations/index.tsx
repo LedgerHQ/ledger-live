@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Delegations = props => {
+const Delegations = (props: any) => {
   const { delegations, validators, account, onDrawer } = props;
   const { t } = useTranslation();
 

@@ -11,12 +11,12 @@ import { ScreenName } from "../../../../../const";
 import PreventNativeBack from "../../../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../../../components/ValidateSuccess";
 
-type Props = {
+interface Props {
   navigation: any,
   route: { params: RouteParams },
 };
 
-type RouteParams = {
+interface RouteParams {
   accountId: string,
   deviceId: string,
   transaction: any,

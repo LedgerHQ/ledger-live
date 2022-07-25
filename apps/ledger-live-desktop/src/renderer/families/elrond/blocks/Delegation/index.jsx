@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
-const TableLine: ThemedComponent<*> = styled(Box).attrs(() => ({
+const TableLine = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   horizontal: true,
@@ -21,14 +20,14 @@ const TableLine: ThemedComponent<*> = styled(Box).attrs(() => ({
   }
 `;
 
-const Wrapper: ThemedComponent<*> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
 
-const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs(p => ({
+const Column = styled(TableLine).attrs(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
@@ -44,7 +43,7 @@ const Column: ThemedComponent<{ clickable?: boolean }> = styled(TableLine).attrs
       : ``}
 `;
 
-const Ellipsis: ThemedComponent<*> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -52,12 +51,12 @@ const Ellipsis: ThemedComponent<*> = styled.div`
   white-space: nowrap;
 `;
 
-const Withdraw: ThemedComponent<*> = styled.div`
+const Withdraw = styled.div`
   line-height: 1;
   cursor: pointer;
 `;
 
-const Divider: ThemedComponent<*> = styled.div`
+const Divider = styled.div`
   width: 100%;
   height: 1px;
   margin-bottom: ${p => p.theme.space[1]}px;

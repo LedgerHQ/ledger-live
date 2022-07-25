@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Unbonding = props => {
+const Unbonding = (props: any) => {
   const {
     last,
     contract,

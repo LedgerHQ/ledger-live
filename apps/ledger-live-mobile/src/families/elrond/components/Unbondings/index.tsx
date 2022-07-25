@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import AccountSectionLabel from "../../../../components/AccountSectionLabel";
 import Unbonding from "./components/Unbonding";
@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Unbondings = props => {
+const Unbondings = (props: any) => {
   const { unbondings, account, onDrawer, delegations } = props;
   const { t } = useTranslation();
 

@@ -1,5 +1,4 @@
 // @flow
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { compose } from "redux";
@@ -7,9 +6,9 @@ import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
+import { addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 
 import type { Operation } from "@ledgerhq/live-common/lib/types";

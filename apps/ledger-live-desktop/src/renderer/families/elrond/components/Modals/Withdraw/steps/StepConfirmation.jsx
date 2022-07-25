@@ -2,9 +2,8 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -14,12 +13,10 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import { StepProps } from "../types";
-
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
-const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
@@ -27,12 +24,7 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  optimisticOperation,
-  error,
-  signed,
-  transaction,
-}: StepProps & { theme: * }) {
+function StepConfirmation({ optimisticOperation, error, signed, transaction }) {
   if (optimisticOperation) {
     const amount = `${denominate({
       input: String(transaction.amount),
@@ -84,7 +76,7 @@ export function StepConfirmationFooter({
   error,
   onClose,
   optimisticOperation,
-}: StepProps) {
+}) {
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]

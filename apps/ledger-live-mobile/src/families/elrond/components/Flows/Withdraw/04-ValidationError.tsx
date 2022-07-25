@@ -9,17 +9,17 @@ import { urls } from "../../../../../config/urls";
 
 const forceInset = { bottom: "always" };
 
-type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
-};
+interface RouteParams {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+}
 
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-};
+interface Props {
+  navigation: any;
+  route: { params: RouteParams };
+}
 
 const styles = StyleSheet.create({
   root: {

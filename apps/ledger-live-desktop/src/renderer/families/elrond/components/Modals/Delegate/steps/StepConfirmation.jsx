@@ -1,12 +1,10 @@
 // @flow
-
 import React from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -19,7 +17,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 
 import { StepProps } from "../types";
 
-const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",

@@ -9,17 +9,17 @@ import { urls } from "../../../../../config/urls";
 
 const forceInset = { bottom: "always" };
 
-type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
-};
+interface RouteParams {
+  accountId: string;
+  deviceId: string;
+  transaction: any;
+  error: Error;
+}
 
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-};
+interface Props {
+  navigation: any;
+  route: { params: RouteParams };
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -49,9 +49,9 @@ const Error = (props: Props) => {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="ElrondUndelegation" name="ValidationError" />
+      <TrackScreen category="CosmosDelegation" name="ValidationError" />
 
-      <ValidateError {...{ error, onClose, onContactUs, onRetry }} />
+      <ValidateError {...{ error, onRetry, onContactUs, onClose }} />
     </SafeAreaView>
   );
 };

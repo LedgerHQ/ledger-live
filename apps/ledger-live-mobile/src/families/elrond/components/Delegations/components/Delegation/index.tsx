@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Delegation = props => {
+const Delegation = (props: any) => {
   const {
     last,
     contract,
