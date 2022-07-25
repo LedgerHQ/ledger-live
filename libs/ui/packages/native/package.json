@@ -27,7 +27,7 @@
   "scripts": {
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
     "build:storybook": "pnpm build-storybook -o web-build",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
@@ -43,8 +43,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
+    "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "@types/color": "^3.0.3",
     "@types/react": "^17.0.39",

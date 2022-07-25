@@ -51,7 +51,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006 -s ./src",
     "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui -F crypto-icons-ui build",
     "build:storybook": "build-storybook -s ./src",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",
