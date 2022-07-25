@@ -32,8 +32,6 @@ jobs:
     if: ${{ needs.is-org-member.outputs.is-org-member }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       INSTRUMENT_BUILD: true
     strategy:
       fail-fast: false
@@ -78,12 +76,17 @@ jobs:
           git config user.name "Team Live"
       - name: Bump npm to latest
         run: npm i -g npm
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
         run: npx playwright install-deps
       - name: Build dependencies
-        run: pnpm turbo run ledger-live-desktop#build:testing
+        run: pnpm turbo run ledger-live-desktop#build:testing --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: Run playwright tests [Linux => xvfb-run]
         if: matrix.os == 'ubuntu-latest'
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:update-snapshots

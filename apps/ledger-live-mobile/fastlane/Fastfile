@@ -109,7 +109,7 @@ platform :ios do
 
     build_number = latest_testflight_build_number(
       version: trim_version_number(package["version"]),
-      app_identifier: MY_APP_BUNDLE_ID
+      app_identifier: "com.ledger.live"
     )
 
     increment_build_number({

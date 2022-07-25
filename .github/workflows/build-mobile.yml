@@ -103,6 +103,11 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
         run: cd apps/ledger-live-mobile && npm version $VERSION
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -110,9 +115,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:llm
+        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
@@ -176,6 +179,11 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
         run: cd apps/ledger-live-mobile && npm version $VERSION
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
       - name: build the app
         env:
           ANDROID_KEYSTORE_PASS: staging
@@ -183,9 +191,7 @@ jobs:
           ANDROID_KEY_PASS: staging
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:llm
+        run: pnpm build:llm --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - uses: ledgerhq/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:

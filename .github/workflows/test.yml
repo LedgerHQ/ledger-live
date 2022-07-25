@@ -22,8 +22,6 @@ jobs:
     name: "Test Libraries"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       FORCE_COLOR: 3
       CI_OS: ${{ matrix.os }}
 
@@ -63,15 +61,20 @@ jobs:
         run: |
           npm i -g npm
           npm --version
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries (Pull Request)
         if: ${{ github.event_name != 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter="...[origin/${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref || github.event.inputs.since_branch || 'develop' }}]" --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         shell: bash
       - name: Build and Test affected libraries (Pull Request)
         if: ${{ github.event_name == 'push' }}
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter=[HEAD^1]
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!live-common-tools" --filter=[HEAD^1] --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3

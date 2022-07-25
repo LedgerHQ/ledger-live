@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.1.3
+
+### Patch Changes
+
+- Updated dependencies [6bcf42ecd]
+  - @ledgerhq/live-common@22.2.1
+
+## 3.1.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [6bcf42ecd]
+  - @ledgerhq/live-common@22.2.1-hotfix.0
+
 ## 3.1.2
 
 ### Patch Changes

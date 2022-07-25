@@ -71,7 +71,12 @@ pnpm dev:lld
 # Build & package the whole app
 # Creates a .dmg for Mac, .exe installer for Windows, or .AppImage for Linux
 # Output files will be created in dist/ folder
-pnpm desktop dist
+
+# build all the required dependencies
+pnpm build:lld:deps
+
+# alias to trigger the `dist` script in ledger-live-desktop project 
+pnpm desktop dist 
 ```
 
 ## Debug

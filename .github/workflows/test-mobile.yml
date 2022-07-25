@@ -17,8 +17,6 @@ jobs:
     name: "Ledger Live Mobile Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       FORCE_COLOR: 3
 
     runs-on: ubuntu-latest
