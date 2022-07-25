@@ -22,6 +22,8 @@ export const urls = {
     zh:
       "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
   },
+  ratingsContact:
+    "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   buyNanoX:
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
