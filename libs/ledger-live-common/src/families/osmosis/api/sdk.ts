@@ -46,7 +46,7 @@ function getOperationType(
 /**
  * Map a send transaction as returned by the indexer to a Ledger Live Operation
  */
-const convertTransactionToOperation = (
+export const convertTransactionToOperation = (
   accountId: string,
   type: OperationType,
   value: BigNumber,
