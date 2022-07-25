@@ -171,6 +171,7 @@ Array [
   "ethereum/erc20/jul",
   "ethereum/erc20/breeze",
   "ethereum/erc20/banker_token",
+  "velas",
   "ethereum/erc20/zeon",
   "ethereum/erc20/gaptoken",
   "ethereum/erc20/cryptoindex_100",
