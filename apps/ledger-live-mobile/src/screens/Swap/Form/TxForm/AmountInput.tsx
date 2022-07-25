@@ -28,7 +28,9 @@ export function AmountInput({ value, onChange, editable, unit, error }: Props) {
           dynamicFontRatio={0.3}
         />
       ) : (
-        <Text variant="h1">-</Text>
+        <Text variant="h1" color="neutral.c70">
+          -
+        </Text>
       )}
 
       <Text color="error.c100">

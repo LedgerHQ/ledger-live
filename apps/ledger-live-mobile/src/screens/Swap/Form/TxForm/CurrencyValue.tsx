@@ -12,13 +12,14 @@ import CounterValue from "../../../components/CounterValue";
 interface Props {
   currency?: CryptoCurrency | TokenCurrency;
   amount?: BigNumber;
+  isLoading?: boolean;
 }
 
-export function CurrencyValue({ currency, amount }: Props) {
-  if (!currency || !amount) {
+export function CurrencyValue({ currency, amount, isLoading }: Props) {
+  if (!currency || !amount || isLoading) {
     return (
       <Flex alignItems="flex-end">
-        <Text>0</Text>
+        <Text color="neutral.c70">-</Text>
       </Flex>
     );
   }

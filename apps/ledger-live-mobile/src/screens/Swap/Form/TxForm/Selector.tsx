@@ -1,7 +1,10 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/types/index";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { useTranslation } from "react-i18next";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 
@@ -44,10 +47,19 @@ export function Selector({
           </Flex>
 
           <Flex marginLeft={4} marginRight={4}>
-            <Text variant="h3" marginBottom={2}>
+            <Text
+              variant="h3"
+              marginBottom={2}
+              color={title ? "neutral.c100" : "neutral.c70"}
+            >
               {title ?? t("transfer.swap2.form.loading")}
             </Text>
-            <Text variant="subtitle">{subTitle}</Text>
+            <Text
+              variant="subtitle"
+              color={title ? "neutral.c100" : "neutral.c70"}
+            >
+              {subTitle}
+            </Text>
           </Flex>
         </Flex>
 

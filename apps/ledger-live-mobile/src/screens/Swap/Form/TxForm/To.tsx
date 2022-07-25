@@ -76,6 +76,7 @@ export function To({ swapTx, provider, pairs, exchangeRate }: Props) {
           <CurrencyValue
             currency={swapTx.swap.to.currency}
             amount={exchangeRate?.toAmount}
+            isLoading={swapTx.swap.rates.status === "loading"}
           />
         </Flex>
       </Flex>
