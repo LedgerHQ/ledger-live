@@ -7,6 +7,7 @@ import bep20tokens from "../data/bep20";
 import polygonTokens from "../data/polygon-erc20";
 import asatokens from "../data/asa";
 import esdttokens from "../data/esdt";
+// import hnttokens from "../data/hnt";
 //import spltokens from "../data/spl";
 const emptyArray = [];
 const tokensArray: TokenCurrency[] = [];

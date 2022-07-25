@@ -24,6 +24,7 @@ import IconSupply from "~/renderer/icons/Supply";
 import IconWithdraw from "~/renderer/icons/Withdraw";
 import IconLink from "~/renderer/icons/LinkIcon";
 import IconCoins from "~/renderer/icons/Coins";
+import IconTransfer from "~/renderer/icons/Transfer";
 
 import Freeze from "~/renderer/icons/Freeze";
 import Unfreeze from "~/renderer/icons/Unfreeze";
@@ -100,6 +101,9 @@ const iconsComponent = {
   DELEGATE: IconDelegate,
   REDELEGATE: IconRedelegate,
   UNDELEGATE: IconUndelegate,
+  STAKE: IconDelegate,
+  UNSTAKE: IconUndelegate,
+  TRANSFER: IconTransfer,
   REVEAL: IconEye,
   CREATE: IconPlus,
   NONE: IconSend,
