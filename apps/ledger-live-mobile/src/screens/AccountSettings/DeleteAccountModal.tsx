@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 import { BottomDrawer, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import Button from "../../components/wrappedUi/Button";

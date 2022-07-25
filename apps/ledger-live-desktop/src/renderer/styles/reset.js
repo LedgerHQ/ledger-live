@@ -1,4 +1,4 @@
-module.exports = `* {
+export default `* {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
   margin: 0;

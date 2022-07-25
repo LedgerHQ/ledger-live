@@ -3,13 +3,16 @@ import { useSelector } from "react-redux";
 import {
   accountWithMandatoryTokens,
   flattenAccounts,
-} from "@ledgerhq/live-common/lib/account/helpers";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/account/helpers";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { Flex } from "@ledgerhq/native-ui";
 import {
   isAccountEmpty,
   getAccountSpendableBalance,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { accountsSelector } from "../reducers/accounts";
 import { TrackScreen } from "../analytics";

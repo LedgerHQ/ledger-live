@@ -7,7 +7,7 @@ import Transport, {
   Device as TransportDevice,
 } from "@ledgerhq/hw-transport";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
-import hidFraming from "@ledgerhq/devices/lib/hid-framing";
+import hidFraming from "@ledgerhq/devices/hid-framing";
 import { identifyUSBProductId, identifyProductName } from "@ledgerhq/devices";
 import { DeviceModel } from "@ledgerhq/devices";
 import {

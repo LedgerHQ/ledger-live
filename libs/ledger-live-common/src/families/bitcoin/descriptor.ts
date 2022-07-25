@@ -13,6 +13,8 @@ import {
 } from "../../derivation";
 import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "../../hw/getAddress";
+import { decodeAccountId } from "../../account/accountId";
+
 export type AccountDescriptor = {
   internal: string;
   external: string;
@@ -23,6 +25,7 @@ const perDerivation: Partial<
   "": (fragment) => `pkh(${fragment})`,
   segwit: (fragment) => `sh(wpkh(${fragment}))`,
   native_segwit: (fragment) => `wpkh(${fragment})`,
+  taproot: (fragment) => `tr(${fragment})`,
 };
 
 function makeFingerprint(compressedPubKey) {
@@ -56,7 +59,8 @@ export function inferDescriptorFromAccount(
   account: Account
 ): AccountDescriptor | null | undefined {
   if (account.currency.family !== "bitcoin") return;
-  const { xpub, derivationMode, seedIdentifier, currency, index } = account;
+  const { id, derivationMode, seedIdentifier, currency, index } = account;
+  const xpub = decodeAccountId(id).xpubOrAddress;
   const fingerprint = makeFingerprint(
     compressPublicKeySECP256(Buffer.from(seedIdentifier, "hex"))
   );

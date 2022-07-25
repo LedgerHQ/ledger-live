@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
 
@@ -44,6 +44,8 @@ jobs:
         run: pnpm changeset pre exit
 
       - name: versioning
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
 
       - name: commit

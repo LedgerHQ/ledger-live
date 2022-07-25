@@ -4,17 +4,17 @@ import { mergeMap } from "rxjs/operators";
 import type {
   DeviceInfo,
   FirmwareUpdateContext,
-} from "@ledgerhq/live-common/lib/types/manager";
+} from "@ledgerhq/live-common/types/manager";
 import { UnknownMCU } from "@ledgerhq/errors";
-import ManagerAPI from "@ledgerhq/live-common/lib/api/Manager";
-import network from "@ledgerhq/live-common/lib/network";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { getProviderId } from "@ledgerhq/live-common/lib/manager/provider";
-import manager from "@ledgerhq/live-common/lib/manager";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
-import prepareFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
-import mainFirmwareUpdate from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
+import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import network from "@ledgerhq/live-common/network";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { getProviderId } from "@ledgerhq/live-common/manager/provider";
+import manager from "@ledgerhq/live-common/manager/index";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
+import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { deviceOpt } from "../scan";
 
 const listFirmwareOSU = async () => {

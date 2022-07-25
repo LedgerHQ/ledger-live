@@ -1,26 +1,42 @@
-import invariant from "invariant";
 import {
   DeviceAppVerifyNotSupported,
   UserRefusedAddress,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { Observable } from "rxjs";
-import type { Resolver } from "./types";
+import invariant from "invariant";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { from, Observable } from "rxjs";
 import perFamily from "../../generated/hw-signMessage";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { from } from "rxjs";
-import { createAction as createAppAction } from "../actions/app";
+import { Account } from "../../types";
 import type { AppRequest, AppState } from "../actions/app";
+import { createAction as createAppAction } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData, Result } from "./types";
+import type { MessageData, Resolver, Result } from "./types";
+
+export const prepareMessageToSign = (
+  { currency, freshAddressPath, derivationMode }: Account,
+  message: string
+): MessageData | null => {
+  if (!perFamily[currency.family]) {
+    throw new Error("Crypto does not support signMessage");
+  }
+
+  return {
+    currency: currency,
+    path: freshAddressPath,
+    derivationMode: derivationMode,
+    message: message,
+    rawMessage: "0x" + Buffer.from(message).toString("hex"),
+  };
+};
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
-  const getAddress = perFamily[currency.family];
-  invariant(getAddress, `signMessage is not implemented for ${currency.id}`);
-  return getAddress(transport, opts)
+  const signMessage = perFamily[currency.family];
+  invariant(signMessage, `signMessage is not implemented for ${currency.id}`);
+  return signMessage(transport, opts)
     .then((result) => {
       log(
         "hw",
@@ -59,24 +75,28 @@ export type State = AppState & BaseState;
 export type Request = AppRequest & {
   message: MessageData;
 };
+
 export type Input = {
   request: Request;
   deviceId: string;
 };
+
 export const signMessageExec = ({
   request,
   deviceId,
 }: Input): Observable<Result> => {
-  const result: Observable<Result> = withDevice(deviceId)((t) =>
-    from(dispatch(t, request.message))
+  const result: Observable<Result> = withDevice(deviceId)((transport) =>
+    from(dispatch(transport, request.message))
   );
   return result;
 };
+
 const initialState: BaseState = {
   signMessageRequested: null,
   signMessageError: null,
   signMessageResult: null,
 };
+
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
   signMessage: (arg0: Input) => Observable<Result> = signMessageExec
@@ -97,6 +117,7 @@ export const createAction = (
       signMessageRequested: request.message,
     });
     const signedFired = useRef<boolean>();
+
     const sign = useCallback(async () => {
       let result;
 
@@ -124,6 +145,7 @@ export const createAction = (
 
       setState({ ...initialState, signMessageResult: result?.signature });
     }, [device, request]);
+
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
         return;
@@ -146,9 +168,9 @@ export const createAction = (
 
   return {
     useHook,
-    mapResult: (r: State) => ({
-      signature: r.signMessageResult,
-      error: r.signMessageError,
+    mapResult: (state: State) => ({
+      signature: state.signMessageResult,
+      error: state.signMessageError,
     }),
   };
 };

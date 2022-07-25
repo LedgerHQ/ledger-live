@@ -7,11 +7,11 @@ import {
   getMainAccount,
   getReceiveFlowError,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+} from "@ledgerhq/live-common/account/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { AccountLike } from "@ledgerhq/live-common/types/index";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";

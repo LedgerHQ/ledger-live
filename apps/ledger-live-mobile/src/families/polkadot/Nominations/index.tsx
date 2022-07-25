@@ -6,21 +6,21 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import { Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/explorers";
+import { Account } from "@ledgerhq/live-common/types/index";
 import {
   canNominate,
   isStash,
   hasExternalController,
   hasExternalStash,
   hasPendingOperationType,
-} from "@ledgerhq/live-common/lib/families/polkadot/logic";
-import { usePolkadotPreloadData } from "@ledgerhq/live-common/lib/families/polkadot/react";
-import type { PolkadotNomination } from "@ledgerhq/live-common/lib/families/polkadot/types";
+} from "@ledgerhq/live-common/families/polkadot/logic";
+import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
+import type { PolkadotNomination } from "@ledgerhq/live-common/families/polkadot/types";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../const";

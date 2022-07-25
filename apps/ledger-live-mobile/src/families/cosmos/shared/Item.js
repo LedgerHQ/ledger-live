@@ -8,14 +8,15 @@ import type {
   CosmosMappedValidator,
   CosmosMappedDelegation,
   CosmosValidatorItem,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import type { Unit } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import type { Unit } from "@ledgerhq/live-common/types/index";
 
 import { useTheme } from "@react-navigation/native";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ArrowRight from "../../../icons/ArrowRight";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
+import ValidatorImage from "./ValidatorImage";
 
 type Props = {
   item: CosmosMappedValidator | CosmosMappedDelegation,
@@ -37,7 +38,7 @@ function Item({
   delegatedValue,
 }: Props) {
   const { colors } = useTheme();
-  const { rank, validator } = item;
+  const { validator } = item;
 
   const { validatorAddress, estimatedYearlyRewardsRate, name } =
     validator || {};
@@ -56,16 +57,16 @@ function Item({
       disabled={isDisabled}
       style={[styles.wrapper]}
     >
-      <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
-        <FirstLetterIcon
-          style={isDisabled ? { backgroundColor: colors.lightFog } : {}}
-          label={name || validatorAddress}
+      <View style={[styles.iconWrapper]}>
+        <ValidatorImage
+          size={32}
+          isLedger={validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+          name={name || validatorAddress}
         />
       </View>
 
       <View style={styles.nameWrapper}>
         <LText semiBold style={[styles.nameText]} numberOfLines={1}>
-          {rank < 0 ? "" : `${rank} .`}
           {name || validatorAddress}
         </LText>
 

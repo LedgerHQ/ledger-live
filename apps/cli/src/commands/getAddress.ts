@@ -1,8 +1,8 @@
 import { from } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
+import { asDerivationMode } from "@ledgerhq/live-common/derivation";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
 import { currencyOpt, deviceOpt, inferCurrency } from "../scan";
 export default {
   description:

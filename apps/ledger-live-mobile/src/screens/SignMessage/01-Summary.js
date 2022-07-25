@@ -3,12 +3,12 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import {
   getAccountCurrency,
   getAccountName,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";

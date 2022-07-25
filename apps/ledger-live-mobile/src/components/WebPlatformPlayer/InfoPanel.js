@@ -5,8 +5,8 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
-import { translateContent } from "@ledgerhq/live-common/lib/platform/logic";
-import type { TranslatableString } from "@ledgerhq/live-common/lib/platform/types";
+import { translateContent } from "@ledgerhq/live-common/platform/logic";
+import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
 
 import { languageSelector } from "../../reducers/settings";
 import ExternalLinkIcon from "../../icons/ExternalLink";

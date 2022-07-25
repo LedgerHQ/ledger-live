@@ -2,8 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
-import { findTokenById } from "@ledgerhq/live-common/lib/currencies";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import { findTokenById } from "@ledgerhq/live-common/currencies/index";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import { useTheme } from "styled-components/native";
 import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";

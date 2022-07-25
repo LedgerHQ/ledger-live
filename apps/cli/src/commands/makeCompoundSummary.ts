@@ -2,13 +2,13 @@ import { map } from "rxjs/operators";
 import type {
   CompoundAccountSummary,
   LoansLikeArray,
-} from "@ledgerhq/live-common/lib/compound/types";
+} from "@ledgerhq/live-common/compound/types";
 import {
   formatCurrencyUnit,
   findCompoundToken,
-} from "@ledgerhq/live-common/lib/currencies";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/lib/compound/logic";
-import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/currencies/index";
+import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
+import type { TokenAccount, Account } from "@ledgerhq/live-common/types/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 

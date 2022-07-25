@@ -5,8 +5,8 @@ import { View, StyleSheet } from "react-native";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,
-} from "@ledgerhq/live-common/lib/reactNative";
-import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/reactNative";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";

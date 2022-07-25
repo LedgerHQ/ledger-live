@@ -17,7 +17,7 @@
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
-import { decodeTxInfo } from "./utils";
+import { decodeTxInfo, hexBuffer, maybeHexBuffer, splitPath } from "./utils";
 // NB: these are temporary import for the deprecated fallback mechanism
 import { LedgerEthTransactionResolution, LoadConfig } from "./services/types";
 import ledgerService from "./services/ledger";
@@ -25,6 +25,13 @@ import {
   EthAppNftNotSupported,
   EthAppPleaseEnableContractData,
 } from "./errors";
+import {
+  signEIP712HashedMessage,
+  signEIP712Message,
+  EIP712Message,
+} from "./modules/EIP712";
+
+export { ledgerService };
 
 export type StarkQuantizationType =
   | "eth"
@@ -40,33 +47,6 @@ const starkQuantizationTypeMap = {
   erc721mintable: 5,
 };
 
-function splitPath(path: string): number[] {
-  const result: number[] = [];
-  const components = path.split("/");
-  components.forEach((element) => {
-    let number = parseInt(element, 10);
-    if (isNaN(number)) {
-      return; // FIXME shouldn't it throws instead?
-    }
-    if (element.length > 1 && element[element.length - 1] === "'") {
-      number += 0x80000000;
-    }
-    result.push(number);
-  });
-  return result;
-}
-
-function hexBuffer(str: string): Buffer {
-  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
-}
-
-function maybeHexBuffer(
-  str: string | null | undefined
-): Buffer | null | undefined {
-  if (!str) return null;
-  return hexBuffer(str);
-}
-
 const remapTransactionRelatedErrors = (e) => {
   if (e && e.statusCode === 0x6a80) {
     return new EthAppPleaseEnableContractData(
@@ -76,6 +56,7 @@ const remapTransactionRelatedErrors = (e) => {
 
   return e;
 };
+
 /**
  * Ethereum API
  *
@@ -107,6 +88,7 @@ export default class Eth {
         "signTransaction",
         "signPersonalMessage",
         "getAppConfiguration",
+        "signEIP712Message",
         "signEIP712HashedMessage",
         "starkGetPublicKey",
         "starkSignOrder",
@@ -187,12 +169,12 @@ export default class Eth {
 
   /**
    * You can sign a transaction and retrieve v, r, s given the raw transaction and the BIP 32 path of the account to sign.
-   * 
+   *
    * @param path: the BIP32 path to sign the transaction on
    * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
    * @param resolution: resolution is an object with all "resolved" metadata necessary to allow the device to clear sign information. This includes: ERC20 token information, plugins, contracts, NFT signatures,... You must explicitly provide something to avoid having a warning. By default, you can use Ledger's service or your own resolution service. See services/types.js for the contract. Setting the value to "null" will fallback everything to blind signing but will still allow the device to sign the transaction.
    * @example
-   import ledgerService from "@ledgerhq/hw-app-eth/lib/services/ledger"
+   import { ledgerService } from "@ledgerhq/hw-app-eth"
    const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
    const resolution = await ledgerService.resolveTransaction(tx);
    const result = eth.signTransaction("44'/60'/0'/0/0", tx, resolution);
@@ -214,7 +196,7 @@ export default class Eth {
           "See https://github.com/LedgerHQ/ledgerjs/blob/master/packages/hw-app-eth/README.md " +
           "– the previous signature is deprecated and providing the 3rd 'resolution' parameter explicitly will become mandatory so you have the control on the resolution and the fallback mecanism (e.g. fallback to blind signing or not)." +
           "// Possible solution:\n" +
-          " + import ledgerService from '@ledgerhq/hw-app-eth/lib/services/ledger';\n" +
+          " + import { ledgerService } from '@ledgerhq/hw-app-eth';\n" +
           " + const resolution = await ledgerService.resolveTransaction(rawTxHex);"
       );
       resolution = await ledgerService
@@ -431,31 +413,55 @@ export default class Eth {
     s: string;
     r: string;
   }> {
-    const domainSeparator = hexBuffer(domainSeparatorHex);
-    const hashStruct = hexBuffer(hashStructMessageHex);
-    const paths = splitPath(path);
-    const buffer = Buffer.alloc(1 + paths.length * 4 + 32 + 32, 0);
-    let offset = 0;
-    buffer[0] = paths.length;
-    paths.forEach((element, index) => {
-      buffer.writeUInt32BE(element, 1 + 4 * index);
-    });
-    offset = 1 + 4 * paths.length;
-    domainSeparator.copy(buffer, offset);
-    offset += 32;
-    hashStruct.copy(buffer, offset);
-    return this.transport
-      .send(0xe0, 0x0c, 0x00, 0x00, buffer)
-      .then((response) => {
-        const v = response[0];
-        const r = response.slice(1, 1 + 32).toString("hex");
-        const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
-        return {
-          v,
-          r,
-          s,
-        };
-      });
+    return signEIP712HashedMessage(
+      this.transport,
+      path,
+      domainSeparatorHex,
+      hashStructMessageHex
+    );
+  }
+
+  /**
+   * Sign an EIP-721 formatted message following the specification here:
+   * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
+   @example
+   eth.signEIP721Message("44'/60'/0'/0/0", {
+      domain: {
+        chainId: 69,
+        name: "Da Domain",
+        verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC",
+        version: "1"
+      },
+      types: {
+        "EIP712Domain": [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" }
+          ],
+        "Test": [
+          { name: "contents", type: "string" }
+        ]
+      },
+      primaryType: "Test",
+      message: {contents: "Hello, Bob!"},
+    })
+   *
+   * @param {String} path derivationPath
+   * @param {Object} jsonMessage message to sign
+   * @param {Boolean} fullImplem use the legacy implementation
+   * @returns {Promise}
+   */
+  async signEIP712Message(
+    path: string,
+    jsonMessage: EIP712Message,
+    fullImplem = false
+  ): Promise<{
+    v: number;
+    s: string;
+    r: string;
+  }> {
+    return signEIP712Message(this.transport, path, jsonMessage, fullImplem);
   }
 
   /**

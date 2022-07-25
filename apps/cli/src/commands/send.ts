@@ -7,18 +7,18 @@ import {
   catchError,
   tap,
 } from "rxjs/operators";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getEnv } from "@ledgerhq/live-common/env";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   formatOperation,
   formatAccount,
   fromOperationRaw,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 import {
   toSignOperationEventRaw,
   formatTransaction,
   formatTransactionStatus,
-} from "@ledgerhq/live-common/lib/transaction";
+} from "@ledgerhq/live-common/transaction/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferTransactionsOpts } from "../transaction";

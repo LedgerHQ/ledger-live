@@ -2,10 +2,11 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import type { Currency } from "@ledgerhq/live-common/types/index";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 
 export type CurrencySettings = {
@@ -217,6 +218,38 @@ export const removeStarredMarketCoins = (payload: string) => ({
 export const setLastConnectedDevice = (device: Device) => ({
   type: "SET_LAST_CONNECTED_DEVICE",
   payload: device,
+});
+
+export const setHasOrderedNano = (enabled: boolean) => ({
+  type: "SET_HAS_ORDERED_NANO",
+  enabled,
+});
+
+export const setMarketRequestParams = (
+  marketRequestParams: MarketListRequestParams,
+) => ({
+  type: "SET_MARKET_REQUEST_PARAMS",
+  payload: marketRequestParams,
+});
+
+export const setMarketCounterCurrency = (currency: string) => ({
+  type: "SET_MARKET_COUNTER_CURRENCY",
+  payload: currency,
+});
+
+export const setMarketFilterByStarredAccounts = (payload: boolean) => ({
+  type: "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
+  payload,
+});
+
+export const setSensitiveAnalytics = (enabled: boolean) => ({
+  type: "SET_SENSITIVE_ANALYTICS",
+  enabled,
+});
+
+export const setFirstConnectionHasDevice = (payload: boolean) => ({
+  type: "SET_FIRST_CONNECTION_HAS_DEVICE",
+  payload,
 });
 
 type PortfolioRangeOption = {

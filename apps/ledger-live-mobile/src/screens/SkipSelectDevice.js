@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NativeModules } from "react-native";
-import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { lastConnectedDeviceSelector } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 

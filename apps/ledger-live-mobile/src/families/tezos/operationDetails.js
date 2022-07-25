@@ -1,5 +1,5 @@
 // @flow
-import type { Operation } from "@ledgerhq/live-common/lib/types";
+import type { Operation } from "@ledgerhq/live-common/types/index";
 
 export default {
   getURLWhatIsThis: (op: Operation) =>

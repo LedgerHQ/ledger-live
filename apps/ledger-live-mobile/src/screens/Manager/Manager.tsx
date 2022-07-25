@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
-import { predictOptimisticState } from "@ledgerhq/live-common/lib/apps";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
+import type { DeviceInfo } from "@ledgerhq/live-common/types/manager";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -15,22 +15,30 @@ import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { ScreenName } from "../../const";
+import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
+import { CommonActions } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import useLatestFirmware from "../../hooks/useLatestFirmware";
+import { isFirmwareUpdateVersionSupported } from "../../logic/firmwareUpdate";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
   INSTALLED_APPS: "INSTALLED_APPS",
 };
 
-export type ManagerTab = $Keys<typeof MANAGER_TABS>;
+export type ManagerTab = keyof typeof MANAGER_TABS;
 
 type Props = {
-  navigation: any,
+  navigation: StackNavigationProp<any>,
   route: {
     params: {
       device: Device,
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
       searchQuery?: string,
+      firmwareUpdate?: boolean,
+      appsToRestore?: string[],
       updateModalOpened?: boolean,
       tab: ManagerTab,
     },
@@ -39,30 +47,39 @@ type Props = {
 
 const Manager = ({
   navigation,
-  route: {
-    params: {
+  route,
+}: Props) => {
+  const {
       device,
       deviceInfo,
       result,
       searchQuery,
+      firmwareUpdate,
+      appsToRestore,
       updateModalOpened,
-      tab = MANAGER_TABS.CATALOG,
-    },
-  },
-}: Props) => {
+      tab = "CATALOG",
+    } = route.params;
+
   const { deviceId, deviceName, modelId } = device;
-  const [state, dispatch] = useApps(result, deviceId);
+  const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
 
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
+  const latestFirmware = useLatestFirmware(deviceInfo);
 
-  const [quitManagerAction, setQuitManagerAction] = useState(false);
+  const [quitManagerAction, setQuitManagerAction] = useState<any>(null);
 
+  const [isFirmwareUpdateOpen, setIsFirmwareUpdateOpen] = useState(false);
+  useEffect(() => {
+    if(latestFirmware && firmwareUpdate && isFirmwareUpdateVersionSupported(deviceInfo, device.modelId)) {
+      setIsFirmwareUpdateOpen(true);
+    }
+  }, [firmwareUpdate, latestFirmware]);
   /** general error state */
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   /** storage warning modal state */
   const [storageWarning, setStorageWarning] = useState(null);
   /** install app with dependencies modal state */
@@ -90,13 +107,15 @@ const Manager = ({
     const dmi = {
       modelId: device.modelId,
       deviceInfo,
-      appsInstalled: state.installed.map(({ name, version }) => ({
+      apps: state.installed.map(({ name, version }) => ({
         name,
         version,
       })),
     };
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
+
+  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [state.installed]);
 
   /**
    * Resets the navigation params in order to unlock navigation
@@ -124,6 +143,25 @@ const Manager = ({
   const resetStorageWarning = useCallback(() => setStorageWarning(null), [
     setStorageWarning,
   ]);
+
+  const onCloseFirmwareUpdate = useCallback((restoreApps?: boolean) => {
+      setIsFirmwareUpdateOpen(false);
+
+      // removes the firmwareUpdate param from the stack navigation so we don't open the modal again
+      // if the user comes back to this page within the stack
+      navigation.dispatch(state => {
+        const routes = state.routes.map(route => ({ ...route, params: { ...route.params, firmwareUpdate: false }}));
+        return CommonActions.reset({ ...state, routes });
+      });
+      if(restoreApps) {
+        // we renavigate to the manager to force redetection of the apps and restore apps if needed
+        navigation.replace(ScreenName.Manager, {
+          device,
+          appsToRestore: installedApps,
+          firmwareUpdate: false
+        });
+      }
+  }, [installedApps, navigation]);
 
   return (
     <>
@@ -175,6 +213,13 @@ const Manager = ({
         appUninstallWithDependencies={appUninstallWithDependencies}
         onClose={resetAppUninstallWithDependencies}
         dispatch={dispatch}
+      />
+      <FirmwareUpdateScreen
+        device={device}
+        deviceInfo={deviceInfo}
+        isOpen={isFirmwareUpdateOpen}
+        onClose={onCloseFirmwareUpdate}
+        hasAppsToRestore={Boolean(appsToRestore?.length)}
       />
     </>
   );

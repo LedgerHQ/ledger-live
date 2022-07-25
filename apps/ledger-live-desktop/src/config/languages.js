@@ -1,5 +1,5 @@
 // @flow
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 export const allLanguages = [
   "de",

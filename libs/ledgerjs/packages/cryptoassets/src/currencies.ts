@@ -3132,7 +3132,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   ethereum_goerli: {
     type: "CryptoCurrency",
     id: "ethereum_goerli",
-    coinType: 1,
+    coinType: 60,
     name: "Ethereum Goerli",
     managerAppName: "Ethereum",
     ticker: "ETH",

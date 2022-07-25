@@ -10,11 +10,11 @@ import type {
   Transaction,
   AccountLike,
   Account,
-} from "@ledgerhq/live-common/lib/types";
-import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/types/index";
+import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 
 const inferAmount = (account: AccountLike, str: string): BigNumber => {
   const currency = getAccountCurrency(account);

@@ -3,11 +3,11 @@ import { BigNumber } from "bignumber.js";
 import isBefore from "date-fns/isBefore";
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import {
   getAccountCurrency,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { useTheme } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";

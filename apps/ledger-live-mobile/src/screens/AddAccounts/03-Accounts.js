@@ -17,16 +17,19 @@ import { compose } from "redux";
 import {
   isAccountEmpty,
   groupAddAccounts,
-} from "@ledgerhq/live-common/lib/account";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/lib/account/addAccounts";
+} from "@ledgerhq/live-common/account/index";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
-import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type {
+  CryptoCurrency,
+  Account,
+} from "@ledgerhq/live-common/types/index";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import type { DerivationMode } from "@ledgerhq/live-common/lib/derivation";
+import type { DerivationMode } from "@ledgerhq/live-common/derivation";
 
 import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
