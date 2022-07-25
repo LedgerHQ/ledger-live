@@ -26,7 +26,7 @@ const BuyButton = ({ currency, account }: { currency: CryptoCurrency, account: A
     if (ptxSmartRouting?.enabled) {
       const params = {
         currency: currency.id,
-        account: account.freshAddress,
+        account: account.id,
         mode: "buy", // buy or sell
       };
 
