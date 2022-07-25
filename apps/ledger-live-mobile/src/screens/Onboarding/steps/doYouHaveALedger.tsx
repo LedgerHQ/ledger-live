@@ -30,6 +30,7 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     identifyUser(true);
 
     track("button_clicked", {
+      First_connection_has_device: true,
       button: "Yes",
       screen: "Has Device?",
     });
