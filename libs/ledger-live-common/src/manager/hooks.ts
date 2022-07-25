@@ -73,7 +73,7 @@ export function useManagerBlueDot(
   return display;
 }
 
-export const useAvailableLanguagesForDevice = (deviceInfo: DeviceInfo): Language[] => {
+export const useAvailableLanguagesForDevice = (deviceInfo?: DeviceInfo): Language[] => {
   const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
 
   useEffect(() => {

@@ -9,12 +9,15 @@ import {
   Text,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocale } from "../../../context/Locale";
 import { languages, supportedLocales } from "../../../languages";
+import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
+import { lastSeenDeviceSelector } from "../../../reducers/settings";
+import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
@@ -23,6 +26,12 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+
+  const lastSeenDevice: DeviceModelInfo | null = useSelector(
+    lastSeenDeviceSelector,
+  );
+
+  const availableDeviceLanguages = useAvailableLanguagesForDevice(lastSeenDevice?.deviceInfo);
 
   const changeLanguage = useCallback(
     l => {
