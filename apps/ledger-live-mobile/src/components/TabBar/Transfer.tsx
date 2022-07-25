@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useContext } from "react";
 import { BackHandler, Dimensions, Pressable } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Lottie from "lottie-react-native";
@@ -20,6 +20,7 @@ import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "../../analytics";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { AnalyticsContext } from "../../components/RootNavigator";
 
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
@@ -144,15 +145,25 @@ export function TransferTabIcon() {
     });
   }, [openAnimValue]);
 
+  const { source } = useContext(AnalyticsContext);
+
   const onPressButton = useCallback(() => {
     if (getIsModalOpened()) {
       closeModal();
-      track("button_clicked", { button: "close_trade" });
+      track("button_clicked", {
+        button: "close_trade",
+        drawer: "trade",
+        screen: source,
+      });
     } else {
       openModal();
-      track("button_clicked", { button: "trade", drawer: "trade" });
+      track("button_clicked", {
+        button: "trade",
+        drawer: "trade",
+        screen: source,
+      });
     }
-  }, [track, getIsModalOpened, closeModal, openModal]);
+  }, [getIsModalOpened, closeModal, track, source, openModal]);
 
   const handleBackPress = useCallback(() => {
     if (!getIsModalOpened()) return false;
