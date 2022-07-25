@@ -416,6 +416,7 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
       try {
         formattedMessage = prepareMessageToSign(account, message);
       } catch (error) {
+        tracking.platformSignMessageFail(manifest);
         return Promise.reject(error);
       }
 
@@ -425,21 +426,22 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
             message: formattedMessage,
             account,
             onConfirmationHandler: signature => {
-              logger.info("Signature done");
+              tracking.platformSignMessageSuccess(manifest);
               resolve(signature);
             },
             onFailHandler: err => {
-              logger.error(err);
+              tracking.platformSignMessageFail(manifest);
               reject(err);
             },
             onClose: () => {
+              tracking.platformSignMessageUserRefused(manifest);
               reject(new Error("Signature aborted by user"));
             },
           }),
         );
       });
     },
-    [accounts, dispatch],
+    [accounts, dispatch, manifest],
   );
 
   const handlers = useMemo(

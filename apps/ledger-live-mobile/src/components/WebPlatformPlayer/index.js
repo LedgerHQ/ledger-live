@@ -556,6 +556,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         invariant(account, "account not found");
         formattedMessage = prepareMessageToSign(account, message);
       } catch (error) {
+        tracking.platformSignMessageFail(manifest);
         return Promise.reject(error);
       }
 
@@ -566,19 +567,22 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
             message: formattedMessage,
             accountId,
             onConfirmationHandler: message => {
+              tracking.platformSignMessageSuccess(manifest);
               resolve(message);
             },
             onFailHandler: error => {
+              tracking.platformSignMessageFail(manifest);
               reject(error);
             },
           },
           onClose: () => {
+            tracking.platformSignMessageUserRefused(manifest);
             reject(new UserRefusedOnDevice());
           },
         });
       });
     },
-    [navigation, accounts],
+    [accounts, manifest, navigation],
   );
 
   const handlers = useMemo(

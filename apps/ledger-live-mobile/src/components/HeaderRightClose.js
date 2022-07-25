@@ -13,7 +13,7 @@ type Props = {
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
-  onClose?: Function,
+  onClose: Function,
 };
 
 export default function HeaderRightClose({
@@ -23,7 +23,7 @@ export default function HeaderRightClose({
   withConfirmation,
   confirmationTitle,
   confirmationDesc,
-  onClose,
+  onClose = () => {},
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -37,17 +37,13 @@ export default function HeaderRightClose({
     if (skipNavigation) {
       // onClose should always be called at the end of the close method,
       // so the callback will not interfere with the expected behavior of this component
-      if (onClose) {
-        onClose();
-      }
+      onClose();
       return;
     }
 
     if (navigation.getParent().pop && preferDismiss) {
       navigation.getParent().pop();
-      if (onClose) {
-        onClose();
-      }
+      onClose();
       return;
     }
 
@@ -55,9 +51,7 @@ export default function HeaderRightClose({
 
     navigation.goBack();
 
-    if (onClose) {
-      onClose();
-    }
+    onClose();
   }
 
   function onPress(): void {
