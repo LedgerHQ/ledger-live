@@ -67,7 +67,7 @@ export default function NftCollectionsList({ account }: Props) {
   const navigateToReceive = useCallback(
     () =>
       navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConnectDevice,
+        screen: ScreenName.ReceiveConfirmation,
         params: {
           accountId: account.id,
         },
@@ -93,7 +93,7 @@ export default function NftCollectionsList({ account }: Props) {
 
   const navigateToReceiveConnectDevice = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
-      screen: ScreenName.ReceiveConnectDevice,
+      screen: ScreenName.ReceiveConfirmation,
       params: {
         accountId: account.id,
       },
