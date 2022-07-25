@@ -50,7 +50,8 @@ export type Transaction =
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction
+  | tronTransaction;
+
 export type TransactionRaw =
   | algorandTransactionRaw
   | bitcoinTransactionRaw
@@ -68,4 +69,4 @@ export type TransactionRaw =
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw
+  | tronTransactionRaw;
