@@ -1,7 +1,7 @@
-// @flow
 import RNLocalize from "react-native-localize";
 import Config from "react-native-config";
 import allLocales from "./locales";
+import { Language } from "@ledgerhq/live-common/lib/types/languages";
 
 export const languages = {
   de: "Deutsch",
@@ -34,6 +34,18 @@ export const localeIds: string[] = Object.keys(allLocales);
 export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
+
+
+/**
+ * This maps the supported locales from live to theiur equivalent languages on the device.
+ * It is to be used for suggesting the user to change their device language according to their Live
+ * language.
+ */
+export const localeIdToDeviceLanguage: { [key in keyof typeof languages]?: Language} = {
+  en: "english",
+  fr: "french",
+  es: "spanish",
+}
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
