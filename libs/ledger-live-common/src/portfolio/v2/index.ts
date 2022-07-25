@@ -6,16 +6,6 @@ import {
   getAccountHistoryBalances,
 } from "../../account";
 import { getEnv } from "../../env";
-import type {
-  BalanceHistory,
-  PortfolioRange,
-  BalanceHistoryWithCountervalue,
-  AccountPortfolio,
-  Portfolio,
-  CurrencyPortfolio,
-  AssetsDistribution,
-  ValueChange,
-} from "./types";
 import { getPortfolioRangeConfig, getDates } from "./range";
 
 export const defaultAssetsDistribution = {
@@ -24,7 +14,18 @@ export const defaultAssetsDistribution = {
   showFirstThreshold: 0.95,
 };
 export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  BalanceHistory,
+  PortfolioRange,
+  BalanceHistoryWithCountervalue,
+  AccountPortfolio,
+  Portfolio,
+  CurrencyPortfolio,
+  AssetsDistribution,
+  ValueChange,
+} from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   Currency,

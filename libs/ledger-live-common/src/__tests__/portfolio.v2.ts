@@ -16,7 +16,6 @@ import {
   getCurrencyPortfolio,
   getAssetsDistribution,
 } from "../portfolio/v2";
-import type { PortfolioRange } from "../portfolio/v2/types";
 import {
   getPortfolioRangeConfig,
   getDates,
@@ -25,7 +24,11 @@ import {
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 setEnv("MOCK", "1");
 describe("Portfolio", () => {
   const rangeCount: [PortfolioRange, number][] = [

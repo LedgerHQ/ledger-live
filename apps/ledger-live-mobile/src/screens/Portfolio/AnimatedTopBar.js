@@ -10,7 +10,7 @@ import {
 import Animated from "react-native-reanimated";
 import { useSafeArea } from "react-native-safe-area-context";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import type { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
+import type { Portfolio } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import BalanceHeader from "./BalanceHeader";

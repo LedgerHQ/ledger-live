@@ -13,8 +13,11 @@ import { createSelector } from "reselect";
 import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
-import type { DeviceModelInfo, AccountLike } from "@ledgerhq/types-live";
+import type {
+  DeviceModelInfo,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";

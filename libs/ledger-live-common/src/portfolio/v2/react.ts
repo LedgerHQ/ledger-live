@@ -3,7 +3,11 @@ import type {
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  PortfolioRange,
+} from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "../../account";
 import { useCountervaluesState } from "../../countervalues/react";
 import {
@@ -13,7 +17,6 @@ import {
   getAssetsDistribution,
   getPortfolioCount,
 } from "./";
-import type { PortfolioRange } from "./types";
 export function useBalanceHistoryWithCountervalue({
   account,
   range,

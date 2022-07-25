@@ -1,6 +1,6 @@
 // @flow
 import { useSelector } from "react-redux";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import type {
   TokenCurrency,
   CryptoCurrency,
@@ -10,7 +10,6 @@ import {
   usePortfolio as usePortfolioCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
 } from "@ledgerhq/live-common/portfolio/v2/react";
-import type { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,

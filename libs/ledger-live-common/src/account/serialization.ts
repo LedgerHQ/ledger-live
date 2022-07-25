@@ -109,7 +109,7 @@ export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
 export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
   return b.map(([date, value]) => ({
     date: new Date(date),
-    value: new BigNumber(value),
+    value: new BigNumber(value).toNumber(),
   }));
 }
 export const toOperationRaw = (
