@@ -1348,6 +1348,14 @@
       "link" : "Asset'ler (ASA) nasıl çalışır?",
       "seeTokens" : "ASA'ları göster ({{tokenCount}})",
       "hideTokens" : "ASA'ları gizle ({{tokenCount}})"
+    },
+    "stellar" : {
+      "title" : "Varlıklar",
+      "cta" : "Varlık ekle",
+      "placeholder" : "{{currencyName}} hesabınıza varlıklar ekleyebilirsiniz.",
+      "link" : "Stellar varlıklarıyla ilgili daha çok bilgi alın",
+      "seeTokens" : "Varlıkları göster ({{tokenCount}})",
+      "hideTokens" : "Varlıkları gizle ({{tokenCount}})"
     }
   },
   "subAccounts" : {
@@ -1864,7 +1872,7 @@
         "parentAccount" : "1. {{currencyName}} hesabı seçin",
         "token" : "2. Token seçin",
         "verifyTokenType" : "Lütfen <0>{{token}}</0> token'ının <0>{{tokenType}}</0> türü bir token olduğunu doğrulayın. {{currency}} hesabına gönderilen diğer tüm kripto varlıklar kaybolabilir.",
-        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}/0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
+        "warningTokenType" : "Lütfen {{currency}} hesaplarına sadece <0>{{ticker}}</0> veya <0>{{tokenType}}</0> türü token'lar gönderin. Diğer kripto varlıklarının gönderilmesi, fonların kalıcı olarak kaybedilmesine yol açabilir."
       },
       "connectDevice" : {
         "title" : "Cihaz",
@@ -1993,6 +2001,13 @@
         "description2" : "Elrond Network'e özgü olan Elrond eGold (EGLD) Token, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
         "description3" : "Elrond ekibiyle aktif bir işbirliği gerçekleştirerek staking işlemleri, dahili ESDT (Elrond Standart Dijital Token) desteği ve daha birçok işlevi eklemek için çalışıyoruz.",
         "website" : "İnternet Ölçeğinde Blok Zinciri"
+      }
+    }
+  },
+  "cardano" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Total balance doesn't include staking rewards"
       }
     }
   },
@@ -2570,6 +2585,31 @@
           },
           "pending" : {
             "title" : "İşlem yayınlanıyor..."
+          },
+          "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+        }
+      }
+    }
+  },
+  "stellar" : {
+    "addAsset" : {
+      "title" : "Varlık ekle",
+      "steps" : {
+        "assets" : {
+          "title" : "Varlık",
+          "info" : "Bir varlık eklemek için minimum ücretle bir işlem gönderilmesi gerekir. Bu, işlem geçmişinizde görünür",
+          "selectLabel" : "Bir varlık seçin",
+          "disabledTooltip" : "Bu varlık Stellar hesabınızda zaten var"
+        },
+        "connectDevice" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın",
+          "success" : {
+            "title" : "{{token}} varlığı başarıyla eklendi",
+            "text" : "Artık Stellar hesabınızla <0>{{token}}</0> varlıkları gönderip alabilirsiniz.",
+            "cta" : "Ayrıntıları göster"
           },
           "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
         }
@@ -3165,7 +3205,7 @@
       "welcome" : {
         "title" : "Ledger'a Hoş Geldiniz",
         "description" : "Kriptonuzu bilgisayarınızdan güvenli bir şekilde yönetin.",
-        "cta" : "Başlangıç",
+        "cta" : "Hemen başla",
         "noDevice" : "Cihazınız yok mu? <0>Bir Ledger Nano X satın alın</0>",
         "languageWarning" : {
           "title" : "{{language}} dilinde başlayın",
@@ -3202,7 +3242,7 @@
       },
       "tutorial" : {
         "steps" : {
-          "getStarted" : "Başlangıç",
+          "getStarted" : "Hemen başla",
           "pinCode" : "PIN kodu",
           "recoveryPhrase" : "Kurtarma ifadesi",
           "hideRecoveryPhrase" : "Kurtarma ifadenizi saklayın",
@@ -3714,7 +3754,7 @@
     "termsLabel" : "Hizmet Şartları",
     "privacyLabel" : "Gizlilik Politikası",
     "switchLabel" : "Hizmet Şartları ve Gizlilik Politikasını okudum ve kabul ediyorum",
-    "cta" : "Ledger uygulamasına girin"
+    "cta" : "Ledger uygulamasına gir"
   },
   "updatedTerms" : {
     "title" : "Kullanım Koşulları Güncellemesi",
@@ -3740,7 +3780,20 @@
         "MEMO_HASH" : "Memo Hash",
         "MEMO_RETURN" : "Memo Dönüşü"
       },
-      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın"
+      "memoWarningText" : "Memo kullanırken, kullanılan türü alıcıyla birlikte dikkatlice doğrulayın",
+      "fee" : "Ücretler",
+      "feeInfoText" : "Stellar ağındaki işlem için en az 0,00001 XLM'lik bir işlem ücreti alınır.",
+      "suggested" : "Önerilen",
+      "recommendedFee" : "Önerilen ücret",
+      "recommenndedFeeInfo" : "Bu işlemi önerilenden daha düşük bir ücretle gönderebilirsiniz ancak tamamlanmayabilir",
+      "networkCongestion" : "ağ yoğunluğu",
+      "networkCongestionLevel" : {
+        "LOW" : "Düşük",
+        "MEDIUM" : "Orta",
+        "HIGH" : "Yüksek"
+      },
+      "assetCode" : "Varlık kodu",
+      "assetIssuer" : "Varlık yaratıcısı"
     },
     "cosmos" : {
       "memo" : "Memo",
@@ -4293,14 +4346,8 @@
     "FeeTooHigh" : {
       "title" : "Ağ ücretleri, tutarın % 10'unun üzerindedir"
     },
-    "StellarWrongMemoFormat" : {
-      "title" : "Memo biçimi yanlış"
-    },
     "SourceHasMultiSign" : {
       "title" : "{{currencyName}} göndermek için lütfen çoklu imzayı devre dışı bırakın"
-    },
-    "StellarMemoRecommended" : {
-      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
     },
     "SwapExchangeRateAmountTooLow" : {
       "title" : "Tutar en az {{minAmountFromFormatted}} olmalıdır"
@@ -4368,6 +4415,47 @@
     },
     "NotEnoughNftOwned" : {
       "title" : "Mevcut token sayısını aştınız"
+    },
+    "CardanoMinAmountError" : {
+      "title" : "Minimum sendable amount is {{amount}} ADA"
+    },
+    "CardanoNotEnoughFunds" : {
+      "title" : "Please ensure you have enough funds to pay for fees"
+    },
+    "StellarWrongMemoFormat" : {
+      "title" : "Memo biçimi yanlış"
+    },
+    "StellarMemoRecommended" : {
+      "title" : "Bu alıcıya gönderirken bir memo gerekebilir"
+    },
+    "StellarAssetNotAccepted" : {
+      "title" : "Bu alıcının henüz {{assetCode}} için bir trustline'ı yok."
+    },
+    "StellarAssetRequired" : {
+      "title" : "Bir trustline eklemek için bir Stellar varlığı seçmelisiniz"
+    },
+    "StellarAssetNotFound" : {
+      "title" : "Seçilen Stellar varlığı bulunamadı"
+    },
+    "StellarNotEnoughNativeBalance" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta işlem ücretini karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarFeeSmallerThanRecommended" : {
+      "title" : "Seçilen ücret önerilen ücretten az"
+    },
+    "StellarFeeSmallerThanBase" : {
+      "title" : "Minimum işlem ücreti 0,00001 XLM'dir"
+    },
+    "StellarNotEnoughNativeBalanceToAddTrustline" : {
+      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "description" : "Hesapta yeni trustline'ı karşılayacak kadar fon olduğundan lütfen emin olun"
+    },
+    "StellarMuxedAccountNotExist" : {
+      "title" : "Stellar hesabı mevcut değil"
+    },
+    "StellarSourceHasMultiSign" : {
+      "title" : "Stellar işlemleri yapmak için lütfen çoklu imzayı devre dışı bırakın"
     }
   },
   "cryptoOrg" : {
@@ -4394,6 +4482,20 @@
     },
     "currentAddress" : {
       "messageIfVirtual" : "{{name}} adresiniz Ledger cihazınızda onaylanamıyor. Kullandığınız takdirde sorumluluk size aittir."
+    },
+    "send" : {
+      "memo" : {
+        "label" : "Memo (isteğe bağlı)",
+        "characterCount" : "{{memoLength}} / {{memoMaxLength}}"
+      }
+    }
+  },
+  "drawers" : {
+    "selectCurrency" : {
+      "title" : "varlık seç"
+    },
+    "selectAccount" : {
+      "title" : "hesap seç"
     }
   }
 }
