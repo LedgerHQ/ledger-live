@@ -1001,7 +1001,9 @@
     },
     "stepLanguage": {
       "title": "Select your language",
-      "cta": "Continue",
+      "cta": "Continue",        
+      "changeDeviceLanguage": "Change your device language?",
+      "changeDeviceLanguageDescription": "Ledger Live is now in {{language}}. Do you want to use {{language}} on your device too?",
       "warning": {
         "title": "Get started in English",
         "cta": "Got it!",
