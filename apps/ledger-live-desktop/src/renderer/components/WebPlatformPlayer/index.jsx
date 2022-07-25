@@ -410,6 +410,8 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
 
   const signMessage = useCallback(
     ({ accountId, message }: { accountId: string, message: string }) => {
+      tracking.platformSignMessageRequested(manifest);
+
       const account = accounts.find(account => account.id === accountId);
 
       let formattedMessage: MessageData | null;
@@ -420,7 +422,6 @@ const WebPlatformPlayer = ({ manifest, onClose, inputs, config }: Props) => {
         return Promise.reject(error);
       }
 
-      tracking.platformSignMessageRequested(manifest);
       return new Promise((resolve, reject) => {
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {

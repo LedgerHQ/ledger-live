@@ -549,6 +549,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const signMessage = useCallback(
     ({ accountId, message }: { accountId: string, message: string }) => {
+      tracking.platformSignMessageRequested(manifest);
+
       let formattedMessage: MessageData | null;
 
       try {
@@ -560,7 +562,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         return Promise.reject(error);
       }
 
-      tracking.platformSignMessageRequested(manifest);
       return new Promise((resolve, reject) => {
         navigation.navigate(NavigatorName.SignMessage, {
           screen: ScreenName.SignSummary,
