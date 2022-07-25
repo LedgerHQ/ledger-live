@@ -66,8 +66,11 @@ import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 import InfoIcon from "../../icons/Info";
 import InfoPanel from "./InfoPanel";
-import * as tracking from "./tracking";
 
+import { track } from "../../analytics/segment";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
+
+const tracking = trackingWrapper(track);
 type Props = {
   manifest: AppManifest,
   inputs?: Object,

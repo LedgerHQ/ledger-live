@@ -32,9 +32,12 @@ import { updateAccountWithUpdater } from "../../actions/accounts";
 import { openModal } from "../../actions/modals";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
 
-import * as tracking from "./tracking";
+import { track } from "~/renderer/analytics/segment";
+import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+
+const tracking = trackingWrapper(track);
 
 type WebPlatformContext = {
   manifest: AppManifest;
