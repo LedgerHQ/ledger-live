@@ -44,7 +44,9 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
             />
           </Text>
         ) : (
-          <Text variant="small">-</Text>
+          <Text variant="small" color="neutral.c70">
+            -
+          </Text>
         )}
       </Flex>
 
