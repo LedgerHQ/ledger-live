@@ -60,7 +60,7 @@ export const updateAccount: UpdateAccount = payload => ({
 
 type ToggleAction = {
   type: string;
-  payload: { updater: (account: Account) => any; accountId: string | undefined };
+  payload: { updater: (account: Account) => any; accountId?: string };
 };
 export const toggleStarAction = (id: string, parentId?: string): ToggleAction => {
   return {
