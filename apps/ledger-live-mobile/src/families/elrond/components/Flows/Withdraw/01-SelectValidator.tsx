@@ -12,7 +12,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import Button from "../../../../../components/Button";
 import LText from "../../../../../components/LText";

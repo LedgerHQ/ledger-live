@@ -1,4 +1,5 @@
 // @flow
+
 import React from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
@@ -15,8 +16,6 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
-import { StepProps } from "../types";
-
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -25,12 +24,7 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  t,
-  optimisticOperation = {},
-  error,
-  signed,
-}: StepProps & { theme: * }) {
+function StepConfirmation({ t, optimisticOperation = {}, error, signed }) {
   if (optimisticOperation) {
     return (
       <Container>

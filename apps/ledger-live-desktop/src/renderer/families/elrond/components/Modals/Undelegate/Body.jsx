@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { compose } from "redux";
@@ -9,7 +10,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 
@@ -21,7 +22,7 @@ import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
 
-type OwnProps = {|
+interface OwnProps {|
   account: Account,
   stepId: StepId,
   onClose: () => void,
@@ -32,7 +33,7 @@ type OwnProps = {|
   amount: string,
 |};
 
-type StateProps = {|
+interface StateProps {|
   t: TFunction,
   device: ?Device,
   accounts: Account[],

@@ -19,9 +19,10 @@ const Unbondings = (props: any) => {
   const { unbondings, account, onDrawer, delegations } = props;
   const { t } = useTranslation();
 
-  const currency = useMemo(() => getAccountCurrency(getMainAccount(account)), [
-    account,
-  ]);
+  const currency = useMemo(
+    () => getAccountCurrency(getMainAccount(account, undefined)),
+    [account],
+  );
 
   return (
     <View style={styles.wrapper}>

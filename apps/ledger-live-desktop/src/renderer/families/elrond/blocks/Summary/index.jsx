@@ -1,10 +1,11 @@
+// @flow
+
 import styled from "styled-components";
 
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 
-const Wrapper: ThemedComponent<*> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,

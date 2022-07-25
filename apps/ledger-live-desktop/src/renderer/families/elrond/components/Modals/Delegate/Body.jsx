@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
@@ -10,7 +11,7 @@ import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import type { StepProps, St } from "./types";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
@@ -27,7 +28,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/logger/logger";
 
-type OwnProps = {|
+interface OwnProps {|
   stepId: StepId,
   onClose: () => void,
   onChangeStepId: StepId => void,
@@ -40,7 +41,7 @@ type OwnProps = {|
   name: string,
 |};
 
-type StateProps = {|
+interface StateProps {|
   t: TFunction,
   device: ?Device,
   accounts: Account[],

@@ -1,12 +1,13 @@
 // @flow
+
 import React, { useState, useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 
-type Props = {
+interface Props {
   name: string;
-};
+}
 
 export default function UndelegationModal({ name }: Props) {
   const [stepId, setStepId] = useState<StepId>("amount");

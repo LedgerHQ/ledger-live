@@ -1,3 +1,5 @@
+// @flow
+
 import React, { Fragment, useEffect, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
@@ -15,7 +17,7 @@ import { ValidatorField, AmountField } from "../fields";
 import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 
-import estimateMaxSpendable from "@ledgerhq/live-common/lib/families/elrond/js-estimateMaxSpendable";
+import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
 
 export default function StepDelegation({
   account,

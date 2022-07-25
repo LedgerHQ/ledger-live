@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { urls } from "../../../../config/urls";
 import { ScreenName, NavigatorName } from "../../../../const";

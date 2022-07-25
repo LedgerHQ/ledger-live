@@ -1,3 +1,5 @@
+// @flow
+
 function format(
   big: string,
   denomination = 18,

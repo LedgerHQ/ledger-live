@@ -1,4 +1,6 @@
-import React, { FC, useState, useCallback, useMemo, useEffect } from "react";
+// @flow
+
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import moment from "moment";
@@ -14,7 +16,7 @@ import { openURL } from "~/renderer/linking";
 import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";
 import { openModal } from "~/renderer/actions/modals";
 
-const Unbonding: FC = ({
+const Unbonding = ({
   account,
   contract,
   seconds,

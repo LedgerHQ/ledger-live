@@ -4,14 +4,13 @@ import { BigNumber } from "bignumber.js";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
-import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import estimateMaxSpendable from "@ledgerhq/live-common/lib/families/elrond/js-estimateMaxSpendable";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+} from "@ledgerhq/live-common/account/index";
+import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../../../const";
@@ -27,15 +26,15 @@ import { constants } from "../../../constants";
 import { nominate } from "../../../helpers";
 
 interface RouteParams {
-  accountId: string,
-  transaction: Transaction,
-  fromSelectAmount?: true,
-};
+  accountId: string;
+  transaction: any;
+  fromSelectAmount?: true;
+}
 
 interface Props {
-  navigation: any,
-  route: { params: RouteParams },
-};
+  navigation: any;
+  route: { params: RouteParams };
+}
 
 const styles = StyleSheet.create({
   stack: {

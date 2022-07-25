@@ -7,13 +7,12 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import BigNumber from "bignumber.js";
 
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getMainAccount,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/account/index";
 
 import { accountScreenSelector } from "../../../../../reducers/accounts";
 import { ScreenName } from "../../../../../const";
@@ -24,14 +23,14 @@ import CurrencyUnitValue from "../../../../../components/CurrencyUnitValue";
 import ArrowRight from "../../../../../icons/ArrowRight";
 
 interface RouteParams {
-  accountId: string,
-  transaction: Transaction,
-};
+  accountId: string;
+  transaction: any;
+}
 
 interface Props {
-  navigation: any,
-  route: { params: RouteParams },
-};
+  navigation: any;
+  route: { params: RouteParams };
+}
 
 const styles = StyleSheet.create({
   stack: {

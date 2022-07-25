@@ -5,10 +5,10 @@ import { BottomDrawer, Box, Flex, Text } from "@ledgerhq/native-ui";
 import { urls } from "../../config/urls";
 import ExternalLink from "../../components/ExternalLink";
 
-type Props = {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
-};
+}
 
 export default function AccountSubHeaderDrawer({ isOpen, onClose }: Props) {
   const { t } = useTranslation();

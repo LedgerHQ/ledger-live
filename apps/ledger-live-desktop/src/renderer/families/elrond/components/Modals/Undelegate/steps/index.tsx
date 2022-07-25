@@ -1,4 +1,5 @@
 // @flow
+
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";

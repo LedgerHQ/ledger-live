@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";

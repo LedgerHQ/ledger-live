@@ -1,3 +1,5 @@
+// @flow
+
 import React, { useMemo, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 

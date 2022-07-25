@@ -1,3 +1,5 @@
+// @flow
+
 import React from "react";
 import styled from "styled-components";
 import Box, { Card } from "~/renderer/components/Box";

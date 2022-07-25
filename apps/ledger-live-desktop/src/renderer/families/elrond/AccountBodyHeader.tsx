@@ -1,10 +1,12 @@
-import React, { Fragment, useCallback, useMemo, useState, useEffect, ReactNode } from "react";
+// @flow
+
+import React, { Fragment, useCallback, useMemo, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -40,7 +42,7 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: ReactNode) => (props: any) =>
+const withDelegation = (Component: any) => (props: any) =>
   props.account.elrondResources ? <Component {...props} /> : null;
 
 const Delegation = (props: Props) => {

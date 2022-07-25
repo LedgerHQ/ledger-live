@@ -21,9 +21,9 @@ import {
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
 
-type Props = {
-  account: Account,
-};
+interface Props {
+  account: Account;
+}
 
 const Summary = (props: Props) => {
   const { account } = props;

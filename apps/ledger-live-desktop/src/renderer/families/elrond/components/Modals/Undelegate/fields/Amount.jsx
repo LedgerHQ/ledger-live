@@ -1,4 +1,5 @@
 // @flow
+
 import React, { useMemo, useState } from "react";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";

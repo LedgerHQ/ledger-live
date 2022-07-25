@@ -5,9 +5,9 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 
-type State = {
+interface State {
   stepId: StepId;
-};
+}
 
 const INITIAL_STATE = {
   stepId: "withdraw",

@@ -19,14 +19,14 @@ import Alert from "../../../../../components/Alert";
 
 const forceInset = { bottom: "always" };
 
-type RouteParams = {
-  accountId: string,
-};
+interface RouteParams {
+  accountId: string;
+}
 
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-};
+interface Props {
+  navigation: any;
+  route: { params: RouteParams };
+}
 
 const styles = StyleSheet.create({
   root: {

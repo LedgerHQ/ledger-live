@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import LText from "../../../../../../components/LText";
 import InfoModal from "../../../../../../modals/Info";
 
-type Props = {
-  disabled?: boolean,
-  onPress: () => void,
-};
+interface Props {
+  disabled?: boolean;
+  onPress: () => void;
+}
 
 const Right = (props: Props) => {
   const [disabledModalOpen, setDisabledModalOpen] = useState(false);

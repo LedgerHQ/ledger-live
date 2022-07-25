@@ -1,8 +1,10 @@
-import React, { FC, useMemo, Fragment, useCallback, ReactNode } from "react";
+// @flow
+
+import React, { useMemo, Fragment, useCallback, ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account as AccountType } from "@ledgerhq/live-common/lib/types";
+import { Account as AccountType } from "@ledgerhq/live-common/types/index";
 
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
@@ -11,14 +13,14 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import Text from "~/renderer/components/Text";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
+import { DelegationType, ValidatorType, UnbondingType } from "~/renderer/families/elrond/types";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { denominate } from "~/renderer/families/elrond/helpers";
 import { constants } from "~/renderer/families/elrond/constants";
 
-type RenderDropdownItemType = {
+interface RenderDropdownItemType {
   isActive: boolean;
   item: {
     key: string;
@@ -27,7 +29,7 @@ type RenderDropdownItemType = {
     tooltip: ReactNode;
     show: boolean;
   };
-};
+}
 
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
@@ -45,7 +47,7 @@ const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   </Fragment>
 );
 
-const Delegation: FC = ({
+const Delegation = ({
   contract,
   claimableRewards,
   userActiveStake,

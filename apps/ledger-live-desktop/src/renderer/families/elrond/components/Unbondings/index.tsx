@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+// @flow
+
+import React from "react";
 import { Trans } from "react-i18next";
 import { Account } from "@ledgerhq/live-common/lib/types";
 
@@ -7,12 +9,12 @@ import { UnbondingType } from "~/renderer/families/elrond/types";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Unbonding from "~/renderer/families/elrond/components/Unbondings/components/Unbonding";
 
-type UnbondingsType = {
+interface UnbondingsType {
   unbondings: Array<UnbondingType>;
   account: Account;
-};
+}
 
-const Unbondings: FC = (props: UnbondingsType) => {
+const Unbondings = (props: UnbondingsType) => {
   const { unbondings, account } = props;
   const columns = [
     "delegation.validator",

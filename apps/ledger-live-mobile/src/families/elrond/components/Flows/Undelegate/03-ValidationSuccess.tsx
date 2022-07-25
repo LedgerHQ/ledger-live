@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { Operation } from "@ledgerhq/live-common/lib/types";
+import { Operation } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 
 import { accountScreenSelector } from "../../../../../reducers/accounts";

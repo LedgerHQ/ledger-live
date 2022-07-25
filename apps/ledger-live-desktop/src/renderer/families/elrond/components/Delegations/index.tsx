@@ -1,17 +1,19 @@
+// @flow
+
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { Account as AccountType } from "@ledgerhq/live-common/lib/types";
+import { Account as AccountType } from "@ledgerhq/live-common/types/index";
 
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import { DelegationType, ValidatorType } from "~/renderer/families/elrond/types";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 
-type DelegationsType = {
+interface DelegationsType {
   delegations: Array<DelegationType>;
   validators: Array<ValidatorType>;
   account: AccountType;
-};
+}
 
 const Delegations = ({ delegations, validators, account }: DelegationsType) => {
   const columns = [

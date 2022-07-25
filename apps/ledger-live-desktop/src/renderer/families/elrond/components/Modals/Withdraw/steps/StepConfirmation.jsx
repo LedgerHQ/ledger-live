@@ -1,3 +1,5 @@
+// @flow
+
 import React from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
