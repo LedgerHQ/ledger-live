@@ -34,6 +34,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
+import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -89,6 +90,8 @@ export default function BaseNavigator() {
     [colors],
   );
   const learn = useFeature("learn");
+  // PTX smart routing feature flag - buy sell live app flag
+  const ptxSmartRouting = useFeature("ptxSmartRouting");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   return (
@@ -353,8 +356,14 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
-        component={ExchangeNavigator}
-        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
+        component={
+          ptxSmartRouting.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator
+        }
+        options={
+          ptxSmartRouting.enabled
+            ? { headerShown: false }
+            : { headerStyle: styles.headerNoShadow, headerLeft: null }
+        }
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
