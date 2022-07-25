@@ -12,15 +12,19 @@ type Props = {
   device: Device | null;
   language: Language;
   onClose: () => void;
-  onResult: () => void;
+  onResult?: () => void;
 };
 
 const DeviceLanguageInstalled: React.FC<{
   onContinue: () => void;
-  onMount: () => void;
+  onMount?: () => void;
   installedLanguage: Language;
 }> = ({ onContinue, onMount, installedLanguage }) => {
-  useEffect(() => onMount(), [onMount]);
+  useEffect(() => {
+    if(onMount) {
+      onMount()
+    }
+  }, [onMount]);
   const { t } = useTranslation();
 
   return (

@@ -1,63 +1,144 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   Flex,
   SelectableList,
   IconBox,
   Icons,
   Text,
+  BottomDrawer,
+  Link,
 } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocale } from "../../../context/Locale";
-import { languages, supportedLocales } from "../../../languages";
-import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import {
+  languages,
+  supportedLocales,
+  localeIdToDeviceLanguage,
+  Locale,
+} from "../../../languages";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
-import { lastSeenDeviceSelector } from "../../../reducers/settings";
+import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
+import NanoXFolded from "../../../images/devices/NanoXFolded";
+import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
+import { idsToLanguage, Language } from "@ledgerhq/live-common/lib/types/languages";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
+  const { t } = useTranslation();
+
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
 
+  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<
+    boolean
+  >(false);
+
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector) as (Device | null);
+  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] = useState<Device | null>(null);
 
-  const availableDeviceLanguages = useAvailableLanguagesForDevice(lastSeenDevice?.deviceInfo);
-
-  const changeLanguage = useCallback(
-    l => {
-      dispatch(setLanguage(l));
-      next();
-    },
-    [dispatch, next],
+  const availableDeviceLanguages = useAvailableLanguagesForDevice(
+    lastSeenDevice?.deviceInfo,
   );
 
+  const changeLanguage = useCallback(
+    (l: Locale) => {
+      dispatch(setLanguage(l));
+
+      const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
+      const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
+      const langAvailableOnDevice = potentialDeviceLanguage !== undefined && availableDeviceLanguages.includes(
+        potentialDeviceLanguage,
+      );
+
+      if (langAvailableOnDevice && deviceLanguageId !== undefined && idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage) {
+        setIsDeviceLanguagePromptOpen(true);
+      } else {
+        next();
+      }
+    },
+    [dispatch, next, availableDeviceLanguages],
+  );
+
+  const closeDeviceLanguagePrompt = useCallback(() => {
+    setIsDeviceLanguagePromptOpen(false);
+    next();
+  }, [next]);
+
   return (
-    <Flex flex={1} p={6}>
-      <ScrollView>
-        <Flex mb={4}>
-          <SelectableList
-            currentValue={currentLocale}
-            onChange={changeLanguage}
+    <>
+      <Flex flex={1} p={6}>
+        <ScrollView>
+          <Flex mb={4}>
+            <SelectableList
+              currentValue={currentLocale}
+              onChange={changeLanguage}
+            >
+              {supportedLocales.map((l, index) => (
+                <SelectableList.Element key={index + l} value={l}>
+                  {languages[l]}
+                </SelectableList.Element>
+              ))}
+            </SelectableList>
+          </Flex>
+        </ScrollView>
+      </Flex>
+      <BottomDrawer
+        isOpen={isDeviceLanguagePromptOpen}
+        onClose={closeDeviceLanguagePrompt}
+      >
+        <Flex alignItems="center">
+          <NanoXFolded size={200} />
+          <Text variant="h4" textAlign="center">
+            {t("onboarding.stepLanguage.changeDeviceLanguage")}
+          </Text>
+          <Flex px={7} mt={4} mb={8}>
+            <Text variant="paragraph" textAlign="center" color="neutral.c70">
+              {t("onboarding.stepLanguage.changeDeviceLanguageDescription", {
+                language: t(`deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`)
+              })}
+            </Text>
+          </Flex>
+          <Button
+            type="main"
+            onPress={() => setDeviceForChangeLanguageAction(lastConnectedDevice)}
+            outline={false}
+            alignSelf="stretch"
           >
-            {supportedLocales.map((l, index) => (
-              <SelectableList.Element key={index + l} value={l}>
-                {languages[l]}
-              </SelectableList.Element>
-            ))}
-          </SelectableList>
+            {t("deviceLocalization.changeLanguage")}
+          </Button>
+          <Flex mt={6}>
+            <Link
+              onPress={() => console.log("TODO: open link")}
+              Icon={Icons.ExternalLinkMedium}
+              iconPosition="right"
+              type="color"
+              style={{ justifyContent: "flex-start" }}
+            >
+              {t("common.learnMore")}
+            </Link>
+          </Flex>
         </Flex>
-      </ScrollView>
-    </Flex>
+      </BottomDrawer>
+      <ChangeDeviceLanguageAction 
+        device={deviceForChangeLanguageAction}
+        language={localeIdToDeviceLanguage[currentLocale] as Language}
+        onClose={() => {setDeviceForChangeLanguageAction(null); closeDeviceLanguagePrompt()}} 
+      />
+    </>
   );
 }
 

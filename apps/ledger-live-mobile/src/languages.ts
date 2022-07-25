@@ -25,23 +25,25 @@ export const languages = {
   zh: "简体中文",
 };
 
-export const localeIds: string[] = Object.keys(allLocales);
+export const localeIds: Locale[] = Object.keys(allLocales) as Locale[];
 
 /**
  * This is the list of languages that are supported in terms of in-app translations
  * and it is meant to appear in the settings.
  */
-export const supportedLocales = Config.LEDGER_DEBUG_ALL_LANGS
+export const supportedLocales: Locale[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
   : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko"];
 
+
+export type Locale = keyof typeof languages;
 
 /**
  * This maps the supported locales from live to theiur equivalent languages on the device.
  * It is to be used for suggesting the user to change their device language according to their Live
  * language.
  */
-export const localeIdToDeviceLanguage: { [key in keyof typeof languages]?: Language} = {
+export const localeIdToDeviceLanguage: { [key in Locale]?: Language} = {
   en: "english",
   fr: "french",
   es: "spanish",
@@ -55,10 +57,12 @@ export const localeIdToDeviceLanguage: { [key in keyof typeof languages]?: Langu
  * or in the case of existing users, they will be prompted once to change their
  * Ledger Live language.
  */
-export const fullySupportedLocales = ["en", "fr", "ru", "es", "zh"];
+export const fullySupportedLocales: Locale[] = ["en", "fr", "ru", "es", "zh"];
 
-export const locales = supportedLocales.reduce((obj, key) => {
-  obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
+type LocaleIndexed<T> = { [key in Locale]?: T };
+
+export const locales = supportedLocales.reduce((obj: LocaleIndexed<any>, key) => {
+  obj[key] = (allLocales as LocaleIndexed<any>)[key]; // eslint-disable-line no-param-reassign
   return obj;
 }, {});
 
@@ -100,7 +104,7 @@ export const DEFAULT_LOCALE = "en-US";
 /** This allows us to have the region set by default to the region corresponding
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {
-  const defaultLanguageLocale = getDefaultLanguageLocale();
+  const defaultLanguageLocale = getDefaultLanguageLocale() as Locale;
   return (
     languageLocaleToDefaultLocaleMap[defaultLanguageLocale] || DEFAULT_LOCALE
   );
