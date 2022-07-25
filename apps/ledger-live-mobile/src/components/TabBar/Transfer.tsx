@@ -13,11 +13,13 @@ import Animated, {
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
+import { useSelector } from "react-redux";
 import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
 import { useTrack } from "../../analytics";
+import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 
 import lightAnimSource from "../../animations/mainButton/light.json";
 import darkAnimSource from "../../animations/mainButton/dark.json";
@@ -120,9 +122,11 @@ export function TransferTabIcon() {
     opacity: interpolate(openAnimValue.value, [0, 1, 2], [0, 1, 0]),
   }));
 
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
   const openModal = useCallback(() => {
     const animCallback = () => {
-      track("drawer_viewed", { drawer: "trade" });
+      if (!readOnlyModeEnabled) track("drawer_viewed", { drawer: "trade" });
     };
     openAnimValue.value = 0;
     openAnimValue.value = withTiming(1, animParams, finished => {
@@ -130,7 +134,7 @@ export function TransferTabIcon() {
         runOnJS(animCallback)();
       }
     });
-  }, [openAnimValue, track]);
+  }, [openAnimValue, track, readOnlyModeEnabled]);
 
   const closeModal = useCallback(() => {
     openAnimValue.value = withTiming(2, animParams, finished => {
