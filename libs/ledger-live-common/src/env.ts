@@ -549,6 +549,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for ledger status api",
   },
+  TEZOS_MAX_TX_QUERIES: {
+    def: 100,
+    parser: intParser,
+    desc: "safe max on maximum number of queries to synchronize a tezos account",
+  },
   PLATFORM_DEBUG: {
     def: false,
     parser: boolParser,
