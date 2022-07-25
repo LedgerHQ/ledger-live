@@ -137,10 +137,10 @@ importers:
       '@octokit/rest': ^18.12.0
       '@playwright/test': 1.22.2
       '@polkadot/react-identicon': 0.89.2
-      '@sentry/cli': ^2.4.1
+      '@sentry/cli': ^2.5.0
       '@sentry/electron': ^3.0.7
-      '@sentry/node': ^7.6.0
-      '@sentry/tracing': ^7.6.0
+      '@sentry/node': ^7.7.0
+      '@sentry/tracing': ^7.7.0
       '@storybook/addon-actions': ^6.3.12
       '@storybook/addon-essentials': ^6.3.12
       '@storybook/addon-links': ^6.3.12
@@ -39221,7 +39221,7 @@ packages:
   /react-native-gesture-handler/2.5.0_mk7ksnag22facomrynqrp7v6gy:
     resolution: {integrity: sha512-djZdcprFf08PZC332D+AeG5wcGeAPhzfCJtB3otUgOgTlvjVXmg/SLFdPJSpzLBqkRAmrC77tM79QgKbuLxkfw==}
     peerDependencies:
-      '@types/react': ^17.0.0
+      '@types/react': '*'
       react: '*'
       react-native: '*'
     peerDependenciesMeta:

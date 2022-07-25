@@ -332,10 +332,12 @@ export const completeExchangeLogic = (
 };
 
 export const signMessageLogic = (
-  { dispatch, accounts }: WebPlatformContext,
+  { manifest, dispatch, accounts }: WebPlatformContext,
   accountId: string,
   message: string,
 ) => {
+  tracking.platformSignMessageRequested(manifest);
+
   const account = accounts.find(account => account.id === accountId);
   if (account === undefined) {
     return Promise.reject(new Error("account not found"));
@@ -345,6 +347,7 @@ export const signMessageLogic = (
   try {
     formattedMessage = prepareMessageToSign(account, message);
   } catch (error) {
+    tracking.platformSignMessageFail(manifest);
     return Promise.reject(error);
   }
 
@@ -354,12 +357,15 @@ export const signMessageLogic = (
         message: formattedMessage,
         account,
         onConfirmationHandler: (signature: string) => {
+          tracking.platformSignMessageSuccess(manifest);
           resolve(signature);
         },
         onFailHandler: (err: Error) => {
+          tracking.platformSignMessageFail(manifest);
           reject(err);
         },
         onClose: () => {
+          tracking.platformSignMessageUserRefused(manifest);
           reject(new UserRefusedOnDevice());
         },
       }),
