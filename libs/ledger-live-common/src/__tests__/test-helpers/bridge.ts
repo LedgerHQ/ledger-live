@@ -709,6 +709,7 @@ export function testBridge<T extends TransactionCommon>(
                     const a = (subAccounts as SubAccount[]).find(
                       (a) => a.id === subAccountId
                     );
+                    console.log(subAccounts);
                     invariant(a, "sub account not found");
                     return a;
                   };

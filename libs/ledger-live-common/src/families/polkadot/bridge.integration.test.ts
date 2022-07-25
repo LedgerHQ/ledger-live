@@ -195,22 +195,6 @@ const polkadot: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "[send] use all amount - should warn all funds",
-          transaction: (t) => ({
-            ...t,
-            useAllAmount: true,
-            mode: "send",
-            recipient: ACCOUNT_EMPTY,
-          }),
-          expectedStatus: (account) => ({
-            errors: {},
-            warnings: {
-              amount: new PolkadotAllFundsWarning(),
-            },
-            totalSpent: account.spendableBalance,
-          }),
-        },
-        {
           name: "nominate without true validator",
           transaction: fromTransactionRaw({
             family: "polkadot",
@@ -400,6 +384,22 @@ const polkadot: CurrenciesData<Transaction> = {
         balance: "11000000000",
       },
       transactions: [
+        {
+          name: "[send] use all amount - should warn all funds",
+          transaction: (t) => ({
+            ...t,
+            useAllAmount: true,
+            mode: "send",
+            recipient: ACCOUNT_SAME_STASHCONTROLLER,
+          }),
+          expectedStatus: (account) => ({
+            errors: {},
+            warnings: {
+              amount: new PolkadotAllFundsWarning(),
+            },
+            totalSpent: account.spendableBalance,
+          }),
+        },
         {
           name: "stash can't nominate",
           transaction: fromTransactionRaw({
