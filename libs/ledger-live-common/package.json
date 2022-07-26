@@ -191,6 +191,7 @@
     "eth-sig-util": "3.0.1",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-util": "^7.1.4",
+    "ethers": "^5.6.9",
     "events": "^3.3.0",
     "expect": "^27.4.6",
     "generic-pool": "^3.8.2",
