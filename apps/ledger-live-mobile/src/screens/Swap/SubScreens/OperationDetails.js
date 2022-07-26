@@ -20,6 +20,7 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountSelector } from "../../../reducers/accounts";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import LText from "../../../components/LText";
@@ -127,7 +128,7 @@ export function OperationDetails({ route }: OperationDetailsProps) {
             onPress={openProvider}
           >
             <LText semiBold style={styles.providerLink} color="live">
-              {provider}
+              {getProviderName(provider)}
             </LText>
             <ExternalLink size={11} color={colors.live} />
           </TouchableOpacity>
