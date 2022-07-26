@@ -23,14 +23,18 @@ export function PendingOperation({ route, navigation }: PendingOperationProps) {
   const {
     swapId,
     provider,
-    targetCurrency,
+    toAccountId,
     fromAccountId,
   } = route.params.swapOperation;
   const fromAccount = useSelector(state =>
     accountSelector(state, { accountId: fromAccountId }),
   );
+  const toAccount = useSelector(state =>
+    accountSelector(state, { accountId: toAccountId }),
+  );
 
   const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
+  const targetCurrency = toAccount && getAccountCurrency(toAccount);
 
   const onComplete = useCallback(() => {
     navigation.navigate("OperationDetails", {
