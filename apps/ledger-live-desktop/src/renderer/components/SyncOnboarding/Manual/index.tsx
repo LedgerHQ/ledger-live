@@ -64,8 +64,8 @@ const SyncOnboardingManual = () => {
         <Button ml={4} Icon={CloseMedium} />
       </Flex>
       <Flex flex={1} px={8} py={4}>
-        <Flex flex={1} flexDirection="column">
-          <Text variant="h1" fontSize="24px">
+        <Flex flex={1} flexDirection="column" justifyContent="center">
+          <Text variant="h1" fontSize="24px" mb="50px">
             Setup your Nano
           </Text>
           <VerticalTimeline steps={steps as any} />
