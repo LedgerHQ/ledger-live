@@ -66,7 +66,7 @@ const SyncOnboardingManual = () => {
         <LangSwitcher />
         <Button ml={4} Icon={CloseMedium} />
       </Flex>
-      <Flex flex={1} px={8} py={4}>
+      <Flex flex={1} px={8} py={4} alignItems="center">
         <Flex flex={1} flexDirection="column">
           <Flex alignItems="center" mb={8}>
             <Text variant="h4" fontSize="24px" fontWeight="semiBold">
