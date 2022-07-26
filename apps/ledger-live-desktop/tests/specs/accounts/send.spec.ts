@@ -6,7 +6,7 @@ import { AccountsPage } from "tests/models/AccountsPage";
 import { AccountPage } from "tests/models/AccountPage";
 
 //test.use({ userdata: "skip-onboarding" });
-test.use({ userdata: "adaAccount" })
+test.use({ userdata: "adaAccount" });
 
 test(`ADA send`, async ({ page }) => {
   const deviceAction = new DeviceAction(page);
