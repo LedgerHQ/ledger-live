@@ -79,23 +79,20 @@ export const textVariantStyle: Record<
     "text-transform": "uppercase",
   },
   h3: {
-    fontFamily: "Alpha, Inter, Sans",
+    fontFamily: "Inter, Sans",
     fontWeight: 500,
-    "text-transform": "uppercase",
   },
   h4: {
-    fontFamily: "Alpha, Inter, Sans",
+    fontFamily: "Inter, Sans",
     fontWeight: 500,
-    "text-transform": "uppercase",
   },
   h4Inter: {
     fontFamily: "Inter, Sans",
     fontWeight: 600,
   },
   h5: {
-    fontFamily: "Alpha, Inter, Sans",
+    fontFamily: "Inter, Sans",
     fontWeight: 500,
-    "text-transform": "uppercase",
   },
   large: {
     fontFamily: "Inter, Sans",
