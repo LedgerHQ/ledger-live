@@ -70,7 +70,7 @@ const CarouselTopBar = styled(Flex).attrs({
   alignItems: "center",
   padding: "40px",
   width: "100%",
-  zIndex: "1",
+  zIndex: 1,
 })``;
 
 const VideoWrapper = styled(Flex).attrs({
