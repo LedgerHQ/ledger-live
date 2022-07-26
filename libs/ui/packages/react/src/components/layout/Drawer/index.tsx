@@ -8,6 +8,7 @@ import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import Text from "../../asorted/Text";
+import Button from "../../cta/Button";
 
 export enum Direction {
   Left = "left",
@@ -31,6 +32,7 @@ const Wrapper = styled(FlexBox)<{
   justify-content: space-between;
   z-index: ${(p) => p.theme.zIndexes[8]};
 `;
+
 const Overlay = styled.div<{ direction: Direction }>`
   display: flex;
   position: fixed;
@@ -42,19 +44,19 @@ const Overlay = styled.div<{ direction: Direction }>`
   z-index: 999;
   background-color: ${(p) => p.theme.colors.constant.overlay};
 `;
+
 const ScrollWrapper = styled(FlexBox)`
   &::-webkit-scrollbar {
     display: none;
   }
 `;
+
 const ButtonPlaceholder = styled.div`
   min-width: ${(p) => p.theme.space[13]}px;
 `;
-const Button = styled.button`
-  background: unset;
-  border: unset;
-  cursor: pointer;
-  color: ${(p) => p.theme.colors.neutral.c100};
+
+const IconButton = styled(Button)`
+  background-color: ${(p) => p.theme.colors.neutral.c30};
 `;
 
 export interface DrawerProps {
@@ -154,9 +156,7 @@ const DrawerContent = React.forwardRef(
                   {!hideNavigation && (
                     <>
                       {onBack != null ? (
-                        <Button onClick={onBack}>
-                          <ArrowLeft size={21} />
-                        </Button>
+                        <IconButton onClick={onBack} Icon={ArrowLeft} />
                       ) : (
                         <ButtonPlaceholder />
                       )}
@@ -168,9 +168,7 @@ const DrawerContent = React.forwardRef(
                     </Text>
                   ) || <div />}
                   <FlexBox alignSelf="flex-start">
-                    <Button onClick={onClose}>
-                      <Close />
-                    </Button>
+                    <IconButton onClick={onClose} Icon={Close} />
                   </FlexBox>
                 </FlexBox>
                 <ScrollWrapper
