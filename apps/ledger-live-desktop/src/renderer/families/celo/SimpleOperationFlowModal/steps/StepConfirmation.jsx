@@ -25,22 +25,13 @@ export const StepConfirmationFooter = ({
   optimisticOperation,
   mode,
 }: StepProps) => {
-  const openManageModal = useCallback(() => {
-    onClose();
-    if (account) {
-      openModal("MODAL_CELO_MANAGE", {
-        account: account,
-      });
-    }
-  }, [account, onClose, openModal]);
-
   return (
     <Box horizontal alignItems="right">
       {error ? (
         <RetryButton primary ml={2} onClick={onRetry} />
       ) : (
-        <Button ml={2} primary onClick={openManageModal}>
-          <Trans i18nKey={`celo.simpleOperation.steps.confirmation.modes.${mode}.success.cta`} />
+        <Button ml={2} primary onClick={onClose}>
+          <Trans i18nKey={`common.done`} />
         </Button>
       )}
     </Box>

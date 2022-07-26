@@ -1,11 +1,13 @@
 // @flow
 
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import type { Account } from "@ledgerhq/live-common/types";
-import { openModal } from "~/renderer/actions/modals";
+import React, { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { openModal } from "~/renderer/actions/modals";
+import { isAccountRegistrationPending } from "../utils";
 import Icon from "./Icon";
+import type { Account } from "@ledgerhq/live-common/types";
 
 type Props = {
   account: Account,
@@ -14,6 +16,8 @@ type Props = {
 const AccountHeaderManageActions = ({ account }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const accounts = useSelector(accountsSelector);
+  const isRegistrationPending = isAccountRegistrationPending(account.id, accounts);
 
   const onClick = useCallback(() => {
     dispatch(
@@ -27,9 +31,11 @@ const AccountHeaderManageActions = ({ account }: Props) => {
     {
       key: "celo",
       onClick: onClick,
-      icon: Icon,
-      disabled: false,
-      label: t("celo.manage.title"),
+      icon: (props: *) => <Icon {...props} isDisabled={isRegistrationPending} />,
+      disabled: isRegistrationPending,
+      label: isRegistrationPending
+        ? t("celo.manage.titleWhenPendingRegistration")
+        : t("celo.manage.title"),
     },
   ];
 };

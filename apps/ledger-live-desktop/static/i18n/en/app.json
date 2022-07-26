@@ -2108,7 +2108,7 @@
       "subHeader": {
         "cardTitle": "Powered by Figment",
         "moreInfo": "More info",
-        "drawerTitle": "Figment integration",
+        "drawerTitle": "Powered by Figment",
         "title": "The CELO  token is now available on Ledger Live",
         "description": "You can now start to manage your CELO tokens and secure them through Ledger Live.",
         "description2": "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
@@ -2150,6 +2150,7 @@
     },
     "manage": {
       "title": "Manage assets",
+      "titleWhenPendingRegistration": "Account Registration Pending",
       "lock": {
         "title": "Lock",
         "description": "To earn rewards, first lock an amount. Then you must vote for your validator(s)."

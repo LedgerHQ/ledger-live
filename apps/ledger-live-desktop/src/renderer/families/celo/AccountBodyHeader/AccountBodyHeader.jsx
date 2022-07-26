@@ -1,11 +1,10 @@
 // @flow
 
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import type { Account } from "@ledgerhq/live-common/types";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
@@ -16,14 +15,17 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import Text from "~/renderer/components/Text";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { openURL } from "~/renderer/linking";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { isAccountRegistrationPending } from "../utils";
 import { Header } from "./Header";
 import { Row } from "./Row";
-import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import {
   availablePendingWithdrawals,
   activatableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBodyHeader.styles";
+import type { Account } from "@ledgerhq/live-common/types";
+import type { CeloVote } from "@ledgerhq/live-common/families/celo/types";
 
 type Props = {
   account: Account,
@@ -33,7 +35,9 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
   const { celoResources } = account;
   invariant(celoResources, "celo account and resources expected");
   const dispatch = useDispatch();
-
+  const accounts = useSelector(accountsSelector);
+  const isRegistrationPending = isAccountRegistrationPending(account?.id, accounts);
+  console.log(accounts);
   const { votes } = celoResources;
 
   const onEarnRewards = useCallback(() => {
@@ -147,11 +151,15 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
               </Box>
             </Box>
             <Box>
-              <Button primary small onClick={onEarnRewards}>
+              <Button primary small onClick={onEarnRewards} disabled={isRegistrationPending}>
                 <Box horizontal flow={1} alignItems="center">
                   <IconChartLine size={12} />
                   <Box>
-                    <Trans i18nKey="celo.delegation.emptyState.delegation" />
+                    {isRegistrationPending ? (
+                      <Trans i18nKey="celo.manage.titleWhenPendingRegistration" />
+                    ) : (
+                      <Trans i18nKey="celo.delegation.emptyState.delegation" />
+                    )}
                   </Box>
                 </Box>
               </Button>
