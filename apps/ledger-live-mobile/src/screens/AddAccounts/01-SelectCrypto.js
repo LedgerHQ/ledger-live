@@ -44,6 +44,19 @@ const listSupportedTokens = () =>
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { filterCurrencyIds = [] } = route.params || {};
+  const currencyOsmosis = useFeature("currencyOsmosis");
+
+  const cryptoCurrencies = useMemo(() => {
+    const currencies = listSupportedCurrencies()
+      .concat(listSupportedTokens())
+      .filter(filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id));
+
+    if (currencyOsmosis?.enabled) {
+      return currencies;
+    }
+
+    return currencies.filter(c => c.family !== "osmosis");
+  }, [currencyOsmosis, filterCurrencyIds]);
   const cryptoCurrencies = useMemo(
     () =>
       listSupportedCurrencies()
