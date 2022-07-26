@@ -1,7 +1,7 @@
 import { Transaction, CryptoCurrency, ProtoNFT, NFTStandard } from "../types";
 import { getEnv } from "../env";
 
-export const isNftTransaction = (
+export const isNftTransaction = false;/*(
   transaction: Transaction | undefined | null
 ): boolean => {
   if (transaction?.family === "ethereum") {
@@ -9,7 +9,7 @@ export const isNftTransaction = (
   }
 
   return false;
-};
+};*/
 
 export function isNFTActive(
   currency: CryptoCurrency | undefined | null

@@ -9,7 +9,7 @@ import { ScrollView, Linking } from "react-native";
 import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
-  hasLendEnabledAccountsSelector,
+  //hasLendEnabledAccountsSelector,
   accountsSelector,
 } from "../../reducers/accounts";
 import {
@@ -31,7 +31,7 @@ export default function TransferDrawer({ onClose }: ModalProps) {
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
+  const lendingEnabled = false;//useSelector(hasLendEnabledAccountsSelector);
   const accounts = useSelector(accountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [

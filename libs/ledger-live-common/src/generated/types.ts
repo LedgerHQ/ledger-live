@@ -12,8 +12,6 @@ import { Transaction as crypto_orgTransaction } from "../families/crypto_org/typ
 import { TransactionRaw as crypto_orgTransactionRaw } from "../families/crypto_org/types";
 import { Transaction as elrondTransaction } from "../families/elrond/types";
 import { TransactionRaw as elrondTransactionRaw } from "../families/elrond/types";
-import { Transaction as ethereumTransaction } from "../families/ethereum/types";
-import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { Transaction as filecoinTransaction } from "../families/filecoin/types";
 import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
 import { Transaction as hederaTransaction } from "../families/hedera/types";
@@ -41,7 +39,6 @@ export type Transaction =
   | cosmosTransaction
   | crypto_orgTransaction
   | elrondTransaction
-  | ethereumTransaction
   | filecoinTransaction
   | hederaTransaction
   | neoTransaction
@@ -59,7 +56,6 @@ export type TransactionRaw =
   | cosmosTransactionRaw
   | crypto_orgTransactionRaw
   | elrondTransactionRaw
-  | ethereumTransactionRaw
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | neoTransactionRaw

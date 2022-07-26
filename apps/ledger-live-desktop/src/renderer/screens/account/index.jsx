@@ -37,8 +37,8 @@ import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
-import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
-import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
+//import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
+//import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 
 const mapStateToProps = (
   state,
@@ -90,7 +90,7 @@ const AccountPage = ({
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
 
-  const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
+  const isCompoundEnabled = false;//useCompoundAccountEnabled(account, parentAccount);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -159,9 +159,6 @@ const AccountPage = ({
           </Box>
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
-          ) : null}
-          {isCompoundEnabled && account.type === "TokenAccount" && parentAccount ? (
-            <CompoundBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
             <Collections account={account} />

@@ -10,8 +10,6 @@ import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 
 import elrond from "../families/elrond/deviceTransactionConfig";
 
-import ethereum from "../families/ethereum/deviceTransactionConfig";
-
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 
 import hedera from "../families/hedera/deviceTransactionConfig";
@@ -36,7 +34,6 @@ export default {
   cosmos,
   crypto_org,
   elrond,
-  ethereum,
   filecoin,
   hedera,
   polkadot,

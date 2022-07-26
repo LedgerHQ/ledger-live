@@ -26,14 +26,14 @@ import { SLIDES } from "../components/Carousel/shared";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
+//const ethereum = getCryptoCurrencyById("ethereum");
+export const possibleIntermediaries = [bitcoin];
 export const supportedCountervalues = [
   ...listSupportedFiats(),
   ...possibleIntermediaries,
 ];
 export const intermediaryCurrency = (from: Currency, _to: Currency) => {
-  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
+  //if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
 };
 

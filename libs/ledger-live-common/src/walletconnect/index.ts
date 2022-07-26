@@ -6,8 +6,8 @@ import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
 import type { Account, Transaction } from "../types";
-import type { TypedMessageData } from "../families/ethereum/types";
-import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
+//import type { TypedMessageData } from "../families/ethereum/types";
+//import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
 export type WCPayloadTransaction = {
   from: string;
@@ -30,7 +30,7 @@ export type WCCallRequest =
     }
   | {
       type: "message";
-      data: MessageData | TypedMessageData;
+      data: MessageData;
     }
   | {
       type: "transaction";
@@ -50,6 +50,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
 
     // @dev: Today, `eth_signTypedData` is versionned. We can't only check `eth_signTypedData`
     //       This regex matches `eth_signTypedData` and `eth_signTypedData_v[0-9]`
+    /*
     case payload.method.match(/eth_signTypedData(_v.)?$/)?.input:
       message = JSON.parse(payload.params[1]);
       hashes = {
@@ -57,7 +58,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
         domainHash: bufferToHex(domainHash(message)),
         // $FlowFixMe
         messageHash: bufferToHex(messageHash(message)),
-      };
+      };*/
     case "eth_sign":
       message = message || payload.params[1];
       rawMessage = rawMessage || payload.params[1];

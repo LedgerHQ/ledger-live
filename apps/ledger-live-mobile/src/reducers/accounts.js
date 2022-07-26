@@ -9,10 +9,12 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/types/index";
+
+/*
 import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
-} from "@ledgerhq/live-common/compound/logic";
+} from "@ledgerhq/live-common/compound/logic";*/
 
 import {
   addAccounts,
@@ -288,7 +290,7 @@ export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
   if (!currency) return [];
   return subAccountByCurrencyOrderedSelector(state, { currency });
 };
-
+/*
 export const hasLendEnabledAccountsSelector: OutputSelector<
   State,
   void,
@@ -308,6 +310,6 @@ export const hasLendEnabledAccountsSelector: OutputSelector<
 
     return !!capabilities;
   }),
-);
+);*/
 
 export default handleActions(handlers, initialState);

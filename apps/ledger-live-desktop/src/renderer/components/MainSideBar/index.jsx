@@ -13,7 +13,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import {
   accountsSelector,
   starredAccountsSelector,
-  hasLendEnabledAccountsSelector,
+  //hasLendEnabledAccountsSelector,
 } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
@@ -220,7 +220,7 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
   const firstTimeLend = useSelector(state => state.settings.firstTimeLend);
 
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
+  const lendingEnabled = false;//useSelector(hasLendEnabledAccountsSelector);
 
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));

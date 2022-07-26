@@ -16,10 +16,11 @@ import {
   Operation,
 } from "@ledgerhq/live-common/types/index";
 import debounce from "lodash/debounce";
+/*
 import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
-} from "@ledgerhq/live-common/compound/logic";
+} from "@ledgerhq/live-common/compound/logic";*/
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
 import { switchCountervalueFirst } from "../../actions/settings";
@@ -171,15 +172,17 @@ const AccountScreenInner = ({
     count: opCount,
   });
 
-  const compoundCapabilities: any =
+  const compoundCapabilities: any = false;
+  /*
     account.type === "TokenAccount" &&
     !!account.compoundBalance &&
     getAccountCapabilities(account);
-
-  const compoundSummary =
+*/
+  const compoundSummary = false;
+  /*
     compoundCapabilities?.status && account.type === "TokenAccount"
       ? makeCompoundSummaryForAccount(account, parentAccount)
-      : undefined;
+      : undefined;*/
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
