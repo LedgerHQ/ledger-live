@@ -279,7 +279,7 @@ const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://explorer-xp.avax.network/tx/$hash",
-        address: "https://explorer-xp.avax.network/address/$address",
+        address: "https://subnets.avax.network/validators/$address",
       }
     ]
   },

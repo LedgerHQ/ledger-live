@@ -51,7 +51,8 @@ const envDefinitions = {
     desc: "Node endpoint for avalanche",
   },
   API_AVALANCHE_EXPLORER_API: {
-    def: "https://explorerapi.avax-test.network",
+    // def: "https://explorerapi.avax-test.network", for "fuji"
+    def: "https://explorerapi.avax.network",
     parser: stringParser,
     desc: "Explorer API for avalanche",
   },
