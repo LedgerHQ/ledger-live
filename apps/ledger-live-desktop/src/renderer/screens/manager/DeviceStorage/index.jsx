@@ -30,6 +30,9 @@ import nanoSPDark from "~/renderer/images/devices/nanoSP_dark.png";
 import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
+import { Flex } from "@ledgerhq/react-ui";
+
+import DeviceLanguage from "./DeviceLanguage";
 
 const illustrations = {
   nanoS: {
@@ -274,6 +277,7 @@ export const StorageBar = ({
 type Props = {
   deviceModel: DeviceModel,
   deviceInfo: DeviceInfo,
+  device: Device,
   distribution: AppsDistribution,
   isIncomplete: boolean,
   installQueue: string[],
@@ -285,6 +289,7 @@ type Props = {
 const DeviceStorage = ({
   deviceModel,
   deviceInfo,
+  device,
   distribution,
   isIncomplete,
   installQueue,
@@ -312,20 +317,23 @@ const DeviceStorage = ({
             </Tooltip>
           </Box>
         </Box>
-        <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-          {firmwareOutdated ? (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareAvailable"
-              values={{ version: deviceInfo.version }}
-            />
-          ) : (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareUpToDate"
-              values={{ version: deviceInfo.version }}
-            />
-          )}{" "}
-          {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
-        </Text>
+        <Flex justifyContent="space-between">
+          <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+            {firmwareOutdated ? (
+              <Trans
+                i18nKey="manager.deviceStorage.firmwareAvailable"
+                values={{ version: deviceInfo.version }}
+              />
+            ) : (
+              <Trans
+                i18nKey="manager.deviceStorage.firmwareUpToDate"
+                values={{ version: deviceInfo.version }}
+              />
+            )}{" "}
+            {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
+          </Text>
+          <DeviceLanguage deviceInfo={deviceInfo} device={device} />
+        </Flex>
         <Separator />
         <Info>
           <div>

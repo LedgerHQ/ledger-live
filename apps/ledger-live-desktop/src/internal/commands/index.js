@@ -24,6 +24,7 @@ import websocketBridge from "./websocketBridge";
 import checkSignatureAndPrepare from "./checkSignatureAndPrepare";
 import getTransactionId from "./getTransactionId";
 import scanDescriptors from "./scanDescriptors";
+import installLanguage from "./installLanguage";
 import getAppAndVersion from "./getAppAndVersion";
 import { commands as bridgeProxyCommands } from "~/renderer/bridge/proxy-commands";
 
@@ -53,6 +54,7 @@ export const commandsById = {
   testInterval,
   websocketBridge,
   scanDescriptors,
+  installLanguage,
   signMessage,
   getAppAndVersion,
 };

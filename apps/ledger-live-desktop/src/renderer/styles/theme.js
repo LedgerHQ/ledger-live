@@ -189,6 +189,26 @@ export type Theme = {
   sizes: {
     topBarHeight: number,
     sideBarWidth: number,
+    drawer: {
+      side: {
+        big: {
+          width: number,
+        },
+        small: {
+          width: number,
+        },
+      },
+      popin: {
+        min: {
+          height: number,
+          width: number,
+        },
+        max: {
+          height: number,
+          width: number,
+        },
+      },
+    },
   },
   radii: number[],
   fontFamilies: { [string]: { [string]: Font } },
@@ -203,6 +223,26 @@ const theme: Theme = {
   sizes: {
     topBarHeight: 58,
     sideBarWidth: 230,
+    drawer: {
+      side: {
+        big: {
+          width: 580,
+        },
+        small: {
+          width: 420,
+        },
+      },
+      popin: {
+        min: {
+          height: 158,
+          width: 462,
+        },
+        max: {
+          height: 522,
+          width: 622,
+        },
+      },
+    },
   },
   radii,
   fontFamilies,

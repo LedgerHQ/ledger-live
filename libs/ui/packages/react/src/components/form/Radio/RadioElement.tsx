@@ -207,5 +207,6 @@ const Element = ({
 };
 
 Element.displayName = "Radio.Element"; // For easy identification in the React devtools & in storybook
+Element.Label = Label;
 
 export default Element;

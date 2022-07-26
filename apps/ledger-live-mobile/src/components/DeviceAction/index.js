@@ -6,6 +6,7 @@ import { DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { TransportStatusError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { Flex, Log } from "@ledgerhq/native-ui";
 import { setLastSeenDeviceInfo } from "../../actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
@@ -25,9 +26,11 @@ import {
   renderConfirmSell,
   LoadingAppInstall,
   AutoRepair,
+  renderAllowLanguageInstallation,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
+import DeviceActionProgress from "../DeviceActionProgress";
 
 type Props<R, H, P> = {
   onResult?: (payload: *) => Promise<void> | void,
@@ -81,6 +84,8 @@ export default function DeviceAction<R, H, P>({
     initSwapRequested,
     initSwapError,
     initSwapResult,
+    installingLanguage,
+    languageInstallationRequested,
     signMessageRequested,
     allowOpeningGranted,
     completeExchangeStarted,
@@ -138,6 +143,17 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (installingLanguage) {
+    return (
+      <Flex>
+        <DeviceActionProgress progress={progress} />
+        <Flex mt={5}>
+          <Log>{t("deviceLocalization.installingLanguage")}</Log>
+        </Flex>
+      </Flex>
+    );
+  }
+
   if (installingApp) {
     const appName = requestOpenApp;
     const props = {
@@ -176,6 +192,14 @@ export default function DeviceAction<R, H, P>({
       wording,
       colors,
       theme,
+    });
+  }
+
+  if (languageInstallationRequested) {
+    return renderAllowLanguageInstallation({
+      t,
+      theme,
+      device: selectedDevice,
     });
   }
 

@@ -1,8 +1,7 @@
-// @flow
 import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
-import { Trans } from "react-i18next";
+import { TFunction, Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -34,7 +33,6 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import Alert from "~/renderer/components/Alert";
 import ConnectTroubleshooting from "~/renderer/components/ConnectTroubleshooting";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
@@ -54,8 +52,10 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { relaunchOnboarding } from "~/renderer/actions/onboarding";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
+import { Flex, Log, ProgressLoader } from "@ledgerhq/react-ui"
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
-export const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = styled.div`
+export const AnimationWrapper = styled.div`
   width: 600px;
   max-width: 100%;
   padding-bottom: 20px;
@@ -65,7 +65,7 @@ export const AnimationWrapper: ThemedComponent<{ modelId?: DeviceModelId }> = st
   justify-content: center;
 `;
 
-const ProgressWrapper: ThemedComponent<{}> = styled.div`
+const ProgressWrapper = styled.div`
   padding: 24px;
   align-self: center;
   display: flex;
@@ -73,7 +73,7 @@ const ProgressWrapper: ThemedComponent<{}> = styled.div`
   justify-content: center;
 `;
 
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -83,7 +83,7 @@ export const Wrapper: ThemedComponent<{}> = styled.div`
   max-width: 100%;
 `;
 
-export const ConfirmWrapper: ThemedComponent<{}> = styled.div`
+export const ConfirmWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -92,7 +92,7 @@ export const ConfirmWrapper: ThemedComponent<{}> = styled.div`
   max-width: 100%;
 `;
 
-const Logo: ThemedComponent<{ warning?: boolean }> = styled.div`
+const Logo = styled.div<{ warning?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +106,7 @@ const Logo: ThemedComponent<{ warning?: boolean }> = styled.div`
   margin-bottom: 20px;
 `;
 
-export const Header: ThemedComponent<{}> = styled.div`
+export const Header = styled.div`
   display: flex;
   flex: 1 0 0%;
   flex-direction: column;
@@ -115,7 +115,7 @@ export const Header: ThemedComponent<{}> = styled.div`
   align-items: center;
 `;
 
-export const Footer: ThemedComponent<{}> = styled.div`
+export const Footer = styled.div`
   display: flex;
   flex: 1 0 0%;
   flex-direction: column;
@@ -124,7 +124,7 @@ export const Footer: ThemedComponent<{}> = styled.div`
   align-items: center;
 `;
 
-export const Title: ThemedComponent<{}> = styled(Text).attrs({
+export const Title = styled(Text).attrs({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   textAlign: "center",
@@ -133,7 +133,7 @@ export const Title: ThemedComponent<{}> = styled(Text).attrs({
   white-space: pre-line;
 `;
 
-export const SubTitle: ThemedComponent<{}> = styled(Text).attrs({
+export const SubTitle = styled(Text).attrs({
   ff: "Inter|Regular",
   color: "palette.text.shade100",
   textAlign: "center",
@@ -336,6 +336,33 @@ export const InstallingApp = ({
   );
 };
 
+export const renderInstallingLanguage = withV3StyleProvider(({
+  progress,
+  t
+}: {
+  progress: number,
+  t: TFunction
+}) => {
+  const cleanProgress = Math.round(progress * 100);
+
+  return (
+    <Flex 
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      data-test-id="installing-language-progress"
+    >
+      <ProgressWrapper>
+        <ProgressLoader progress={cleanProgress} />
+      </ProgressWrapper>
+      <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={30}>
+        {t("deviceLocalization.installingLanguage")}
+      </Log> 
+    </Flex>
+  );
+});
+
 export const renderListingApps = () => (
   <Wrapper data-test-id="device-action-loader">
     <Header />
@@ -378,6 +405,32 @@ export const renderAllowManager = ({
   </Wrapper>
 );
 
+export const renderAllowLanguageInstallation = ({
+  modelId,
+  type,
+  t,
+}: {
+  modelId: DeviceModelId,
+  type: "light" | "dark",
+  t: TFunction,
+}) => (
+  <Flex
+    flex={1}
+    flexDirection="column"
+    justifyContent="center"
+    alignItems="center"
+    data-test-id="allow-language-installation"
+  >
+    <DeviceBlocker />
+    <AnimationWrapper modelId={modelId}>
+      <Animation animation={getDeviceAnimation(modelId, type, "validate")} />
+    </AnimationWrapper>
+    <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
+      {t(`deviceLocalization.allowLanguageInstallation`)}
+    </Log>
+  </Flex>
+);
+
 export const renderAllowOpeningApp = ({
   modelId,
   type,
@@ -388,7 +441,7 @@ export const renderAllowOpeningApp = ({
   modelId: DeviceModelId,
   type: "light" | "dark",
   wording: string,
-  tokenContext?: ?TokenCurrency,
+  tokenContext?: TokenCurrency,
   isDeviceBlocker?: boolean,
 }) => (
   <Wrapper>
@@ -542,7 +595,7 @@ export const renderConnectYourDevice = ({
   type: "light" | "dark",
   onRetry: () => void,
   onRepairModal: () => void,
-  device: ?Device,
+  device: Device,
   unresponsive?: boolean,
 }) => (
   <Wrapper>
@@ -737,7 +790,7 @@ export const renderLoading = ({
   children,
 }: {
   modelId: DeviceModelId,
-  children?: React$Node,
+  children?: React.ReactNode,
 }) => (
   <Wrapper data-test-id="device-action-loader">
     <Header />

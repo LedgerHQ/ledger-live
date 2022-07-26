@@ -3,10 +3,17 @@ import { Page, Locator } from "@playwright/test";
 export class ManagerPage {
   readonly page: Page;
   readonly firmwareUpdateButton: Locator;
+  readonly changeDeviceLanguageButton: Locator;
+  readonly installLanguageButton: Locator;
+  readonly closeLanguageInstallationButton: Locator;
+  readonly languageInstalled: Locator;  
+  readonly allowLanguageInstallation: Locator;
+  readonly installingLanguageProgress: Locator;
   readonly installedAppsTab: Locator;
   readonly catalogAppsTab: Locator;
   readonly updateAllButton: Locator;
   readonly updateAllProgressBar: Locator;
+  readonly changeLanguageOption: Function;
   readonly appProgressBar: Function;
   readonly installAppButton: Function;
   readonly uninstallAppButton: Function;
@@ -17,10 +24,17 @@ export class ManagerPage {
   constructor(page: Page) {
     this.page = page;
     this.firmwareUpdateButton = page.locator('data-test-id=manager-update-firmware-button');
+    this.changeDeviceLanguageButton = page.locator('data-test-id=manager-change-language-button');
+    this.installLanguageButton = page.locator('data-test-id=install-language-button');
+    this.closeLanguageInstallationButton = page.locator('data-test-id=close-language-installation-button');
+    this.languageInstalled = page.locator('data-test-id=language-installed'); 
+    this.allowLanguageInstallation = page.locator('data-test-id=allow-language-installation');
+    this.installingLanguageProgress = page.locator('data-test-id=installing-language-progress');
     this.installedAppsTab = page.locator('data-test-id=manager-installed-apps-tab');
     this.catalogAppsTab = page.locator('data-test-id=manager-app-catalog-tab');
     this.updateAllButton = page.locator('data-test-id=manager-update-all-apps-button');
     this.updateAllProgressBar =  page.locator('data-test-id=manager-update-all-progress-bar');
+    this.changeLanguageOption = (language: string) : Locator => page.locator(`data-test-id=manager-language-option-${language}`);
     this.appProgressBar = (currency: string) : Locator => page.locator(`data-test-id=manager-${currency}-app-progress-bar`);
     this.installAppButton = (currency: string) : Locator => page.locator(`data-test-id=manager-install-${currency}-app-button`);
     this.uninstallAppButton = (currency: string) : Locator => page.locator(`data-test-id=manager-uninstall-${currency}-app-button`);
@@ -45,6 +59,12 @@ export class ManagerPage {
   async installApp(currency: string) {
     await this.installAppButton(currency).click();
     await this.appProgressBar(currency).waitFor({ state: "detached" });
+  }
+
+  async openChangeLanguageDrawerAndSelectLanguage(language: string) {
+    await this.changeDeviceLanguageButton.click();
+    await this.changeLanguageOption(language).waitFor({ state: "visible" });
+    await this.changeLanguageOption(language).click();
   }
 
   async uninstallApp(currency: string) {

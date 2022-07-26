@@ -176,6 +176,7 @@ const Manager = ({
       <AppsScreen
         state={state}
         dispatch={dispatch}
+        device={device}
         navigation={navigation}
         setAppInstallWithDependencies={setAppInstallWithDependencies}
         setAppUninstallWithDependencies={setAppUninstallWithDependencies}
