@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useContext } from "react";
+import React, { useCallback, useEffect, useContext, useState } from "react";
 import { BackHandler, Dimensions, Pressable } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import Lottie from "lottie-react-native";
@@ -125,7 +125,10 @@ export function TransferTabIcon() {
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
+  const [isOpened, setIsOpened] = useState(false);
+
   const openModal = useCallback(() => {
+    setIsOpened(true);
     const animCallback = () => {
       if (!readOnlyModeEnabled) track("drawer_viewed", { drawer: "trade" });
     };
@@ -138,6 +141,7 @@ export function TransferTabIcon() {
   }, [openAnimValue, track, readOnlyModeEnabled]);
 
   const closeModal = useCallback(() => {
+    setIsOpened(false);
     openAnimValue.value = withTiming(2, animParams, finished => {
       if (finished) {
         openAnimValue.value = 0;
@@ -189,21 +193,23 @@ export function TransferTabIcon() {
         onPress={closeModal}
         style={opacityStyle}
       />
-      <AnimatedDrawerContainer
-        animatedProps={drawerContainerProps}
-        style={[
-          {
-            width: screenWidth,
-            maxHeight: screenHeight - bottomInset - topInset,
-            paddingBottom:
-              bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
-          },
-          opacityStyle,
-          translateYStyle,
-        ]}
-      >
-        <TransferDrawer onClose={closeModal} />
-      </AnimatedDrawerContainer>
+      {isOpened ? (
+        <AnimatedDrawerContainer
+          animatedProps={drawerContainerProps}
+          style={[
+            {
+              width: screenWidth,
+              maxHeight: screenHeight - bottomInset - topInset,
+              paddingBottom:
+                bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
+            },
+            opacityStyle,
+            translateYStyle,
+          ]}
+        >
+          <TransferDrawer onClose={closeModal} />
+        </AnimatedDrawerContainer>
+      ) : null}
       <MainButton
         activeOpacity={1}
         disabled={lockSubject.getValue()}
