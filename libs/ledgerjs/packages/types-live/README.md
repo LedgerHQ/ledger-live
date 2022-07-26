@@ -886,12 +886,12 @@ Type: {paginationConfig: [PaginationConfig](#paginationconfig), withoutSynchroni
 
 ### BalanceHistoryData
 
-Type: {date: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), value: BigNumber}
+Type: {date: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), value: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
 *   `date` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)** 
-*   `value` **BigNumber** 
+*   `value` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 ### BalanceHistory
 
@@ -903,33 +903,33 @@ Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global
 
 ### BalanceHistoryWithCountervalue
 
-Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{date: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), value: BigNumber, countervalue: BigNumber}>
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
 
 ### ValueChange
 
-Type: {percentage: (BigNumber | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), value: BigNumber}
+Type: {percentage: ([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined)), value: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
-*   `percentage` **(BigNumber | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
-*   `value` **BigNumber** 
+*   `percentage` **([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+*   `value` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 ### AccountPortfolio
 
-Type: {history: [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue), countervalueAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), countervalueReceiveSum: BigNumber, countervalueSendSum: BigNumber, cryptoChange: [ValueChange](#valuechange), countervalueChange: [ValueChange](#valuechange)}
+Type: {history: [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue), countervalueAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), countervalueReceiveSum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalueSendSum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), cryptoChange: [ValueChange](#valuechange), countervalueChange: [ValueChange](#valuechange)}
 
 #### Properties
 
 *   `history` **[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)** 
 *   `countervalueAvailable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-*   `countervalueReceiveSum` **BigNumber** 
-*   `countervalueSendSum` **BigNumber** 
+*   `countervalueReceiveSum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `countervalueSendSum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `cryptoChange` **[ValueChange](#valuechange)** 
 *   `countervalueChange` **[ValueChange](#valuechange)** 
 
 ### CurrencyPortfolio
 
-Type: {history: [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue), countervalueAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), histories: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>, accounts: [AccountLikeArray](#accountlikearray), cryptoChange: [ValueChange](#valuechange), countervalueChange: [ValueChange](#valuechange)}
+Type: {history: [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue), countervalueAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), histories: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>, accounts: [AccountLikeArray](#accountlikearray), cryptoChange: [ValueChange](#valuechange), range: [PortfolioRange](#portfoliorange), countervalueChange: [ValueChange](#valuechange)}
 
 #### Properties
 
@@ -938,11 +938,12 @@ Type: {history: [BalanceHistoryWithCountervalue](#balancehistorywithcountervalue
 *   `histories` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>** 
 *   `accounts` **[AccountLikeArray](#accountlikearray)** 
 *   `cryptoChange` **[ValueChange](#valuechange)** 
+*   `range` **[PortfolioRange](#portfoliorange)** 
 *   `countervalueChange` **[ValueChange](#valuechange)** 
 
 ### Portfolio
 
-Type: {balanceHistory: [BalanceHistory](#balancehistory), balanceAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), availableAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, unavailableCurrencies: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<(CryptoCurrency | TokenCurrency)>, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, range: [PortfolioRange](#portfoliorange), histories: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>, countervalueReceiveSum: BigNumber, countervalueSendSum: BigNumber, countervalueChange: [ValueChange](#valuechange)}
+Type: {balanceHistory: [BalanceHistory](#balancehistory), balanceAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), availableAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, unavailableCurrencies: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<(CryptoCurrency | TokenCurrency)>, accounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>, range: [PortfolioRange](#portfoliorange), histories: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>, countervalueReceiveSum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalueSendSum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalueChange: [ValueChange](#valuechange)}
 
 #### Properties
 
@@ -953,35 +954,35 @@ Type: {balanceHistory: [BalanceHistory](#balancehistory), balanceAvailable: [boo
 *   `accounts` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[AccountLike](#accountlike)>** 
 *   `range` **[PortfolioRange](#portfoliorange)** 
 *   `histories` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[BalanceHistoryWithCountervalue](#balancehistorywithcountervalue)>** 
-*   `countervalueReceiveSum` **BigNumber** 
-*   `countervalueSendSum` **BigNumber** 
+*   `countervalueReceiveSum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `countervalueSendSum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `countervalueChange` **[ValueChange](#valuechange)** 
 
 ### PortfolioRangeConfig
 
-Type: {count: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), granularityId: (`"HOUR"` | `"DAY"` | `"WEEK"`), startOf: function (arg0: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)): [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), increment: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
+Type: {count: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, granularityId: GranularityId, startOf: function (arg0: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)): [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), increment: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
-*   `count` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `granularityId` **(`"HOUR"` | `"DAY"` | `"WEEK"`)** 
+*   `count` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `granularityId` **GranularityId** 
 *   `startOf` **function (arg0: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)): [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)** 
 *   `increment` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 ### PortfolioRange
 
-Type: (`"year"` | `"month"` | `"week"` | `"day"`)
+Type: (`"all"` | `"year"` | `"month"` | `"week"` | `"day"`)
 
 ### AssetsDistribution
 
-Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: BigNumber, countervalue: BigNumber}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: BigNumber}
+Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), list: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>, showFirst: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), sum: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}
 
 #### Properties
 
 *   `isAvailable` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: BigNumber, countervalue: BigNumber}>** 
+*   `list` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{currency: (CryptoCurrency | TokenCurrency), distribution: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), amount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), countervalue: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>** 
 *   `showFirst` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `sum` **BigNumber** 
+*   `sum` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 
 ### SwapOperation
 
