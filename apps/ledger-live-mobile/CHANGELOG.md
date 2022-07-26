@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-nightly.3
+
+### Patch Changes
+
+- [#737](https://github.com/LedgerHQ/ledger-live/pull/737) [`8ee5ab993`](https://github.com/LedgerHQ/ledger-live/commit/8ee5ab9937b2abba6837684933dde266a09811cd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix missing import in NFTViewer
+
 ## 3.5.0-nightly.2
 
 ### Minor Changes
