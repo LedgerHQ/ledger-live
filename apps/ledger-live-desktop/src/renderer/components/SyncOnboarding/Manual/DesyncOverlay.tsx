@@ -43,7 +43,9 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
       flexDirection="column"
     >
       <Flex justifyContent="flex-end" mr={6} mt={6}>
-        <Button Icon={CloseMedium} iconSize={24} borderColor="transparent" />
+        <Box backgroundColor={colors.neutral.c30} borderRadius="9999px">
+          <Button Icon={CloseMedium} iconSize={24} />
+        </Box>
       </Flex>
       <Flex position="absolute" width="100%" justifyContent="flex-end" bottom={0} padding={4}>
         <Flex
