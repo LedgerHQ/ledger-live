@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,6 +27,7 @@ import {
 import { notificationsSelector } from "../reducers/settings";
 import { ScreenName, NavigatorName } from "../const";
 import { setRatingsModalLocked } from "../actions/ratings";
+import { track } from "../analytics";
 
 export type EventTrigger = {
     /** Name of the route that will trigger the push notification modal */
@@ -102,7 +103,6 @@ const useNotifications = () => {
     const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
     const accounts: Account[] = useSelector(accountsSelector);
 
-    const route = useRoute();
     const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
     const dispatch = useDispatch();
@@ -139,7 +139,7 @@ const useNotifications = () => {
     const handlePushNotificationsPermission = useCallback(async () => {
         track("button_clicked", {
           button: "Go to system settings",
-          screen: route.name,
+          screen: pushNotificationsOldRoute,
         });
         if (Platform.OS === "android") {
             Linking.openSettings();
@@ -153,7 +153,7 @@ const useNotifications = () => {
                 fcm.requestPermission();
             }
         }
-    }, [route.name]);
+    }, [pushNotificationsOldRoute]);
 
     const setPushNotificationsModalOpenCallback = useCallback(
         isModalOpen => {
@@ -367,16 +367,34 @@ const useNotifications = () => {
       }, [pushNotificationsDataOfUser, updatePushNotificationsDataOfUserInStateAndStore]);
     
     const modalAllowNotifications = useCallback(() => {
+        track("button_clicked", {
+          button: "Allow",
+          screen: pushNotificationsOldRoute,
+          drawer: "Notif",
+        });
         setPushNotificationsModalOpenCallback(false);
         navigation.navigate(NavigatorName.Settings, {
             screen: ScreenName.NotificationsSettings
         });
         if (pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts) {
-            handleSetDateOfNextAllowedRequest(pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts);
+            handleSetDateOfNextAllowedRequest(
+              pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+            );
         }
-    }, [handleSetDateOfNextAllowedRequest, navigation, pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts, setPushNotificationsModalOpenCallback]);
+    }, [
+      pushNotificationsOldRoute,
+      handleSetDateOfNextAllowedRequest,
+      navigation,
+      pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+      setPushNotificationsModalOpenCallback,
+    ]);
 
     const modalDelayLater = useCallback(() => {
+        track("button_clicked", {
+          button: "Maybe Later",
+          screen: pushNotificationsOldRoute,
+          drawer: "Notif",
+        });
         setPushNotificationsModalOpenCallback(false);
         if (pushNotificationsDataOfUser?.alreadyDelayedToLater) {
             updatePushNotificationsDataOfUserInStateAndStore({
@@ -391,12 +409,21 @@ const useNotifications = () => {
                 },
             );
         }
-    }, [handleSetDateOfNextAllowedRequest, pushNotificationsDataOfUser, pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts, pushNotificationsFeature?.params?.conditions?.maybe_later_delay, setPushNotificationsModalOpenCallback, updatePushNotificationsDataOfUserInStateAndStore]);
+    }, [
+      pushNotificationsOldRoute,
+      handleSetDateOfNextAllowedRequest,
+      pushNotificationsDataOfUser,
+      pushNotificationsFeature?.params?.conditions?.default_delay_between_two_prompts,
+      pushNotificationsFeature?.params?.conditions?.maybe_later_delay,
+      setPushNotificationsModalOpenCallback,
+      updatePushNotificationsDataOfUserInStateAndStore,
+    ]);
 
     return {
         initPushNotifications,
         initPushNotificationsData,
         cleanPushNotifications,
+        pushNotificationsOldRoute,
         pushNotificationsModalType,
         isPushNotificationsModalOpen,
         getIsNotifEnabled,

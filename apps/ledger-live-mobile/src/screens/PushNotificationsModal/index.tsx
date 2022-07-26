@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,6 +15,7 @@ import PromptNotifGenericLight from "../../images/illustration/Light/_PromptNoti
 import PromptNotifMarketDark from "../../images/illustration/Dark/_PromptNotifMarket.png";
 import PromptNotifMarketLight from "../../images/illustration/Light/_PromptNotifMarket.png";
 import { notificationsSelector } from "../../reducers/settings";
+import { TrackScreen } from "../../analytics";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ const PushNotificationsModal = () => {
     getIsNotifEnabled,
     listenForNotifications,
     clearNotificationsListeners,
+    pushNotificationsOldRoute,
   } = useNotifications();
   const notificationsSettings = useSelector(notificationsSelector);
 
@@ -78,6 +80,16 @@ const PushNotificationsModal = () => {
       isOpen={isPushNotificationsModalOpen}
       noCloseButton
     >
+      <TrackScreen
+        category="Notification Prompt"
+        name={
+          pushNotificationsModalType === "generic"
+            ? "Notification Prompt 1 - Notif"
+            : "Notification Prompt 2 - Graph"
+        }
+        source={pushNotificationsOldRoute}
+        type={"drawer"}
+      />
       <Flex mb={4}>
         <Flex alignItems={"center"}>
           <NotifIllustration />

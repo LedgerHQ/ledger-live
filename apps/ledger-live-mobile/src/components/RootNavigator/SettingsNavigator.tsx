@@ -62,7 +62,7 @@ export default function SettingsNavigator() {
   const navigation = useNavigation();
   const currentRoute = useCurrentRouteName();
 
-  const goBackFromAccount = useCallback(() => {
+  const goBackFromNotifications = useCallback(() => {
     track("button_clicked", {
       button: "Back Arrow",
       screen: currentRoute,
@@ -121,7 +121,7 @@ export default function SettingsNavigator() {
         options={{
           headerLeft: () => (
             <Box ml={6}>
-              <TouchableOpacity onPress={goBackFromAccount}>
+              <TouchableOpacity onPress={goBackFromNotifications}>
                 <Icons.ArrowLeftMedium size={24} />
               </TouchableOpacity>
             </Box>
