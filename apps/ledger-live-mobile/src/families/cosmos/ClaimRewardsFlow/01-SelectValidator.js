@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { useCosmosMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -64,7 +64,10 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
 
   const unit = getAccountUnit(account);
 
-  const delegations = useCosmosMappedDelegations(mainAccount, "claimReward");
+  const delegations = useCosmosFamilyMappedDelegations(
+    mainAccount,
+    "claimReward",
+  );
 
   const onSelect = useCallback(
     (validator, value) => {

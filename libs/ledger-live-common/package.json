@@ -116,6 +116,8 @@
     "@celo/wallet-ledger": "^1.5.2",
     "@cosmjs/amino": "^0.28.4",
     "@cosmjs/crypto": "^0.26.5",
+    "@cosmjs/launchpad": "^0.26.5",
+    "@cosmjs/ledger-amino": "^0.26.5",
     "@cosmjs/proto-signing": "^0.26.5",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-com/chain-jslib": "0.0.19",
@@ -123,6 +125,7 @@
     "@ethereumjs/tx": "^3.5.0",
     "@hashgraph/sdk": "^2.10.1",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
+    "@keplr-wallet/cosmos": "^0.9.16",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -227,6 +230,7 @@
     "zcash-bitcore-lib": "^0.13.20-rc3"
   },
   "devDependencies": {
+    "@keplr-wallet/proto-types": "^0.10.4",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
     "@types/bs58": "^4.0.1",
@@ -257,6 +261,7 @@
     "glob": "^7.2.0",
     "jest": "^28.1.1",
     "jest-file-snapshot": "^0.5.0",
+    "long": "^4.0.0",
     "prettier": "2.3.2",
     "react": "^17.0.2",
     "react-dom": "17.0.2",

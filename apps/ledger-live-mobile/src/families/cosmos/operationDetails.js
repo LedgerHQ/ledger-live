@@ -11,7 +11,7 @@ import type {
   OperationType,
   Operation,
 } from "@ledgerhq/live-common/types/index";
-import { useCosmosPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -35,7 +35,7 @@ function getURLWhatIsThis(op: Operation): ?string {
 type Props = {
   extra: {
     validators: CosmosDelegationInfo[],
-    cosmosSourceValidator?: string,
+    sourceValidator?: string,
     memo?: string,
   },
   type: OperationType,
@@ -47,7 +47,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
-  const { validators: cosmosValidators } = useCosmosPreloadData();
+  const currencyName = account.currency.name.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(
+    currencyName,
+  );
 
   const redirectAddressCreator = useCallback(
     address => () => {
@@ -143,9 +146,8 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       break;
     }
     case "REDELEGATE": {
-      const { cosmosSourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !cosmosSourceValidator)
-        break;
+      const { sourceValidator, validators } = extra;
+      if (!validators || validators.length <= 0 || !sourceValidator) break;
 
       const validator = extra.validators[0];
 
@@ -154,7 +156,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       );
 
       const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === cosmosSourceValidator,
+        v => v.validatorAddress === sourceValidator,
       );
 
       const formattedAmount = formatCurrencyUnit(
@@ -176,10 +178,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
             value={
               formattedSourceValidator
                 ? formattedSourceValidator.name
-                : cosmosSourceValidator
+                : sourceValidator
             }
             onPress={() => {
-              redirectAddressCreator(cosmosSourceValidator);
+              redirectAddressCreator(sourceValidator);
             }}
           />
           <Section
