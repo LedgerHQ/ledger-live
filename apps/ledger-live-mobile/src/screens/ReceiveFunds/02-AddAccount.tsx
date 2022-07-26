@@ -164,7 +164,17 @@ function AddAccountsAccounts({ navigation, route }: Props) {
 
       return (
         <Flex px={6}>
-          <AccountCard account={acc} onPress={() => selectAccount(account)} />
+          <AccountCard
+            account={acc}
+            onPress={() => selectAccount(account)}
+            AccountSubTitle={
+              acc.parentAccount || acc.token?.parentCurrency ? (
+                <LText color="neutral.c70">
+                  {(acc.parentAccount || acc.token.parentCurrency).name}
+                </LText>
+              ) : null
+            }
+          />
         </Flex>
       );
     },
