@@ -142,7 +142,7 @@ const extractErrorMessage = (raw: string): string | undefined => {
   return;
 };
 
-const implementation = (arg: any): Promise<any> => {
+const implementation = (arg: AxiosRequestConfig): Promise<any> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
   let promise;
 

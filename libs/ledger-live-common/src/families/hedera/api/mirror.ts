@@ -12,7 +12,7 @@ const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
 const fetch = (path, query = {}) =>
   network({
-    type: "get",
+    method: "GET",
     url: URL.format({
       pathname: `${getMirrorApiUrl()}/api/v1${path}`,
       query,
