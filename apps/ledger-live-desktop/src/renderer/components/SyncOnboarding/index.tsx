@@ -2,6 +2,7 @@ import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboardingPairing from "./Pairing";
 import SyncOnboardingManual from "./Manual";
 
@@ -23,4 +24,4 @@ const SyncOnboarding = () => {
   );
 };
 
-export default SyncOnboarding;
+export default withV3StyleProvider(SyncOnboarding);
