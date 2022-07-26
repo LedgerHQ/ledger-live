@@ -100,7 +100,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         complete: () => {
           if (onSuccess)
             onSuccess(mainAccount.freshAddress)
-          else navigation.navigate(ScreenName.ReceiveVerificationConfirmation, { ...route.params, verified: true });
+          else navigation.navigate(ScreenName.ReceiveVerificationConfirmation, { ...route.params, verified: true, createTokenAccount: false });
         },
         error: error => {
           if (error && error.name !== "UserRefusedAddress") {
