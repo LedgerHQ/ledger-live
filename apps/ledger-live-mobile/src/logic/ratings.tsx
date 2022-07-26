@@ -103,12 +103,12 @@ const useRatings = () => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else {
+      } else if (!isRatingsModalLocked) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch],
+    [dispatch, isRatingsModalLocked],
   );
 
   const areRatingsConditionsMet = useCallback(() => {

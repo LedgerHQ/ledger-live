@@ -107,7 +107,7 @@ function MarketDetail({
     dispatch(action(currencyId));
 
     if (!isStarred) triggerMarketPushNotificationModal();
-  }, [dispatch, isStarred, currencyId]);
+  }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
 
   const { range } = chartRequestParams;
 

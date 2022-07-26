@@ -156,7 +156,7 @@ const useNotifications = () => {
             dispatch(setNotificationsModalType("generic"));
             dispatch(setNotificationsModalOpen(isModalOpen));
             dispatch(setRatingsModalLocked(false));
-          } else {
+          } else if (!isPushNotificationsModalLocked) {
             getIsNotifEnabled().then(isNotifEnabled => {
                 if (!isNotifEnabled || !notificationsSettings.allowed) {
                     dispatch(setNotificationsModalOpen(isModalOpen)); 
@@ -165,7 +165,7 @@ const useNotifications = () => {
             });
           }
         },
-        [dispatch, notificationsSettings.allowed],
+        [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
     );
     
     const areConditionsMet = useCallback(() => {
