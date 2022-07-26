@@ -42,16 +42,6 @@ export default function NotificationCenter() {
     }),
   );
 
-  const [isModalOpened, setIsModalOpened] = useState(false);
-
-  const onModalClose = useCallback(() => {
-    setIsModalOpened(false);
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => setIsModalOpened(true), 3000);
-  }, []);
-
   return (
     <>
       <SectionList
