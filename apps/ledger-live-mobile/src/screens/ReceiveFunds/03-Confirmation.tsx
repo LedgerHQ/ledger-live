@@ -111,12 +111,14 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   useEffect(() => {
     if(route.params?.createTokenAccount && !hasAddedTokenAccount) {
       const newMainAccount = mainAccount;
-      const emptyTokenAccount = makeEmptyTokenAccount(newMainAccount, currency);
-      newMainAccount.subAccounts = [...newMainAccount.subAccounts, emptyTokenAccount];
+      if(!newMainAccount.subAccounts.find((acc: TokenAccount) => acc?.token?.id === currency.id)) {
+        const emptyTokenAccount = makeEmptyTokenAccount(newMainAccount, currency);
+        newMainAccount.subAccounts = [...newMainAccount.subAccounts, emptyTokenAccount];
 
-      dispatch(replaceAccounts({ scannedAccounts: [newMainAccount], selectedIds: [newMainAccount.id], renamings: {}}));
-      setIsToastDisplayed(true);
-      setHasAddedTokenAccount(true);
+        dispatch(replaceAccounts({ scannedAccounts: [newMainAccount], selectedIds: [newMainAccount.id], renamings: {}}));
+        setIsToastDisplayed(true);
+        setHasAddedTokenAccount(true);
+      } 
     }
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount])
 
