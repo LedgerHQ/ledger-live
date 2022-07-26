@@ -9,7 +9,7 @@ export const avalancheClient = () => {
 
       const url = new URL(node);
       avalanche = new Avalanche(url.hostname, Number(url.port));
-      avalanche.setNetworkID(5); //5 = "FUJI", 1 = MAINNET. DELETE THIS LINE IF ON MAINNET
+      avalanche.setNetworkID(1); //5 = "FUJI", 1 = MAINNET. DELETE THIS LINE IF ON MAINNET
     }
 
     return avalanche;

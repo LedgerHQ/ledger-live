@@ -3,13 +3,10 @@ import { getEnv } from "../../../env";
 import network from "../../../network";
 import { Operation, OperationType } from "../../../types";
 import { encodeOperationId } from "../../../operation";
-import { KeyPair as AVMKeyPair } from "avalanche/dist/apis/avm";
-import BinTools from "avalanche/dist/utils/bintools";
 import { avalancheClient } from "./client";
 import { makeLRUCache } from "../../../cache";
 import { HDHelper } from "../hdhelper";
 import { isDefaultValidatorNode, MINUTE, DAY, ONE_AVAX } from "../utils";
-import { PChainAlias } from "avalanche/dist/utils";
 
 const getIndexerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_INDEXER")}${route || ""}`;
@@ -19,6 +16,7 @@ const getExplorerUrl = (route: string): string =>
 
 const P_IMPORT = "p_import";
 const P_EXPORT = "p_export";
+const P_ADD_DELEGATOR = "p_add_delegator";
 
 //Does not appear the indexer makes it simple to get REWARD operations or calculate resulting AVAX rewards
 //see get rewardAmt() in avalanche wallet
@@ -88,6 +86,8 @@ const getOperationType = (type: string): OperationType => {
       return "OUT";
     case P_IMPORT:
       return "IN";
+    case P_ADD_DELEGATOR:
+      return "DELEGATE";
     default:
       return "NONE";
   }
