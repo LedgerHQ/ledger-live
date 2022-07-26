@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback } from "react";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import invariant from "invariant";
 import { useDispatch } from "react-redux";
@@ -63,7 +63,7 @@ const Delegation = ({ account }: Props) => {
   //TODO: make sure this works on mainnet. Make sure links to same place as official avax wallet
   const onExternalLink = useCallback(
     (address: string) => {
-      const url = explorerView && getAddressExplorer(explorerView, address);
+      const url = explorerView && getTransactionExplorer(explorerView, address);
 
       if (url) {
         openURL(url);
@@ -83,7 +83,7 @@ const Delegation = ({ account }: Props) => {
       )}
       <TableContainer mb={6}>
         <TableHeader title={<Trans i18nKey="avalanchepchain.delegation.header" />}>
-          {hasDelegations && (
+          {(isDelegationEnabled && hasDelegations) && (
             <Button
               id={"account-delegate-button"}
               mr={2}
