@@ -75,7 +75,7 @@ const steps: Array<St> = [
     id: "connectDevice",
     label: <Trans i18nKey="avalanchepchain.delegation.flow.steps.connectDevice.title" />,
     component: GenericStepConnectDevice,
-    onBack: ({ transitionTo }: StepProps) => transitionTo("amount"),
+    onBack: ({ transitionTo }: StepProps) => transitionTo("endDate"),
   },
   {
     id: "confirmation",
