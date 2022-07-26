@@ -19,16 +19,22 @@ import {
   localeIdToDeviceLanguage,
   Locale,
 } from "../../../languages";
-import type { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
+import { DeviceModelInfo } from "@ledgerhq/live-common/types/manager";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
 import { setLanguage } from "../../../actions/settings";
-import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "../../../reducers/settings";
+import {
+  lastConnectedDeviceSelector,
+  lastSeenDeviceSelector,
+} from "../../../reducers/settings";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/lib/manager/hooks";
 import NanoXFolded from "../../../images/devices/NanoXFolded";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
-import { idsToLanguage, Language } from "@ledgerhq/live-common/lib/types/languages";
+import {
+  idsToLanguage,
+  Language,
+} from "@ledgerhq/live-common/lib/types/languages";
 
 function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const { locale: currentLocale } = useLocale();
@@ -47,9 +53,16 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
   const lastSeenDevice: DeviceModelInfo | null = useSelector(
     lastSeenDeviceSelector,
   );
-  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector) as (Device | null);
-  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] = useState<Device | null>(null);
+  const lastConnectedDevice = useSelector(
+    lastConnectedDeviceSelector,
+  ) as Device | null;
+  const [
+    deviceForChangeLanguageAction,
+    setDeviceForChangeLanguageAction,
+  ] = useState<Device | null>(null);
 
+  const deviceLocalizationFeatureFlag = { enabled: true }; // useFeature("deviceLocalization");
+  // TODO: reactivate this feature flag once QA is done
   const availableDeviceLanguages = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
@@ -60,11 +73,18 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
 
       const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
       const potentialDeviceLanguage = localeIdToDeviceLanguage[l];
-      const langAvailableOnDevice = potentialDeviceLanguage !== undefined && availableDeviceLanguages.includes(
-        potentialDeviceLanguage,
-      );
+      const langAvailableOnDevice =
+        potentialDeviceLanguage !== undefined &&
+        availableDeviceLanguages.includes(potentialDeviceLanguage);
 
-      if (langAvailableOnDevice && deviceLanguageId !== undefined && idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage) {
+      // firmware version verification is not really needed here, the presence of a language id
+      // indicates that we are in a firmware that supports localization
+      if (
+        langAvailableOnDevice &&
+        deviceLanguageId !== undefined &&
+        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
+        deviceLocalizationFeatureFlag.enabled
+      ) {
         setIsDeviceLanguagePromptOpen(true);
       } else {
         next();
@@ -108,13 +128,17 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           <Flex px={7} mt={4} mb={8}>
             <Text variant="paragraph" textAlign="center" color="neutral.c70">
               {t("onboarding.stepLanguage.changeDeviceLanguageDescription", {
-                language: t(`deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`)
+                language: t(
+                  `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
+                ),
               })}
             </Text>
           </Flex>
           <Button
             type="main"
-            onPress={() => setDeviceForChangeLanguageAction(lastConnectedDevice)}
+            onPress={() =>
+              setDeviceForChangeLanguageAction(lastConnectedDevice)
+            }
             outline={false}
             alignSelf="stretch"
           >
@@ -133,10 +157,13 @@ function OnboardingStepLanguage({ navigation }: StackScreenProps<{}>) {
           </Flex>
         </Flex>
       </BottomDrawer>
-      <ChangeDeviceLanguageAction 
+      <ChangeDeviceLanguageAction
         device={deviceForChangeLanguageAction}
         language={localeIdToDeviceLanguage[currentLocale] as Language}
-        onClose={() => {setDeviceForChangeLanguageAction(null); closeDeviceLanguagePrompt()}} 
+        onClose={() => {
+          setDeviceForChangeLanguageAction(null);
+          closeDeviceLanguagePrompt();
+        }}
       />
     </>
   );
