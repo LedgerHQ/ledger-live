@@ -13,12 +13,24 @@ interface Props {
   provider?: string;
   exchangeRate?: ExchangeRate;
   pairs: Pair[];
+  swapError?: Error;
 }
 
-export function TxForm({ swapTx, provider, exchangeRate, pairs }: Props) {
+export function TxForm({
+  swapTx,
+  provider,
+  exchangeRate,
+  pairs,
+  swapError,
+}: Props) {
   return (
     <Flex>
-      <From swapTx={swapTx} provider={provider} pairs={pairs} />
+      <From
+        swapTx={swapTx}
+        provider={provider}
+        pairs={pairs}
+        swapError={swapError}
+      />
       <To
         swapTx={swapTx}
         exchangeRate={exchangeRate}

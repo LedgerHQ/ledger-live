@@ -25,9 +25,10 @@ interface Props {
   provider?: string;
   swapTx: SwapTransactionType;
   pairs: Pair[];
+  swapError?: Error;
 }
 
-export function From({ swapTx, provider, pairs }: Props) {
+export function From({ swapTx, provider, pairs, swapError }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormProps>();
 
@@ -88,7 +89,7 @@ export function From({ swapTx, provider, pairs }: Props) {
             editable={!swapTx.swap.isMaxEnabled}
             unit={unit}
             onChange={swapTx.setFromAmount}
-            error={swapTx.fromAmountError}
+            error={swapError}
           />
         </Flex>
       </Flex>

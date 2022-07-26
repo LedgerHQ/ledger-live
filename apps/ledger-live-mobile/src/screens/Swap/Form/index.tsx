@@ -104,7 +104,6 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     if (params?.accountId) {
-      // console.log(params?.currency.id);
       const enhancedAccounts = accounts.map(acc =>
         accountWithMandatoryTokens(acc, [params?.currency]),
       );
@@ -306,10 +305,16 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
         return;
       }
 
+      // If RATE_NOT_FOUND it means the quote as expired, so we need to refresh the rates
+      if (status.codeName === "RATE_NOT_FOUND") {
+        swapTx?.swap?.refetchRates();
+        return;
+      }
+
       // All other statuses are considered errors
       setErrorCode(status.codeName);
     }
-  }, [kyc, exchangeRate, dispatch, provider, currentFlow]);
+  }, [kyc, exchangeRate, dispatch, provider, currentFlow, swapTx.swap]);
 
   const isSwapReady =
     !errorCode &&
@@ -360,6 +365,7 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
               provider={provider}
               exchangeRate={exchangeRate}
               pairs={pairs}
+              swapError={swapError}
             />
 
             {swapTx.swap.rates.status === "loading" ? (

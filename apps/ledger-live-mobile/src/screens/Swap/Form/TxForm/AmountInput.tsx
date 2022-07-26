@@ -33,7 +33,7 @@ export function AmountInput({ value, onChange, editable, unit, error }: Props) {
         </Text>
       )}
 
-      <Text color="error.c100">
+      <Text color="error.c100" textAlign="right" variant="tiny">
         {/* @ts-expect-error */}
         <TranslatedError error={error} />
       </Text>
