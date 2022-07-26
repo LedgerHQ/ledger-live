@@ -110,11 +110,12 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   useEffect(() => {
     if(route.params?.createTokenAccount && !hasAddedTokenAccount) {
-      const newMainAccount = mainAccount;
+      const newMainAccount = {...mainAccount};
       if(!newMainAccount.subAccounts.find((acc: TokenAccount) => acc?.token?.id === currency.id)) {
         const emptyTokenAccount = makeEmptyTokenAccount(newMainAccount, currency);
         newMainAccount.subAccounts = [...newMainAccount.subAccounts, emptyTokenAccount];
 
+        // @TODO create a new action for adding a single account at a time instead of replacing
         dispatch(replaceAccounts({ scannedAccounts: [newMainAccount], selectedIds: [newMainAccount.id], renamings: {}}));
         setIsToastDisplayed(true);
         setHasAddedTokenAccount(true);

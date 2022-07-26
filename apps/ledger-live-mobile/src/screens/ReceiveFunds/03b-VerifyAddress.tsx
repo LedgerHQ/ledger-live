@@ -8,6 +8,7 @@ import type {
   Account,
   TokenAccount,
   AccountLike,
+  Currency,
 } from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
@@ -72,7 +73,6 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   const { type } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   const routerRoute = useRoute();
   const lastRoute = usePreviousRouteName();
@@ -102,7 +102,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             onSuccess(mainAccount.freshAddress)
           else navigation.navigate(ScreenName.ReceiveVerificationConfirmation, { ...route.params, verified: true, createTokenAccount: false });
         },
-        error: error => {
+        error: (error: any) => {
           if (error && error.name !== "UserRefusedAddress") {
             logger.critical(error);
           }

@@ -75,7 +75,7 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       blacklistedTokenIds: [],
     };
     // will be set to false if an existing account is found
-
+    // @TODO observable similar to the one in AddAccounts Flow maybe refactor both in single workflow
     scanSubscription.current = concat(
       from(prepareCurrency(c)).pipe(ignoreElements()),
       bridge.scanAccounts({
@@ -84,19 +84,24 @@ function AddAccountsAccounts({ navigation, route }: Props) {
         syncConfig,
       }),
     ).subscribe({
-      next: ({ account }) => {
+      next: ({ account }: { account: Account }) => {
         if (currency.type === "TokenCurrency") {
-          const pa = account;
+          // handle token accounts cases where we want to create empty new token accounts
+          const pa = { ...account };
 
-          if (!pa.subAccounts.find(a => a.token.id === currency.id)) {
+          if (
+            !pa.subAccounts.find(
+              (a: { token: { id: any } }) => a.token.id === currency.id,
+            ) // in case we dont already have one we create an empty token account
+          ) {
             const tokenAcc = makeEmptyTokenAccount(pa, currency);
             tokenAcc.parentAccount = pa;
             pa.subAccounts.push(tokenAcc);
           }
 
-          setScannedAccounts((accs: Account[]) => [...accs, pa]);
+          setScannedAccounts((accs: Account[]) => [...accs, pa]); // add the account with the newly added token account to the list of scanned accounts
         } else {
-          setScannedAccounts((accs: Account[]) => [...accs, account]);
+          setScannedAccounts((accs: Account[]) => [...accs, account]); // add the account to the list of scanned accounts
         }
       },
       complete: () => setScanning(false),

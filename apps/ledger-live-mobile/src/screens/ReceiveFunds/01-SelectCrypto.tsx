@@ -54,7 +54,7 @@ const findAccountByCurrency = (accounts: (TokenAccount | Account)[], currency: C
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const {t } = useTranslation();
   const routerRoute = useRoute()
-  const { filterCurrencyIds = [] } = route.params || {};
+  const filterCurrencyIds  = useMemo(() => route.params?.filterCurrencyIds || [], [route.params?.filterCurrencyIds]);
   const lastRoute = usePreviousRouteName()
   const cryptoCurrencies = useMemo(
     () =>
@@ -75,37 +75,37 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     track('currency_clicked', {screen: routerRoute.name, currency: currency.name})
 
     const accs = findAccountByCurrency(accounts, currency);
-    if(accs.length > 1) {
+    if(accs.length > 1) { // if we found one or more accounts of the given currency we select account
       navigation.navigate(ScreenName.ReceiveSelectAccount, {
         currency
-      });
-    } else if(accs.length === 1) {
+      }); 
+    } else if(accs.length === 1) { // if we found only one account of the given currency we go straight to QR code
       navigation.navigate(ScreenName.ReceiveConfirmation, {
         accountId: accs[0].id,
         parentId: accs[0]?.parentId,
       });
-    } else if (currency.type === "TokenCurrency") {
+    } else if (currency.type === "TokenCurrency") { // cases for token currencies
         const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
 
-        if (parentAccounts.length > 1) {
+        if (parentAccounts.length > 1) { // if we found one or more accounts of the parent currency we select account
           
           navigation.navigate(ScreenName.ReceiveSelectAccount, {
             currency,
             createTokenAccount: true
           });
-        } else if (parentAccounts.length === 1) {
+        } else if (parentAccounts.length === 1) { // if we found only one account of the parent currency we go straight to QR code
           navigation.navigate(ScreenName.ReceiveConfirmation, {
             accountId: parentAccounts[0].id,
             currency,
             createTokenAccount: true
           });
-        } else {
+        } else { // if we didn't find any account of the parent currency we add and create one
           navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
             currency,
             createTokenAccount: true
           });
         }
-      } else {
+      } else { // else we create a currency account
         navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
           currency,
         });

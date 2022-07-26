@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getReceiveFlowError,
-  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AccountLike } from "@ledgerhq/live-common/types/index";
@@ -102,7 +101,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(account);
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
