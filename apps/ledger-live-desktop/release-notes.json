@@ -1,6 +1,6 @@
 [
   {
-    "tag_name": "2.44.0",
-    "body": "\nLedger and FTX joining forces, RBF for Bitcoin transactions, a few bug fixes, and more. Here are some powerful new Ledger Live features heading your way. \n\n### 🚀 Features\nSwap crypto on FTX without leaving Ledger Live. Access to FTX swapping options to grow and diversify your portfolio while your assets remain fully secure in a Ledger hardware wallet. \nGone are the days of stuck Bitcoin transactions. With the enhanced Bitcoin RBF (Replace-by-Fee) feature, you can increase network fees and speed up unconfirmed transactions.\nDid you know that the floor price is one of the most important metrics for determining the value of an NFT collection? In this spirit, Ledger Live will now display an NFT’s floor price next to the collection name.\n\n### 🐛 Fixes\nThere were a few little bugs that caused some trouble. For instance, several users reported issues when connecting to Rarible or OpenSea with WalletConnect. We’ve patched this up.\n"
+    "tag_name": "2.43.0",
+    "body": "\nWe’re constantly adding new integrations and working on performance improvements to make Ledger Live a world-class experience. Here is what’s new in this release.\n\n### 🚀 Features\nWe’re excited to announce that Ledger Live is launching support for Cardano, one of the biggest cryptocurrencies based on its total market value. Now you can send and receive Cardano’s native token, ADA. \n\n### 🐛 Fixes\nWe’ve done some bug fixes and made a few small but important changes behind the curtain.\n"
   }
 ]
