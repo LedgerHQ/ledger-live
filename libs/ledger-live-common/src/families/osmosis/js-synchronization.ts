@@ -1,5 +1,4 @@
 import { pubkeyToAddress, decodeBech32Pubkey } from "@cosmjs/amino";
-import { decodeCloseAccountInstructionUnchecked } from "@solana/spl-token";
 import { BigNumber } from "bignumber.js";
 import { encodeAccountId } from "../../account";
 import {

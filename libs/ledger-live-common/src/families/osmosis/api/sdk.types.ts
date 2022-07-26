@@ -53,9 +53,9 @@ export interface OsmosisSendEventContent {
 export interface OsmosisStakingEventContent {
   type: string[];
   module: string;
-  node: any; //todo fix this type
-  amount: any; //todo fix this type
-  transfers: any; //todo fix this type
+  node: any;
+  amount: any;
+  transfers: any;
 }
 
 export interface OsmosisEvent {

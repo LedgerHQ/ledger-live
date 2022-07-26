@@ -21,10 +21,8 @@ import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import {
   AuthInfo,
   TxRaw,
-  // TxBody,
   Fee,
 } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
-// import { Fee } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 
