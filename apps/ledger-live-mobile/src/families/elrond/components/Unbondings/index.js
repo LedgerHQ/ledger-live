@@ -1,3 +1,4 @@
+// @flow
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";

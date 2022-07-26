@@ -1,3 +1,4 @@
+// @flow
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
@@ -56,8 +57,8 @@ interface Props {
   account: Account;
 }
 
-const withStaking = Component => props =>
-  props.account.elrondResources ? <Component {...props} /> : null;
+const withStaking = Component => (props: Props) =>
+  props.account.elrondResources ? <Component {...props.account} /> : null;
 
 const Staking = (props: Props) => {
   const { account } = props;

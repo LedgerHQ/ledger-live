@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -49,8 +50,9 @@ const Error = (props: Props) => {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="ElrondClaimRewards" name="ValidationError" />
-      <ValidateError {...{ error, onClose, onContactUs, onRetry }} />
+      <TrackScreen category="CosmosDelegation" name="ValidationError" />
+
+      <ValidateError {...{ error, onRetry, onContactUs, onClose }} />
     </SafeAreaView>
   );
 };

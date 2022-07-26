@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, SectionList, TouchableOpacity } from "react-native";
 import { BigNumber } from "bignumber.js";

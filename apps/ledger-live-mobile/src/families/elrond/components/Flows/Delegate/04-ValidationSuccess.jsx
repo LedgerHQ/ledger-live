@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
@@ -50,11 +51,9 @@ const Success = (props: Props) => {
     });
   }, [account, route.params, navigation]);
 
-  const mode = route.params.transaction.mode;
-
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondClaimRewards" name="ValidationSuccess" />
+      <TrackScreen category="ElrondsDelegation" name="ValidationSuccess" />
 
       <PreventNativeBack />
 
@@ -62,14 +61,10 @@ const Success = (props: Props) => {
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={
-          <Trans
-            i18nKey={`elrond.claimRewards.flow.steps.verification.success.title${
-              mode !== "claimRewards" ? "reDelegateRewards" : ""
-            }`}
-          />
+          <Trans i18nKey="elrond.delegation.flow.steps.verification.success.title" />
         }
         description={
-          <Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />
+          <Trans i18nKey="elrond.delegation.flow.steps.verification.success.text" />
         }
       />
     </View>

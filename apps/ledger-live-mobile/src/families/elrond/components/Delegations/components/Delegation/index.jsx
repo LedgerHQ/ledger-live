@@ -1,4 +1,5 @@
-import React, { useMemo, useCallback } from "react";
+// @flow
+import React, { useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -8,6 +9,7 @@ import CounterValue from "../../../../../../components/CounterValue";
 import ArrowRight from "../../../../../../icons/ArrowRight";
 import LText from "../../../../../../components/LText";
 import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
+
 import { denominate } from "../../../../helpers";
 import { constants } from "../../../../constants";
 
@@ -46,42 +48,27 @@ const styles = StyleSheet.create({
   },
 });
 
-const Unbonding = (props: any) => {
+const Delegation = (props: any) => {
   const {
     last,
     contract,
     validator,
     currency,
-    amount,
-    onDrawer,
-    seconds,
-    delegations,
+    userActiveStake,
+    onDelegate,
+    claimableRewards,
   } = props;
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   const name = validator ? validator.name : contract || "";
-  const value = useMemo(
+  const amount = useMemo(
     () =>
       denominate({
-        input: amount,
+        input: userActiveStake,
       }),
-    [amount],
+    [userActiveStake],
   );
-
-  const onPress = useCallback(() => {
-    if (onDrawer) {
-      onDrawer({
-        source: "undelegation",
-        amount,
-        validator,
-        meta: {
-          delegations,
-          seconds,
-        },
-      });
-    }
-  }, [onDrawer, validator, seconds, delegations, amount]);
 
   return (
     <View style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}>
@@ -94,7 +81,11 @@ const Unbonding = (props: any) => {
             ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
             : undefined,
         ]}
-        onPress={onPress}
+        onPress={() =>
+          onDelegate(validator, userActiveStake, {
+            claimableRewards,
+          })
+        }
       >
         <View style={[styles.icon, { backgroundColor: colors.lightLive }]}>
           <FirstLetterIcon label={name} />
@@ -116,14 +107,14 @@ const Unbonding = (props: any) => {
 
         <View style={styles.rightWrapper}>
           <LText semiBold={true}>
-            {value} {constants.egldLabel}
+            {amount} {constants.egldLabel}
           </LText>
 
           <LText color="grey">
             <CounterValue
               currency={currency}
               showCode={true}
-              value={BigNumber(amount)}
+              value={BigNumber(userActiveStake)}
               alwaysShowSign={false}
               withPlaceholder={true}
             />
@@ -134,4 +125,4 @@ const Unbonding = (props: any) => {
   );
 };
 
-export default Unbonding;
+export default Delegation;

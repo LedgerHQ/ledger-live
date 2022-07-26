@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -29,9 +30,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const withSummary = Component => props =>
+const withSummary = Component => (props: Props) =>
   props.account.elrondResources || props.account.balance.gt(0) ? (
-    <Component {...props} />
+    <Component {...props.account} />
   ) : null;
 
 const Summary = (props: Props) => {

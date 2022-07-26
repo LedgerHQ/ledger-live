@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";

@@ -1,3 +1,4 @@
+// @flow
 import React, { useMemo, useCallback } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";

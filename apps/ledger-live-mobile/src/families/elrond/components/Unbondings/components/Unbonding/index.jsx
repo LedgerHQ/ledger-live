@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+// @flow
+import React, { useMemo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -8,7 +9,6 @@ import CounterValue from "../../../../../../components/CounterValue";
 import ArrowRight from "../../../../../../icons/ArrowRight";
 import LText from "../../../../../../components/LText";
 import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
-
 import { denominate } from "../../../../helpers";
 import { constants } from "../../../../constants";
 
@@ -47,27 +47,42 @@ const styles = StyleSheet.create({
   },
 });
 
-const Delegation = (props: any) => {
+const Unbonding = (props: any) => {
   const {
     last,
     contract,
     validator,
     currency,
-    userActiveStake,
-    onDelegate,
-    claimableRewards,
+    amount,
+    onDrawer,
+    seconds,
+    delegations,
   } = props;
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   const name = validator ? validator.name : contract || "";
-  const amount = useMemo(
+  const value = useMemo(
     () =>
       denominate({
-        input: userActiveStake,
+        input: amount,
       }),
-    [userActiveStake],
+    [amount],
   );
+
+  const onPress = useCallback(() => {
+    if (onDrawer) {
+      onDrawer({
+        source: "undelegation",
+        amount,
+        validator,
+        meta: {
+          delegations,
+          seconds,
+        },
+      });
+    }
+  }, [onDrawer, validator, seconds, delegations, amount]);
 
   return (
     <View style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}>
@@ -80,11 +95,7 @@ const Delegation = (props: any) => {
             ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
             : undefined,
         ]}
-        onPress={() =>
-          onDelegate(validator, userActiveStake, {
-            claimableRewards,
-          })
-        }
+        onPress={onPress}
       >
         <View style={[styles.icon, { backgroundColor: colors.lightLive }]}>
           <FirstLetterIcon label={name} />
@@ -106,14 +117,14 @@ const Delegation = (props: any) => {
 
         <View style={styles.rightWrapper}>
           <LText semiBold={true}>
-            {amount} {constants.egldLabel}
+            {value} {constants.egldLabel}
           </LText>
 
           <LText color="grey">
             <CounterValue
               currency={currency}
               showCode={true}
-              value={BigNumber(userActiveStake)}
+              value={BigNumber(amount)}
               alwaysShowSign={false}
               withPlaceholder={true}
             />
@@ -124,4 +135,4 @@ const Delegation = (props: any) => {
   );
 };
 
-export default Delegation;
+export default Unbonding;

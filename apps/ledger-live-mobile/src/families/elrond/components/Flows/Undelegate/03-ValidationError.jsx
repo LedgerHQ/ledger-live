@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";

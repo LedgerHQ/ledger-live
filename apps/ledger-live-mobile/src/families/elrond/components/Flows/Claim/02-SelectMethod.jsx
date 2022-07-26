@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "@react-navigation/native";

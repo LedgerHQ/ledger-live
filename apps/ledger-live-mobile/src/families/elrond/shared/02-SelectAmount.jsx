@@ -1,3 +1,4 @@
+// @flow
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Keyboard, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
