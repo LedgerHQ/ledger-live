@@ -820,8 +820,8 @@
   },
   "ratings": {
     "init": {
-      "title": "Enjoying Ledger Live?",
-      "description": "Whether you like it or feel we could be doing better. We really value your feedback.",
+      "title": "How do you like our app?",
+      "description": "Your feedback is important for improving Ledger Live.",
       "cta": {
         "enjoy": "It's great",
         "disappointed": "I am disappointed",
@@ -838,7 +838,8 @@
     },
     "disappointed": {
       "title": "Help us build a better product for you",
-      "description": "We want to do better, and your honest feedback helps us know what to improve.",
+      "description": "If you need more assistance or would like us to get back to you, please use our live chat",
+      "here": "here",
       "cta": {
         "sendFeedback": "Send feedback",
         "notNow": "Not now"
@@ -3376,6 +3377,13 @@
             "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
           }
         }
+      }
+    }
+  },
+  "cardano": {
+    "info": {
+      "balanceDoesNotIncludeRewards": {
+        "title": "Total balance doesn't include staking rewards"
       }
     }
   },
