@@ -50,7 +50,7 @@ const mockOsmosisAccountTransaction: OsmosisAccountTransaction = {
 test("getOperationValue", () => {
   expect(
     getOperationValue(
-      mockOsmosisEventContent,
+      mockOsmosisSendEventContent,
       "UNKNOWN",
       new BigNumber(100)
     ).toString()
