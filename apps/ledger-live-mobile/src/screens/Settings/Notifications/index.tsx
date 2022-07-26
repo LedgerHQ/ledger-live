@@ -14,7 +14,7 @@ import {
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
-import { TrackScreen } from "../../../analytics";
+import { track, TrackScreen } from "../../../analytics";
 import { notificationsSelector } from "../../../reducers/settings";
 import { setNotifications } from "../../../actions/settings";
 import { State } from "../../../reducers";
