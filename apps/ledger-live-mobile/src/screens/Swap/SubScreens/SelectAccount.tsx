@@ -60,20 +60,31 @@ export function SelectAccount({
   }, [accounts, selectedCurrency]);
 
   const allAccounts = useMemo(() => {
-    const accounts = selectedCurrency
-      ? flattenAccounts(enhancedAccounts).filter(
-          acc =>
-            (acc.type === "TokenAccount" ? acc.token : acc.currency).id ===
-            selectedCurrency.id,
-        )
-      : flattenAccounts(enhancedAccounts);
+    const accounts = flattenAccounts(enhancedAccounts);
+
     if (target === "to") {
-      return accounts;
+      return accounts
+        .filter(a => {
+          const c = getAccountCurrency(a);
+          return c.type === "CryptoCurrency" || c.id === selectedCurrency.id;
+        })
+        .map(a => {
+          const c = getAccountCurrency(a);
+          return {
+            ...a,
+            disabled:
+              (selectedCurrency.type === "TokenCurrency" &&
+                c.type === "CryptoCurrency") ||
+              !c.id === selectedCurrency.id,
+          };
+        });
     }
 
     return accounts.map(a => ({
       ...a,
-      disabled: !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      disabled:
+        !a.balance.gt(0) ||
+        !selectableCurrencyIds.includes(getAccountCurrency(a).id),
     }));
   }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds]);
 
@@ -117,21 +128,19 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
-    const currencyIds = params.selectableCurrencyIds || [];
-
     // @ts-expect-error
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
       params: {
         returnToSwap: true,
-        filterCurrencyIds: currencyIds,
+        filterCurrencyIds: selectableCurrencyIds,
         onSuccess: () => {
           navigation.navigate("SelectAccount", params);
         },
         analyticsPropertyFlow: "swap",
       },
     });
-  }, [navigation, params]);
+  }, [navigation, params, selectableCurrencyIds]);
 
   const renderList = useCallback(
     items => {

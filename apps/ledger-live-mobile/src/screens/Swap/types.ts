@@ -60,6 +60,7 @@ export type SwapNavParamList = {
   SelectAccount: {
     target: Target;
     provider: string;
+    swap: SwapDataType;
     selectableCurrencyIds: string[];
     selectedCurrency: CryptoCurrency | TokenCurrency;
   };

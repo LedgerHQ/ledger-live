@@ -165,12 +165,18 @@ export function Summary({
       {swap.to.account ? (
         <Item
           title={t("transfer.swap2.form.details.label.target")}
-          onEdit={() =>
+          onEdit={() => {
+            const selectableCurrencyIds =
+              to.currency.type === "TokenCurrency"
+                ? [to.currency.id, to.currency.parentCurrency.id]
+                : [to.currency.id];
             navigation.navigate("SelectAccount", {
               target: "to",
               selectedCurrency: to.currency,
-            })
-          }
+              selectableCurrencyIds,
+              swap,
+            });
+          }}
         >
           <Flex flexDirection="row" alignItems="center">
             <CurrencyIcon size={20} currency={targetAccountCurrency} />
