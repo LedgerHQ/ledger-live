@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Linking, Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { add, isBefore, parseISO } from "date-fns";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -102,6 +102,7 @@ const useNotifications = () => {
     const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
     const accounts: Account[] = useSelector(accountsSelector);
 
+    const route = useRoute();
     const accountsWithAmountCount = useMemo(() => accounts.filter(account => account.balance?.gt(0)).length, [accounts]);
 
     const dispatch = useDispatch();
@@ -136,6 +137,10 @@ const useNotifications = () => {
     }, [notificationsToken]);
 
     const handlePushNotificationsPermission = useCallback(async () => {
+        track("button_clicked", {
+          button: "Go to system settings",
+          screen: route.name,
+        });
         if (Platform.OS === "android") {
             Linking.openSettings();
         } else {
@@ -148,7 +153,7 @@ const useNotifications = () => {
                 fcm.requestPermission();
             }
         }
-    }, []);
+    }, [route.name]);
 
     const setPushNotificationsModalOpenCallback = useCallback(
         isModalOpen => {
