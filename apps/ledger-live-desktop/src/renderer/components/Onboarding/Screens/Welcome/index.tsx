@@ -5,22 +5,14 @@ import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
-import Carousel from "~/renderer/components/Onboarding/Screens/Welcome/Carousel";
 import { urls } from "~/config/urls";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 
-import accessCrypto from "./assets/accessCrypto.png";
-import ownPrivateKey from "./assets/ownPrivateKey.png";
-import setupNano from "./assets/setupNano.png";
-import stayOffline from "./assets/stayOffline.png";
-import validateTransactions from "./assets/validateTransactions.png";
+import BuyNanoX from "./assets/buyNanoX.webm";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
-
-const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
-registerAssets(stepLogos);
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -77,6 +69,12 @@ const CarouselTopBar = styled(Flex).attrs({
   alignItems: "center",
   padding: "40px",
   width: "100%",
+  zIndex: "1",
+})``;
+
+const VideoWrapper = styled(Flex).attrs({
+  objectFit: "cover",
+  position: "fixed",
 })``;
 
 const Description = styled(Text)`
@@ -105,13 +103,6 @@ export function Welcome() {
   const openPrivacyPolicy = useCallback(() => {
     openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
   }, []);
-
-  const steps = stepLogos.map((logo, index) => ({
-    image: logo,
-    title: t(`onboarding.screens.welcome.steps.${index}.title`),
-    description: t(`onboarding.screens.welcome.steps.${index}.desc`),
-    isLast: index === stepLogos.length - 1,
-  }));
 
   return (
     <WelcomeContainer>
@@ -165,7 +156,11 @@ export function Welcome() {
             <LangSwitcher />
           )}
         </CarouselTopBar>
-        <Carousel queue={steps} />
+        <VideoWrapper>
+          <video autoPlay loop>
+            <source src={BuyNanoX} type="video/webm" />
+          </video>
+        </VideoWrapper>
       </RightContainer>
     </WelcomeContainer>
   );
