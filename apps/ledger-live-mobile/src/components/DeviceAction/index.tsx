@@ -204,12 +204,9 @@ export default function DeviceAction<R, H, P>({
       device: selectedDevice,
       colors,
       theme,
-      // $FlowFixMe
-      transaction: request.transaction,
-      // $FlowFixMe
-      exchangeRate: request.exchangeRate,
-      // $FlowFixMe
-      exchange: request.exchange,
+      transaction: request?.transaction,
+      exchangeRate: request?.exchangeRate,
+      exchange: request?.exchange,
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
     });
