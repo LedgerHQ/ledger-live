@@ -18,9 +18,11 @@ import {
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
+import invariant from "invariant";
 
 import { JSONRPCRequest } from "json-rpc-2.0";
 
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type {
   RawPlatformTransaction,
   RawPlatformSignedTransaction,
@@ -35,6 +37,7 @@ import {
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import type { AppManifest } from "@ledgerhq/live-common/platform/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/types";
 
 import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
 import {
@@ -47,6 +50,8 @@ import {
   serializePlatformSignedTransaction,
   deserializePlatformSignedTransaction,
 } from "@ledgerhq/live-common/platform/serializers";
+import { prepareMessageToSign } from "@ledgerhq/live-common/lib/hw/signMessage";
+
 import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
@@ -542,6 +547,46 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     [accounts, manifest, navigation, device],
   );
 
+  const signMessage = useCallback(
+    ({ accountId, message }: { accountId: string, message: string }) => {
+      tracking.platformSignMessageRequested(manifest);
+
+      let formattedMessage: MessageData | null;
+
+      try {
+        const account = accounts.find(account => account.id === accountId);
+        invariant(account, "account not found");
+        formattedMessage = prepareMessageToSign(account, message);
+      } catch (error) {
+        tracking.platformSignMessageFail(manifest);
+        return Promise.reject(error);
+      }
+
+      return new Promise((resolve, reject) => {
+        navigation.navigate(NavigatorName.SignMessage, {
+          screen: ScreenName.SignSummary,
+          params: {
+            message: formattedMessage,
+            accountId,
+            onConfirmationHandler: message => {
+              tracking.platformSignMessageSuccess(manifest);
+              resolve(message);
+            },
+            onFailHandler: error => {
+              tracking.platformSignMessageFail(manifest);
+              reject(error);
+            },
+          },
+          onClose: () => {
+            tracking.platformSignMessageUserRefused(manifest);
+            reject(new UserRefusedOnDevice());
+          },
+        });
+      });
+    },
+    [accounts, manifest, navigation],
+  );
+
   const handlers = useMemo(
     () => ({
       "account.list": listAccounts,
@@ -552,6 +597,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       "transaction.broadcast": broadcastTransaction,
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
+      "message.sign": signMessage,
     }),
     [
       listAccounts,
@@ -562,6 +608,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       broadcastTransaction,
       startExchange,
       completeExchange,
+      signMessage,
     ],
   );
 
