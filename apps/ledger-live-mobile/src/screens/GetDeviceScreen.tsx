@@ -23,7 +23,7 @@ import { NavigatorName, ScreenName } from "../const";
 import useIsAppInBackground from "../components/useIsAppInBackground";
 import {
   hasCompletedOnboardingSelector,
-  discreetModeSelector,
+  readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { track, TrackScreen } from "../analytics";
 import { StringNullableChain } from "lodash";
@@ -84,17 +84,17 @@ export default function GetDeviceScreen() {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const discreetMode = useSelector(discreetModeSelector);
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const handleBack = useCallback(() => {
     navigation.goBack();
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "close",
         screen: "Upsell Nano",
       });
     }
-  }, [discreetMode, navigation]);
+  }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
     setShowWelcome(false);
@@ -105,13 +105,13 @@ export default function GetDeviceScreen() {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-    if (discreetMode) {
+    if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
         screen: "Upsell Nano",
       });
     }
-  }, [discreetMode, navigation, setFirstTimeOnboarding, setShowWelcome]);
+  }, [readOnlyModeEnabled, navigation, setFirstTimeOnboarding, setShowWelcome]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {
@@ -127,7 +127,7 @@ export default function GetDeviceScreen() {
 
   return (
     <StyledSafeAreaView>
-      {discreetMode ? (
+      {readOnlyModeEnabled ? (
         <TrackScreen category="ReadOnly" name="Upsell Nano" source={source} />
       ) : null}
       <Flex
