@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
-import { CloseMedium } from "@ledgerhq/react-ui/assets/icons";
+import { CloseMedium, HelpMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import Illustration from "~/renderer/components/Illustration";
+import HelpDrawer from "./HelpDrawer";
 
 const SyncOnboardingManual = () => {
-  const { t } = useTranslation();
-
   const steps = [
     {
       status: "active",
@@ -57,17 +56,28 @@ const SyncOnboardingManual = () => {
     },
   ];
 
+  const { t } = useTranslation();
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+
   return (
     <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
+      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <Flex width="100%" justifyContent="flex-end" mt={4} px={4}>
         <LangSwitcher />
         <Button ml={4} Icon={CloseMedium} />
       </Flex>
       <Flex flex={1} px={8} py={4}>
-        <Flex flex={1} flexDirection="column" justifyContent="center">
-          <Text variant="h1" fontSize="24px" mb="50px">
-            Setup your Nano
-          </Text>
+        <Flex flex={1} flexDirection="column">
+          <Flex alignItems="center" mb={8}>
+            <Text variant="h4" fontSize="24px" fontWeight="semiBold">
+              Setup Manual
+            </Text>
+            <Button
+              ml={4}
+              Icon={() => <HelpMedium color="neutral.c80" size={24} />}
+              onClick={() => setHelpDrawerOpen(true)}
+            />
+          </Flex>
           <VerticalTimeline steps={steps as any} />
         </Flex>
         <Flex flex={1} justifyContent="center" alignItems="center">
