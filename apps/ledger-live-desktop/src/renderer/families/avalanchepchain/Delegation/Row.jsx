@@ -42,7 +42,7 @@ export function Row({ delegation, account, onExternalLink }: Props) {
             {isDefaultValidatorNode(delegation.nodeID) ? (
               <Logo size={16} />
             ) : (
-              <FirstLetterIcon label={delegation.nodeID.split("-")[0]} />
+              <FirstLetterIcon label={delegation.nodeID.split("-")[1]} />
             )}
           </IconContainer>
         </Box>

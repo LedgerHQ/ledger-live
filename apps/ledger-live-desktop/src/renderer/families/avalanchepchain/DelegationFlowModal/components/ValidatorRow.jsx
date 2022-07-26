@@ -49,11 +49,15 @@ function AvalancheValidatorRow({ validator, active, onClick, unit, currency }: P
           {isDefaultValidatorNode(validator.nodeID) ? (
             <Logo size={16} />
           ) : (
-            <FirstLetterIcon label={validator.nodeID.split("0")[0]} />
+            <FirstLetterIcon label={validator.nodeID.split("-")[1]} />
           )}
         </IconContainer>
       }
-      title={validator.nodeID}
+      title={
+        isDefaultValidatorNode(validator.nodeID)
+          ? `Ledger by Figment`
+          : validator.nodeID
+      }
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={
