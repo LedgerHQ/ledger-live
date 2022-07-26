@@ -156,7 +156,7 @@ const useNotifications = () => {
             dispatch(setNotificationsModalType("generic"));
             dispatch(setNotificationsModalOpen(isModalOpen));
             dispatch(setRatingsModalLocked(false));
-          } else if (!isPushNotificationsModalLocked) {
+          } else {
             getIsNotifEnabled().then(isNotifEnabled => {
                 if (!isNotifEnabled || !notificationsSettings.allowed) {
                     dispatch(setNotificationsModalOpen(isModalOpen)); 
@@ -165,7 +165,7 @@ const useNotifications = () => {
             });
           }
         },
-        [dispatch, notificationsSettings.allowed, isPushNotificationsModalLocked],
+        [dispatch, notificationsSettings.allowed],
     );
     
     const areConditionsMet = useCallback(() => {
@@ -239,7 +239,7 @@ const useNotifications = () => {
             dispatch(setRatingsModalLocked(false));
           }
     
-          if (!areConditionsMet()) return;
+          if (isPushNotificationsModalLocked || !areConditionsMet()) return;
 
           for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
             if (isEventTriggered(eventTrigger, newRoute)) {
@@ -264,6 +264,7 @@ const useNotifications = () => {
           pushNotificationsFeature?.params?.trigger_events,
           isEventTriggered,
           setPushNotificationsModalOpenCallback,
+          isPushNotificationsModalLocked,
         ],
     );
 
@@ -299,7 +300,7 @@ const useNotifications = () => {
     }, [navigation]);
     
     const triggerMarketPushNotificationModal = useCallback(() => {
-        if (pushNotificationsDataOfUser?.doNotAskAgain) return;
+        if (pushNotificationsDataOfUser?.doNotAskAgain || isPushNotificationsModalLocked) return;
         const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
         if (marketCoinStarredParams?.enabled) {
             dispatch(setRatingsModalLocked(true));
@@ -315,9 +316,16 @@ const useNotifications = () => {
                 }),
             );
         }
-    }, [dispatch, pushNotificationsDataOfUser?.doNotAskAgain, pushNotificationsFeature?.params?.marketCoinStarred, setPushNotificationsModalOpenCallback]);
+    }, [
+      dispatch,
+      isPushNotificationsModalLocked,
+      pushNotificationsDataOfUser?.doNotAskAgain,
+      pushNotificationsFeature?.params?.marketCoinStarred,
+      setPushNotificationsModalOpenCallback,
+    ]);
 
     const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
+        if (isPushNotificationsModalLocked) return;
         const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
         if (justFinishedOnboardingParams?.enabled) {
             dispatch(setRatingsModalLocked(true));
@@ -332,7 +340,12 @@ const useNotifications = () => {
                 }),
             );
         }
-    }, [dispatch, pushNotificationsFeature?.params?.justFinishedOnboarding, setPushNotificationsModalOpenCallback]);
+    }, [
+      isPushNotificationsModalLocked,
+      dispatch,
+      pushNotificationsFeature?.params?.justFinishedOnboarding,
+      setPushNotificationsModalOpenCallback,
+    ]);
 
     const handleSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
         if (delay !== null && delay !== undefined) {

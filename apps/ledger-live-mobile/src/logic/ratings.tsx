@@ -103,12 +103,12 @@ const useRatings = () => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
-      } else if (!isRatingsModalLocked) {
+      } else {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(true));
       }
     },
-    [dispatch, isRatingsModalLocked],
+    [dispatch],
   );
 
   const areRatingsConditionsMet = useCallback(() => {
@@ -196,7 +196,7 @@ const useRatings = () => {
         clearTimeout(ratingsHappyMoment?.timeout);
       }
 
-      if (!areRatingsConditionsMet()) return;
+      if (isRatingsModalLocked || !areRatingsConditionsMet()) return;
 
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
@@ -215,6 +215,7 @@ const useRatings = () => {
       dispatch(setRatingsCurrentRouteName(ratingsNewRoute));
     },
     [
+      isRatingsModalLocked,
       areRatingsConditionsMet,
       ratingsHappyMoment?.timeout,
       dispatch,
@@ -263,6 +264,8 @@ const useRatings = () => {
   );
 
   const handleSettingsRateApp = useCallback(() => {
+    if (isRatingsModalLocked) return;
+
     dispatch(
       setRatingsHappyMoment({
         route_name: "Settings",
@@ -275,7 +278,7 @@ const useRatings = () => {
       params: ratingsFeature?.params,
     });
     setRatingsModalOpenCallback(true);
-  }, [dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
+  }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback((delay, additionalParams) => {
     if (delay !== null && delay !== undefined) {
