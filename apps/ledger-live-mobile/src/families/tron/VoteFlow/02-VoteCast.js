@@ -1,6 +1,6 @@
 /* @flow */
 import invariant from "invariant";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -9,13 +9,13 @@ import { Trans } from "react-i18next";
 import type {
   Vote,
   Transaction,
-} from "@ledgerhq/live-common/lib/families/tron/types";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+} from "@ledgerhq/live-common/families/tron/types";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   useTronSuperRepresentatives,
   SR_MAX_VOTES,
   formatVotes,
-} from "@ledgerhq/live-common/lib/families/tron/react";
+} from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";

@@ -4,18 +4,18 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { from } from "rxjs";
 import { map, retryWhen } from "rxjs/operators";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account } from "@ledgerhq/live-common/types/index";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CantOpenDevice } from "@ledgerhq/errors";
 import {
   withDevice,
   withDevicePolling,
   retryWhileErrors,
   genericCanRetryOnError,
-} from "@ledgerhq/live-common/lib/hw/deviceAccess";
-import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
-import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
+} from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceNameTransport from "@ledgerhq/live-common/hw/getDeviceName";
+import editDeviceNameTransport from "@ledgerhq/live-common/hw/editDeviceName";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";

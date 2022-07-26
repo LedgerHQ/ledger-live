@@ -15,12 +15,12 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
 import { ScreenName } from "../../const";
 import { urls } from "../../config/urls";

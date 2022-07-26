@@ -7,13 +7,13 @@ import React, {
   useEffect,
 } from "react";
 import { useTheme } from "styled-components/native";
-import { Unit, Currency, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import { Unit, Currency, AccountLike } from "@ledgerhq/live-common/types/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/lib/portfolio/v2/types";
+} from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   Box,
   Flex,
@@ -252,7 +252,10 @@ const GraphCardHeader = ({
             numberOfLines={1}
             adjustsFontSizeToFit
           >
-            <CurrencyUnitValue {...items[0]} disableRounding />
+            <CurrencyUnitValue
+              disableRounding={shouldUseCounterValue}
+              {...items[0]}
+            />
           </Text>
           <Flex flexDirection="row" alignItems="center">
             <Delta percent valueChange={valueChange} />

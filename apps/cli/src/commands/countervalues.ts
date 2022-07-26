@@ -6,26 +6,26 @@ import { BigNumber } from "bignumber.js";
 import asciichart from "asciichart";
 import invariant from "invariant";
 import { Observable } from "rxjs";
-import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
-import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
-import { getPortfolioCountByDate } from "@ledgerhq/live-common/lib/portfolio/v2";
+import { toBalanceHistoryRaw } from "@ledgerhq/live-common/account/index";
+import type { PortfolioRange } from "@ledgerhq/live-common/types/index";
+import { getPortfolioCountByDate } from "@ledgerhq/live-common/portfolio/v2/index";
 import {
   getRanges,
   getDates,
-} from "@ledgerhq/live-common/lib/portfolio/v2/range";
-import type { Currency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/portfolio/v2/range";
+import type { Currency } from "@ledgerhq/live-common/types/index";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,
   listFiatCurrencies,
-} from "@ledgerhq/live-common/lib/currencies";
+} from "@ledgerhq/live-common/currencies/index";
 import {
   initialState,
   calculateMany,
   loadCountervalues,
   resolveTrackingPairs,
-} from "@ledgerhq/live-common/lib/countervalues/logic";
-import CountervaluesAPI from "@ledgerhq/live-common/lib/countervalues/api";
+} from "@ledgerhq/live-common/countervalues/logic";
+import CountervaluesAPI from "@ledgerhq/live-common/countervalues/api/index";
 const histoFormatters = {
   stats: (histo, currency, countervalue) =>
     (currency.ticker + " to " + countervalue.ticker).padEnd(12) +

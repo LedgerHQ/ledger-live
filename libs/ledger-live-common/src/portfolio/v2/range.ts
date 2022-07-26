@@ -1,12 +1,26 @@
-import {
-  weekIncrement,
-  dayIncrement,
-  hourIncrement,
-  startOfWeek,
-  startOfDay,
-  startOfHour,
-} from "../range";
 import type { PortfolioRangeConfig, PortfolioRange } from "./types";
+
+export const hourIncrement = 60 * 60 * 1000;
+export const dayIncrement = 24 * hourIncrement;
+export const weekIncrement = 7 * dayIncrement;
+
+export function startOfHour(t: Date): Date {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
+}
+
+export function startOfMonth(t: Date): Date {
+  return new Date(t.getFullYear(), t.getMonth(), 1);
+}
+
+export function startOfDay(t: Date): Date {
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+
+export function startOfWeek(t: Date): Date {
+  const d = startOfDay(t);
+  return new Date(d.getTime() - d.getDay() * dayIncrement);
+}
+
 export function getPortfolioRangeConfig(
   r: PortfolioRange
 ): PortfolioRangeConfig {

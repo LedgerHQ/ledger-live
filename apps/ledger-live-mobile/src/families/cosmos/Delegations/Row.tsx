@@ -4,14 +4,15 @@ import { useTranslation } from "react-i18next";
 import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
-import { Currency } from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/families/cosmos/types";
+import { Currency } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
+import ValidatorImage from "../shared/ValidatorImage";
+import { LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/cosmos/utils";
 
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;
@@ -41,8 +42,12 @@ export default function DelegationRow({
       ]}
       onPress={() => onPress(delegation)}
     >
-      <View style={[styles.icon, { backgroundColor: colors.lightLive }]}>
-        <FirstLetterIcon label={validator?.name ?? validatorAddress ?? ""} />
+      <View style={[styles.icon]}>
+        <ValidatorImage
+          size={42}
+          isLedger={validatorAddress === LEDGER_VALIDATOR_ADDRESS}
+          name={validator?.name ?? validatorAddress ?? ""}
+        />
       </View>
 
       <View style={styles.nameWrapper}>

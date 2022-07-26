@@ -2,30 +2,22 @@ import React, { useState } from "react";
 import FastImage, {
   OnLoadEvent,
   FastImageProps,
+  ResizeMode,
 } from "react-native-fast-image";
 import { View, StyleSheet, Animated } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
 import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
-const ImageComponent = ({
-  ...props
-}: {
-  style: Object;
-} & FastImageProps) =>
+const ImageComponent: React.FC<FastImageProps> = props =>
   typeof props?.source === "object" && props?.source?.uri ? (
     <FastImage {...props} />
-  ) : (
-    <></>
-  );
+  ) : null;
 
-const NotFound = ({
-  colors,
-  onLayout,
-}: {
-  colors: Object;
+const NotFound: React.FC<{
+  colors: { [key: string]: string };
   onLayout: () => void;
-}) => {
+}> = ({ colors, onLayout }) => {
   const [iconWidth, setIconWidth] = useState(40);
 
   return (
@@ -50,44 +42,75 @@ type Props = {
   style?: Object;
   status: string;
   src: string;
-  resizeMode?: string;
+  srcFallback: string;
+  resizeMode?: ResizeMode;
   colors: any;
+  transaprency?: boolean;
 };
 
 type State = {
-  loadError: boolean;
+  error: boolean;
+  usingFallback: boolean;
 };
 
 class NftImage extends React.PureComponent<Props, State> {
-  state = {
-    beforeLoadDone: false,
-    loadError: false,
-    contentType: null,
+  static defaultProps = {
+    transaprency: false,
   };
 
-  opacityAnim = new Animated.Value(0);
+  state = {
+    error: false,
+    contentType: null,
+    usingFallback: false,
+  };
+
+  contentOpacityAnim = new Animated.Value(0);
+  skeletonOpacityAnim = new Animated.Value(1);
 
   startAnimation = () => {
-    Animated.timing(this.opacityAnim, {
+    Animated.timing(this.contentOpacityAnim, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
+    }).start();
+
+    Animated.timing(this.skeletonOpacityAnim, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+      delay: 250,
     }).start();
   };
 
   onLoad = ({ nativeEvent }: OnLoadEvent) => {
     if (!nativeEvent) {
-      this.setState({ loadError: true });
+      if (this.state.usingFallback) {
+        this.setState({ error: true });
+      } else {
+        this.setState({ usingFallback: true });
+      }
     }
   };
 
   onError = () => {
-    this.setState({ loadError: true });
+    if (this.state.usingFallback) {
+      this.setState({ error: true });
+    } else {
+      this.setState({ usingFallback: true });
+    }
   };
 
   render() {
-    const { style, status, src, colors, resizeMode = "cover" } = this.props;
-    const { loadError } = this.state;
+    const {
+      style,
+      src,
+      srcFallback,
+      status,
+      colors,
+      resizeMode = "cover",
+      transaprency,
+    } = this.props;
+    const { error, usingFallback } = this.state;
 
     const noData = status === "nodata";
     const metadataError = status === "error";
@@ -95,28 +118,38 @@ class NftImage extends React.PureComponent<Props, State> {
 
     return (
       <View style={[style, styles.root]}>
-        <Skeleton style={styles.skeleton} loading={true} />
+        <Animated.View
+          style={[
+            styles.skeleton,
+            {
+              opacity: this.skeletonOpacityAnim,
+            },
+          ]}
+        >
+          <Skeleton style={styles.skeleton} loading={true} />
+        </Animated.View>
         <Animated.View
           style={[
             styles.imageContainer,
             {
-              opacity: this.opacityAnim,
+              opacity: this.contentOpacityAnim,
             },
           ]}
         >
-          {noData || metadataError || noSource || loadError ? (
+          {noData || metadataError || noSource || error ? (
             <NotFound colors={colors} onLayout={this.startAnimation} />
           ) : (
             <ImageComponent
+              key={Number(this.state.usingFallback)}
               style={[
                 styles.image,
                 {
-                  backgroundColor: colors.white,
+                  backgroundColor: transaprency ? undefined : colors.background,
                 },
               ]}
               resizeMode={resizeMode}
               source={{
-                uri: src,
+                uri: usingFallback ? srcFallback : src,
               }}
               onLoad={this.onLoad}
               onLoadEnd={this.startAnimation}

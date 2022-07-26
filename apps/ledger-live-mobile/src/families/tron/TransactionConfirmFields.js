@@ -4,11 +4,11 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import type { Transaction } from "@ledgerhq/live-common/types/index";
 import {
   formatVotes,
   useTronSuperRepresentatives,
-} from "@ledgerhq/live-common/lib/families/tron/react";
+} from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
 import {
   DataRow,

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { Icons } from "@ledgerhq/native-ui";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
 import { accountsSelector } from "../../reducers/accounts";
@@ -11,6 +12,7 @@ import PoweredByLedger from "./PoweredByLedger";
 import TrackScreen from "../../analytics/TrackScreen";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
+import useRatings from "../../logic/ratings";
 
 type Props = {
   navigation: any;
@@ -19,6 +21,7 @@ type Props = {
 export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
+  const { handleSettingsRateApp } = useRatings();
 
   const [debugVisible, setDebugVisible] = useState(
     Config.FORCE_DEBUG_VISIBLE || false,
@@ -84,6 +87,14 @@ export default function Settings({ navigation }: Props) {
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
+      <FeatureToggle feature="ratings">
+        <SettingsCard
+          title={t("settings.about.liveReview.title")}
+          desc={t("settings.about.liveReview.desc")}
+          Icon={Icons.StarMedium}
+          onClick={handleSettingsRateApp}
+        />
+      </FeatureToggle>
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}

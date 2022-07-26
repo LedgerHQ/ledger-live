@@ -4,12 +4,12 @@ import {
   Account,
   AccountLike,
   Operation,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 import {
   getMainAccount,
   getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
-import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
+} from "@ledgerhq/live-common/account/index";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import Skeleton from "./Skeleton";

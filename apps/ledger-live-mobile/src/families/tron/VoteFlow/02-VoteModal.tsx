@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useState, useMemo, useRef } from "react";
 import { View, StyleSheet, TextInput, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
+import { Vote } from "@ledgerhq/live-common/families/tron/types";
 
 import { useTheme } from "@react-navigation/native";
 import { BottomDrawer, Flex, Link } from "@ledgerhq/native-ui";

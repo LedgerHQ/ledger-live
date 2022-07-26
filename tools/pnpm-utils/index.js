@@ -92,7 +92,16 @@ function removeDependencies(
           );
           delete pkg[kind][dependency];
         }
-        if (pkg.peerDependenciesMeta && kind === "peerDependencies") {
+        if (
+          pkg.peerDependenciesMeta &&
+          kind === "peerDependencies" &&
+          pkg.peerDependenciesMeta[dependency]
+        ) {
+          console.log(
+            `${bold("[-]", 31)} ${field(dependency)} | ${field(
+              key
+            )} (peerDependenciesMeta)`
+          );
           delete pkg.peerDependenciesMeta[dependency];
         }
       });

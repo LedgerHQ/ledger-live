@@ -1,9 +1,9 @@
 import { listen } from "@ledgerhq/logs";
 import { map, reduce } from "rxjs/operators";
-import { accountFormatters } from "@ledgerhq/live-common/lib/account";
+import { accountFormatters } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 export default {
   description: "Generate a test for scan accounts (live-common dataset)",
   args: [
@@ -34,6 +34,8 @@ export default {
         if (accounts.length === 0) throw new Error("no accounts!");
         const { currency } = accounts[0];
         return `
+import "../../__tests__/test-helpers/setup";
+import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 
@@ -46,7 +48,7 @@ const dataset: CurrenciesData<Transaction> = {
   ],
 };
 
-export default dataset;
+testBridge(dataset);
 `;
       })
     );

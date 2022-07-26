@@ -28,6 +28,7 @@ import {
   fromCryptoOrgResourcesRaw,
   fromSolanaResourcesRaw,
   fromNFTRaw,
+  fromCardanoResourceRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 
@@ -369,6 +370,15 @@ export function patchAccount(
     account.elrondResources !== updatedRaw.elrondResources
   ) {
     next.elrondResources = fromElrondResourcesRaw(updatedRaw.elrondResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.cardanoResources &&
+    // @ts-expect-error check if this is valid for deep equal check
+    account.cardanoResources !== updatedRaw.cardanoResources
+  ) {
+    next.cardanoResources = fromCardanoResourceRaw(updatedRaw.cardanoResources);
     changed = true;
   }
 

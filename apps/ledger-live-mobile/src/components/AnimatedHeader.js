@@ -79,6 +79,7 @@ type Props = {
   footer?: React$Node,
   style?: *,
   titleStyle?: *,
+  edges?: ("top" | "right" | "left" | "bottom")[],
 };
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
@@ -93,6 +94,7 @@ export default function AnimatedHeaderView({
   footer,
   style,
   titleStyle,
+  edges,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -133,6 +135,7 @@ export default function AnimatedHeaderView({
 
   return (
     <SafeAreaView
+      edges={edges}
       style={[styles.root, { backgroundColor: colors.background }, style]}
     >
       <Animated.View

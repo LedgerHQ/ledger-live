@@ -7,9 +7,9 @@ import type {
   Operation,
   OperationType,
   AccountLike,
-} from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { isConfirmedOperation } from "@ledgerhq/live-common/lib/operation";
+} from "@ledgerhq/live-common/types/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import OperationStatusIcon from "../icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 

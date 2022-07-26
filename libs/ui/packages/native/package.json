@@ -1,8 +1,15 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.7.17",
+  "version": "0.8.1",
   "description": "Ledger Live - Mobile UI",
-  "repository": "https://github.com/LedgerHQ/ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native",
   "license": "MIT",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "main": "lib/index.js",

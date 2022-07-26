@@ -6,7 +6,7 @@ import { RectButton } from "react-native-gesture-handler";
 import type {
   CryptoCurrency,
   TokenCurrency,
-} from "@ledgerhq/live-common/lib/types";
+} from "@ledgerhq/live-common/types/index";
 
 import LText from "./LText";
 import CircleCurrencyIcon from "./CircleCurrencyIcon";
@@ -18,6 +18,7 @@ type Props = {
   isOK?: boolean,
   style?: *,
   colors: *,
+  iconSize?: number,
 };
 
 class CurrencyRow extends PureComponent<Props> {
@@ -26,12 +27,12 @@ class CurrencyRow extends PureComponent<Props> {
   };
 
   render() {
-    const { currency, style, isOK = true, colors } = this.props;
+    const { currency, style, isOK = true, colors, iconSize = 26 } = this.props;
 
     return (
       <RectButton style={[styles.root, style]} onPress={this.onPress}>
         <CircleCurrencyIcon
-          size={26}
+          size={iconSize}
           currency={currency}
           color={!isOK ? colors.lightFog : undefined}
         />

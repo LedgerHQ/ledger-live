@@ -1,11 +1,25 @@
 // @flow
-import React, { useState, useMemo, useCallback } from "react";
-import { TextInput, StyleSheet } from "react-native";
+import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
+import { TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme, NavigationProp } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
+import KeyboardView from "../../../components/KeyboardView";
+import ImportIcon from "../../../icons/Import";
+
+const DebuggerButton: React$ComponentType<{
+  onPress: Function,
+}> = ({ onPress }) => {
+  const { colors } = useTheme();
+
+  return (
+    <TouchableOpacity style={styles.buttons} onPress={onPress}>
+      <ImportIcon size={18} color={colors.grey} />
+    </TouchableOpacity>
+  );
+};
 
 export default function CustomManifest({
   navigation,
@@ -37,32 +51,79 @@ export default function CustomManifest({
     });
   }, [manifest, addLocalManifest, navigation]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <DebuggerButton
+          onPress={() =>
+            onChange(`
+            {
+              "id": "debug",
+              "name": "Debugger",
+              "url": "https://debug.apps.ledger.com/",
+              "homepageUrl": "https://developers.ledger.com/",
+              "icon": "https://cdn.live.ledger.com/icons/platform/debugger.png",
+              "platform": "all",
+              "apiVersion": "0.0.1",
+              "manifestVersion": "1",
+              "branch": "debug",
+              "categories": [
+                "tools"
+              ],
+              "currencies": "*",
+              "content": {
+                "shortDescription": {
+                  "en": "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk."
+                },
+                "description": {
+                  "en": "Try out the Ledger Live API to test capabilities of our platform integration solution. Use at your own risk."
+                }
+              },
+              "permissions": [
+                {
+                  "method": "*"
+                }
+              ],
+              "domains": [
+                "http://*",
+                "https://*"
+              ]
+            }
+          `)
+          }
+        />
+      ),
+    });
+  }, [navigation, onChange]);
+
   return (
-    <NavigationScrollView>
-      <TextInput
-        style={[
-          styles.input,
-          { color: colors.text, borderColor: colors.border },
-        ]}
-        value={manifest}
-        onChangeText={onChange}
-        placeholder="Paste your manufest json"
-        multiline
-        autoCorrect={false}
-      />
-      <Button
-        type="primary"
-        title="Open"
-        disabled={disabled}
-        onPress={onOpen}
-      />
-    </NavigationScrollView>
+    <KeyboardView>
+      <NavigationScrollView>
+        <TextInput
+          style={[
+            styles.input,
+            { color: colors.text, borderColor: colors.border },
+          ]}
+          value={manifest}
+          onChangeText={onChange}
+          placeholder="Paste your manufest json"
+          multiline
+          autoCorrect={false}
+        />
+        <Button
+          type="primary"
+          title="Open"
+          disabled={disabled}
+          onPress={onOpen}
+        />
+      </NavigationScrollView>
+    </KeyboardView>
   );
 }
 
 function useCustomManifest() {
   const [manifest, setManifest] = useState("");
-  const { addLocalManifest } = usePlatformApp();
+  const { addLocalManifest } = useLocalLiveAppContext();
 
   const onChange = useCallback(val => {
     try {
@@ -103,5 +164,9 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     marginBottom: 16,
+  },
+  buttons: {
+    paddingVertical: 8,
+    paddingHorizontal: 8,
   },
 });

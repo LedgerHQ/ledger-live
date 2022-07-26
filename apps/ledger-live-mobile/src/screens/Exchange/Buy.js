@@ -1,50 +1,80 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { useTheme } from "@react-navigation/native";
+import {
+  currenciesByMarketcap,
+  findCryptoCurrencyByKeyword,
+} from "@ledgerhq/live-common/currencies/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import LText from "../../components/LText";
-import BuyOption from "./BuyOption";
-import MoonPay from "../../icons/providers/MoonPay";
-import Coinify from "../../icons/providers/Coinify";
+import BigSpinner from "../../icons/BigSpinner";
+import { useRampCatalogCurrencies } from "./hooks";
+import SelectAccountCurrency from "./SelectAccountCurrency";
 
-const forceInset = { bottom: "always" };
+type Props = {
+  navigation: any,
+  route: {
+    params: {
+      defaultAccountId?: string,
+      defaultCurrencyId?: string,
+      defaultTicker?: string,
+      currency?: string, // Used for the deeplink only
+    },
+  },
+};
 
-type Provider = "moonpay" | "coinify" | null;
+type State = {
+  sortedCurrencies: Array<TokenCurrency | CryptoCurrency>,
+  isLoading: boolean,
+};
 
-export default function Buy() {
-  const { t } = useTranslation();
-  const navigation = useNavigation();
+// To avoid recreating a ref on each render and triggering hooks
+const emptyArray = [];
+
+export default function OnRamp({ route }: Props) {
+  const [currencyState, setCurrencyState] = useState<State>({
+    sortedCurrencies: [],
+    isLoading: true,
+  });
   const { colors } = useTheme();
+  const rampCatalog = useRampCatalog();
+  const allCurrencies = useRampCatalogCurrencies(
+    rampCatalog?.value?.onRamp || emptyArray,
+  );
 
-  const [provider, setProvider] = useState<Provider>(null);
-  const { manifests } = usePlatformApp();
+  const { defaultAccountId, defaultTicker, currency } = route.params || {};
 
-  const navigateToMoonPay = useCallback(() => {
-    const manifest = manifests.get("moonpay");
-    navigation.navigate(ScreenName.PlatformApp, {
-      platform: manifest.id,
-      name: manifest.name,
+  // Check currency for the DeepLinking
+  const defaultCurrencyId = useMemo(() => {
+    const paramsCurrencyId = route.params?.defaultCurrencyId;
+    if (!paramsCurrencyId && currency) {
+      return findCryptoCurrencyByKeyword(currency)?.id;
+    }
+    return paramsCurrencyId;
+  }, [currency, route.params?.defaultCurrencyId]);
+
+  useEffect(() => {
+    const filteredCurrencies = defaultTicker
+      ? allCurrencies.filter(currency => currency.ticker === defaultTicker)
+      : allCurrencies;
+
+    currenciesByMarketcap(filteredCurrencies).then(sortedCurrencies => {
+      setCurrencyState({
+        sortedCurrencies,
+        isLoading: false,
+      });
     });
-  }, [navigation, manifests]);
-
-  const navigateToCoinify = useCallback(() => {
-    navigation.navigate(ScreenName.Coinify);
-  }, [navigation]);
-
-  const onContinue = useCallback(() => {
-    provider === "moonpay" ? navigateToMoonPay() : navigateToCoinify();
-  }, [provider, navigateToMoonPay, navigateToCoinify]);
-
-  const moonPayIcon = <MoonPay size={40} />;
-  const coinifyIcon = <Coinify size={40} />;
+    // Only get on first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <SafeAreaView
@@ -55,58 +85,20 @@ export default function Buy() {
           paddingTop: extraStatusBarPadding,
         },
       ]}
-      forceInset={forceInset}
     >
-      <TrackScreen category="Buy Crypto" />
-      <View style={styles.body}>
-        <LText semiBold>{t("exchange.buy.title")}</LText>
-        <View style={styles.providers}>
-          <BuyOption
-            name={"MoonPay"}
-            icon={moonPayIcon}
-            supportedCoinsCount={40}
-            onPress={() => setProvider("moonpay")}
-            isActive={provider === "moonpay"}
-          />
-          <BuyOption
-            name={"Coinify"}
-            icon={coinifyIcon}
-            supportedCoinsCount={10}
-            onPress={() => setProvider("coinify")}
-            isActive={provider === "coinify"}
-          />
+      <TrackScreen category="Multibuy" name="Buy" />
+      {currencyState.isLoading ? (
+        <View style={styles.spinner}>
+          <BigSpinner size={42} />
         </View>
-      </View>
-      <View
-        style={[
-          styles.footer,
-          {
-            ...Platform.select({
-              android: {
-                borderTopColor: "rgba(20, 37, 51, 0.1)",
-                borderTopWidth: 1,
-              },
-              ios: {
-                shadowColor: "rgb(20, 37, 51)",
-                shadowRadius: 14,
-                shadowOpacity: 0.04,
-                shadowOffset: {
-                  width: 0,
-                  height: -4,
-                },
-              },
-            }),
-          },
-        ]}
-      >
-        <Button
-          containerStyle={styles.button}
-          type={"primary"}
-          title={t("common.continue")}
-          onPress={() => onContinue()}
-          disabled={!provider}
+      ) : (
+        <SelectAccountCurrency
+          flow="buy"
+          allCurrencies={currencyState.sortedCurrencies}
+          defaultCurrencyId={defaultCurrencyId}
+          defaultAccountId={defaultAccountId}
         />
-      </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -115,23 +107,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  body: {
-    flex: 1,
+  spinner: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    margin: 16,
-  },
-  providers: {
-    flex: 1,
-    marginTop: 8,
-  },
-  footer: {
-    marginTop: 40,
-    padding: 16,
-  },
-  button: {
-    alignSelf: "stretch",
-    minWidth: "100%",
+    marginTop: 10,
   },
 });

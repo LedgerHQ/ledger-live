@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import firmwareUpdateRepair from "@ledgerhq/live-common/lib/hw/firmwareUpdate-repair";
+import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 
 import { NavigatorName } from "../const";
 import logger from "../logger";

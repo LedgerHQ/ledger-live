@@ -15,19 +15,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v2.1.0
-      name: "install pnpm"
-      with:
-        version: latest
-    - uses: actions/setup-node@v3
-      name: "install node"
-      if: ${{ inputs.os != 'win' }}
-      with:
-        node-version: 14.x
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
     - name: bump npm
-      run: npm i -g npm
+      run: npm i -g npm@8.12.2
       shell: bash
     - name: install dependencies
       if: ${{ inputs.os != 'mac' }}

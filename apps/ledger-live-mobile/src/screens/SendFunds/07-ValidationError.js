@@ -2,19 +2,21 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/types/index";
 import { useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { TrackScreen } from "../../analytics";
 import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
+/* eslint-disable import/named */
 import {
   // $FlowFixMe
   context as _wcContext,
   // $FlowFixMe
   setCurrentCallRequestError,
 } from "../WalletConnect/Provider";
+/* eslint-enable import/named */
 import { accountScreenSelector } from "../../reducers/accounts";
 
 const forceInset = { bottom: "always" };

@@ -87,6 +87,13 @@ module.exports = {
     "react/jsx-fragments": "warn",
     "react/no-deprecated": "warn",
     "prettier/prettier": "error",
+
+    // Ignore live-common for the moment because this rule does not work with subpath exports
+    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
+    "import/no-unresolved": [
+      "error",
+      { ignore: ["^@ledgerhq/live-common/.*"] },
+    ],
   },
   globals: {
     __DEV__: false,

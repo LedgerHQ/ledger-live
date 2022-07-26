@@ -1,11 +1,11 @@
 import { of, interval } from "rxjs";
 import { reduce, mergeMap, shareReplay, tap } from "rxjs/operators";
 import { dataToFrames } from "qrloop";
-import { encode } from "@ledgerhq/live-common/lib/cross";
+import { encode } from "@ledgerhq/live-common/cross";
 import { asQR } from "../qr";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import { Account } from "@ledgerhq/live-common/types/index";
 export default {
   description: "Export given accounts to Live QR or console for importing",
   args: [

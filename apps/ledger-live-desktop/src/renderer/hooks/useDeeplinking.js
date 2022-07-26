@@ -6,8 +6,8 @@ import { useLocation, useHistory } from "react-router-dom";
 import {
   findCryptoCurrencyByKeyword,
   parseCurrencyUnit,
-} from "@ledgerhq/live-common/lib/currencies";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+} from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";

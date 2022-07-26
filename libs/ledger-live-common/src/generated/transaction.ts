@@ -2,6 +2,8 @@ import algorand from "../families/algorand/transaction";
 
 import bitcoin from "../families/bitcoin/transaction";
 
+import cardano from "../families/cardano/transaction";
+
 import celo from "../families/celo/transaction";
 
 import cosmos from "../families/cosmos/transaction";
@@ -36,6 +38,7 @@ import tron from "../families/tron/transaction";
 export default {
   algorand,
   bitcoin,
+  cardano,
   celo,
   cosmos,
   crypto_org,

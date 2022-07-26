@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
-import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
-import styled from "styled-components/native";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Alert, Flex } from "@ledgerhq/native-ui";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import DeviceAction from "./DeviceAction";
+import styled from "styled-components/native";
 import BottomModal from "./BottomModal";
+import DeviceAction from "./DeviceAction";
 
 const DeviceActionContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -40,18 +40,20 @@ export default function DeviceActionModal({
   const showAlert = !device?.wired;
   const [result, setResult] = useState<any | null>(null);
 
+  const handleModalHide = useCallback(() => {
+    if (onModalHide) onModalHide();
+    if (onResult && result) {
+      onResult(result);
+      setResult(null);
+    }
+  }, [onModalHide, onResult, result]);
+
   return (
     <BottomModal
       id="DeviceActionModal"
       isOpened={result ? false : !!device}
-      onClose={onClose}
-      onModalHide={() => {
-        if (onModalHide) onModalHide();
-        if (onResult && result) {
-          onResult(result);
-          setResult(null);
-        }
-      }}
+      onClose={result ? undefined : onClose}
+      onModalHide={handleModalHide}
     >
       {onResult && result
         ? null

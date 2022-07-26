@@ -24,8 +24,13 @@ import type {
   ValueChange,
 } from "./types";
 import { getPortfolioRangeConfig, getDates } from "./range";
-import { defaultAssetsDistribution } from "../";
-import type { AssetsDistributionOpts } from "../";
+
+export const defaultAssetsDistribution = {
+  minShowFirst: 1,
+  maxShowFirst: 6,
+  showFirstThreshold: 0.95,
+};
+export type AssetsDistributionOpts = typeof defaultAssetsDistribution;
 
 export function getPortfolioCount(
   accounts: AccountLike[],

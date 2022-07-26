@@ -3,7 +3,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
+import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 

@@ -1,10 +1,12 @@
-name: Build Desktop App
+name: "[Build] Desktop App"
 
 on:
   push:
     branches:
       - main
       - develop
+      - release
+      - hotfix
     # paths:
     #   - apps/ledger-live-desktop/**
   pull_request:
@@ -19,18 +21,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  is-org-member:
-    name: "Check Org Member"
-    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@develop
+  pr-is-fork:
+    name: "Check if the PR is a fork"
+    uses: ./.github/workflows/pr-is-fork.yml
     with:
-      username: ${{ github.actor }}
-      organisation: ledgerhq
+      non-pr-result: true
     secrets:
       token: ${{ secrets.COMMON_READ_ORG }}
 
   start-runner:
-    needs: [is-org-member]
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
+    needs: [pr-is-fork]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
     name: "start ec2 instance"
     uses: ledgerhq/ledger-live/.github/workflows/start-linux-runner.yml@develop
     with:
@@ -40,8 +41,8 @@ jobs:
 
   stop-runner:
     name: "stop ec2 instance"
-    if: ${{ always() && needs.start-runner.result == 'success' && needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member, start-runner, build-desktop-app-linux]
+    if: ${{ always() && needs.start-runner.result == 'success' && !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork, start-runner, build-desktop-app-linux]
     uses: ledgerhq/ledger-live/.github/workflows/stop-linux-runner.yml@develop
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -51,8 +52,8 @@ jobs:
 
   build-desktop-app-linux:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member, start-runner]
+    if: ${{ !fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork, start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -70,10 +71,20 @@ jobs:
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
@@ -81,10 +92,7 @@ jobs:
           os: linux
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:lld
+        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -93,8 +101,8 @@ jobs:
 
   build-desktop-app-linux-external:
     name: "Build Ledger Live Desktop (Linux)"
-    if: ${{ !needs.is-org-member.outputs.is-org-member }}
-    needs: [is-org-member]
+    if: ${{ fromJSON(needs.pr-is-fork.outputs.pr-is-fork) }}
+    needs: [pr-is-fork]
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -115,10 +123,20 @@ jobs:
         with:
           ruby-version: 2.7
           bundler-cache: true
-      - name: install and switch to GCC 5.4x
-        run: |
-          cd apps/ledger-live-desktop
-          ./tools/g++-5.4/install.sh
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
 
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
@@ -126,10 +144,7 @@ jobs:
           os: linux
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-        run: pnpm build:lld
+        run: pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload linux app
         uses: actions/upload-artifact@v3
         with:
@@ -157,17 +172,24 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: win
 
       - name: build the app
-        env:
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
-          pnpm build:lld
+          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
         shell: bash
       - name: upload windows
         uses: actions/upload-artifact@v3
@@ -177,7 +199,7 @@ jobs:
 
   build-desktop-app-macos:
     name: "Build Ledger Live Desktop (Mac OS X)"
-    runs-on: macos-latest
+    runs-on: [ledger-live, macos]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -191,19 +213,30 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
 
+      - uses: pnpm/action-setup@v2.1.0
+        with:
+          version: latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: TurboRepo local server
+        uses: felixmosh/turborepo-gh-artifacts@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          server-token: "yolo"
+
       - uses: ledgerhq/ledger-live/tools/actions/composites/build-desktop@develop
         id: build-desktop
         with:
           os: mac
 
       - name: build the app
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
-          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
         run: |
           eval "$(rbenv init - bash)"
-          pnpm build:lld
+          pnpm build:lld --api="http://127.0.0.1:9080" --token="yolo" --team="foo"
       - name: upload macOS app
         uses: actions/upload-artifact@v3
         with:

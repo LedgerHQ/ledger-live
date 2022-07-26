@@ -4,7 +4,7 @@ import type { Account, Operation, SignedOperation } from "../../types";
 import { ChainAPI } from "./api";
 import {
   SolanaTxConfirmationTimeout,
-  SolanaTxSimulationFailedPendingOp,
+  SolanaTxSimulationFailedWhilePendingOp,
 } from "./errors";
 
 export const broadcastWithAPI = async (
@@ -33,7 +33,7 @@ export const broadcastWithAPI = async (
         e.message.includes("simulation failed") &&
         account.pendingOperations.length > 0
       ) {
-        throw new SolanaTxSimulationFailedPendingOp();
+        throw new SolanaTxSimulationFailedWhilePendingOp();
       }
 
       if (e.message.includes("was not confirmed in")) {

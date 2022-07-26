@@ -132,7 +132,7 @@ export default function OnboardingStepFinish({ navigation }: Props) {
         m={6}
         type="main"
         outline={false}
-        event="BuyDeviceScreen - Buy Ledger"
+        event="GetDeviceScreen - Buy Ledger"
         onPress={onFinish}
         size="large"
       >
