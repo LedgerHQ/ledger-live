@@ -106,13 +106,14 @@ export const getOperations = async (
   );
 
   const pChainOperations = operations.filter(getPChainOperations);
+
   return pChainOperations.map((o) =>
     convertTransactionToOperation(o, accountId)
   );
 };
 
 const getPChainOperations = ({ type }) =>
-  type === P_IMPORT || type === P_EXPORT;
+  type === P_IMPORT || type === P_EXPORT || type === P_ADD_DELEGATOR;
 
 export const getAccount = async () => {
   const hdHelper = HDHelper.getInstance();
@@ -120,10 +121,12 @@ export const getAccount = async () => {
     await hdHelper.fetchBalances();
   const stakedBalance = await hdHelper.fetchStake();
   const balance = available.plus(locked).plus(lockedStakeable).plus(multisig);
+  const blockHeight = await avalancheClient().PChain().getHeight();
 
   return {
     balance,
     stakedBalance,
+    blockHeight: blockHeight.toNumber()
   };
 };
 

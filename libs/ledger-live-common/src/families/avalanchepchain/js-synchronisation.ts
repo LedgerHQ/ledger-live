@@ -34,7 +34,7 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   await HDHelper.instantiate(publicKey, chainCode);
 
-  const { balance, stakedBalance } = await getAccount();
+  const { balance, stakedBalance, blockHeight } = await getAccount();
   const delegations = await getDelegations();
 
   let operations = oldOperations;
@@ -48,6 +48,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     balance: balance.plus(stakedBalance),
     spendableBalance: balance,
     operationsCount: operations.length,
+    blockHeight,
     avalanchePChainResources: {
       publicKey,
       chainCode,
