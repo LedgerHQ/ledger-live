@@ -14,6 +14,8 @@ import elrond from "../../families/elrond/bridge/js";
 
 import ethereum from "../../families/ethereum/bridge/js";
 
+import evm from "../../families/evm/bridge/js";
+
 import filecoin from "../../families/filecoin/bridge/js";
 
 import hedera from "../../families/hedera/bridge/js";
@@ -42,6 +44,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  evm,
   filecoin,
   hedera,
   neo,

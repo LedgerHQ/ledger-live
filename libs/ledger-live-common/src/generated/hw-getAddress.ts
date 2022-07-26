@@ -14,6 +14,8 @@ import elrond from "../families/elrond/hw-getAddress";
 
 import ethereum from "../families/ethereum/hw-getAddress";
 
+import evm from "../families/evm/hw-getAddress";
+
 import filecoin from "../families/filecoin/hw-getAddress";
 
 import hedera from "../families/hedera/hw-getAddress";
@@ -42,6 +44,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  evm,
   filecoin,
   hedera,
   neo,
