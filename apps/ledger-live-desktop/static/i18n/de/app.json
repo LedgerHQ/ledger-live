@@ -1569,7 +1569,7 @@
       "ctaPortfolio" : "Zurück zum Portfolio"
     },
     "deviceStorage" : {
-      "freeSpace" : "<0>{{space}}</0>kostenlos",
+      "freeSpace" : "<0>{{space}}</0> frei",
       "noFreeSpace" : "Kein Speicher mehr frei",
       "installed" : "Apps",
       "capacity" : "Kapazität",
