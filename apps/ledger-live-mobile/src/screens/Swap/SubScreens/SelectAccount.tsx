@@ -96,10 +96,11 @@ export function SelectAccount({
       // @ts-expect-error
       navigation.navigate("SwapForm", {
         accountId: account.id,
+        currency: selectedCurrency,
         target,
       });
     },
-    [navigation, target],
+    [navigation, target, selectedCurrency],
   );
 
   const renderItem = useCallback(

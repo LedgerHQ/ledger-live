@@ -24,7 +24,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { getMainAccount } from "@ledgerhq/live-common/src/account";
+import {
+  getMainAccount,
+  accountWithMandatoryTokens,
+} from "@ledgerhq/live-common/src/account";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
@@ -101,7 +104,12 @@ export function SwapForm({ route: { params } }: SwapFormProps) {
     }
 
     if (params?.accountId) {
-      const account = flattenAccounts(accounts).find(
+      // console.log(params?.currency.id);
+      const enhancedAccounts = accounts.map(acc =>
+        accountWithMandatoryTokens(acc, [params?.currency]),
+      );
+
+      const account = flattenAccounts(enhancedAccounts).find(
         a => a.id === params.accountId,
       );
 
