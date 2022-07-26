@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import {
   CryptoCurrency,
   Account,
+  TokenAccount,
   Currency,
   AccountLike,
   TokenCurrency,
@@ -15,6 +16,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { makeEmptyTokenAccount } from "@ledgerhq/live-common/lib/account";
 import { replaceAccounts } from "../../actions/accounts";
 import logger from "../../logger";
 import { ScreenName } from "../../const";
@@ -83,7 +85,19 @@ function AddAccountsAccounts({ navigation, route }: Props) {
       }),
     ).subscribe({
       next: ({ account }) => {
-        setScannedAccounts((accs: Account[]) => [...accs, account]);
+        if (currency.type === "TokenCurrency") {
+          const pa = account;
+
+          if (!pa.subAccounts.find(a => a.token.id === currency.id)) {
+            const tokenAcc = makeEmptyTokenAccount(pa, currency);
+            tokenAcc.parentAccount = pa;
+            pa.subAccounts.push(tokenAcc);
+          }
+
+          setScannedAccounts((accs: Account[]) => [...accs, pa]);
+        } else {
+          setScannedAccounts((accs: Account[]) => [...accs, account]);
+        }
       },
       complete: () => setScanning(false),
       error: error => {
@@ -140,12 +154,21 @@ function AddAccountsAccounts({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item: account }: { item: Account }) => (
-      <Flex px={6}>
-        <AccountCard account={account} onPress={() => selectAccount(account)} />
-      </Flex>
-    ),
-    [selectAccount],
+    ({ item: account }: { item: Account }) => {
+      const acc =
+        currency.type === "TokenCurrency"
+          ? account.subAccounts.find(
+              (a: TokenAccount) => a.token.id === currency.id,
+            )
+          : account;
+
+      return (
+        <Flex px={6}>
+          <AccountCard account={acc} onPress={() => selectAccount(account)} />
+        </Flex>
+      );
+    },
+    [currency.id, currency.type, selectAccount],
   );
 
   const renderHeader = useCallback(

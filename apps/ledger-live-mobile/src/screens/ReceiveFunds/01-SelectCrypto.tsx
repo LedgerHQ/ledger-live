@@ -111,7 +111,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         });
       }
 
-  }, [accounts, navigation]);
+  }, [accounts, navigation, routerRoute.name]);
 
   const renderList = useCallback((items: any) => (
     <FlatList
