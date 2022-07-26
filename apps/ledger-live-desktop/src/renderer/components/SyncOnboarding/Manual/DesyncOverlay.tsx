@@ -11,6 +11,7 @@ type Props = {
 export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
   const [showContent, setShowContent] = useState<boolean>(false);
   const { colors } = useTheme();
+  console.log(useTheme());
 
   useEffect(() => {
     if (isOpen) {
@@ -41,10 +42,8 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
       width="100%"
       flexDirection="column"
     >
-      <Flex justifyContent="flex-end" mr="24px" mt="24px">
-        <Box padding="4px 8px 7px 8px" borderRadius="320px" backgroundColor={colors.neutral.c30}>
-          <Button Icon={CloseMedium} iconSize={24} borderColor="transparent" />
-        </Box>
+      <Flex justifyContent="flex-end" mr={6} mt={6}>
+        <Button Icon={CloseMedium} iconSize={24} borderColor="transparent" />
       </Flex>
       <Flex position="absolute" width="100%" justifyContent="flex-end" bottom={0} padding={4}>
         <Flex
@@ -52,8 +51,8 @@ export const DesyncOverlay = ({ isOpen, delay = 0 }: Props) => {
           backgroundColor={colors.warning}
           borderRadius="8px"
           p={4}
-          mr="24px"
-          mb="24px"
+          mr={4}
+          mb={4}
           flexDirection="row"
           alignItems="center"
         >
