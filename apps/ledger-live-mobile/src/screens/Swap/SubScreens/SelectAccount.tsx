@@ -129,6 +129,8 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
+    const currencyIds = params.selectableCurrencyIds || [];
+
     // @ts-expect-error
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
