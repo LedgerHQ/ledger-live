@@ -48,7 +48,7 @@ export function Row({ delegation, account, onExternalLink }: Props) {
         </Box>
         <Ellipsis>
           {isDefaultValidatorNode(delegation.nodeID)
-            ? `Ledger by Figment - ${delegation.nodeID}`
+            ? `Ledger by Figment`
             : delegation.nodeID}
         </Ellipsis>
       </Column>
