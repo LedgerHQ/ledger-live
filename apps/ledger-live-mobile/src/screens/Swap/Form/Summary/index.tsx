@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
-import { Flex, Icon, Text } from "@ledgerhq/native-ui";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
+import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   SwapTransactionType,
@@ -11,9 +12,13 @@ import {
 import {
   getAccountName,
   getAccountUnit,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
+import {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/types/index";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import { providerIcons } from "../../../../icons/swap/index";
 import { StatusTag } from "./StatusTag";
@@ -56,7 +61,7 @@ export function Summary({
     [to.account],
   );
 
-  const targetAccountCurrency = useMemo(
+  const targetAccountCurrency: CryptoCurrency | TokenCurrency = useMemo(
     () => to.account && getAccountCurrency(to.account),
     [to.account],
   );
@@ -163,7 +168,7 @@ export function Summary({
           onEdit={() =>
             navigation.navigate("SelectAccount", {
               target: "to",
-              accountIds: [],
+              selectedCurrency: to.currency,
             })
           }
         >

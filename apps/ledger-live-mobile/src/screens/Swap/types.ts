@@ -53,13 +53,15 @@ export type OperationDetailsProps = StackScreenProps<
   "OperationDetails"
 >;
 
+type Target = "from" | "to";
+
 export type SwapNavParamList = {
   Swap: undefined;
   SelectAccount: {
-    target: "from" | "to";
-    accounts: AccountLike & { disabled: boolean };
+    target: Target;
     provider: string;
-    currencyIds: string[];
+    selectableCurrencyIds: string[];
+    selectedCurrency: CryptoCurrency | TokenCurrency;
   };
   SelectCurrency: {
     currencies: string[];
@@ -104,6 +106,7 @@ export type SwapFormNavParamList = {
     currency?: CryptoCurrency | TokenCurrency;
     rate?: ExchangeRate;
     transaction?: Transaction;
+    target?: Target;
   };
   SwapHistory: undefined;
 };

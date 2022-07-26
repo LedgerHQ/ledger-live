@@ -60,11 +60,10 @@ export function From({ swapTx, provider, pairs }: Props) {
     // @ts-expect-error
     navigation.navigate("SelectAccount", {
       target: "from",
-      accounts,
       provider,
-      currencyIds: [...new Set(pairs.map(p => p.from))],
+      selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
     });
-  }, [navigation, accounts, provider, pairs]);
+  }, [navigation, provider, pairs]);
 
   return (
     <Flex

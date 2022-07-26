@@ -19,6 +19,7 @@ import {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/types/index";
+import { swap } from "@ledgerhq/live-common/src/families/solana/utils";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
 
@@ -42,11 +43,13 @@ export function To({ swapTx, provider, pairs, exchangeRate }: Props) {
   const currencies = useCurrencies(pairs, fromCurrency?.id);
 
   const { name, balance } = useMemo(() => {
-    const { currency, account } = swapTx.swap.to;
-
+    const to = swapTx.swap.to;
+    if (!to) {
+      return { name: "", balance: "" };
+    }
     return {
-      name: (account && getAccountName(account)) || currency?.name,
-      balance: currency?.units[0].code ?? "",
+      name: (to.account && getAccountName(to.account)) || to.currency?.name,
+      balance: to.currency?.units[0].code || "",
     };
   }, [swapTx.swap.to]);
 

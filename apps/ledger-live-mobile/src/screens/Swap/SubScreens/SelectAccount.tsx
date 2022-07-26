@@ -1,10 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { AccountLike } from "@ledgerhq/live-common/types/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/src/account";
+import {
+  getAccountCurrency,
+  flattenAccounts,
+} from "@ledgerhq/live-common/src/account";
+import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/src/currencies";
 import { TrackScreen } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
@@ -15,21 +21,74 @@ import {
 } from "../../../helpers/formatAccountSearchResults";
 import { SelectAccountProps } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
+import { accountsSelector } from "../../../reducers/accounts";
 
 export function SelectAccount({
   navigation,
   route: { params },
 }: SelectAccountProps) {
-  const { accounts, provider, currencyIds } = params;
+  const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
+
+  const unfilteredAccounts = useSelector(accountsSelector);
+
+  const accounts = useMemo(
+    () =>
+      unfilteredAccounts.filter(acc =>
+        selectableCurrencyIds.includes(getAccountCurrency(acc).id),
+      ),
+    [selectableCurrencyIds, unfilteredAccounts],
+  );
+
+  const enhancedAccounts = useMemo(() => {
+    if (!selectedCurrency) {
+      return accounts.map(acc => accountWithMandatoryTokens(acc, []));
+    }
+
+    const filteredAccounts = accounts.filter(
+      acc =>
+        acc.currency.id ===
+        (selectedCurrency.type === "TokenCurrency"
+          ? selectedCurrency.parentCurrency.id
+          : selectedCurrency.id),
+    );
+    if (selectedCurrency.type === "TokenCurrency") {
+      return filteredAccounts.map(acc =>
+        accountWithMandatoryTokens(acc, [selectedCurrency]),
+      );
+    }
+    return filteredAccounts;
+  }, [accounts, selectedCurrency]);
+
+  const allAccounts = useMemo(() => {
+    const accounts = selectedCurrency
+      ? flattenAccounts(enhancedAccounts).filter(
+          acc =>
+            (acc.type === "TokenAccount" ? acc.token : acc.currency).id ===
+            selectedCurrency.id,
+        )
+      : flattenAccounts(enhancedAccounts);
+    if (target === "to") {
+      return accounts;
+    }
+
+    return accounts.map(a => ({
+      ...a,
+      disabled: !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+    }));
+  }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds]);
+
   const { t } = useTranslation();
   const { colors } = useTheme();
 
   const onSelect = useCallback(
     (account: AccountLike) => {
       // @ts-expect-error
-      navigation.navigate("SwapForm", { accountId: account.id });
+      navigation.navigate("SwapForm", {
+        accountId: account.id,
+        target,
+      });
     },
-    [navigation],
+    [navigation, target],
   );
 
   const renderItem = useCallback(
@@ -58,27 +117,21 @@ export function SelectAccount({
   );
 
   const onAddAccount = useCallback(() => {
+    const currencyIds = params.selectableCurrencyIds || [];
+
     // @ts-expect-error
     navigation.navigate(NavigatorName.AddAccounts, {
       screen: ScreenName.AddAccountsSelectCrypto,
       params: {
         returnToSwap: true,
         filterCurrencyIds: currencyIds,
-        onSuccess: ({ selected }: { selected: AccountLike[] }) => {
-          const addedAccounts = selected.map(a => ({
-            ...a,
-            disabled: !currencyIds.includes(getAccountCurrency(a).id),
-          }));
-
-          navigation.navigate("SelectAccount", {
-            ...params,
-            accounts: [...params.accounts, ...addedAccounts],
-          });
+        onSuccess: () => {
+          navigation.navigate("SelectAccount", params);
         },
         analyticsPropertyFlow: "swap",
       },
     });
-  }, [navigation, currencyIds, params]);
+  }, [navigation, params]);
 
   const renderList = useCallback(
     items => {
@@ -129,8 +182,11 @@ export function SelectAccount({
       <Flex>
         <FilteredSearchBar
           keys={["name", "unit.code", "token.name", "token.ticker"]}
-          inputWrapperStyle={[styles.card, styles.searchBarContainer]}
-          list={accounts}
+          inputWrapperStyle={[
+            styles.getCurrencyAccountcard,
+            styles.searchBarContainer,
+          ]}
+          list={allAccounts}
           renderList={renderList}
           renderEmptySearch={() => (
             <Flex padding={4} alignItems="center">
