@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   searchBarContainer: {
+    paddingHorizontal: 16,
     paddingBottom: 8,
   },
 });
