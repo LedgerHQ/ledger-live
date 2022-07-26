@@ -21,8 +21,8 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import {
   FIVE_MINUTES,
   YEAR,
+  TWO_WEEKS,
   THREE_WEEKS,
-  MIN_STAKE_DURATION,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
 
 const Container: ThemedComponent<*> = styled(Box)`
@@ -63,7 +63,7 @@ function StepEndDate({
   const selectedValidator = validators.find(v => v.nodeID === transaction.recipient);
 
   const stakeStartTime = moment().unix() + FIVE_MINUTES;
-  const unixMinEndDate = stakeStartTime + MIN_STAKE_DURATION;
+  const unixMinEndDate = stakeStartTime + TWO_WEEKS;
   const unixMaxEndDate = Math.min(stakeStartTime + YEAR, Number(selectedValidator.endTime));
   const unixDefaultEndDate = Math.min(stakeStartTime + THREE_WEEKS, unixMaxEndDate);
 

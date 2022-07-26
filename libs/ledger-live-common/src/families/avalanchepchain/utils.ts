@@ -28,4 +28,3 @@ export const DAY = HOUR * 24;
 export const YEAR = DAY * 365;
 export const TWO_WEEKS = DAY * 14;
 export const THREE_WEEKS = DAY * 21;
-export const MIN_STAKE_DURATION = DAY * 14;
