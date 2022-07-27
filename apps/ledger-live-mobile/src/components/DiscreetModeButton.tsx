@@ -15,9 +15,9 @@ export default function DiscreetModeButton({ size = 24 }: { size?: number }) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.root}>
       {discreetMode ? (
-        <EyeNoneMedium size={size} color={"neutral.c70"} />
+        <EyeNoneMedium size={size} color={"neutral.c100"} />
       ) : (
-        <EyeMedium size={size} color={"neutral.c70"} />
+        <EyeMedium size={size} color={"neutral.c100"} />
       )}
     </TouchableOpacity>
   );

@@ -1,11 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  Currency,
-  TokenCurrency,
-  CryptoCurrency,
-} from "@ledgerhq/live-common/types/index";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
 import GraphCard from "../../components/GraphCard";

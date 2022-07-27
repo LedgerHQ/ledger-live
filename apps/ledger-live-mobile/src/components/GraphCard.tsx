@@ -1,16 +1,10 @@
 import React, { useCallback, useState, memo } from "react";
-import { TouchableOpacity } from "react-native";
-import { Currency } from "@ledgerhq/live-common/types/index";
-import { Portfolio } from "@ledgerhq/live-common/portfolio/v2/types";
-import { BoxedIcon, Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
-import { PieChartMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, Text, GraphTabs } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import styled, { useTheme } from "styled-components/native";
 import Delta from "./Delta";
 import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import CurrencyUnitValue from "./CurrencyUnitValue";
-import DiscreetModeButton from "./DiscreetModeButton";
 import { NavigatorName } from "../const";
 
 import { useTimeRange } from "../actions/settings";
@@ -45,7 +39,6 @@ function GraphCard({
   counterValueCurrency,
   areAccountsEmpty,
 }: Props) {
-  const { t } = useTranslation();
   const { countervalueChange, balanceAvailable, balanceHistory } = portfolio;
 
   const item = balanceHistory[balanceHistory.length - 1];
@@ -78,26 +71,15 @@ function GraphCard({
   const activeRangeIndex = timeRangeItems.findIndex(r => r.key === range);
 
   return (
-    <Flex bg={"neutral.c30"} borderRadius={2}>
+    <Flex>
       <Flex
         flexDirection={"row"}
-        justifyContent={"space-between"}
-        alignItems={"flex-start"}
-        p={6}
+        justifyContent={"center"}
+        alignItems={"center"}
+        marginTop={40}
+        marginBottom={40}
       >
-        <Flex>
-          <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
-            <Text
-              variant={"small"}
-              fontWeight={"semiBold"}
-              color={"neutral.c70"}
-              textTransform={"uppercase"}
-              mr={2}
-            >
-              {t("tabs.portfolio")}
-            </Text>
-            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
-          </Flex>
+        <Flex alignItems="center">
           {areAccountsEmpty ? (
             <Text variant={"h3"} color={"neutral.c100"}>
               <CurrencyUnitValue unit={unit} value={0} />
@@ -153,36 +135,21 @@ function GraphCard({
             </>
           )}
         </Flex>
-        {!areAccountsEmpty ? (
-          <Flex>
-            <TouchableOpacity onPress={onPieChartButtonpress}>
-              <BoxedIcon
-                Icon={PieChartMedium}
-                variant={"circle"}
-                iconSize={20}
-                size={48}
-                badgeSize={30}
-                iconColor={"neutral.c100"}
-              />
-            </TouchableOpacity>
-          </Flex>
-        ) : null}
       </Flex>
 
       <Graph
         isInteractive={isAvailable}
         isLoading={!isAvailable}
-        height={100}
-        width={getWindowDimensions().width - 32}
+        height={110}
+        width={getWindowDimensions().width + 1}
         color={colors.primary.c80}
         data={balanceHistory}
         onItemHover={setHoverItem}
         mapValue={mapGraphValue}
       />
-      <Flex mt={25} px={6} pb={6}>
+      <Flex paddingTop={6} background={colors.background.main}>
         <GraphTabs
           activeIndex={activeRangeIndex}
-          activeBg="background.main"
           onChange={updateTimeRange}
           labels={rangesLabels}
         />
