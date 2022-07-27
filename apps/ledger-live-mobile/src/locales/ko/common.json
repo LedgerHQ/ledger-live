@@ -3287,6 +3287,19 @@
       "de" : "독일어"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "식별자",
     "description" : "동일한 식별자가 표시되면 {{fullDeviceName}}에서 양쪽 버튼을 함께 누르세요:"

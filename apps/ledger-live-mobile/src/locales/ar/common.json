@@ -3283,6 +3283,19 @@
       "de" : "Deutsch"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "المُعرّف",
     "description" : "يرجى الضغط على الزرين معاً على {{fullDeviceName}} الخاصة بك إذا كانت تعرض نفس المُعرّف:"

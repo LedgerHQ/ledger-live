@@ -3287,6 +3287,19 @@
       "de" : "Almanca"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Tanımlayıcı",
     "description" : "Aynı tanımlayıcıyı gösteriyorsa lütfen {{fullDeviceName}} cihazınızda iki tuşa aynı anda basın:"

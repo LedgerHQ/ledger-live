@@ -3287,6 +3287,19 @@
       "de" : "Allemand"
     }
   },
+  "deviceLocalization" : {
+    "language" : "Language",
+    "deviceLanguage" : "Device Language",
+    "changeLanguage" : "Change language",
+    "allowLanguageInstallation" : "Allow language installation",
+    "languageInstalled" : "Device language changed to {{language}}",
+    "installingLanguage" : "Installing language",
+    "languages" : {
+      "english" : "English",
+      "french" : "French",
+      "spanish" : "Spanish"
+    }
+  },
   "FirmwareUpdateCheckId" : {
     "title" : "Identifiant",
     "description" : "Merci d’appuyer sur les deux boutons simultanément sur votre {{fullDeviceName}} si le même identifiant apparaît :"
