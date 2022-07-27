@@ -2710,7 +2710,7 @@
         "info": "How Delegation works",
         "delegation": "Earn rewards"
       },
-      "notEnoughToDelegate": "You must have at least 25 available AVAX on the P chain to become a delegator.",
+      "notEnoughToDelegate": "You must have at least 25 AVAX available on the P chain to become a delegator.",
       "validatorStake": "Validator Stake",
       "validatorRemainingStake": "Available",
       "flow": {
