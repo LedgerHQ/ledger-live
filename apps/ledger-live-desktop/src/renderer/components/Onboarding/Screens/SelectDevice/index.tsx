@@ -1,12 +1,14 @@
 import React, { useCallback, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
 import { OnboardingContext } from "../../index";
 
@@ -31,6 +33,7 @@ export function SelectDevice() {
   const { t } = useTranslation();
   const history = useHistory();
   const { setDeviceModelId } = useContext(OnboardingContext);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const handleDeviceSelect = useCallback(
     (deviceModelId: DeviceModelId) => {
@@ -43,7 +46,11 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
-      <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/welcome")} />
+      <OnboardingNavHeader
+        onClickPrevious={() =>
+          history.push(hasCompletedOnboarding ? "/settings/help" : "/onboarding/welcome")
+        }
+      />
       <DeviceSelector onClick={handleDeviceSelect} />
       <TitleText variant="h3" fontSize="28px">
         {t("onboarding.screens.selectDevice.title")}
