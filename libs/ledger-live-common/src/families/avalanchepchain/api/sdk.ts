@@ -292,7 +292,18 @@ const orderByStakeAmount = () => (a, b) => {
   }
 };
 
-export const removeExpiringValidators = (validator) => {
+export const customValidatorFilter = async (validators) => {
+  let { minDelegatorStake } = await avalancheClient()
+    .PChain()
+    .getMinStake(true);
+  minDelegatorStake = new BigNumber(minDelegatorStake);
+
+  return validators
+    .filter(removeExpiringValidators)
+    .filter(removeValidatorsWithoutAvailableStake(minDelegatorStake));
+};
+
+const removeExpiringValidators = (validator) => {
   const now = Math.floor(Date.now() / 1000);
   const endTime = parseInt(validator.endTime);
   const diff = endTime - now;
@@ -300,6 +311,10 @@ export const removeExpiringValidators = (validator) => {
 
   // If end time is less than 2 weeks and 10 minutes, remove from validator list
   return diff > threshold;
+};
+
+const removeValidatorsWithoutAvailableStake = (minimumStake) => (validator) => {
+  return !validator.remainingStake.lt(minimumStake);
 };
 
 export const getAddressChains = async (addresses: string[]) => {
