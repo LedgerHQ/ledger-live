@@ -23,7 +23,7 @@ import type {
 } from "./types";
 
 export const getMockExchangeRate = ({
-  provider = "ftx",
+  provider = "changelly",
   tradeMethod = "fixed",
 }: {
   provider?: string;
@@ -83,7 +83,7 @@ export const mockGetExchangeRates = async (
   }
 
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise((r) => setTimeout(r, 400));
   const magnitudeAwareRate = new BigNumber(1)
     .div(new BigNumber(10).pow(unitFrom.magnitude))
     .times(new BigNumber(10).pow(unitTo.magnitude));
@@ -94,7 +94,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "ftx",
+      provider: "changelly",
       expirationDate: new Date(),
       tradeMethod: "fixed",
     },
@@ -103,7 +103,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "ftx",
+      provider: "changelly",
       expirationDate: new Date(),
       tradeMethod: "float",
     },
@@ -124,13 +124,13 @@ export const mockInitSwap = (
 };
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise((r) => setTimeout(r, 400));
   const usesV3 = getSwapAPIBaseURL().endsWith("v3");
 
   return usesV3
     ? [
         {
-          provider: "ftx",
+          provider: "changelly",
           pairs: [
             { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
             { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
@@ -179,7 +179,7 @@ export const mockGetProviders: GetProviders = async () => {
 };
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise((r) => setTimeout(r, 400));
   return statusList.map((s) => ({ ...s, status: "finished" }));
 };
 
@@ -188,7 +188,7 @@ export const mockGetKYCStatus = async (
   status: ValidKYCStatus
 ): Promise<KYCStatus> => {
   //Fake delay to show the pending state in the UI
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 1000));
   return { id, status };
 };
 
@@ -200,7 +200,7 @@ export const mockCheckQuote: CheckQuote = async ({
   bearerToken: _bearerToken,
 }) => {
   //Fake delay to show the pending state in the UI
-  await new Promise((r) => setTimeout(r, 2000));
+  await new Promise((r) => setTimeout(r, 1000));
 
   switch (mockedCheckQuoteStatusCode) {
     case "RATE_VALID":
@@ -286,7 +286,7 @@ export const mockPostSwapAccepted: PostSwapAccepted = async ({
   /* eslint-enable */
 }) => {
   //Fake delay to simulate network
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise((r) => setTimeout(r, 400));
 
   return null;
 };
@@ -298,7 +298,7 @@ export const mockPostSwapCancelled: PostSwapCancelled = async ({
   /* eslint-enable */
 }) => {
   //Fake delay to simulate network
-  await new Promise((r) => setTimeout(r, 800));
+  await new Promise((r) => setTimeout(r, 400));
 
   return null;
 };

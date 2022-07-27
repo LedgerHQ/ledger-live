@@ -8,7 +8,7 @@ import { Drawer } from "tests/models/Drawer";
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
 // FIXME: Sometimes, on slow machines, swap mock events are not emitted.
-test.fixme("Swap", async ({ page }) => {
+test("Swap", async ({ page }) => {
   const swapPage = new SwapPage(page);
   const deviceAction = new DeviceAction(page);
   const drawer = new Drawer(page);
