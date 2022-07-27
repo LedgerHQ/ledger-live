@@ -2,6 +2,7 @@
 
 import {
   canSend,
+  canReceive,
   getAccountCurrency,
   getMainAccount,
   isAccountEmpty,
@@ -288,10 +289,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       {manageActions.length > 0 && ManageActionsHeader}
       {availableOnSwap && SwapHeader}
       {availableOnBuy && BuyHeader}
-      {canSend(account, parentAccount) && (
+      {canSend(account, parentAccount, currency) && (
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       )}
-      <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {canReceive(currency) && (
+        <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      )}
     </FadeInButtonsContainer>
   );
 
