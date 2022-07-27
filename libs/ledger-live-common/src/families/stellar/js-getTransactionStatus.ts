@@ -196,10 +196,10 @@ const getTransactionStatus = async (
         totalSpent = new BigNumber(0);
         amount = new BigNumber(0);
       }
-    }
 
-    if (!errors.amount && amount.eq(0)) {
-      errors.amount = new AmountRequired();
+      if (!errors.amount && amount.eq(0)) {
+        errors.amount = new AmountRequired();
+      }
     }
   }
 
