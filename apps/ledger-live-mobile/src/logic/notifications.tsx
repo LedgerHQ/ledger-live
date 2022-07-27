@@ -330,7 +330,7 @@ const useNotifications = () => {
     ]);
 
     const triggerJustFinishedOnboardingNewDevicePushNotificationModal = useCallback(() => {
-        if (isPushNotificationsModalLocked) return;
+        if (!pushNotificationsFeature?.enabled || isPushNotificationsModalLocked) return;
         const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
         if (justFinishedOnboardingParams?.enabled) {
             dispatch(setRatingsModalLocked(true));
@@ -346,6 +346,7 @@ const useNotifications = () => {
             );
         }
     }, [
+      pushNotificationsFeature?.enabled,
       isPushNotificationsModalLocked,
       dispatch,
       pushNotificationsFeature?.params?.justFinishedOnboarding,

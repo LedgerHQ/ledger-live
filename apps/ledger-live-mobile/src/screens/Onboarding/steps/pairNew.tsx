@@ -48,7 +48,9 @@ function OnboardingStepPairNew() {
   >();
 
   const dispatch = useDispatch();
-  const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
+  const {
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  } = useNotifications();
   const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning } = route.params;
@@ -101,7 +103,12 @@ function OnboardingStepPairNew() {
     });
 
     triggerJustFinishedOnboardingNewDevicePushNotificationModal();
-  }, [dispatch, navigation, resetCurrentStep]);
+  }, [
+    dispatch,
+    navigation,
+    resetCurrentStep,
+    triggerJustFinishedOnboardingNewDevicePushNotificationModal,
+  ]);
 
   const nextPage = useCallback(() => {
     onFinish();
