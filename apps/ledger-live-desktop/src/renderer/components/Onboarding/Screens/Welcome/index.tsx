@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { openURL } from "~/renderer/linking";
@@ -17,8 +17,7 @@ import validateTransactions from "./assets/validateTransactions.png";
 
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 
-import { relaunchOnboarding } from "~/renderer/actions/onboarding";
-import { onboardingRelaunchedSelector } from "~/renderer/reducers/application";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { languageSelector } from "~/renderer/reducers/settings";
 
 const stepLogos = [accessCrypto, ownPrivateKey, stayOffline, validateTransactions, setupNano];
@@ -86,13 +85,15 @@ const Description = styled(Text)`
 `;
 
 export function Welcome() {
-  const onboardingOrigin = useSelector(onboardingRelaunchedSelector) ? "/settings/help" : undefined;
-  console.log(useSelector(onboardingRelaunchedSelector));
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { t } = useTranslation();
   const history = useHistory();
-  const dispatch = useDispatch();
   const { colors } = useTheme();
   const locale = useSelector(languageSelector) || "en";
+
+  if (hasCompletedOnboarding) {
+    history.push("/onboarding/select-device");
+  }
 
   const buyNanoX = useCallback(() => {
     openURL(urls.noDevice.buyNew);
@@ -112,13 +113,6 @@ export function Welcome() {
     description: t(`onboarding.screens.welcome.steps.${index}.desc`),
     isLast: index === stepLogos.length - 1,
   }));
-
-  const handlePrevious = useCallback(() => {
-    if (onboardingOrigin) {
-      history.push(onboardingOrigin);
-      dispatch(relaunchOnboarding(false));
-    }
-  }, [history, onboardingOrigin, dispatch]);
 
   return (
     <WelcomeContainer>
@@ -164,11 +158,6 @@ export function Welcome() {
       </LeftContainer>
       <RightContainer>
         <CarouselTopBar>
-          {!!onboardingOrigin && (
-            <Button size="small" onClick={handlePrevious}>
-              {t("common.previous")}
-            </Button>
-          )}
           {colors.palette.type === "dark" ? (
             <InvertThemeV3>
               <LangSwitcher />
