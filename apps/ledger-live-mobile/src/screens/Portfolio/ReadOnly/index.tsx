@@ -243,13 +243,21 @@ function PortfolioScreen({ navigation }: Props) {
     ],
   );
 
-  const { source, setSource } = useContext(AnalyticsContext);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
   useFocusEffect(() => {
     screen("ReadOnly", "Wallet", { source });
   });
 
-  useFocusEffect(() => setSource("Wallet"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Wallet");
+
+      return () => {
+        setSource("Wallet");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <>

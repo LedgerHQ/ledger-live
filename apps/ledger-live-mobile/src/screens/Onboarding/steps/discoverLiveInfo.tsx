@@ -152,9 +152,17 @@ const Item = ({
 function DiscoverLiveInfo() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(1);
-  const { source, setSource } = useContext(AnalyticsContext);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource(`Reborn Story Step ${currentIndex}`));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen(`Reborn Story Step ${currentIndex}`);
+
+      return () => {
+        setSource(`Reborn Story Step ${currentIndex}`);
+      };
+    }, [setScreen, currentIndex, setSource]),
+  );
 
   const onChange = useCallback(
     (index: number, skipped: boolean) => {

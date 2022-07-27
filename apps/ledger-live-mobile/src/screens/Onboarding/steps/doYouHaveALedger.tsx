@@ -64,9 +64,17 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: any) {
     });
   }, [identifyUser, navigation]);
 
-  const { setSource } = useContext(AnalyticsContext);
+  const { setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource("Has Device?"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Has Device?");
+
+      return () => {
+        setSource("Has Device?");
+      };
+    }, [setSource, setScreen]),
+  );
 
   useFocusEffect(() => {
     screen("Onboarding", "Has Device?");

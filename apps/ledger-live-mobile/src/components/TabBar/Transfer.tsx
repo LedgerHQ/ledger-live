@@ -149,7 +149,7 @@ export function TransferTabIcon() {
     });
   }, [openAnimValue]);
 
-  const { source } = useContext(AnalyticsContext);
+  const { screen } = useContext(AnalyticsContext);
 
   const onPressButton = useCallback(() => {
     if (getIsModalOpened()) {
@@ -157,17 +157,17 @@ export function TransferTabIcon() {
       track("button_clicked", {
         button: "close_trade",
         drawer: "trade",
-        screen: source,
+        screen,
       });
     } else {
       openModal();
       track("button_clicked", {
         button: "trade",
         drawer: "trade",
-        screen: source,
+        screen,
       });
     }
-  }, [getIsModalOpened, closeModal, track, source, openModal]);
+  }, [getIsModalOpened, closeModal, track, screen, openModal]);
 
   const handleBackPress = useCallback(() => {
     if (!getIsModalOpened()) return false;

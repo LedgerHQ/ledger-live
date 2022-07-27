@@ -455,9 +455,17 @@ export default function Market({ navigation }: { navigation: any }) {
     if (refreshControlVisible && !loading) setRefreshControlVisible(false);
   }, [refreshControlVisible, loading]);
 
-  const { setSource } = useContext(AnalyticsContext);
+  const { setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource("Market"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Market");
+
+      return () => {
+        setSource("Market");
+      };
+    }, [setScreen, setSource]),
+  );
 
   return (
     <TabBarSafeAreaView

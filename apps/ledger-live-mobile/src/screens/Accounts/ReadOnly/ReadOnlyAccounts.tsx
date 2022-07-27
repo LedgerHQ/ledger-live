@@ -135,9 +135,17 @@ function ReadOnlyAccounts({ navigation, route }: Props) {
     [t],
   );
 
-  const { source, setSource } = useContext(AnalyticsContext);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource("Assets"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Assets");
+
+      return () => {
+        setSource("Assets");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <TabBarSafeAreaView>

@@ -11,7 +11,9 @@ import ImportAccountsNavigator from "./ImportAccountsNavigator";
 
 export const AnalyticsContext = createContext<{
   source: undefined | string,
+  screen: undefined | string,
   setSource: (source: undefined | string) => void,
+  setScreen: (screen: undefined | string) => void,
 }>({ source: undefined, setSource: () => {} });
 
 type Props = {
@@ -35,11 +37,17 @@ export default function RootNavigator({ importDataString }: Props) {
     undefined,
   );
 
+  const [analyticsScreen, setAnalyticsScreen] = useState<undefined | string>(
+    undefined,
+  );
+
   return (
     <AnalyticsContext.Provider
       value={{
         source: analyticsSource,
+        screen: analyticsScreen,
         setSource: setAnalyticsSource,
+        setScreen: setAnalyticsScreen,
       }}
     >
       <Stack.Navigator screenOptions={{ headerShown: false }}>

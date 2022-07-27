@@ -133,9 +133,17 @@ function ReadOnlyAccount({ route }: Props) {
   const renderItem = useCallback(({ item }: any) => item, []);
   const keyExtractor = useCallback((_: any, index: any) => String(index), []);
 
-  const { source, setSource } = useContext(AnalyticsContext);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource("Account"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Account");
+
+      return () => {
+        setSource("Account");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>

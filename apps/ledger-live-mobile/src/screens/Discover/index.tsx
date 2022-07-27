@@ -137,9 +137,17 @@ function Discover() {
     [learn?.enabled, navigation, readOnlyTrack, t],
   );
 
-  const { setSource } = useContext(AnalyticsContext);
+  const { setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource("Discover"));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen("Discover");
+
+      return () => {
+        setSource("Discover");
+      };
+    }, [setSource, setScreen]),
+  );
 
   return (
     <StyledSafeAreaView>

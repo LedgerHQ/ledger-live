@@ -90,9 +90,17 @@ function PostWelcomeSelection({
     userHasDevice ? "With Device" : "No Device"
   }`;
 
-  const { source, setSource } = useContext(AnalyticsContext);
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
-  useFocusEffect(() => setSource(screenName));
+  useFocusEffect(
+    useCallback(() => {
+      setScreen(screenName);
+
+      return () => {
+        setSource(screenName);
+      };
+    }, [setSource, setScreen, screenName]),
+  );
 
   const navigation = useNavigation();
   const { t } = useTranslation();
