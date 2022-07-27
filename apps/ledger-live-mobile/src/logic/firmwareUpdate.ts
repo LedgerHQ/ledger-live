@@ -12,7 +12,7 @@ export const isFirmwareUpdateVersionSupported = (
   deviceInfo: DeviceInfo,
   modelId: DeviceModelId,
 ) =>
-  deviceVersionRangesForUpdate[modelId] &&
+  Boolean(deviceVersionRangesForUpdate[modelId]) &&
   versionSatisfies(
     deviceInfo.version,
     deviceVersionRangesForUpdate[modelId] as string,
