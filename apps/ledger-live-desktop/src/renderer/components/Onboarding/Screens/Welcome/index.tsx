@@ -87,6 +87,7 @@ const Description = styled(Text)`
 
 export function Welcome() {
   const onboardingOrigin = useSelector(onboardingRelaunchedSelector) ? "/settings/help" : undefined;
+  console.log(useSelector(onboardingRelaunchedSelector));
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
