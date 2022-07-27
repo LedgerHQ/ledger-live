@@ -20,6 +20,8 @@ import hedera from "../../families/hedera/bridge/js";
 
 import neo from "../../families/neo/bridge/js";
 
+import osmosis from "../../families/osmosis/bridge/js";
+
 import polkadot from "../../families/polkadot/bridge/js";
 
 import ripple from "../../families/ripple/bridge/js";
@@ -45,6 +47,7 @@ export default {
   filecoin,
   hedera,
   neo,
+  osmosis,
   polkadot,
   ripple,
   solana,

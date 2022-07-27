@@ -18,6 +18,8 @@ import filecoin from "../families/filecoin/speculos-deviceActions";
 
 import hedera from "../families/hedera/speculos-deviceActions";
 
+import osmosis from "../families/osmosis/speculos-deviceActions";
+
 import polkadot from "../families/polkadot/speculos-deviceActions";
 
 import ripple from "../families/ripple/speculos-deviceActions";
@@ -42,6 +44,7 @@ export default {
   ethereum,
   filecoin,
   hedera,
+  osmosis,
   polkadot,
   ripple,
   solana,
