@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, SubTitle, AsideFooter, CheckStep, Column, IllustrationContainer } from "../shared";
-import getStarted from "../assets/v3/getStarted.png";
+import RecoverySheet from "../assets/recoverySheet.png";
 
 type Props = {
   userUnderstandConsequences: boolean;
@@ -33,7 +33,7 @@ export function ExistingRecoveryPhrase({
 }
 
 ExistingRecoveryPhrase.Illustration = (
-  <IllustrationContainer width="240px" height="245px" src={getStarted} />
+  <IllustrationContainer width="240px" height="245px" src={RecoverySheet} />
 );
 
 const Footer = (props: any) => {
