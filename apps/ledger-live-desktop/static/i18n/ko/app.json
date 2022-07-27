@@ -2007,7 +2007,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "스테이킹 보상은 총 잔액에 포함되지 않습니다."
       }
     }
   },
@@ -4417,10 +4417,10 @@
       "title" : "사용 가능한 토큰 수를 초과했습니다"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
     },
     "StellarWrongMemoFormat" : {
       "title" : "메모 형식이 잘못되었습니다"
