@@ -1,3 +1,5 @@
+// @flow
+
 import React from "react";
 import styled from "styled-components";
 import Box, { Card } from "~/renderer/components/Box";
@@ -52,8 +54,8 @@ export default function AccountSubHeader() {
           <InfoCircle size={12} />
           <CardHeader>{t("elrond.account.subHeader.cardTitle")}</CardHeader>
         </CardHeaderContainer>
-        <CustomButton outline onClick={openDrawer}>
-          <Box horizontal flow={1} alignItems="center">
+        <CustomButton outline={true} onClick={openDrawer}>
+          <Box horizontal={true} flow={1} alignItems="center">
             <Box fontSize={3}>
               <Trans i18nKey="elrond.account.subHeader.moreInfo" />
             </Box>

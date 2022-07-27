@@ -1,3 +1,5 @@
+// @flow
+
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";

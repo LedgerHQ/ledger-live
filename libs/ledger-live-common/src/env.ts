@@ -95,6 +95,11 @@ const envDefinitions = {
     def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
+  ELROND_DELEGATION_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://delegation-api.elrond.com",
+    desc: "Elrond DELEGATION API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",

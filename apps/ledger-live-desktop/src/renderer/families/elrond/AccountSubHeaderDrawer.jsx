@@ -1,4 +1,5 @@
 // @flow
+
 import React from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
@@ -10,8 +11,8 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 
 type Props = {
-  isOpen: boolean,
-  closeDrawer: () => void,
+  isOpen: boolean;
+  closeDrawer: () => void;
 };
 
 const Title = styled(Text)`
