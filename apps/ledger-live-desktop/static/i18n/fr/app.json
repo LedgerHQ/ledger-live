@@ -2141,11 +2141,7 @@
         "steps" : {
           "starter" : {
             "description" : "Vous pouvez gagner des récompenses en déléguant vos ATOM à un validateur.",
-            "bullet" : [
-              "Vous gardez la propriété de vos actifs délégués.",
-              "Déléguez avec votre appareil Ledger.",
-              "Les actifs seront disponibles 21 jours après avoir mis fin à la délégation."
-            ],
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles 21 jours après avoir mis fin à la délégation."],
             "warning" : {
               "description" : "Choisissez votre validateur judicieusement : une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement."
             }
@@ -2461,11 +2457,7 @@
       "steps" : {
         "starter" : {
           "description" : "Vous pouvez gagner des récompenses en liant vos actifs, puis en nommant vos validateurs.",
-          "bullet" : [
-            "Vous gardez la propriété de vos actifs liés.",
-            "Nommez en utilisant votre appareil Ledger.",
-            "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."
-          ],
+          "bullet" : ["Vous gardez la propriété de vos actifs liés.", "Nommez en utilisant votre appareil Ledger.", "Vos actifs seront à nouveau disponibles 28 jours après avoir mis fin à la liaison."],
           "help" : "Fonctionnement des nominations",
           "warning" : "Choisissez votre validateur judicieusement : une partie de vos actifs liés peut être perdue si le validateur ne se comporte pas correctement."
         },
@@ -3717,7 +3709,8 @@
     "warning" : "Vérifiez toujours que l’adresse affichée sur votre appareil est identique à celle donnée par le {{recipientWording}}.",
     "secureContract" : "Vérifiez les détails du dépôt sur votre appareil avant de l’envoyer. L’adresse du contrat est fournie de manière sécurisée afin que vous n’ayez pas à la vérifier.",
     "verifyData" : "Vérifiez toujours les détails de l’opération sur votre appareil.",
-    "warningWording" : {},
+    "warningWording" : {
+    },
     "titleWording" : {
       "send" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "claimReward" : "Confirmez l’opération sur votre appareil pour la finaliser.",
@@ -3767,11 +3760,7 @@
     "title" : "Mise à jour des Conditions d’utilisation",
     "body" : {
       "intro" : "Les Conditions d’utilisation de Ledger Live ont été mises à jour. Elles ont été simplifiées, et reflètent les nouveaux services et fonctionnalités disponibles via Ledger Live. Les mises à jour comprennent :",
-      "bulletPoints" : [
-        "Précisions supplémentaires sur les services disponibles et leur fonctionnement",
-        "Explications sur les frais applicables aux services",
-        "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d’utilisation"
-      ],
+      "bulletPoints" : ["Précisions supplémentaires sur les services disponibles et leur fonctionnement", "Explications sur les frais applicables aux services", "Améliorations du processus de notification, pour vous tenir à jour de toute nouvelle modification de nos Conditions d’utilisation"],
       "agreement" : "En cliquant sur Continuer, vous reconnaissez avoir lu et accepté les Conditions d’utilisation ci-dessous."
     },
     "link" : "Conditions d’utilisation",

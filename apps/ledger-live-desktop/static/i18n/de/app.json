@@ -2141,11 +2141,7 @@
         "steps" : {
           "starter" : {
             "description" : "Sie können Prämien verdienen, indem Sie Ihre ATOM-Vermögenswerte an einen Validator übertragen.",
-            "bullet" : [
-              "Sie behalten das Eigentum an delegierten Vermögenswerten",
-              "Delegieren Sie mit Ihrem Ledger-Gerät",
-              "Vermögenswerte sind 21 Tage nach Rücknahme der Delegierung verfügbar"
-            ],
+            "bullet" : ["Sie behalten das Eigentum an delegierten Vermögenswerten", "Delegieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 21 Tage nach Rücknahme der Delegierung verfügbar"],
             "warning" : {
               "description" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
             }
@@ -2461,11 +2457,7 @@
       "steps" : {
         "starter" : {
           "description" : "Sie können Prämien verdienen, indem Sie Ihr Vermögen binden und dann Ihre Validatoren nominieren.",
-          "bullet" : [
-            "Sie behalten das Eigentum an gebundenen Vermögenswerten",
-            "Nominieren Sie mit Ihrem Ledger-Gerät",
-            "Vermögenswerte sind 28 Tage nach Aufhebung der Bindung verfügbar"
-          ],
+          "bullet" : ["Sie behalten das Eigentum an gebundenen Vermögenswerten", "Nominieren Sie mit Ihrem Ledger-Gerät", "Vermögenswerte sind 28 Tage nach Aufhebung der Bindung verfügbar"],
           "help" : "Wie Nominierungen funktionieren",
           "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer gebundenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
         },
@@ -3717,7 +3709,8 @@
     "warning" : "Vergewissern Sie sich immer, dass die auf Ihrem Gerät angezeigte Adresse genau mit der Adresse übereinstimmt, die von {{recipientWording}} mitgeteilt wurde",
     "secureContract" : "Überprüfen Sie die Einzahlungsdetails auf Ihrem Gerät, bevor Sie sie senden. Die Vertragsadresse wird sicher bereitgestellt, sodass Sie sie nicht verifizieren müssen.",
     "verifyData" : "Überprüfen Sie immer die Aktivitätsdetails auf Ihrem Gerät.",
-    "warningWording" : {},
+    "warningWording" : {
+    },
     "titleWording" : {
       "send" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "claimReward" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
@@ -3767,11 +3760,7 @@
     "title" : "Aktualisierung der Nutzungsbedingungen",
     "body" : {
       "intro" : "Guten Tag! Wir haben unsere Ledger Live-Nutzungsbedingungen aktualisiert – zum einen, um sie klarer zu fassen, zum anderen, um die in Ledger Live neu verfügbaren Services und Funktionen abzudecken. Die wichtigsten Änderungen:",
-      "bulletPoints" : [
-        "Erläuterung der verfügbaren Services und ihrer Funktionsweise",
-        "Informationen rund um die für Services erhobenen Gebühren",
-        "Optimierung unseres Benachrichtigungsprozesses, um sicherzustellen, dass Sie über neue Änderungen unserer Nutzungsbedingungen stets zuverlässig informiert sind"
-      ],
+      "bulletPoints" : ["Erläuterung der verfügbaren Services und ihrer Funktionsweise", "Informationen rund um die für Services erhobenen Gebühren", "Optimierung unseres Benachrichtigungsprozesses, um sicherzustellen, dass Sie über neue Änderungen unserer Nutzungsbedingungen stets zuverlässig informiert sind"],
       "agreement" : "Durch Klicken auf „Weiter“ bestätigen Sie, dass Sie die nachstehenden Nutzungsbedingungen gelesen haben und diesen zustimmen."
     },
     "link" : "Nutzungsbedingungen",

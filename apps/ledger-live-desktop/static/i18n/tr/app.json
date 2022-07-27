@@ -2141,11 +2141,7 @@
         "steps" : {
           "starter" : {
             "description" : "ATOM varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
-            "bullet" : [
-              "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
-              "Ledger cihazınızı kullanarak yetki devredin.",
-              "Yetkisi iptal edilen varlıklar 21 gün sonra yeniden kullanılabilir"
-            ],
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi iptal edilen varlıklar 21 gün sonra yeniden kullanılabilir"],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             }
@@ -2461,11 +2457,7 @@
       "steps" : {
         "starter" : {
           "description" : "Varlıklarınızı bağlayıp, çeşitli doğrulayıcıları aday göstererek ödül kazanabilirsiniz.",
-          "bullet" : [
-            "Bağladığınız varlıklar size ait olmaya devam eder",
-            "Ledger cihazınızı kullanarak adaylarınızı gösterin",
-            "Çözülmüş varlıklar 21 gün sonra yeniden kullanılabilir"
-          ],
+          "bullet" : ["Bağladığınız varlıklar size ait olmaya devam eder", "Ledger cihazınızı kullanarak adaylarınızı gösterin", "Çözülmüş varlıklar 21 gün sonra yeniden kullanılabilir"],
           "help" : "Aday gösterme nasıl çalışır?",
           "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde bağladığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
         },
@@ -3717,7 +3709,8 @@
     "warning" : "Cihazınızda görüntülenen adresin, {{recipientWording}} tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
     "secureContract" : "Göndermeden önce cihazınızdaki fon bilgilerini doğrulayın. Sözleşme adresi güvenli bir şekilde sağlanır, böylece onu doğrulamak zorunda kalmazsınız.",
     "verifyData" : "Cihazınızdaki işlem ayrıntılarını her zaman doğrulayın.",
-    "warningWording" : {},
+    "warningWording" : {
+    },
     "titleWording" : {
       "send" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
       "claimReward" : "İşlemi sonlandırmak için lütfen cihazınızda onaylayın",
@@ -3767,11 +3760,7 @@
     "title" : "Kullanım Koşulları Güncellemesi",
     "body" : {
       "intro" : "Merhaba! Ledger Live Kullanım Koşullarımızı güncelleyerek daha anlaşılır bir hâle getirdik ve Ledger Live'ın yeni sunulan hizmet ve özelliklerini ekledik. Güncellemeyle yapılan önemli değişiklikler:",
-      "bulletPoints" : [
-        "Hangi hizmetlerin mevcut olduğu ve nasıl çalıştıklarıyla ilgili açıklamalar",
-        "Hizmetler için ücretlerin nasıl çalıştığıyla ilgili açıklamalar",
-        "Kullanım Koşullarımızdaki herhangi bir değişiklikten gerektiği gibi haberdar olmanızı sağlamak için bildirim sürecindeki iyileştirmeler"
-      ],
+      "bulletPoints" : ["Hangi hizmetlerin mevcut olduğu ve nasıl çalıştıklarıyla ilgili açıklamalar", "Hizmetler için ücretlerin nasıl çalıştığıyla ilgili açıklamalar", "Kullanım Koşullarımızdaki herhangi bir değişiklikten gerektiği gibi haberdar olmanızı sağlamak için bildirim sürecindeki iyileştirmeler"],
       "agreement" : "\"Devam\" butonuna tıklayarak, aşağıdaki Kullanım Koşullarını okuyup kabul ettiğinizi beyan etmiş olursunuz."
     },
     "link" : "Kullanım Koşulları",

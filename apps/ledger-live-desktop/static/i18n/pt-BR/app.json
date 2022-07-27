@@ -2141,11 +2141,7 @@
         "steps" : {
           "starter" : {
             "description" : "Você pode ganhar recompensas delegando seus ativos ATOM a um validador.",
-            "bullet" : [
-              "Você continua tendo a posse dos ativos delegados",
-              "Delegue usando seu dispositivo Ledger",
-              "Os ativos estarão disponíveis 21 dias após interromper a delegação"
-            ],
+            "bullet" : ["Você continua tendo a posse dos ativos delegados", "Delegue usando seu dispositivo Ledger", "Os ativos estarão disponíveis 21 dias após interromper a delegação"],
             "warning" : {
               "description" : "Escolha cuidadosamente seu validador: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
             }
@@ -2461,11 +2457,7 @@
       "steps" : {
         "starter" : {
           "description" : "Você pode ganhar recompensas vinculando seus ativos e nomeando seus validadores.",
-          "bullet" : [
-            "Você continua tendo posse dos ativos vinculados",
-            "Nomeie usando seu dispositivo Ledger",
-            "Os ativos estarão disponíveis novamente 28 dias após a desvinculação"
-          ],
+          "bullet" : ["Você continua tendo posse dos ativos vinculados", "Nomeie usando seu dispositivo Ledger", "Os ativos estarão disponíveis novamente 28 dias após a desvinculação"],
           "help" : "Como funcionam as nomeações",
           "warning" : "Escolha cuidadosamente o seu validador: parte de seus ativos vinculados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
         },
@@ -3717,7 +3709,8 @@
     "warning" : "Sempre verifique se o endereço exibido no seu dispositivo corresponde exatamente ao fornecido por{{recipientWording}}",
     "secureContract" : "Verifique os detalhes do depósito no seu dispositivo antes de enviá-lo. O endereço do contrato é fornecido com segurança para que você não precise verificá-lo.",
     "verifyData" : "Sempre verifique os detalhes da operação no seu dispositivo.",
-    "warningWording" : {},
+    "warningWording" : {
+    },
     "titleWording" : {
       "send" : "Confirme no seu dispositivo para finalizar a operação",
       "claimReward" : "Confirme no seu dispositivo para finalizar a operação",
@@ -3767,11 +3760,7 @@
     "title" : "Atualização dos Termos de uso",
     "body" : {
       "intro" : "Olá! Atualizamos nossos Termos de Uso do Ledger Live com o objetivo de torná-los mais claros e refletir os novos serviços e recursos disponíveis no Ledger Live. As principais atualizações estão focadas:",
-      "bulletPoints" : [
-        "Esclarecer quais serviços estão disponíveis e como funcionam",
-        "Explicar como funcionam as taxas de serviços",
-        "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"
-      ],
+      "bulletPoints" : ["Esclarecer quais serviços estão disponíveis e como funcionam", "Explicar como funcionam as taxas de serviços", "Melhorar nosso processo de notificação para garantir que você seja devidamente informado de quaisquer novas alterações em nossos Termos de uso"],
       "agreement" : "Ao clicar em \"Continuar\" você concorda que leu e aceitou os Termos de uso abaixo."
     },
     "link" : "Termos de uso",
