@@ -77,8 +77,9 @@ const extraProperties = store => {
     sessionId,
     devicesCount: devices.length,
     firstConnectionHasDevice,
+    // $FlowFixMe
+    ...(satisfaction ? { satisfaction } : {}),
     ...deviceInfo,
-    ...(satisfaction && { satisfaction }),
   };
 };
 
