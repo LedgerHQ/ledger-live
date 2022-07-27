@@ -24,7 +24,7 @@ function getDeviceTransactionConfig(): Array<DeviceTransactionField> {
 
   fields.push({
     type: "text",
-    label: "Type",
+    label: "Sign",
     value: "Add Delegator",
   });
   fields.push({
