@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-next.7
+
+### Patch Changes
+
+- [#711](https://github.com/LedgerHQ/ledger-live/pull/711) [`afa1ca628`](https://github.com/LedgerHQ/ledger-live/commit/afa1ca628003b6df3f922b6cc9bdb0293e0fffd5) Thanks [@Justkant](https://github.com/Justkant)! - fix: requestAccount to show all accounts
+
 ## 3.5.0-next.6
 
 ### Minor Changes

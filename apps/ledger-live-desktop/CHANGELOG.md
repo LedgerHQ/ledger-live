@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.45.0-next.8
+
+### Patch Changes
+
+- [#734](https://github.com/LedgerHQ/ledger-live/pull/734) [`61b61d9d1`](https://github.com/LedgerHQ/ledger-live/commit/61b61d9d19bdc0c82108168bcf98b5f5769a038b) Thanks [@LFBarreto](https://github.com/LFBarreto)! - LLD - Buy Sell live app redirection should now use the correct account param identifier
+
 ## 2.45.0-next.7
 
 ### Minor Changes

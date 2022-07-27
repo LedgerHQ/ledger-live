@@ -6,6 +6,7 @@ import type {
   Account,
   AccountLike,
   AccountLikeArray,
+  SubAccount,
 } from "@ledgerhq/live-common/types/account";
 
 export type SearchResult = {
@@ -73,7 +74,9 @@ export const formatSearchResultsTuples = (
   const formated = reduce(
     searchResults,
     (acc, tuple) => {
-      const accountId = tuple.subAccount ? tuple.subAccount.id : tuple.account;
+      const accountId = tuple.subAccount
+        ? tuple.subAccount.id
+        : tuple.account.id;
       if (!acc[accountId]) {
         acc[accountId] = {
           account: tuple.subAccount || tuple.account,

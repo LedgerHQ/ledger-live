@@ -1,24 +1,5 @@
 ---
-"@ledgerhq/live-common": major
-"@ledgerhq/devices": major
-"@ledgerhq/hw-app-btc": major
-"@ledgerhq/live-cli": patch
-"ledger-live-desktop": patch
-"@ledgerhq/hw-app-eth": patch
-"@ledgerhq/hw-transport-node-ble": patch
-"@ledgerhq/hw-transport-node-hid-noevents": patch
-"@ledgerhq/hw-transport-web-ble": patch
-"@ledgerhq/hw-transport-webhid": patch
-"@ledgerhq/hw-transport-webusb": patch
-"@ledgerhq/react-native-hw-transport-ble": patch
-"@ledgerhq/icons-ui": patch
-"@ledgerhq/react-ui": patch
-"has-hash-commit-deps": patch
-"@actions/submit-bot-report": patch
-"@actions/upload-images": patch
-"esbuild-utils": patch
-"live-github-bot": patch
-"native-modules-tools": patch
+"live-mobile": patch
 ---
 
 #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
