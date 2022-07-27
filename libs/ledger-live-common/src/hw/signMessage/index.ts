@@ -28,8 +28,8 @@ export const prepareMessageToSign = (
     currency: currency,
     path: freshAddressPath,
     derivationMode: derivationMode as DerivationMode,
-    message: message,
-    rawMessage: "0x" + Buffer.from(message).toString("hex"),
+    message: Buffer.from(message, "hex").toString(),
+    rawMessage: "0x" + message,
   };
 };
 
