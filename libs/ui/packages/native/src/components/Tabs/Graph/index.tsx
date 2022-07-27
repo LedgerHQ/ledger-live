@@ -15,25 +15,24 @@ type GraphTabItemProps = TabItemProps & {
 
 const TabBox = styled.TouchableOpacity`
   text-align: center;
-  margin: auto;
-  flex: 1;
-  border-radius: 48px;
+  border-radius: 4px;
+  box-sizing: border-box;
   overflow: hidden;
+  margin-left: 2px;
 `;
 
 const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
   // Avoid conflict with styled-system's size property by nulling size and renaming it
   size: undefined,
-  lineHeight: p.size === "medium" ? "36px" : "26px",
+  lineHeight: p.size === "medium" ? "40px" : "26px",
   textAlign: "center",
-  px: 4,
-  height: p.size === "medium" ? "36px" : "26px",
+  height: p.size === "medium" ? "40px" : "26px",
+  width: 40,
 }))``;
 
-const StyledTabs = styled(TemplateTabs)<GraphTabsProps>`
-  border: ${(p) => `1px solid ${p.theme.colors.neutral.c40}`};
-  border-radius: 35px;
-  padding: ${(p) => `${p.theme.space[p.size === "medium" ? 2 : 1]}px`};
+const StyledTabs = styled(TemplateTabs)`
+  display: flex;
+  justify-content: center;
 `;
 
 export const GraphTab = ({
@@ -41,7 +40,7 @@ export const GraphTab = ({
   isActive,
   label,
   activeColor = "neutral.c100",
-  activeBg = "primary.c20",
+  activeBg = "neutral.c30",
   size = "medium",
   disabled,
 }: GraphTabItemProps): React.ReactElement => {
