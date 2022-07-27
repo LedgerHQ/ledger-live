@@ -2007,7 +2007,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "总余额不包括权益质押奖励"
       }
     }
   },
@@ -4417,10 +4417,10 @@
       "title" : "您已超过可用代币的数量"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "最小可发送数额为 {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "请确保您的资金足够支付费用"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo 格式错误"
