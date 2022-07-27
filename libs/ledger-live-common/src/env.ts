@@ -41,7 +41,7 @@ const envDefinitions = {
     desc: "Node API endpoint for algorand",
   },
   API_BIM: {
-    def: "https://bim-staging.api.ledger.com",
+    def: "https://bim.api.ledger.com",
     parser: stringParser,
     desc: "Endpoint for long handling long running tasks",
   },
