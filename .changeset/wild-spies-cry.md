@@ -4,7 +4,6 @@
 "@ledgerhq/hw-app-btc": major
 "@ledgerhq/live-cli": patch
 "ledger-live-desktop": patch
-"live-mobile": patch
 "@ledgerhq/hw-app-eth": patch
 "@ledgerhq/hw-transport-node-ble": patch
 "@ledgerhq/hw-transport-node-hid-noevents": patch
