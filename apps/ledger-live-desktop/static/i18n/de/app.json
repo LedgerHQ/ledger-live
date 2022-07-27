@@ -2007,7 +2007,7 @@
   "cardano" : {
     "account" : {
       "subHeader" : {
-        "cardTitle" : "Total balance doesn't include staking rewards"
+        "cardTitle" : "Der Gesamtkontostand enthält keine Stakingprämien"
       }
     }
   },
@@ -4417,10 +4417,10 @@
       "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
     },
     "CardanoMinAmountError" : {
-      "title" : "Minimum sendable amount is {{amount}} ADA"
+      "title" : "Der Mindestbetrag, der versendet werden kann, ist {{amount}} ADA"
     },
     "CardanoNotEnoughFunds" : {
-      "title" : "Please ensure you have enough funds to pay for fees"
+      "title" : "Bitte vergewissern Sie sich, dass Sie ausreichend Geld für die Bezahlung der Gebühren haben"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
