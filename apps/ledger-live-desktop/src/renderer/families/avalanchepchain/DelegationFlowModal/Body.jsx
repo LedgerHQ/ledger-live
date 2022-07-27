@@ -172,9 +172,11 @@ const Body = ({
   const errorSteps = [];
 
   if (transactionError) {
-    errorSteps.push(2);
+    const deviceStepIndex = 3;
+    errorSteps.push(deviceStepIndex);
   } else if (bridgeError) {
-    errorSteps.push(0);
+    const validatorStepIndex = 0;
+    errorSteps.push(validatorStepIndex);
   }
 
   const stepperProps = {
