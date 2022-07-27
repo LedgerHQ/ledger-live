@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 import { Operation, OperationType } from "../../../types";
+import { AvalanchePChainTransactions } from "../types";
 import { encodeOperationId } from "../../../operation";
 import { avalancheClient } from "./client";
 import { makeLRUCache } from "../../../cache";
@@ -14,13 +15,24 @@ const getIndexerUrl = (route: string): string =>
 const getExplorerUrl = (route: string): string =>
   `${getEnv("API_AVALANCHE_EXPLORER_API")}${route || ""}`;
 
-const P_IMPORT = "p_import";
-const P_EXPORT = "p_export";
-const P_ADD_DELEGATOR = "p_add_delegator";
+export const getOperations = async (
+  blockStartHeight: number,
+  accountId: string
+): Promise<Operation[]> => {
+  const hdHelper = HDHelper.getInstance();
+  const addresses = hdHelper.getAllDerivedAddresses();
 
-//Does not appear the indexer makes it simple to get REWARD operations or calculate resulting AVAX rewards
-//see get rewardAmt() in avalanche wallet
-//in latest operations, probably just put latest ADD_DELEGATOR transactions...
+  let operations: Operation[] = await fetchOperations(
+    addresses,
+    blockStartHeight
+  );
+
+  const pChainOperations = operations.filter(getPChainOperations);
+
+  return pChainOperations.map((o) =>
+    convertTransactionToOperation(o, accountId)
+  );
+};
 
 /**
  * Fetch operation list from indexer
@@ -56,11 +68,55 @@ const removeChainPrefix = (address: string) => address.split("-")[1];
 
 const convertTransactionToOperation = (transaction, accountId): Operation => {
   const type = getOperationType(transaction.type);
-  const fee = new BigNumber(transaction.fee);
-  const outputIndex = transaction.type === P_IMPORT ? 0 : 1;
-  let value = new BigNumber(transaction.outputs?.[outputIndex].amount);
 
-  if (transaction.type === P_EXPORT) {
+  switch (type) {
+    case "DELEGATE": {
+      return convertDelegationToOperation(transaction, accountId, type);
+    }
+    default: {
+      return convertSendAndReceiveToOperation(transaction, accountId, type);
+    }
+  }
+};
+
+const convertDelegationToOperation = (
+  transaction,
+  accountId,
+  type
+): Operation => {
+  let value = new BigNumber(transaction.metadata.weight);
+
+  return {
+    id: encodeOperationId(accountId, transaction.id, type),
+    hash: transaction.id,
+    type,
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    senders: [],
+    recipients: [],
+    blockHeight: transaction.block_height,
+    blockHash: transaction.block,
+    accountId,
+    date: new Date(transaction.timestamp),
+    extra: {
+      stakeValue: value,
+    },
+  };
+};
+
+const convertSendAndReceiveToOperation = (
+  transaction,
+  accountId,
+  type
+): Operation => {
+  const fee = new BigNumber(transaction.fee);
+  const outputIndex =
+    transaction.type === AvalanchePChainTransactions.Import ? 0 : 1;
+  let value = new BigNumber(
+    transaction.outputs?.find((o) => o.index === outputIndex).amount
+  );
+
+  if (transaction.type === AvalanchePChainTransactions.Export) {
     value = value.plus(fee);
   }
 
@@ -82,38 +138,21 @@ const convertTransactionToOperation = (transaction, accountId): Operation => {
 
 const getOperationType = (type: string): OperationType => {
   switch (type) {
-    case P_EXPORT:
+    case AvalanchePChainTransactions.Export:
       return "OUT";
-    case P_IMPORT:
+    case AvalanchePChainTransactions.Import:
       return "IN";
-    case P_ADD_DELEGATOR:
+    case AvalanchePChainTransactions.Delegate:
       return "DELEGATE";
     default:
       return "NONE";
   }
 };
 
-export const getOperations = async (
-  blockStartHeight: number,
-  accountId: string
-): Promise<Operation[]> => {
-  const hdHelper = HDHelper.getInstance();
-  const addresses = hdHelper.getAllDerivedAddresses();
-
-  let operations: Operation[] = await fetchOperations(
-    addresses,
-    blockStartHeight
-  );
-
-  const pChainOperations = operations.filter(getPChainOperations);
-
-  return pChainOperations.map((o) =>
-    convertTransactionToOperation(o, accountId)
-  );
-};
-
 const getPChainOperations = ({ type }) =>
-  type === P_IMPORT || type === P_EXPORT || type === P_ADD_DELEGATOR;
+  type === AvalanchePChainTransactions.Import ||
+  type === AvalanchePChainTransactions.Export ||
+  type === AvalanchePChainTransactions.Delegate;
 
 export const getAccount = async () => {
   const hdHelper = HDHelper.getInstance();
@@ -126,7 +165,7 @@ export const getAccount = async () => {
   return {
     balance,
     stakedBalance,
-    blockHeight: blockHeight.toNumber()
+    blockHeight: blockHeight.toNumber(),
   };
 };
 
