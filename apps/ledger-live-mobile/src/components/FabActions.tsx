@@ -209,6 +209,7 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                       currency &&
                       currency.ticker &&
                       currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency && currency.id,
                   },
                 },
               ],
@@ -230,6 +231,7 @@ const FabMarketActionsComponent: React.FC<Props> = ({
                       currency &&
                       currency.ticker &&
                       currency.ticker.toUpperCase(),
+                    defaultCurrencyId: currency && currency.id,
                   },
                 },
               ],
