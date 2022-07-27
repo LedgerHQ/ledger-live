@@ -61,12 +61,12 @@ export const prepareTransaction = async (account: Account, t: Transaction) => {
   let { fees, memo, gas, amount } = t;
   const { mode } = t;
 
-  fees = await getEstimatedFees();
+  fees = await getEstimatedFees(mode);
   gas = await getEstimatedGas(mode);
 
   if (mode === "send") {
     t.amount = t.useAllAmount
-      ? await estimateMaxSpendable({ account, parentAccount: null })
+      ? await estimateMaxSpendable({ account, parentAccount: null, mode })
       : amount;
   }
 
@@ -75,7 +75,7 @@ export const prepareTransaction = async (account: Account, t: Transaction) => {
   }
 
   if (t.useAllAmount) {
-    amount = await estimateMaxSpendable({ account, parentAccount: null });
+    amount = await estimateMaxSpendable({ account, parentAccount: null, mode });
     t = { ...t, amount, fees, gas };
   }
 

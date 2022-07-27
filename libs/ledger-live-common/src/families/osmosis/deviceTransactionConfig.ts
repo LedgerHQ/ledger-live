@@ -149,7 +149,7 @@ function getDeviceTransactionConfig({
       break;
   }
 
-  if (!estimatedFees.isNaN() && estimatedFees.isZero()) {
+  if (!estimatedFees.isNaN() && !estimatedFees.isZero()) {
     fields.push({
       type: "fees",
       label: "Fee",

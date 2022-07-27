@@ -60,7 +60,7 @@ const signOperation = ({
               denom: account.currency.units[1].code,
               amount: transaction.fees
                 ? (transaction.fees.toNumber().toString() as string)
-                : (String(await getEstimatedFees()) as string),
+                : (String(await getEstimatedFees(transaction.mode)) as string),
             },
           ],
           gas: transaction.gas

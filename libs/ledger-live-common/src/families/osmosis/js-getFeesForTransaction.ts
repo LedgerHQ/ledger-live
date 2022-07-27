@@ -8,8 +8,8 @@ const gasForTransaction: {
   delegate: 300000,
   undelegate: 350000,
   redelegate: 550000,
-  claimReward: 300000, // Per https://github.com/chainapsis/keplr-wallet/blob/8d45477df2b2393a90786a5c87f814302b878c3d/packages/extension/src/stores/root.tsx#L240
-  claimRewardCompound: 400000, // TODO - verify this value
+  claimReward: 300000,
+  claimRewardCompound: 400000,
 };
 
 // Default fees in uosmo
@@ -17,13 +17,15 @@ const gasForTransaction: {
 // make sure to flip estimatedFees.isZero() to !estimatedFees.isZero() in
 // './deviceTransactionConfig.ts'.
 export const DEFAULT_FEES = 0;
+export const MIN_GAS_FEE = 0.0025; // Min gas fee in uosmo (https://commonwealth.im/osmosis/discussion/6298-draft-minimum-gas-fee)
+export const DEFAULT_GAS = 100000;
 
 /**
  * Fetch the transaction fees for a transaction
  */
-const getEstimatedFees = async (): Promise<BigNumber> => {
-  // Fees are currently zero in Osmosis
-  return new BigNumber(DEFAULT_FEES);
+const getEstimatedFees = async (mode: string): Promise<BigNumber> => {
+  const gas = await getEstimatedGas(mode as CosmosOperationMode);
+  return gas.times(MIN_GAS_FEE);
 };
 
 /**
@@ -34,16 +36,8 @@ export const getEstimatedGas = async (
 ): Promise<BigNumber> => {
   const estimatedGas = gasForTransaction[mode];
   if (!estimatedGas) {
-    throw new Error(
-      `Estimated gas for the operation mode ${mode} is undefined`
-    );
+    return new BigNumber(DEFAULT_GAS);
   }
-
-  if (mode === "claimReward") {
-    // TODO do proper gas calculation
-    // estimatedGas = estimatedGas * validators.length
-  }
-
   return new BigNumber(estimatedGas);
 };
 
