@@ -636,7 +636,13 @@ export default function Tutorial({ useCase }: Props) {
         illustration={CurrentScreen.Illustration}
         AsideFooter={CurrentScreen.Footer}
         disableContinue={canContinue === false}
-        ProgressBar={<ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />}
+        ProgressBar={
+          useCase !== UseCase.connectDevice ? (
+            <ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />
+          ) : (
+            <></>
+          )
+        }
         continueLabel={CurrentScreen.continueLabel}
         handleContinue={next}
         handleBack={previous}
