@@ -16,6 +16,7 @@ import { Box, Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import LinearGradient from "react-native-linear-gradient";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -25,6 +26,8 @@ import {
 } from "../../reducers/settings";
 import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
+import BackgroundGradient from "../../components/BackgroundGradient";
+import getWindowDimensions from "../../logic/getWindowDimensions";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
@@ -72,6 +75,13 @@ const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   mt: 9,
   px: p.px ?? 6,
 }))``;
+
+export const Gradient = styled(BackgroundGradient)`
+  position: absolute;
+  width: "100%";
+  height: 450px;
+  top: -130px;
+`;
 
 const SectionTitle = ({
   title,
@@ -159,7 +169,7 @@ function PortfolioScreen({ navigation }: Props) {
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
-    setGraphCardEndPosition(y + height / 2);
+    setGraphCardEndPosition(y + height / 10);
   }, []);
 
   const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
@@ -177,7 +187,7 @@ function PortfolioScreen({ navigation }: Props) {
           <AddAssetsCard />
         </Box>
       ),
-      <Box mx={6} mt={3} onLayout={onPortfolioCardLayout}>
+      <Box onLayout={onPortfolioCardLayout}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -187,71 +197,77 @@ function PortfolioScreen({ navigation }: Props) {
       </Box>,
       ...(accounts.length > 0
         ? [
-            <Box mt={6}>
+            <Box pt={6} background={colors.background.main}>
               <FabActions areAccountsEmpty={areAccountsEmpty} />
             </Box>,
           ]
         : []),
       ...(showAssets
         ? [
-            <SectionContainer>
-              <SectionTitle
-                title={t("distribution.title")}
-                navigation={navigation}
-                navigatorName={NavigatorName.PortfolioAccounts}
-                containerProps={{ mb: "9px" }}
-              />
-              <Assets
-                balanceHistory={portfolio.balanceHistory}
-                assets={assetsToDisplay}
-              />
-              {accounts.length < maxAssetsToDisplay && (
-                <>
-                  <Flex
-                    mt={6}
-                    p={4}
-                    border={`1px dashed ${colors.neutral.c40}`}
-                    borderRadius={4}
-                  >
-                    <TextLink
-                      onPress={openAddModal}
-                      Icon={PlusMedium}
-                      iconPosition={"left"}
-                      type={"color"}
+            <Box background={colors.background.main}>
+              <SectionContainer>
+                <SectionTitle
+                  title={t("distribution.title")}
+                  navigation={navigation}
+                  navigatorName={NavigatorName.PortfolioAccounts}
+                  containerProps={{ mb: "9px" }}
+                />
+                <Assets
+                  balanceHistory={portfolio.balanceHistory}
+                  assets={assetsToDisplay}
+                />
+                {accounts.length < maxAssetsToDisplay && (
+                  <>
+                    <Flex
+                      mt={6}
+                      p={4}
+                      border={`1px dashed ${colors.neutral.c40}`}
+                      borderRadius={4}
                     >
-                      {t("distribution.moreAssets")}
-                    </TextLink>
-                  </Flex>
-                  <AddAccountsModal
-                    navigation={navigation}
-                    isOpened={isAddModalOpened}
-                    onClose={closeAddModal}
-                  />
-                </>
-              )}
-            </SectionContainer>,
+                      <TextLink
+                        onPress={openAddModal}
+                        Icon={PlusMedium}
+                        iconPosition={"left"}
+                        type={"color"}
+                      >
+                        {t("distribution.moreAssets")}
+                      </TextLink>
+                    </Flex>
+                    <AddAccountsModal
+                      navigation={navigation}
+                      isOpened={isAddModalOpened}
+                      onClose={closeAddModal}
+                    />
+                  </>
+                )}
+              </SectionContainer>
+            </Box>,
           ]
         : []),
       ...(showCarousel
         ? [
-            <SectionContainer px={0} minHeight={175}>
-              <SectionTitle
-                title={t("portfolio.recommended.title")}
-                containerProps={{ mb: 7, mx: 6 }}
-              />
-              <Carousel cardsVisibility={carouselVisibility} />
-            </SectionContainer>,
+            <Box background={colors.background.main}>
+              <SectionContainer px={0} minHeight={175}>
+                <SectionTitle
+                  title={t("portfolio.recommended.title")}
+                  containerProps={{ mb: 7, mx: 6 }}
+                />
+                <Carousel cardsVisibility={carouselVisibility} />
+              </SectionContainer>
+            </Box>,
           ]
         : []),
       ...(showAssets
         ? [
-            <SectionContainer px={0} mb={8}>
-              <SectionTitle
-                title={t("analytics.operations.title")}
-                containerProps={{ mx: 6 }}
-              />
-              <PortfolioHistoryList navigation={navigation} />
-            </SectionContainer>,
+            <Box background={colors.background.main}>
+              <SectionContainer px={0} mb={8}>
+                <SectionTitle
+                  title={t("analytics.operations.title")}
+                  containerProps={{ mx: 6 }}
+                />
+                <PortfolioHistoryList navigation={navigation} />
+              </SectionContainer>
+            </Box>,
           ]
         : []),
     ],
@@ -287,18 +303,10 @@ function PortfolioScreen({ navigation }: Props) {
           accountsLength={accounts.length}
           discreet={discreetMode}
         />
-        <Box bg={"background.main"}>
-          <Header
-            counterValueCurrency={counterValueCurrency}
-            portfolio={portfolio}
-            currentPositionY={currentPositionY}
-            graphCardEndPosition={graphCardEndPosition}
-            hidePortfolio={areAccountsEmpty}
-          />
-        </Box>
+        <Gradient />
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{ flex: 1, position: "relative" }}
+          style={{ flex: 1, position: "relative", paddingTop: 48 }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}
@@ -309,6 +317,13 @@ function PortfolioScreen({ navigation }: Props) {
           }
         />
         <MigrateAccountsBanner />
+        <Header
+          counterValueCurrency={counterValueCurrency}
+          portfolio={portfolio}
+          currentPositionY={currentPositionY}
+          graphCardEndPosition={graphCardEndPosition}
+          hidePortfolio={areAccountsEmpty}
+        />
       </TabBarSafeAreaView>
     </>
   );
