@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.5.0-nightly.4
+
+### Patch Changes
+
+- [#718](https://github.com/LedgerHQ/ledger-live/pull/718) [`14245392b`](https://github.com/LedgerHQ/ledger-live/commit/14245392b30d6ece427bdcbe5bce3aab6ec80dd4) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the error wording for users trying to update the firmware via bluetooth
+
 ## 3.5.0-nightly.3
 
 ### Patch Changes
