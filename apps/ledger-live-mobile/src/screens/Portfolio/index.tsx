@@ -15,6 +15,7 @@ import { Box, Flex, Link as TextLink } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import LinearGradient from "react-native-linear-gradient";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import {
@@ -24,7 +25,6 @@ import {
 } from "../../reducers/settings";
 import { usePortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import BackgroundGradient from "../../components/BackgroundGradient";
 
 import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
@@ -66,7 +66,55 @@ const SectionContainer = styled(Flex).attrs((p: { px?: string | number }) => ({
   px: p.px ?? 6,
 }))``;
 
-export const Gradient = styled(BackgroundGradient)``;
+const SectionTitle = ({
+  title,
+  onSeeAllPress,
+  navigatorName,
+  screenName,
+  params,
+  navigation,
+  seeMoreText,
+  containerProps,
+}: {
+  title: React.ReactElement;
+  onSeeAllPress?: () => void;
+  navigatorName?: string;
+  screenName?: string;
+  params?: any;
+  navigation?: any;
+  seeMoreText?: React.ReactElement;
+  containerProps?: FlexBoxProps;
+}) => {
+  const { t } = useTranslation();
+  const onLinkPress = useCallback(() => {
+    if (onSeeAllPress) {
+      onSeeAllPress();
+    }
+    if (navigation && navigatorName) {
+      navigation.navigate(navigatorName, { screen: screenName, params });
+    }
+  }, [onSeeAllPress, navigation, navigatorName, screenName, params]);
+
+  return (
+    <Flex
+      flexDirection={"row"}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      {...containerProps}
+    >
+      <Text variant={"h3"} textTransform={"uppercase"} mt={2}>
+        {title}
+      </Text>
+      {onSeeAllPress || navigatorName ? (
+        <StyledTouchableOpacity onPress={onLinkPress}>
+          <TextLink onPress={onLinkPress} type={"color"}>
+            {seeMoreText || t("common.seeAll")}
+          </TextLink>
+        </StyledTouchableOpacity>
+      ) : null}
+    </Flex>
+  );
+};
 
 const maxAssetsToDisplay = 5;
 
@@ -196,13 +244,12 @@ function PortfolioScreen({ navigation }: Props) {
         : []),
       ...(showAssets
         ? [
-            <SectionContainer px={6}>
-              <SectionTitle title={t("analytics.allocation.title")} />
-              <AllocationsSection />
-            </SectionContainer>,
-            <SectionContainer px={6} mb={8}>
-              <SectionTitle title={t("analytics.operations.title")} />
-              <OperationsHistorySection accounts={assetsToDisplay} />
+            <SectionContainer px={0} mb={8}>
+              <SectionTitle
+                title={t("analytics.operations.title")}
+                containerProps={{ mx: 6 }}
+              />
+              <PortfolioHistoryList navigation={navigation} />
             </SectionContainer>,
           ]
         : []),
@@ -239,17 +286,18 @@ function PortfolioScreen({ navigation }: Props) {
           accountsLength={accounts.length}
           discreet={discreetMode}
         />
-        <BackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-        />
+        <Box bg={"background.main"}>
+          <Header
+            counterValueCurrency={counterValueCurrency}
+            portfolio={portfolio}
+            currentPositionY={currentPositionY}
+            graphCardEndPosition={graphCardEndPosition}
+            hidePortfolio={areAccountsEmpty}
+          />
+        </Box>
         <AnimatedFlatListWithRefreshControl
           data={data}
-          style={{
-            flex: 1,
-            position: "relative",
-            paddingTop: 48,
-          }}
+          style={{ flex: 1, position: "relative" }}
           contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
           renderItem={({ item }: { item: React.ReactNode }) => item}
           keyExtractor={(_: any, index: number) => String(index)}

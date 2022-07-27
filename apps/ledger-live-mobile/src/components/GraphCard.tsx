@@ -101,68 +101,88 @@ function GraphCard({
         marginTop={40}
         marginBottom={40}
       >
-        <Animated.View style={[BalanceOpacity]}>
-          <Flex alignItems="center">
-            {areAccountsEmpty ? (
-              <Text variant={"h3"} color={"neutral.c100"}>
-                <CurrencyUnitValue unit={unit} value={0} />
-              </Text>
-            ) : (
-              <>
-                <Flex>
-                  {!balanceAvailable ? (
-                    <BigPlaceholder mt="8px" />
-                  ) : (
-                    <Text
-                      fontFamily="Inter"
-                      fontWeight="semiBold"
-                      fontSize="42px"
-                      color={"neutral.c100"}
-                      numberOfLines={1}
-                      adjustsFontSizeToFit
-                    >
-                      <CurrencyUnitValue
-                        unit={unit}
-                        value={hoveredItem ? hoveredItem.value : item.value}
-                        joinFragmentsSeparator=" "
-                      />
-                    </Text>
-                  )}
-                  <TransactionsPendingConfirmationWarning />
-                </Flex>
-                <Flex flexDirection={"row"}>
-                  {!balanceAvailable ? (
-                    <>
-                      <SmallPlaceholder mt="12px" />
-                    </>
-                  ) : (
-                    <Flex flexDirection="row" alignItems="center">
-                      {hoveredItem && hoveredItem.date ? (
-                        <Text
-                          variant={"body"}
-                          fontWeight={"semibold"}
-                          fontSize="16px"
-                        >
-                          <FormatDate date={hoveredItem.date} />
-                        </Text>
-                      ) : (
-                        <>
-                          <Delta
-                            percent
-                            show0Delta
-                            valueChange={countervalueChange}
-                            // range={portfolio.range}
-                          />
-                          <Delta unit={unit} valueChange={countervalueChange} />
-                        </>
-                      )}
-                    </Flex>
-                  )}
-                </Flex>
-              </>
-            )}
+        <Flex>
+          <Flex flexDirection={"row"} alignItems={"center"} mb={1}>
+            <Text
+              variant={"small"}
+              fontWeight={"semiBold"}
+              color={"neutral.c70"}
+              textTransform={"uppercase"}
+              mr={2}
+            >
+              {t("tabs.portfolio")}
+            </Text>
+            {!areAccountsEmpty && <DiscreetModeButton size={20} />}
           </Flex>
-        </Animated.View>
+          {areAccountsEmpty ? (
+            <Text variant={"h3"} color={"neutral.c100"}>
+              <CurrencyUnitValue unit={unit} value={0} />
+            </Text>
+          ) : (
+            <>
+              <Flex>
+                {!balanceAvailable ? (
+                  <BigPlaceholder mt="8px" />
+                ) : (
+                  <Text
+                    fontFamily="Inter"
+                    fontWeight="semiBold"
+                    fontSize="30px"
+                    color={"neutral.c100"}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    <CurrencyUnitValue
+                      unit={unit}
+                      value={hoveredItem ? hoveredItem.value : item.value}
+                      joinFragmentsSeparator=" "
+                    />
+                  </Text>
+                )}
+                <TransactionsPendingConfirmationWarning />
+              </Flex>
+              <Flex flexDirection={"row"}>
+                {!balanceAvailable ? (
+                  <>
+                    <SmallPlaceholder mt="12px" />
+                  </>
+                ) : (
+                  <Flex flexDirection="row" alignItems="center">
+                    {hoveredItem && hoveredItem.date ? (
+                      <Text variant={"body"} fontWeight={"medium"}>
+                        <FormatDate date={hoveredItem.date} />
+                      </Text>
+                    ) : (
+                      <>
+                        <Delta
+                          percent
+                          show0Delta
+                          valueChange={countervalueChange}
+                          // range={portfolio.range}
+                        />
+                        <Delta unit={unit} valueChange={countervalueChange} />
+                      </>
+                    )}
+                  </Flex>
+                )}
+              </Flex>
+            </>
+          )}
+        </Flex>
+        {!areAccountsEmpty ? (
+          <Flex>
+            <TouchableOpacity onPress={onPieChartButtonpress}>
+              <BoxedIcon
+                Icon={PieChartMedium}
+                variant={"circle"}
+                iconSize={20}
+                size={48}
+                badgeSize={30}
+                iconColor={"neutral.c100"}
+              />
+            </TouchableOpacity>
+          </Flex>
+        ) : null}
       </Flex>
 
       <Graph

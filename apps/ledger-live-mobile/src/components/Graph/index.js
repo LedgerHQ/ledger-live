@@ -10,7 +10,6 @@ import maxBy from "lodash/maxBy";
 import minBy from "lodash/minBy";
 import Svg, { Path, Defs } from "react-native-svg";
 import { useTheme } from "styled-components/native";
-import DefGraph from "./DefGrad";
 import BarInteraction from "./BarInteraction";
 import type { Item, ItemArray } from "./types";
 
@@ -45,6 +44,7 @@ function Graph({
   const { colors } = useTheme();
 
   const color = initialColor || colors.primary.c80;
+  const backgroundColor = colors.background.main;
 
   const maxY = mapValue(maxBy(data, mapValue));
   const minY = mapValue(minBy(data, mapValue));
@@ -68,9 +68,7 @@ function Graph({
     .x(d => x(d.date))
     .y0(d => yExtractor(d))
     .y1(
-      d =>
-        yExtractor(d) +
-        Math.min((maxY - minY) / verticalRangeRatio, height + 20),
+      d => yExtractor(d) + Math.min((maxY - minY) / verticalRangeRatio, height),
     )
     .curve(curve)(data);
 
@@ -90,7 +88,7 @@ function Graph({
       <Defs>
         <DefGraph height={height} color={color} />
       </Defs>
-      <Path d={area} fill={fill || "url(#grad)"} />
+      <Path d={area} fill="url(#grad)" />
       <Path d={line} stroke={color} strokeWidth={STROKE_WIDTH} fill="none" />
     </Svg>
   );
