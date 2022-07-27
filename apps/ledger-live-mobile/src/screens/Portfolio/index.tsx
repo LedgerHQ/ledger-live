@@ -44,6 +44,8 @@ import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../components/TabBar/TabBarSafeAreaView";
+import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
+import Button from "../../components/Button";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -148,6 +150,7 @@ function PortfolioScreen({ navigation }: Props) {
   const closeAddModal = useCallback(() => setAddModalOpened(false), [
     setAddModalOpened,
   ]);
+
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 

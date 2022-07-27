@@ -20,6 +20,12 @@
 	<string>3.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The Ledger Live app needs access to your camera to scan QR codes</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to access your photos</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

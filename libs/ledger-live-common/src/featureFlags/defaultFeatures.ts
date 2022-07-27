@@ -64,4 +64,10 @@ export const defaultFeatures: DefaultFeatures = {
   counterValue: {
     enabled: false,
   },
+  llmUsbFirmwareUpdate: {
+    enabled: false,
+  },
+  customImage: {
+    enabled: false,
+  },
 };

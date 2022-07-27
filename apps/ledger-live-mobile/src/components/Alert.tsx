@@ -24,7 +24,7 @@ type IconType = React.ComponentType<{ size: number; color: string }>;
 type Props = {
   id?: string;
   type: AlertType;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title?: string;
   noIcon?: boolean;
   onLearnMore?: () => any;

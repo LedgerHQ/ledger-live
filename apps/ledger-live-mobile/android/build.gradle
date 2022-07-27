@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 30
         targetSdkVersion = 30
-        kotlinVersion = "1.4.10"
+        kotlinVersion = "1.6.0"
         androidXCore = "1.6.0"
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
@@ -56,6 +56,11 @@ allprojects {
         }
         maven {
             url "$rootDir/../node_modules/expo-camera/android/maven"
+        }
+        jcenter() {
+            content {
+                includeModule("com.theartofdev.edmodo", "android-image-cropper") // for expo-image-picker
+            }
         }
     }
     configurations.all {
