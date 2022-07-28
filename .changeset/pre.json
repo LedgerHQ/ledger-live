@@ -73,5 +73,28 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "afraid-experts-brush",
+    "afraid-moles-train",
+    "brave-ears-teach",
+    "dull-timers-care",
+    "giant-buttons-retire",
+    "green-crabs-begin",
+    "hot-avocados-dream",
+    "hot-singers-lick",
+    "light-pans-report",
+    "long-kiwis-call",
+    "modern-monkeys-teach2",
+    "purple-birds-try",
+    "purple-laws-cry2",
+    "rotten-chicken-greet2",
+    "seven-humans-sip",
+    "shiny-swans-tickle2",
+    "six-rats-bathe",
+    "spicy-eyes-decide",
+    "thick-ligers-fail",
+    "weak-queens-shout",
+    "wild-spies-cry2",
+    "yellow-sloths-fry"
+  ]
 }
